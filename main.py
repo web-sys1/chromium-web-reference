@@ -68,7 +68,7 @@ def main():
             print('DETAILS'.center(54, "-"), '\n')
             print(PreMMsg[0].text)
             
-    with open(f'index.html', 'w', encoding='utf8') as f:
+    with open(f'docs/index.html', 'w', encoding='utf8') as f:
        content = top + MTAB_RES + bottom
        return f.write(content)
     
