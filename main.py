@@ -7,7 +7,7 @@ HEADER = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
 REV_CHG_URL = requests.get('https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Mac%2FLAST_CHANGE?alt=media', headers = HEADER)
 CURRENT_REVISION_NO = REV_CHG_URL.text
 
-top = """
+begin = """
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,6 +15,64 @@ top = """
 <meta content="utf-8" http-equiv="encoding">
 <base href="https://chromium.googlesource.com/">
 <style type="text/css">
+table.blueTable {
+  border: 1px solid #1C6EA4;
+  background-color: #EEEEEE;
+  width: 100%;
+  text-align: center;
+  border-collapse: collapse;
+}
+table.blueTable td, table.blueTable th {
+  border: 1px solid #AAAAAA;
+  padding: 3px 2px;
+}
+table.blueTable tbody td {
+  font-size: 16px;
+}
+table.blueTable tr:nth-child(even) {
+  background: #D0E4F5;
+}
+table.blueTable thead {
+  background: #3077A4;
+  background: -moz-linear-gradient(top, #6499bb 0%, #4484ad 66%, #3077A4 100%);
+  background: -webkit-linear-gradient(top, #6499bb 0%, #4484ad 66%, #3077A4 100%);
+  background: linear-gradient(to bottom, #6499bb 0%, #4484ad 66%, #3077A4 100%);
+  border-bottom: 2px solid #444444;
+}
+table.blueTable thead th {
+  font-size: 15px;
+  font-weight: bold;
+  color: #FFFFFF;
+  text-align: center;
+  border-left: 2px solid #D0E4F5;
+}
+table.blueTable thead th:first-child {
+  border-left: none;
+}
+
+table.blueTable tfoot {
+  font-size: 8px;
+  font-weight: bold;
+  color: #FFFFFF;
+  background: #D0E4F5;
+  background: -moz-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+  background: -webkit-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+  background: linear-gradient(to bottom, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+  border-top: 2px solid #444444;
+}
+table.blueTable tfoot td {
+  font-size: 8px;
+}
+table.blueTable tfoot .links {
+  text-align: right;
+}
+table.blueTable tfoot .links a{
+  display: inline-block;
+  background: #1C6EA4;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
 
 body{
     background: #fff2e0;
@@ -37,7 +95,7 @@ body{
 </head>
 <body>
 """
-bottom = """
+endLine = """
 </body>
 </html>
 """
@@ -47,18 +105,39 @@ def main():
     CR_IDENTIFIER = json.loads(CR_REV_G.text)
     r = requests.get(CR_IDENTIFIER['redirect_url'])
     content = BeautifulSoup(r.content, "html.parser")
+    
     print('SUMMARY'.center(54, "-"), '\n')
     print('REVISION NO. ' + CURRENT_REVISION_NO)
     title = content.title.string
     print('PAGE TITLE: ', title)
     print('SHA-1 COMMIT NO.: ', CR_IDENTIFIER['git_sha'])
-
+    
+    GIT_SHA1 = CR_IDENTIFIER['git_sha']
+    
+    ContentSummary = f"""
+    <table class="blueTable">
+     <thead>
+      <tr>
+       <th><strong>REVISION ID</strong></th>
+       <th>SHA-1 COMMIT</th>
+      </tr>
+    </thead>
+    <tfoot></tfoot>
+     <tbody>
+      <tr>
+       <td>{CURRENT_REVISION_NO}</td>
+       <td>{GIT_SHA1}</td>
+      </tr>
+     </tbody>
+    </table>
+   <hr>"""
+    HR_BREAKPOINT= f"""<hr style="height:1px;border-width:0;color:gray;background-color:gray">"""
     MetadataParser = content.find_all("div", {"class" : "Metadata"})
     PreMMsg = content.find_all("pre", {"class" : "MetadataMessage"})
 
     MTAB_P = MetadataParser[0].find("table")
     METADATA_FT = MTAB_P()
-    MTAB_RES = MTAB_P.prettify() + PreMMsg[0].prettify()
+    MTAB_RES = ContentSummary + MTAB_P.prettify() + HR_BREAKPOINT + PreMMsg[0].prettify()
     
     for tag in PreMMsg:
         if 'class' in tag.attrs.keys() and tag.attrs['class'][0].strip():
@@ -72,10 +151,10 @@ def main():
             print('DETAILS'.center(54, "-"), '\n')
             print(PreMMsg[0].text)
             
-    with open(f'docs/index.html', 'w', encoding='utf8') as f:
-       content = top + MTAB_RES + bottom
+            
+    with open(f'index.html', 'w', encoding='utf8') as f:
+       content = begin + MTAB_RES + endLine
        return f.write(content)
     
 if __name__ == '__main__':
     main()
-    
