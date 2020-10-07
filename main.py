@@ -131,7 +131,9 @@ def main():
      </tbody>
     </table>
    <hr>"""
+    
     HR_BREAKPOINT= f"""<hr style="height:1px;border-width:0;color:gray;background-color:gray">"""
+    
     MetadataParser = content.find_all("div", {"class" : "Metadata"})
     PreMMsg = content.find_all("pre", {"class" : "MetadataMessage"})
 
