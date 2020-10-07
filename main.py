@@ -1,3 +1,4 @@
+#Import libraries
 from bs4 import BeautifulSoup
 import json
 import requests
@@ -15,6 +16,7 @@ begin = """
 <meta content="utf-8" http-equiv="encoding">
 <base href="https://chromium.googlesource.com/">
 <style type="text/css">
+/* Styles */
 table.blueTable {
   border: 1px solid #1C6EA4;
   background-color: #EEEEEE;
