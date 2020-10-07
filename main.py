@@ -15,6 +15,10 @@ top = """
 <meta content="utf-8" http-equiv="encoding">
 <base href="https://chromium.googlesource.com/">
 <style type="text/css">
+
+body{
+    background: #fff2e0;
+}
 .Metadata {
     margin-bottom: 15px;
 }
@@ -22,8 +26,8 @@ top = """
     font-family: 'Source Code Pro',monospace;
 }
 .MetadataMessage {
-    background-color: #fafafa;
-    border: 1px solid #ccc;
+    background-color: #b9caff;
+    border: 1px solid #de5353;
     color: #000;
     margin: 0;
     padding: 12px;
