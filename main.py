@@ -158,7 +158,7 @@ def main():
             
     with open(f'index.html', 'w', encoding='utf8') as f:
        content = begin + MTAB_RES + endLine
-       return f.write(content)
+       f.write(content)
     
 if __name__ == '__main__':
     main()
