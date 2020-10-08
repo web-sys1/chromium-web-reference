@@ -16,7 +16,6 @@ begin = """
 <meta content="utf-8" http-equiv="encoding">
 <base href="https://chromium.googlesource.com/">
 <style type="text/css">
-/* Styles */
 table.blueTable {
   border: 1px solid #1C6EA4;
   background-color: #EEEEEE;
@@ -84,6 +83,9 @@ body{
 }
 .u-monospace {
     font-family: 'Source Code Pro',monospace;
+    max-width: 100%;
+    overflow-x: scroll;
+    border: groove #c33b3b 2px;
 }
 .MetadataMessage {
     background-color: #b9caff;
@@ -133,15 +135,13 @@ def main():
      </tbody>
     </table>
    <hr>"""
-    
     HR_BREAKPOINT= f"""<hr style="height:1px;border-width:0;color:gray;background-color:gray">"""
-    
     MetadataParser = content.find_all("div", {"class" : "Metadata"})
     PreMMsg = content.find_all("pre", {"class" : "MetadataMessage"})
 
     MTAB_P = MetadataParser[0].find("table")
     METADATA_FT = MTAB_P()
-    MTAB_RES = ContentSummary + MTAB_P.prettify() + HR_BREAKPOINT + PreMMsg[0].prettify()
+    MTAB_RES = MTAB_P.prettify() + HR_BREAKPOINT + PreMMsg[0].prettify()
     
     for tag in PreMMsg:
         if 'class' in tag.attrs.keys() and tag.attrs['class'][0].strip():
@@ -154,7 +154,6 @@ def main():
             print(METADATA_FT[21].text, ':' + '', METADATA_FT[23].text + '\n\n')
             print('DETAILS'.center(54, "-"), '\n')
             print(PreMMsg[0].text)
-            
             
     with open(f'docs/index.html', 'w', encoding='utf8') as f:
        content = begin + MTAB_RES + endLine
