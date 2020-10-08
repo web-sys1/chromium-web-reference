@@ -141,7 +141,7 @@ def main():
 
     MTAB_P = MetadataParser[0].find("table")
     METADATA_FT = MTAB_P()
-    MTAB_RES = MTAB_P.prettify() + HR_BREAKPOINT + PreMMsg[0].prettify()
+    MTAB_RES = ContentSummary + MTAB_P.prettify() + HR_BREAKPOINT + PreMMsg[0].prettify()
     
     for tag in PreMMsg:
         if 'class' in tag.attrs.keys() and tag.attrs['class'][0].strip():
