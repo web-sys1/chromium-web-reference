@@ -99,8 +99,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>816318</td>
-       <td>4d9f7242269df1879b1cfd68c72bceb02b1dfa94</td>
+       <td>816341</td>
+       <td>2c428e5462fb5a2c951aa442d249a2be336b9f5f</td>
       </tr>
      </tbody>
     </table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4d9f7242269df1879b1cfd68c72bceb02b1dfa94
+   2c428e5462fb5a2c951aa442d249a2be336b9f5f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4d9f7242269df1879b1cfd68c72bceb02b1dfa94">
+    <a href="/chromium/src/+log/2c428e5462fb5a2c951aa442d249a2be336b9f5f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4d9f7242269df1879b1cfd68c72bceb02b1dfa94.tar.gz">
+    <a href="/chromium/src/+archive/2c428e5462fb5a2c951aa442d249a2be336b9f5f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Adam Ettenberger &lt;Adam.Ettenberger@microsoft.com&gt;
   </td>
   <td>
-   Mon Oct 12 22:16:53 2020
+   Mon Oct 12 23:18:50 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Mon Oct 12 22:16:53 2020
+   Mon Oct 12 23:18:50 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4d9f7242269df1879b1cfd68c72bceb02b1dfa94/">
-    a5738dbff2ac8e554a8ac3f2c18b3eedbc5dcba6
+   <a href="/chromium/src/+/2c428e5462fb5a2c951aa442d249a2be336b9f5f/">
+    5bac1d04090bdccbef24d832adbc13367fcee006
    </a>
   </td>
  </tr>
@@ -166,49 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4d9f7242269df1879b1cfd68c72bceb02b1dfa94%5E">
-    09490f2c3cdcb3e4890822bcafd58300e84544a0
+   <a href="/chromium/src/+/2c428e5462fb5a2c951aa442d249a2be336b9f5f%5E">
+    bbf552568e4f2dc76603f2b0275adce5594f19e9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4d9f7242269df1879b1cfd68c72bceb02b1dfa94%5E%21/">
+    <a href="/chromium/src/+/2c428e5462fb5a2c951aa442d249a2be336b9f5f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Skia from 4aa4c6014d56 to 3637a44a3643 (5 revisions)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix TextChanged UIA events
 
-<a href="https://skia.googlesource.com/skia.git/+log/4aa4c6014d56..3637a44a3643">https://skia.googlesource.com/skia.git/+log/4aa4c6014d56..3637a44a3643</a>
+Blink fires the TextChanged event for all sorts of reasons, and it
+leads to flakiness and difficulty fixing other bugs.
 
-2020-10-12 mtklein@google.com update comments and rearrange SkVx.h
-2020-10-12 egdaniel@google.com Update attachment unique key to handle format and protected.
-2020-10-12 michaelludwig@google.com Take crop rect into account for input bounds/reverse filter bounds
-2020-10-12 mtklein@google.com power up skvx::map
-2020-10-12 bsalomon@google.com Revert "Revert "Use ManagedBackendTexture in place of TestUtils backend texture helpers.""
+Instead, fire this event when a static text node has changed its text
+using AXEventGenerator, which is more stable and predictable.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/skia-autoroll">https://autoroll.skia.org/r/skia-autoroll</a>
-Please CC robertphillips@google.com on the revert to ensure that a human
-is aware of the problem.
+When static text changes under UIA, fire a text-changed event
+rather than raising a property-changed for UIA_NamePropertyId.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+Add AXEventGenerator::Event::EDITABLE_TEXT_CHANGED which is fired on an
+editable root when static text within an editable text region changes.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chromium.try:android_optional_gpu_tests_rel;luci.chromium.try:linux-blink-rel;luci.chromium.try:linux-chromeos-compile-dbg;luci.chromium.try:linux_optional_gpu_tests_rel;luci.chromium.try:mac_optional_gpu_tests_rel;luci.chromium.try:win_optional_gpu_tests_rel
-Cq-Do-Not-Cancel-Tryjobs: true
-Bug: None
-Tbr: robertphillips@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I977022183f836d44307e59607298d631b2f8f090">I977022183f836d44307e59607298d631b2f8f090</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2465939">https://chromium-review.googlesource.com/c/chromium/src/+/2465939</a>
-Reviewed-by: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#816318}
+Bug: 904977, 1062063, 1085481, 1105262
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic655deba0d1a5ab1fb575ffa8a56cef1c538c923">Ic655deba0d1a5ab1fb575ffa8a56cef1c538c923</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2393067">https://chromium-review.googlesource.com/c/chromium/src/+/2393067</a>
+Commit-Queue: Adam Ettenberger &lt;Adam.Ettenberger@microsoft.com&gt;
+Reviewed-by: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
+Reviewed-by: Kurt Catti-Schmidt &lt;kschmi@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/master@{#816341}
 </pre>
 
 </body>
