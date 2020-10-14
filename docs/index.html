@@ -99,8 +99,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>816893</td>
-       <td>1f88222047c42ecddc232cee3c88f753ec34b098</td>
+       <td>816900</td>
+       <td>8c55b4a4caf574423bd2548b158043feed5cbdc8</td>
       </tr>
      </tbody>
     </table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1f88222047c42ecddc232cee3c88f753ec34b098
+   8c55b4a4caf574423bd2548b158043feed5cbdc8
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1f88222047c42ecddc232cee3c88f753ec34b098">
+    <a href="/chromium/src/+log/8c55b4a4caf574423bd2548b158043feed5cbdc8">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1f88222047c42ecddc232cee3c88f753ec34b098.tar.gz">
+    <a href="/chromium/src/+archive/8c55b4a4caf574423bd2548b158043feed5cbdc8.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jimmy Gong &lt;jimmyxgong@chromium.org&gt;
+   Minoru Chikamune &lt;chikamune@chromium.org&gt;
   </td>
   <td>
-   Wed Oct 14 04:45:39 2020
+   Wed Oct 14 05:55:39 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Wed Oct 14 04:45:39 2020
+   Wed Oct 14 05:55:39 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1f88222047c42ecddc232cee3c88f753ec34b098/">
-    af46a5daf8230d9993bed2fd8f5894ce3759bfd5
+   <a href="/chromium/src/+/8c55b4a4caf574423bd2548b158043feed5cbdc8/">
+    68c5f74c8d80ffac0b10849b2cb70dd6dc5c4fb1
    </a>
   </td>
  </tr>
@@ -166,30 +166,54 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1f88222047c42ecddc232cee3c88f753ec34b098%5E">
-    9e74c8549fdf4e693f4af11f20f96aa3ff584bfd
+   <a href="/chromium/src/+/8c55b4a4caf574423bd2548b158043feed5cbdc8%5E">
+    56f110a6c63f6243aeaaf208f9178aa7cfa750b4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1f88222047c42ecddc232cee3c88f753ec34b098%5E%21/">
+    <a href="/chromium/src/+/8c55b4a4caf574423bd2548b158043feed5cbdc8%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Implement NotificationManager
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use the given task runner for AssociatedInterfaceProvider::GetInterface.
 
-- Responsible for managing the internal notifications set and sending
-  inline replies for notifications.
+[Context]
+This is a part of an effort to achieve MBI. We want to avoid per-thread task runner as much as possible.
 
-Bug: 1106937
-Test: chromeos_components_unittests
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I659f3b16c06005d213beb9c2cbe21618f35404c9">I659f3b16c06005d213beb9c2cbe21618f35404c9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2466980">https://chromium-review.googlesource.com/c/chromium/src/+/2466980</a>
-Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
-Commit-Queue: Jimmy Gong &lt;jimmyxgong@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#816893}
+[Previous code]
+AssociatedInterfaceProvider::GetInterface was using per-thread default task runner because task_runner was not specified.
+
+[What this CL does]
+Use the given task runner for AssociatedInterfaceProvider::GetInterface instead of per-thread task runner
+
+[Rlated stack trace]
+base::SequencedTaskRunnerHandle::Get()
+mojo::internal::GetTaskRunnerToUseFromUserProvidedTaskRunner()
+mojo::internal::AssociatedInterfacePtrStateBase::Bind()
+mojo::internal::AssociatedInterfacePtrState&lt;&gt;::Bind()
+mojo::AssociatedRemote&lt;&gt;::Bind()
+mojo::AssociatedRemote&lt;&gt;::BindNewEndpointAndPassReceiver()
+mojo::AssociatedRemote&lt;&gt;::BindNewEndpointAndPassReceiver()
+blink::AssociatedInterfaceProvider::GetInterface&lt;&gt;()
+content::RenderFrameImpl::GetFrameHost()
+content::(anonymous namespace)::ResourceLoadCompleted()
+content::NotifyResourceLoadCompleted()
+content::NavigationBodyLoader::NotifyCompletionIfAppropriate()
+content::NavigationBodyLoader::OnComplete()
+network::mojom::URLLoaderClientStubDispatch::Accept()
+network::mojom::URLLoaderClientStub&lt;&gt;::Accept()
+
+Bug: 1105403
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I20d3e2a7e1ba638a94d30e33d964d8df5f8fd418">I20d3e2a7e1ba638a94d30e33d964d8df5f8fd418</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2462857">https://chromium-review.googlesource.com/c/chromium/src/+/2462857</a>
+Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Reviewed-by: Dominic Farolino &lt;dom@chromium.org&gt;
+Commit-Queue: Minoru Chikamune &lt;chikamune@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#816900}
 </pre>
 
 </body>
