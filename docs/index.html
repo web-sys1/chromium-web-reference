@@ -99,8 +99,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>817410</td>
-       <td>74c81c179b4ff6c4ddca6f2633c7339d58c62cce</td>
+       <td>817422</td>
+       <td>d658439002fc9bc6b4deeec71738600402ea9742</td>
       </tr>
      </tbody>
     </table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   74c81c179b4ff6c4ddca6f2633c7339d58c62cce
+   d658439002fc9bc6b4deeec71738600402ea9742
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/74c81c179b4ff6c4ddca6f2633c7339d58c62cce">
+    <a href="/chromium/src/+log/d658439002fc9bc6b4deeec71738600402ea9742">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/74c81c179b4ff6c4ddca6f2633c7339d58c62cce.tar.gz">
+    <a href="/chromium/src/+archive/d658439002fc9bc6b4deeec71738600402ea9742.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Asami Doi &lt;asamidoi@chromium.org&gt;
+   Alexey Baskakov &lt;loyso@chromium.org&gt;
   </td>
   <td>
-   Thu Oct 15 07:45:53 2020
+   Thu Oct 15 08:52:08 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Thu Oct 15 07:45:53 2020
+   Thu Oct 15 08:52:08 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/74c81c179b4ff6c4ddca6f2633c7339d58c62cce/">
-    5dbfce50595243d763cd92a14c5efeefac1d555c
+   <a href="/chromium/src/+/d658439002fc9bc6b4deeec71738600402ea9742/">
+    0028fc440a656366c710b39eeebf34564f7e5dd9
    </a>
   </td>
  </tr>
@@ -166,39 +166,68 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/74c81c179b4ff6c4ddca6f2633c7339d58c62cce%5E">
-    077e346a09d4a3ed568c6cea78534fe0c965c04e
+   <a href="/chromium/src/+/d658439002fc9bc6b4deeec71738600402ea9742%5E">
+    c9ee825b75ff26491a22ff685d168e54a2ea8dc0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/74c81c179b4ff6c4ddca6f2633c7339d58c62cce%5E%21/">
+    <a href="/chromium/src/+/d658439002fc9bc6b4deeec71738600402ea9742%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ServiceWorker: Start the event immediately if its type is same as the type of the currently running events
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "Enable vaapi decoding on linux x86/64 by default."
 
-This CL makes an event start immediately after its creation if its type
-is the same as the events currently running.
+This reverts commit 6757c99a4dc1acc030b9af6c36dea0d5db4469e1.
 
-The behavior slightly changes by this change.
-Previously, if the events come like [online1, offline1, online2], the
-order of execution is 1) online1 2) offline1 3) online2.
-Now, if the events come like [online1, offline1, online2], the order of
-execution is 1) online1 2) online2 3) offline1 if online1 is running
-when online2 comes to the queue.
+Reason for revert: It was wrong culprit. Still failing here:
+<a href="https://ci.chromium.org/p/chromium/builders/ci/Linux%20TSan%20Tests/59863">https://ci.chromium.org/p/chromium/builders/ci/Linux%20TSan%20Tests/59863</a>
 
-Also, this CL renames `id_event_map_` to `all_events_`.
+Original change's description:
+&gt; Revert "Enable vaapi decoding on linux x86/64 by default."
+&gt;
+&gt; This reverts commit 7bc2776d6f3a5c63a4cae7cd8dab22d8c8701a7c.
+&gt;
+&gt; Reason for revert: A culprit that breaks
+&gt; WebRtcCaptureFromElementBrowserTest.CaptureFromMediaElement
+&gt; test on Linux TSAN:
+&gt; <a href="https://ci.chromium.org/p/chromium/builders/ci/Linux%20TSan%20Tests/59853">https://ci.chromium.org/p/chromium/builders/ci/Linux%20TSan%20Tests/59853</a>
+&gt;
+&gt; Original change's description:
+&gt; &gt; Enable vaapi decoding on linux x86/64 by default.
+&gt; &gt;
+&gt; &gt; Bug: 1097029
+&gt; &gt;
+&gt; &gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib3105a11e5ad76f7ef22930246014a702e39d0dd">Ib3105a11e5ad76f7ef22930246014a702e39d0dd</a>
+&gt; &gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2436704">https://chromium-review.googlesource.com/c/chromium/src/+/2436704</a>
+&gt; &gt; Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
+&gt; &gt; Commit-Queue: Ted Meyer &lt;tmathmeyer@chromium.org&gt;
+&gt; &gt; Cr-Commit-Position: refs/heads/master@{#817228}
+&gt;
+&gt; TBR=dalecurtis@chromium.org,tmathmeyer@chromium.org,andrescj@chromium.org
+&gt;
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I73a5d50738122ef5c81a0c7a92ec9016ac1420eb">I73a5d50738122ef5c81a0c7a92ec9016ac1420eb</a>
+&gt; No-Presubmit: true
+&gt; No-Tree-Checks: true
+&gt; No-Try: true
+&gt; Bug: 1097029
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2474233">https://chromium-review.googlesource.com/c/chromium/src/+/2474233</a>
+&gt; Reviewed-by: Alexey Baskakov &lt;loyso@chromium.org&gt;
+&gt; Commit-Queue: Alexey Baskakov &lt;loyso@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/master@{#817384}
 
-Bug: 965802
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibb82efc509a5c7ea0364a3e31127728ce8b8de1c">Ibb82efc509a5c7ea0364a3e31127728ce8b8de1c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2438074">https://chromium-review.googlesource.com/c/chromium/src/+/2438074</a>
-Commit-Queue: Asami Doi &lt;asamidoi@chromium.org&gt;
-Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
-Reviewed-by: Makoto Shimazu &lt;shimazu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#817410}
+TBR=dalecurtis@chromium.org,loyso@chromium.org,tmathmeyer@chromium.org,andrescj@chromium.org
+
+# Not skipping CQ checks because this is a reland.
+
+Bug: 1097029
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I99ac6f3950373f1c0786c26795186787bff8b8bf">I99ac6f3950373f1c0786c26795186787bff8b8bf</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2473865">https://chromium-review.googlesource.com/c/chromium/src/+/2473865</a>
+Reviewed-by: Alexey Baskakov &lt;loyso@chromium.org&gt;
+Commit-Queue: Alexey Baskakov &lt;loyso@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#817422}
 </pre>
 
 </body>
