@@ -99,8 +99,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>817374</td>
-       <td>71cd8862d9b922d55bfa429d012a2b4a918a9207</td>
+       <td>817386</td>
+       <td>7b60fe6e30ccfa3d9b661abae36c1e305fe8a673</td>
       </tr>
      </tbody>
     </table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   71cd8862d9b922d55bfa429d012a2b4a918a9207
+   7b60fe6e30ccfa3d9b661abae36c1e305fe8a673
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/71cd8862d9b922d55bfa429d012a2b4a918a9207">
+    <a href="/chromium/src/+log/7b60fe6e30ccfa3d9b661abae36c1e305fe8a673">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/71cd8862d9b922d55bfa429d012a2b4a918a9207.tar.gz">
+    <a href="/chromium/src/+archive/7b60fe6e30ccfa3d9b661abae36c1e305fe8a673.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Hirokazu Honda &lt;hiroh@chromium.org&gt;
+   Shubham Aggarwal &lt;shuagga@microsoft.com&gt;
   </td>
   <td>
-   Thu Oct 15 04:55:33 2020
+   Thu Oct 15 06:00:28 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Thu Oct 15 04:55:33 2020
+   Thu Oct 15 06:00:28 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/71cd8862d9b922d55bfa429d012a2b4a918a9207/">
-    233117281bc17acbea5822ae2364ba3ad74ea9f3
+   <a href="/chromium/src/+/7b60fe6e30ccfa3d9b661abae36c1e305fe8a673/">
+    8dda01b0b4c59c6052602f5812a32f370162cba4
    </a>
   </td>
  </tr>
@@ -166,30 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/71cd8862d9b922d55bfa429d012a2b4a918a9207%5E">
-    25011a97f133419216c827fcaebee5fb1a580880
+   <a href="/chromium/src/+/7b60fe6e30ccfa3d9b661abae36c1e305fe8a673%5E">
+    afa39cc9d6dff297f980173d54ca6cf745ec23cc
    </a>
    <span>
     [
-    <a href="/chromium/src/+/71cd8862d9b922d55bfa429d012a2b4a918a9207%5E%21/">
+    <a href="/chromium/src/+/7b60fe6e30ccfa3d9b661abae36c1e305fe8a673%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media/gpu/VaapiWrapper: Add AV1 profiles to VaapiWrapper
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add sql::DatabaseOptions to encapsulate its configuration options
 
-This is necessary to pass vaapi_unittest on volteer where AV1
-capability is detected by VA-API driver.
+sql::Database uses internal state to manage its configuration options
+like page size, journal mode etc. These options need to be set before
+Database::Open() is called. Any change to this state has no effect if
+done after the database has already been opened. There are also some
+SQLite subtleties around different behaviour of this state depending on
+whether the database is being opened for the first time or being
+re-opened.
 
-Bug: 1029212
-Test: vaapi_unittest on volteer
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib2b7dff8141013e3807de23cfcfe58844258f8a6">Ib2b7dff8141013e3807de23cfcfe58844258f8a6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2398447">https://chromium-review.googlesource.com/c/chromium/src/+/2398447</a>
-Commit-Queue: Hirokazu Honda &lt;hiroh@chromium.org&gt;
-Reviewed-by: Jao-ke Chin-Lee &lt;jchinlee@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#817374}
+This change encapsulates all such state into a sql::DatabaseOptions
+struct which is passed to the sql::Database constructor. This ensures
+that the required options have been configured before calling Open().
+
+We migrate sql/ to use the new constructor instead of the setters for
+the state. In upcoming changes, we plan to remove the setters for this
+state. This will make the Database API enforce that the options are set
+only once and stay the same over the lifetime of the object.
+
+Bug: 1126968
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id44b6b3883f7a695f3b5cd96ad071e15cb1dc44a">Id44b6b3883f7a695f3b5cd96ad071e15cb1dc44a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2427035">https://chromium-review.googlesource.com/c/chromium/src/+/2427035</a>
+Commit-Queue: Shubham Aggarwal &lt;shuagga@microsoft.com&gt;
+Reviewed-by: Victor Costan &lt;pwnall@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#817386}
 </pre>
 
 </body>
