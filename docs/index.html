@@ -99,8 +99,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>820458</td>
-       <td>ca433f3eff0a220676b7eec66ae852723b549f4e</td>
+       <td>820492</td>
+       <td>a4867eda65c79eccc99099a15f4180c4448b2ea7</td>
       </tr>
      </tbody>
     </table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ca433f3eff0a220676b7eec66ae852723b549f4e
+   a4867eda65c79eccc99099a15f4180c4448b2ea7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ca433f3eff0a220676b7eec66ae852723b549f4e">
+    <a href="/chromium/src/+log/a4867eda65c79eccc99099a15f4180c4448b2ea7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ca433f3eff0a220676b7eec66ae852723b549f4e.tar.gz">
+    <a href="/chromium/src/+archive/a4867eda65c79eccc99099a15f4180c4448b2ea7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Austin Sullivan &lt;asully@chromium.org&gt;
+   Scott Violet &lt;sky@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 23 22:27:30 2020
+   Fri Oct 23 23:40:24 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 23 22:27:30 2020
+   Fri Oct 23 23:40:24 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ca433f3eff0a220676b7eec66ae852723b549f4e/">
-    d450377ce8ac66b7c13439449b54beb5f81478f9
+   <a href="/chromium/src/+/a4867eda65c79eccc99099a15f4180c4448b2ea7/">
+    5d2a0348e18bdc6a55289e744724fc5e775b2c8d
    </a>
   </td>
  </tr>
@@ -166,30 +166,63 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ca433f3eff0a220676b7eec66ae852723b549f4e%5E">
-    d4986c66eb5c9ea7e3c4ebc5d67f925e687c0ade
+   <a href="/chromium/src/+/a4867eda65c79eccc99099a15f4180c4448b2ea7%5E">
+    66c9d659b591aca11a733d01b59f1116d500064e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ca433f3eff0a220676b7eec66ae852723b549f4e%5E%21/">
+    <a href="/chromium/src/+/a4867eda65c79eccc99099a15f4180c4448b2ea7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add DIR_METADATA to //codelabs
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "indexeddb: defer journal cleanup in CommitPhaseTwo"
 
-Bug: N/A
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2fa776ab02969c19fec3cc1bffd0745a181da598">I2fa776ab02969c19fec3cc1bffd0745a181da598</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2488393">https://chromium-review.googlesource.com/c/chromium/src/+/2488393</a>
-Reviewed-by: Victor Costan &lt;pwnall@chromium.org&gt;
-Reviewed-by: Dirk Pranke &lt;dpranke@google.com&gt;
-Reviewed-by: danakj &lt;danakj@chromium.org&gt;
+This reverts commit 715577e4d7cb62b678d194efa5f6ea17fd002c5b.
+
+Reason for revert: This caused compile failure:
+<a href="https://ci.chromium.org/p/chromium/builders/ci/fuchsia-arm64-cast/97365?">https://ci.chromium.org/p/chromium/builders/ci/fuchsia-arm64-cast/97365?</a>
+[8734/14809] CXX obj/content/test/content_unittests__exec/indexed_db_backing_store_unittest.o
+FAILED: obj/content/test/content_unittests__exec/indexed_db_backing_store_unittest.o
+/b/s/w/ir/cache/goma/client/gomacc ../../third_party/llvm-build/Release+Asserts/bin/clang++ -MMD -MF...(too long)
+../../content/browser/indexed_db/indexed_db_backing_store_unittest.cc:924:20: error: no member named 'SetExecuteJournalCleaningOnNoTransactionsForTesting' in 'content::indexed_db_backing_store_unittest::TestableIndexedDBBackingStore'
+backing_store()-&gt;SetExecuteJournalCleaningOnNoTransactionsForTesting();
+~~~~~~~~~~~~~~~  ^
+1 error generated.
+
+Original change's description:
+&gt; indexeddb: defer journal cleanup in CommitPhaseTwo
+&gt;
+&gt; Currently, IndexedDBBackingStore::Transaction::CommitPhaseTwo
+&gt; calls IndexedDBBackingStore::DidCommitTransaction which cleans up blobs
+&gt; in the recovery journal (under some conditions).  Unfortunately, it
+&gt; doesn't remove the blobs that were just written in that transaction from
+&gt; the recovery journal prior to calling DidCommitTransaction.
+&gt;
+&gt; This patch rearranges the calls so that DidCommitTransaction is always
+&gt; called in CommitPhaseTwo, but only after the journal has been updated.
+&gt;
+&gt; Bug: 1131151
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I703d250f42b3de77a41b7ebc151ae71db5dbda6c">I703d250f42b3de77a41b7ebc151ae71db5dbda6c</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2495872">https://chromium-review.googlesource.com/c/chromium/src/+/2495872</a>
+&gt; Commit-Queue: enne &lt;enne@chromium.org&gt;
+&gt; Auto-Submit: enne &lt;enne@chromium.org&gt;
+&gt; Reviewed-by: Marijn Kruisselbrink &lt;mek@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/master@{#820486}
+
+TBR=mek@chromium.org,enne@chromium.org
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id3876068e31e91817ff7c396f024cf159b3c1dfe">Id3876068e31e91817ff7c396f024cf159b3c1dfe</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Bug: 1131151
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2496035">https://chromium-review.googlesource.com/c/chromium/src/+/2496035</a>
 Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Commit-Queue: Austin Sullivan &lt;asully@chromium.org&gt;
-Auto-Submit: Austin Sullivan &lt;asully@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#820458}
+Commit-Queue: Scott Violet &lt;sky@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#820492}
 </pre>
 
 </body>
