@@ -99,8 +99,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>820663</td>
-       <td>791b3e31b293fd5c42de28ce57aa3bab55ad961b</td>
+       <td>820667</td>
+       <td>e9eb7f9c10107b207aa17831553e59e75194089c</td>
       </tr>
      </tbody>
     </table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   791b3e31b293fd5c42de28ce57aa3bab55ad961b
+   e9eb7f9c10107b207aa17831553e59e75194089c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/791b3e31b293fd5c42de28ce57aa3bab55ad961b">
+    <a href="/chromium/src/+log/e9eb7f9c10107b207aa17831553e59e75194089c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/791b3e31b293fd5c42de28ce57aa3bab55ad961b.tar.gz">
+    <a href="/chromium/src/+archive/e9eb7f9c10107b207aa17831553e59e75194089c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xida Chen &lt;xidachen@chromium.org&gt;
+   Minoru Chikamune &lt;chikamune@chromium.org&gt;
   </td>
   <td>
-   Mon Oct 26 03:21:34 2020
+   Mon Oct 26 04:15:16 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Mon Oct 26 03:21:34 2020
+   Mon Oct 26 04:15:16 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/791b3e31b293fd5c42de28ce57aa3bab55ad961b/">
-    efe323bcf5799d3e1ac85b11a745b9f1b3f66c61
+   <a href="/chromium/src/+/e9eb7f9c10107b207aa17831553e59e75194089c/">
+    96f5d1c5e3941ce95657bd9b183e57b4dd850893
    </a>
   </td>
  </tr>
@@ -166,37 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/791b3e31b293fd5c42de28ce57aa3bab55ad961b%5E">
-    9acf42f6ec8f2c1e3b5cc37fd3721edde6ca7221
+   <a href="/chromium/src/+/e9eb7f9c10107b207aa17831553e59e75194089c%5E">
+    d959b0eb18599e7c70d660193695ce9c7480aed6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/791b3e31b293fd5c42de28ce57aa3bab55ad961b%5E%21/">
+    <a href="/chromium/src/+/e9eb7f9c10107b207aa17831553e59e75194089c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Setup classes for native paintworklet
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[MBI] Integrate AgentGroupScheduler with AgentSchedulingGroup.
 
-This CL creates classes to build the infra of native paint worklet.
-Specifically, we create a NativePaintWorklet class, and when
-we paint the background color, we ask the NativePaintWorklet
-to do the paint. Because NativePaintWorklet lives under the
-modules/ and paint part is in core/, we need some other classes
-to be there so that the paint can call NativePaintWorklet APIs.
+Context:
 
-Design doc here:
-<a href="https://docs.google.com/document/d/1usCnwWs8HsH5FU_185q6MsrZehFmpl5QgbbB4pvHIjI/edit">https://docs.google.com/document/d/1usCnwWs8HsH5FU_185q6MsrZehFmpl5QgbbB4pvHIjI/edit</a>
+Previously, AgentGroupScheduler was tentatively created per thread. But AgentGroupScheduler has to be integrated with AgentSchedulingGroup.
 
-Bug: 1138997
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifdabf3ce5226ee4cacac03eec46029e74c3fa9c6">Ifdabf3ce5226ee4cacac03eec46029e74c3fa9c6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2464428">https://chromium-review.googlesource.com/c/chromium/src/+/2464428</a>
+What this CL does:
+
+- Instantiate AgentGroupScheduler per AgentSchedulingGroup for the most of the ordinary pages. Previously, AgentGroupScheduler was created per MainThreadScheduler. Unfortunately, there are some edge cases where ordinary pages are temporarily created (e.g. ScopedWebFrame, WebViewPlugin). In that case, AgentGroupScheduler will be created on a case by case basis. For the non-ordinary pages, this CL creates AgentGroupScheduler per page.
+
+- Plumb AgentGroupScheduler from AgentSchedulingGroup to PageScheduler. Because AgentGroupScheduler has to be associated with PageScheduler.
+
+- Migrate some per-thread task runners to use per-ASG task runners. (e.g. WebFrameWidgetBase)
+
+Bug: 1105403, 1113102, 1135020
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iad25da50bc978876b6e211f675ea8504791d4541">Iad25da50bc978876b6e211f675ea8504791d4541</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2434414">https://chromium-review.googlesource.com/c/chromium/src/+/2434414</a>
+Commit-Queue: Minoru Chikamune &lt;chikamune@chromium.org&gt;
+Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
 Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
-Commit-Queue: Xida Chen &lt;xidachen@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#820663}
+Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
+Reviewed-by: Tal Pressman &lt;talp@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#820667}
 </pre>
 
 </body>
