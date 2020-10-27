@@ -99,8 +99,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>821242</td>
-       <td>4f6ea044119feccdd91e89113a10a8eb1a201afc</td>
+       <td>821284</td>
+       <td>655d04d4f965d74cccb6f63df0d9857e2f59d01b</td>
       </tr>
      </tbody>
     </table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4f6ea044119feccdd91e89113a10a8eb1a201afc
+   655d04d4f965d74cccb6f63df0d9857e2f59d01b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4f6ea044119feccdd91e89113a10a8eb1a201afc">
+    <a href="/chromium/src/+log/655d04d4f965d74cccb6f63df0d9857e2f59d01b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4f6ea044119feccdd91e89113a10a8eb1a201afc.tar.gz">
+    <a href="/chromium/src/+archive/655d04d4f965d74cccb6f63df0d9857e2f59d01b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ryan Sturm &lt;ryansturm@chromium.org&gt;
+   Antonio Sartori &lt;antoniosartori@chromium.org&gt;
   </td>
   <td>
-   Tue Oct 27 15:17:33 2020
+   Tue Oct 27 16:31:37 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Tue Oct 27 15:17:33 2020
+   Tue Oct 27 16:31:37 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4f6ea044119feccdd91e89113a10a8eb1a201afc/">
-    1f8833e52f2c571d0ad0221d930bc3ab98321537
+   <a href="/chromium/src/+/655d04d4f965d74cccb6f63df0d9857e2f59d01b/">
+    a98827d4de16a1f80a8df5070adaa51e1724ded0
    </a>
   </td>
  </tr>
@@ -166,37 +166,55 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4f6ea044119feccdd91e89113a10a8eb1a201afc%5E">
-    82c6f1b68834a7d124014528b4f48f8c2eb3f0c2
+   <a href="/chromium/src/+/655d04d4f965d74cccb6f63df0d9857e2f59d01b%5E">
+    f84c000f95f4c036ef137fedecfca63bf938edd9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4f6ea044119feccdd91e89113a10a8eb1a201afc%5E%21/">
+    <a href="/chromium/src/+/655d04d4f965d74cccb6f63df0d9857e2f59d01b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Disabling search engine preconnects in browser tests by default
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix referrer policy inheritance WPT for javascript: URLs
 
-This caused a suite of tests to fail based on multiple test objects
-mocking servers that don't expect extra connections. Rather than fixing
-various test fixtures, we disable the search engine preconnect
-behavior by default since it has good test coverage by itself. By
-disabling the test in the constructor of in process browser test,
-any sub tests should be able to override the behavior with their own
-feature list.
+According to the specification, executing a javascript: URL in a
+document does not commit a new document. Indeed, following
+<a href="https://html.spec.whatwg.org/multipage/browsing-the-web.html#javascript-protocol">https://html.spec.whatwg.org/multipage/browsing-the-web.html#javascript-protocol</a>
+executing a javascript: URL request gives a response whose status is
+204, and processing a response with status 204 does not commit a new
+document:
+<a href="https://html.spec.whatwg.org/multipage/browsing-the-web.html#process-a-navigate-response">https://html.spec.whatwg.org/multipage/browsing-the-web.html#process-a-navigate-response</a>
+In particular, executing a javascript: URL does not change the
+document's URL. So if we create a new (empty) iframe and execute right
+away some javascript: URL in it, the URL of the iframe document will
+be "about:blank".
 
-Also re-enables test that was recently disabled.
+On the other side, a document with URL "about:blank" will usually not
+send any Referer header, since the algorithm for determining the
+outgoing referrer goes through the stripping section
+<a href="https://w3c.github.io/webappsec-referrer-policy/#strip-url">https://w3c.github.io/webappsec-referrer-policy/#strip-url</a> which
+returns `no-referrer` for a local scheme.
 
-Bug: 1128033
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I998b4d0f801cf7d8aecde3a68be2f19f7f51cc12">I998b4d0f801cf7d8aecde3a68be2f19f7f51cc12</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2494609">https://chromium-review.googlesource.com/c/chromium/src/+/2494609</a>
-Reviewed-by: David Trainor &lt;dtrainor@chromium.org&gt;
-Reviewed-by: Matt Menke &lt;mmenke@chromium.org&gt;
-Commit-Queue: Ryan Sturm &lt;ryansturm@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#821242}
+As a consequence, we should always expect the Referer header of an
+outgoing fetch request from an `&lt;iframe src="javascript:..."&gt;` without
+custom referrer to be empty.
+
+This CL adjusts the referrer policy inheritance WP test to that.
+
+Still, we want to test that the referrer policy is inherited correctly
+for javascript: URLs. For doing that, we add a custom referrer to the
+outgoing fetch request, and we check that the content of the received
+Referer header corresponds to the custom referrer modulo the inherited
+referrer policy.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib3fe0808d3f8a1790e3f565cf2b1648fd2ea6c13">Ib3fe0808d3f8a1790e3f565cf2b1648fd2ea6c13</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2464930">https://chromium-review.googlesource.com/c/chromium/src/+/2464930</a>
+Commit-Queue: Antonio Sartori &lt;antoniosartori@chromium.org&gt;
+Reviewed-by: Dominic Farolino &lt;dom@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#821284}
 </pre>
 
 </body>
