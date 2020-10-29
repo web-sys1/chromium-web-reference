@@ -99,8 +99,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>822041</td>
-       <td>b3d2e0707ccc9066d62ee7399fb828aed888b7ee</td>
+       <td>822052</td>
+       <td>e9d65d29181633f5c29f8b6db6c72f9bbf8e7d8b</td>
       </tr>
      </tbody>
     </table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b3d2e0707ccc9066d62ee7399fb828aed888b7ee
+   e9d65d29181633f5c29f8b6db6c72f9bbf8e7d8b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b3d2e0707ccc9066d62ee7399fb828aed888b7ee">
+    <a href="/chromium/src/+log/e9d65d29181633f5c29f8b6db6c72f9bbf8e7d8b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b3d2e0707ccc9066d62ee7399fb828aed888b7ee.tar.gz">
+    <a href="/chromium/src/+archive/e9d65d29181633f5c29f8b6db6c72f9bbf8e7d8b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Emircan Uysaler &lt;emircan@chromium.org&gt;
+   Samuel Attard &lt;samuel.r.attard@gmail.com&gt;
   </td>
   <td>
-   Thu Oct 29 05:15:40 2020
+   Thu Oct 29 06:11:47 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Thu Oct 29 05:15:40 2020
+   Thu Oct 29 06:11:47 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b3d2e0707ccc9066d62ee7399fb828aed888b7ee/">
-    84ebd1568b393aa6ce9cf9accfce0dc8406cabf2
+   <a href="/chromium/src/+/e9d65d29181633f5c29f8b6db6c72f9bbf8e7d8b/">
+    297e6a333f545b7fd2b0e69a7d826fdddfc2a297
    </a>
   </td>
  </tr>
@@ -166,30 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b3d2e0707ccc9066d62ee7399fb828aed888b7ee%5E">
-    d83065943c442d941ab699b33d43c3921575d386
+   <a href="/chromium/src/+/e9d65d29181633f5c29f8b6db6c72f9bbf8e7d8b%5E">
+    2f6d9f2b01aee3226296a7b0efa12b9d9b86d2bc
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b3d2e0707ccc9066d62ee7399fb828aed888b7ee%5E%21/">
+    <a href="/chromium/src/+/e9d65d29181633f5c29f8b6db6c72f9bbf8e7d8b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Fuchsia] Apply crop rect to scenic overlays
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">swap global proxies before initializing the windows proxies
 
-This CL applies the crop rect calculated by the overlay processor on
-Scenic's scene graph.
+Electron's Context Isolation implementation has a side-effect of
+initializing the isolated worlds WindowProxy during the initialization
+of the main world WindowProxy as a result of creating the isolated
+world inside the DidCreateScriptContext hook.  This results in an
+assertion failing in Chromium during a frame swap where it expects to
+be able to set a new global_proxy in the WindowProxy of the isolated
+world BEFORE it is initialized.
 
-Bug: 1127984
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifc4a7078c1323fcdc2921e8fccb367e05dfd3824">Ifc4a7078c1323fcdc2921e8fccb367e05dfd3824</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2503857">https://chromium-review.googlesource.com/c/chromium/src/+/2503857</a>
-Auto-Submit: Emircan Uysaler &lt;emircan@chromium.org&gt;
-Commit-Queue: Sergey Ulanov &lt;sergeyu@chromium.org&gt;
-Reviewed-by: Sergey Ulanov &lt;sergeyu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#822041}
+To meet this assumption this patch splits SetGlobalProxy into two
+calls, SetGlobalProxyWithoutInitializing and InitializeIfNeeded which
+has the same resultant effect but means that all of the global_proxy
+objects are set BEFORE any WindowProxy's are initialized.
+
+To further clarify, if an embedder creates and initializes new script
+context as a result of a call to DidCreateScriptContext the
+"global_proxy_.IsEmpty()" CHECK fails as it doesn't expect that context
+to have been initialized yet.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0efa579a4ec2d93369f3e1fc7a922a459a2300cf">I0efa579a4ec2d93369f3e1fc7a922a459a2300cf</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2503397">https://chromium-review.googlesource.com/c/chromium/src/+/2503397</a>
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Yuki Shiino &lt;yukishiino@chromium.org&gt;
+Commit-Queue: Yuki Shiino &lt;yukishiino@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#822052}
 </pre>
 
 </body>
