@@ -99,8 +99,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>823132</td>
-       <td>8c343f79f0f6406c9783b10e0e28b7c6f0d868f8</td>
+       <td>823161</td>
+       <td>82e2bc96d1193d635240f7f5f3907d8092be440f</td>
       </tr>
      </tbody>
     </table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8c343f79f0f6406c9783b10e0e28b7c6f0d868f8
+   82e2bc96d1193d635240f7f5f3907d8092be440f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8c343f79f0f6406c9783b10e0e28b7c6f0d868f8">
+    <a href="/chromium/src/+log/82e2bc96d1193d635240f7f5f3907d8092be440f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8c343f79f0f6406c9783b10e0e28b7c6f0d868f8.tar.gz">
+    <a href="/chromium/src/+archive/82e2bc96d1193d635240f7f5f3907d8092be440f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
   </td>
   <td>
-   Mon Nov 02 14:08:16 2020
+   Mon Nov 02 15:57:58 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Mon Nov 02 14:08:16 2020
+   Mon Nov 02 15:57:58 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8c343f79f0f6406c9783b10e0e28b7c6f0d868f8/">
-    7f5922e397d4345529da76cbc1db6d08af8ed657
+   <a href="/chromium/src/+/82e2bc96d1193d635240f7f5f3907d8092be440f/">
+    319b421450d60bf1a854123b0c9ed1b71b34c62a
    </a>
   </td>
  </tr>
@@ -166,44 +166,71 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8c343f79f0f6406c9783b10e0e28b7c6f0d868f8%5E">
-    d886f416b951835d2dfb6d3e55e09582443e29e1
+   <a href="/chromium/src/+/82e2bc96d1193d635240f7f5f3907d8092be440f%5E">
+    b04a1325da76b761793a8710ee81a1acea525cc5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8c343f79f0f6406c9783b10e0e28b7c6f0d868f8%5E%21/">
+    <a href="/chromium/src/+/82e2bc96d1193d635240f7f5f3907d8092be440f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll ANGLE from 4d252a5bc47f to ed916ddf61cc (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Support complex selectors in :not()
 
-<a href="https://chromium.googlesource.com/angle/angle.git/+log/4d252a5bc47f..ed916ddf61cc">https://chromium.googlesource.com/angle/angle.git/+log/4d252a5bc47f..ed916ddf61cc</a>
+Until now we've only supported a single compound selector as an
+argument to :not(). This CL adds support for complex selectors,
+based on the recent work on :is() and :where().
 
-2020-11-02 angle-autoroll@skia-public.iam.gserviceaccount.com Roll Vulkan-Tools from ee0de094ddff to 3f747ee91e3b (1 revision)
+Parsing
+-------
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/angle-chromium-autoroll">https://autoroll.skia.org/r/angle-chromium-autoroll</a>
-Please CC ianelliott@google.com on the revert to ensure that a human
-is aware of the problem.
+Note that unlike :is() and :where(), :not() does not use
+the forgiving selector list behavior, but instead fails parsing the
+normal way. CSSSelectorParser now has both ConsumeNestedSelectorList
+and ConsumeForgivingNestedSelectorList for the two behaviors.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+Our ShadowDOMv0-disabling logic should apply to complex :not() as well,
+but for backwards compatibility, we need to allow it whenever :not()
+_doesn't_ have a complex argument. The TreatAsNonComplexArgumentToNot()
+was added to detect this, which replaces the previous function
+CSSParserSelector::IsSimple. (When v0 is removed, we can remove this
+mess as well).
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
+Invalidation
+------------
 
-Cq-Include-Trybots: luci.chromium.try:android_optional_gpu_tests_rel;luci.chromium.try:linux_optional_gpu_tests_rel;luci.chromium.try:mac_optional_gpu_tests_rel;luci.chromium.try:win-asan;luci.chromium.try:win_optional_gpu_tests_rel;luci.chromium.try:linux-swangle-try-x64;luci.chromium.try:win-swangle-try-x86
-Bug: None
-Tbr: ianelliott@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7d78313f7f13000c3d9c1e8e0c50ef79b6e4ea3e">I7d78313f7f13000c3d9c1e8e0c50ef79b6e4ea3e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2514187">https://chromium-review.googlesource.com/c/chromium/src/+/2514187</a>
-Reviewed-by: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#823132}
+There was a bug in ExtractInvalidationSetFeaturesFromSelectorList:
+we're supposed to ignore any extracted features inside a :not().
+For example, for ".a :not(.b)", we should not add ".b" to the
+invalidation set for ".a". In ExtractInvalidationSetFeaturesFrom-
+SelectorList there was code that attempted to block the inner features
+from "crossing" the :not()-boundary, but it incorrectly used the
+*outer* pseudo-type. In other words, when considering ":not(.b)",
+the pseudo-type would be kUnknown, since we are not (yet) inside the
+:not(). Instead what we need to do is check the pseudo-type of
+of the currently held simple selector.
+
+Now that we "block" inner features correctly at the :not() boundary,
+the check in ExtractInvalidationSetFeaturesFromCompound is not needed
+anymore. This in turns means we can remove several PseudoType params,
+which is nice.
+
+Matching
+--------
+
+Now traverses a CSSSelectorList and uses MatchSelector. Beyond that
+it just works.
+
+Bug: 1139865
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iea5513445e54303ba0685cffc3b52dabc115b7f1">Iea5513445e54303ba0685cffc3b52dabc115b7f1</a>
+I2S: <a href="https://groups.google.com/a/chromium.org/g/blink-dev/c/0alTkXvDCL8/m/-ClOGvOJBAAJ">https://groups.google.com/a/chromium.org/g/blink-dev/c/0alTkXvDCL8/m/-ClOGvOJBAAJ</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2507549">https://chromium-review.googlesource.com/c/chromium/src/+/2507549</a>
+Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
+Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#823161}
 </pre>
 
 </body>
