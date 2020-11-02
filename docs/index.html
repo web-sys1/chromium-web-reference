@@ -99,8 +99,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>823161</td>
-       <td>82e2bc96d1193d635240f7f5f3907d8092be440f</td>
+       <td>823185</td>
+       <td>018d4604364eac42be09ebce205d86b3e6477388</td>
       </tr>
      </tbody>
     </table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   82e2bc96d1193d635240f7f5f3907d8092be440f
+   018d4604364eac42be09ebce205d86b3e6477388
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/82e2bc96d1193d635240f7f5f3907d8092be440f">
+    <a href="/chromium/src/+log/018d4604364eac42be09ebce205d86b3e6477388">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/82e2bc96d1193d635240f7f5f3907d8092be440f.tar.gz">
+    <a href="/chromium/src/+archive/018d4604364eac42be09ebce205d86b3e6477388.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+   Dominique Fauteux-Chapleau &lt;domfc@chromium.org&gt;
   </td>
   <td>
-   Mon Nov 02 15:57:58 2020
+   Mon Nov 02 17:06:28 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Mon Nov 02 15:57:58 2020
+   Mon Nov 02 17:06:28 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/82e2bc96d1193d635240f7f5f3907d8092be440f/">
-    319b421450d60bf1a854123b0c9ed1b71b34c62a
+   <a href="/chromium/src/+/018d4604364eac42be09ebce205d86b3e6477388/">
+    3fbf23f74b2f1dead434ce3b06c2d62da0520b4b
    </a>
   </td>
  </tr>
@@ -166,71 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/82e2bc96d1193d635240f7f5f3907d8092be440f%5E">
-    b04a1325da76b761793a8710ee81a1acea525cc5
+   <a href="/chromium/src/+/018d4604364eac42be09ebce205d86b3e6477388%5E">
+    47435535f08eeff031ad184ffd59c7bfa4cb6515
    </a>
    <span>
     [
-    <a href="/chromium/src/+/82e2bc96d1193d635240f7f5f3907d8092be440f%5E%21/">
+    <a href="/chromium/src/+/018d4604364eac42be09ebce205d86b3e6477388%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Support complex selectors in :not()
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rename UploadRealtimeReport to UploadSecurityEventReport
 
-Until now we've only supported a single compound selector as an
-argument to :not(). This CL adds support for complex selectors,
-based on the recent work on :is() and :where().
+This is to better represent what the function actually does.
+This is only a rename and doesn't change any existing behaviour.
 
-Parsing
--------
-
-Note that unlike :is() and :where(), :not() does not use
-the forgiving selector list behavior, but instead fails parsing the
-normal way. CSSSelectorParser now has both ConsumeNestedSelectorList
-and ConsumeForgivingNestedSelectorList for the two behaviors.
-
-Our ShadowDOMv0-disabling logic should apply to complex :not() as well,
-but for backwards compatibility, we need to allow it whenever :not()
-_doesn't_ have a complex argument. The TreatAsNonComplexArgumentToNot()
-was added to detect this, which replaces the previous function
-CSSParserSelector::IsSimple. (When v0 is removed, we can remove this
-mess as well).
-
-Invalidation
-------------
-
-There was a bug in ExtractInvalidationSetFeaturesFromSelectorList:
-we're supposed to ignore any extracted features inside a :not().
-For example, for ".a :not(.b)", we should not add ".b" to the
-invalidation set for ".a". In ExtractInvalidationSetFeaturesFrom-
-SelectorList there was code that attempted to block the inner features
-from "crossing" the :not()-boundary, but it incorrectly used the
-*outer* pseudo-type. In other words, when considering ":not(.b)",
-the pseudo-type would be kUnknown, since we are not (yet) inside the
-:not(). Instead what we need to do is check the pseudo-type of
-of the currently held simple selector.
-
-Now that we "block" inner features correctly at the :not() boundary,
-the check in ExtractInvalidationSetFeaturesFromCompound is not needed
-anymore. This in turns means we can remove several PseudoType params,
-which is nice.
-
-Matching
---------
-
-Now traverses a CSSSelectorList and uses MatchSelector. Beyond that
-it just works.
-
-Bug: 1139865
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iea5513445e54303ba0685cffc3b52dabc115b7f1">Iea5513445e54303ba0685cffc3b52dabc115b7f1</a>
-I2S: <a href="https://groups.google.com/a/chromium.org/g/blink-dev/c/0alTkXvDCL8/m/-ClOGvOJBAAJ">https://groups.google.com/a/chromium.org/g/blink-dev/c/0alTkXvDCL8/m/-ClOGvOJBAAJ</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2507549">https://chromium-review.googlesource.com/c/chromium/src/+/2507549</a>
-Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#823161}
+Bug: 1098437
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I06888a8e6994dcaf327c48e14681b953a8cd5dfe">I06888a8e6994dcaf327c48e14681b953a8cd5dfe</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2510194">https://chromium-review.googlesource.com/c/chromium/src/+/2510194</a>
+Commit-Queue: Dominique Fauteux-Chapleau &lt;domfc@chromium.org&gt;
+Reviewed-by: Daniel Rubery &lt;drubery@chromium.org&gt;
+Reviewed-by: Julian Pastarmov &lt;pastarmovj@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#823185}
 </pre>
 
 </body>
