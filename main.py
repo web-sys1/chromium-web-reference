@@ -50,7 +50,6 @@ table.blueTable thead th {
 table.blueTable thead th:first-child {
   border-left: none;
 }
-
 table.blueTable tfoot {
   font-size: 8px;
   font-weight: bold;
@@ -74,7 +73,6 @@ table.blueTable tfoot .links a{
   padding: 2px 8px;
   border-radius: 5px;
 }
-
 body{
     background: #fff2e0;
 }
@@ -107,7 +105,12 @@ endLine = """
 def main():
     CR_REV_G = requests.get('https://cr-rev.appspot.com/_ah/api/crrev/v1/redirect/' + CURRENT_REVISION_NO)
     CR_IDENTIFIER = json.loads(CR_REV_G.text)
-    r = requests.get(CR_IDENTIFIER['redirect_url'])
+    
+    try:
+      r = requests.get(CR_IDENTIFIER['redirect_url'])
+    except:
+      r = requests.get(CR_IDENTIFIER['redirectUrl'])
+      
     content = BeautifulSoup(r.content, "html.parser")
     
     print('SUMMARY'.center(54, "-"), '\n')
