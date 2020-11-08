@@ -97,8 +97,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>825221</td>
-       <td>e9d0a99d5b72814063d62680e78c395024786e42</td>
+       <td>825222</td>
+       <td>5eb53a4533d1280403943f00d94f4b4b212521a3</td>
       </tr>
      </tbody>
     </table>
@@ -108,19 +108,19 @@ body{
    commit
   </th>
   <td>
-   e9d0a99d5b72814063d62680e78c395024786e42
+   5eb53a4533d1280403943f00d94f4b4b212521a3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e9d0a99d5b72814063d62680e78c395024786e42">
+    <a href="/chromium/src/+log/5eb53a4533d1280403943f00d94f4b4b212521a3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e9d0a99d5b72814063d62680e78c395024786e42.tar.gz">
+    <a href="/chromium/src/+archive/5eb53a4533d1280403943f00d94f4b4b212521a3.tar.gz">
      tgz
     </a>
     ]
@@ -132,10 +132,10 @@ body{
    author
   </th>
   <td>
-   Nohemi Fernandez &lt;fernandex@chromium.org&gt;
+   Abigail Klein &lt;abigailbklein@google.com&gt;
   </td>
   <td>
-   Sun Nov 08 20:09:23 2020
+   Sun Nov 08 22:06:15 2020
   </td>
  </tr>
  <tr>
@@ -146,7 +146,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Sun Nov 08 20:09:23 2020
+   Sun Nov 08 22:06:15 2020
   </td>
  </tr>
  <tr>
@@ -154,8 +154,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e9d0a99d5b72814063d62680e78c395024786e42/">
-    279a0319b2e3b4ddeac96d5dc05a48c247d2a6fd
+   <a href="/chromium/src/+/5eb53a4533d1280403943f00d94f4b4b212521a3/">
+    745ad5230051c59975f5cb56feaabee1cea75f1f
    </a>
   </td>
  </tr>
@@ -164,30 +164,55 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e9d0a99d5b72814063d62680e78c395024786e42%5E">
-    9b4d2b60750791dca2b65cb042f9c3b28b897d5e
+   <a href="/chromium/src/+/5eb53a4533d1280403943f00d94f4b4b212521a3%5E">
+    e9d0a99d5b72814063d62680e78c395024786e42
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e9d0a99d5b72814063d62680e78c395024786e42%5E%21/">
+    <a href="/chromium/src/+/5eb53a4533d1280403943f00d94f4b4b212521a3%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS] Add event handler for SigninNotificationInfoBarDelegate.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Live Caption] Manage SODA installation and progress updates for
+ChromeOS and non-ChromeOS installations.
 
-Open the Settings UI to manage on device accounts when user clicks on
-'Settings' button from the infobar.
+Introduce a new SODAInstaller which is responsible for installing
+SODA (Speech On-Device API). It has a separate implementations in
+ChromeOS and non-ChromeOS. The SODAInstallerImpl on ChromeOS installs
+SODA with the DlcserviceClient. The SODAInstallerImpl on non-ChromeOS
+installs SODA with the ComponentUpdaterService. Each sends installation
+progress updates to its observers.
 
-Bug: 1145592
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6cf2021b09f920a0de84674b202ffc89bba3d664">I6cf2021b09f920a0de84674b202ffc89bba3d664</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2521815">https://chromium-review.googlesource.com/c/chromium/src/+/2521815</a>
-Commit-Queue: Nohemi Fernandez &lt;fernandex@chromium.org&gt;
-Reviewed-by: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
-Reviewed-by: Brian White &lt;bcwhite@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#825221}
+The SODAInstaller has a single instance, because SODA is only downloaded
+once for the entire device.
+
+The CaptionController initiates the SODA download by calling the
+InstallSODA method of the SODAInstaller. It initiates language downloads
+by calling InstallLanguage.
+
+The CaptionsHandler is a SODAInstallerObserver. It sends SODA download
+updates to the captions subpage WebUI in settings. Since the
+SODAInstallerObserver is a common interface between the ChromeOS
+and non-ChromeOS implementations, there now only needs to be one
+CaptionsHandler.
+
+More SODAInstallerObservers will be introduced in upcoming CLs.
+
+For more information, see this design doc: <a href="https://docs.google.com/document/d/1e9ie7WequR4UafYq72-wpXwFj0-lLWMvjXZP5jXXpwU/edit#">https://docs.google.com/document/d/1e9ie7WequR4UafYq72-wpXwFj0-lLWMvjXZP5jXXpwU/edit#</a>
+
+Bug: 1055150, 1111002
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia82285a1dc1440229d7912bb07ae522abde9900b">Ia82285a1dc1440229d7912bb07ae522abde9900b</a>
+AX-Relnotes: N/A (feature not yet launched)
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2473744">https://chromium-review.googlesource.com/c/chromium/src/+/2473744</a>
+Commit-Queue: Abigail Klein &lt;abigailbklein@google.com&gt;
+Reviewed-by: Sorin Jianu &lt;sorin@chromium.org&gt;
+Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
+Reviewed-by: dpapad &lt;dpapad@chromium.org&gt;
+Reviewed-by: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#825222}
 </pre>
 
 </body>
