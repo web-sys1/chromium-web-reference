@@ -97,8 +97,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>827589</td>
-       <td>a9b31acc1d5c83f9adc974b4ada16bb790bcbe9d</td>
+       <td>827590</td>
+       <td>78ddb4f7c8d3a86095ba637f935154adb9a5c62b</td>
       </tr>
      </tbody>
     </table>
@@ -108,19 +108,19 @@ body{
    commit
   </th>
   <td>
-   a9b31acc1d5c83f9adc974b4ada16bb790bcbe9d
+   78ddb4f7c8d3a86095ba637f935154adb9a5c62b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a9b31acc1d5c83f9adc974b4ada16bb790bcbe9d">
+    <a href="/chromium/src/+log/78ddb4f7c8d3a86095ba637f935154adb9a5c62b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a9b31acc1d5c83f9adc974b4ada16bb790bcbe9d.tar.gz">
+    <a href="/chromium/src/+archive/78ddb4f7c8d3a86095ba637f935154adb9a5c62b.tar.gz">
      tgz
     </a>
     ]
@@ -132,10 +132,10 @@ body{
    author
   </th>
   <td>
-   Sunggook Chue &lt;sunggch@microsoft.com&gt;
+   Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
   </td>
   <td>
-   Sat Nov 14 09:32:50 2020
+   Sat Nov 14 10:50:43 2020
   </td>
  </tr>
  <tr>
@@ -146,7 +146,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Sat Nov 14 09:32:50 2020
+   Sat Nov 14 10:50:43 2020
   </td>
  </tr>
  <tr>
@@ -154,8 +154,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a9b31acc1d5c83f9adc974b4ada16bb790bcbe9d/">
-    4b9045d0a4d4b7f1b8f86e8631b8098d2355a596
+   <a href="/chromium/src/+/78ddb4f7c8d3a86095ba637f935154adb9a5c62b/">
+    9717867bf96c47569cd88e12c47fde581f96187c
    </a>
   </td>
  </tr>
@@ -164,63 +164,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a9b31acc1d5c83f9adc974b4ada16bb790bcbe9d%5E">
-    14bdf30e8b520e45885e3c71ffc01a9f763da5c9
+   <a href="/chromium/src/+/78ddb4f7c8d3a86095ba637f935154adb9a5c62b%5E">
+    a9b31acc1d5c83f9adc974b4ada16bb790bcbe9d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a9b31acc1d5c83f9adc974b4ada16bb790bcbe9d%5E%21/">
+    <a href="/chromium/src/+/78ddb4f7c8d3a86095ba637f935154adb9a5c62b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland: "PWA on Desktop Windows: Implement uninstallation via OS settings."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">NoStatePrefetch: Move mojo disconnect handler from PrerenderProcessorClient to PrerenderProcessor
 
-This reverts <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2459309">https://chromium-review.googlesource.com/c/chromium/src/+/2459309</a>
+This is a preparation for removing webkit-prefixed prerendering events
+(see <a href="https://crbug.com/839030">https://crbug.com/839030</a>). mojom::PrerepderProcessorClient is used
+for dispatching the events and will be removed along with the events, so
+it won't be available for monitoring the connection.
 
-Reason for revert:
-Test, All/SystemWebAppManagerUpgradeBrowserTest.Upgrade/WebApps, failed often.
-It was indeed test bug that it mistakenly called install operation without
-waiting uninstall operation. so it ends up with early signal, which
-try to launch non-existent web app. The original CL
-exposed this error due to increased uninstall time. The testing bug
-was fixed now <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2503374.">https://chromium-review.googlesource.com/c/chromium/src/+/2503374.</a>
+After this CL, mojom::PrerenderProcessor is used for monitoring the
+connection instead of mojom::PrerenderProcessorClient so that follow-up
+CLs can remove it. The renderer-side endpoints of
+mojom::PrerenderProcessor and mojom::PrerenderProcessorClient have the
+same lifetime, so the timing of disconnection is not changed
+before/after this CL.
 
-note. there is no additional change except merge conflict fix
-in the chrome_features.*, app_launcher_handlers.cc.
+Another notable point in this CL is to change the ownership of
+PrerenderProcessorImpl in the browser process. Before this CL,
+PrerenderProcessorImpl is owned by mojo::MakeSelfOwnedReceiver. After
+this CL, the processor destroys itself on the disconnect handler. This
+change is necessary for monitoring the disconnection because
+mojo::MakeSelfOwnedReceiver doesn't provide any hook point to register
+the discconnect handler.
 
-Original change's description:
-&gt; PWA on Desktop Windows: Implement uninstallation via OS settings.
-
-&gt; When user uninstall a PWA from Windows Settings or Control, it also
-&gt; uninstall PWA from browser registrar.
-
-&gt; The detailed design spec:
-&gt; <a href="https://docs.google.com/document/d/1XjFYnHXCJt08UsbWrQKw5vLW3_vQumOPrB7A9bpHq_s/edit?usp=sharing">https://docs.google.com/document/d/1XjFYnHXCJt08UsbWrQKw5vLW3_vQumOPrB7A9bpHq_s/edit?usp=sharing</a>
-
-&gt; Bug: 957043
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I927213c847033ddf5767679f3d7081d2c6760343">I927213c847033ddf5767679f3d7081d2c6760343</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2316848">https://chromium-review.googlesource.com/c/chromium/src/+/2316848</a>
-&gt; Commit-Queue: Sunggook Chue &lt;sunggch@microsoft.com&gt;
-&gt; Reviewed-by: Phillis Tang &lt;phillis@chromium.org&gt;
-&gt; Reviewed-by: Ben Wells &lt;benwells@chromium.org&gt;
-&gt; Reviewed-by: Alexey Baskakov &lt;loyso@chromium.org&gt;
-&gt; Reviewed-by: Greg Thompson &lt;grt@chromium.org&gt;
-&gt; Reviewed-by: Daniel Murphy &lt;dmurph@chromium.org&gt;
-&gt; Reviewed-by: Tommy Martino &lt;tmartino@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#814546}
-
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I35d7b55b0a70d50c8e326007841977973027dc8e">I35d7b55b0a70d50c8e326007841977973027dc8e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2508400">https://chromium-review.googlesource.com/c/chromium/src/+/2508400</a>
-Commit-Queue: Sunggook Chue &lt;sunggch@microsoft.com&gt;
-Reviewed-by: Ben Wells &lt;benwells@chromium.org&gt;
-Reviewed-by: Daniel Murphy &lt;dmurph@chromium.org&gt;
-Reviewed-by: Greg Thompson &lt;grt@chromium.org&gt;
-Reviewed-by: Tommy Martino &lt;tmartino@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#827589}
+Bug: 839030
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I36a094466690d352e1c149792a345ebdaf8a32d2">I36a094466690d352e1c149792a345ebdaf8a32d2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2522725">https://chromium-review.googlesource.com/c/chromium/src/+/2522725</a>
+Reviewed-by: Robert Ogden &lt;robertogden@chromium.org&gt;
+Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+Commit-Queue: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#827590}
 </pre>
 
 </body>
