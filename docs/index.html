@@ -97,8 +97,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>827590</td>
-       <td>78ddb4f7c8d3a86095ba637f935154adb9a5c62b</td>
+       <td>827593</td>
+       <td>859da5457c042164aa4a250da3651f1c473e0aa1</td>
       </tr>
      </tbody>
     </table>
@@ -108,19 +108,19 @@ body{
    commit
   </th>
   <td>
-   78ddb4f7c8d3a86095ba637f935154adb9a5c62b
+   859da5457c042164aa4a250da3651f1c473e0aa1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/78ddb4f7c8d3a86095ba637f935154adb9a5c62b">
+    <a href="/chromium/src/+log/859da5457c042164aa4a250da3651f1c473e0aa1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/78ddb4f7c8d3a86095ba637f935154adb9a5c62b.tar.gz">
+    <a href="/chromium/src/+archive/859da5457c042164aa4a250da3651f1c473e0aa1.tar.gz">
      tgz
     </a>
     ]
@@ -132,10 +132,10 @@ body{
    author
   </th>
   <td>
-   Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+   Hirokazu Honda &lt;hiroh@chromium.org&gt;
   </td>
   <td>
-   Sat Nov 14 10:50:43 2020
+   Sat Nov 14 12:01:13 2020
   </td>
  </tr>
  <tr>
@@ -146,7 +146,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Sat Nov 14 10:50:43 2020
+   Sat Nov 14 12:01:13 2020
   </td>
  </tr>
  <tr>
@@ -154,8 +154,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/78ddb4f7c8d3a86095ba637f935154adb9a5c62b/">
-    9717867bf96c47569cd88e12c47fde581f96187c
+   <a href="/chromium/src/+/859da5457c042164aa4a250da3651f1c473e0aa1/">
+    fb34d0d415bc6ae765309d4801ae4d49cbebf83b
    </a>
   </td>
  </tr>
@@ -164,47 +164,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/78ddb4f7c8d3a86095ba637f935154adb9a5c62b%5E">
-    a9b31acc1d5c83f9adc974b4ada16bb790bcbe9d
+   <a href="/chromium/src/+/859da5457c042164aa4a250da3651f1c473e0aa1%5E">
+    62693518b84cbaf7b53fcc4a654fa0ebcde8d53c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/78ddb4f7c8d3a86095ba637f935154adb9a5c62b%5E%21/">
+    <a href="/chromium/src/+/859da5457c042164aa4a250da3651f1c473e0aa1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">NoStatePrefetch: Move mojo disconnect handler from PrerenderProcessorClient to PrerenderProcessor
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media/gpu: Add AcceleratedVideoDecoder for AV1
 
-This is a preparation for removing webkit-prefixed prerendering events
-(see <a href="https://crbug.com/839030">https://crbug.com/839030</a>). mojom::PrerepderProcessorClient is used
-for dispatching the events and will be removed along with the events, so
-it won't be available for monitoring the connection.
+This CL adds an implementation of AcceleratedVideoDecoder for
+AV1, AV1Decoder and a few necessary classes for it. They use
+libgav1 parser and structures. Since libgav1 is built in
+ChromeOS, AV1Decoder is built for ChromeOS x86 targets only.
 
-After this CL, mojom::PrerenderProcessor is used for monitoring the
-connection instead of mojom::PrerenderProcessorClient so that follow-up
-CLs can remove it. The renderer-side endpoints of
-mojom::PrerenderProcessor and mojom::PrerenderProcessorClient have the
-same lifetime, so the timing of disconnection is not changed
-before/after this CL.
-
-Another notable point in this CL is to change the ownership of
-PrerenderProcessorImpl in the browser process. Before this CL,
-PrerenderProcessorImpl is owned by mojo::MakeSelfOwnedReceiver. After
-this CL, the processor destroys itself on the disconnect handler. This
-change is necessary for monitoring the disconnection because
-mojo::MakeSelfOwnedReceiver doesn't provide any hook point to register
-the discconnect handler.
-
-Bug: 839030
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I36a094466690d352e1c149792a345ebdaf8a32d2">I36a094466690d352e1c149792a345ebdaf8a32d2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2522725">https://chromium-review.googlesource.com/c/chromium/src/+/2522725</a>
-Reviewed-by: Robert Ogden &lt;robertogden@chromium.org&gt;
-Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Commit-Queue: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#827590}
+Bug: 1029212, 1000988
+Test: video_decode_accelerator_tests test-25fps.av1.ivf --use_vd
+Test: av1_decoder_unittest
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id9d0be18484006005803ae409e45c2028d44c315">Id9d0be18484006005803ae409e45c2028d44c315</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2397997">https://chromium-review.googlesource.com/c/chromium/src/+/2397997</a>
+Commit-Queue: Hirokazu Honda &lt;hiroh@chromium.org&gt;
+Reviewed-by: Andres Calderon Jaramillo &lt;andrescj@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#827593}
 </pre>
 
 </body>
