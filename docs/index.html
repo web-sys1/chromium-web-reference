@@ -97,8 +97,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>827417</td>
-       <td>eac8dc719aac799b0d9ee59a8c602f3dd9104a63</td>
+       <td>827481</td>
+       <td>d5f55e2f1981cb82668e3a037374dcd007ecf67d</td>
       </tr>
      </tbody>
     </table>
@@ -108,19 +108,19 @@ body{
    commit
   </th>
   <td>
-   eac8dc719aac799b0d9ee59a8c602f3dd9104a63
+   d5f55e2f1981cb82668e3a037374dcd007ecf67d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/eac8dc719aac799b0d9ee59a8c602f3dd9104a63">
+    <a href="/chromium/src/+log/d5f55e2f1981cb82668e3a037374dcd007ecf67d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/eac8dc719aac799b0d9ee59a8c602f3dd9104a63.tar.gz">
+    <a href="/chromium/src/+archive/d5f55e2f1981cb82668e3a037374dcd007ecf67d.tar.gz">
      tgz
     </a>
     ]
@@ -132,10 +132,10 @@ body{
    author
   </th>
   <td>
-   Becca Hughes &lt;beccahughes@chromium.org&gt;
+   Aaron Colwell &lt;acolwell@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 13 21:36:44 2020
+   Fri Nov 13 23:46:30 2020
   </td>
  </tr>
  <tr>
@@ -146,7 +146,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 13 21:36:44 2020
+   Fri Nov 13 23:46:30 2020
   </td>
  </tr>
  <tr>
@@ -154,8 +154,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/eac8dc719aac799b0d9ee59a8c602f3dd9104a63/">
-    247fda7ab6619044d3e7f2f8c2f404159b771503
+   <a href="/chromium/src/+/d5f55e2f1981cb82668e3a037374dcd007ecf67d/">
+    c136a9730559717846273e6de230cb3662e667b4
    </a>
   </td>
  </tr>
@@ -164,75 +164,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/eac8dc719aac799b0d9ee59a8c602f3dd9104a63%5E">
-    cd96da904f4dc067f83c22e8d068cf35fa3a9266
+   <a href="/chromium/src/+/d5f55e2f1981cb82668e3a037374dcd007ecf67d%5E">
+    b8aa741d8b128a7e60419830affe371d662cd835
    </a>
    <span>
     [
-    <a href="/chromium/src/+/eac8dc719aac799b0d9ee59a8c602f3dd9104a63%5E%21/">
+    <a href="/chromium/src/+/d5f55e2f1981cb82668e3a037374dcd007ecf67d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "Reland "[Media Session] Fix for Lacros""
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove IsDefaultSiteInstance() call from RenderFrameHostManager.
 
-This is a reland of dde3defc9976bdb4cfa2850265af95f5355c0db2
+Removing an unnecessary call to IsDefaultSiteInstance() in
+RenderFrameHostManager. The condition the call was in expects
+RequiresDedicatedProcess() to return true on the SiteInstance which
+won't happen on a default SiteInstance.
 
-The fix here is too disable MediaKeysListenerManagerImplTest on CrOS
-since MediaKeysListenerManager is disabled too.
+- Removed IsDefaultSiteInstance() call from RFHM.
+- Added a test that explicitly verifies that a default SiteInstance
+  returns fals for RequiresDedicatedProcess() to help prove the
+  call was not needed and ensure that we don't accidentally change
+  this behavior.
+- Converted DCHECK in set_process_reuse_policy() to a check to make
+  sure we don't accidentally allow reuse to be set on production builds.
 
-Original change's description:
-&gt; Reland "[Media Session] Fix for Lacros"
-&gt;
-&gt; This is a reland of ddb531f7f5bb320297e46a1f8013a023aacf00e4
-&gt;
-&gt; There is a fix in media_session_service.cc to allow the tests to pass
-&gt; when ash-chrome is not running.
-&gt;
-&gt; Original change's description:
-&gt; &gt; [Media Session] Fix for Lacros
-&gt; &gt;
-&gt; &gt; At the moment in Lacros there are two instances of the
-&gt; &gt; Media Session Service (MSS) one hosted in ash-chrome and
-&gt; &gt; the other in lacros-chrome. This means that sessions in
-&gt; &gt; either browser process cannot see sessions from the other.
-&gt; &gt;
-&gt; &gt; This changes it so when a client asks for lacros-chrome
-&gt; &gt; MSS instead of providing a locally hosted MSS it binds
-&gt; &gt; the MSS in ash-chrome.
-&gt; &gt;
-&gt; &gt; BUG=1140215
-&gt; &gt;
-&gt; &gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic155a6cd928f0735095f849f309f9075dbb1d36f">Ic155a6cd928f0735095f849f309f9075dbb1d36f</a>
-&gt; &gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2485850">https://chromium-review.googlesource.com/c/chromium/src/+/2485850</a>
-&gt; &gt; Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
-&gt; &gt; Reviewed-by: Tommy Steimel &lt;steimel@chromium.org&gt;
-&gt; &gt; Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-&gt; &gt; Reviewed-by: Erik Chen &lt;erikchen@chromium.org&gt;
-&gt; &gt; Commit-Queue: Becca Hughes &lt;beccahughes@chromium.org&gt;
-&gt; &gt; Cr-Commit-Position: refs/heads/master@{#825016}
-&gt;
-&gt; Bug: 1140215
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I64834d9be778998b42bf3447444a6955265215ef">I64834d9be778998b42bf3447444a6955265215ef</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2525851">https://chromium-review.googlesource.com/c/chromium/src/+/2525851</a>
-&gt; Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-&gt; Reviewed-by: Tommy Steimel &lt;steimel@chromium.org&gt;
-&gt; Reviewed-by: Erik Chen &lt;erikchen@chromium.org&gt;
-&gt; Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
-&gt; Commit-Queue: Becca Hughes &lt;beccahughes@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#825439}
-
-Bug: 1140215
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I43d916d2d5726a02baf5fc9307e86a36e99b67fc">I43d916d2d5726a02baf5fc9307e86a36e99b67fc</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2529730">https://chromium-review.googlesource.com/c/chromium/src/+/2529730</a>
-Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
-Reviewed-by: Tommy Steimel &lt;steimel@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Reviewed-by: Erik Chen &lt;erikchen@chromium.org&gt;
-Commit-Queue: Becca Hughes &lt;beccahughes@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#827417}
+Bug: 1085275
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I628df05fe1b2eb27031f8bec087913867717e9a7">I628df05fe1b2eb27031f8bec087913867717e9a7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2538251">https://chromium-review.googlesource.com/c/chromium/src/+/2538251</a>
+Commit-Queue: Aaron Colwell &lt;acolwell@chromium.org&gt;
+Commit-Queue: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Auto-Submit: Aaron Colwell &lt;acolwell@chromium.org&gt;
+Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#827481}
 </pre>
 
 </body>
