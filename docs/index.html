@@ -97,8 +97,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>828083</td>
-       <td>f9b5989758003d423e3dc5824ca13d1ed2efceec</td>
+       <td>828095</td>
+       <td>5243d913956e400e6131daac4ab545d592c881e7</td>
       </tr>
      </tbody>
     </table>
@@ -108,19 +108,19 @@ body{
    commit
   </th>
   <td>
-   f9b5989758003d423e3dc5824ca13d1ed2efceec
+   5243d913956e400e6131daac4ab545d592c881e7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f9b5989758003d423e3dc5824ca13d1ed2efceec">
+    <a href="/chromium/src/+log/5243d913956e400e6131daac4ab545d592c881e7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f9b5989758003d423e3dc5824ca13d1ed2efceec.tar.gz">
+    <a href="/chromium/src/+archive/5243d913956e400e6131daac4ab545d592c881e7.tar.gz">
      tgz
     </a>
     ]
@@ -132,10 +132,10 @@ body{
    author
   </th>
   <td>
-   Anand K Mistry &lt;amistry@chromium.org&gt;
+   Takashi Sakamoto &lt;tasak@google.com&gt;
   </td>
   <td>
-   Tue Nov 17 05:33:02 2020
+   Tue Nov 17 06:30:32 2020
   </td>
  </tr>
  <tr>
@@ -146,7 +146,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Tue Nov 17 05:33:02 2020
+   Tue Nov 17 06:30:32 2020
   </td>
  </tr>
  <tr>
@@ -154,8 +154,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f9b5989758003d423e3dc5824ca13d1ed2efceec/">
-    1b67d0b606c57343dd65a710950abe3073394696
+   <a href="/chromium/src/+/5243d913956e400e6131daac4ab545d592c881e7/">
+    fe9d83d53956075c1385ede23816870e78963a4e
    </a>
   </td>
  </tr>
@@ -164,34 +164,88 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f9b5989758003d423e3dc5824ca13d1ed2efceec%5E">
-    0ecdc9560957705963207af807c1cce139370a46
+   <a href="/chromium/src/+/5243d913956e400e6131daac4ab545d592c881e7%5E">
+    bb38d02120e2dbc17ea39b2d8a6c96ad4436b4a4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f9b5989758003d423e3dc5824ca13d1ed2efceec%5E%21/">
+    <a href="/chromium/src/+/5243d913956e400e6131daac4ab545d592c881e7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix a possible stack corruption in AssistantAudioDecoder.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Reland "CrOS: Add Files app to default shelf pins in second position""
 
-In OpenDecoderOnMediaThread(), the error callback to
-media::BlockingUrlProtocol is being bound to a stack variable. However,
-the BlockingUrlProtocol (and callback) outlives the function. So any
-read error that occurs later, such as in
-AssistantAudioDecoder::Decode(), will cause a write to the out-of-scope
-variable, causing stack corruption.
+This reverts commit 527ae681822eb33a7f86e0cbd4202494b6a66693.
 
-Bug: None
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1149e48416c1a6ca2d8ddd9d9f124cf3bb6d5f8f">I1149e48416c1a6ca2d8ddd9d9f124cf3bb6d5f8f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2542930">https://chromium-review.googlesource.com/c/chromium/src/+/2542930</a>
-Reviewed-by: Jeroen Dhollander &lt;jeroendh@chromium.org&gt;
-Reviewed-by: Xiaohui Chen &lt;xiaohuic@chromium.org&gt;
-Commit-Queue: Anand K Mistry &lt;amistry@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#828083}
+Reason for revert: suspect causing chrome_all_tast_tests failure on chromeos-kevin-chrome
+- ui.ShelfLaunchedApps
+
+First detected build:
+<a href="https://ci.chromium.org/p/chrome/builders/ci/chromeos-kevin-chrome/10864">https://ci.chromium.org/p/chrome/builders/ci/chromeos-kevin-chrome/10864</a>
+
+Sample log:
+<a href="https://logs.chromium.org/logs/chrome/buildbucket/cr-buildbucket.appspot.com/8863425670685038096/+/steps/chrome_all_tast_tests_on_ChromeOS/0/logs/Deterministic_failure:_ui.ShelfLaunchedApps__status_FAILURE_/0">https://logs.chromium.org/logs/chrome/buildbucket/cr-buildbucket.appspot.com/8863425670685038096/+/steps/chrome_all_tast_tests_on_ChromeOS/0/logs/Deterministic_failure:_ui.ShelfLaunchedApps__status_FAILURE_/0</a>
+--
+Unexpected apps in the shelf. Expected only Chrome: [0x2f76930 0x2f76960]
+--
+
+Original change's description:
+&gt; Reland "CrOS: Add Files app to default shelf pins in second position"
+&gt;
+&gt; This is a reland of 5d6ecbfb2d3e6bca4c9e0da56321803235a26218
+&gt;
+&gt; The failing Tast test (ui.ShelfLaunchedApps) has been updated to
+&gt; ensure it continues passing after this CL is landed.
+&gt;
+&gt; This is the second of a chain of 3 CLs:
+&gt;
+&gt; 1. crrev.com/c/2538305: Allow Files app to be pinned by default in
+&gt;    ui.ShelfLaunchedApps
+&gt; 2. crrev.com/c/2538857: Add Files app to default shelf pins in second
+&gt;    position
+&gt; 3. crrev.com/c/2538307: Update ui.ShelfLaunchedApps to ensure Chrome and
+&gt;    Files are always pinned
+&gt;
+&gt; Original change's description:
+&gt; &gt; CrOS: Add Files app to default shelf pins in second position
+&gt; &gt;
+&gt; &gt; This adds the Files app to the spot after the Chrome icon, for new users
+&gt; &gt; only. There's also some variations of the default pin layout controlled
+&gt; &gt; by a Finch experiment, I've moved the Files app up in those layouts for
+&gt; &gt; consistency.
+&gt; &gt;
+&gt; &gt; This change was requested for M88 and will be merged back.
+&gt; &gt;
+&gt; &gt; Bug: 1148519
+&gt; &gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iae54561fec599b813ba97e82a5678fa834a02db2">Iae54561fec599b813ba97e82a5678fa834a02db2</a>
+&gt; &gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2537214">https://chromium-review.googlesource.com/c/chromium/src/+/2537214</a>
+&gt; &gt; Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
+&gt; &gt; Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
+&gt; &gt; Commit-Queue: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
+&gt; &gt; Auto-Submit: Tim Sergeant &lt;tsergeant@chromium.org&gt;
+&gt; &gt; Cr-Commit-Position: refs/heads/master@{#827272}
+&gt;
+&gt; Bug: 1148519
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9186b43a651dea4c4de9e46f849d35da9cc6062c">I9186b43a651dea4c4de9e46f849d35da9cc6062c</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2538857">https://chromium-review.googlesource.com/c/chromium/src/+/2538857</a>
+&gt; Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
+&gt; Commit-Queue: Tim Sergeant &lt;tsergeant@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/master@{#827981}
+
+TBR=xiyuan@chromium.org,tsergeant@chromium.org
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I36e3778d368973d250824541c422d68b1679babd">I36e3778d368973d250824541c422d68b1679babd</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Bug: 1148519
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2543883">https://chromium-review.googlesource.com/c/chromium/src/+/2543883</a>
+Reviewed-by: Takashi Sakamoto &lt;tasak@google.com&gt;
+Commit-Queue: Takashi Sakamoto &lt;tasak@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#828095}
 </pre>
 
 </body>
