@@ -97,8 +97,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>829612</td>
-       <td>55ee4aaf41040e781ec5ea0a827a4416f397d1b2</td>
+       <td>829624</td>
+       <td>5c8608af49745ddb5ea47745451dfeccf20e2ac9</td>
       </tr>
      </tbody>
     </table>
@@ -108,19 +108,19 @@ body{
    commit
   </th>
   <td>
-   55ee4aaf41040e781ec5ea0a827a4416f397d1b2
+   5c8608af49745ddb5ea47745451dfeccf20e2ac9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/55ee4aaf41040e781ec5ea0a827a4416f397d1b2">
+    <a href="/chromium/src/+log/5c8608af49745ddb5ea47745451dfeccf20e2ac9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/55ee4aaf41040e781ec5ea0a827a4416f397d1b2.tar.gz">
+    <a href="/chromium/src/+archive/5c8608af49745ddb5ea47745451dfeccf20e2ac9.tar.gz">
      tgz
     </a>
     ]
@@ -132,10 +132,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 20 11:09:59 2020
+   Fri Nov 20 12:11:19 2020
   </td>
  </tr>
  <tr>
@@ -146,7 +146,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 20 11:09:59 2020
+   Fri Nov 20 12:11:19 2020
   </td>
  </tr>
  <tr>
@@ -154,8 +154,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/55ee4aaf41040e781ec5ea0a827a4416f397d1b2/">
-    4cfec33d04a3cc2be224932733485e5cd6c7bf1f
+   <a href="/chromium/src/+/5c8608af49745ddb5ea47745451dfeccf20e2ac9/">
+    0f1438aae717c54d11a56ebd1ede6020534aac2e
    </a>
   </td>
  </tr>
@@ -164,45 +164,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/55ee4aaf41040e781ec5ea0a827a4416f397d1b2%5E">
-    7e314a6f1eb0e4d5e1e614ebc0fface61ac1c769
+   <a href="/chromium/src/+/5c8608af49745ddb5ea47745451dfeccf20e2ac9%5E">
+    ee9c3db32182627fa1fd68ad801e1e13a7f772b5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/55ee4aaf41040e781ec5ea0a827a4416f397d1b2%5E%21/">
+    <a href="/chromium/src/+/5c8608af49745ddb5ea47745451dfeccf20e2ac9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Dawn from 1a14e7e02441 to 75a1f5234e4b (2 revisions)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[scroll-animations] Run style/layout twice if necessary
 
-<a href="https://dawn.googlesource.com/dawn.git/+log/1a14e7e02441..75a1f5234e4b">https://dawn.googlesource.com/dawn.git/+log/1a14e7e02441..75a1f5234e4b</a>
+This CL solves the "first frame problem" [1], where ScrollTimelines
+created by style recalc end up as inactive, because layout hasn't
+run yet at the time that style recalc takes place.
 
-2020-11-20 ivan.murashov@lge.com Remove storage class specifier for the explicit template specialization
-2020-11-20 jiawei.shao@intel.com D3D12: Search the default path of Windows SDK for DXC DLLs
+When a new timeline is created, it goes into a list of "unvalidated"
+timelines. During the lifecycle update, right after the style and
+layout steps, we go through all such timelines and check if the current
+timeline state (snapshot) is "stale" compared to a freshly computed
+snapshot. If it is, it means that layout had some effect on the
+timeline(s) that we would like to include in the next frame. We then
+mark the associated effect targets for style recalc, which in turn
+triggers a re-run of the style/layout steps in the lifecycle.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/dawn-chromium-autoroll">https://autoroll.skia.org/r/dawn-chromium-autoroll</a>
-Please CC kainino@google.com on the revert to ensure that a human
-is aware of the problem.
+After all timelines have been validated, the list of unvalidated
+timelines is cleared. This guarantees that we don't accidentally
+trigger style/layout more than twice.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+[1] <a href="https://github.com/w3c/csswg-drafts/issues/5261">https://github.com/w3c/csswg-drafts/issues/5261</a>
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chromium.try:dawn-linux-x64-deps-rel;luci.chromium.try:dawn-mac-x64-deps-rel;luci.chromium.try:dawn-win10-x64-deps-rel;luci.chromium.try:dawn-win10-x86-deps-rel
-Bug: None
-Tbr: kainino@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ife9f4247f71b2563e0ef2b8a387b89a4bdac0520">Ife9f4247f71b2563e0ef2b8a387b89a4bdac0520</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2552244">https://chromium-review.googlesource.com/c/chromium/src/+/2552244</a>
-Reviewed-by: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#829612}
+Fixed: 1145933
+Bug: 1074052
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic915bb71b204c93cbde1c5f485d26a4b1c2bd09f">Ic915bb71b204c93cbde1c5f485d26a4b1c2bd09f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2517448">https://chromium-review.googlesource.com/c/chromium/src/+/2517448</a>
+Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+Reviewed-by: Robert Flack &lt;flackr@chromium.org&gt;
+Reviewed-by: Stefan Zager &lt;szager@chromium.org&gt;
+Reviewed-by: Kevin Ellis &lt;kevers@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#829624}
 </pre>
 
 </body>
