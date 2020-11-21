@@ -97,8 +97,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>829997</td>
-       <td>d77a28bd0f3698e80a2ab6d73d4ec847196cceef</td>
+       <td>830002</td>
+       <td>f11b63b4220a66df946a1384f6e6c2b87e898f86</td>
       </tr>
      </tbody>
     </table>
@@ -108,19 +108,19 @@ body{
    commit
   </th>
   <td>
-   d77a28bd0f3698e80a2ab6d73d4ec847196cceef
+   f11b63b4220a66df946a1384f6e6c2b87e898f86
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d77a28bd0f3698e80a2ab6d73d4ec847196cceef">
+    <a href="/chromium/src/+log/f11b63b4220a66df946a1384f6e6c2b87e898f86">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d77a28bd0f3698e80a2ab6d73d4ec847196cceef.tar.gz">
+    <a href="/chromium/src/+archive/f11b63b4220a66df946a1384f6e6c2b87e898f86.tar.gz">
      tgz
     </a>
     ]
@@ -132,10 +132,10 @@ body{
    author
   </th>
   <td>
-   Josh Nohle &lt;nohle@google.com&gt;
+   Alison Maher &lt;almaher@microsoft.com&gt;
   </td>
   <td>
-   Sat Nov 21 16:52:15 2020
+   Sat Nov 21 18:28:37 2020
   </td>
  </tr>
  <tr>
@@ -146,7 +146,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Sat Nov 21 16:52:15 2020
+   Sat Nov 21 18:28:37 2020
   </td>
  </tr>
  <tr>
@@ -154,8 +154,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d77a28bd0f3698e80a2ab6d73d4ec847196cceef/">
-    cff44dcd742947a67488c1f31eb3a3a4167115f4
+   <a href="/chromium/src/+/f11b63b4220a66df946a1384f6e6c2b87e898f86/">
+    fb8d7573d903f4016ed2858afe16f8909c1061bd
    </a>
   </td>
  </tr>
@@ -164,43 +164,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d77a28bd0f3698e80a2ab6d73d4ec847196cceef%5E">
-    522973e6906e1e91f3e8f594fdd756fbcaa2dc2e
+   <a href="/chromium/src/+/f11b63b4220a66df946a1384f6e6c2b87e898f86%5E">
+    8b613beba1a0917f7f6456430c656d76d9180cfa
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d77a28bd0f3698e80a2ab6d73d4ec847196cceef%5E%21/">
+    <a href="/chromium/src/+/f11b63b4220a66df946a1384f6e6c2b87e898f86%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Nearby] Add metrics for transfer medium changes
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Forced colors mode invalidation
 
-* Track the result of Nearby Share starting a bandwidth upgrade via the
-  Nearby Connections library. This metric only records the result of
-  initiating the change not the result of fully finishing an upgrade.
-  Also, this metric does not capture automatic bandwidth upgrades
-  initiated internally by the Nearby Connections library. Note: This
-  is currently only emitted for receive flows because UpgradeBandwith()
-  is only invoked for incoming connections.
+After looking into invalidation for the -internal-forced-color
+property, I noticed other issues with invalidation in forced colors
+mode that get fixed in this CL.
 
-* Track the data transfer medium that the Nearby Connections library
-  successfully switches to during a Nearby Share transfer.
+1) Set the default for -internal-forced-background-color to
+StyleColor(CSSValueID::Canvas), similar to how the color property was
+handled.
 
-Manually tested for send and receive flows with successful and
-unsuccessful WebRTC upgrades.
+2) The viewport background color sometimes would not get updated to
+the right color in StyleEngine depending on if ColorSchemeChanged()
+was called (for a different reason other than forced colors mode)
+before PlatformColorsChanged() was called.
 
-Bug: 1105579
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I11fc1f4d05c60645818d5a8f8c60c120f72f438f">I11fc1f4d05c60645818d5a8f8c60c120f72f438f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2542462">https://chromium-review.googlesource.com/c/chromium/src/+/2542462</a>
-Reviewed-by: James Vecore &lt;vecore@google.com&gt;
-Reviewed-by: Ryan Hansberry &lt;hansberry@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Reviewed-by: Caitlin Fischer &lt;caitlinfischer@google.com&gt;
-Commit-Queue: Josh Nohle &lt;nohle@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#829997}
+To fix this, update the viewport background color as part of
+PlatformColorsChanged() instead of as a part of ColorSchemeChanged().
+
+3) We also need to invalidate paint whenever the system colors change
+(which will also invalidate paint whenever forced colors mode changes).
+
+Bug: 970285
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idcf192897c86aa16aa934b7ccea9cd8a32dec591">Idcf192897c86aa16aa934b7ccea9cd8a32dec591</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2536799">https://chromium-review.googlesource.com/c/chromium/src/+/2536799</a>
+Commit-Queue: Alison Maher &lt;almaher@microsoft.com&gt;
+Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#830002}
 </pre>
 
 </body>
