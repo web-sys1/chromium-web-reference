@@ -97,8 +97,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>830517</td>
-       <td>d32c22e3f1851f63e06c6d4a1a1294c245faa220</td>
+       <td>830527</td>
+       <td>a9076200667b74d525a28190730e53b80ba36afa</td>
       </tr>
      </tbody>
     </table>
@@ -108,19 +108,19 @@ body{
    commit
   </th>
   <td>
-   d32c22e3f1851f63e06c6d4a1a1294c245faa220
+   a9076200667b74d525a28190730e53b80ba36afa
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d32c22e3f1851f63e06c6d4a1a1294c245faa220">
+    <a href="/chromium/src/+log/a9076200667b74d525a28190730e53b80ba36afa">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d32c22e3f1851f63e06c6d4a1a1294c245faa220.tar.gz">
+    <a href="/chromium/src/+archive/a9076200667b74d525a28190730e53b80ba36afa.tar.gz">
      tgz
     </a>
     ]
@@ -132,10 +132,10 @@ body{
    author
   </th>
   <td>
-   Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+   Oriol Brufau &lt;obrufau@igalia.com&gt;
   </td>
   <td>
-   Tue Nov 24 09:14:42 2020
+   Tue Nov 24 10:22:29 2020
   </td>
  </tr>
  <tr>
@@ -146,7 +146,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Tue Nov 24 09:14:42 2020
+   Tue Nov 24 10:22:29 2020
   </td>
  </tr>
  <tr>
@@ -154,8 +154,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d32c22e3f1851f63e06c6d4a1a1294c245faa220/">
-    701369f5fd854231b815f51582adbdd0938d7ca1
+   <a href="/chromium/src/+/a9076200667b74d525a28190730e53b80ba36afa/">
+    d09dbc601ab1c79b960a759de17a5b1537d3365d
    </a>
   </td>
  </tr>
@@ -164,47 +164,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d32c22e3f1851f63e06c6d4a1a1294c245faa220%5E">
-    d532a8afa9e36b393e7b2eefb21ca8c11464f7a0
+   <a href="/chromium/src/+/a9076200667b74d525a28190730e53b80ba36afa%5E">
+    b956187f9954d8d7f17984d7a470ecf094572264
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d32c22e3f1851f63e06c6d4a1a1294c245faa220%5E%21/">
+    <a href="/chromium/src/+/a9076200667b74d525a28190730e53b80ba36afa%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Implements limited version of font-style:oblique &lt;angle&gt;
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[editing] Fix DCHECK failure in ToPositionInFlatTree
 
-Introduce Synthetic Vertical Oblique by Font::DrawBlob
+A Shadow DOM V0 insertion point can't participate in the flat tree, so
+attempting to convert a Position with such an anchor node into a
+PositionInFlatTree used to produce a DCHECK failure.
 
-This patch implements limited version of "font-style oblique &lt;angle&gt;"
-when &lt;angle&gt; is negative, text-orientation is upright, and writing
-mode is vertical, e.g. "font-style: oblique -15deg", for simulating
-"tts:fontShear"[1] in vertical writing mode, e.g. video caption for
-Japanese title.
+This patch makes ToPositionInFlatTree use a position with the parent
+node, if the given one is a V0 insertion point.
 
+Bug: 1151536
 
-This patch does two things:
- 1. Draw font glyph with affine transform skew y-axis -15deg, aka
-    synthetic oblique.
- 2. Select normal slant font when using synthetic vertical oblique[2].
-    Note: "Meriryo" has italic font and other Japanese fonts are slant
-    by font manager.
+Test=PositionTest.ToPositionInFlatTreeWithV0InsertionPoint1
+Test=PositionTest.ToPositionInFlatTreeWithV0InsertionPoint2
+Test=PositionTest.ToPositionInFlatTreeWithV0InsertionPoint3
 
-[1] <a href="https://www.w3.org/TR/2018/REC-ttml2-20181108/#style-attribute-fontShear">https://www.w3.org/TR/2018/REC-ttml2-20181108/#style-attribute-fontShear</a>
-[2] <a href="http://crbug.com/918475:">http://crbug.com/918475:</a> Chrome does not distinguish `italic` and
-`oblique`
-
-Bug: 1112923
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5c14bb705fcdd01893be7cc0734bfc2440cb381d">I5c14bb705fcdd01893be7cc0734bfc2440cb381d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2537733">https://chromium-review.googlesource.com/c/chromium/src/+/2537733</a>
-Commit-Queue: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Auto-Submit: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Reviewed-by: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#830517}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2d823294ed092ceb7dca4cd708fd75eca5a55f92">I2d823294ed092ceb7dca4cd708fd75eca5a55f92</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2551131">https://chromium-review.googlesource.com/c/chromium/src/+/2551131</a>
+Commit-Queue: Oriol Brufau &lt;obrufau@igalia.com&gt;
+Reviewed-by: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#830527}
 </pre>
 
 </body>
