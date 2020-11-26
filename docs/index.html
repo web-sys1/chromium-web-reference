@@ -97,8 +97,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>831363</td>
-       <td>c3b8df45312e8b95993b020dd95603984a682070</td>
+       <td>831380</td>
+       <td>bc77425849c1ae339fb16c841b39a81d878c62cf</td>
       </tr>
      </tbody>
     </table>
@@ -108,19 +108,19 @@ body{
    commit
   </th>
   <td>
-   c3b8df45312e8b95993b020dd95603984a682070
+   bc77425849c1ae339fb16c841b39a81d878c62cf
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c3b8df45312e8b95993b020dd95603984a682070">
+    <a href="/chromium/src/+log/bc77425849c1ae339fb16c841b39a81d878c62cf">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c3b8df45312e8b95993b020dd95603984a682070.tar.gz">
+    <a href="/chromium/src/+archive/bc77425849c1ae339fb16c841b39a81d878c62cf.tar.gz">
      tgz
     </a>
     ]
@@ -132,10 +132,10 @@ body{
    author
   </th>
   <td>
-   Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+   Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
   </td>
   <td>
-   Thu Nov 26 16:04:40 2020
+   Thu Nov 26 17:10:49 2020
   </td>
  </tr>
  <tr>
@@ -146,7 +146,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Thu Nov 26 16:04:40 2020
+   Thu Nov 26 17:10:49 2020
   </td>
  </tr>
  <tr>
@@ -154,8 +154,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c3b8df45312e8b95993b020dd95603984a682070/">
-    2019861113b3552f54686b84c8c51765777402d6
+   <a href="/chromium/src/+/bc77425849c1ae339fb16c841b39a81d878c62cf/">
+    ae06fa17fa3fa0ea8859646624a225d0d6d96974
    </a>
   </td>
  </tr>
@@ -164,32 +164,95 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c3b8df45312e8b95993b020dd95603984a682070%5E">
-    5abd0494c26366175e081d2163643d1dbef8bed4
+   <a href="/chromium/src/+/bc77425849c1ae339fb16c841b39a81d878c62cf%5E">
+    86cb35413fc79d9eeb39c1c678ee89603425f6a9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c3b8df45312e8b95993b020dd95603984a682070%5E%21/">
+    <a href="/chromium/src/+/bc77425849c1ae339fb16c841b39a81d878c62cf%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix missing MakeCurrent for SkiaRenderer
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Some changes to Layer::SafeOpaqueBackgroundColor()
 
-In some cases releasing resources requires gl context to be current,
-this CL fixes some missed cases:
-* Destroying shared images used for overlays on MacOS.
-* Destroying shared images used for render passes overlays on MacOS.
-* Destroying SkImage used as render passes.
+Some background: the color is used to ensure an opaque layer
+(Layer::contents_opaque() is true) to be always opaque, in case that
+1. a tile in the opaque layer has not been rasterized when the tile
+   becomes visible. The color will be drawn on the tile as a
+   "checkerboard" color.
+2. a layer is scaled/translated and the drawings don't cover whole
+   pixels along the edge of the layer. The color will be used to ensure
+   the edge pixels are opaque.
 
-Bug: 1147547
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7434cba77953e65bc8c0328816102b380e3a7a69">I7434cba77953e65bc8c0328816102b380e3a7a69</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2561035">https://chromium-review.googlesource.com/c/chromium/src/+/2561035</a>
-Reviewed-by: Peng Huang &lt;penghuang@chromium.org&gt;
-Commit-Queue: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#831363}
+Strict opaqueness of an opaque layer is important to ensure the
+occlusion optimization for opaque layers to work properly.
+
+The color should be chosen to be the close to the color of the real
+pixels close to the pixels drawn with SafeOpaqueBackgroundColor(), so
+Layer::background_color() is preferred. However if background_color()
+is not opaque for an opaque layer, we need to find an opaque color for
+SafeOpaqueBackgroundColor().
+
+In legacy layer tree mode (which is used by the ui compositor for now),
+for each opaque layer, if it's background_color() is not opaque,
+cc::PropertyTreeBuilder will try to find the first opaque
+background_color() along the layer ancestor chain. If none of the
+ancestor layers has opaque background_color(), then LayerTreeHost::
+background_color(), with the alpha channel forced to be opaque, will be
+used.
+
+In layer list mode (which is used by blink), there is no layer ancestor
+chain, so the above algorithm doesn't apply. Before this CL,
+blink::PaintChunksToCcLayer() tried to find the background color
+covering the most area in the layer as SafeOpaqueBackgroundColor().
+
+This CL:
+
+- Changes Layer::SetSafeOpaqueBackgroundColor() to be for layer tree
+  mode only. It's called by cc::PropertyTreeBuilder, and occasionally
+  by the ui compositor directly.
+
+- Removes blink code calling Layer::SetSafeOpaqueBackgroundColor().
+  Previously in rare cases, it was different from background_color()
+  when no background color bigger than half of the layer was found,
+  and the largest (small) background color was chosen, which was not
+  representative. Instead, in layer list mode,
+  Layer::SafeOpaqueBackgroundColor() implements a simplified version
+  of the layer tree mode algorithm: use background_color() if it's not
+  transparent, or LayerTreeHost::background_color(), with the alpha
+  channel forced to be opaque.
+
+- Remove the logic in LayerImpl::SafeOpaqueBackgroundColor() (which was
+  left when we had property tree building for both main thread and impl
+  side) and let Layer push the calculated SafeOpaqueBackgroundColor().
+
+- Fix 936906 by checking opaqueness of SafeOpaqueBackgroundColor().
+
+History of this CL:
+- crrev.com/828829 was landed to check for opaque
+  SafeOpaqueBackgroundColor(). It doesn't contain other changes in this
+  CL. It has an error (the uncalculated
+  Layer::safe_opaque_background_color_ was pushed to LayerImpl) which
+  caused crbug.com/1150781.
+- crrev.com/829869 reverted crrev.com/828829.
+- This CL was created at first to reland crrev.com/828829 with the fix,
+  but finally it contains more changes.
+
+Caveat:
+- For now, LayerTreeHost::background_color() is transparent for OOPIFs.
+  If it's used, the forced opaque color will be rgba(0, 0, 0, 255)
+  which is not desirable in non-drak mode. This is not a new issue, so
+  this CL doesn't address this.
+
+Bug: 936906
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia624c37866267757e583e1638ac0ca8ec9d35566">Ia624c37866267757e583e1638ac0ca8ec9d35566</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2553207">https://chromium-review.googlesource.com/c/chromium/src/+/2553207</a>
+Reviewed-by: Stefan Zager &lt;szager@chromium.org&gt;
+Commit-Queue: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#831380}
 </pre>
 
 </body>
