@@ -97,8 +97,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>831226</td>
-       <td>6f6923160e81a4c535a6d8e09db0f792ee9dc0bd</td>
+       <td>831254</td>
+       <td>7ed8f6034d055aac3c44c74e22427da95e3f4a9e</td>
       </tr>
      </tbody>
     </table>
@@ -108,19 +108,19 @@ body{
    commit
   </th>
   <td>
-   6f6923160e81a4c535a6d8e09db0f792ee9dc0bd
+   7ed8f6034d055aac3c44c74e22427da95e3f4a9e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6f6923160e81a4c535a6d8e09db0f792ee9dc0bd">
+    <a href="/chromium/src/+log/7ed8f6034d055aac3c44c74e22427da95e3f4a9e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6f6923160e81a4c535a6d8e09db0f792ee9dc0bd.tar.gz">
+    <a href="/chromium/src/+archive/7ed8f6034d055aac3c44c74e22427da95e3f4a9e.tar.gz">
      tgz
     </a>
     ]
@@ -132,10 +132,10 @@ body{
    author
   </th>
   <td>
-   Nicholas Hollingum &lt;hollingum@google.com&gt;
+   Maggie Cai &lt;mxcai@chromium.org&gt;
   </td>
   <td>
-   Thu Nov 26 02:42:10 2020
+   Thu Nov 26 04:47:04 2020
   </td>
  </tr>
  <tr>
@@ -146,7 +146,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Thu Nov 26 02:42:10 2020
+   Thu Nov 26 04:47:04 2020
   </td>
  </tr>
  <tr>
@@ -154,8 +154,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6f6923160e81a4c535a6d8e09db0f792ee9dc0bd/">
-    89c0cf93fca6196ed800ab0e9b5c86021910fa7d
+   <a href="/chromium/src/+/7ed8f6034d055aac3c44c74e22427da95e3f4a9e/">
+    3724217602d23d6862ba0db27c023258a4e2d2ba
    </a>
   </td>
  </tr>
@@ -164,37 +164,57 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6f6923160e81a4c535a6d8e09db0f792ee9dc0bd%5E">
-    990f883ce42be5c21830d6ee2fb5c0d602fb9f4f
+   <a href="/chromium/src/+/7ed8f6034d055aac3c44c74e22427da95e3f4a9e%5E">
+    721988b2c6a81e4162509565eadfaed1e732e394
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6f6923160e81a4c535a6d8e09db0f792ee9dc0bd%5E%21/">
+    <a href="/chromium/src/+/7ed8f6034d055aac3c44c74e22427da95e3f4a9e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">app_service: Windows from exo are not browser windows
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[ozone/wayland] Introduced the histogram to track time on data transfer."
 
-The IsOpenedInBrowser method is used to exclude windows managed by
-browser controllers from being handled by the app service. This method
-special-cased unmatched crostini windows, whose app type is unknown and
-therefore would be conservatively assumed to be broswer-based.
+This reverts commit d1224786759fcec9f1ce81c276de2da915d4c1bf.
 
-We use a better case, by excluding all exo-originating windows. This not
-only catches all the unmatched crostini cases, but also it handles all
-arc, larcos and pluginvm windows here, instead of needing to check the
-AppType of their app id against the proxy.  Further, it allows us to
-exclude all anonymous apps (see go/anonymous-apps).
+Reason for revert: Suspect this CL breaks the build android-archive-rel. First failure: <a href="https://ci.chromium.org/p/chromium/builders/ci/android-archive-rel/16867">https://ci.chromium.org/p/chromium/builders/ci/android-archive-rel/16867</a>
+Compile error message: expand_owners.Error: The histogram Event.WaylandDragDrop.IncomingDataTransferTime must have a valid primary owner, i.e. a Googler with an @google.com or @chromium.org email address.
 
-Bug: b/172979315
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic8f109a5fe0d3aa5049ba244aba9e22a8bcdd7b8">Ic8f109a5fe0d3aa5049ba244aba9e22a8bcdd7b8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2560442">https://chromium-review.googlesource.com/c/chromium/src/+/2560442</a>
-Reviewed-by: Nancy Wang &lt;nancylingwang@chromium.org&gt;
-Commit-Queue: Nic Hollingum &lt;hollingum@google.com&gt;
-Cr-Commit-Position: refs/heads/master@{#831226}
+Original change's description:
+&gt; [ozone/wayland] Introduced the histogram to track time on data transfer.
+&gt;
+&gt; When data is dragged from another application into Chromium, there is a
+&gt; delay between mouse pointer crossing the window border and the actual
+&gt; OnDragEnter() called on the window.  The delay happens because the
+&gt; drag drop controller has to get the data, which implies at least one
+&gt; request to the Wayland server (the actual number of requests equals
+&gt; number of MIME types available in the data offer).
+&gt;
+&gt; Here a histogram is introduced to know what the real delays will be
+&gt; there in the wild.
+&gt;
+&gt; Bug: 1147413
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2f3acc067f718ccb29d98ea1bf98b9f03efc2f7d">I2f3acc067f718ccb29d98ea1bf98b9f03efc2f7d</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2552864">https://chromium-review.googlesource.com/c/chromium/src/+/2552864</a>
+&gt; Reviewed-by: Robert Kroeger &lt;rjkroege@chromium.org&gt;
+&gt; Reviewed-by: Alexei Svitkine &lt;asvitkine@chromium.org&gt;
+&gt; Commit-Queue: Alexander Dunaev &lt;adunaev@igalia.com&gt;
+&gt; Cr-Commit-Position: refs/heads/master@{#831251}
+
+TBR=rjkroege@chromium.org,asvitkine@chromium.org,adunaev@igalia.com
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8a9f113d12f7c8ef7e71989cdb3949696a683901">I8a9f113d12f7c8ef7e71989cdb3949696a683901</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Bug: 1147413
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2561958">https://chromium-review.googlesource.com/c/chromium/src/+/2561958</a>
+Reviewed-by: Maggie Cai &lt;mxcai@chromium.org&gt;
+Commit-Queue: Maggie Cai &lt;mxcai@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#831254}
 </pre>
 
 </body>
