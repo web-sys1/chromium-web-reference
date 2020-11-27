@@ -5,11 +5,10 @@ import requests
 
 HEADER = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'}    
 
-REV_CHG_URL = requests.get('https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Mac%2FLAST_CHANGE?alt=media', headers = HEADER)
-CURRENT_REVISION_NO = REV_CHG_URL.text
+REV_CHG_URL = [requests.get('https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Mac%2FLAST_CHANGE?alt=media', headers = HEADER), requests.get('https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Win%2FLAST_CHANGE?alt=media', headers = HEADER)]
+CURRENT_REVISION_NO = [REV_CHG_URL[0].text, REV_CHG_URL[1].text]
 
-begin = """
-<!DOCTYPE html>
+begin = """<!DOCTYPE html>
 <html>
 <head>
 <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
@@ -97,14 +96,16 @@ body{
 </head>
 <body>
 """
+
 endLine = """
 </body>
 </html>
 """
 
 def main():
-    CR_REV_G = requests.get('https://cr-rev.appspot.com/_ah/api/crrev/v1/redirect/' + CURRENT_REVISION_NO)
-    CR_IDENTIFIER = json.loads(CR_REV_G.text)
+    CR_REV_G = [requests.get('https://cr-rev.appspot.com/_ah/api/crrev/v1/redirect/' + CURRENT_REVISION_NO[0]), requests.get('https://cr-rev.appspot.com/_ah/api/crrev/v1/redirect/' + CURRENT_REVISION_NO[1])]
+    CR_IDENTIFIER = json.loads(CR_REV_G[0].text)
+    CR_IDENTIFIER_WIN = json.loads(CR_REV_G[1].text)
     
     try:
       r = requests.get(CR_IDENTIFIER['redirect_url'])
@@ -114,12 +115,12 @@ def main():
     content = BeautifulSoup(r.content, "html.parser")
     
     print('SUMMARY'.center(54, "-"), '\n')
-    print('REVISION NO. ' + CURRENT_REVISION_NO)
+    print('REVISION NO. ' + CURRENT_REVISION_NO[0])
     title = content.title.string
     print('PAGE TITLE: ', title)
     print('SHA-1 COMMIT NO.: ', CR_IDENTIFIER['git_sha'])
     
-    GIT_SHA1 = CR_IDENTIFIER['git_sha']
+    GIT_SHA1 = [CR_IDENTIFIER['git_sha'], CR_IDENTIFIER_WIN['git_sha']]
     
     ContentSummary = f"""
     <table class="blueTable">
@@ -132,9 +133,12 @@ def main():
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>{CURRENT_REVISION_NO}</td>
-       <td>{GIT_SHA1}</td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/{CURRENT_REVISION_NO[0]}/"> {CURRENT_REVISION_NO[0]}</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/{GIT_SHA1[0]}">{GIT_SHA1[0]}</a></td>
       </tr>
+      <tr>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/{CURRENT_REVISION_NO[1]}/">{CURRENT_REVISION_NO[0]}</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/{GIT_SHA1[1]}">{GIT_SHA1[1]}</a></td>
      </tbody>
     </table>
    <hr>"""
@@ -158,7 +162,7 @@ def main():
             print('DETAILS'.center(54, "-"), '\n')
             print(PreMMsg[0].text)
             
-    with open(f'docs/index.html', 'w', encoding='utf8') as f:
+    with open(f'index.html', 'w', encoding='utf8') as f:
        content = begin + MTAB_RES + endLine
        f.write(content)
     
