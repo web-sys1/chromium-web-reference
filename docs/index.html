@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/831639/"> 831639</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/451126413f90723c23b397b866f8d6cac8ae30fe">451126413f90723c23b397b866f8d6cac8ae30fe</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/831650/"> 831650</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8ee89b5a853e263574016bc659860bb105791fd5">8ee89b5a853e263574016bc659860bb105791fd5</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/831644/">831644</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/89527b66df8944c6ff351b1b8ac9e5f649f5bb9b">89527b66df8944c6ff351b1b8ac9e5f649f5bb9b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/831649/">831649</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6b30439b9e4ba6152138d7bace67bbdfb11b2515">6b30439b9e4ba6152138d7bace67bbdfb11b2515</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   451126413f90723c23b397b866f8d6cac8ae30fe
+   8ee89b5a853e263574016bc659860bb105791fd5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/451126413f90723c23b397b866f8d6cac8ae30fe">
+    <a href="/chromium/src/+log/8ee89b5a853e263574016bc659860bb105791fd5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/451126413f90723c23b397b866f8d6cac8ae30fe.tar.gz">
+    <a href="/chromium/src/+archive/8ee89b5a853e263574016bc659860bb105791fd5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kevin McNee &lt;mcnee@chromium.org&gt;
+   Xida Chen &lt;xidachen@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 27 20:24:28 2020
+   Fri Nov 27 21:33:00 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 27 20:24:28 2020
+   Fri Nov 27 21:33:00 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/451126413f90723c23b397b866f8d6cac8ae30fe/">
-    a1e0beee14e5d7b58fb1071a02f7fdf10e39e4e2
+   <a href="/chromium/src/+/8ee89b5a853e263574016bc659860bb105791fd5/">
+    7ab3fa88a993bcecd61a6c79932823bc9c9cabbe
    </a>
   </td>
  </tr>
@@ -166,29 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/451126413f90723c23b397b866f8d6cac8ae30fe%5E">
-    df4f0ec9b8367178328d521899d853d143d11225
+   <a href="/chromium/src/+/8ee89b5a853e263574016bc659860bb105791fd5%5E">
+    6b30439b9e4ba6152138d7bace67bbdfb11b2515
    </a>
    <span>
     [
-    <a href="/chromium/src/+/451126413f90723c23b397b866f8d6cac8ae30fe%5E%21/">
+    <a href="/chromium/src/+/8ee89b5a853e263574016bc659860bb105791fd5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Do some clean up in components/zoom/
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix a few flaky test in css-paint-api/
 
-In addition to mechanical changes, we replace several manual loops over
-the preset zoom values with suitable standard algorithms.
+The problem of these tests is that we do a takeScreenShot in the
+rAF, and a rAF doesn't guarantee that the animation is ready, so
+it can be easily flaky given that the animations are running on
+the compositor thread.
 
-Bug: None
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I169b2b63bfd1561cebf0d22127cf1efb6954ada9">I169b2b63bfd1561cebf0d22127cf1efb6954ada9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2526482">https://chromium-review.googlesource.com/c/chromium/src/+/2526482</a>
-Reviewed-by: James MacLean &lt;wjmaclean@chromium.org&gt;
-Commit-Queue: Kevin McNee &lt;mcnee@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#831639}
+This CL fixes it so that it calls takeScreenShot when the animation
+ready promise is resolved, and the makes sure that the animation
+already begun.
+
+Bug: 1133821
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4fae6ccb9fe992316831d4d2013e1aa32eb52c82">I4fae6ccb9fe992316831d4d2013e1aa32eb52c82</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2562728">https://chromium-review.googlesource.com/c/chromium/src/+/2562728</a>
+Reviewed-by: Kevin Ellis &lt;kevers@chromium.org&gt;
+Commit-Queue: Xida Chen &lt;xidachen@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#831650}
 </pre>
 
 </body>
