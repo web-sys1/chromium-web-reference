@@ -162,7 +162,7 @@ def main():
             print('DETAILS'.center(54, "-"), '\n')
             print(PreMMsg[0].text)
             
-    with open(f'index.html', 'w', encoding='utf8') as f:
+    with open(f'docs/index.html', 'w', encoding='utf8') as f:
        content = begin + MTAB_RES + endLine
        f.write(content)
     
