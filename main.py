@@ -137,7 +137,7 @@ def main():
        <td><a href="https://chromium.googlesource.com/chromium/src/+/{GIT_SHA1[0]}">{GIT_SHA1[0]}</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/{CURRENT_REVISION_NO[1]}/">{CURRENT_REVISION_NO[0]}</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/{CURRENT_REVISION_NO[1]}/">{CURRENT_REVISION_NO[1]}</a> <sup><b>(WIN)</b></sup></td>
        <td><a href="https://chromium.googlesource.com/chromium/src/+/{GIT_SHA1[1]}">{GIT_SHA1[1]}</a></td>
      </tbody>
     </table>
