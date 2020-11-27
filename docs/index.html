@@ -97,8 +97,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td>831497</td>
-       <td>31a359c5cfa01f98a65cdac507b5c582fe539581</td>
+       <td>831503</td>
+       <td>2a2d91f5d293ab7875df3ce8d40fc0ecb581b41d</td>
       </tr>
      </tbody>
     </table>
@@ -108,19 +108,19 @@ body{
    commit
   </th>
   <td>
-   31a359c5cfa01f98a65cdac507b5c582fe539581
+   2a2d91f5d293ab7875df3ce8d40fc0ecb581b41d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/31a359c5cfa01f98a65cdac507b5c582fe539581">
+    <a href="/chromium/src/+log/2a2d91f5d293ab7875df3ce8d40fc0ecb581b41d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/31a359c5cfa01f98a65cdac507b5c582fe539581.tar.gz">
+    <a href="/chromium/src/+archive/2a2d91f5d293ab7875df3ce8d40fc0ecb581b41d.tar.gz">
      tgz
     </a>
     ]
@@ -132,10 +132,10 @@ body{
    author
   </th>
   <td>
-   Yuta Hijikata &lt;ythjkt@google.com&gt;
+   Koji Ishii &lt;kojii@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 27 07:50:26 2020
+   Fri Nov 27 08:37:02 2020
   </td>
  </tr>
  <tr>
@@ -146,7 +146,7 @@ body{
    Commit Bot &lt;commit-bot@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 27 07:50:26 2020
+   Fri Nov 27 08:37:02 2020
   </td>
  </tr>
  <tr>
@@ -154,8 +154,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/31a359c5cfa01f98a65cdac507b5c582fe539581/">
-    c735f426ae778528ded4c7af4b44c367d270c388
+   <a href="/chromium/src/+/2a2d91f5d293ab7875df3ce8d40fc0ecb581b41d/">
+    5fb42daf19cbed931ee1c2a57e1616251ad86498
    </a>
   </td>
  </tr>
@@ -164,35 +164,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/31a359c5cfa01f98a65cdac507b5c582fe539581%5E">
-    e05049fdbd853c731b82e5c8ddd88c7bdaebbe9a
+   <a href="/chromium/src/+/2a2d91f5d293ab7875df3ce8d40fc0ecb581b41d%5E">
+    3fff69be593717f2fbb7de5e9af075d41c543811
    </a>
    <span>
     [
-    <a href="/chromium/src/+/31a359c5cfa01f98a65cdac507b5c582fe539581%5E%21/">
+    <a href="/chromium/src/+/2a2d91f5d293ab7875df3ce8d40fc0ecb581b41d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">LaCrOS: Replace defined(OS_CHROMEOS) with BUILDFLAG(IS_CHROMEOS_ASH)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Check the outline property when invalidating continuations
 
-The change is mostly mechanical replacing defined(OS_CHROMEOS) with
-BUILDFLAG(IS_CHROMEOS_ASH) and GN variable is_chromeos with
-is_chromeos_ash with some special cases (For those cases please
-refer to <a href="http://go/lacros-macros">http://go/lacros-macros</a>).
+r830902 crrev.com/c/2535904 started to:
+* Set |needs_full_invalidation| in |NGBlockNode::
+  CopyFragmentDataToLayoutBox|
+* |SetNeedsPaintPhaseDescendantOutlines| in
+  |PaintInvalidator::UpdatePaintingLayer|
+for all non-inline |LayoutBlock| that belong to continuation
+chains. This was done on purpose, assuming finding the inline
+ancestor and checking its `outline` property is more expensive
+than setting these flags.
 
-The patch is made in preparation to switching lacros build from
-target_os=linux to target_os=chromeos. This will prevent lacros from
-changing behaviour after the switch.
+This patch does more precise check for the invalidation, by
+extracging the logic from |NGBoxFragmentPainter|.
 
-Bug: 1052397
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I56a028e93cecfb1f7bbb201679d0940e6415303a">I56a028e93cecfb1f7bbb201679d0940e6415303a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2562923">https://chromium-review.googlesource.com/c/chromium/src/+/2562923</a>
-Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
-Commit-Queue: Yuta Hijikata &lt;ythjkt@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#831497}
+Doing this has positive effects on rasterize_and_record_micro:
+<a href="https://pinpoint-dot-chromeperf.appspot.com/job/1739ab00d20000">https://pinpoint-dot-chromeperf.appspot.com/job/1739ab00d20000</a>
+
+while no noticeable regressions in bink_perf.{layout,paint}:
+<a href="https://pinpoint-dot-chromeperf.appspot.com/job/139588b3520000">https://pinpoint-dot-chromeperf.appspot.com/job/139588b3520000</a>
+<a href="https://pinpoint-dot-chromeperf.appspot.com/job/105e3d30d20000">https://pinpoint-dot-chromeperf.appspot.com/job/105e3d30d20000</a>
+
+Bug: 1152749, 1145048
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2d3658c087ed443dc87a83fc15fa4adede8a2fbf">I2d3658c087ed443dc87a83fc15fa4adede8a2fbf</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2560021">https://chromium-review.googlesource.com/c/chromium/src/+/2560021</a>
+Reviewed-by: Morten Stenshorne &lt;mstensho@chromium.org&gt;
+Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#831503}
 </pre>
 
 </body>
