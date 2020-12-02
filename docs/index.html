@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/832578/"> 832578</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/da63128fe1820798b1d8a9bf0ea423589e23cfd1">da63128fe1820798b1d8a9bf0ea423589e23cfd1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/832596/"> 832596</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fc704eaacbf7deb6a410a5dabf8918a052a81f7e">fc704eaacbf7deb6a410a5dabf8918a052a81f7e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/832588/">832588</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/679c0abd0637ff9467154ecef6a29908c42276fa">679c0abd0637ff9467154ecef6a29908c42276fa</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/832604/">832604</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/59a7dfca8ec98c361bfd72ce7d085e430dbc0558">59a7dfca8ec98c361bfd72ce7d085e430dbc0558</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   da63128fe1820798b1d8a9bf0ea423589e23cfd1
+   fc704eaacbf7deb6a410a5dabf8918a052a81f7e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/da63128fe1820798b1d8a9bf0ea423589e23cfd1">
+    <a href="/chromium/src/+log/fc704eaacbf7deb6a410a5dabf8918a052a81f7e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/da63128fe1820798b1d8a9bf0ea423589e23cfd1.tar.gz">
+    <a href="/chromium/src/+archive/fc704eaacbf7deb6a410a5dabf8918a052a81f7e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Daniel Cheng &lt;dcheng@chromium.org&gt;
+   Yoshifumi Inoue &lt;yosin@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 02 00:02:58 2020
+   Wed Dec 02 00:59:16 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 02 00:02:58 2020
+   Wed Dec 02 00:59:16 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/da63128fe1820798b1d8a9bf0ea423589e23cfd1/">
-    cf38472d67f57b1a33d32a0eafeaabf57c9288ae
+   <a href="/chromium/src/+/fc704eaacbf7deb6a410a5dabf8918a052a81f7e/">
+    eba7f01a96113198a8ba2e4d1b85e2d742f0f344
    </a>
   </td>
  </tr>
@@ -166,41 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/da63128fe1820798b1d8a9bf0ea423589e23cfd1%5E">
-    9ec398386592c465340d599d0212442cfcd52f66
+   <a href="/chromium/src/+/fc704eaacbf7deb6a410a5dabf8918a052a81f7e%5E">
+    18c7a65b86f8ed45d98a2101ea8b4f18d0f57228
    </a>
    <span>
     [
-    <a href="/chromium/src/+/da63128fe1820798b1d8a9bf0ea423589e23cfd1%5E%21/">
+    <a href="/chromium/src/+/fc704eaacbf7deb6a410a5dabf8918a052a81f7e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add CHECKs to debug why WebLocalFrameImpl has a detached core frame.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Get rid of enum SelectionType
 
-There are Android crashes where sending an orientation change event
-seems to encounter mutually exclusive facts:
-- WebLocalFrameImpl::GetFrame() should only return a non-null pointer if
-  the LocalFrame is attached.
-- Furthermore, GetFrame() and GetFrame()-&gt;DomWindow() both return
-  non-null pointers (though GetFrame()-&gt;DomWindow() returning non- null
-  does *not* imply the frame is attached).
-- ScreenOrientationController is looked up as a a LocalDOMWindow
-  supplement, using a non-null DomWindow().
-- ScreenOrientationController is an ExecutionContextLifecycleObserver,
-  and uses the DomWindow() helper to look up frames to iterate through.
-- DomWindow() should only return null once the associated LocalDOMWindow
-  is detached
-- Yet DomWindow() returns null, contradicting WebLocalFrameImpl...
+This patch gets rid of |enum SelectionType| because most of usage can be
+replaced with |IsRange()| to simplify source code for improving code
+health.
 
-Bug: 1154141
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id4e695a542c47dbd9263db6dcfc3718653bec242">Id4e695a542c47dbd9263db6dcfc3718653bec242</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2566884">https://chromium-review.googlesource.com/c/chromium/src/+/2566884</a>
-Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Reviewed-by: Fergal Daly &lt;fergal@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#832578}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibe73e8a6b98767191e3dcc25beea9a02311a3dc4">Ibe73e8a6b98767191e3dcc25beea9a02311a3dc4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2566317">https://chromium-review.googlesource.com/c/chromium/src/+/2566317</a>
+Commit-Queue: Kent Tamura &lt;tkent@chromium.org&gt;
+Auto-Submit: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#832596}
 </pre>
 
 </body>
