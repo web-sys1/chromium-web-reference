@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/834972/"> 834972</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e6e879676584caefdd053fb96c8a89effd636969">e6e879676584caefdd053fb96c8a89effd636969</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/835006/"> 835006</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fea665d94736fb6ef65cb4eff2e07791a6c6644c">fea665d94736fb6ef65cb4eff2e07791a6c6644c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/834980/">834980</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e6e879676584caefdd053fb96c8a89effd636969
+   fea665d94736fb6ef65cb4eff2e07791a6c6644c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e6e879676584caefdd053fb96c8a89effd636969">
+    <a href="/chromium/src/+log/fea665d94736fb6ef65cb4eff2e07791a6c6644c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e6e879676584caefdd053fb96c8a89effd636969.tar.gz">
+    <a href="/chromium/src/+archive/fea665d94736fb6ef65cb4eff2e07791a6c6644c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   James Cook &lt;jamescook@chromium.org&gt;
+   Nicholas Hollingum &lt;hollingum@google.com&gt;
   </td>
   <td>
-   Wed Dec 09 00:36:03 2020
+   Wed Dec 09 01:54:21 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 09 00:36:03 2020
+   Wed Dec 09 01:54:21 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e6e879676584caefdd053fb96c8a89effd636969/">
-    59df8a45e51699991958e0b27d10eb6fdd09d90c
+   <a href="/chromium/src/+/fea665d94736fb6ef65cb4eff2e07791a6c6644c/">
+    dcf5e1169ee29010063b269aa57e9a12424e622e
    </a>
   </td>
  </tr>
@@ -166,35 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e6e879676584caefdd053fb96c8a89effd636969%5E">
-    0cface44fe47e351c96924bb4a8fab3073067c00
+   <a href="/chromium/src/+/fea665d94736fb6ef65cb4eff2e07791a6c6644c%5E">
+    600c612a9b7f8ef6cb56b5b18d73e1fc3c78700e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e6e879676584caefdd053fb96c8a89effd636969%5E%21/">
+    <a href="/chromium/src/+/fea665d94736fb6ef65cb4eff2e07791a6c6644c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">lacros: Only call ChangeMetricsReportingState() for actual changes
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">borealis: Add a utility to shutdown when all windows are closed
 
-ChangeMetricsReportingState() has side effects that occur even if the
-reporting state didn't change, including recording an UMA metric and
-clearing some stability data.
+We extend the BorealisWindowManager to track the lifetime of individual
+windows, apps (as collections of windows) and the session (as
+collections of apps.
 
-Change MetricsRecordingObserver to only call the method when the
-state actually changed, rather than unconditionally on startup and
-on change.
+This new observer was kept separate from the already-present anonymous
+observer as the two have limited overlap, and are not used
+simultaneously by any clients (currently).
 
-Bug: 1148604
-Test: added to unit_tests
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia510bcb99c5b8dd0ad23e7ade0c8595ad8d86cfa">Ia510bcb99c5b8dd0ad23e7ade0c8595ad8d86cfa</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2580841">https://chromium-review.googlesource.com/c/chromium/src/+/2580841</a>
-Reviewed-by: Erik Chen &lt;erikchen@chromium.org&gt;
-Commit-Queue: James Cook &lt;jamescook@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#834972}
+We also implement a trivial watcher in the BorealisContext which joins
+the new session-observing behaviour with the ShutdownMonitor. This
+watcher will only be active while the context exists so we will not
+accidentally issue shutdown requests while the vm is not running.
+
+Bug: b/172006764, b/172979315
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie58c87acbb14eebe41152986f6b86032a5d8c759">Ie58c87acbb14eebe41152986f6b86032a5d8c759</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2576876">https://chromium-review.googlesource.com/c/chromium/src/+/2576876</a>
+Commit-Queue: Nic Hollingum &lt;hollingum@google.com&gt;
+Reviewed-by: Daniel Ng &lt;danielng@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#835006}
 </pre>
 
 </body>
