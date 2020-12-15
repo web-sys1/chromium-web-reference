@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/836830/"> 836830</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/890d71c50f1c38a6a2e983904b7eec782b6bc164">890d71c50f1c38a6a2e983904b7eec782b6bc164</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/836862/"> 836862</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f1595a9d7f9a16697ffb33b062b291a582921d71">f1595a9d7f9a16697ffb33b062b291a582921d71</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/836827/">836827</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/da9b5ec032ad503c5c0c147b6b2ce20ee86270e7">da9b5ec032ad503c5c0c147b6b2ce20ee86270e7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/836848/">836848</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3a5a57b16d013cec1f79343a17692771c1604085">3a5a57b16d013cec1f79343a17692771c1604085</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   890d71c50f1c38a6a2e983904b7eec782b6bc164
+   f1595a9d7f9a16697ffb33b062b291a582921d71
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/890d71c50f1c38a6a2e983904b7eec782b6bc164">
+    <a href="/chromium/src/+log/f1595a9d7f9a16697ffb33b062b291a582921d71">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/890d71c50f1c38a6a2e983904b7eec782b6bc164.tar.gz">
+    <a href="/chromium/src/+archive/f1595a9d7f9a16697ffb33b062b291a582921d71.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Stefan Zager &lt;szager@chromium.org&gt;
+   Koji Ishii &lt;kojii@chromium.org&gt;
   </td>
   <td>
-   Mon Dec 14 23:09:48 2020
+   Tue Dec 15 00:08:37 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Dec 14 23:09:48 2020
+   Tue Dec 15 00:08:37 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/890d71c50f1c38a6a2e983904b7eec782b6bc164/">
-    024bc4102a73ea6cd25c25ab7cb3744c63cf32b7
+   <a href="/chromium/src/+/f1595a9d7f9a16697ffb33b062b291a582921d71/">
+    c56cc853a1011420af9c8760634226c00965637e
    </a>
   </td>
  </tr>
@@ -166,38 +166,28 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/890d71c50f1c38a6a2e983904b7eec782b6bc164%5E">
-    47ef86401a78b85751303d84ed7d90156e660aa3
+   <a href="/chromium/src/+/f1595a9d7f9a16697ffb33b062b291a582921d71%5E">
+    1b1fe0019c7f1ef557ba528dbdc6167991a931ea
    </a>
    <span>
     [
-    <a href="/chromium/src/+/890d71c50f1c38a6a2e983904b7eec782b6bc164%5E%21/">
+    <a href="/chromium/src/+/f1595a9d7f9a16697ffb33b062b291a582921d71%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Throttle a display locked frame, even if it needs IntersectionObserver
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove NGPaintFragment from NGBlockNode
 
-If an entire frame is display locked because it's an iframe whose owner
-&lt;iframe&gt; element is locked in the parent document then...
-
-- We should not run lifecycle updates, even if the frame requires an
-IntersectionObserver update.
-
-- IntersectionObserver should be allowed to run, even if the document
-is dirty (because it skipped lifecycle updates).
-
-It's OK to do this because when the IntersectionObserver algorithm runs,
-it will skip all geometry work due to the display lock, and just
-generate a "not intersecting" notification if one is needed.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I591fee0f707189696e2a38bc754b81458d8ae2f4">I591fee0f707189696e2a38bc754b81458d8ae2f4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2587690">https://chromium-review.googlesource.com/c/chromium/src/+/2587690</a>
-Reviewed-by: vmpstr &lt;vmpstr@chromium.org&gt;
-Commit-Queue: Stefan Zager &lt;szager@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#836830}
+Bug: 1154531
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I68dbd92b6d4066d4add555be602ece24c714c283">I68dbd92b6d4066d4add555be602ece24c714c283</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2590145">https://chromium-review.googlesource.com/c/chromium/src/+/2590145</a>
+Commit-Queue: Kent Tamura &lt;tkent@chromium.org&gt;
+Auto-Submit: Koji Ishii &lt;kojii@chromium.org&gt;
+Reviewed-by: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
+Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#836862}
 </pre>
 
 </body>
