@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/837243/"> 837243</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bf0ffcc82e34bd10b2750a66712a23dd092d60d2">bf0ffcc82e34bd10b2750a66712a23dd092d60d2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/837286/"> 837286</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a7c05dc0dcfd20b53c82e02b82f2009708732dfd">a7c05dc0dcfd20b53c82e02b82f2009708732dfd</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/837260/">837260</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4b826e824faee6601776b49eca23ba83e6f4d455">4b826e824faee6601776b49eca23ba83e6f4d455</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/837286/">837286</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a7c05dc0dcfd20b53c82e02b82f2009708732dfd">a7c05dc0dcfd20b53c82e02b82f2009708732dfd</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   bf0ffcc82e34bd10b2750a66712a23dd092d60d2
+   a7c05dc0dcfd20b53c82e02b82f2009708732dfd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/bf0ffcc82e34bd10b2750a66712a23dd092d60d2">
+    <a href="/chromium/src/+log/a7c05dc0dcfd20b53c82e02b82f2009708732dfd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/bf0ffcc82e34bd10b2750a66712a23dd092d60d2.tar.gz">
+    <a href="/chromium/src/+archive/a7c05dc0dcfd20b53c82e02b82f2009708732dfd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chromium WPT Sync &lt;wpt-autoroller@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Toni Barzic &lt;tbarzic@chromium.org&gt;
   </td>
   <td>
-   Tue Dec 15 21:22:09 2020
+   Tue Dec 15 22:27:02 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Dec 15 21:22:09 2020
+   Tue Dec 15 22:27:02 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/bf0ffcc82e34bd10b2750a66712a23dd092d60d2/">
-    918d5dea589d7aa59245ac63d5a03478ce2e676a
+   <a href="/chromium/src/+/a7c05dc0dcfd20b53c82e02b82f2009708732dfd/">
+    4800159876287b4636edd1f6b2d6c55f5f738630
    </a>
   </td>
  </tr>
@@ -166,45 +166,53 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/bf0ffcc82e34bd10b2750a66712a23dd092d60d2%5E">
-    6f955f9d461f40b445da20c8fb4820d682a4fed3
+   <a href="/chromium/src/+/a7c05dc0dcfd20b53c82e02b82f2009708732dfd%5E">
+    6024250802e395ed35302811be03bf2d033d6450
    </a>
    <span>
     [
-    <a href="/chromium/src/+/bf0ffcc82e34bd10b2750a66712a23dd092d60d2%5E%21/">
+    <a href="/chromium/src/+/a7c05dc0dcfd20b53c82e02b82f2009708732dfd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Import wpt@7647a1ff12f0719bf1825626a2e96138a8b3e5fd
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update holding space previews animation
 
-Using wpt-import in Chromium 55054d6725ead02f27d660fe12d3922fe16b9835.
-With Chromium commits locally applied on WPT:
-64eda80d63 "Fix ShapeDetection handling of broken HTMLImageElements"
+Makes the previews animation better match the speced behavior.
+More fundamental change is the way the list of items to be shown in the
+icon is calculated - instead of having HoldingSpaceTrayIcon track the
+holding space model changes and update itself on each change, the
+HoldingSpaceTrayIcon now does not depend directly on the holding space
+state. Instead, HoldingSpaceTray calculates the list of items to
+display in the icon, and passes it on to HoldingSpaceTrayIcon. The icon
+calculates and runs transitions needed to update the icon to match the
+new state.
 
+Unifying the API to update the set of items in the icon makes batching
+the holding space items easier - it's sufficient to schedule an async
+task to calculate the list of items in the model, and pass it on to the
+icon when the time is right.
 
-Note to sheriffs: This CL imports external tests and adds
-expectations for those tests; if this CL is large and causes
-a few new failures, please fix the failures by adding new
-lines to TestExpectations rather than reverting. See:
-<a href="https://chromium.googlesource.com/chromium/src/+/master/docs/testing/web_platform_tests.md">https://chromium.googlesource.com/chromium/src/+/master/docs/testing/web_platform_tests.md</a>
+Other changes:
+HoldingSpaceTrayIconPreview now tracks its current and pending index in
+the item list, which simplifies calculating transitions, and simplifies
+logic for determining whether the preview needs a layout. Also, the
+indices can be used to distinguish new from existing items when updating
+the icon (new items will not have the current index set).
 
-Directory owners for changes in this CL:
-foolip@chromium.org, lpz@chromium.org, robertma@chromium.org:
-  external/wpt/tools
+Unifies AnimateShift and AnimateUnshift into a single method - the
+method now uses pending preview index to calculate the target transform,
+which makes the distinction between shift and unshift irrelevant.
 
-NOAUTOREVERT=true
-TBR=robertma@google.com
+BUG=1142572
 
-No-Export: true
-Cq-Include-Trybots: luci.chromium.try:linux-wpt-identity-fyi-rel,linux-wpt-input-fyi-rel
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I30d4fd1624de295859e68c327d0a7497f3c49346">I30d4fd1624de295859e68c327d0a7497f3c49346</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2592136">https://chromium-review.googlesource.com/c/chromium/src/+/2592136</a>
-Reviewed-by: WPT Autoroller &lt;wpt-autoroller@chops-service-accounts.iam.gserviceaccount.com&gt;
-Commit-Queue: WPT Autoroller &lt;wpt-autoroller@chops-service-accounts.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#837243}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id614c39838d0aa10dc2652d4a23b8e934d67bdbe">Id614c39838d0aa10dc2652d4a23b8e934d67bdbe</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2582431">https://chromium-review.googlesource.com/c/chromium/src/+/2582431</a>
+Commit-Queue: Toni Baržić &lt;tbarzic@chromium.org&gt;
+Reviewed-by: David Black &lt;dmblack@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#837286}
 </pre>
 
 </body>
