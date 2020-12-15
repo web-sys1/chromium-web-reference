@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/836777/"> 836777</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b5ede6fbda9c41dd7a734561f56cdf6f364983d1">b5ede6fbda9c41dd7a734561f56cdf6f364983d1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/836830/"> 836830</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/890d71c50f1c38a6a2e983904b7eec782b6bc164">890d71c50f1c38a6a2e983904b7eec782b6bc164</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/836827/">836827</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b5ede6fbda9c41dd7a734561f56cdf6f364983d1
+   890d71c50f1c38a6a2e983904b7eec782b6bc164
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b5ede6fbda9c41dd7a734561f56cdf6f364983d1">
+    <a href="/chromium/src/+log/890d71c50f1c38a6a2e983904b7eec782b6bc164">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b5ede6fbda9c41dd7a734561f56cdf6f364983d1.tar.gz">
+    <a href="/chromium/src/+archive/890d71c50f1c38a6a2e983904b7eec782b6bc164.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Raymond Toy &lt;rtoy@chromium.org&gt;
+   Stefan Zager &lt;szager@chromium.org&gt;
   </td>
   <td>
-   Mon Dec 14 21:13:05 2020
+   Mon Dec 14 23:09:48 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Dec 14 21:13:05 2020
+   Mon Dec 14 23:09:48 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b5ede6fbda9c41dd7a734561f56cdf6f364983d1/">
-    96e7a74b6fd7b32b5a5800a442beaf279c58e2dc
+   <a href="/chromium/src/+/890d71c50f1c38a6a2e983904b7eec782b6bc164/">
+    024bc4102a73ea6cd25c25ab7cb3744c63cf32b7
    </a>
   </td>
  </tr>
@@ -166,46 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b5ede6fbda9c41dd7a734561f56cdf6f364983d1%5E">
-    786acb8d615c8d67233520fd2c970c364e917df3
+   <a href="/chromium/src/+/890d71c50f1c38a6a2e983904b7eec782b6bc164%5E">
+    47ef86401a78b85751303d84ed7d90156e660aa3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b5ede6fbda9c41dd7a734561f56cdf6f364983d1%5E%21/">
+    <a href="/chromium/src/+/890d71c50f1c38a6a2e983904b7eec782b6bc164%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add metrics for AudioContextOptions.latencyHint
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Throttle a display locked frame, even if it needs IntersectionObserver
 
-Add metrics to record the value of latencyHint which can be one of
-four values in the following order:
+If an entire frame is display locked because it's an iframe whose owner
+&lt;iframe&gt; element is locked in the parent document then...
 
-  "interactive"
-  "balanced"
-  "playback"
-  exact
+- We should not run lifecycle updates, even if the frame requires an
+IntersectionObserver update.
 
-The first three are the values of the AudioContextLatencyCatergory
-enum.  The last is for case when an explicit floating-point value
-is given.
+- IntersectionObserver should be allowed to run, even if the document
+is dirty (because it skipped lifecycle updates).
 
-When the hint is a floating-point value, we record the value in
-milliseconds.
+It's OK to do this because when the IntersectionObserver algorithm runs,
+it will skip all geometry work due to the display lock, and just
+generate a "not intersecting" notification if one is needed.
 
-Each of these metrics are recorded each time an AudioContext is
-created.
-
-Bug: 1156304
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I264f6f9a38983bd0e40f42e720cfcf685e7a1cdc">I264f6f9a38983bd0e40f42e720cfcf685e7a1cdc</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2586047">https://chromium-review.googlesource.com/c/chromium/src/+/2586047</a>
-Reviewed-by: Jesse Doherty &lt;jwd@chromium.org&gt;
-Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Reviewed-by: Hongchan Choi &lt;hongchan@chromium.org&gt;
-Commit-Queue: Raymond Toy &lt;rtoy@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#836777}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I591fee0f707189696e2a38bc754b81458d8ae2f4">I591fee0f707189696e2a38bc754b81458d8ae2f4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2587690">https://chromium-review.googlesource.com/c/chromium/src/+/2587690</a>
+Reviewed-by: vmpstr &lt;vmpstr@chromium.org&gt;
+Commit-Queue: Stefan Zager &lt;szager@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#836830}
 </pre>
 
 </body>
