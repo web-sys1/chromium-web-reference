@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/837679/"> 837679</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8315acc2d9d699f9c418f26f3a45878d61779b50">8315acc2d9d699f9c418f26f3a45878d61779b50</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/837639/"> 837639</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5d3dd257fdb048822291f570af44ab9116d73e14">5d3dd257fdb048822291f570af44ab9116d73e14</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/837696/">837696</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8315acc2d9d699f9c418f26f3a45878d61779b50
+   5d3dd257fdb048822291f570af44ab9116d73e14
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8315acc2d9d699f9c418f26f3a45878d61779b50">
+    <a href="/chromium/src/+log/5d3dd257fdb048822291f570af44ab9116d73e14">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8315acc2d9d699f9c418f26f3a45878d61779b50.tar.gz">
+    <a href="/chromium/src/+archive/5d3dd257fdb048822291f570af44ab9116d73e14.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sergei Glazunov &lt;glazunov@google.com&gt;
+   Alex Turner &lt;alexmt@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 16 19:20:20 2020
+   Wed Dec 16 18:08:05 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 16 19:20:20 2020
+   Wed Dec 16 18:08:05 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8315acc2d9d699f9c418f26f3a45878d61779b50/">
-    f6044a14a5abaa7eef312cb3e94f1e24a882e0cd
+   <a href="/chromium/src/+/5d3dd257fdb048822291f570af44ab9116d73e14/">
+    16f6a14066f14c5064a45393334fe14c13387bf1
    </a>
   </td>
  </tr>
@@ -166,29 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8315acc2d9d699f9c418f26f3a45878d61779b50%5E">
-    728862986f53037c539dac595718843b361488ce
+   <a href="/chromium/src/+/5d3dd257fdb048822291f570af44ab9116d73e14%5E">
+    d275ea0293ed09a78db423d1f2f123762ee8fe68
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8315acc2d9d699f9c418f26f3a45878d61779b50%5E%21/">
+    <a href="/chromium/src/+/5d3dd257fdb048822291f570af44ab9116d73e14%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix ios-simulator-cronet build failure
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove const identifier from certain content::RenderFrameHost pointers
 
-Move the problematic include under the ENABLE_BACKUP_REF_PTR_IMPL flag.
+The content/ public API explicitly forbids use of the const identifier
+on interfaces to avoid assumptions about the implementation. For this
+reason, const identifiers on pointers to a content class prevent the use
+of any of its methods.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I15340b867bb51fda4894ea260bdd8ac59f666e1d">I15340b867bb51fda4894ea260bdd8ac59f666e1d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2595369">https://chromium-review.googlesource.com/c/chromium/src/+/2595369</a>
-Auto-Submit: Sergei Glazunov &lt;glazunov@google.com&gt;
-Reviewed-by: Benoit L &lt;lizeb@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#837679}
+We thus remove the const identifier from some RenderFrameHost pointers
+to allow for a future change to ContentSubresourceFilterThrottleManager
+::IsFrameTaggedAsAd(). The future change (crrev.com/c/2561207) will
+require invocation of a RenderFrameHost method using the currently const
+pointer.
+
+Bug: 1151500
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie6ada00f211f3f04db35cb88331d2c8599b5dfaf">Ie6ada00f211f3f04db35cb88331d2c8599b5dfaf</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2593693">https://chromium-review.googlesource.com/c/chromium/src/+/2593693</a>
+Commit-Queue: Alex Turner &lt;alexmt@chromium.org&gt;
+Reviewed-by: Charlie Harrison &lt;csharrison@chromium.org&gt;
+Reviewed-by: Nasko Oskov &lt;nasko@chromium.org&gt;
+Reviewed-by: Peter Kasting &lt;pkasting@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#837639}
 </pre>
 
 </body>
