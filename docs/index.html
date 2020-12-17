@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/837852/"> 837852</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0d5712a44d1e02c580d50e56c29c0b498307c704">0d5712a44d1e02c580d50e56c29c0b498307c704</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/837869/"> 837869</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e01f2ab2a5407ae407d63fd7aa0ff4eac2661e08">e01f2ab2a5407ae407d63fd7aa0ff4eac2661e08</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/837852/">837852</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0d5712a44d1e02c580d50e56c29c0b498307c704">0d5712a44d1e02c580d50e56c29c0b498307c704</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/837900/">837900</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/669743f1ca9c579a06e864c1fcc53108def16045">669743f1ca9c579a06e864c1fcc53108def16045</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0d5712a44d1e02c580d50e56c29c0b498307c704
+   e01f2ab2a5407ae407d63fd7aa0ff4eac2661e08
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0d5712a44d1e02c580d50e56c29c0b498307c704">
+    <a href="/chromium/src/+log/e01f2ab2a5407ae407d63fd7aa0ff4eac2661e08">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0d5712a44d1e02c580d50e56c29c0b498307c704.tar.gz">
+    <a href="/chromium/src/+archive/e01f2ab2a5407ae407d63fd7aa0ff4eac2661e08.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Greg Thompson &lt;grt@chromium.org&gt;
+   Asami Doi &lt;asamidoi@chromium.org&gt;
   </td>
   <td>
-   Thu Dec 17 00:59:06 2020
+   Thu Dec 17 02:01:31 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Dec 17 00:59:06 2020
+   Thu Dec 17 02:01:31 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0d5712a44d1e02c580d50e56c29c0b498307c704/">
-    56df764bf2fc522948bc4be3e4a7e963e353ad32
+   <a href="/chromium/src/+/e01f2ab2a5407ae407d63fd7aa0ff4eac2661e08/">
+    9527b8d67e661ad22c62492c1cef8e64200f297b
    </a>
   </td>
  </tr>
@@ -166,36 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0d5712a44d1e02c580d50e56c29c0b498307c704%5E">
-    0cb92cb65de697dd1a0015e22fc7f65b734662aa
+   <a href="/chromium/src/+/e01f2ab2a5407ae407d63fd7aa0ff4eac2661e08%5E">
+    807176b3bbbf910c0500331abb7110e9d061b72f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0d5712a44d1e02c580d50e56c29c0b498307c704%5E%21/">
+    <a href="/chromium/src/+/e01f2ab2a5407ae407d63fd7aa0ff4eac2661e08%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Mac] Fix a crash following destruction of a FilePathWatcher.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Consider WARN_NOT_OFFLINE_CAPABLE as not an error.
 
-FilePathWatcherKQueue::Watch uses a FileDescriptorWatcher, which
-requires that its callers handle spurious runs of callbacks after the
-watch is cancelled.
+This CL replaces `data.errors.empty()` with `data.NoBlockingErrors()`
+because we don't want to consider the WARN_NOT_OFFLINE_CAPABLE state as
+an error. The state just logs a warning message to DevTools and
+Application &gt; Manifest &gt; Installability and it should not affect the
+behavior.
 
-If this speculative fix resolves the crash, a follow-on CL will revise
-the FileDescriptorWatcher documentation to make this case explicit.
-
-BUG=1156603
-R=fdoray@chromium.org
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7d5da3fb4e58cf30efab21963908b3ff41e9dc71">I7d5da3fb4e58cf30efab21963908b3ff41e9dc71</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2593379">https://chromium-review.googlesource.com/c/chromium/src/+/2593379</a>
-Commit-Queue: Greg Thompson &lt;grt@chromium.org&gt;
-Auto-Submit: Greg Thompson &lt;grt@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#837852}
+Bug: 1157809
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I03cf02f134ff4f96441723bf893aac380160cced">I03cf02f134ff4f96441723bf893aac380160cced</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2592245">https://chromium-review.googlesource.com/c/chromium/src/+/2592245</a>
+Reviewed-by: Makoto Shimazu &lt;shimazu@chromium.org&gt;
+Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
+Commit-Queue: Asami Doi &lt;asamidoi@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#837869}
 </pre>
 
 </body>
