@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/839049/"> 839049</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/64ce634f01d397b072381ad82734996f21a1b6d4">64ce634f01d397b072381ad82734996f21a1b6d4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/839053/"> 839053</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/17ac2f6437da361712be95bb66676c2ccc873f62">17ac2f6437da361712be95bb66676c2ccc873f62</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/839055/">839055</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   64ce634f01d397b072381ad82734996f21a1b6d4
+   17ac2f6437da361712be95bb66676c2ccc873f62
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/64ce634f01d397b072381ad82734996f21a1b6d4">
+    <a href="/chromium/src/+log/17ac2f6437da361712be95bb66676c2ccc873f62">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/64ce634f01d397b072381ad82734996f21a1b6d4.tar.gz">
+    <a href="/chromium/src/+archive/17ac2f6437da361712be95bb66676c2ccc873f62.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Shengsong Tan &lt;sstan@google.com&gt;
+   Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 23 03:44:33 2020
+   Wed Dec 23 04:23:58 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 23 03:44:33 2020
+   Wed Dec 23 04:23:58 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/64ce634f01d397b072381ad82734996f21a1b6d4/">
-    3927f6039f91723f232df23283c92bdabffc83b1
+   <a href="/chromium/src/+/17ac2f6437da361712be95bb66676c2ccc873f62/">
+    983ddf7c3446284cc13cc9b9d77f3bbdc6c26e65
    </a>
   </td>
  </tr>
@@ -166,31 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/64ce634f01d397b072381ad82734996f21a1b6d4%5E">
-    43fb9f71eb8395eee697e7c073ef929e0b1b4bcc
+   <a href="/chromium/src/+/17ac2f6437da361712be95bb66676c2ccc873f62%5E">
+    d4035f8a36800b43116e74d3985823a8942128f9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/64ce634f01d397b072381ad82734996f21a1b6d4%5E%21/">
+    <a href="/chromium/src/+/17ac2f6437da361712be95bb66676c2ccc873f62%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Adding metadata to ImeMenu views.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[cc] Fix flaky crashing browser_tests on ChromeOS
 
-This is part of the "Views Posse" effort. See this document:
-<a href="https://docs.google.com/document/d/1Rst3792TjXtVA8k8GXaPD8MnuB1JAneSOpIILdA4268/edit?usp=sharing">https://docs.google.com/document/d/1Rst3792TjXtVA8k8GXaPD8MnuB1JAneSOpIILdA4268/edit?usp=sharing</a>
+The crash happened when we committed from the main thread and the
+high res tiling was dropped because its scale was out of the range
+of min and max scales.
 
-Bug: 1159562
-Test: build
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I784f58acb01fd54cc3efadf526ae0df5a5e9865f">I784f58acb01fd54cc3efadf526ae0df5a5e9865f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2600418">https://chromium-review.googlesource.com/c/chromium/src/+/2600418</a>
-Commit-Queue: Shengsong Tan &lt;sstan@google.com&gt;
-Reviewed-by: Tetsui Ohkubo &lt;tetsui@chromium.org&gt;
-Reviewed-by: Allen Bauer &lt;kylixrd@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#839049}
+To avoid the crash, remove SanityCheckTilingState() from
+CleanUpTilingsOnActiveLayer() to avoid the DCHECK failure at the
+beginning of UpdateTiles(), and call SanityCheckTilingState() from
+the original callsites after updating the tilings.
+
+Bug: 1160003
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id9cfb65158dc6c540e2316e4f062fe6299cd1842">Id9cfb65158dc6c540e2316e4f062fe6299cd1842</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2599471">https://chromium-review.googlesource.com/c/chromium/src/+/2599471</a>
+Reviewed-by: danakj &lt;danakj@chromium.org&gt;
+Commit-Queue: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#839053}
 </pre>
 
 </body>
