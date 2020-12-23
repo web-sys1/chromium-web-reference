@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/839147/"> 839147</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6f80d5d3a2dba37968c2bb4d73ea20ec6dfb415c">6f80d5d3a2dba37968c2bb4d73ea20ec6dfb415c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/839170/"> 839170</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8354c6e920cc8ac64980fefae6fba3ad7e584258">8354c6e920cc8ac64980fefae6fba3ad7e584258</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/839163/">839163</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6f80d5d3a2dba37968c2bb4d73ea20ec6dfb415c
+   8354c6e920cc8ac64980fefae6fba3ad7e584258
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6f80d5d3a2dba37968c2bb4d73ea20ec6dfb415c">
+    <a href="/chromium/src/+log/8354c6e920cc8ac64980fefae6fba3ad7e584258">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6f80d5d3a2dba37968c2bb4d73ea20ec6dfb415c.tar.gz">
+    <a href="/chromium/src/+archive/8354c6e920cc8ac64980fefae6fba3ad7e584258.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   manukh &lt;manukh@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 23 18:40:42 2020
+   Wed Dec 23 20:27:00 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 23 18:40:42 2020
+   Wed Dec 23 20:27:00 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6f80d5d3a2dba37968c2bb4d73ea20ec6dfb415c/">
-    934b15014cba233628bb6cc0e646d5bf909d86e0
+   <a href="/chromium/src/+/8354c6e920cc8ac64980fefae6fba3ad7e584258/">
+    63e0a18462e55542d1615912d4eab1a19e6a9dbf
    </a>
   </td>
  </tr>
@@ -166,39 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6f80d5d3a2dba37968c2bb4d73ea20ec6dfb415c%5E">
-    f385f7b08f411ece3b602e7d9636c93f8d23f4a3
+   <a href="/chromium/src/+/8354c6e920cc8ac64980fefae6fba3ad7e584258%5E">
+    6f4d6ac78ce0eba1b4b5da846e40a9a0ed5f1ae6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6f80d5d3a2dba37968c2bb4d73ea20ec6dfb415c%5E%21/">
+    <a href="/chromium/src/+/8354c6e920cc8ac64980fefae6fba3ad7e584258%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Fuchsia SDK from 0.20201223.0.1 to 0.20201223.2.1
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[omnibox] [rich-autocompletion] Preserve cursor for split selections.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/fuchsia-sdk-chromium-autoroll">https://autoroll.skia.org/r/fuchsia-sdk-chromium-autoroll</a>
-Please CC chrome-fuchsia-gardener@grotations.appspotmail.com on the revert to ensure that a human
-is aware of the problem.
+Split AC was added in CL crrev.com/c/2424985 . It allows e.g. the input
+'a c' to match the text 'a [b ]c[ d]'
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+When generating the text selections from word matches, it removes empty
+matches and merges adjacent matches. E.g. the input 'a b' produces the
+selections 'a b[ c]' instead of 'a| |b[ c]'. This is desirable usually,
+but not desirable for the last selection which is used to determine the
+cursor position; merging or filtering the last selection incorrectly
+alters the cursor.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
+This CL makes sure to preserve the last selection and, therefore, the
+correct cursor. E.g. the input 'a c' produces selections 'a [b ]c|'
+instead of 'a [b ]c'.
 
-Cq-Include-Trybots: luci.chromium.try:fuchsia-arm64-cast;luci.chromium.try:fuchsia-deterministic-dbg;luci.chromium.try:fuchsia-x64-cast
-Tbr: chrome-fuchsia-gardener@grotations.appspotmail.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie537aafacdd96fed47b0464c404df597a54aa5a3">Ie537aafacdd96fed47b0464c404df597a54aa5a3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2602063">https://chromium-review.googlesource.com/c/chromium/src/+/2602063</a>
-Reviewed-by: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#839147}
+Bug: 1062446
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icfb13321d86454a8a2fbc89289fefda53287b770">Icfb13321d86454a8a2fbc89289fefda53287b770</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2601046">https://chromium-review.googlesource.com/c/chromium/src/+/2601046</a>
+Commit-Queue: manuk hovanesian &lt;manukh@chromium.org&gt;
+Reviewed-by: Orin Jaworski &lt;orinj@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#839170}
 </pre>
 
 </body>
