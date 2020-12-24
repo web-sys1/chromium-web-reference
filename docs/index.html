@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/839193/"> 839193</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/145cb570fec11ae7754fb8cb49adfa1ddf3c95c2">145cb570fec11ae7754fb8cb49adfa1ddf3c95c2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/839211/"> 839211</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cca0dd73c5c2bc719f8152bd33599bd7799926be">cca0dd73c5c2bc719f8152bd33599bd7799926be</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/839194/">839194</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7e14f27396e36db7d33b505f043d5af83fdb0d06">7e14f27396e36db7d33b505f043d5af83fdb0d06</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/839215/">839215</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9a92a066aabb15a7d9c373760052cf97a3b8b341">9a92a066aabb15a7d9c373760052cf97a3b8b341</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   145cb570fec11ae7754fb8cb49adfa1ddf3c95c2
+   cca0dd73c5c2bc719f8152bd33599bd7799926be
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/145cb570fec11ae7754fb8cb49adfa1ddf3c95c2">
+    <a href="/chromium/src/+log/cca0dd73c5c2bc719f8152bd33599bd7799926be">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/145cb570fec11ae7754fb8cb49adfa1ddf3c95c2.tar.gz">
+    <a href="/chromium/src/+archive/cca0dd73c5c2bc719f8152bd33599bd7799926be.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
+   Henrique Ferreiro &lt;hferreiro@igalia.com&gt;
   </td>
   <td>
-   Wed Dec 23 22:13:51 2020
+   Wed Dec 23 23:48:02 2020
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 23 22:13:51 2020
+   Wed Dec 23 23:48:02 2020
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/145cb570fec11ae7754fb8cb49adfa1ddf3c95c2/">
-    e06227dade9529c23e98f709bfd003b82b4aa826
+   <a href="/chromium/src/+/cca0dd73c5c2bc719f8152bd33599bd7799926be/">
+    4a32cdd86cf2e8dc446708cf2f476344ac7e08e4
    </a>
   </td>
  </tr>
@@ -166,44 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/145cb570fec11ae7754fb8cb49adfa1ddf3c95c2%5E">
-    7ea1bc4184197b9754b3c4723a9708bce99a94b3
+   <a href="/chromium/src/+/cca0dd73c5c2bc719f8152bd33599bd7799926be%5E">
+    137e4d6a77ee33131e52b3939c91af3ece7e5d36
    </a>
    <span>
     [
-    <a href="/chromium/src/+/145cb570fec11ae7754fb8cb49adfa1ddf3c95c2%5E%21/">
+    <a href="/chromium/src/+/cca0dd73c5c2bc719f8152bd33599bd7799926be%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Simplify AXTreeSnapshotterImpl code
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">RuleSet: change CompactRules and Trace to follow definition order
 
-This is a simple refactoring that should have no side effects.
+This CL adds missing rules member attributes and fixes the ordering in
+both CompactRules() and Trace() to follow the ordering in the class
+definition.
 
-The change 'Use EmbeddingTokens as the "backing store" for AXTreeIDs'
-(<a href="http://crrev.com/c/2270065">http://crrev.com/c/2270065</a>) got rid of AXContentTreeUpdate, which was
-previously a more complex version of AXTreeUpdate with some extra
-content-specific fields.
-
-There was a small missed opportunity to refactor here -
-AXTreeSnapshotterImpl was serializing to a AXContentTreeUpdate and
-then converting that to an AXTreeUpdate. Since AXContentTreeUpdate
-no longer exists, the code to populate one struct and then copy it
-to another one is redundant and can be simplified.
-
-This shouldn't result in any change in functionality. AXTreeSnapshotter
-is already covered by tests, primarily in
-snapshot_ax_tree_browsertest.cc
-
-Bug: 1094150, 1161541
-AX-Relnotes: N/A
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If9863ce23cca5538eeab5e0a34350d2f9bfe9e46">If9863ce23cca5538eeab5e0a34350d2f9bfe9e46</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2602438">https://chromium-review.googlesource.com/c/chromium/src/+/2602438</a>
-Reviewed-by: Mark Schillaci &lt;mschillaci@google.com&gt;
-Commit-Queue: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#839193}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icfa58c6a10c2a7e0c5a28807ed5af975693d9d5e">Icfa58c6a10c2a7e0c5a28807ed5af975693d9d5e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2601361">https://chromium-review.googlesource.com/c/chromium/src/+/2601361</a>
+Reviewed-by: Eric Willigers &lt;ericwilligers@chromium.org&gt;
+Commit-Queue: Henrique Ferreiro &lt;hferreiro@igalia.com&gt;
+Cr-Commit-Position: refs/heads/master@{#839211}
 </pre>
 
 </body>
