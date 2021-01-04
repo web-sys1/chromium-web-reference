@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/839988/"> 839988</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0c6760975114f2a66a57126c5d1e36d2b0f8ef02">0c6760975114f2a66a57126c5d1e36d2b0f8ef02</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/839989/"> 839989</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0448e5acbe189380fc7d7a425a9b200b42fb7300">0448e5acbe189380fc7d7a425a9b200b42fb7300</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/839988/">839988</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0c6760975114f2a66a57126c5d1e36d2b0f8ef02
+   0448e5acbe189380fc7d7a425a9b200b42fb7300
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0c6760975114f2a66a57126c5d1e36d2b0f8ef02">
+    <a href="/chromium/src/+log/0448e5acbe189380fc7d7a425a9b200b42fb7300">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0c6760975114f2a66a57126c5d1e36d2b0f8ef02.tar.gz">
+    <a href="/chromium/src/+archive/0448e5acbe189380fc7d7a425a9b200b42fb7300.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Internal Frameworks Autoroller &lt;bling-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Nektarios Paisios &lt;nektar@chromium.org&gt;
   </td>
   <td>
-   Sun Jan 03 21:16:36 2021
+   Sun Jan 03 21:58:06 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Jan 03 21:16:36 2021
+   Sun Jan 03 21:58:06 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0c6760975114f2a66a57126c5d1e36d2b0f8ef02/">
-    58fa6e7e8717ab509fde434ab4edc01ff8feed99
+   <a href="/chromium/src/+/0448e5acbe189380fc7d7a425a9b200b42fb7300/">
+    715ec477c47d54505ccbe71a11599d77f0e56215
    </a>
   </td>
  </tr>
@@ -166,27 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0c6760975114f2a66a57126c5d1e36d2b0f8ef02%5E">
-    9c1b72815685431b8612a37a107219580d731348
+   <a href="/chromium/src/+/0448e5acbe189380fc7d7a425a9b200b42fb7300%5E">
+    0c6760975114f2a66a57126c5d1e36d2b0f8ef02
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0c6760975114f2a66a57126c5d1e36d2b0f8ef02%5E%21/">
+    <a href="/chromium/src/+/0448e5acbe189380fc7d7a425a9b200b42fb7300%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Frameworks roll] Roll to 349943199 piper revision
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Adds ability in AXPosition to stop at the boundary of a window-like node
 
-TBR=bling-team@google.com
+One of the consequences of exposing Views as an AXTree is that
+certain assumptions in AXPosition are no longer true.
+One of those assumptions is that if a null position has been returned from a method
+that moves from a non-null position to some other position, such as `CreatePositionAtEndOfAnchor`,
+then the beginning or the end of the whole content has been reached.
+This is no longer true when a tree of Views is connected to the main tree
+representing the currently visible webpage.
+It's also not true when AXPosition starts to be used more on Chrome OS, where the whole desktop
+is exposed using a forest of AXTrees.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6fc17ac4d12763dfb6a3efedd86b2b9db5ed48b4">I6fc17ac4d12763dfb6a3efedd86b2b9db5ed48b4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2605475">https://chromium-review.googlesource.com/c/chromium/src/+/2605475</a>
-Reviewed-by: Internal Frameworks Autoroller &lt;bling-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
-Commit-Queue: Internal Frameworks Autoroller &lt;bling-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#839988}
+In this patch, the entirety of the AXPosition code was scanned for any assumptions that would
+prevent it from working when the webpage's main tree is connected to a Views tree.
+Also, care was taken to ensure that UI Automation text range provider methods work as before,
+for e example navigating by word, line, etc. shouldnot stop at iframe boundaries.
+
+AX-Relnotes: n/a.
+
+Split out from patch that fixes CreatePositionAtStart/EndOfContent
+<a href="https://chromium-review.googlesource.com/c/chromium/src/+/2595454/">https://chromium-review.googlesource.com/c/chromium/src/+/2595454/</a>
+
+Bug: 1049261
+R=dmazzoni@chromium.org, aleventhal@chromium.org
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1a25d9f715c50773b418d322c2f7c52eacbd6732">I1a25d9f715c50773b418d322c2f7c52eacbd6732</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2597568">https://chromium-review.googlesource.com/c/chromium/src/+/2597568</a>
+Commit-Queue: Nektarios Paisios &lt;nektar@chromium.org&gt;
+Reviewed-by: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
+Reviewed-by: Kurt Catti-Schmidt &lt;kschmi@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/master@{#839989}
 </pre>
 
 </body>
