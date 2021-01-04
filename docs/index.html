@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/839989/"> 839989</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0448e5acbe189380fc7d7a425a9b200b42fb7300">0448e5acbe189380fc7d7a425a9b200b42fb7300</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/839992/"> 839992</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0823dbaead74b346a75d653e65ab90b02779d3a6">0823dbaead74b346a75d653e65ab90b02779d3a6</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/839988/">839988</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0c6760975114f2a66a57126c5d1e36d2b0f8ef02">0c6760975114f2a66a57126c5d1e36d2b0f8ef02</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/839992/">839992</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0823dbaead74b346a75d653e65ab90b02779d3a6">0823dbaead74b346a75d653e65ab90b02779d3a6</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0448e5acbe189380fc7d7a425a9b200b42fb7300
+   0823dbaead74b346a75d653e65ab90b02779d3a6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0448e5acbe189380fc7d7a425a9b200b42fb7300">
+    <a href="/chromium/src/+log/0823dbaead74b346a75d653e65ab90b02779d3a6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0448e5acbe189380fc7d7a425a9b200b42fb7300.tar.gz">
+    <a href="/chromium/src/+archive/0823dbaead74b346a75d653e65ab90b02779d3a6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nektarios Paisios &lt;nektar@chromium.org&gt;
+   Alexander Timin &lt;altimin@chromium.org&gt;
   </td>
   <td>
-   Sun Jan 03 21:58:06 2021
+   Mon Jan 04 00:54:36 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Jan 03 21:58:06 2021
+   Mon Jan 04 00:54:36 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0448e5acbe189380fc7d7a425a9b200b42fb7300/">
-    715ec477c47d54505ccbe71a11599d77f0e56215
+   <a href="/chromium/src/+/0823dbaead74b346a75d653e65ab90b02779d3a6/">
+    75ec572cbe6a5767f3a265b83ec4741c674bba6c
    </a>
   </td>
  </tr>
@@ -166,49 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0448e5acbe189380fc7d7a425a9b200b42fb7300%5E">
-    0c6760975114f2a66a57126c5d1e36d2b0f8ef02
+   <a href="/chromium/src/+/0823dbaead74b346a75d653e65ab90b02779d3a6%5E">
+    4e761f875ad0a94bb9866f5cc13a17bc1fa552ff
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0448e5acbe189380fc7d7a425a9b200b42fb7300%5E%21/">
+    <a href="/chromium/src/+/0823dbaead74b346a75d653e65ab90b02779d3a6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Adds ability in AXPosition to stop at the boundary of a window-like node
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[tracing] Align --trace-startup and --enable-tracing.
 
-One of the consequences of exposing Views as an AXTree is that
-certain assumptions in AXPosition are no longer true.
-One of those assumptions is that if a null position has been returned from a method
-that moves from a non-null position to some other position, such as `CreatePositionAtEndOfAnchor`,
-then the beginning or the end of the whole content has been reached.
-This is no longer true when a tree of Views is connected to the main tree
-representing the currently visible webpage.
-It's also not true when AXPosition starts to be used more on Chrome OS, where the whole desktop
-is exposed using a forest of AXTrees.
+Use StartupTracingController both for --trace-startup (primary use case:
+browser startup perf profiling) and --enable-tracing (primary use case:
+browser test tracing).
 
-In this patch, the entirety of the AXPosition code was scanned for any assumptions that would
-prevent it from working when the webpage's main tree is connected to a Views tree.
-Also, care was taken to ensure that UI Automation text range provider methods work as before,
-for e example navigating by word, line, etc. shouldnot stop at iframe boundaries.
+Due to historical reasons both flags are kept, but now their behaviour
+is mostly the same. If both are present, --trace-startup takes
+precedence.
 
-AX-Relnotes: n/a.
+Differences:
+- `trace-startup` finishes after 5 seconds by default, while `enable-tracing`
+  continues until the browser is closed. (--trace-startup-duration overrides
+  both).
+- `trace-startup-file` always treats the path as absolute, while if
+  `enable-tracing-output` ends with /, it uses the provided value as the
+  directory and generates the base name based on the current runtime
+  metadata.
 
-Split out from patch that fixes CreatePositionAtStart/EndOfContent
-<a href="https://chromium-review.googlesource.com/c/chromium/src/+/2595454/">https://chromium-review.googlesource.com/c/chromium/src/+/2595454/</a>
+R=skyostil@chromium.org,eseckler@chromium.org
+BUG=1157954
 
-Bug: 1049261
-R=dmazzoni@chromium.org, aleventhal@chromium.org
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1a25d9f715c50773b418d322c2f7c52eacbd6732">I1a25d9f715c50773b418d322c2f7c52eacbd6732</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2597568">https://chromium-review.googlesource.com/c/chromium/src/+/2597568</a>
-Commit-Queue: Nektarios Paisios &lt;nektar@chromium.org&gt;
-Reviewed-by: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
-Reviewed-by: Kurt Catti-Schmidt &lt;kschmi@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/master@{#839989}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia76316aa8927b431784e2fb94c8e42e4e2c0b479">Ia76316aa8927b431784e2fb94c8e42e4e2c0b479</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2589834">https://chromium-review.googlesource.com/c/chromium/src/+/2589834</a>
+Reviewed-by: Nasko Oskov &lt;nasko@chromium.org&gt;
+Reviewed-by: Eric Seckler &lt;eseckler@chromium.org&gt;
+Commit-Queue: Alexander Timin &lt;altimin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#839992}
 </pre>
 
 </body>
