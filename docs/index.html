@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/840662/"> 840662</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0d25be9ba3231da315f9021c32e3d239686b8032">0d25be9ba3231da315f9021c32e3d239686b8032</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/840688/"> 840688</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/30cfc9e5bd46383b208f173d758745cd15308a66">30cfc9e5bd46383b208f173d758745cd15308a66</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/840660/">840660</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/92bc3e2c8d34149ea907f7f5c3b2a8d21ac39b79">92bc3e2c8d34149ea907f7f5c3b2a8d21ac39b79</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/840716/">840716</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/58a891d329ada833a1136db4f13b1e6158ea02c3">58a891d329ada833a1136db4f13b1e6158ea02c3</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0d25be9ba3231da315f9021c32e3d239686b8032
+   30cfc9e5bd46383b208f173d758745cd15308a66
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0d25be9ba3231da315f9021c32e3d239686b8032">
+    <a href="/chromium/src/+log/30cfc9e5bd46383b208f173d758745cd15308a66">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0d25be9ba3231da315f9021c32e3d239686b8032.tar.gz">
+    <a href="/chromium/src/+archive/30cfc9e5bd46383b208f173d758745cd15308a66.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Aaron Leventhal &lt;aleventhal@chromium.org&gt;
+   Nick Diego Yamane &lt;nickdiego@igalia.com&gt;
   </td>
   <td>
-   Wed Jan 06 17:49:19 2021
+   Wed Jan 06 18:49:59 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jan 06 17:49:19 2021
+   Wed Jan 06 18:49:59 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0d25be9ba3231da315f9021c32e3d239686b8032/">
-    b6570ac6b4c617e0e0eb02d180b99a1e9472c97b
+   <a href="/chromium/src/+/30cfc9e5bd46383b208f173d758745cd15308a66/">
+    111fb872f716bf0d36e2802a5d6c91da19bbe47b
    </a>
   </td>
  </tr>
@@ -166,40 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0d25be9ba3231da315f9021c32e3d239686b8032%5E">
-    feee9990b1dd9030f54f6c58c3ff84b615fdec62
+   <a href="/chromium/src/+/30cfc9e5bd46383b208f173d758745cd15308a66%5E">
+    5a74b121f1de927bda7acdf3dfbbfd7a092943b2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0d25be9ba3231da315f9021c32e3d239686b8032%5E%21/">
+    <a href="/chromium/src/+/30cfc9e5bd46383b208f173d758745cd15308a66%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Speculative fix: iframe hypertext returns null hyperlink at index 0
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ozone/wayland: dnd: Fix UAF crashes when the entered window is destroyed
 
-An iframe can only have 1 hyperlink. If the iframe is not loaded yet,
-then it should have 0.
+The case where the entered surface in a drag session (through
+wl_data_device::enter event) is suddenly destroyed at client-side, was
+not being properly handled, causing use-after-free crashes. This fixes
+it as well as adds a unit test to prevent future similar regressions.
 
-When hyperlink 0 is retrieved, it should never be null. However, this
-is occurring where the url is "empty". It may be occurring during
-document destruction.
-
-There exists code to update the parent hypertext when a
-BrowserAccessibilityManager's contents are attached, but not on
-destruction. It's unclear whether a single BrowserAccessibilityManager
-can be destroyed without the entire tree of them being destroyed.
-To be safe, update the parent when a BrowserAccessibilityManager
-is destroyed.
-
-Bug: 1157731
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I96a6654d3aa2d6934c07a0145e76edad9ee93243">I96a6654d3aa2d6934c07a0145e76edad9ee93243</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2611665">https://chromium-review.googlesource.com/c/chromium/src/+/2611665</a>
-Reviewed-by: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
-Commit-Queue: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#840662}
+Bug: 1143707
+Test: ozone_unittest --gtest_filter='*WaylandDataDragControllerTest.*'
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0fb0b7abbc257398c3a114f1c2d438ecc8d9adf5">I0fb0b7abbc257398c3a114f1c2d438ecc8d9adf5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2593572">https://chromium-review.googlesource.com/c/chromium/src/+/2593572</a>
+Commit-Queue: Nick Yamane &lt;nickdiego@igalia.com&gt;
+Reviewed-by: Maksim Sisov &lt;msisov@igalia.com&gt;
+Reviewed-by: Antonio Gomes &lt;tonikitoo@igalia.com&gt;
+Cr-Commit-Position: refs/heads/master@{#840688}
 </pre>
 
 </body>
