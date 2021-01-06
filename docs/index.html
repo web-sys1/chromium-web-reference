@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/840625/"> 840625</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/01f93289cc6e8e72ea1268a62f52dc8b883d59e3">01f93289cc6e8e72ea1268a62f52dc8b883d59e3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/840662/"> 840662</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0d25be9ba3231da315f9021c32e3d239686b8032">0d25be9ba3231da315f9021c32e3d239686b8032</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/840660/">840660</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   01f93289cc6e8e72ea1268a62f52dc8b883d59e3
+   0d25be9ba3231da315f9021c32e3d239686b8032
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/01f93289cc6e8e72ea1268a62f52dc8b883d59e3">
+    <a href="/chromium/src/+log/0d25be9ba3231da315f9021c32e3d239686b8032">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/01f93289cc6e8e72ea1268a62f52dc8b883d59e3.tar.gz">
+    <a href="/chromium/src/+archive/0d25be9ba3231da315f9021c32e3d239686b8032.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
+   Aaron Leventhal &lt;aleventhal@chromium.org&gt;
   </td>
   <td>
-   Wed Jan 06 16:21:02 2021
+   Wed Jan 06 17:49:19 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jan 06 16:21:02 2021
+   Wed Jan 06 17:49:19 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/01f93289cc6e8e72ea1268a62f52dc8b883d59e3/">
-    d5d7ed25a5e8baf69a45d99dee57d712484b2fa9
+   <a href="/chromium/src/+/0d25be9ba3231da315f9021c32e3d239686b8032/">
+    b6570ac6b4c617e0e0eb02d180b99a1e9472c97b
    </a>
   </td>
  </tr>
@@ -166,44 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/01f93289cc6e8e72ea1268a62f52dc8b883d59e3%5E">
-    e5e993e1f4cefea2f3f75555bf02bedf40579e56
+   <a href="/chromium/src/+/0d25be9ba3231da315f9021c32e3d239686b8032%5E">
+    feee9990b1dd9030f54f6c58c3ff84b615fdec62
    </a>
    <span>
     [
-    <a href="/chromium/src/+/01f93289cc6e8e72ea1268a62f52dc8b883d59e3%5E%21/">
+    <a href="/chromium/src/+/0d25be9ba3231da315f9021c32e3d239686b8032%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Help App from P17q_sHuE... to _2IUiaMak...
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Speculative fix: iframe hypertext returns null hyperlink at index 0
 
-Release_Notes: <a href="http://go/help_app-x20/relnotes/Main/help_app_nightly_202101060600_RC00.html">http://go/help_app-x20/relnotes/Main/help_app_nightly_202101060600_RC00.html</a>
+An iframe can only have 1 hyperlink. If the iframe is not loaded yet,
+then it should have 0.
 
-<a href="https://chrome-infra-packages.appspot.com/p/chromeos_internal/apps/help_app/app/+/_2IUiaMakoAVmovMPZQalk_OvCtn2wuY52u81Pw-egYC">https://chrome-infra-packages.appspot.com/p/chromeos_internal/apps/help_app/app/+/_2IUiaMakoAVmovMPZQalk_OvCtn2wuY52u81Pw-egYC</a>
+When hyperlink 0 is retrieved, it should never be null. However, this
+is occurring where the url is "empty". It may be occurring during
+document destruction.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://skia-autoroll.corp.goog/r/help-app-chromium-autoroll">https://skia-autoroll.corp.goog/r/help-app-chromium-autoroll</a>
-Please CC help-app@grotations.appspotmail.com on the revert to ensure that a human
-is aware of the problem.
+There exists code to update the parent hypertext when a
+BrowserAccessibilityManager's contents are attached, but not on
+destruction. It's unclear whether a single BrowserAccessibilityManager
+can be destroyed without the entire tree of them being destroyed.
+To be safe, update the parent when a BrowserAccessibilityManager
+is destroyed.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Bug: None
-Tbr: help-app@grotations.appspotmail.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9d4bd14fce4121b65963e7402ea56f7fa37c0733">I9d4bd14fce4121b65963e7402ea56f7fa37c0733</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2613165">https://chromium-review.googlesource.com/c/chromium/src/+/2613165</a>
-Reviewed-by: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Commit-Queue: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#840625}
+Bug: 1157731
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I96a6654d3aa2d6934c07a0145e76edad9ee93243">I96a6654d3aa2d6934c07a0145e76edad9ee93243</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2611665">https://chromium-review.googlesource.com/c/chromium/src/+/2611665</a>
+Reviewed-by: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
+Commit-Queue: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#840662}
 </pre>
 
 </body>
