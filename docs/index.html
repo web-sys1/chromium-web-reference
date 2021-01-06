@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/840688/"> 840688</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/30cfc9e5bd46383b208f173d758745cd15308a66">30cfc9e5bd46383b208f173d758745cd15308a66</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/840721/"> 840721</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bf5fcffc1401314fc9143dae8fdd8a8aca64fae6">bf5fcffc1401314fc9143dae8fdd8a8aca64fae6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/840716/">840716</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   30cfc9e5bd46383b208f173d758745cd15308a66
+   bf5fcffc1401314fc9143dae8fdd8a8aca64fae6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/30cfc9e5bd46383b208f173d758745cd15308a66">
+    <a href="/chromium/src/+log/bf5fcffc1401314fc9143dae8fdd8a8aca64fae6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/30cfc9e5bd46383b208f173d758745cd15308a66.tar.gz">
+    <a href="/chromium/src/+archive/bf5fcffc1401314fc9143dae8fdd8a8aca64fae6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nick Diego Yamane &lt;nickdiego@igalia.com&gt;
+   Thomas Guilbert &lt;tguilbert@chromium.org&gt;
   </td>
   <td>
-   Wed Jan 06 18:49:59 2021
+   Wed Jan 06 19:45:11 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jan 06 18:49:59 2021
+   Wed Jan 06 19:45:11 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/30cfc9e5bd46383b208f173d758745cd15308a66/">
-    111fb872f716bf0d36e2802a5d6c91da19bbe47b
+   <a href="/chromium/src/+/bf5fcffc1401314fc9143dae8fdd8a8aca64fae6/">
+    bb073a4b32099dff58c11495743a72d5e45d3ac7
    </a>
   </td>
  </tr>
@@ -166,33 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/30cfc9e5bd46383b208f173d758745cd15308a66%5E">
-    5a74b121f1de927bda7acdf3dfbbfd7a092943b2
+   <a href="/chromium/src/+/bf5fcffc1401314fc9143dae8fdd8a8aca64fae6%5E">
+    a055c6786f844abec349ba48a58b45f6f650157d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/30cfc9e5bd46383b208f173d758745cd15308a66%5E%21/">
+    <a href="/chromium/src/+/bf5fcffc1401314fc9143dae8fdd8a8aca64fae6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ozone/wayland: dnd: Fix UAF crashes when the entered window is destroyed
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Convert RemoteFileSyncService.h to OnceCallback
 
-The case where the entered surface in a drag session (through
-wl_data_device::enter event) is suddenly destroyed at client-side, was
-not being properly handled, causing use-after-free crashes. This fixes
-it as well as adds a unit test to prevent future similar regressions.
+This CL converts OriginStatusMap, StatusMapCallback and ListCallback to
+OnceCallbacks. It also deletes the unused RemoteVersionsCallback and
+DownloadVersionCallback.
 
-Bug: 1143707
-Test: ozone_unittest --gtest_filter='*WaylandDataDragControllerTest.*'
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0fb0b7abbc257398c3a114f1c2d438ecc8d9adf5">I0fb0b7abbc257398c3a114f1c2d438ecc8d9adf5</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2593572">https://chromium-review.googlesource.com/c/chromium/src/+/2593572</a>
-Commit-Queue: Nick Yamane &lt;nickdiego@igalia.com&gt;
-Reviewed-by: Maksim Sisov &lt;msisov@igalia.com&gt;
-Reviewed-by: Antonio Gomes &lt;tonikitoo@igalia.com&gt;
-Cr-Commit-Position: refs/heads/master@{#840688}
+The CL also changes CallbackTracker to support OnceCallbacks only,
+which is in line with the guarantees offered by CallbackTracker.
+
+There are also a few opportunistic clean ups to use std::make_unique,
+instead of calling "new".
+
+Bug: 1152272
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4fc28eabd10f61297be62edd0a1c00f473bb45b7">I4fc28eabd10f61297be62edd0a1c00f473bb45b7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2606713">https://chromium-review.googlesource.com/c/chromium/src/+/2606713</a>
+Commit-Queue: Thomas Guilbert &lt;tguilbert@chromium.org&gt;
+Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#840721}
 </pre>
 
 </body>
