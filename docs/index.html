@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/841019/"> 841019</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2291e961040289c5b43331c2b2bec3754628eb85">2291e961040289c5b43331c2b2bec3754628eb85</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/841031/"> 841031</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ace2b0657a7b31b95f48f786a06a9c3d6fd04a32">ace2b0657a7b31b95f48f786a06a9c3d6fd04a32</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/841033/">841033</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cf449d36918ebbc40909d84ab6b5aedfc4d15fe0">cf449d36918ebbc40909d84ab6b5aedfc4d15fe0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/841052/">841052</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/26ca52602e7a59733f0199a67e7d5bc584332a03">26ca52602e7a59733f0199a67e7d5bc584332a03</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2291e961040289c5b43331c2b2bec3754628eb85
+   ace2b0657a7b31b95f48f786a06a9c3d6fd04a32
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2291e961040289c5b43331c2b2bec3754628eb85">
+    <a href="/chromium/src/+log/ace2b0657a7b31b95f48f786a06a9c3d6fd04a32">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2291e961040289c5b43331c2b2bec3754628eb85.tar.gz">
+    <a href="/chromium/src/+archive/ace2b0657a7b31b95f48f786a06a9c3d6fd04a32.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jasmine Chen &lt;lnishan@google.com&gt;
+   Danila Kuzmin &lt;dkuzmin@google.com&gt;
   </td>
   <td>
-   Thu Jan 07 12:16:09 2021
+   Thu Jan 07 13:34:59 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 07 12:16:09 2021
+   Thu Jan 07 13:34:59 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2291e961040289c5b43331c2b2bec3754628eb85/">
-    d3298d51f2f7edf4a0a8a85cbfb4bfb8491bc4a8
+   <a href="/chromium/src/+/ace2b0657a7b31b95f48f786a06a9c3d6fd04a32/">
+    42b77733f0e9f211528741cc4e57f3f1b2a2d801
    </a>
   </td>
  </tr>
@@ -166,57 +166,26 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2291e961040289c5b43331c2b2bec3754628eb85%5E">
-    87e472646037d2097eed9a6a304a5298b51e9ff2
+   <a href="/chromium/src/+/ace2b0657a7b31b95f48f786a06a9c3d6fd04a32%5E">
+    c478ac32baa89c7536a20ef59e7955935bfd999e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2291e961040289c5b43331c2b2bec3754628eb85%5E%21/">
+    <a href="/chromium/src/+/ace2b0657a7b31b95f48f786a06a9c3d6fd04a32%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">VCD: Migrate to use SetCallbacksAssociated
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">oobe histograms: Extend UpdateScreen stages histograms
 
-This addresses a subtle race condition in
-CameraModuleCallbacks::SetCallbacks().
-
-The key sequence of events,
-1. CameraHalClient receives a pending remote of CameraModule
-2. CameraHalClient calls CameraModule::GetNumberOfCameras()
-3. CameraHalClient calls CameraModule::SetCallbacks() to pass a pending
-   remote of CameraModuleCallbacks.
-4. CameraModule receiver would fire
-   CameraModuleCallbacks::CameraDeviceStatusChange()
-5. CameraModule receiver then fires CameraModule::SetCallbacksCallback
-
-The expectation was that 4 would be received before 5. However, since
-CameraModule and CameraModuleCallbacks run on different message pipes, 4
-can actually be received after 5, not meeting the expectation.
-
-So here we make CameraModuleCallbacks an associated interface of
-CameraModule.
-Please see crrev.com/c/2434712 for the implementation on CameraModule.
-
-Bug: b/169324225
-Test: With the following,
-    1. Open Chrome Camera App (CCA)
-    2. restart cros-camera
-    3. Verify CameraDeviceStatusChange is received before
-       SetCallbacksCallback
-    4. Repeat and passes 20/20 times.
-    Additionally,
-    1. Build capture_unittests and scp to DUT
-    2. tast run dut 'camera.CaptureUnittests'
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I79f6006b7827d2e556b01e7d57df43916ca7913e">I79f6006b7827d2e556b01e7d57df43916ca7913e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2470898">https://chromium-review.googlesource.com/c/chromium/src/+/2470898</a>
-Reviewed-by: Wei Lee &lt;wtlee@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#841019}
+Bug: 1160744
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I380a647751c692ef8880d92b63ad4e8080f36fb3">I380a647751c692ef8880d92b63ad4e8080f36fb3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2601741">https://chromium-review.googlesource.com/c/chromium/src/+/2601741</a>
+Reviewed-by: Ilya Sherman &lt;isherman@chromium.org&gt;
+Commit-Queue: Danila Kuzmin &lt;dkuzmin@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#841031}
 </pre>
 
 </body>
