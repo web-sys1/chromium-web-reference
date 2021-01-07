@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/840853/"> 840853</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/072fa85a896efaf88e354325c1b35eb4fd9a49fe">072fa85a896efaf88e354325c1b35eb4fd9a49fe</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/840877/"> 840877</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7f46566491f406054f4af671439339b97b411f5e">7f46566491f406054f4af671439339b97b411f5e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/840854/">840854</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a60740a79691f01a8e82e9cf7238d9b7cfb57bdf">a60740a79691f01a8e82e9cf7238d9b7cfb57bdf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/840876/">840876</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2c707c2951e592fcdc349c5e46c90339b87dd464">2c707c2951e592fcdc349c5e46c90339b87dd464</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   072fa85a896efaf88e354325c1b35eb4fd9a49fe
+   7f46566491f406054f4af671439339b97b411f5e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/072fa85a896efaf88e354325c1b35eb4fd9a49fe">
+    <a href="/chromium/src/+log/7f46566491f406054f4af671439339b97b411f5e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/072fa85a896efaf88e354325c1b35eb4fd9a49fe.tar.gz">
+    <a href="/chromium/src/+archive/7f46566491f406054f4af671439339b97b411f5e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Varun Khaneja &lt;vakh@chromium.org&gt;
+   Dale Curtis &lt;dalecurtis@chromium.org&gt;
   </td>
   <td>
-   Thu Jan 07 01:06:32 2021
+   Thu Jan 07 02:02:06 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 07 01:06:32 2021
+   Thu Jan 07 02:02:06 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/072fa85a896efaf88e354325c1b35eb4fd9a49fe/">
-    de6d1bb90876fd17d4ace258f9ed52850045d176
+   <a href="/chromium/src/+/7f46566491f406054f4af671439339b97b411f5e/">
+    c95eed25781c29be91f866384a4dbff0824404a5
    </a>
   </td>
  </tr>
@@ -166,26 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/072fa85a896efaf88e354325c1b35eb4fd9a49fe%5E">
-    0f46bbc42bfe60b6ad14643af03e01d9bc2a4d96
+   <a href="/chromium/src/+/7f46566491f406054f4af671439339b97b411f5e%5E">
+    2c707c2951e592fcdc349c5e46c90339b87dd464
    </a>
    <span>
     [
-    <a href="/chromium/src/+/072fa85a896efaf88e354325c1b35eb4fd9a49fe%5E%21/">
+    <a href="/chromium/src/+/7f46566491f406054f4af671439339b97b411f5e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add xinghuilu@chromium.org to safe_browsing OWNERS
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Ensure flush support is properly known before using it.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I97e012df8967aa0b5d4ab9c60298571aafd9428a">I97e012df8967aa0b5d4ab9c60298571aafd9428a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2612217">https://chromium-review.googlesource.com/c/chromium/src/+/2612217</a>
-Reviewed-by: Daniel Rubery &lt;drubery@chromium.org&gt;
-Reviewed-by: Nathan Parker &lt;nparker@chromium.org&gt;
-Commit-Queue: Varun Khaneja &lt;vakh@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#840853}
+VEA flush support isn't known until Initialize() completes, which
+happens by way of RequireBitstreamBuffers(). The old code uses the
+value of |flush_support_| during InitCompleted() despite it not
+being set until after InitCompleted() runs.
+
+The fix is to ensure we set |flush_support_| correctly before we
+use it and to switch to a base::Optional for its value to prevent
+accidental incorrect usage in the future.
+
+R=sandersd
+
+Fixed: 1163673
+Test: New unittest.
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I69cec2f954ffc68773984ab59227b2cd10079820">I69cec2f954ffc68773984ab59227b2cd10079820</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2613670">https://chromium-review.googlesource.com/c/chromium/src/+/2613670</a>
+Commit-Queue: Dale Curtis &lt;dalecurtis@chromium.org&gt;
+Commit-Queue: Dan Sanders &lt;sandersd@chromium.org&gt;
+Auto-Submit: Dale Curtis &lt;dalecurtis@chromium.org&gt;
+Reviewed-by: Dan Sanders &lt;sandersd@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#840877}
 </pre>
 
 </body>
