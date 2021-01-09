@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/841842/"> 841842</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/63bbe33b28bed109c441a18fa01440a915b56f8e">63bbe33b28bed109c441a18fa01440a915b56f8e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/841848/"> 841848</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8787a5752eb24067cb9107b1b53def262d20f2b6">8787a5752eb24067cb9107b1b53def262d20f2b6</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/841843/">841843</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ef2d92ce5821e15d758c1d99efd63e087e20bd29">ef2d92ce5821e15d758c1d99efd63e087e20bd29</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/841846/">841846</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6ca5cc205dea17466d3b1037fa0164166cb2c377">6ca5cc205dea17466d3b1037fa0164166cb2c377</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   63bbe33b28bed109c441a18fa01440a915b56f8e
+   8787a5752eb24067cb9107b1b53def262d20f2b6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/63bbe33b28bed109c441a18fa01440a915b56f8e">
+    <a href="/chromium/src/+log/8787a5752eb24067cb9107b1b53def262d20f2b6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/63bbe33b28bed109c441a18fa01440a915b56f8e.tar.gz">
+    <a href="/chromium/src/+archive/8787a5752eb24067cb9107b1b53def262d20f2b6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   David Roger &lt;droger@chromium.org&gt;
   </td>
   <td>
-   Sat Jan 09 20:04:10 2021
+   Sat Jan 09 22:10:34 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Jan 09 20:04:10 2021
+   Sat Jan 09 22:10:34 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/63bbe33b28bed109c441a18fa01440a915b56f8e/">
-    c87659a17f0acd60eacb9825fdc4aa89e8bbfc1f
+   <a href="/chromium/src/+/8787a5752eb24067cb9107b1b53def262d20f2b6/">
+    545065438d154b21af5677ebeeaa688a6440d373
    </a>
   </td>
  </tr>
@@ -166,41 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/63bbe33b28bed109c441a18fa01440a915b56f8e%5E">
-    3246c21ecd4c45d8c4ceca5ecb63553898f68f9b
+   <a href="/chromium/src/+/8787a5752eb24067cb9107b1b53def262d20f2b6%5E">
+    d11e83421c830be7c065d81ff42db5021f2c4fea
    </a>
    <span>
     [
-    <a href="/chromium/src/+/63bbe33b28bed109c441a18fa01440a915b56f8e%5E%21/">
+    <a href="/chromium/src/+/8787a5752eb24067cb9107b1b53def262d20f2b6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Linux PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[profiles] Fix use-after-free in ProfileManager when deleting profiles
 
-Roll Chrome Linux PGO profile from chrome-linux-master-1610193586-93f61022a3f2638e289b0e08a26785a26ecf4b4e.profdata to chrome-linux-master-1610215000-b69940577779e97f408887c78f00b942182f0cb0.profdata
+ProfileManager::CleanUpDeletedProfiles() passes a raw base::Value pointer
+to ProfileCleanedUp() to be run later asynchronously.
+This is incorrect, as this raw pointer is pointing somewhere in the
+middle of a list in preferences. If the preferences change in the
+meantime, the pointer is invalid when it is used.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-linux-chromium">https://autoroll.skia.org/r/pgo-linux-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+The base::Value is passed by value rather than by unique_ptr, as this is
+now the recommended pattern.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:linux-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id7729d0e47948a84fc56958c4b5e7fe4f98ae65a">Id7729d0e47948a84fc56958c4b5e7fe4f98ae65a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2619791">https://chromium-review.googlesource.com/c/chromium/src/+/2619791</a>
-Reviewed-by: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#841842}
+Fixed: 1164410
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifeebe3fe9f49cc7f991c738b73b24bdb6b017168">Ifeebe3fe9f49cc7f991c738b73b24bdb6b017168</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2618339">https://chromium-review.googlesource.com/c/chromium/src/+/2618339</a>
+Reviewed-by: Jan Krcal &lt;jkrcal@chromium.org&gt;
+Commit-Queue: David Roger &lt;droger@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#841848}
 </pre>
 
 </body>
