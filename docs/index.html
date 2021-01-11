@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/842020/"> 842020</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/76be69b8dbd7c2a62b530f0e6236c910aed857c4">76be69b8dbd7c2a62b530f0e6236c910aed857c4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/842036/"> 842036</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/253798c2f590a4a5661531982d2b3c82c9ab0d4e">253798c2f590a4a5661531982d2b3c82c9ab0d4e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/842025/">842025</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6ced994f35f3d326d9ac9722125745598a2eef0a">6ced994f35f3d326d9ac9722125745598a2eef0a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/842039/">842039</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3e0237472e7de100265f400bc6d65aefa70a7f0c">3e0237472e7de100265f400bc6d65aefa70a7f0c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   76be69b8dbd7c2a62b530f0e6236c910aed857c4
+   253798c2f590a4a5661531982d2b3c82c9ab0d4e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/76be69b8dbd7c2a62b530f0e6236c910aed857c4">
+    <a href="/chromium/src/+log/253798c2f590a4a5661531982d2b3c82c9ab0d4e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/76be69b8dbd7c2a62b530f0e6236c910aed857c4.tar.gz">
+    <a href="/chromium/src/+archive/253798c2f590a4a5661531982d2b3c82c9ab0d4e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mihai Sardarescu &lt;msarda@google.com&gt;
+   Bartek Nowierski &lt;bartekn@chromium.org&gt;
   </td>
   <td>
-   Mon Jan 11 14:05:09 2021
+   Mon Jan 11 15:05:55 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jan 11 14:05:09 2021
+   Mon Jan 11 15:05:55 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/76be69b8dbd7c2a62b530f0e6236c910aed857c4/">
-    6df661528e217921b02d4f3188965b5b2834b879
+   <a href="/chromium/src/+/253798c2f590a4a5661531982d2b3c82c9ab0d4e/">
+    3eb9feda09503e1d605ec80d880779324ecb4303
    </a>
   </td>
  </tr>
@@ -166,38 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/76be69b8dbd7c2a62b530f0e6236c910aed857c4%5E">
-    78ea2c1bec790fd43d3860d22e8fad64b9e23aec
+   <a href="/chromium/src/+/253798c2f590a4a5661531982d2b3c82c9ab0d4e%5E">
+    90e19f6307de0109a962cb046d4b737cb80a35b0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/76be69b8dbd7c2a62b530f0e6236c910aed857c4%5E%21/">
+    <a href="/chromium/src/+/253798c2f590a4a5661531982d2b3c82c9ab0d4e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Convert ios/chrome/* code to OnPrimaryAccountChanged()
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PA: Remove DCHECK from AllocFlagsNoHooks-&gt;PartitionRefCountPointer path
 
-Methods OnPrimaryAccountSet/Cleared are deprecated. This CL changes
-these calls to OnPrimaryAccountChanged().
+If GigaCage isn't enabled, this DCHECK will get triggered:
+AllocFlagsNoHooks-&gt;PartitionRefCountPointer-&gt;DCheckGetSlotOffsetIsZero-&gt;
+-&gt;PartitionAllocGetSlotOffset-&gt;
+-&gt;DCheckIfManagedByPartitionAllocNormalBuckets
 
-As on iOS, the user cannot be signed with a primary account at
-ConsentLevel::kNotRequired (on iOS, setting a primary account requires
-the user to go through the sync consent), the migration is defensive
-and DCHECKs that the OnPrimaryAccountChanged() are always fired for
-primary account changes at sync level.
+GigaCage isn't needed to set up PartitionRefCount. It's only needed to
+easily detect from BackupRefPtr code if PartitionRefCount is available,
+but this won't be an issue because BackupRefPtr is disabled when
+GigaCage isn't needed.
 
-Bug: 1158855
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I071545f01f2a984a365d563997997873d75fd86d">I071545f01f2a984a365d563997997873d75fd86d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2617881">https://chromium-review.googlesource.com/c/chromium/src/+/2617881</a>
-Auto-Submit: Mihai Sardarescu &lt;msarda@chromium.org&gt;
-Commit-Queue: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
-Reviewed-by: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
-Reviewed-by: Tanmoy Mollik &lt;triploblastic@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#842020}
+Bug: 1073933
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaea2781d207e9534293a1b3dd57dd6c42a422ed7">Iaea2781d207e9534293a1b3dd57dd6c42a422ed7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2620922">https://chromium-review.googlesource.com/c/chromium/src/+/2620922</a>
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Commit-Queue: Kentaro Hara &lt;haraken@chromium.org&gt;
+Commit-Queue: Bartek Nowierski &lt;bartekn@chromium.org&gt;
+Auto-Submit: Bartek Nowierski &lt;bartekn@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#842036}
 </pre>
 
 </body>
