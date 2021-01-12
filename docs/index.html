@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/842417/"> 842417</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3eaf0a3e1390add999bb2765db3a140ff8dc65e1">3eaf0a3e1390add999bb2765db3a140ff8dc65e1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/842430/"> 842430</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7d07fcaeb9232b1bdf696db09d58e0c530d4a531">7d07fcaeb9232b1bdf696db09d58e0c530d4a531</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/842430/">842430</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7d07fcaeb9232b1bdf696db09d58e0c530d4a531">7d07fcaeb9232b1bdf696db09d58e0c530d4a531</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/842444/">842444</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6313de4b6d9af6a105e47ec86173cab0fbef1b3b">6313de4b6d9af6a105e47ec86173cab0fbef1b3b</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3eaf0a3e1390add999bb2765db3a140ff8dc65e1
+   7d07fcaeb9232b1bdf696db09d58e0c530d4a531
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3eaf0a3e1390add999bb2765db3a140ff8dc65e1">
+    <a href="/chromium/src/+log/7d07fcaeb9232b1bdf696db09d58e0c530d4a531">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3eaf0a3e1390add999bb2765db3a140ff8dc65e1.tar.gz">
+    <a href="/chromium/src/+archive/7d07fcaeb9232b1bdf696db09d58e0c530d4a531.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Black &lt;dmblack@google.com&gt;
+   Matt Falkenhagen &lt;falken@chromium.org&gt;
   </td>
   <td>
-   Tue Jan 12 07:15:43 2021
+   Tue Jan 12 08:18:38 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 12 07:15:43 2021
+   Tue Jan 12 08:18:38 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3eaf0a3e1390add999bb2765db3a140ff8dc65e1/">
-    d39d1c713463df400c3a5ccf406dcca2d9702b16
+   <a href="/chromium/src/+/7d07fcaeb9232b1bdf696db09d58e0c530d4a531/">
+    76b7913418e2d1f9254d91bbc3cc7bc4fd39dfda
    </a>
   </td>
  </tr>
@@ -166,33 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3eaf0a3e1390add999bb2765db3a140ff8dc65e1%5E">
-    c3e4f3586c3bc9c2937ab74bfbead1583f78a92c
+   <a href="/chromium/src/+/7d07fcaeb9232b1bdf696db09d58e0c530d4a531%5E">
+    db11bed96e13025f1902643065585f6caffb4871
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3eaf0a3e1390add999bb2765db3a140ff8dc65e1%5E%21/">
+    <a href="/chromium/src/+/7d07fcaeb9232b1bdf696db09d58e0c530d4a531%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Support holding space commands in Files app recents.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "service worker: Simplify main resource "handler" &amp; "interceptor" (3/3)"
 
-Previously holding space commands were not enabled for recents sections
-of the Files app. Now, holding space commands are enabled provided that
-the selection of entries contains entries from supported volumes.
+This is a reland of f4b585788d8604a76f23a5e89a4985cb8151feb5
 
-Per UX recommendation, entries from unsupported volumes are ignored
-with respect to command execution.
+The fix is to add an early return of null `handle_` in
+MaybeCreateSubresourceLoaderParams() which is a weak ptr.
+The comment for `handle_` explains that for workers it can
+be destroyed before the interceptor, because
+{Dedicated,Shared}WorkerHost can be destroyed during loading.
+Also change WorkerScriptLoader to early return when the host is
+already destroyed, to avoid unexpected behavior like going to
+network instead of the service worker when it should.
 
-Bug: 1160933
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaccb0a756c4ec07c301f335fc3f5468f9a6d7a17">Iaccb0a756c4ec07c301f335fc3f5468f9a6d7a17</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2623175">https://chromium-review.googlesource.com/c/chromium/src/+/2623175</a>
-Commit-Queue: David Black &lt;dmblack@google.com&gt;
-Reviewed-by: Luciano Pacheco &lt;lucmult@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#842417}
+Original change's description:
+&gt; service worker: Simplify main resource "handler" &amp; "interceptor" (3/3)
+&gt;
+&gt; Bug: 1138155
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iafb12ae9de19e68e637e7fb990bb8439ec4df848">Iafb12ae9de19e68e637e7fb990bb8439ec4df848</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2602307">https://chromium-review.googlesource.com/c/chromium/src/+/2602307</a>
+&gt; Reviewed-by: Asami Doi &lt;asamidoi@chromium.org&gt;
+&gt; Commit-Queue: Matt Falkenhagen &lt;falken@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/master@{#842305}
+
+Bug: 1138155
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0b76d1cc9f0365d4bb0f063e1b42e5cb96d6d11d">I0b76d1cc9f0365d4bb0f063e1b42e5cb96d6d11d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2623609">https://chromium-review.googlesource.com/c/chromium/src/+/2623609</a>
+Reviewed-by: Asami Doi &lt;asamidoi@chromium.org&gt;
+Commit-Queue: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#842430}
 </pre>
 
 </body>
