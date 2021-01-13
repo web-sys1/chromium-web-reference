@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/843004/"> 843004</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e84179dd89b27257edcc11638217b3e05d2be665">e84179dd89b27257edcc11638217b3e05d2be665</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/843060/"> 843060</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6f4f7fdc6e82249604cd1c0edcbc6ae34536fac9">6f4f7fdc6e82249604cd1c0edcbc6ae34536fac9</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/843040/">843040</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b8888319ef084b0d75ee23034cfdfb67a99016fe">b8888319ef084b0d75ee23034cfdfb67a99016fe</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/843073/">843073</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f9992b7e457fc6011f31b6b6ecc59d0cb03aae73">f9992b7e457fc6011f31b6b6ecc59d0cb03aae73</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e84179dd89b27257edcc11638217b3e05d2be665
+   6f4f7fdc6e82249604cd1c0edcbc6ae34536fac9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e84179dd89b27257edcc11638217b3e05d2be665">
+    <a href="/chromium/src/+log/6f4f7fdc6e82249604cd1c0edcbc6ae34536fac9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e84179dd89b27257edcc11638217b3e05d2be665.tar.gz">
+    <a href="/chromium/src/+archive/6f4f7fdc6e82249604cd1c0edcbc6ae34536fac9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Bence Béky &lt;bnc@chromium.org&gt;
+   Wenyu Fu &lt;wenyufu@google.com&gt;
   </td>
   <td>
-   Wed Jan 13 14:36:16 2021
+   Wed Jan 13 17:18:45 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jan 13 14:36:16 2021
+   Wed Jan 13 17:18:45 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e84179dd89b27257edcc11638217b3e05d2be665/">
-    95624de5204427bfca43aac77e0c1cf5c2542d98
+   <a href="/chromium/src/+/6f4f7fdc6e82249604cd1c0edcbc6ae34536fac9/">
+    2067cf7ec6f3673e428c8e5a89d8ecbc2dbdc46f
    </a>
   </td>
  </tr>
@@ -166,34 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e84179dd89b27257edcc11638217b3e05d2be665%5E">
-    db1d912ffe112d0077f2ea15dbb739c67e279220
+   <a href="/chromium/src/+/6f4f7fdc6e82249604cd1c0edcbc6ae34536fac9%5E">
+    b4e6a9fcc832e8cc74757e6b9fcc76675c98e739
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e84179dd89b27257edcc11638217b3e05d2be665%5E%21/">
+    <a href="/chromium/src/+/6f4f7fdc6e82249604cd1c0edcbc6ae34536fac9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Parse SETTINGS_DEPRECATE_HTTP2_PRIORITIES.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[FirstRun] Waiting until policy loaded before leaving welcome page
 
-Implement logic for
-<a href="https://httpwg.org/http-extensions/draft-ietf-httpbis-priority.html#name-disabling-http-2-priorities">https://httpwg.org/http-extensions/draft-ietf-httpbis-priority.html#name-disabling-http-2-priorities</a>
-in SpdySession, adding accessors for HTTP/2 priorities and
-PRIORITY_UPDATE frame.  Add |enable_priority_update| knob to
+Wait on the welcome page if policy exists on device. This applies to all
+the FRE scenarios, and paves the road for the following pages to load
+enterprise policies without additional logics to wait on loading.
 
-SpdySessionDependencies via SpdySessionPool to SpdySession.  Default to
-current behavior both in tests and production.
+This change also makes |BrowserSignin| policy works as expected. First
+run fragments will be added to pager after policy services is
+initialized,  so SignInManager#isSyncAllowed will be populated with
+value that matches the policy setting. If the |BrowserSignin| is set to
+disabled, the sign in fragment will not be added into FRE.
 
-HttpNetworkSession: :Params and plumb it through from
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iada98d7d692b3ce10e37cd9681ba16a99d564237">Iada98d7d692b3ce10e37cd9681ba16a99d564237</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2616834">https://chromium-review.googlesource.com/c/chromium/src/+/2616834</a>
-Reviewed-by: Renjie Tang &lt;renjietang@chromium.org&gt;
-Commit-Queue: Bence Béky &lt;bnc@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#843004}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I88942f50093bc77432981ebc78042d777bb0bcaf">I88942f50093bc77432981ebc78042d777bb0bcaf</a>
+Bug: 1155715
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2601329">https://chromium-review.googlesource.com/c/chromium/src/+/2601329</a>
+Commit-Queue: Wenyu Fu &lt;wenyufu@chromium.org&gt;
+Reviewed-by: Theresa  &lt;twellington@chromium.org&gt;
+Reviewed-by: Steven Holte &lt;holte@chromium.org&gt;
+Reviewed-by: Sky Malice &lt;skym@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#843060}
 </pre>
 
 </body>
