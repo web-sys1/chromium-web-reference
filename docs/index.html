@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/843441/"> 843441</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b6f3b558e066f8ddb125983f636ee0342d09ce10">b6f3b558e066f8ddb125983f636ee0342d09ce10</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/843467/"> 843467</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/17c11c4c1eaaef9ad2478cf0a28fbe8735033b61">17c11c4c1eaaef9ad2478cf0a28fbe8735033b61</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/843456/">843456</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b6f3b558e066f8ddb125983f636ee0342d09ce10
+   17c11c4c1eaaef9ad2478cf0a28fbe8735033b61
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b6f3b558e066f8ddb125983f636ee0342d09ce10">
+    <a href="/chromium/src/+log/17c11c4c1eaaef9ad2478cf0a28fbe8735033b61">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b6f3b558e066f8ddb125983f636ee0342d09ce10.tar.gz">
+    <a href="/chromium/src/+archive/17c11c4c1eaaef9ad2478cf0a28fbe8735033b61.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Colin Blundell &lt;blundell@chromium.org&gt;
+   Daniel Hosseinian &lt;dhoss@chromium.org&gt;
   </td>
   <td>
-   Thu Jan 14 08:43:00 2021
+   Thu Jan 14 10:02:14 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 14 08:43:00 2021
+   Thu Jan 14 10:02:14 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b6f3b558e066f8ddb125983f636ee0342d09ce10/">
-    9cb8e9fe9ad2b590f704f2b1a802728b5dbaee77
+   <a href="/chromium/src/+/17c11c4c1eaaef9ad2478cf0a28fbe8735033b61/">
+    e3b352e0dd6f9cf420ebd723a88c573dd159bd55
    </a>
   </td>
  </tr>
@@ -166,56 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b6f3b558e066f8ddb125983f636ee0342d09ce10%5E">
-    3c36515ae6fb85f62c4872b370cd0781f284e414
+   <a href="/chromium/src/+/17c11c4c1eaaef9ad2478cf0a28fbe8735033b61%5E">
+    c91913f09af50e2634fda0fa4e88d479b4032ba6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b6f3b558e066f8ddb125983f636ee0342d09ce10%5E%21/">
+    <a href="/chromium/src/+/17c11c4c1eaaef9ad2478cf0a28fbe8735033b61%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Safe Browsing] Pull out timeout tracking of token fetches for reuse
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PDF Viewer: Put document properties behind a flag and disable by default
 
-This CL separates separates the mechanism via which
-SafeBrowsingPrimaryAccountTokenFetcher fetches access tokens and the
-mechanisms via which it tracks and responds to ongoing token fetches,
-moving the latter into a new SafeBrowsingTokenFetchTracker helper class
-for reuse by WebLayer. This class includes the following:
+Document properties isn't ready to ship since some property values are
+still missing. Placing behind a feature flag for now that can be enabled
+on chrome://flags.
 
-- Tracking of ongoing access token fetch requests coming from the client
-  of SafeBrowsingTokenFetcher, responding to these requests when
-  notified that a given access token has been fetched, and gating these
-  requests on a given time threshold (responding with an empty access
-  token if a request times out)
-- Responding to all active token requests with an empty access token on
-  destruction
-
-This CL also adds unittests of SafeBrowsingTokenFetchTracker.
-
-Via this helper class, WebLayer will be able to share the key
-functionality of gating safe browsing access token fetches on a timeout
-rather than duplicating this functionality and risking divergence over
-time.
-
-The only subtlety is the behavior on token fetch timeout:
-SafeBrowsingPrimaryAccountTokenFetcher needs to be notified in addition
-to its client so that the former can destroy the corresponding
-AccessTokenFetcher. To facilitate this,
-SafeBrowsingTokenFetchTracker::StartTrackingTokenFetch() takes in both
-the SafeBrowsingTokenFetcher::Callback that the client passed in and a
-callback to be invoked on timeout, via which its owner can clean up any
-state associated with the request.
-
-Bug: 1080748
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I79bb83096cc2094c7cf9916eccf382271a5f46a5">I79bb83096cc2094c7cf9916eccf382271a5f46a5</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2624630">https://chromium-review.googlesource.com/c/chromium/src/+/2624630</a>
-Commit-Queue: Colin Blundell &lt;blundell@chromium.org&gt;
-Reviewed-by: Xinghui Lu &lt;xinghuilu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#843441}
+Bug: 93619
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I064ac07972d58d244a84905bf4a21896978c7f95">I064ac07972d58d244a84905bf4a21896978c7f95</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2628038">https://chromium-review.googlesource.com/c/chromium/src/+/2628038</a>
+Commit-Queue: Daniel Hosseinian &lt;dhoss@chromium.org&gt;
+Commit-Queue: dpapad &lt;dpapad@chromium.org&gt;
+Reviewed-by: dpapad &lt;dpapad@chromium.org&gt;
+Auto-Submit: Daniel Hosseinian &lt;dhoss@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#843467}
 </pre>
 
 </body>
