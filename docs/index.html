@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/843350/"> 843350</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4d2c8d0046e653cf6d183466f8af095d0b063657">4d2c8d0046e653cf6d183466f8af095d0b063657</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/843377/"> 843377</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1bba741f920278b78341175ef888c19a6affd664">1bba741f920278b78341175ef888c19a6affd664</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/843356/">843356</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4d2c8d0046e653cf6d183466f8af095d0b063657
+   1bba741f920278b78341175ef888c19a6affd664
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4d2c8d0046e653cf6d183466f8af095d0b063657">
+    <a href="/chromium/src/+log/1bba741f920278b78341175ef888c19a6affd664">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4d2c8d0046e653cf6d183466f8af095d0b063657.tar.gz">
+    <a href="/chromium/src/+archive/1bba741f920278b78341175ef888c19a6affd664.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Clark DuVall &lt;cduvall@chromium.org&gt;
+   Miguel Casas &lt;mcasas@chromium.org&gt;
   </td>
   <td>
-   Thu Jan 14 03:05:41 2021
+   Thu Jan 14 04:05:16 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 14 03:05:41 2021
+   Thu Jan 14 04:05:16 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4d2c8d0046e653cf6d183466f8af095d0b063657/">
-    1994a572213e00824fcec96e7f8ba53beef338ac
+   <a href="/chromium/src/+/1bba741f920278b78341175ef888c19a6affd664/">
+    162f530fc489ba1e947bf21adc0f2e692e5af613
    </a>
   </td>
  </tr>
@@ -166,30 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4d2c8d0046e653cf6d183466f8af095d0b063657%5E">
-    efe842911ea84db01426f90763cdadd85f1bf16d
+   <a href="/chromium/src/+/1bba741f920278b78341175ef888c19a6affd664%5E">
+    cdcaa4a75c1def0faf168622fbc6fa9d2b538f0b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4d2c8d0046e653cf6d183466f8af095d0b063657%5E%21/">
+    <a href="/chromium/src/+/1bba741f920278b78341175ef888c19a6affd664%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Attempt to deflake SplitPreloaderTest
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media::V4L2VideoDecoder: introduce kMaxNumOfInstances
 
-I wasn't able to repro the flake locally, but this is my best guess at a
-fix.
+MS Teams on ARM-based ChromeOS with the new VideoDecoder (not launched)
+tries to create many direct video decoders (I see e.g. 42 on kukui);
+some succeed but eventually they don't and the tab ends up hitting an
+OOM. The process is not well understood and needs further debugging.
 
-Bug: 1166286
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2d229d66ea0f16f2c2f959642cdc5baf1598fdef">I2d229d66ea0f16f2c2f959642cdc5baf1598fdef</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2628016">https://chromium-review.googlesource.com/c/chromium/src/+/2628016</a>
-Commit-Queue: Clark DuVall &lt;cduvall@chromium.org&gt;
-Auto-Submit: Clark DuVall &lt;cduvall@chromium.org&gt;
-Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#843350}
+This CL replicates the kMaxNumOfInstances [1] logic from the legacy
+VideoDecodeAccelerator to the new direct VideoDecoder, so the new
+behaves like the old, allowing us to unblock the linked bug.
+
+[1] <a href="https://source.chromium.org/search?q=kMaxNumOfInstances&amp;sq=&amp;ss=chromium%2Fchromium%2Fsrc:media%2Fgpu%2Fv4l2%2F">https://source.chromium.org/search?q=kMaxNumOfInstances&amp;sq=&amp;ss=chromium%2Fchromium%2Fsrc:media%2Fgpu%2Fv4l2%2F</a>
+
+Landing this provision on Kukui was already discussed on
+.
+
+https: //chromium-review.googlesource.com/c/chromium/src/+/2372926/10#message-ca9039b5fb3eb9e1fbcd9701ddc476b257f088d6
+Bug: b/170870476
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ice0d9f16e7ca0063c03cccdafe54e29ad5602cd0">Ice0d9f16e7ca0063c03cccdafe54e29ad5602cd0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2628069">https://chromium-review.googlesource.com/c/chromium/src/+/2628069</a>
+Commit-Queue: Miguel Casas &lt;mcasas@chromium.org&gt;
+Reviewed-by: Andres Calderon Jaramillo &lt;andrescj@chromium.org&gt;
+Reviewed-by: Fritz Koenig &lt;frkoenig@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#843377}
 </pre>
 
 </body>
