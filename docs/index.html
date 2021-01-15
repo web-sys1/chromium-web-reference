@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/844046/"> 844046</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/87c6fe063e886346f886b37436d99dc876c56700">87c6fe063e886346f886b37436d99dc876c56700</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/844053/"> 844053</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7edae826dd7d6bda5c75337285fd2d9b1f265336">7edae826dd7d6bda5c75337285fd2d9b1f265336</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/844046/">844046</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/87c6fe063e886346f886b37436d99dc876c56700">87c6fe063e886346f886b37436d99dc876c56700</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/844058/">844058</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/58ee63f4cfa8f9efec0f745d8e1579cdeb826f5f">58ee63f4cfa8f9efec0f745d8e1579cdeb826f5f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   87c6fe063e886346f886b37436d99dc876c56700
+   7edae826dd7d6bda5c75337285fd2d9b1f265336
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/87c6fe063e886346f886b37436d99dc876c56700">
+    <a href="/chromium/src/+log/7edae826dd7d6bda5c75337285fd2d9b1f265336">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/87c6fe063e886346f886b37436d99dc876c56700.tar.gz">
+    <a href="/chromium/src/+archive/7edae826dd7d6bda5c75337285fd2d9b1f265336.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Aaron Leventhal &lt;aleventhal@google.com&gt;
+   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jan 15 13:08:11 2021
+   Fri Jan 15 14:17:49 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jan 15 13:08:11 2021
+   Fri Jan 15 14:17:49 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/87c6fe063e886346f886b37436d99dc876c56700/">
-    10abc01309903c4b3334023322f285cf8d20c2e7
+   <a href="/chromium/src/+/7edae826dd7d6bda5c75337285fd2d9b1f265336/">
+    15ccfc413b20d3c9ef878c3d5564097422bebffe
    </a>
   </td>
  </tr>
@@ -166,59 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/87c6fe063e886346f886b37436d99dc876c56700%5E">
-    9308966e2cb2f59ec84c9d28f70803ace4ec05ec
+   <a href="/chromium/src/+/7edae826dd7d6bda5c75337285fd2d9b1f265336%5E">
+    f0d6de792a1d6c39624481bcfd60294c932726f5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/87c6fe063e886346f886b37436d99dc876c56700%5E%21/">
+    <a href="/chromium/src/+/7edae826dd7d6bda5c75337285fd2d9b1f265336%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Every child needs a parent
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Linux PGO Profile
 
-Before this CL, the following problems with parent traversal existed:
-1. ComputeParent() was called many times before a parent was cached
-2. It's technically possible for ComputeParent() to provide a
-   different result than the object that added a child, although
-   no known cases are identified, it's dangerous to have complex
-   asymmetrical code.
-3. Several methods such as Init(), UpdateCachedValueIfNeeded() and
-   AddChildren() sometimes ended up reentering on the same object.
+Roll Chrome Linux PGO profile from chrome-linux-master-1610690109-4d1151c59ad39afee419f9fccf0374e5470965d9.profdata to chrome-linux-master-1610711423-18f006eac9d09987835ac3798b0f3a285cb6646c.profdata
 
-This CL addresses these issues by:
-1. Passing in the correct parent when a child is being added
-2. Caching the parent when an object is initialized. Therefore
-   ComputeParent() is only called once per object
-3. Requiring that all non-root objects have a parent (DCHECK)
-4. Do not allow Init(), UpdateCachedValueIfNeeded() or
-   AddChildren() to reenter on the same object (DCHECK)
+If this roll has caused a breakage, revert this CL and stop the roller
+using the controls here:
+<a href="https://autoroll.skia.org/r/pgo-linux-chromium">https://autoroll.skia.org/r/pgo-linux-chromium</a>
+Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
+is aware of the problem.
 
-In addition, the code is simplified by removing several
-parent-related methods that are no longer necessary, and
-by reducing the number of member variables related to ignored state.
-The ignored changes are from a previous CL that was reverted
-due to an incorrect assumption that a null parent meant that
-it was a first-time call to UpdateCachedValuesIfNeeded().
+To report a problem with the AutoRoller itself, please file a bug:
+<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
 
-Clear improvements in a number of test results, including:
-- children-changed-only-on-ancestor.html (remove redundant events)
-- aria-owns-grid-expected.txt (now passes)
-- canvas-select-row-expected.txt (now passes)
-- 7.5% improvement in perf_tests for
-  SendPendingAccessibilityEvents + ProcessDeferredAccessibilityEvents
+Documentation for the AutoRoller is here:
+<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
 
-Bug: None
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I38478dca9e5c87645cbbfd35d8e4bbad6e29489a">I38478dca9e5c87645cbbfd35d8e4bbad6e29489a</a>
-Cq-Do-Not-Cancel-Tryjobs: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2528573">https://chromium-review.googlesource.com/c/chromium/src/+/2528573</a>
-Commit-Queue: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
-Reviewed-by: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
-Reviewed-by: Alice Boxhall &lt;aboxhall@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#844046}
+Cq-Include-Trybots: luci.chrome.try:linux-chrome
+Tbr: pgo-profile-sheriffs@google.com
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icb30c044b5de61cfd67fe466806995658c2d5b87">Icb30c044b5de61cfd67fe466806995658c2d5b87</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2633165">https://chromium-review.googlesource.com/c/chromium/src/+/2633165</a>
+Reviewed-by: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/master@{#844053}
 </pre>
 
 </body>
