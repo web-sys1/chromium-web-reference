@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/843846/"> 843846</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/72367a889a72b0346aec07e4f82ebb5fd1f207c7">72367a889a72b0346aec07e4f82ebb5fd1f207c7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/843892/"> 843892</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4fd38d8662aa141fb586140088b85042f0f1089b">4fd38d8662aa141fb586140088b85042f0f1089b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/843832/">843832</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a61e8610eae005e582b5bc35995e8759d43e3df0">a61e8610eae005e582b5bc35995e8759d43e3df0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/843917/">843917</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ba8ae9eaa06b5a885d43b66af1ed1a9c21101d04">ba8ae9eaa06b5a885d43b66af1ed1a9c21101d04</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   72367a889a72b0346aec07e4f82ebb5fd1f207c7
+   4fd38d8662aa141fb586140088b85042f0f1089b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/72367a889a72b0346aec07e4f82ebb5fd1f207c7">
+    <a href="/chromium/src/+log/4fd38d8662aa141fb586140088b85042f0f1089b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/72367a889a72b0346aec07e4f82ebb5fd1f207c7.tar.gz">
+    <a href="/chromium/src/+archive/4fd38d8662aa141fb586140088b85042f0f1089b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Salvador Guerrero &lt;salg@google.com&gt;
+   Liquan (Max) Gu &lt;maxlg@chromium.org&gt;
   </td>
   <td>
-   Fri Jan 15 01:12:13 2021
+   Fri Jan 15 02:14:51 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jan 15 01:12:13 2021
+   Fri Jan 15 02:14:51 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/72367a889a72b0346aec07e4f82ebb5fd1f207c7/">
-    bfabf9b4e44fd0f973c75b33e213bd467f8ce621
+   <a href="/chromium/src/+/4fd38d8662aa141fb586140088b85042f0f1089b/">
+    d4fd9ff23511517a4ef3933fd880dd446f90470c
    </a>
   </td>
  </tr>
@@ -166,33 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/72367a889a72b0346aec07e4f82ebb5fd1f207c7%5E">
-    bca5f7bea78e8da83785a3e7da6c7a7d828a5dfc
+   <a href="/chromium/src/+/4fd38d8662aa141fb586140088b85042f0f1089b%5E">
+    879aec0205686bab42426410226385457c714057
    </a>
    <span>
     [
-    <a href="/chromium/src/+/72367a889a72b0346aec07e4f82ebb5fd1f207c7%5E%21/">
+    <a href="/chromium/src/+/4fd38d8662aa141fb586140088b85042f0f1089b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Removed per database params in leveldb_proto experiment
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Android][Payments] Throttle payment handler pages on mime-types
 
-This CL removes the option of setting up migrations for each database
-individually, now if the migration experiment is on all databases will
-be migrated (except by those in a blocklist).
+Motivation:
+Now, payment handler supports pages of any mime type on Android. This
+exposes payment handlers to the vulnerabilities of some less maintained
+mime-types. In order to make payment handlers safer to use, this CL
+limits the mime types of payment handlers on Android by allowlisting.
 
-This makes it simpler to launch the experiment to stable, as we will no
-longer need to specify each database name on the experiment params.
+Changes:
+* Moved the WebContents user data setting logic into
+  markPaymentHandlerWebContents() to
+  payment_handler_navigation_throttle.cc.
+* Let both Android &amp; desktop's payment handler coordinators use the
+  method to annotate a payment handler web-contents.
+* Moved the throttle from //chrome/browser to //components to make it
+  more convenient to depend on.
 
-Bug: 870813
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I00259f5ceeae14790a40546d9fab064eac1aea29">I00259f5ceeae14790a40546d9fab064eac1aea29</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2630734">https://chromium-review.googlesource.com/c/chromium/src/+/2630734</a>
-Reviewed-by: ssid &lt;ssid@chromium.org&gt;
-Commit-Queue: Salvador Guerrero &lt;salg@google.com&gt;
-Cr-Commit-Position: refs/heads/master@{#843846}
+Bug: 1165367, 1159267
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibc75bad9b47b2586e4222c2556c4bf6fb6bd28cd">Ibc75bad9b47b2586e4222c2556c4bf6fb6bd28cd</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2614918">https://chromium-review.googlesource.com/c/chromium/src/+/2614918</a>
+Commit-Queue: Liquan (Max) Gu &lt;maxlg@chromium.org&gt;
+Reviewed-by: Rouslan Solomakhin &lt;rouslan@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#843892}
 </pre>
 
 </body>
