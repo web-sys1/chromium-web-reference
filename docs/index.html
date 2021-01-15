@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/844036/"> 844036</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7565c660528f5ca629346cbd49af78275a4c7f89">7565c660528f5ca629346cbd49af78275a4c7f89</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/844046/"> 844046</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/87c6fe063e886346f886b37436d99dc876c56700">87c6fe063e886346f886b37436d99dc876c56700</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/844038/">844038</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7565c660528f5ca629346cbd49af78275a4c7f89
+   87c6fe063e886346f886b37436d99dc876c56700
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7565c660528f5ca629346cbd49af78275a4c7f89">
+    <a href="/chromium/src/+log/87c6fe063e886346f886b37436d99dc876c56700">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7565c660528f5ca629346cbd49af78275a4c7f89.tar.gz">
+    <a href="/chromium/src/+archive/87c6fe063e886346f886b37436d99dc876c56700.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Aaron Leventhal &lt;aleventhal@google.com&gt;
   </td>
   <td>
-   Fri Jan 15 11:50:23 2021
+   Fri Jan 15 13:08:11 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jan 15 11:50:23 2021
+   Fri Jan 15 13:08:11 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7565c660528f5ca629346cbd49af78275a4c7f89/">
-    6be167c067dbfc6a2c50ce0c1ad69a5dbb5195da
+   <a href="/chromium/src/+/87c6fe063e886346f886b37436d99dc876c56700/">
+    10abc01309903c4b3334023322f285cf8d20c2e7
    </a>
   </td>
  </tr>
@@ -166,39 +166,59 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7565c660528f5ca629346cbd49af78275a4c7f89%5E">
-    f1ba2cf0701225ad807d7a5669d8f411aa3e81d4
+   <a href="/chromium/src/+/87c6fe063e886346f886b37436d99dc876c56700%5E">
+    9308966e2cb2f59ec84c9d28f70803ace4ec05ec
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7565c660528f5ca629346cbd49af78275a4c7f89%5E%21/">
+    <a href="/chromium/src/+/87c6fe063e886346f886b37436d99dc876c56700%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Fuchsia SDK from 0.20210114.3.1 to 0.20210115.0.1
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Every child needs a parent
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/fuchsia-sdk-chromium-autoroll">https://autoroll.skia.org/r/fuchsia-sdk-chromium-autoroll</a>
-Please CC chrome-fuchsia-gardener@grotations.appspotmail.com on the revert to ensure that a human
-is aware of the problem.
+Before this CL, the following problems with parent traversal existed:
+1. ComputeParent() was called many times before a parent was cached
+2. It's technically possible for ComputeParent() to provide a
+   different result than the object that added a child, although
+   no known cases are identified, it's dangerous to have complex
+   asymmetrical code.
+3. Several methods such as Init(), UpdateCachedValueIfNeeded() and
+   AddChildren() sometimes ended up reentering on the same object.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+This CL addresses these issues by:
+1. Passing in the correct parent when a child is being added
+2. Caching the parent when an object is initialized. Therefore
+   ComputeParent() is only called once per object
+3. Requiring that all non-root objects have a parent (DCHECK)
+4. Do not allow Init(), UpdateCachedValueIfNeeded() or
+   AddChildren() to reenter on the same object (DCHECK)
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
+In addition, the code is simplified by removing several
+parent-related methods that are no longer necessary, and
+by reducing the number of member variables related to ignored state.
+The ignored changes are from a previous CL that was reverted
+due to an incorrect assumption that a null parent meant that
+it was a first-time call to UpdateCachedValuesIfNeeded().
 
-Cq-Include-Trybots: luci.chromium.try:fuchsia-arm64-cast;luci.chromium.try:fuchsia-deterministic-dbg;luci.chromium.try:fuchsia-x64-cast
-Tbr: chrome-fuchsia-gardener@grotations.appspotmail.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibb45ef20ee6d1328a5fe9946f386bb07659ede50">Ibb45ef20ee6d1328a5fe9946f386bb07659ede50</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2632332">https://chromium-review.googlesource.com/c/chromium/src/+/2632332</a>
-Reviewed-by: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#844036}
+Clear improvements in a number of test results, including:
+- children-changed-only-on-ancestor.html (remove redundant events)
+- aria-owns-grid-expected.txt (now passes)
+- canvas-select-row-expected.txt (now passes)
+- 7.5% improvement in perf_tests for
+  SendPendingAccessibilityEvents + ProcessDeferredAccessibilityEvents
+
+Bug: None
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I38478dca9e5c87645cbbfd35d8e4bbad6e29489a">I38478dca9e5c87645cbbfd35d8e4bbad6e29489a</a>
+Cq-Do-Not-Cancel-Tryjobs: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2528573">https://chromium-review.googlesource.com/c/chromium/src/+/2528573</a>
+Commit-Queue: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
+Reviewed-by: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
+Reviewed-by: Alice Boxhall &lt;aboxhall@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#844046}
 </pre>
 
 </body>
