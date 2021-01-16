@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/844333/"> 844333</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/60e7aba7b0ad80e172f3a2e5865b69210d6cf58f">60e7aba7b0ad80e172f3a2e5865b69210d6cf58f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/844347/"> 844347</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0416c431857b138a7da67a50672dc795ad27aa46">0416c431857b138a7da67a50672dc795ad27aa46</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/844335/">844335</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   60e7aba7b0ad80e172f3a2e5865b69210d6cf58f
+   0416c431857b138a7da67a50672dc795ad27aa46
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/60e7aba7b0ad80e172f3a2e5865b69210d6cf58f">
+    <a href="/chromium/src/+log/0416c431857b138a7da67a50672dc795ad27aa46">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/60e7aba7b0ad80e172f3a2e5865b69210d6cf58f.tar.gz">
+    <a href="/chromium/src/+archive/0416c431857b138a7da67a50672dc795ad27aa46.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   manukh &lt;manukh@chromium.org&gt;
+   Denis Nikitin &lt;denik@chromium.org&gt;
   </td>
   <td>
-   Sat Jan 16 01:57:54 2021
+   Sat Jan 16 02:55:51 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Jan 16 01:57:54 2021
+   Sat Jan 16 02:55:51 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/60e7aba7b0ad80e172f3a2e5865b69210d6cf58f/">
-    e7ec91badb085bcd86941209e19a85023a69d5ac
+   <a href="/chromium/src/+/0416c431857b138a7da67a50672dc795ad27aa46/">
+    820f111cf9d06962751f290fe25b1ee305f5fc5e
    </a>
   </td>
  </tr>
@@ -166,62 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/60e7aba7b0ad80e172f3a2e5865b69210d6cf58f%5E">
-    16d887ec3bdd3574bd4c38d85a4136c528f6becc
+   <a href="/chromium/src/+/0416c431857b138a7da67a50672dc795ad27aa46%5E">
+    9677e35ef08c65a786f021c70e4aef7dca9e91f9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/60e7aba7b0ad80e172f3a2e5865b69210d6cf58f%5E%21/">
+    <a href="/chromium/src/+/0416c431857b138a7da67a50672dc795ad27aa46%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[omnibox] [rich-autocompletion] Don't swap |fill_into_edit|.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Extend the targets of debug_fission with ThinLTO
 
-Traditional AutcompleteMatch's set their |fill_into_edit| to their URLs.
+ThinLTO requires -gsplit-dwarf in ldflags.
+The flag was passed only in Android.
 
-With rich autocompletion before this CL, when the input matched the
-title, |fill_into_edit| would instead be set to the title, and
-|fill_into_edit_additional_text| would contain the URL and be
-displayed in a views::Label adjacent to the omnibox. E.g., for the input
-'ti', the location bar would display 'ti[tle] (url.com)'.
+Pass -gsplit-dwarf to ldflags with all targets except NaCL and Apple.
 
-To avoid awkward cursor logic, only the omnibox is editable, and the
-adjacent label containing |fill_into_edit_additional_text| is not. This
-made it difficult to edit the suggestion URL before navigating to it
-when the user input matched the suggestion title.
-
-Therefore, this CL reverts to the original behavior of having
-|fill_into_edit| be the URL. Specifically:
-  1) No longer sets |fill_into_edit| to the suggestion title when the
-input matches the title.
-  2) Renames |fill_into_edit_additional_text| to |additional_text| since
-it is no longer used when suggestion selection changes.
-  3) Removes the |swapped_fill_into_edit| field as it would always be
-false now.
-  4) No longer sends the |additional_text| in view methods for selection
-changes since we only want to display the additional text for the
-default suggestions.
-  5) Removes the |kRichAutocompletionShowTitlesParam| param as it would
-require effort to make it compattible with the above changes, and
-fishfooders concurred it's not promising.
-
-This has the added side benefit of making |fill_into_edit| behavior
-consistent between suggestions that seem the same. I.e., before when
-selecting a suggestion whose title matched the input, sometimes the
-location bar would display 'title (url.com)' and othertimes 'url.com'
-(depending on the input length and whether the match was a shortcut
-match).
-
-
-Bug: 1163356, 1062446
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If42f30d693b7d5204d94c3f21e72662879d8b857">If42f30d693b7d5204d94c3f21e72662879d8b857</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2616973">https://chromium-review.googlesource.com/c/chromium/src/+/2616973</a>
-Commit-Queue: manuk hovanesian &lt;manukh@chromium.org&gt;
-Reviewed-by: Tommy Li &lt;tommycli@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#844333}
+Bug: chromium:1158215
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ica36d0ed0cb3382792b3f21b30af56638faf24ee">Ica36d0ed0cb3382792b3f21b30af56638faf24ee</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2618780">https://chromium-review.googlesource.com/c/chromium/src/+/2618780</a>
+Reviewed-by: Bob Haarman &lt;inglorion@chromium.org&gt;
+Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
+Commit-Queue: Denis Nikitin &lt;denik@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#844347}
 </pre>
 
 </body>
