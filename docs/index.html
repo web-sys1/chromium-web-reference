@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/844659/"> 844659</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1fb49019410544c1183dbf3f15c541fdec7b3929">1fb49019410544c1183dbf3f15c541fdec7b3929</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/844668/"> 844668</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/17a7d1fcce21b4c20023ec0a5e52aedf16dbdf09">17a7d1fcce21b4c20023ec0a5e52aedf16dbdf09</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/844657/">844657</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d9a95af11cb7ec66a6f6263230ee5270db21eb8d">d9a95af11cb7ec66a6f6263230ee5270db21eb8d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/844665/">844665</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/22a0780261c2da2383c32c77266b4f9250320056">22a0780261c2da2383c32c77266b4f9250320056</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1fb49019410544c1183dbf3f15c541fdec7b3929
+   17a7d1fcce21b4c20023ec0a5e52aedf16dbdf09
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1fb49019410544c1183dbf3f15c541fdec7b3929">
+    <a href="/chromium/src/+log/17a7d1fcce21b4c20023ec0a5e52aedf16dbdf09">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1fb49019410544c1183dbf3f15c541fdec7b3929.tar.gz">
+    <a href="/chromium/src/+archive/17a7d1fcce21b4c20023ec0a5e52aedf16dbdf09.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+   Yann Dago &lt;ydago@chromium.org&gt;
   </td>
   <td>
-   Tue Jan 19 04:02:36 2021
+   Tue Jan 19 04:55:43 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 19 04:02:36 2021
+   Tue Jan 19 04:55:43 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1fb49019410544c1183dbf3f15c541fdec7b3929/">
-    c9f97bde6aa625a0f89c3015a0b3ca99fc14c615
+   <a href="/chromium/src/+/17a7d1fcce21b4c20023ec0a5e52aedf16dbdf09/">
+    dd07a267e2d760f95965dbdc9ca78610dab2e98b
    </a>
   </td>
  </tr>
@@ -166,39 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1fb49019410544c1183dbf3f15c541fdec7b3929%5E">
-    00da91bbde3d272afd639260a85db82286138f4b
+   <a href="/chromium/src/+/17a7d1fcce21b4c20023ec0a5e52aedf16dbdf09%5E">
+    c07f11c3792e248f5ebc7102553f921e3ec45439
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1fb49019410544c1183dbf3f15c541fdec7b3929%5E%21/">
+    <a href="/chromium/src/+/17a7d1fcce21b4c20023ec0a5e52aedf16dbdf09%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Implement ui::TransformAnimationCurveAdapter::MaximumScale()
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix wrong function called when sync times out waiting for policies
 
-This ensures that cc will rasterize the animating layer at the maximum
-scale, to avoid
-1. blurriness during scaling-up animations (e.g. scale 1 -&gt; 3),
-2. too big raster scale (wasting memory) during small scale animations
-(e.g. scale 0.1 -&gt; 0.3).
+This fixes the fact that the wrong data was sent to the histogram
+"Sync.Startup.PolicyLoadTimeout" and uses a new histogram named
+"Sync.Startup.PolicyLoadTimeout2" to avoid using the wrong data.
 
-Previously in the above cases, in simple cases (without ancestor
-scales), scale 1 for the layer was used for raterization because
-ui::TransformAnimationCurveAdapter failed to provide the maximum scale
-of animations.
-
-Also remove unused ui::InverseTransformCurveAdapter.
-
-Bug: 1161586
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ieb876bc271c98627bd61370c93e806b44be0b868">Ieb876bc271c98627bd61370c93e806b44be0b868</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2605242">https://chromium-review.googlesource.com/c/chromium/src/+/2605242</a>
-Commit-Queue: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
-Reviewed-by: Robert Flack &lt;flackr@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#844659}
+Bug: 1129065
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaa42e0ede6348f130a8e1e09ea35c2989aaff955">Iaa42e0ede6348f130a8e1e09ea35c2989aaff955</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2629574">https://chromium-review.googlesource.com/c/chromium/src/+/2629574</a>
+Commit-Queue: Yann Dago &lt;ydago@chromium.org&gt;
+Reviewed-by: Caitlin Fischer &lt;caitlinfischer@google.com&gt;
+Reviewed-by: Marc Treib &lt;treib@chromium.org&gt;
+Auto-Submit: Yann Dago &lt;ydago@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#844668}
 </pre>
 
 </body>
