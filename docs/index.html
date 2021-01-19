@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/844655/"> 844655</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a9a5e13fea828423957cd62716855c1f368fd9c9">a9a5e13fea828423957cd62716855c1f368fd9c9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/844659/"> 844659</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1fb49019410544c1183dbf3f15c541fdec7b3929">1fb49019410544c1183dbf3f15c541fdec7b3929</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/844654/">844654</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2a7b2aa02bfc301d4e7d6a6763499b2c26eea39c">2a7b2aa02bfc301d4e7d6a6763499b2c26eea39c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/844657/">844657</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d9a95af11cb7ec66a6f6263230ee5270db21eb8d">d9a95af11cb7ec66a6f6263230ee5270db21eb8d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a9a5e13fea828423957cd62716855c1f368fd9c9
+   1fb49019410544c1183dbf3f15c541fdec7b3929
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a9a5e13fea828423957cd62716855c1f368fd9c9">
+    <a href="/chromium/src/+log/1fb49019410544c1183dbf3f15c541fdec7b3929">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a9a5e13fea828423957cd62716855c1f368fd9c9.tar.gz">
+    <a href="/chromium/src/+archive/1fb49019410544c1183dbf3f15c541fdec7b3929.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Song Fangzhen &lt;songfangzhen@bytedance.com&gt;
+   Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
   </td>
   <td>
-   Tue Jan 19 03:08:51 2021
+   Tue Jan 19 04:02:36 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 19 03:08:51 2021
+   Tue Jan 19 04:02:36 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a9a5e13fea828423957cd62716855c1f368fd9c9/">
-    25a0291377f7f601bc3e7f1745526934a75e66e1
+   <a href="/chromium/src/+/1fb49019410544c1183dbf3f15c541fdec7b3929/">
+    c9f97bde6aa625a0f89c3015a0b3ca99fc14c615
    </a>
   </td>
  </tr>
@@ -166,38 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a9a5e13fea828423957cd62716855c1f368fd9c9%5E">
-    2a7b2aa02bfc301d4e7d6a6763499b2c26eea39c
+   <a href="/chromium/src/+/1fb49019410544c1183dbf3f15c541fdec7b3929%5E">
+    00da91bbde3d272afd639260a85db82286138f4b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a9a5e13fea828423957cd62716855c1f368fd9c9%5E%21/">
+    <a href="/chromium/src/+/1fb49019410544c1183dbf3f15c541fdec7b3929%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Direct Sockets: Disallow connecting to non-public addresses.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Implement ui::TransformAnimationCurveAdapter::MaximumScale()
 
-Reject hostnames that resolve to non-public exception unless a raw IP
-address or a *.local hostname is entered by the user.
+This ensures that cc will rasterize the animating layer at the maximum
+scale, to avoid
+1. blurriness during scaling-up animations (e.g. scale 1 -&gt; 3),
+2. too big raster scale (wasting memory) during small scale animations
+(e.g. scale 0.1 -&gt; 0.3).
 
-TODO: Show connection dialog and use the hostname provided by the user.
+Previously in the above cases, in simple cases (without ancestor
+scales), scale 1 for the layer was used for raterization because
+ui::TransformAnimationCurveAdapter failed to provide the maximum scale
+of animations.
 
-Below documents are from Eric Willigers &lt;ericwilligers@chromium.org&gt;.
-Explainer: <a href="https://github.com/WICG/raw-sockets/blob/master/docs/explainer.md">https://github.com/WICG/raw-sockets/blob/master/docs/explainer.md</a>
+Also remove unused ui::InverseTransformCurveAdapter.
 
-Design doc:
-<a href="https://docs.google.com/document/d/1Xa5nFkIWxkL3hZHvDYWPhT8sZvNeFpCUKNuqIwZHxnE/edit?usp=sharing">https://docs.google.com/document/d/1Xa5nFkIWxkL3hZHvDYWPhT8sZvNeFpCUKNuqIwZHxnE/edit?usp=sharing</a>
-
-Bug: 1119661
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9a1300adf8b4acef2fbc2f18c465f86bc11b3859">I9a1300adf8b4acef2fbc2f18c465f86bc11b3859</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2631664">https://chromium-review.googlesource.com/c/chromium/src/+/2631664</a>
-Commit-Queue: Eric Willigers &lt;ericwilligers@chromium.org&gt;
-Reviewed-by: Glen Robertson &lt;glenrob@chromium.org&gt;
-Reviewed-by: Eric Willigers &lt;ericwilligers@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#844655}
+Bug: 1161586
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ieb876bc271c98627bd61370c93e806b44be0b868">Ieb876bc271c98627bd61370c93e806b44be0b868</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2605242">https://chromium-review.googlesource.com/c/chromium/src/+/2605242</a>
+Commit-Queue: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Reviewed-by: Robert Flack &lt;flackr@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#844659}
 </pre>
 
 </body>
