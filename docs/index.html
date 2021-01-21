@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/845515/"> 845515</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/887543a75ed0a9c0abd0125064c73764be5f0baf">887543a75ed0a9c0abd0125064c73764be5f0baf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/845540/"> 845540</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d6688307f79cd4e25bdb96885f0f81d1e9a26a10">d6688307f79cd4e25bdb96885f0f81d1e9a26a10</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/845521/">845521</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6674e06c6c48ec7c632dacbee5a40d48dab35093">6674e06c6c48ec7c632dacbee5a40d48dab35093</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/845536/">845536</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/57687533bdce85b78276e1887cccfc7f3ef8ec55">57687533bdce85b78276e1887cccfc7f3ef8ec55</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   887543a75ed0a9c0abd0125064c73764be5f0baf
+   d6688307f79cd4e25bdb96885f0f81d1e9a26a10
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/887543a75ed0a9c0abd0125064c73764be5f0baf">
+    <a href="/chromium/src/+log/d6688307f79cd4e25bdb96885f0f81d1e9a26a10">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/887543a75ed0a9c0abd0125064c73764be5f0baf.tar.gz">
+    <a href="/chromium/src/+archive/d6688307f79cd4e25bdb96885f0f81d1e9a26a10.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Aleks Totic &lt;atotic@chromium.org&gt;
+   Bartek Nowierski &lt;bartekn@chromium.org&gt;
   </td>
   <td>
-   Thu Jan 21 04:29:54 2021
+   Thu Jan 21 06:17:10 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 21 04:29:54 2021
+   Thu Jan 21 06:17:10 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/887543a75ed0a9c0abd0125064c73764be5f0baf/">
-    e39e89260875045083e3cd3487bed47711b8d9a9
+   <a href="/chromium/src/+/d6688307f79cd4e25bdb96885f0f81d1e9a26a10/">
+    1c5d78568a485939ca9460385bf2851e7a76f906
    </a>
   </td>
  </tr>
@@ -166,50 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/887543a75ed0a9c0abd0125064c73764be5f0baf%5E">
-    0f313b943f8658106b347850473d29b77afd42cc
+   <a href="/chromium/src/+/d6688307f79cd4e25bdb96885f0f81d1e9a26a10%5E">
+    4a0a39d0792d935e9c9b1dfc9111d330edfa896d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/887543a75ed0a9c0abd0125064c73764be5f0baf%5E%21/">
+    <a href="/chromium/src/+/d6688307f79cd4e25bdb96885f0f81d1e9a26a10%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">wpt computing-row-measure-0.html fix
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PA] Rename GetSize and ActualSize
 
-2 tests in this test suite seem inconsistent:
+The names are highly confusing and misleading. These functions don't
+return an actual size, but an underlying capacity, which may or may not
+be readily available to the app. AllocationCapacity* names reflect the
+behavior better.
 
-test#2 asserts that
-
-tbody.height=10px &gt; tr.height=1px &gt; td.height=1px
-implies td.offsetHeight = 1px
-
-test#4 asserts that
-
-tbody.height=10px &gt; tr &gt; td.height=1px
-implies td.offsetHeight = 10px
-
-Edge 17 is the only browser that agrees with #2 and #4
-FF agrees with #2, but not #4
-Chrome agrees with #4, but not #2
-Safari agrees with #4, but not #2
-
-To me, #2 and #4 seem to be in conflict.
-Either tbody height propagates to rows, or it does not.
-
-The problem is that #2 is overconstrained.
-
-My suggestion is that tbody height always propagates to tr.
-
-Bug: 958381
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I28bfd108c67968d31d0372b536c316c997d2d958">I28bfd108c67968d31d0372b536c316c997d2d958</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2586097">https://chromium-review.googlesource.com/c/chromium/src/+/2586097</a>
-Reviewed-by: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
-Commit-Queue: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#845515}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4c59dbf75397b31ed58c1467c019ca23057031c7">I4c59dbf75397b31ed58c1467c019ca23057031c7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2636748">https://chromium-review.googlesource.com/c/chromium/src/+/2636748</a>
+Commit-Queue: Bartek Nowierski &lt;bartekn@chromium.org&gt;
+Reviewed-by: Michael Lippautz &lt;mlippautz@chromium.org&gt;
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#845540}
 </pre>
 
 </body>
