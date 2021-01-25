@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/846848/"> 846848</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/92e008e359905de904be992710ac64e4d2293a10">92e008e359905de904be992710ac64e4d2293a10</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/846873/"> 846873</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1e32b4dcc7ab20429655fca0b89dd56cddf3318d">1e32b4dcc7ab20429655fca0b89dd56cddf3318d</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/846846/">846846</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cfe7d78319cf2f41cca83da4357acab2d4db82bf">cfe7d78319cf2f41cca83da4357acab2d4db82bf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/846884/">846884</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f3c5ed5bc233aa10fda93237d2e3cbb9fdbe2647">f3c5ed5bc233aa10fda93237d2e3cbb9fdbe2647</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   92e008e359905de904be992710ac64e4d2293a10
+   1e32b4dcc7ab20429655fca0b89dd56cddf3318d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/92e008e359905de904be992710ac64e4d2293a10">
+    <a href="/chromium/src/+log/1e32b4dcc7ab20429655fca0b89dd56cddf3318d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/92e008e359905de904be992710ac64e4d2293a10.tar.gz">
+    <a href="/chromium/src/+archive/1e32b4dcc7ab20429655fca0b89dd56cddf3318d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Peter Wen &lt;wnwen@chromium.org&gt;
+   Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
   </td>
   <td>
-   Mon Jan 25 20:07:38 2021
+   Mon Jan 25 21:01:33 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jan 25 20:07:38 2021
+   Mon Jan 25 21:01:33 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/92e008e359905de904be992710ac64e4d2293a10/">
-    fafe41c87751822be4b29c107630d41db226be5e
+   <a href="/chromium/src/+/1e32b4dcc7ab20429655fca0b89dd56cddf3318d/">
+    5f46dafa0a109de02437947eb90a1e922a117921
    </a>
   </td>
  </tr>
@@ -166,47 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/92e008e359905de904be992710ac64e4d2293a10%5E">
-    2ff10650f041c171182d8511e80a257e4da87c3c
+   <a href="/chromium/src/+/1e32b4dcc7ab20429655fca0b89dd56cddf3318d%5E">
+    2e097d19d02172d36388b178b62a725de1d53262
    </a>
    <span>
     [
-    <a href="/chromium/src/+/92e008e359905de904be992710ac64e4d2293a10%5E%21/">
+    <a href="/chromium/src/+/1e32b4dcc7ab20429655fca0b89dd56cddf3318d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Android: Remove md5_check for prepare_resources.py
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move release_fence to Overlay EndReadAccess
 
-Also update pydeps for compile_resources.py.
+This CL moved release fence from SharedImageRepresentationOverlay
+BeginReadAccess to EndReadAccess. Overlays sometimes are presented
+across multiple frames and we need to use fence from the last frame to
+correctly synchronize access.
 
-Before (r846015):
-gn args: target_os="android" use_goma=true android_fast_local_dev=true
-gn gen: 7.0s
-chrome_java_nosig: 34.7s avg (37.2s, 34.3s, 33.6s, 33.7s)
-chrome_java_sig: 35.4s avg (34.7s, 35.5s, 35.4s, 35.8s)
-chrome_java_res: 38.9s avg (38.8s, 39.1s, 38.3s, 39.2s)
-base_java_nosig: 43.1s avg (43.4s, 43.0s, 42.5s, 43.4s)
-base_java_sig: 106.2s avg (106.3s, 106.3s, 105.9s, 106.4s)
+On some platforms (e.g Android SurfaceControl) system
+compositor provides us with a release fence, so it won't work with
+BeginReadAccess.
 
-After:
-gn args: target_os="android" use_goma=true android_fast_local_dev=true
-gn gen: 6.4s
-chrome_java_nosig: 33.2s avg (33.8s, 32.7s)
-chrome_java_sig: 34.6s avg (34.4s, 34.9s)
-chrome_java_res: 39.5s avg (39.0s, 40.0s)
-base_java_nosig: 43.5s avg (43.4s, 43.6s)
-base_java_sig: 106.1s avg (105.7s, 106.6s)
-
-Bug: 1066943
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1ed1426d739f28952a3fe38cf608e4f8b68b34db">I1ed1426d739f28952a3fe38cf608e4f8b68b34db</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2644566">https://chromium-review.googlesource.com/c/chromium/src/+/2644566</a>
-Commit-Queue: Peter Wen &lt;wnwen@chromium.org&gt;
-Auto-Submit: Peter Wen &lt;wnwen@chromium.org&gt;
-Reviewed-by: Mohamed Heikal &lt;mheikal@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#846848}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icd05a74ac0916568812c8fb54a33366746e03e10">Icd05a74ac0916568812c8fb54a33366746e03e10</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2646607">https://chromium-review.googlesource.com/c/chromium/src/+/2646607</a>
+Commit-Queue: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Reviewed-by: Peng Huang &lt;penghuang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#846873}
 </pre>
 
 </body>
