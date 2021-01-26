@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/847066/"> 847066</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e68712f29e9aae82327b64ec2cce3c8be7a66368">e68712f29e9aae82327b64ec2cce3c8be7a66368</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/847080/"> 847080</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7852be2c5e1530656ef56db9c38f4f14952e24c5">7852be2c5e1530656ef56db9c38f4f14952e24c5</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/847068/">847068</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/70020e670c0fa9f950ade871ddef44e412595f1a">70020e670c0fa9f950ade871ddef44e412595f1a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/847079/">847079</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/16b48141d66cc0eb576aefc6953b6d4a28309a94">16b48141d66cc0eb576aefc6953b6d4a28309a94</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e68712f29e9aae82327b64ec2cce3c8be7a66368
+   7852be2c5e1530656ef56db9c38f4f14952e24c5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e68712f29e9aae82327b64ec2cce3c8be7a66368">
+    <a href="/chromium/src/+log/7852be2c5e1530656ef56db9c38f4f14952e24c5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e68712f29e9aae82327b64ec2cce3c8be7a66368.tar.gz">
+    <a href="/chromium/src/+archive/7852be2c5e1530656ef56db9c38f4f14952e24c5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Minggang Wang &lt;minggang.wang@intel.com&gt;
+   Colin Blundell &lt;blundell@chromium.org&gt;
   </td>
   <td>
-   Tue Jan 26 06:42:19 2021
+   Tue Jan 26 08:13:11 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 26 06:42:19 2021
+   Tue Jan 26 08:13:11 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e68712f29e9aae82327b64ec2cce3c8be7a66368/">
-    35d02d6b877d086a94699b0e4b8fe8b826131afc
+   <a href="/chromium/src/+/7852be2c5e1530656ef56db9c38f4f14952e24c5/">
+    6c0ef6be8ebad4c7b71859cc7e3bdd7566999436
    </a>
   </td>
  </tr>
@@ -166,112 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e68712f29e9aae82327b64ec2cce3c8be7a66368%5E">
-    7d61912b3a04dc3c261b1ed65a8fbf02908987c0
+   <a href="/chromium/src/+/7852be2c5e1530656ef56db9c38f4f14952e24c5%5E">
+    16b48141d66cc0eb576aefc6953b6d4a28309a94
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e68712f29e9aae82327b64ec2cce3c8be7a66368%5E%21/">
+    <a href="/chromium/src/+/7852be2c5e1530656ef56db9c38f4f14952e24c5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[OnionSoup] Remove content::ResourceDispatcher
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[WebLayer] Expose ability to fetch access tokens to C++
 
-ResourceDispatcher was once used to serve as a communication interface
-to the ResourceDispatcherHost in the browser process to start a request
-from the render process. Along with Mojofication &amp; Onion Soup work,
-the ResourceDispatcher doesn't serve any host any longer and it becomes
-feasible to remove it from content/ eventually.
+This CL adds a public C++ API for fetching access tokens in WebLayer,
+as well as an Android implementation of this API that proxies calls
+from C++ to the Java-side client. This support will be needed to add
+access tokens to Safe Browsing realtime URL lookups.
 
-As many classes under content/renderer/ depend on the ResourceDispatcher,
-this patch makes the following changes in order to remove it:
-
-- Create a class WebResourceRequestSender under
-  third_party/blink/public/platform/ which is a thin layer used to send
-  the async/sync resource requests in blink. Most of its functions are
-  migrated from the original ResourceDispatcher, but it will not
-  maintain the combination of a request_id and a mapped request, because
-  each WebURLLoaderImpl::Context owns a WebResourceRequestSender.
-  (Previously, ResourceDispatcher was owned by sort of fetch context.)
-
-- Add the blink platform unit tests for the WebResourceRequestSender
-  migrated from the unit test of ResourceDispatcher.
-
-- Because SyncLoadContext binds with WebResourceRequestSender tightly
-  for sending a sync request, this patch moves it to
-  third_party/blink/renderer/platform/loader/fetch/url_loader/ together
-  with WebResourceRequestSender.
-
-- The interface ResourceDispatcherDelegate is renamed to
-  WebResourceRequestSenderDelegate and moved into blink and gets
-  implemented in content.
-
-- Remove the ResourceDispatcher from the codebase and the classes that
-  depend on it.
-
-- Remove the TestRequestPeer used by the ResourceDispatcher unit test.
-
-- Remove the wrapper class RequestPeerImpl.
-
-So, before this CL, the situation looks like:
-
-                        +--------------+
-                        |WebRequestPeer&lt;-------------+
-                        +----^---------+             |
-                             | &lt;derives&gt;             | &lt;derives&gt;
-                             |                       |
-                       +-----+---------+      +---------------+
-                       |SyncLoadContext|      |RequestPeerImpl|
-                       +--------+------+      +-----^---------+
-                                |                   | &lt;weak&gt;
-+--------------------------+    |                   |
-|ResourceDispatcherDelegate|    |               +---+-----+
-+-----------^--------------+    |               | Context +---+
-            |                   |               +-----+---+   |
-            |                   |                     |       |
-            |               +---v---------------+     |       | &lt;weak&gt;
-            +---------------+ ResourceDispatcher&lt;-----+       |
-                            +------+------------+    +--------v--------+
-                                   |                 | WebURLLoaderImpl|
-                                   | &lt;derives&gt;       +-----------------+
-                      +------------v-----------------+
-                      |WebMojoURLLoaderClientObserver|
-                      +------------------------------+
-
-and after this CL, the situation looks like:
-
-          +--------------+
-          |WebRequestPeer|            +----------------+
-          +--^---------^-+            |WebURLLoaderImpl|
-             |         |              +--------^-------+
-   &lt;derives&gt; |         | &lt;derives&gt;             |
-+------------+--+  +---+-----+                 |
-|SyncLoadContext|  | Context +-----------------+
-+-----+---------+  +--+------+     &lt;weak&gt;
-      |               |
-      |               | &lt;owns&gt;
-      |               |
-  +---v---------------v----+           +------------------------------+
-  |WebResourceRequestSender+-----------&gt;WebMojoURLLoaderClientObserver|
-  +-------------+----------+ &lt;derives&gt; +------------------------------+
-                |
-           +----v---------------------------+
-           |WebResourceRequestSenderDelegate|
-           +--------------------------------+
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5e64ab33b12d58fa376014765bbfad92807fdf6c">I5e64ab33b12d58fa376014765bbfad92807fdf6c</a>
-Bug: 1110032
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2593227">https://chromium-review.googlesource.com/c/chromium/src/+/2593227</a>
-Commit-Queue: Minggang Wang &lt;minggang.wang@intel.com&gt;
-Reviewed-by: Colin Blundell &lt;blundell@chromium.org&gt;
-Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
-Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
-Reviewed-by: Makoto Shimazu &lt;shimazu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#847066}
+Bug: 1080748
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I13c92ccb1d79981578347c1efd5462ca77c7043a">I13c92ccb1d79981578347c1efd5462ca77c7043a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2643334">https://chromium-review.googlesource.com/c/chromium/src/+/2643334</a>
+Commit-Queue: Colin Blundell &lt;blundell@chromium.org&gt;
+Reviewed-by: Clark DuVall &lt;cduvall@chromium.org&gt;
+Reviewed-by: John Abd-El-Malek &lt;jam@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#847080}
 </pre>
 
 </body>
