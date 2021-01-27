@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/847597/"> 847597</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2569600c4b79fa8f69330e4f8f012e1756e50f37">2569600c4b79fa8f69330e4f8f012e1756e50f37</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/847622/"> 847622</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8c171c2faf4df27067f321d92f3b993a34eb571b">8c171c2faf4df27067f321d92f3b993a34eb571b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/847597/">847597</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2569600c4b79fa8f69330e4f8f012e1756e50f37
+   8c171c2faf4df27067f321d92f3b993a34eb571b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2569600c4b79fa8f69330e4f8f012e1756e50f37">
+    <a href="/chromium/src/+log/8c171c2faf4df27067f321d92f3b993a34eb571b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2569600c4b79fa8f69330e4f8f012e1756e50f37.tar.gz">
+    <a href="/chromium/src/+archive/8c171c2faf4df27067f321d92f3b993a34eb571b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Honglin Yu &lt;honglinyu@chromium.org&gt;
+   arthursonzogni &lt;arthursonzogni@chromium.org&gt;
   </td>
   <td>
-   Wed Jan 27 13:48:27 2021
+   Wed Jan 27 15:33:58 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jan 27 13:48:27 2021
+   Wed Jan 27 15:33:58 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2569600c4b79fa8f69330e4f8f012e1756e50f37/">
-    a43b2831a048aa0a34744dfac32e89ae238bcf9d
+   <a href="/chromium/src/+/8c171c2faf4df27067f321d92f3b993a34eb571b/">
+    d5d14eaae36d7480a5412e393fe323cf9532a89e
    </a>
   </td>
  </tr>
@@ -166,32 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2569600c4b79fa8f69330e4f8f012e1756e50f37%5E">
-    b3a2415d0a8c9b9a966a1d9e1f74747017ad74c9
+   <a href="/chromium/src/+/8c171c2faf4df27067f321d92f3b993a34eb571b%5E">
+    dea121740a02a3f6bca27f7904956220431a94df
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2569600c4b79fa8f69330e4f8f012e1756e50f37%5E%21/">
+    <a href="/chromium/src/+/8c171c2faf4df27067f321d92f3b993a34eb571b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[privacy budget] Update the location of docs in readme files.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add regression tests for 1170038
 
-In CL <a href="https://crrev.com/c/2432863,">https://crrev.com/c/2432863,</a> the location of
-privacy_budget_code_locations.md has been changed. Here we update them
-in some readme files.
+In <a href="https://crbug.com/1170038#c3,">https://crbug.com/1170038#c3,</a> by looking at the crash stacktrace, I
+suspected it was possible for the synchronous navigation to about:blank
+to be initiated by a document, different from the parent/opener. I also
+suspected it could start loading at a random time, instead of
+immediately after the initial empty document.
 
-BUG=973801
-TEST=no other privacy_budget_code_locations.md can be found in code search.
+Instead of having:
+- The initial empty document
+- The empty document, created by the initial synchronous navigation to
+  about:blank.
+to be perfect twin. We would have two blank document inheriting
+properties from two different documents.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I69e330ecdf88a05c201ced7caa40c213b21456ec">I69e330ecdf88a05c201ced7caa40c213b21456ec</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2651989">https://chromium-review.googlesource.com/c/chromium/src/+/2651989</a>
-Commit-Queue: Asanka Herath &lt;asanka@chromium.org&gt;
-Reviewed-by: Asanka Herath &lt;asanka@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#847597}
+That's particulary bad, because the synchronous navigation to
+about:blank is the last remaining one that isn't driven by the browser
+process. This could potentially block RenderDocument, SwapRfhAtCommit,
+OutOfBlinkSandbox, OutOfBlinkOrigin, ...
+
+This patch adds several WPT tests. One of them shows the synchronous
+navigation can be initiated from a arbitrary same-origin document. The
+other reproducest show
+the crash.
+
+Bug: 1170038,1041376
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I52c0fed7c80aae6ccb5fba1c2f93d694f0d9121e">I52c0fed7c80aae6ccb5fba1c2f93d694f0d9121e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2648117">https://chromium-review.googlesource.com/c/chromium/src/+/2648117</a>
+Reviewed-by: Antonio Sartori &lt;antoniosartori@chromium.org&gt;
+Commit-Queue: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#847622}
 </pre>
 
 </body>
