@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/848279/"> 848279</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f69f67eaa73c30caf942290dcd543c3064a5b19f">f69f67eaa73c30caf942290dcd543c3064a5b19f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/848332/"> 848332</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bdf60bfe8417b57aba66db52b4011c3e2366b5b9">bdf60bfe8417b57aba66db52b4011c3e2366b5b9</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/848294/">848294</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/04e22b1747e8b1a9ff30743161e18a2ac71288fb">04e22b1747e8b1a9ff30743161e18a2ac71288fb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/848322/">848322</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/029fbc03074646419fc4a251e9f367954aa4efa5">029fbc03074646419fc4a251e9f367954aa4efa5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f69f67eaa73c30caf942290dcd543c3064a5b19f
+   bdf60bfe8417b57aba66db52b4011c3e2366b5b9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f69f67eaa73c30caf942290dcd543c3064a5b19f">
+    <a href="/chromium/src/+log/bdf60bfe8417b57aba66db52b4011c3e2366b5b9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f69f67eaa73c30caf942290dcd543c3064a5b19f.tar.gz">
+    <a href="/chromium/src/+archive/bdf60bfe8417b57aba66db52b4011c3e2366b5b9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xiaocheng Hu &lt;xiaochengh@chromium.org&gt;
+   Alexei Svitkine &lt;asvitkine@chromium.org&gt;
   </td>
   <td>
-   Thu Jan 28 22:04:38 2021
+   Fri Jan 29 00:06:45 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 28 22:04:38 2021
+   Fri Jan 29 00:06:45 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f69f67eaa73c30caf942290dcd543c3064a5b19f/">
-    84e258d94ef601eaa9f761b73205e7f2b660a610
+   <a href="/chromium/src/+/bdf60bfe8417b57aba66db52b4011c3e2366b5b9/">
+    61f37f90d0cafd24125fad700ca22e6006850e3c
    </a>
   </td>
  </tr>
@@ -166,49 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f69f67eaa73c30caf942290dcd543c3064a5b19f%5E">
-    822f03382e4e563a6629bedf0e2ef1eff6bd89ef
+   <a href="/chromium/src/+/bdf60bfe8417b57aba66db52b4011c3e2366b5b9%5E">
+    d4be907ab6e8991f5c12478aa67f2cdb7d81b00d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f69f67eaa73c30caf942290dcd543c3064a5b19f%5E%21/">
+    <a href="/chromium/src/+/bdf60bfe8417b57aba66db52b4011c3e2366b5b9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Invalidate counter &amp; list marker layout on counter style rule changes
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix incorrect histograms association via OnDidCreateMetricsLog().
 
-This patch implements layout invalidation on counter style changes.
-In particular:
+More details in the bug, but the TL;DR is that the sequencing
+around how OnDidCreateLog() was called resulted in one of the logs
+containing two instances of the histograms logged by this function
+and another log not having any.
 
-1. Each ListStyleTypeData holds a mutable reference to a CounterStyle
-object, which is updated on demand. The reference can become dirty or
-stale (*) after counter style updates.
+I reproduced this behavior in a unit test, which confirmed that
+the fix is working.
 
-2. After updating counter styles, if any list marker is holding a
-dirty or stale referencing to a CounterStyle, its layout is
-invalidated. This achieves partial layout invalidation.
-
-3. The layout invalidation is done after style update, at the same
-time when we are doing counter updates. Since we are already
-recalculating counter text unconditionally, this also achieves
-counter text update when counter styles change.
-
-(*) "Dirty" means the counter style itself is dirtied due to an
-update. "Stale" means the counter style itself is fine, but the list
-marker is now referencing a different counter style due to overriding
-(e.g, when a predefined counter style is overridden by author style).
-
-Bug: 687225
-Cq-Include-Trybots: luci.chromium.try:layout_test_leak_detection
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I28ba5aecd7334196647c4ed59054dabf92bc49ab">I28ba5aecd7334196647c4ed59054dabf92bc49ab</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2641299">https://chromium-review.googlesource.com/c/chromium/src/+/2641299</a>
-Commit-Queue: Xiaocheng Hu &lt;xiaochengh@chromium.org&gt;
-Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#848279}
+Bug: 1171469
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If2f2b6262bde61575fd3656603af75a572a61529">If2f2b6262bde61575fd3656603af75a572a61529</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2653971">https://chromium-review.googlesource.com/c/chromium/src/+/2653971</a>
+Reviewed-by: Ilya Sherman &lt;isherman@chromium.org&gt;
+Reviewed-by: Alexei Svitkine &lt;asvitkine@chromium.org&gt;
+Commit-Queue: Alexei Svitkine &lt;asvitkine@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#848332}
 </pre>
 
 </body>
