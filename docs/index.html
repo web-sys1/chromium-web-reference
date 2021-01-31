@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/848896/"> 848896</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/878a605f67559ea0fb1a62423884aa95f38f1d3f">878a605f67559ea0fb1a62423884aa95f38f1d3f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/848912/"> 848912</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9d91d2a1429a9329000fbdd78ef1733a9945d401">9d91d2a1429a9329000fbdd78ef1733a9945d401</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/848896/">848896</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/878a605f67559ea0fb1a62423884aa95f38f1d3f">878a605f67559ea0fb1a62423884aa95f38f1d3f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/848897/">848897</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/16cda152a6d302c4470d7764b4ca6fb5a6b50c77">16cda152a6d302c4470d7764b4ca6fb5a6b50c77</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   878a605f67559ea0fb1a62423884aa95f38f1d3f
+   9d91d2a1429a9329000fbdd78ef1733a9945d401
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/878a605f67559ea0fb1a62423884aa95f38f1d3f">
+    <a href="/chromium/src/+log/9d91d2a1429a9329000fbdd78ef1733a9945d401">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/878a605f67559ea0fb1a62423884aa95f38f1d3f.tar.gz">
+    <a href="/chromium/src/+archive/9d91d2a1429a9329000fbdd78ef1733a9945d401.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Greg Thompson &lt;grt@chromium.org&gt;
+   Aaron Leventhal &lt;aleventhal@chromium.org&gt;
   </td>
   <td>
-   Sat Jan 30 18:28:09 2021
+   Sun Jan 31 02:35:11 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Jan 30 18:28:09 2021
+   Sun Jan 31 02:35:11 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/878a605f67559ea0fb1a62423884aa95f38f1d3f/">
-    a72690b7af96f7511a9d91709157b22a69ff4d42
+   <a href="/chromium/src/+/9d91d2a1429a9329000fbdd78ef1733a9945d401/">
+    745e78b624922dd7c9fc8202c64da9257a7d915c
    </a>
   </td>
  </tr>
@@ -166,58 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/878a605f67559ea0fb1a62423884aa95f38f1d3f%5E">
-    3e650d57481aaf2e6841b1997fae90afdaaa933f
+   <a href="/chromium/src/+/9d91d2a1429a9329000fbdd78ef1733a9945d401%5E">
+    d8f917264cc4691c08d784f05f6742ffac7a7a07
    </a>
    <span>
     [
-    <a href="/chromium/src/+/878a605f67559ea0fb1a62423884aa95f38f1d3f%5E%21/">
+    <a href="/chromium/src/+/9d91d2a1429a9329000fbdd78ef1733a9945d401%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "[upgrade_detector] Avoid the macOS Catalina file consent dialog."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Never return a detached AXObject for AXObjectCacheImpl::Get()
 
-This reverts commit ef8df111b412639285afad7c535d8835f6603690.
+If detached nodes are returned, it can lead to crashes elsewhere in
+the system, as not all AXObject methods have guards to ensure they are
+not detached. It also can lead to unexpected code paths.
 
-Reason for revert: The crash should be fixed in <a href="https://crrev.com/848881.">https://crrev.com/848881.</a>
+Whitespace nodes that are not added were being created and
+detached but remained in the cache, and sometimes returned and used.
+To remedy, this CL moves the whitespace pruning logic before the
+AXObject is even created.
 
-Original change's description:
-&gt; Revert "[upgrade_detector] Avoid the macOS Catalina file consent dialog."
-&gt;
-&gt; This reverts commit ca693d9ee57744e5964522807a47753c3d2bef51.
-&gt;
-&gt; This revert switches from a "trivial" watch on macOS back to a
-&gt; non-recursive watch. This means that parent directories will also be
-&gt; monitored. It is this monitoring of parent dirs that may trigger the
-&gt; consent dialog.
-&gt;
-&gt; This revert is yet another attempt to address a crash in
-&gt; base::FilePathWatcherKQueue::OnKQueueReadable that appears to correlate
-&gt; with the landing of <a href="https://crrev.com/830353.">https://crrev.com/830353.</a>
-&gt;
-&gt; Bug: 1147071,1156603
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I436b74718a5d8908169930f77d154d3dcfc20e5f">I436b74718a5d8908169930f77d154d3dcfc20e5f</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2642159">https://chromium-review.googlesource.com/c/chromium/src/+/2642159</a>
-&gt; Auto-Submit: Greg Thompson &lt;grt@chromium.org&gt;
-&gt; Commit-Queue: Jan Wilken Dörrie &lt;jdoerrie@chromium.org&gt;
-&gt; Reviewed-by: Jan Wilken Dörrie &lt;jdoerrie@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#846666}
-
-TBR=grt@chromium.org,jdoerrie@chromium.org,chromium-scoped@luci-project-accounts.iam.gserviceaccount.com
-
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Bug: 1147071
-Bug: 1156603
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I44ead3358f798ce5b92ef9a36b1776423eb5299e">I44ead3358f798ce5b92ef9a36b1776423eb5299e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2661555">https://chromium-review.googlesource.com/c/chromium/src/+/2661555</a>
-Commit-Queue: Greg Thompson &lt;grt@chromium.org&gt;
-Reviewed-by: Greg Thompson &lt;grt@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#848896}
+Bug: 1167459
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4ee309c7a1271bb82cca01dd95c4690347c5726e">I4ee309c7a1271bb82cca01dd95c4690347c5726e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2656496">https://chromium-review.googlesource.com/c/chromium/src/+/2656496</a>
+Commit-Queue: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
+Reviewed-by: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#848912}
 </pre>
 
 </body>
