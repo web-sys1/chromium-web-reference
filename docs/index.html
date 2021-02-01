@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/849091/"> 849091</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0f4a28aa469ddc5150e8a80aae45fa206100d77a">0f4a28aa469ddc5150e8a80aae45fa206100d77a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/849075/"> 849075</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f1916dbb9a5f0b983ab2c84763446f28ee819b16">f1916dbb9a5f0b983ab2c84763446f28ee819b16</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/849096/">849096</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0f4a28aa469ddc5150e8a80aae45fa206100d77a
+   f1916dbb9a5f0b983ab2c84763446f28ee819b16
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0f4a28aa469ddc5150e8a80aae45fa206100d77a">
+    <a href="/chromium/src/+log/f1916dbb9a5f0b983ab2c84763446f28ee819b16">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0f4a28aa469ddc5150e8a80aae45fa206100d77a.tar.gz">
+    <a href="/chromium/src/+archive/f1916dbb9a5f0b983ab2c84763446f28ee819b16.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ryo Hashimoto &lt;hashimoto@chromium.org&gt;
+   Oriol Brufau &lt;obrufau@igalia.com&gt;
   </td>
   <td>
-   Mon Feb 01 13:37:36 2021
+   Mon Feb 01 12:32:28 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Feb 01 13:37:36 2021
+   Mon Feb 01 12:32:28 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0f4a28aa469ddc5150e8a80aae45fa206100d77a/">
-    1037accedb7692da818343a81a1fae4b69b015a9
+   <a href="/chromium/src/+/f1916dbb9a5f0b983ab2c84763446f28ee819b16/">
+    d272995257bef0dfdf3e2629eda53b5a324c1e84
    </a>
   </td>
  </tr>
@@ -166,52 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0f4a28aa469ddc5150e8a80aae45fa206100d77a%5E">
-    739d1af18ae9005e2b0c4ff945ac25c97a87e04b
+   <a href="/chromium/src/+/f1916dbb9a5f0b983ab2c84763446f28ee819b16%5E">
+    c670814e08db801ed81eca22c3e5a7b07689c883
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0f4a28aa469ddc5150e8a80aae45fa206100d77a%5E%21/">
+    <a href="/chromium/src/+/f1916dbb9a5f0b983ab2c84763446f28ee819b16%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Fix jank on first show of holding space welcome banner."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[editing] Use relocatable position in ApplyStyleCommand::ApplyBlockStyle
 
-This reverts commit f5df79ecd7ee7780d0a0c6103fe9d1874ead0cdb.
+ApplyBlockStyle used to store a position, change the DOM, and then try
+to update the position if it became orphan.
+However, even if not orphan, it could have become invalid. For example,
+trimming the whitespace in a text node could make the number of chars
+become smaller than the position offset.
 
-Reason for revert: Breaks filemanager.DragDrop tast and blocks chrome uprev.
+Therefore, this patch uses a RelocatablePosition instead.
 
-Original change's description:
-&gt; Fix jank on first show of holding space welcome banner.
-&gt;
-&gt; Because holding space welcome banner styles are dynamically loaded,
-&gt; there was some jank when the banner was shown before the dynamic styles
-&gt; had finished loading.
-&gt;
-&gt; This CL adds inline styles to hide the welcome banner until they are
-&gt; removed following load completion of dynamic styles.
-&gt;
-&gt; Bug: 1170470
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I32aa65c5c17505d1e2c2bee61a4e27468c6f881d">I32aa65c5c17505d1e2c2bee61a4e27468c6f881d</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2649110">https://chromium-review.googlesource.com/c/chromium/src/+/2649110</a>
-&gt; Reviewed-by: Luciano Pacheco &lt;lucmult@chromium.org&gt;
-&gt; Commit-Queue: David Black &lt;dmblack@google.com&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#847408}
+Bug: 1172007
 
-TBR=dmblack@google.com,lucmult@chromium.org,chromium-scoped@luci-project-accounts.iam.gserviceaccount.com
+TEST=ApplyStyleCommandTest.JustifyRightWithSVGForeignObject
 
-# Not skipping CQ checks because original CL landed &gt; 1 day ago.
-
-Bug: 1171875
-Bug: 1170470
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie71d01fcf37776d8fe0c66b66e465aa690050eb2">Ie71d01fcf37776d8fe0c66b66e465aa690050eb2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2663348">https://chromium-review.googlesource.com/c/chromium/src/+/2663348</a>
-Reviewed-by: Ryo Hashimoto &lt;hashimoto@chromium.org&gt;
-Commit-Queue: Ryo Hashimoto &lt;hashimoto@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#849091}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If400c260771b8606a55c3af358ee60273171209b">If400c260771b8606a55c3af358ee60273171209b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2660875">https://chromium-review.googlesource.com/c/chromium/src/+/2660875</a>
+Commit-Queue: Oriol Brufau &lt;obrufau@igalia.com&gt;
+Reviewed-by: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#849075}
 </pre>
 
 </body>
