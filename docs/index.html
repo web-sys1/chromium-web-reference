@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/849616/"> 849616</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/734467398dbb17aae8a2a97d9ac5159fa05e9ab9">734467398dbb17aae8a2a97d9ac5159fa05e9ab9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/849644/"> 849644</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8ad113addfda56821b143b7315d17da4fa013040">8ad113addfda56821b143b7315d17da4fa013040</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/849620/">849620</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   734467398dbb17aae8a2a97d9ac5159fa05e9ab9
+   8ad113addfda56821b143b7315d17da4fa013040
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/734467398dbb17aae8a2a97d9ac5159fa05e9ab9">
+    <a href="/chromium/src/+log/8ad113addfda56821b143b7315d17da4fa013040">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/734467398dbb17aae8a2a97d9ac5159fa05e9ab9.tar.gz">
+    <a href="/chromium/src/+archive/8ad113addfda56821b143b7315d17da4fa013040.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Benjamin Prosnitz &lt;bprosnitz@google.com&gt;
+   Xida Chen &lt;xidachen@chromium.org&gt;
   </td>
   <td>
-   Tue Feb 02 16:03:50 2021
+   Tue Feb 02 17:05:50 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 02 16:03:50 2021
+   Tue Feb 02 17:05:50 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/734467398dbb17aae8a2a97d9ac5159fa05e9ab9/">
-    1232a151cec5db390cdd3f852349f691121b7739
+   <a href="/chromium/src/+/8ad113addfda56821b143b7315d17da4fa013040/">
+    10ebdeafff1286b13c07788c5f66de8c52c27931
    </a>
   </td>
  </tr>
@@ -166,42 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/734467398dbb17aae8a2a97d9ac5159fa05e9ab9%5E">
-    08f55a3c9278dd9b0348077e0a34af619bda1aa4
+   <a href="/chromium/src/+/8ad113addfda56821b143b7315d17da4fa013040%5E">
+    d8847806c7c4d645c06e00cd887e42f17cd3e6f8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/734467398dbb17aae8a2a97d9ac5159fa05e9ab9%5E%21/">
+    <a href="/chromium/src/+/8ad113addfda56821b143b7315d17da4fa013040%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Allow both client-side error and epitaph in context provider test
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix integer-overflow in WheelEvent::WheelEvent
 
-This is part of an LSC for Fuchsia FTP-028.
+The problem is here:
+-static_cast&lt;int32_t&gt;(initializer-&gt;wheelDeltaX()))
 
-In <a href="https://fuchsia-review.googlesource.com/c/fuchsia/+/471000,">https://fuchsia-review.googlesource.com/c/fuchsia/+/471000,</a>
-wrong object type errors are detected client-side in HLCPP and
-reported through a callback function on the client
-(ZX_ERR_WRONG_TYPE).
+If the value of initializer-&gt;wheelDeltaX() is INT_MIN,
+then the negate of the value will overflow.
 
-This behavior conflicts with the existing test which expects
-the error to be caught at a later point - on the server side
-and reported via an epitaph on a different channel (context).
-
-This CL updates the test to support BOTH cases to allow
-migration to the new behavior. After the migration takes place,
-the test will be updated to disallow the old behavior.
-
-Bug: fuchsia:66567
-Bug: fuchsia:68779
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I176c3745a5386ab5bcfd2a830b17985668ada0ad">I176c3745a5386ab5bcfd2a830b17985668ada0ad</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2593438">https://chromium-review.googlesource.com/c/chromium/src/+/2593438</a>
-Reviewed-by: Wez &lt;wez@chromium.org&gt;
-Commit-Queue: Benjamin Prosnitz &lt;bprosnitz@google.com&gt;
-Cr-Commit-Position: refs/heads/master@{#849616}
+Bug: 1166998
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I79470052ff69eb969de18f32441ca413e2b0036b">I79470052ff69eb969de18f32441ca413e2b0036b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2633669">https://chromium-review.googlesource.com/c/chromium/src/+/2633669</a>
+Commit-Queue: Xida Chen &lt;xidachen@chromium.org&gt;
+Reviewed-by: David Bokan &lt;bokan@chromium.org&gt;
+Reviewed-by: Mustaq Ahmed &lt;mustaq@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#849644}
 </pre>
 
 </body>
