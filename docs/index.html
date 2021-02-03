@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/849919/"> 849919</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/756c3e7736d91560f2ff85914be31c30316c13fa">756c3e7736d91560f2ff85914be31c30316c13fa</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/849941/"> 849941</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/92b9493922798309e7a5e6c3b4b00f9a1b064070">92b9493922798309e7a5e6c3b4b00f9a1b064070</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/849878/">849878</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/983161df1646b87efa1e7cc484c04bc6baff0da4">983161df1646b87efa1e7cc484c04bc6baff0da4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/849944/">849944</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ab72d45199c2d649fbb0a54562dc5342f0cdcb99">ab72d45199c2d649fbb0a54562dc5342f0cdcb99</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   756c3e7736d91560f2ff85914be31c30316c13fa
+   92b9493922798309e7a5e6c3b4b00f9a1b064070
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/756c3e7736d91560f2ff85914be31c30316c13fa">
+    <a href="/chromium/src/+log/92b9493922798309e7a5e6c3b4b00f9a1b064070">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/756c3e7736d91560f2ff85914be31c30316c13fa.tar.gz">
+    <a href="/chromium/src/+archive/92b9493922798309e7a5e6c3b4b00f9a1b064070.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chris Harrelson &lt;chrishtr@chromium.org&gt;
+   Karandeep Bhatia &lt;karandeepb@chromium.org&gt;
   </td>
   <td>
-   Wed Feb 03 02:43:33 2021
+   Wed Feb 03 03:44:16 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 03 02:43:33 2021
+   Wed Feb 03 03:44:16 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/756c3e7736d91560f2ff85914be31c30316c13fa/">
-    37c8fe51be7e60a19b81aff132db580bb5f9fdc6
+   <a href="/chromium/src/+/92b9493922798309e7a5e6c3b4b00f9a1b064070/">
+    8eca28ac009ea283cab2790ec1c02ee9c3602848
    </a>
   </td>
  </tr>
@@ -166,39 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/756c3e7736d91560f2ff85914be31c30316c13fa%5E">
-    0604f9e705cec537c2283af16a12d133414e320e
+   <a href="/chromium/src/+/92b9493922798309e7a5e6c3b4b00f9a1b064070%5E">
+    14be0a818c668f0d741af82cec5d60aa4d9c688a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/756c3e7736d91560f2ff85914be31c30316c13fa%5E%21/">
+    <a href="/chromium/src/+/92b9493922798309e7a5e6c3b4b00f9a1b064070%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Store bit for paint offset translation was present before reattach
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Extensions: Cache feature availability for specified keys on Manifest.
 
-This allows PaintPropertyTreeBuilder to skip any paint offset
-translation for a reattached node in the subsequent pre-paint, because
-if the previous frame encountered a paint offset translation, the
-paint offset of the object does not aggregate across it. Therefore
-the old and new paint offsets both skip it and the new one should
-also be skipped.
+Cache the subset of available and specified manifest keys on the
+Manifest object. This makes availability lookups quicker (just a
+DictionaryValue key/path lookup) instead of the current cost of
+iterating over all parent paths and checking their availability. Expose
+the availabile DictionaryValue on the Manifest object as well and use it
+for auto-generated manifest parsing clients.
 
-The bit helps to distinguish between the case of a paint offset
-translation re-allocated due to reattach and deletion of a LayoutObject,
-vs a style change that caused a new paint offset translation to be
-allocated.
+The caveat is that this requires a one-time cost of iterating over all
+specified keys in the manifest and checking their availabililty ((this
+should be offset by the faster availabililty lookups) and the memory
+usage of the Manifest object also increases a bit.
 
-Fixed: 1170400
+BUG=1167276
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4b057cbcec3a8d72b0beeda7a0f3e34f99a605ef">I4b057cbcec3a8d72b0beeda7a0f3e34f99a605ef</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2666949">https://chromium-review.googlesource.com/c/chromium/src/+/2666949</a>
-Commit-Queue: Chris Harrelson &lt;chrishtr@chromium.org&gt;
-Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#849919}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaec2a06b03219159fd21775e2b1f44729740490b">Iaec2a06b03219159fd21775e2b1f44729740490b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2636686">https://chromium-review.googlesource.com/c/chromium/src/+/2636686</a>
+Commit-Queue: Karan Bhatia &lt;karandeepb@chromium.org&gt;
+Auto-Submit: Karan Bhatia &lt;karandeepb@chromium.org&gt;
+Reviewed-by: Devlin &lt;rdevlin.cronin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#849941}
 </pre>
 
 </body>
