@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/850097/"> 850097</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ac52640f254a14e8a187291d13157f95f5e12ea7">ac52640f254a14e8a187291d13157f95f5e12ea7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/850110/"> 850110</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/67d165e9093678046a8b24e6b7c63cf3dcb4e8a4">67d165e9093678046a8b24e6b7c63cf3dcb4e8a4</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/850100/">850100</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0e01a804d30d88dea02f0bfbb4819c1b41a31718">0e01a804d30d88dea02f0bfbb4819c1b41a31718</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/850120/">850120</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/46f65c5f0360ffa5b8a50244d20819a88bace9b6">46f65c5f0360ffa5b8a50244d20819a88bace9b6</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ac52640f254a14e8a187291d13157f95f5e12ea7
+   67d165e9093678046a8b24e6b7c63cf3dcb4e8a4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ac52640f254a14e8a187291d13157f95f5e12ea7">
+    <a href="/chromium/src/+log/67d165e9093678046a8b24e6b7c63cf3dcb4e8a4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ac52640f254a14e8a187291d13157f95f5e12ea7.tar.gz">
+    <a href="/chromium/src/+archive/67d165e9093678046a8b24e6b7c63cf3dcb4e8a4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+   Omer Katz &lt;omerkatz@chromium.org&gt;
   </td>
   <td>
-   Wed Feb 03 14:19:51 2021
+   Wed Feb 03 15:15:10 2021
   </td>
  </tr>
  <tr>
@@ -145,10 +145,10 @@ body{
    committer
   </th>
   <td>
-   Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+   Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 03 14:19:51 2021
+   Wed Feb 03 15:15:10 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ac52640f254a14e8a187291d13157f95f5e12ea7/">
-    87ef5acd53700e51bb0ffbfa1b35c5415a6cd127
+   <a href="/chromium/src/+/67d165e9093678046a8b24e6b7c63cf3dcb4e8a4/">
+    57ce4e5c6b9705a02e2228627ade5b9a8aeef815
    </a>
   </td>
  </tr>
@@ -166,69 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ac52640f254a14e8a187291d13157f95f5e12ea7%5E">
-    26007fcd0dc27632e7001db5c2619f58d06714de
+   <a href="/chromium/src/+/67d165e9093678046a8b24e6b7c63cf3dcb4e8a4%5E">
+    fd88c699011fd068ee2232d8035a04ba5abccb1a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ac52640f254a14e8a187291d13157f95f5e12ea7%5E%21/">
+    <a href="/chromium/src/+/67d165e9093678046a8b24e6b7c63cf3dcb4e8a4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[Autofill] Added execution control to captured-site tests."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">heap: Fix plugin bug for cppgc builds
 
-This reverts commit fd1f09a41922335ac055f2a0c2966588dfddc7e7.
+cppgc::GarbageCollected and cppgc::GarbageCollectedMixin inherit from
+cppgc::GarbageCollectedBase. The base class doesn't exist in blink. as a
+result, when checking the left most parent of GCed classes we find
+cppgc::GarbageCollectedBase and erroneously report errors.
+Since we should still distinguish cppgc::GarbageCollected from
+cppgc::GarbageCollectedMixin, the solution is to ignore the
+cppgc::GarbageCollectedBase and return the its subclass as the left most
+parent of the class.
 
-Reason for revert:
-
-Findit (<a href="https://goo.gl/kROfz5">https://goo.gl/kROfz5</a>) identified CL at revision 850078 as the
-culprit for failures in the build cycles as shown on:
-<a href="https://analysis.chromium.org/waterfall/culprit?key=ag9zfmZpbmRpdC1mb3ItbWVyRAsSDVdmU3VzcGVjdGVkQ0wiMWNocm9taXVtL2ZkMWYwOWE0MTkyMjMzNWFjMDU1ZjJhMGMyOTY2NTg4ZGZkZGM3ZTcM">https://analysis.chromium.org/waterfall/culprit?key=ag9zfmZpbmRpdC1mb3ItbWVyRAsSDVdmU3VzcGVjdGVkQ0wiMWNocm9taXVtL2ZkMWYwOWE0MTkyMjMzNWFjMDU1ZjJhMGMyOTY2NTg4ZGZkZGM3ZTcM</a>
-
-Sample Failed Build: <a href="https://ci.chromium.org/b/8856314599448204800">https://ci.chromium.org/b/8856314599448204800</a>
-
-Sample Failed Step: compile
-
-Original change's description:
-&gt; [Autofill] Added execution control to captured-site tests.
-&gt; 
-&gt; This CL gives simple control over the execution of captured-site-test
-&gt; recipes: the recipe can be paused, unpaused, stepped through, and
-&gt; inspected.
-&gt; 
-&gt; The commands are read from the file specified in the
-&gt; --command_file switch, which typically should be a FIFO special file
-&gt; (named pipe). (That is, the file is re-opened and -read once the
-&gt; end is reached.)
-&gt; 
-&gt; Typical usage is like this:
-&gt; 
-&gt; $ mkfifo $PIPE
-&gt; $ .../captured_sites_interactive_tests --command_file=$PIPE ... &amp;
-&gt; $ echo "next 4" &gt;$PIPE      # execute 4 actions
-&gt; $ echo "show -4" &gt;$PIPE     # show last 4 actions
-&gt; $ echo "run" &gt;$PIPE         # resume execution
-&gt; 
-&gt; Bug: 1172063
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I242171e1f0c09d145594c3fbf6e464bce2f18a5a">I242171e1f0c09d145594c3fbf6e464bce2f18a5a</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2658755">https://chromium-review.googlesource.com/c/chromium/src/+/2658755</a>
-&gt; Commit-Queue: Christoph Schwering &lt;schwering@google.com&gt;
-&gt; Reviewed-by: Matthias Körber &lt;koerber@google.com&gt;
-&gt; Reviewed-by: Ian Struiksma &lt;ianstruiksma@google.com&gt;
-&gt; Reviewed-by: Jan Wilken Dörrie &lt;jdoerrie@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#850078}
-
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I95eb83ff62c6121b3add5067c25f8b192555d14e">I95eb83ff62c6121b3add5067c25f8b192555d14e</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Bug: 1172063
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2672459">https://chromium-review.googlesource.com/c/chromium/src/+/2672459</a>
-Cr-Commit-Position: refs/heads/master@{#850097}
+Bug: chromium:1056170
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I848daf98a8ef363a436dee2cf921d81309d5a02d">I848daf98a8ef363a436dee2cf921d81309d5a02d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2672008">https://chromium-review.googlesource.com/c/chromium/src/+/2672008</a>
+Reviewed-by: Michael Lippautz &lt;mlippautz@chromium.org&gt;
+Commit-Queue: Omer Katz &lt;omerkatz@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#850110}
 </pre>
 
 </body>
