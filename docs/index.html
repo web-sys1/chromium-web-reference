@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/850561/"> 850561</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/750f7f0acc95d17fb4c9d020ffbdbef49e696026">750f7f0acc95d17fb4c9d020ffbdbef49e696026</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/850575/"> 850575</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b617fb3628b4033db935cf8ccff8c60cca561071">b617fb3628b4033db935cf8ccff8c60cca561071</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/850562/">850562</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   750f7f0acc95d17fb4c9d020ffbdbef49e696026
+   b617fb3628b4033db935cf8ccff8c60cca561071
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/750f7f0acc95d17fb4c9d020ffbdbef49e696026">
+    <a href="/chromium/src/+log/b617fb3628b4033db935cf8ccff8c60cca561071">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/750f7f0acc95d17fb4c9d020ffbdbef49e696026.tar.gz">
+    <a href="/chromium/src/+archive/b617fb3628b4033db935cf8ccff8c60cca561071.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Benoit Lize &lt;lizeb@chromium.org&gt;
+   Minoru Chikamune &lt;chikamune@chromium.org&gt;
   </td>
   <td>
-   Thu Feb 04 12:58:36 2021
+   Thu Feb 04 14:15:03 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Feb 04 12:58:36 2021
+   Thu Feb 04 14:15:03 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/750f7f0acc95d17fb4c9d020ffbdbef49e696026/">
-    b4ecdb49df909515cc4b6337fac3a09dba84de61
+   <a href="/chromium/src/+/b617fb3628b4033db935cf8ccff8c60cca561071/">
+    2e6ada9ec7207124f9ad01a93d97d021a7f908f9
    </a>
   </td>
  </tr>
@@ -166,35 +166,56 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/750f7f0acc95d17fb4c9d020ffbdbef49e696026%5E">
-    c7f1a1f263aaffa8c980b77990b84cffbfac4ff8
+   <a href="/chromium/src/+/b617fb3628b4033db935cf8ccff8c60cca561071%5E">
+    aeae11cffbb41dcbc5129501013cab8dddb83d7f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/750f7f0acc95d17fb4c9d020ffbdbef49e696026%5E%21/">
+    <a href="/chromium/src/+/b617fb3628b4033db935cf8ccff8c60cca561071%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PartitionAlloc] Enable freelist hardening on Windows.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[MBI] Migrate ScrollAnimatorMac to use per-ASG CompositorTaskRunner
 
-Freelist hardening is disabled on Windows because it was causing
-failures on some post-CQ bots. This was likely due to an actual
-Use-After-Free in the thread cache during process teardown. Now that the
-root cause has been found and addressed, re-enable it.
+Before this CL, ScrollAnimatorMac used per-thread
+CompositorTaskRunner.
 
-Note to sheriff: If Windows bots break in range, this is the likely
-culprit, feel free to revert.
+After this CL, ScrollAnimatorMac will use per-ASG (Agent Scheduling
+Group) CompositorTaskRunner.
 
-Bug: 998048, 1159411
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ice2c4267adb0f77cf63f323c4ebe95f2c0e6dcf9">Ice2c4267adb0f77cf63f323c4ebe95f2c0e6dcf9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2673824">https://chromium-review.googlesource.com/c/chromium/src/+/2673824</a>
-Reviewed-by: Keishi Hattori &lt;keishi@chromium.org&gt;
+[scroll_animator_mac.mm (ScrollAnimatorMac)]
+
+This is a Objective-C++ code which uses per-thread
+CompositorTaskRunner. ScrollableArea can be used to obtain per-ASG
+CompositorTaskRunner.
+
+[ScrollableArea]
+
+ScrollableArea was already using per-ASG CompositorTaskRunner. But
+this time, ScrollAnimatorMac requires the per-ASG CompositorTaskRunner
+at the very beginning of initializing the page. So this CL added a
+per-ASG CompositorTaskRunner argument to the constructor of
+ScrollableArea.
+
+[Page]
+
+When the page object instantiates, the AgentGroupScheduler object is
+provided to the page object afterwards. This timing was too late for
+ScrollAnimatorMac. So this CL changed it. Also, the previous code
+initialized the PageScheduler outside of the constructor. But I
+thought it is better to initialize PageScheduler inside the
+constructor. So this CL changed it as well.
+
+Bug: 1105403
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7348fba3c11f4c0ae541711a5b135fb648642242">I7348fba3c11f4c0ae541711a5b135fb648642242</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2666353">https://chromium-review.googlesource.com/c/chromium/src/+/2666353</a>
+Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
 Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Commit-Queue: Benoit L &lt;lizeb@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#850561}
+Commit-Queue: Minoru Chikamune &lt;chikamune@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#850575}
 </pre>
 
 </body>
