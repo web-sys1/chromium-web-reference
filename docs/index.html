@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/850575/"> 850575</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b617fb3628b4033db935cf8ccff8c60cca561071">b617fb3628b4033db935cf8ccff8c60cca561071</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/850584/"> 850584</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7f1e270b798231e26beaad5ff6e306e042b6a060">7f1e270b798231e26beaad5ff6e306e042b6a060</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/850575/">850575</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b617fb3628b4033db935cf8ccff8c60cca561071">b617fb3628b4033db935cf8ccff8c60cca561071</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/850591/">850591</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bc123b7173f1b0af029176ecd9048adc26be05d8">bc123b7173f1b0af029176ecd9048adc26be05d8</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b617fb3628b4033db935cf8ccff8c60cca561071
+   7f1e270b798231e26beaad5ff6e306e042b6a060
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b617fb3628b4033db935cf8ccff8c60cca561071">
+    <a href="/chromium/src/+log/7f1e270b798231e26beaad5ff6e306e042b6a060">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b617fb3628b4033db935cf8ccff8c60cca561071.tar.gz">
+    <a href="/chromium/src/+archive/7f1e270b798231e26beaad5ff6e306e042b6a060.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Minoru Chikamune &lt;chikamune@chromium.org&gt;
+   Kushagra Sinha &lt;sinhak@chromium.org&gt;
   </td>
   <td>
-   Thu Feb 04 14:15:03 2021
+   Thu Feb 04 15:29:06 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Feb 04 14:15:03 2021
+   Thu Feb 04 15:29:06 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b617fb3628b4033db935cf8ccff8c60cca561071/">
-    2e6ada9ec7207124f9ad01a93d97d021a7f908f9
+   <a href="/chromium/src/+/7f1e270b798231e26beaad5ff6e306e042b6a060/">
+    1cd8f59a498583b0a81796601710fd70e2f9f6dd
    </a>
   </td>
  </tr>
@@ -166,56 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b617fb3628b4033db935cf8ccff8c60cca561071%5E">
-    aeae11cffbb41dcbc5129501013cab8dddb83d7f
+   <a href="/chromium/src/+/7f1e270b798231e26beaad5ff6e306e042b6a060%5E">
+    d0c353755a09dc6512070e80eee90761ae6c479b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b617fb3628b4033db935cf8ccff8c60cca561071%5E%21/">
+    <a href="/chromium/src/+/7f1e270b798231e26beaad5ff6e306e042b6a060%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[MBI] Migrate ScrollAnimatorMac to use per-ASG CompositorTaskRunner
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">cros: Force update token handle after online Gaia auth
 
-Before this CL, ScrollAnimatorMac used per-thread
-CompositorTaskRunner.
+Token handle is currently not updated, even after an online Gaia auth,
+if the previous token handle is still valid.
 
-After this CL, ScrollAnimatorMac will use per-ASG (Agent Scheduling
-Group) CompositorTaskRunner.
+This is a bug because the token handle can then point to an older LST,
+and will be eventually invalidated by a Gaia cron job. This would cause
+users to receive an incorrect notification that their current token is
+invalid, when in reality an older token of theirs has been invalidated.
 
-[scroll_animator_mac.mm (ScrollAnimatorMac)]
+Fix this by force updating token handle when the user goes through an
+online Gaia sign-in.
+In combination with <a href="https://crrev.com/c/2659047,">https://crrev.com/c/2659047,</a> these CLs guarantee
+that token handle will always be tied to the LST. Whenever LST changes,
+in-session or at sign-in screen, we will force update the token handle.
 
-This is a Objective-C++ code which uses per-thread
-CompositorTaskRunner. ScrollableArea can be used to obtain per-ASG
-CompositorTaskRunner.
-
-[ScrollableArea]
-
-ScrollableArea was already using per-ASG CompositorTaskRunner. But
-this time, ScrollAnimatorMac requires the per-ASG CompositorTaskRunner
-at the very beginning of initializing the page. So this CL added a
-per-ASG CompositorTaskRunner argument to the constructor of
-ScrollableArea.
-
-[Page]
-
-When the page object instantiates, the AgentGroupScheduler object is
-provided to the page object afterwards. This timing was too late for
-ScrollAnimatorMac. So this CL changed it. Also, the previous code
-initialized the PageScheduler outside of the constructor. But I
-thought it is better to initialize PageScheduler inside the
-constructor. So this CL changed it as well.
-
-Bug: 1105403
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7348fba3c11f4c0ae541711a5b135fb648642242">I7348fba3c11f4c0ae541711a5b135fb648642242</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2666353">https://chromium-review.googlesource.com/c/chromium/src/+/2666353</a>
-Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
-Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Commit-Queue: Minoru Chikamune &lt;chikamune@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#850575}
+Bug: b/178100144
+Bug: 1170300
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ice02381fd3dd747211bfab168e5acc5477c4f117">Ice02381fd3dd747211bfab168e5acc5477c4f117</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2671467">https://chromium-review.googlesource.com/c/chromium/src/+/2671467</a>
+Commit-Queue: Kush Sinha &lt;sinhak@chromium.org&gt;
+Reviewed-by: Roman Sorokin [CET] &lt;rsorokin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#850584}
 </pre>
 
 </body>
