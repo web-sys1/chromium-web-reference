@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/851374/"> 851374</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bcd8ee01981cf92de5399854c8e53fb5958547be">bcd8ee01981cf92de5399854c8e53fb5958547be</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/851400/"> 851400</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/82c211f61581acbab242256576dd68f4df5503f5">82c211f61581acbab242256576dd68f4df5503f5</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/851370/">851370</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dd70923e52db71d5d19be1fd793b024347ad6667">dd70923e52db71d5d19be1fd793b024347ad6667</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/851401/">851401</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3c9bf7837aa0963fdc4d0cfece7d385aebac082a">3c9bf7837aa0963fdc4d0cfece7d385aebac082a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   bcd8ee01981cf92de5399854c8e53fb5958547be
+   82c211f61581acbab242256576dd68f4df5503f5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/bcd8ee01981cf92de5399854c8e53fb5958547be">
+    <a href="/chromium/src/+log/82c211f61581acbab242256576dd68f4df5503f5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/bcd8ee01981cf92de5399854c8e53fb5958547be.tar.gz">
+    <a href="/chromium/src/+archive/82c211f61581acbab242256576dd68f4df5503f5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Donn Denman &lt;donnd@chromium.org&gt;
+   Matthew Denton &lt;mpdenton@chromium.org&gt;
   </td>
   <td>
-   Sat Feb 06 00:57:22 2021
+   Sat Feb 06 01:58:54 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Feb 06 00:57:22 2021
+   Sat Feb 06 01:58:54 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/bcd8ee01981cf92de5399854c8e53fb5958547be/">
-    df376bf5648e48b70772c69cd786351936f49e96
+   <a href="/chromium/src/+/82c211f61581acbab242256576dd68f4df5503f5/">
+    f0b135f6e9ada070e957767bc09ebf1d26621718
    </a>
   </td>
  </tr>
@@ -166,39 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/bcd8ee01981cf92de5399854c8e53fb5958547be%5E">
-    428bc1c039c7b6c408fce1379541df3977c77b01
+   <a href="/chromium/src/+/82c211f61581acbab242256576dd68f4df5503f5%5E">
+    76a2ec46d04a2739b1d52c3dedc277a5c489d9d2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/bcd8ee01981cf92de5399854c8e53fb5958547be%5E%21/">
+    <a href="/chromium/src/+/82c211f61581acbab242256576dd68f4df5503f5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[TTS] Populate the help section of the Overlay Panel.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove CertVerifierService feature
 
-Shows a help section inside the Overlay Panel as an encouragement for
-users to switch away from tap for the Longpress experiment (when this
-help feature has been enabled).
+The feature is enabled by default and hasn't caused any meaningful
+regression, so this removes the CertVerifierService feature.
 
-Adds a blue vector touch icon to show in the panel.
+This requires un-parameterizing some tests that were parameterized on
+the CertVerifierService feature.
 
-Still TODO:
-1) Add Feature Engagement to determine when to show.
-2) Add metrics.
-3) Add tests.
+CertVerifierParams in the NetworkContext was a union of
+CertVerifierServiceRemoteParams and CertVerifierCreationParams, but now
+the Network Service has no use for the CertVerifierCreationParams as it
+won't be creating a CertVerifier in-process anymore. So the union is
+removed and NetworkContextParams just contains a
+CertVerifierServiceRemoteParams directly, which requires some type
+changes all over the codebase.
 
-BUG=1158621
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I87e4889df97e241c62a7d5e10e04b1f8dfe74a41">I87e4889df97e241c62a7d5e10e04b1f8dfe74a41</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2596818">https://chromium-review.googlesource.com/c/chromium/src/+/2596818</a>
-Commit-Queue: Donn Denman &lt;donnd@chromium.org&gt;
-Reviewed-by: Theresa  &lt;twellington@chromium.org&gt;
-Reviewed-by: Sinan Sahin &lt;sinansahin@google.com&gt;
-Cr-Commit-Position: refs/heads/master@{#851374}
+Bug: 1015134, 1111472
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I722346f20dda6161b40cfec039d6adff35878ef5">I722346f20dda6161b40cfec039d6adff35878ef5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2674530">https://chromium-review.googlesource.com/c/chromium/src/+/2674530</a>
+Commit-Queue: Matthew Denton &lt;mpdenton@chromium.org&gt;
+Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Reviewed-by: Ryan Sleevi &lt;rsleevi@chromium.org&gt;
+Reviewed-by: John Abd-El-Malek &lt;jam@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#851400}
 </pre>
 
 </body>
