@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/851646/"> 851646</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3f64b41ed5152e36b6e685353fdb4a28ea5d8b0a">3f64b41ed5152e36b6e685353fdb4a28ea5d8b0a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/851663/"> 851663</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ddac08ce0107687275ffd324d9e23a40f072e1f2">ddac08ce0107687275ffd324d9e23a40f072e1f2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/851655/">851655</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/74bc846b78ffad0ffd2e2b20cf5c55cef3544bfc">74bc846b78ffad0ffd2e2b20cf5c55cef3544bfc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/851670/">851670</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4bd546c50d3ee4ae3893cc0173437dbb6573ba3d">4bd546c50d3ee4ae3893cc0173437dbb6573ba3d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3f64b41ed5152e36b6e685353fdb4a28ea5d8b0a
+   ddac08ce0107687275ffd324d9e23a40f072e1f2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3f64b41ed5152e36b6e685353fdb4a28ea5d8b0a">
+    <a href="/chromium/src/+log/ddac08ce0107687275ffd324d9e23a40f072e1f2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3f64b41ed5152e36b6e685353fdb4a28ea5d8b0a.tar.gz">
+    <a href="/chromium/src/+archive/ddac08ce0107687275ffd324d9e23a40f072e1f2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andy Paicu &lt;andypaicu@chromium.org&gt;
+   Jan Wilken Dörrie &lt;jdoerrie@chromium.org&gt;
   </td>
   <td>
-   Mon Feb 08 10:28:02 2021
+   Mon Feb 08 11:29:53 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Feb 08 10:28:02 2021
+   Mon Feb 08 11:29:53 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3f64b41ed5152e36b6e685353fdb4a28ea5d8b0a/">
-    53a7b81286b16229e56a24a1cfc88227c0d15fe8
+   <a href="/chromium/src/+/ddac08ce0107687275ffd324d9e23a40f072e1f2/">
+    3d1136553975945b794dc7fd6d26ed48e4d42a48
    </a>
   </td>
  </tr>
@@ -166,55 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3f64b41ed5152e36b6e685353fdb4a28ea5d8b0a%5E">
-    bffa6980c61bbb99293e73d27542cb518cb75999
+   <a href="/chromium/src/+/ddac08ce0107687275ffd324d9e23a40f072e1f2%5E">
+    60d47cca387a302e6d6336492e28b938a66f3577
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3f64b41ed5152e36b6e685353fdb4a28ea5d8b0a%5E%21/">
+    <a href="/chromium/src/+/ddac08ce0107687275ffd324d9e23a40f072e1f2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Create a centralized class for interacting with permission actions...
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[base] Prepare //chrome/installer/util/shell_util for string16 switch
 
-...historical data
+This change prepares //chrome/installer/util/shell_util for the upcoming
+base::string16 switch on Windows. It performs the following mechanical
+changes:
 
-crrev.com/c/2526681 added a new client for permission action historical
-data which duplicated some logic. This CL dedupes that logic, and also
-adds support for counting all previous actions, not just notifications.
+* Replace base::string16 with std::wstring
+* Replace base::char16 with wchar_t
+* Replace base::StringPiece16 with base::WStringPiece
+* Replace #include "base/strings/string16.h" with #include &lt;string&gt;
+* Replace STRING16_LITERAL("...") with L"..."
+* Replace UTF16 conversion functions with their wide equivalents
 
-1) PermissionActionsHistoricData is a KeyedService containing utility
-functions to interact with the permission actions history. It's expanded
-handle all action types not just notifications.
-
-2) AdaptiveQuietNotificationPermissionUiEnabler now interfaces with
-this class and does not hold any logic except strictly for enabling the
-quiet notifications ui adaptively.
-
-3) PredictionBasedPermissionUiSelector now also interfaces with this
-class, ensuring there is no more duplicate logic.
-
-4) Since the history is now needed elsewhere, the adaptive activation
-will stop deleting history when the quiet ui is manually disabled.
-Instead a new pref holds the time at which it was disabled, and
-the adaptive activation only considers actions after said time.
-
-5) The separate clock instance that was used for testing was removed
-in favor of using a task environment with the TimeSource::MOCK_TIME
-trait.
-
-Bug: 1138595
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2726c157564b15fd3a13dfd633a7ceadc307c853">I2726c157564b15fd3a13dfd633a7ceadc307c853</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2558438">https://chromium-review.googlesource.com/c/chromium/src/+/2558438</a>
-Reviewed-by: Andy Paicu &lt;andypaicu@chromium.org&gt;
-Reviewed-by: Martin Šrámek &lt;msramek@chromium.org&gt;
-Reviewed-by: Balazs Engedy &lt;engedy@chromium.org&gt;
-Reviewed-by: Illia Klimov &lt;elklm@chromium.org&gt;
-Commit-Queue: Andy Paicu &lt;andypaicu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#851646}
+Bug: 911896
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I73ebd5fc7ae0ca3d8c9c7c2a9f1a552fcb905ca6">I73ebd5fc7ae0ca3d8c9c7c2a9f1a552fcb905ca6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2676766">https://chromium-review.googlesource.com/c/chromium/src/+/2676766</a>
+Commit-Queue: Jan Wilken Dörrie &lt;jdoerrie@chromium.org&gt;
+Reviewed-by: Greg Thompson &lt;grt@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#851663}
 </pre>
 
 </body>
