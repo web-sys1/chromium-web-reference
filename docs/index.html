@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/851562/"> 851562</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/38397856b6df53334ee5d2597012137475aa8554">38397856b6df53334ee5d2597012137475aa8554</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/851565/"> 851565</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/aed8818f58f374c8c8c0e4db757502a0e7d8ba25">aed8818f58f374c8c8c0e4db757502a0e7d8ba25</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/851563/">851563</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   38397856b6df53334ee5d2597012137475aa8554
+   aed8818f58f374c8c8c0e4db757502a0e7d8ba25
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/38397856b6df53334ee5d2597012137475aa8554">
+    <a href="/chromium/src/+log/aed8818f58f374c8c8c0e4db757502a0e7d8ba25">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/38397856b6df53334ee5d2597012137475aa8554.tar.gz">
+    <a href="/chromium/src/+archive/aed8818f58f374c8c8c0e4db757502a0e7d8ba25.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   3su6n15k.default@developer.gserviceaccount.com &lt;3su6n15k.default@developer.gserviceaccount.com&gt;
+   Jinsuk Kim &lt;jinsukkim@chromium.org&gt;
   </td>
   <td>
-   Mon Feb 08 00:23:32 2021
+   Mon Feb 08 01:20:53 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Feb 08 00:23:32 2021
+   Mon Feb 08 01:20:53 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/38397856b6df53334ee5d2597012137475aa8554/">
-    e0ca40dd83b098ad7f6f3c6a4375faeb9e350fab
+   <a href="/chromium/src/+/aed8818f58f374c8c8c0e4db757502a0e7d8ba25/">
+    41e8473c305c09b8151db0a244d4e4c53a3d4018
    </a>
   </td>
  </tr>
@@ -166,30 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/38397856b6df53334ee5d2597012137475aa8554%5E">
-    1ed35f7b35da2c968358efbed32ac3b3311c6240
+   <a href="/chromium/src/+/aed8818f58f374c8c8c0e4db757502a0e7d8ba25%5E">
+    4c3734c8cecdb27b7486a3497b414dc4c8ced73f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/38397856b6df53334ee5d2597012137475aa8554%5E%21/">
+    <a href="/chromium/src/+/aed8818f58f374c8c8c0e4db757502a0e7d8ba25%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Automated Commit: LKGM 13777.0.0 for chromeos.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">GestureNav: Delete navigation sheet logic
 
-CQ_INCLUDE_TRYBOTS=luci.chrome.try:chromeos-betty-pi-arc-chrome
-CQ_INCLUDE_TRYBOTS=luci.chrome.try:chromeos-eve-chrome
-CQ_INCLUDE_TRYBOTS=luci.chrome.try:chromeos-kevin-chrome
-TBR=chrome-os-gardeners@google.com
+Navigation sheet is not used in gesture navigation UI. This CL deletes
+the related logic.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibe004d737983dcd823a1877909b5f61bcb71292b">Ibe004d737983dcd823a1877909b5f61bcb71292b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2681794">https://chromium-review.googlesource.com/c/chromium/src/+/2681794</a>
-Reviewed-by: ChromeOS bot &lt;3su6n15k.default@developer.gserviceaccount.com&gt;
-Commit-Queue: ChromeOS bot &lt;3su6n15k.default@developer.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#851562}
+HistoryNavigationDelegate also becomes not necessary any more as it was
+devised to minimize dependencies on chrome_java (mainly Tab, back when
+it was still a part of it) and create two subdelegates(ActionDelegate
+and SheetDelegate). Now that Tab was already modularized and
+SheetDelegate is not used for gesture navigation, it can be removed
+as well. NavigationHandler is passed Tab directly.
+
+ActionDelegate was redefined to BackActionDelegate that consists of:
+- getBackActionType: return the type of actions for back gesture
+                     for the arrow bubble text
+- onBackGesture: perform the actual back gesture action
+
+which both need dependencies on TabbedChromeActivity. It is defined
+in root ui coordinator, and passed to the coordinator. It effectively
+replaces a function/runnable passed individually.
+
+Now NavigationSheet is used for the popup brought up by long press
+on back button only.
+
+Bug: 1100717
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6ef40ce810edbfb8db2c540e0bd11b7d988f0924">I6ef40ce810edbfb8db2c540e0bd11b7d988f0924</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2672996">https://chromium-review.googlesource.com/c/chromium/src/+/2672996</a>
+Commit-Queue: Jinsuk Kim &lt;jinsukkim@chromium.org&gt;
+Reviewed-by: Matt Jones &lt;mdjones@chromium.org&gt;
+Reviewed-by: Theresa  &lt;twellington@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#851565}
 </pre>
 
 </body>
