@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/852183/"> 852183</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/589299408027620ecfc8331334e20f6d4bf33f77">589299408027620ecfc8331334e20f6d4bf33f77</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/852200/"> 852200</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3c333cbb76abdd5fe8bd32a641abd42ff2111e35">3c333cbb76abdd5fe8bd32a641abd42ff2111e35</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/852170/">852170</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   589299408027620ecfc8331334e20f6d4bf33f77
+   3c333cbb76abdd5fe8bd32a641abd42ff2111e35
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/589299408027620ecfc8331334e20f6d4bf33f77">
+    <a href="/chromium/src/+log/3c333cbb76abdd5fe8bd32a641abd42ff2111e35">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/589299408027620ecfc8331334e20f6d4bf33f77.tar.gz">
+    <a href="/chromium/src/+archive/3c333cbb76abdd5fe8bd32a641abd42ff2111e35.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alexander Dunaev &lt;adunaev@igalia.com&gt;
+   Christian Dullweber &lt;dullweber@chromium.org&gt;
   </td>
   <td>
-   Tue Feb 09 14:31:11 2021
+   Tue Feb 09 15:33:25 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 09 14:31:11 2021
+   Tue Feb 09 15:33:25 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/589299408027620ecfc8331334e20f6d4bf33f77/">
-    dddd4968433c3dde7e9cd67ed18346d912117873
+   <a href="/chromium/src/+/3c333cbb76abdd5fe8bd32a641abd42ff2111e35/">
+    4e86db9a73357f20587e14d3b65a0c3e67bd9a8b
    </a>
   </td>
  </tr>
@@ -166,51 +166,61 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/589299408027620ecfc8331334e20f6d4bf33f77%5E">
-    eeeed1df26365c0cf7d4b1d7aa72ae84824316d8
+   <a href="/chromium/src/+/3c333cbb76abdd5fe8bd32a641abd42ff2111e35%5E">
+    650f577eca3133015042217468a00d69eb29baa9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/589299408027620ecfc8331334e20f6d4bf33f77%5E%21/">
+    <a href="/chromium/src/+/3c333cbb76abdd5fe8bd32a641abd42ff2111e35%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[vulkan] Set default plane count to 1.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[Start] Add a home button on the Grid Tab switcher."
 
-There are a few inconsistencies around the current implementation of
-OutputPresenterX11.
+This reverts commit 02cf25be4666ce3ceb457f755f5663888e163ec7.
 
-1. OutputPresenterX11 creates the GMB handle with planes [1], and gets
-   FDs from the image to share memory.
-2. When ExternalVkImageFactory creates a shared image from GMB, it
-   asserts that plane count is exactly 1 [2]; after that assertion, it
-   takes the FD from the GMB.
-3. However, OutputPresenterX11 sets the tiling mode of the Vulkan image
-   to VK_IMAGE_TILING_OPTIMAL [3], which causes the plane count to be
-   equal to 0.  This causes the assertion mentioned above to fail, but
-   even if there was no assertion, the shared image would be unable to
-   take an FD from the Vulkan image.
+Reason for revert: StartSurfaceTest started flaking shortly after CL 
+landed
 
-Also it is worth noting that VulkanImage::GetMemoryFd() doesn't take
-plane count into account [4].
+Original change's description:
+&gt; [Start] Add a home button on the Grid Tab switcher.
+&gt;
+&gt; In this CL, we add a home button on the Tab switcher when the Start
+&gt; surface is enabled.
+&gt; 1. This button is positioned on the left side of the tab switcher.
+&gt; 2. The long clicking of the home button which shows the settings of
+&gt;    changing the home page is disabled.
+&gt; Whether to show the home button is behind a Finch parameter
+&gt; "home_button_on_grid_tab_switcher".
+&gt; Proposal:
+&gt; <a href="https://docs.google.com/presentation/d/1QXnHf7U60P3JoHjCU-sWiVN8AvfNq4PHiHSUx7GD6cY/edit#slide=id.gb139e76ea8_0_2087">https://docs.google.com/presentation/d/1QXnHf7U60P3JoHjCU-sWiVN8AvfNq4PHiHSUx7GD6cY/edit#slide=id.gb139e76ea8_0_2087</a>
+&gt; Demo:
+&gt; <a href="https://drive.google.com/file/d/1phxDxHtmjtFheNBw6q6MWIlT0zBBQG_Q/view?usp=sharing">https://drive.google.com/file/d/1phxDxHtmjtFheNBw6q6MWIlT0zBBQG_Q/view?usp=sharing</a>
+&gt;
+&gt; Bug: 1164962
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3de3f7b7bb69d7747f95e396f68dca31e172ad07">I3de3f7b7bb69d7747f95e396f68dca31e172ad07</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2653973">https://chromium-review.googlesource.com/c/chromium/src/+/2653973</a>
+&gt; Reviewed-by: Xi Han &lt;hanxi@chromium.org&gt;
+&gt; Reviewed-by: Matt Jones &lt;mdjones@chromium.org&gt;
+&gt; Reviewed-by: Henrique Nakashima &lt;hnakashima@chromium.org&gt;
+&gt; Reviewed-by: Wei-Yin Chen (陳威尹) &lt;wychen@chromium.org&gt;
+&gt; Commit-Queue: Xi Han &lt;hanxi@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/master@{#851974}
 
-Here the default plane count is set to 1, which resolves the
-inconsistency explained above.
+TBR=hanxi@chromium.org,mdjones@chromium.org,wychen@chromium.org,hnakashima@chromium.org,chromium-scoped@luci-project-accounts.iam.gserviceaccount.com
 
-[1] <a href="https://source.chromium.org/chromium/chromium/src/+/master:components/viz/service/display_embedder/output_presenter_x11.cc;l=269">https://source.chromium.org/chromium/chromium/src/+/master:components/viz/service/display_embedder/output_presenter_x11.cc;l=269</a>
-[2] <a href="https://source.chromium.org/chromium/chromium/src/+/master:gpu/vulkan/vulkan_image_linux.cc;l=43">https://source.chromium.org/chromium/chromium/src/+/master:gpu/vulkan/vulkan_image_linux.cc;l=43</a>
-[3] <a href="https://source.chromium.org/chromium/chromium/src/+/master:components/viz/service/display_embedder/output_presenter_x11.cc;l=238">https://source.chromium.org/chromium/chromium/src/+/master:components/viz/service/display_embedder/output_presenter_x11.cc;l=238</a>
-[4] <a href="https://source.chromium.org/chromium/chromium/src/+/master:gpu/vulkan/vulkan_image.cc;l=164">https://source.chromium.org/chromium/chromium/src/+/master:gpu/vulkan/vulkan_image.cc;l=164</a>
-
-Bug: 1153156
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I336b78f384ed6a33af5d9dceb5a228709a7925d1">I336b78f384ed6a33af5d9dceb5a228709a7925d1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2679618">https://chromium-review.googlesource.com/c/chromium/src/+/2679618</a>
-Reviewed-by: Peng Huang &lt;penghuang@chromium.org&gt;
-Commit-Queue: Alexander Dunaev &lt;adunaev@igalia.com&gt;
-Cr-Commit-Position: refs/heads/master@{#852183}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib82c42fbecb1daaee2f5aba928041b58e4fed27c">Ib82c42fbecb1daaee2f5aba928041b58e4fed27c</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Bug: 1164962, 1176084, 
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2682353">https://chromium-review.googlesource.com/c/chromium/src/+/2682353</a>
+Reviewed-by: Christian Dullweber &lt;dullweber@chromium.org&gt;
+Commit-Queue: Christian Dullweber &lt;dullweber@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#852200}
 </pre>
 
 </body>
