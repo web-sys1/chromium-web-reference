@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/852172/"> 852172</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4c9ef91367602b0669db36b1360869a99c57d0cf">4c9ef91367602b0669db36b1360869a99c57d0cf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/852183/"> 852183</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/589299408027620ecfc8331334e20f6d4bf33f77">589299408027620ecfc8331334e20f6d4bf33f77</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/852170/">852170</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4c9ef91367602b0669db36b1360869a99c57d0cf
+   589299408027620ecfc8331334e20f6d4bf33f77
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4c9ef91367602b0669db36b1360869a99c57d0cf">
+    <a href="/chromium/src/+log/589299408027620ecfc8331334e20f6d4bf33f77">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4c9ef91367602b0669db36b1360869a99c57d0cf.tar.gz">
+    <a href="/chromium/src/+archive/589299408027620ecfc8331334e20f6d4bf33f77.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alex Ilin &lt;alexilin@chromium.org&gt;
+   Alexander Dunaev &lt;adunaev@igalia.com&gt;
   </td>
   <td>
-   Tue Feb 09 13:33:33 2021
+   Tue Feb 09 14:31:11 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 09 13:33:33 2021
+   Tue Feb 09 14:31:11 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4c9ef91367602b0669db36b1360869a99c57d0cf/">
-    c0cfe0ce534637921d6c0f6340e1f74fb7aa54be
+   <a href="/chromium/src/+/589299408027620ecfc8331334e20f6d4bf33f77/">
+    dddd4968433c3dde7e9cd67ed18346d912117873
    </a>
   </td>
  </tr>
@@ -166,36 +166,51 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4c9ef91367602b0669db36b1360869a99c57d0cf%5E">
-    c2a6094b7bad6ad775d40e59763843be488b4122
+   <a href="/chromium/src/+/589299408027620ecfc8331334e20f6d4bf33f77%5E">
+    eeeed1df26365c0cf7d4b1d7aa72ae84824316d8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4c9ef91367602b0669db36b1360869a99c57d0cf%5E%21/">
+    <a href="/chromium/src/+/589299408027620ecfc8331334e20f6d4bf33f77%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[identity] Remove the old consent flow (issueAdvice)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[vulkan] Set default plane count to 1.
 
-This CL removes all the code handling the old consent flow for minting
-access tokens for Chrome extensions.
+There are a few inconsistencies around the current implementation of
+OutputPresenterX11.
 
-According to the Signin.OAuth2MintToken.ApiCallResult histogram, the
-server no longer returns issue advice response in the OAuth mint token
-flow for new Chrome versions (&gt;= M87).
+1. OutputPresenterX11 creates the GMB handle with planes [1], and gets
+   FDs from the image to share memory.
+2. When ExternalVkImageFactory creates a shared image from GMB, it
+   asserts that plane count is exactly 1 [2]; after that assertion, it
+   takes the FD from the GMB.
+3. However, OutputPresenterX11 sets the tiling mode of the Vulkan image
+   to VK_IMAGE_TILING_OPTIMAL [3], which causes the plane count to be
+   equal to 0.  This causes the assertion mentioned above to fail, but
+   even if there was no assertion, the shared image would be unable to
+   take an FD from the Vulkan image.
 
-Most of the tests covering the old consent flow were modified to
-simulate the new consent flow instead.
+Also it is worth noting that VulkanImage::GetMemoryFd() doesn't take
+plane count into account [4].
 
-Bug: 1173171
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7f88d1e187f0410081597cee3a17d0ee8ec10914">I7f88d1e187f0410081597cee3a17d0ee8ec10914</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2679387">https://chromium-review.googlesource.com/c/chromium/src/+/2679387</a>
-Commit-Queue: Alex Ilin &lt;alexilin@chromium.org&gt;
-Reviewed-by: David Roger &lt;droger@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#852172}
+Here the default plane count is set to 1, which resolves the
+inconsistency explained above.
+
+[1] <a href="https://source.chromium.org/chromium/chromium/src/+/master:components/viz/service/display_embedder/output_presenter_x11.cc;l=269">https://source.chromium.org/chromium/chromium/src/+/master:components/viz/service/display_embedder/output_presenter_x11.cc;l=269</a>
+[2] <a href="https://source.chromium.org/chromium/chromium/src/+/master:gpu/vulkan/vulkan_image_linux.cc;l=43">https://source.chromium.org/chromium/chromium/src/+/master:gpu/vulkan/vulkan_image_linux.cc;l=43</a>
+[3] <a href="https://source.chromium.org/chromium/chromium/src/+/master:components/viz/service/display_embedder/output_presenter_x11.cc;l=238">https://source.chromium.org/chromium/chromium/src/+/master:components/viz/service/display_embedder/output_presenter_x11.cc;l=238</a>
+[4] <a href="https://source.chromium.org/chromium/chromium/src/+/master:gpu/vulkan/vulkan_image.cc;l=164">https://source.chromium.org/chromium/chromium/src/+/master:gpu/vulkan/vulkan_image.cc;l=164</a>
+
+Bug: 1153156
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I336b78f384ed6a33af5d9dceb5a228709a7925d1">I336b78f384ed6a33af5d9dceb5a228709a7925d1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2679618">https://chromium-review.googlesource.com/c/chromium/src/+/2679618</a>
+Reviewed-by: Peng Huang &lt;penghuang@chromium.org&gt;
+Commit-Queue: Alexander Dunaev &lt;adunaev@igalia.com&gt;
+Cr-Commit-Position: refs/heads/master@{#852183}
 </pre>
 
 </body>
