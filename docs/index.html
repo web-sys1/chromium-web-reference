@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/852491/"> 852491</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d30cd9785fd44b7470d66b9379a8c06c0f72d9b8">d30cd9785fd44b7470d66b9379a8c06c0f72d9b8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/852511/"> 852511</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2cbbf7afb36229e02e0247c6440971d34b5505e4">2cbbf7afb36229e02e0247c6440971d34b5505e4</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/852496/">852496</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d30cd9785fd44b7470d66b9379a8c06c0f72d9b8
+   2cbbf7afb36229e02e0247c6440971d34b5505e4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d30cd9785fd44b7470d66b9379a8c06c0f72d9b8">
+    <a href="/chromium/src/+log/2cbbf7afb36229e02e0247c6440971d34b5505e4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d30cd9785fd44b7470d66b9379a8c06c0f72d9b8.tar.gz">
+    <a href="/chromium/src/+archive/2cbbf7afb36229e02e0247c6440971d34b5505e4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kenneth Russell &lt;kbr@chromium.org&gt;
+   Felipe Erias &lt;felipeerias@igalia.com&gt;
   </td>
   <td>
-   Wed Feb 10 05:12:02 2021
+   Wed Feb 10 06:07:42 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 10 05:12:02 2021
+   Wed Feb 10 06:07:42 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d30cd9785fd44b7470d66b9379a8c06c0f72d9b8/">
-    91d452a5a2f04afe724f7e86276f84e90bdf7d79
+   <a href="/chromium/src/+/2cbbf7afb36229e02e0247c6440971d34b5505e4/">
+    f8dc28cc551313fb964265137653cb834e7c5917
    </a>
   </td>
  </tr>
@@ -166,33 +166,61 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d30cd9785fd44b7470d66b9379a8c06c0f72d9b8%5E">
-    eda1665eff48b06d27371105dd3b60074acd1ff5
+   <a href="/chromium/src/+/2cbbf7afb36229e02e0247c6440971d34b5505e4%5E">
+    ebdfa974f64189162baaff307f1044c7aacb324a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d30cd9785fd44b7470d66b9379a8c06c0f72d9b8%5E%21/">
+    <a href="/chromium/src/+/2cbbf7afb36229e02e0247c6440971d34b5505e4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Suppress new WebGL test failures on Qualcomm GPUs.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "Do not clip gutters created by scrollbar-gutter"
 
-  conformance2/glsl3/precision-side-effects-bug.html
-  conformance2/glsl3/uint-int-shift-bug.html
+This is a reland of 87556ad01e74492343e1f906433257ae0976eacf
 
-are both failing on recent GPUs, including on the Pixel 2.
+The motivation for the original change was that events
+happening on the additional gutter created by the "both"
+keyword were being ignored.
 
-Bug: 1155942, 1176213, 1176485
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I57f18f3156ca67bb55125408da61379b28d060fa">I57f18f3156ca67bb55125408da61379b28d060fa</a>
-Tbr: behdadb@chromium.org
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2686749">https://chromium-review.googlesource.com/c/chromium/src/+/2686749</a>
-Auto-Submit: Kenneth Russell &lt;kbr@chromium.org&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#852491}
+The reverted commit included a unit test that used overlay
+scrollbars and issued scrolling events. However, this
+combination turned out to cause a DCHECK failure on Mac with
+ASAN enabled.
+
+This CL replaces that unit test with a similar one that uses
+classic scrollbars, which is suitable for testing the fixed
+functionality while avoiding that Mac/ASAN failure.
+
+Original change's description:
+&gt; Do not clip gutters created by scrollbar-gutter
+&gt;
+&gt; The gutters created by the scrollbar-gutter property don't occlude
+&gt; the content underneath them. Therefore, to prevent missing content
+&gt; and ignored events, those gutters should not be clipped out by
+&gt; LayoutBox::OverflowClipRect.
+&gt;
+&gt; In order to do this, ExcludeScrollbars and ComputeScrollbarsInternal
+&gt; are optionally able to exclude those gutters from their results.
+&gt;
+&gt; Web and unit tests are included.
+&gt;
+&gt; Bug: 710214
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib5d70d4783c84eb8c78961f758795cc984f13c9d">Ib5d70d4783c84eb8c78961f758795cc984f13c9d</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2643687">https://chromium-review.googlesource.com/c/chromium/src/+/2643687</a>
+&gt; Commit-Queue: Felipe Erias Morandeira &lt;felipeerias@gmail.com&gt;
+&gt; Reviewed-by: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/master@{#847991}
+
+Bug: 710214
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia719872d0adc0f2f1d78033b2b67868db8827052">Ia719872d0adc0f2f1d78033b2b67868db8827052</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2680371">https://chromium-review.googlesource.com/c/chromium/src/+/2680371</a>
+Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
+Commit-Queue: Felipe Erias &lt;felipeerias@igalia.com&gt;
+Cr-Commit-Position: refs/heads/master@{#852511}
 </pre>
 
 </body>
