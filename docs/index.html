@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/853309/"> 853309</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ac4f72e2905081d57c687318499c4b284bc1f3e6">ac4f72e2905081d57c687318499c4b284bc1f3e6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/853340/"> 853340</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e2d9d90b94685a99c6a7e7184ac2c60fa69fe2bd">e2d9d90b94685a99c6a7e7184ac2c60fa69fe2bd</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/853313/">853313</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ac4f72e2905081d57c687318499c4b284bc1f3e6
+   e2d9d90b94685a99c6a7e7184ac2c60fa69fe2bd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ac4f72e2905081d57c687318499c4b284bc1f3e6">
+    <a href="/chromium/src/+log/e2d9d90b94685a99c6a7e7184ac2c60fa69fe2bd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ac4f72e2905081d57c687318499c4b284bc1f3e6.tar.gz">
+    <a href="/chromium/src/+archive/e2d9d90b94685a99c6a7e7184ac2c60fa69fe2bd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jesse Schettler &lt;jschettler@chromium.org&gt;
+   Xida Chen &lt;xidachen@chromium.org&gt;
   </td>
   <td>
-   Fri Feb 12 00:22:55 2021
+   Fri Feb 12 01:21:33 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 12 00:22:55 2021
+   Fri Feb 12 01:21:33 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ac4f72e2905081d57c687318499c4b284bc1f3e6/">
-    3ae4152c088cf3f47b05daeaf442f3b7a67853d2
+   <a href="/chromium/src/+/e2d9d90b94685a99c6a7e7184ac2c60fa69fe2bd/">
+    0eded37e77d72537aaea53045fb56c438a0bf855
    </a>
   </td>
  </tr>
@@ -166,29 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ac4f72e2905081d57c687318499c4b284bc1f3e6%5E">
-    b645628fcb2b6b3c5c96a345e14970a005d5f530
+   <a href="/chromium/src/+/e2d9d90b94685a99c6a7e7184ac2c60fa69fe2bd%5E">
+    238c849ae3b8145e143d624f72ccca3d2bb38a44
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ac4f72e2905081d57c687318499c4b284bc1f3e6%5E%21/">
+    <a href="/chromium/src/+/e2d9d90b94685a99c6a7e7184ac2c60fa69fe2bd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">scanning: Style all Scan app scrollbars the same
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix a failing composite bgcolor animation layout test
 
-Make the existing scrollbar styling shared styling to ensure all the
-scrollbars in the Scan app are styled the same.
+This CL fixes a failing layout test on composite background color
+animation.
 
-Bug: None
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9f75db22c1f717981cd6ad570438dd7c15ecacd6">I9f75db22c1f717981cd6ad570438dd7c15ecacd6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2685425">https://chromium-review.googlesource.com/c/chromium/src/+/2685425</a>
-Commit-Queue: Jesse Schettler &lt;jschettler@chromium.org&gt;
-Reviewed-by: Zentaro Kavanagh &lt;zentaro@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#853309}
+The problem is in the FillRectWithPaintWorklet, when we
+specify the src_rect, it should be in the Node's coordinate
+system. For example, if we have a simple
+.div {
+  width: 200px;
+  height: 200px;
+  background-color: green
+}
+Then the dest_rect would be (8, 8, 200, 200) because the html
+has a margin of 8 pixels. The src_rect should just be
+(0, 0, 200, 200) which is in the Node's coordinate system.
+
+Bug: 1150468
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7dc075c226a6f61ef79bd449d49ed7391fc116b5">I7dc075c226a6f61ef79bd449d49ed7391fc116b5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2606133">https://chromium-review.googlesource.com/c/chromium/src/+/2606133</a>
+Commit-Queue: Xida Chen &lt;xidachen@chromium.org&gt;
+Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#853340}
 </pre>
 
 </body>
