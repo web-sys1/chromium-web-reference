@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/854124/"> 854124</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9a40d61c1fb44aed88abae570bdf5047ca4f757a">9a40d61c1fb44aed88abae570bdf5047ca4f757a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/854126/"> 854126</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c12d59e6e6c1da4a36383b277df920c3c512c951">c12d59e6e6c1da4a36383b277df920c3c512c951</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/854092/">854092</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e897d7f2a0085f08bc3801753f5be47aae8c03e4">e897d7f2a0085f08bc3801753f5be47aae8c03e4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/854128/">854128</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e492efd40e5635b52e9f1fe4f034c33b51210571">e492efd40e5635b52e9f1fe4f034c33b51210571</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9a40d61c1fb44aed88abae570bdf5047ca4f757a
+   c12d59e6e6c1da4a36383b277df920c3c512c951
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9a40d61c1fb44aed88abae570bdf5047ca4f757a">
+    <a href="/chromium/src/+log/c12d59e6e6c1da4a36383b277df920c3c512c951">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9a40d61c1fb44aed88abae570bdf5047ca4f757a.tar.gz">
+    <a href="/chromium/src/+archive/c12d59e6e6c1da4a36383b277df920c3c512c951.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Bartek Nowierski &lt;bartekn@chromium.org&gt;
+   Takashi Sakamoto &lt;tasak@google.com&gt;
   </td>
   <td>
-   Tue Feb 16 00:21:31 2021
+   Tue Feb 16 00:51:44 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 16 00:21:31 2021
+   Tue Feb 16 00:51:44 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9a40d61c1fb44aed88abae570bdf5047ca4f757a/">
-    7b9a1d52a3c98ff698ac55639ed0a4e30c1485ed
+   <a href="/chromium/src/+/c12d59e6e6c1da4a36383b277df920c3c512c951/">
+    8ba6933e03bc8de9a7cca367546b7b47f2e56ddb
    </a>
   </td>
  </tr>
@@ -166,38 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9a40d61c1fb44aed88abae570bdf5047ca4f757a%5E">
-    d9729fc2c0184c2fbf1010a27e3d49ce8075710b
+   <a href="/chromium/src/+/c12d59e6e6c1da4a36383b277df920c3c512c951%5E">
+    2d8cc01ac63d8524744f4996c2a537a36414e93e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9a40d61c1fb44aed88abae570bdf5047ca4f757a%5E%21/">
+    <a href="/chromium/src/+/c12d59e6e6c1da4a36383b277df920c3c512c951%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PA][BRP] Don't allow enabling BackupRefPtr support if PA-E is disabled
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PA] Store PartitionRefCount in SubsequentPageMetadata if available
 
-It's been too many times we've tried to test CheckedPtr without PA-E,
-wondering why things don't work the way they should, or worse, thinking
-that everything is working while it doesn't.
+For single-slot spans, ref-count is no longer stored in the slot (even
+though the space for it is still reserved). Instead, it is stored in the
+subsequent page metadata. Updated single-slot span layout:
 
-The most typical culprit are debug builds, which turn on component
-builds, which in turn silently turn off PA-E, which silently makes
-CheckedPtr useless outside of Blink partitions.
+  |&lt;---------------------- slot size ------------------------&gt;
+  |[cookie]|...data...|[cookie]|[refcnt_placeholder]|[unused]|
 
-NOTE: If you only want to test BRP support in PA (ref-counting), you
-should comment out this assert. You don't need PA-E for this to work.
+This CL allows us to avoid moving ref-count in ReallocFlags, because
+the stored position is not affected by raw size. If ReallocFlags needs
+larger memory than current slot size, ReallocFlag allocates a new slot
+from larger bucket, and frees the current slot.
+
+This CL doesn't affect purge behavior, because it keeps the system pages
+at the end of the slot empty and thus decommittable for single-slot
+spans.
 
 Bug: 1073933
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic5c1d40147f0ed559411f860abc7bbf1022062c1">Ic5c1d40147f0ed559411f860abc7bbf1022062c1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2695091">https://chromium-review.googlesource.com/c/chromium/src/+/2695091</a>
-Auto-Submit: Bartek Nowierski &lt;bartekn@chromium.org&gt;
-Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#854124}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I241d5ecf010b9bd874b37254fbafbe43fbbbbeae">I241d5ecf010b9bd874b37254fbafbe43fbbbbeae</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2692434">https://chromium-review.googlesource.com/c/chromium/src/+/2692434</a>
+Reviewed-by: Bartek Nowierski &lt;bartekn@chromium.org&gt;
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Commit-Queue: Takashi Sakamoto &lt;tasak@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#854126}
 </pre>
 
 </body>
