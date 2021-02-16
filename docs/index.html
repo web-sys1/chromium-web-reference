@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/854126/"> 854126</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c12d59e6e6c1da4a36383b277df920c3c512c951">c12d59e6e6c1da4a36383b277df920c3c512c951</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/854132/"> 854132</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a7de3d2fabb3273a131d35b3a9d962d92afaa5de">a7de3d2fabb3273a131d35b3a9d962d92afaa5de</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/854128/">854128</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c12d59e6e6c1da4a36383b277df920c3c512c951
+   a7de3d2fabb3273a131d35b3a9d962d92afaa5de
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c12d59e6e6c1da4a36383b277df920c3c512c951">
+    <a href="/chromium/src/+log/a7de3d2fabb3273a131d35b3a9d962d92afaa5de">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c12d59e6e6c1da4a36383b277df920c3c512c951.tar.gz">
+    <a href="/chromium/src/+archive/a7de3d2fabb3273a131d35b3a9d962d92afaa5de.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Takashi Sakamoto &lt;tasak@google.com&gt;
+   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 16 00:51:44 2021
+   Tue Feb 16 02:10:50 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 16 00:51:44 2021
+   Tue Feb 16 02:10:50 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c12d59e6e6c1da4a36383b277df920c3c512c951/">
-    8ba6933e03bc8de9a7cca367546b7b47f2e56ddb
+   <a href="/chromium/src/+/a7de3d2fabb3273a131d35b3a9d962d92afaa5de/">
+    82a7f5a59ed720c3f5814edc1d73c1dba58803c8
    </a>
   </td>
  </tr>
@@ -166,43 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c12d59e6e6c1da4a36383b277df920c3c512c951%5E">
-    2d8cc01ac63d8524744f4996c2a537a36414e93e
+   <a href="/chromium/src/+/a7de3d2fabb3273a131d35b3a9d962d92afaa5de%5E">
+    4c154927f76d2b1d3e47d2b2601f7857f0c0e47d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c12d59e6e6c1da4a36383b277df920c3c512c951%5E%21/">
+    <a href="/chromium/src/+/a7de3d2fabb3273a131d35b3a9d962d92afaa5de%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PA] Store PartitionRefCount in SubsequentPageMetadata if available
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Win64 PGO Profile
 
-For single-slot spans, ref-count is no longer stored in the slot (even
-though the space for it is still reserved). Instead, it is stored in the
-subsequent page metadata. Updated single-slot span layout:
+Roll Chrome Win64 PGO profile from chrome-win64-master-1613411946-24385ded2e2bdc52248560db7df096045089a461.profdata to chrome-win64-master-1613416540-cde0978e6ba67f35a517b5293e8a473bf5b00c36.profdata
 
-  |&lt;---------------------- slot size ------------------------&gt;
-  |[cookie]|...data...|[cookie]|[refcnt_placeholder]|[unused]|
+If this roll has caused a breakage, revert this CL and stop the roller
+using the controls here:
+<a href="https://autoroll.skia.org/r/pgo-win64-chromium">https://autoroll.skia.org/r/pgo-win64-chromium</a>
+Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
+is aware of the problem.
 
-This CL allows us to avoid moving ref-count in ReallocFlags, because
-the stored position is not affected by raw size. If ReallocFlags needs
-larger memory than current slot size, ReallocFlag allocates a new slot
-from larger bucket, and frees the current slot.
+To report a problem with the AutoRoller itself, please file a bug:
+<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
 
-This CL doesn't affect purge behavior, because it keeps the system pages
-at the end of the slot empty and thus decommittable for single-slot
-spans.
+Documentation for the AutoRoller is here:
+<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
 
-Bug: 1073933
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I241d5ecf010b9bd874b37254fbafbe43fbbbbeae">I241d5ecf010b9bd874b37254fbafbe43fbbbbeae</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2692434">https://chromium-review.googlesource.com/c/chromium/src/+/2692434</a>
-Reviewed-by: Bartek Nowierski &lt;bartekn@chromium.org&gt;
-Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Commit-Queue: Takashi Sakamoto &lt;tasak@google.com&gt;
-Cr-Commit-Position: refs/heads/master@{#854126}
+Cq-Include-Trybots: luci.chrome.try:win64-chrome
+Tbr: pgo-profile-sheriffs@google.com
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iefc548cca8bab16a19577d320ebbf323d4520d29">Iefc548cca8bab16a19577d320ebbf323d4520d29</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2693398">https://chromium-review.googlesource.com/c/chromium/src/+/2693398</a>
+Reviewed-by: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/master@{#854132}
 </pre>
 
 </body>
