@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/855684/"> 855684</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e58536e2b0a1756a7b9dab419b60b93eb6eea4c6">e58536e2b0a1756a7b9dab419b60b93eb6eea4c6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/855694/"> 855694</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e32031333db711414a221d171b50e5f00dc83b8d">e32031333db711414a221d171b50e5f00dc83b8d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/855691/">855691</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e58536e2b0a1756a7b9dab419b60b93eb6eea4c6
+   e32031333db711414a221d171b50e5f00dc83b8d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e58536e2b0a1756a7b9dab419b60b93eb6eea4c6">
+    <a href="/chromium/src/+log/e32031333db711414a221d171b50e5f00dc83b8d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e58536e2b0a1756a7b9dab419b60b93eb6eea4c6.tar.gz">
+    <a href="/chromium/src/+archive/e32031333db711414a221d171b50e5f00dc83b8d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mark Cogan &lt;marq@google.com&gt;
+   Michael Savigny &lt;msavigny@google.com&gt;
   </td>
   <td>
-   Fri Feb 19 13:45:41 2021
+   Fri Feb 19 14:53:27 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 19 13:45:41 2021
+   Fri Feb 19 14:53:27 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e58536e2b0a1756a7b9dab419b60b93eb6eea4c6/">
-    1fb85353a4409308ae75a1bde276bbaf68f6c598
+   <a href="/chromium/src/+/e32031333db711414a221d171b50e5f00dc83b8d/">
+    b2442536a528ea866e0f39fad23642600f8c90c6
    </a>
   </td>
  </tr>
@@ -166,43 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e58536e2b0a1756a7b9dab419b60b93eb6eea4c6%5E">
-    4de48f805636f581c51f1219112c8385b6100a60
+   <a href="/chromium/src/+/e32031333db711414a221d171b50e5f00dc83b8d%5E">
+    d724612b21bd43ff93f8f1958897c1027f2bb825
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e58536e2b0a1756a7b9dab419b60b93eb6eea4c6%5E%21/">
+    <a href="/chromium/src/+/e32031333db711414a221d171b50e5f00dc83b8d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS] Guard against grid view item array overrun.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add more tsan configs/builders using reclient.
 
-In some cases, it seems like the collection view delegate methods in
-GrdiViewController for handing item selection and deselection can be
-called with index paths that don't match the item count for the
-TabSwitcherItems array. (Specifically, the index path of the (de)selected
-item will be one higher than the maximum index of the array).
+All changes in mb_config.pyl.
 
-Given that touches and select/deselect events are handled asynchronously
-by UIKit, it's possible that these might be being handled after a model
-update (which is synchronous) has changed the size of the items array.
-(This does seem unlikely, since model updates should also update the
-collection view, so it shouldn't be sending the select/deselect events).
+Added config for tsan_disable_nacl_debug_bot.
 
-In any case, this CL adds a guard clause to cause calls to
--tappedItemAtIndexPath: no-op if the index path is illegal for the items
-array. This should have no user-visible effect, since there's no
-tab with that index to be selected.
+Added FYI builders: TSAN Debug (reclient), TSAN Release (reclient)
 
-Bug: 1163238
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3035bebd270171ef28d75fbbb4f08baa4e8f0caf">I3035bebd270171ef28d75fbbb4f08baa4e8f0caf</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2691206">https://chromium-review.googlesource.com/c/chromium/src/+/2691206</a>
-Reviewed-by: David Jean &lt;djean@chromium.org&gt;
-Commit-Queue: Mark Cogan &lt;marq@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#855684}
+This is part of the migration from goma-&gt;reclient.  These are builders
+that will be checked for artifact correctness and performance before
+switching the original builder from goma to reclient.
+
+Bug: 1141788
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I31388f521814e91802e4455233f600530b6c3bc8">I31388f521814e91802e4455233f600530b6c3bc8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2704780">https://chromium-review.googlesource.com/c/chromium/src/+/2704780</a>
+Reviewed-by: Dirk Pranke &lt;dpranke@google.com&gt;
+Commit-Queue: Michael Savigny &lt;msavigny@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#855694}
 </pre>
 
 </body>
