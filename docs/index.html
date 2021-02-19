@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/855663/"> 855663</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b08fccfb30ac693fc130cbaff2d2e9fad7be9e1e">b08fccfb30ac693fc130cbaff2d2e9fad7be9e1e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/855670/"> 855670</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3501e907d72b547c65f17ef98a39d863dbabe382">3501e907d72b547c65f17ef98a39d863dbabe382</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/855668/">855668</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b08fccfb30ac693fc130cbaff2d2e9fad7be9e1e
+   3501e907d72b547c65f17ef98a39d863dbabe382
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b08fccfb30ac693fc130cbaff2d2e9fad7be9e1e">
+    <a href="/chromium/src/+log/3501e907d72b547c65f17ef98a39d863dbabe382">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b08fccfb30ac693fc130cbaff2d2e9fad7be9e1e.tar.gz">
+    <a href="/chromium/src/+archive/3501e907d72b547c65f17ef98a39d863dbabe382.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Youkichi Hosoi &lt;youkichihosoi@chromium.org&gt;
+   David Jean &lt;djean@chromium.org&gt;
   </td>
   <td>
-   Fri Feb 19 10:28:23 2021
+   Fri Feb 19 11:19:34 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 19 10:28:23 2021
+   Fri Feb 19 11:19:34 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b08fccfb30ac693fc130cbaff2d2e9fad7be9e1e/">
-    662b676a7d274d8ac19eda4d7ea5b0ce14518fb7
+   <a href="/chromium/src/+/3501e907d72b547c65f17ef98a39d863dbabe382/">
+    8f041bdfdefb3304b5f2651aad9ec5182ca226ab
    </a>
   </td>
  </tr>
@@ -166,50 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b08fccfb30ac693fc130cbaff2d2e9fad7be9e1e%5E">
-    4f85da4391fe7bdfcc08f25fc19c7011070ef9b5
+   <a href="/chromium/src/+/3501e907d72b547c65f17ef98a39d863dbabe382%5E">
+    700074fa00b5eaa5acc64ccd4f75c1b97696f6ff
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b08fccfb30ac693fc130cbaff2d2e9fad7be9e1e%5E%21/">
+    <a href="/chromium/src/+/3501e907d72b547c65f17ef98a39d863dbabe382%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">arc: Send mounting event to ARC even when volume has watcher attached
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ios] Fixed PluginPlaceholderTest flaky tests.
 
-Currently, to ARC, we are not sending mounting events for removable
-media that have file system watchers already attached.
-Unfortunately, this can result in absence of removable media in ARC R,
-since ARC R can internally unmount storage volumes when vold is reset
-and/or system services are restarted. To restore the unmounted volumes,
-ARC R requests Chrome to send mounting events for all existing volumes,
-but since such volumes have file system watchers already attached, the
-requested mounting events are never sent.
-To resolve this issue, basically we should either
-(1) just send mounting events even when volumes have watchers, or
-(2) make ARC R send a request to detach file system watchers before
-    requesting mounting events for existing volumes
-Here, (2) is the safer approach since it can prevent Chrome from
-accidentally sending multiple mounting events without requests from ARC.
-However, fortunately, both ARC P and R are capable of handling such
-multiple mounting events by skipping them. Thus the simpler approach
-of (1) can be implemented.
+Wait until navigation is finished before proceeding with rest
+of test.  Stops js injector from failing.
 
-BUG=b:179781272
-TEST=Manually induce vold reset and/or system service restart in ARC R.
-TEST=Confirm that removable media is properly mounted again inside ARC.
-TEST=Send multiple mounting events for the same volume. Confirm that the
-TEST=events can be properly handled by both ARC P and ARC R.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id7cb46d074b40ae81dd64cd0529d671dbbb103c0">Id7cb46d074b40ae81dd64cd0529d671dbbb103c0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2706420">https://chromium-review.googlesource.com/c/chromium/src/+/2706420</a>
-Reviewed-by: Risan &lt;risan@chromium.org&gt;
-Reviewed-by: Ryo Hashimoto &lt;hashimoto@chromium.org&gt;
-Commit-Queue: Youkichi Hosoi &lt;youkichihosoi@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#855663}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6f255241766ba63985953b8864a1e1b45ab0040c">I6f255241766ba63985953b8864a1e1b45ab0040c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2704054">https://chromium-review.googlesource.com/c/chromium/src/+/2704054</a>
+Commit-Queue: David Jean &lt;djean@chromium.org&gt;
+Reviewed-by: Olivier Robin &lt;olivierrobin@chromium.org&gt;
+Reviewed-by: Mark Cogan &lt;marq@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#855670}
 </pre>
 
 </body>
