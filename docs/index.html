@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/855637/"> 855637</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cd6a8517d95af00256cc09ecfcbeca936c9b056f">cd6a8517d95af00256cc09ecfcbeca936c9b056f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/855642/"> 855642</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/513124a464de38520ab14386d4983d0977a5e0b2">513124a464de38520ab14386d4983d0977a5e0b2</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/855638/">855638</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   cd6a8517d95af00256cc09ecfcbeca936c9b056f
+   513124a464de38520ab14386d4983d0977a5e0b2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/cd6a8517d95af00256cc09ecfcbeca936c9b056f">
+    <a href="/chromium/src/+log/513124a464de38520ab14386d4983d0977a5e0b2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/cd6a8517d95af00256cc09ecfcbeca936c9b056f.tar.gz">
+    <a href="/chromium/src/+archive/513124a464de38520ab14386d4983d0977a5e0b2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Austin Sullivan &lt;asully@chromium.org&gt;
+   Tal Pressman &lt;talp@chromium.org&gt;
   </td>
   <td>
-   Fri Feb 19 05:16:34 2021
+   Fri Feb 19 06:09:04 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 19 05:16:34 2021
+   Fri Feb 19 06:09:04 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/cd6a8517d95af00256cc09ecfcbeca936c9b056f/">
-    84b64df1c4effe2d2fffa911c36a6e1edc9a00e5
+   <a href="/chromium/src/+/513124a464de38520ab14386d4983d0977a5e0b2/">
+    9095091fd5bf79e42d5517c4606a646f728996f0
    </a>
   </td>
  </tr>
@@ -166,39 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/cd6a8517d95af00256cc09ecfcbeca936c9b056f%5E">
-    3820bdb51e6f72e209f681177b8abd2dd87f1625
+   <a href="/chromium/src/+/513124a464de38520ab14386d4983d0977a5e0b2%5E">
+    07599be82e26ff72b2fbf8fe7f26402003b42401
    </a>
    <span>
     [
-    <a href="/chromium/src/+/cd6a8517d95af00256cc09ecfcbeca936c9b056f%5E%21/">
+    <a href="/chromium/src/+/513124a464de38520ab14386d4983d0977a5e0b2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">testing: Mark Android GPU decoding tests uninstantiated
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "[VideoCapture] Make VideoCaptureHost per frame instead of per process"
 
-This problem was discovered by attempting to roll googletest past CL
-315255779, which causes test binaries to fail when they include test
-suites / parametrized tests that are not instantiated, and when they
-include empty test suites.
+This is a reland of crrev.com/c/2632614 by guidou@, fixing the renderer
+crashes reported in crbug.com/116866. The failing bot was run manually
+to verify the fix.
 
-The MediaCodecVideoDecoderVp9Test test suite is currently not
-instantiated, so it does not run at all. Unfortunately, these tests
-are broken. To unblock the googletest roll, the test has been
-annotated with the GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST macro
-which can be removed once the tests are fixed.
+Original change description:
+Prior to this CL, there was a VideoCaptureHost mojo object per renderer
+process.  This CL makes it per frame, which is preferred.
 
-The MediaCodecVideoDecoderAV1Test test suite has also been annotated.
+This CL keeps the mojo client (VideoCaptureImpl and
+WebVideoCaptureImplManager) in platform since they do not really need
+to know about frames, only about a browser interface broker.
+LocalVideoCaptureClientImpl is moved to modules/mediastream, where it
+can know about frames and can pass the corresponding BIB to the video.
+The other user of the video-capture client is pepper, which already
+knew about frames.
 
-Bug: 1163396
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia9bff01c663ed6767dc09d865677bdaafe2daf08">Ia9bff01c663ed6767dc09d865677bdaafe2daf08</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2688442">https://chromium-review.googlesource.com/c/chromium/src/+/2688442</a>
-Reviewed-by: Frank Liberato &lt;liberato@chromium.org&gt;
-Commit-Queue: Austin Sullivan &lt;asully@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#855637}
+
+Bug: 1167900, 1168666, 1126758
+Cq-Include-Trybots: luci.chrome.try:chromeos-betty-pi-arc-chrome
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I854ce0d833ac2db4f9ac8853d3549627c33dd0ac">I854ce0d833ac2db4f9ac8853d3549627c33dd0ac</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2703551">https://chromium-review.googlesource.com/c/chromium/src/+/2703551</a>
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
+Reviewed-by: Guido Urdaneta &lt;guidou@chromium.org&gt;
+Commit-Queue: Tal Pressman &lt;talp@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#855642}
 </pre>
 
 </body>
