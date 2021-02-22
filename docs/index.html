@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/856166/"> 856166</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/415651b2dd20e59e23914a369ab0eee66322ac35">415651b2dd20e59e23914a369ab0eee66322ac35</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/856177/"> 856177</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b3e6409d68840ceb2809bb046ef5bc1eeef28bc8">b3e6409d68840ceb2809bb046ef5bc1eeef28bc8</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/856168/">856168</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7bd8966662ee9276d44508ca97598937735ca104">7bd8966662ee9276d44508ca97598937735ca104</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/856177/">856177</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b3e6409d68840ceb2809bb046ef5bc1eeef28bc8">b3e6409d68840ceb2809bb046ef5bc1eeef28bc8</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   415651b2dd20e59e23914a369ab0eee66322ac35
+   b3e6409d68840ceb2809bb046ef5bc1eeef28bc8
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/415651b2dd20e59e23914a369ab0eee66322ac35">
+    <a href="/chromium/src/+log/b3e6409d68840ceb2809bb046ef5bc1eeef28bc8">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/415651b2dd20e59e23914a369ab0eee66322ac35.tar.gz">
+    <a href="/chromium/src/+archive/b3e6409d68840ceb2809bb046ef5bc1eeef28bc8.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jiewei Qian &lt;qjw@chromium.org&gt;
+   Tsuyoshi Horo &lt;horo@chromium.org&gt;
   </td>
   <td>
-   Mon Feb 22 03:20:06 2021
+   Mon Feb 22 04:12:31 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Feb 22 03:20:06 2021
+   Mon Feb 22 04:12:31 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/415651b2dd20e59e23914a369ab0eee66322ac35/">
-    8afac3e7c6034bbf1a3066f339edec794815be04
+   <a href="/chromium/src/+/b3e6409d68840ceb2809bb046ef5bc1eeef28bc8/">
+    e063e8e29f385c2100b56a0d79572bfdcd405202
    </a>
   </td>
  </tr>
@@ -166,43 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/415651b2dd20e59e23914a369ab0eee66322ac35%5E">
-    4c0cb8c7c1e3be4cdb11c507691a1631cdf0a2f9
+   <a href="/chromium/src/+/b3e6409d68840ceb2809bb046ef5bc1eeef28bc8%5E">
+    56df6762805d5baf3d8d7683a682d7f9cab2f5aa
    </a>
    <span>
     [
-    <a href="/chromium/src/+/415651b2dd20e59e23914a369ab0eee66322ac35%5E%21/">
+    <a href="/chromium/src/+/b3e6409d68840ceb2809bb046ef5bc1eeef28bc8%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">system-web-apps: fix flaky link capture test on linux and lacros
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make SubresourceWebBundles feature available only in Secure Context
 
-This CL reduce the usage of RunUntilIdle and FindLastActive in SWA link
-capture tests.
+We are developing the SubresourceWebBundles feature behind the feature
+flag. This feature is enabled when
+--enable-features=SubresourceWebBundles or
+chrome://flags/#enable-experimental-web-platform-features is enabled
+even when the page is non-Secure Context.
 
-We suspect these methods are causing flakiness on linux and lacros
-builds. They are replaced by WaitForBrowserToClose and
-BrowserActivationWaiter.
+But according to this doc, we should make powerful new features
+available only to secure origins.
+<a href="https://www.chromium.org/Home/chromium-security/prefer-secure-origins-for-powerful-new-features">https://www.chromium.org/Home/chromium-security/prefer-secure-origins-for-powerful-new-features</a>
 
-Note, we need to assume window activations are processed in FIFO order.
-In other words, `window1-&gt;Show(); window2-&gt;Show();` triggers window
-activations in the order of Show() method being called. This is a
-reasonable assumption.
+So this CL makes the SubresourceWebBundles feature available only in
+Secure Context by:
+ (1) Add [SecureContext] extended attribute to `resources` and `scopes`
+     attribute of HTMLLinkElement in html_link_element.idl.
+ (2) Check IsSecureContext() also when we check
+     RuntimeEnabledFeatures::SubresourceWebBundlesEnabled().
 
-Also move system_web_app_ui_browsertest to run in interactive_ui_test,
-which runs test in serial (browsertests may run in parallel). Since
-window activation is global (across all running instances), this helps
-ensuring consistent window activations.
+Note: this restriction doesn’t affect Origin Trial of this feature,
+because Origin Trials are only enabled for secure origins.
 
-Fixed: 1172891,1164178
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie35eddc6d52ae812ea9b4c5c301e7bf1c3cb7a93">Ie35eddc6d52ae812ea9b4c5c301e7bf1c3cb7a93</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2699437">https://chromium-review.googlesource.com/c/chromium/src/+/2699437</a>
-Reviewed-by: Giovanni Ortuño Urquidi &lt;ortuno@chromium.org&gt;
-Commit-Queue: Jiewei Qian  &lt;qjw@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#856166}
+Bug: 1082020
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifa533f99f64c83015d293946084395a5af59cfba">Ifa533f99f64c83015d293946084395a5af59cfba</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2703194">https://chromium-review.googlesource.com/c/chromium/src/+/2703194</a>
+Commit-Queue: Tsuyoshi Horo &lt;horo@chromium.org&gt;
+Commit-Queue: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
+Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
+Reviewed-by: Kunihiko Sakamoto &lt;ksakamoto@chromium.org&gt;
+Reviewed-by: Hayato Ito &lt;hayato@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#856177}
 </pre>
 
 </body>
