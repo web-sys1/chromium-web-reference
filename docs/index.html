@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/856638/"> 856638</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2852037985ede40827281713139c47686dadc97a">2852037985ede40827281713139c47686dadc97a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/856652/"> 856652</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/77a79f0acfa0ee29101bab06aaef1288a6d5ec68">77a79f0acfa0ee29101bab06aaef1288a6d5ec68</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/856649/">856649</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/58c638bd0501117224abf147ed67f997363efed2">58c638bd0501117224abf147ed67f997363efed2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/856655/">856655</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1c8e872e61eaf5333d7ec5b583a7306497536d88">1c8e872e61eaf5333d7ec5b583a7306497536d88</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2852037985ede40827281713139c47686dadc97a
+   77a79f0acfa0ee29101bab06aaef1288a6d5ec68
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2852037985ede40827281713139c47686dadc97a">
+    <a href="/chromium/src/+log/77a79f0acfa0ee29101bab06aaef1288a6d5ec68">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2852037985ede40827281713139c47686dadc97a.tar.gz">
+    <a href="/chromium/src/+archive/77a79f0acfa0ee29101bab06aaef1288a6d5ec68.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kurt Catti-Schmidt (SCHMIDT) &lt;kschmi@microsoft.com&gt;
+   Internal Frameworks Autoroller &lt;bling-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 23 12:18:12 2021
+   Tue Feb 23 13:21:35 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 23 12:18:12 2021
+   Tue Feb 23 13:21:35 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2852037985ede40827281713139c47686dadc97a/">
-    a003b0718d2fee51fa14686b7ce2ca2f6c3aecdd
+   <a href="/chromium/src/+/77a79f0acfa0ee29101bab06aaef1288a6d5ec68/">
+    57f452241e6cb0243d7a4d103619c22a6bcf5ad1
    </a>
   </td>
  </tr>
@@ -166,45 +166,25 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2852037985ede40827281713139c47686dadc97a%5E">
-    a5baa3c794af34514b1bd69fc4dc4cc70ac53120
+   <a href="/chromium/src/+/77a79f0acfa0ee29101bab06aaef1288a6d5ec68%5E">
+    6cdb4b3cbf42166045e20f4db689602fd0c88142
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2852037985ede40827281713139c47686dadc97a%5E%21/">
+    <a href="/chromium/src/+/77a79f0acfa0ee29101bab06aaef1288a6d5ec68%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix crash/hang in ui::AXNodeData::IsIgnored from AXPosition
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Frameworks roll] Roll to 358985972 piper revision
 
-With the following change:
-<a href="https://chromium-review.googlesource.com/c/chromium/src/+/2648678">https://chromium-review.googlesource.com/c/chromium/src/+/2648678</a>
-AXPositions were allowed to traverse into empty objects.
-
-There is a separate restriction under IsValid() that specifically
-checks if a node is a child of an empty object, and considers these
-nodes to be invalid, and converts them to NullPositions.
-
-This creates problems when converting between TextPositions and
-TreePositions, as the constructor will fail the IsValid check and
-return a NullPosition. At this point, the anchor object is lost and
-we end up crashing or hanging.
-
-This change removes this restriction from the IsValid check and updates
-some test expectations to reflect the new behavior.
-
-AX-Relnotes: n/a.
-
-Bug: 1173825
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If0158a6ae3b6e80f1459b3d5888ae218fb5049d7">If0158a6ae3b6e80f1459b3d5888ae218fb5049d7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2702380">https://chromium-review.googlesource.com/c/chromium/src/+/2702380</a>
-Commit-Queue: Nektarios Paisios &lt;nektar@chromium.org&gt;
-Reviewed-by: Nektarios Paisios &lt;nektar@chromium.org&gt;
-Reviewed-by: Benjamin Beaudry &lt;benjamin.beaudry@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/master@{#856638}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibf1257b719029eeab72ddcdb906d99c91d70e342">Ibf1257b719029eeab72ddcdb906d99c91d70e342</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2713790">https://chromium-review.googlesource.com/c/chromium/src/+/2713790</a>
+Commit-Queue: Internal Frameworks Autoroller &lt;bling-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+Bot-Commit: Internal Frameworks Autoroller &lt;bling-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/master@{#856652}
 </pre>
 
 </body>
