@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/856961/"> 856961</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c5e427a2676cd5090037c4af346226998d97ce4f">c5e427a2676cd5090037c4af346226998d97ce4f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/857010/"> 857010</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d2dc1d62ff9883ac3315475307b679babaaf88f9">d2dc1d62ff9883ac3315475307b679babaaf88f9</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/856960/">856960</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b827496bccd33be197cf9e044ebd0046dc85c8b3">b827496bccd33be197cf9e044ebd0046dc85c8b3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/857006/">857006</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6d562b2234f273850aa741c7de7c24eae20c1dde">6d562b2234f273850aa741c7de7c24eae20c1dde</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c5e427a2676cd5090037c4af346226998d97ce4f
+   d2dc1d62ff9883ac3315475307b679babaaf88f9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c5e427a2676cd5090037c4af346226998d97ce4f">
+    <a href="/chromium/src/+log/d2dc1d62ff9883ac3315475307b679babaaf88f9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c5e427a2676cd5090037c4af346226998d97ce4f.tar.gz">
+    <a href="/chromium/src/+archive/d2dc1d62ff9883ac3315475307b679babaaf88f9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Martin Kreichgauer &lt;martinkr@google.com&gt;
+   Miyoung Shin &lt;myid.shin@igalia.com&gt;
   </td>
   <td>
-   Wed Feb 24 02:35:59 2021
+   Wed Feb 24 03:49:45 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 24 02:35:59 2021
+   Wed Feb 24 03:49:45 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c5e427a2676cd5090037c4af346226998d97ce4f/">
-    f1343ab9724458b27a167cf57906863c6e395f12
+   <a href="/chromium/src/+/d2dc1d62ff9883ac3315475307b679babaaf88f9/">
+    71425be1e636dca83adc04427b2b482ecb9bd523
    </a>
   </td>
  </tr>
@@ -166,41 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c5e427a2676cd5090037c4af346226998d97ce4f%5E">
-    b827496bccd33be197cf9e044ebd0046dc85c8b3
+   <a href="/chromium/src/+/d2dc1d62ff9883ac3315475307b679babaaf88f9%5E">
+    305a707d96bdf96296b5666e75cc81a95618cb93
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c5e427a2676cd5090037c4af346226998d97ce4f%5E%21/">
+    <a href="/chromium/src/+/d2dc1d62ff9883ac3315475307b679babaaf88f9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">fido: don't block the UI thread during IsUVPAA()
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix perf regression during parsing
 
-The implementation of IsUserVerifyingPlatformAuthenticatorAvailable()
-was synchronous, but every OS's implementation relies on some form of
-IPC and/or dynamic loading (macOS, CrOS, Windows). This worked fine for
-the most part, except for macOS where the implementation talks to the
-Security Framework which tends to stall or crash at random for a small
-number of users.
+r202256 introduced the cache of the directionality for all
+elements so that, the extra works were run in BeginParsingChildren
+and ChildrenChanged and this caused the regression of perf tests.
 
-This CL doesn't directly address the underlying hangs or crashes yet,
-but makes the IsUVPAA() interface asynchronous, moves the
-implementations off of the UI thread and makes call to external
-libraries on Windows and macOS with the CONTINUE_ON_SHUTDOWN trait.
-This should ensure that if these calls do hang, the browser stays
-responsive and they don't block browser shutdown.
+This CL uses the dir attribute's dirty flag and avoids the extra
+work if there isn't any dir attribute in the document.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I84fcff3331830f842d92468decd713a7fd57aaf1">I84fcff3331830f842d92468decd713a7fd57aaf1</a>
-Bug: 1168157, 1154063
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2683862">https://chromium-review.googlesource.com/c/chromium/src/+/2683862</a>
-Commit-Queue: Martin Kreichgauer &lt;martinkr@google.com&gt;
-Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
-Reviewed-by: Adam Langley &lt;agl@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#856961}
+Bug: 1180469, 1180481, 1180517, 1180550
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I54549f8cd7d6099837362c247a23260b22b7e1e8">I54549f8cd7d6099837362c247a23260b22b7e1e8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2712063">https://chromium-review.googlesource.com/c/chromium/src/+/2712063</a>
+Reviewed-by: Mason Freed &lt;masonfreed@chromium.org&gt;
+Commit-Queue: Miyoung Shin &lt;myid.shin@igalia.com&gt;
+Cr-Commit-Position: refs/heads/master@{#857010}
 </pre>
 
 </body>
