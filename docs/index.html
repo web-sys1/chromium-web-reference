@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/856957/"> 856957</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3fea7574bf0beaafe6e53fedb422341e114a2194">3fea7574bf0beaafe6e53fedb422341e114a2194</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/856961/"> 856961</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c5e427a2676cd5090037c4af346226998d97ce4f">c5e427a2676cd5090037c4af346226998d97ce4f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/856948/">856948</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5a017f1615dfa0736ad10f85da674caef1e625fc">5a017f1615dfa0736ad10f85da674caef1e625fc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/856960/">856960</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b827496bccd33be197cf9e044ebd0046dc85c8b3">b827496bccd33be197cf9e044ebd0046dc85c8b3</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3fea7574bf0beaafe6e53fedb422341e114a2194
+   c5e427a2676cd5090037c4af346226998d97ce4f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3fea7574bf0beaafe6e53fedb422341e114a2194">
+    <a href="/chromium/src/+log/c5e427a2676cd5090037c4af346226998d97ce4f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3fea7574bf0beaafe6e53fedb422341e114a2194.tar.gz">
+    <a href="/chromium/src/+archive/c5e427a2676cd5090037c4af346226998d97ce4f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Matt Stark &lt;msta@google.com&gt;
+   Martin Kreichgauer &lt;martinkr@google.com&gt;
   </td>
   <td>
-   Wed Feb 24 01:36:14 2021
+   Wed Feb 24 02:35:59 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 24 01:36:14 2021
+   Wed Feb 24 02:35:59 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3fea7574bf0beaafe6e53fedb422341e114a2194/">
-    d98f960cea409aa8996694b32892289e9b15da19
+   <a href="/chromium/src/+/c5e427a2676cd5090037c4af346226998d97ce4f/">
+    f1343ab9724458b27a167cf57906863c6e395f12
    </a>
   </td>
  </tr>
@@ -166,53 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3fea7574bf0beaafe6e53fedb422341e114a2194%5E">
-    4ffbceb9e46813c0041c27d52fbcd180348ae073
+   <a href="/chromium/src/+/c5e427a2676cd5090037c4af346226998d97ce4f%5E">
+    b827496bccd33be197cf9e044ebd0046dc85c8b3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3fea7574bf0beaafe6e53fedb422341e114a2194%5E%21/">
+    <a href="/chromium/src/+/c5e427a2676cd5090037c4af346226998d97ce4f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Replaced static list of locales in BUILD.gn files."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">fido: don't block the UI thread during IsUVPAA()
 
-This reverts commit d3be0082310db2f60fa170d1bf0444ed0744ccaa.
+The implementation of IsUserVerifyingPlatformAuthenticatorAvailable()
+was synchronous, but every OS's implementation relies on some form of
+IPC and/or dynamic loading (macOS, CrOS, Windows). This worked fine for
+the most part, except for macOS where the implementation talks to the
+Security Framework which tends to stall or crash at random for a small
+number of users.
 
-Reason for revert: My cl replaced locales_with_fake_bidi with locales_and_pseudolocales, and claudio's used locales_with_fake_bidi. We hit CQ at the same time, so neither saw each other's changes in CQ and so it passed. Reverting this CL because it's the smaller CL and will be easier to re-approve (and I suspect reverting mine would give merge conflicts with this CL)
+This CL doesn't directly address the underlying hangs or crashes yet,
+but makes the IsUVPAA() interface asynchronous, moves the
+implementations off of the UI thread and makes call to external
+libraries on Windows and macOS with the CONTINUE_ON_SHUTDOWN trait.
+This should ensure that if these calls do hang, the browser stays
+responsive and they don't block browser shutdown.
 
-Original change's description:
-&gt; Replaced static list of locales in BUILD.gn files.
-&gt;
-&gt; This change removes the static list of locales from BUILD.gn files, so
-&gt; that adding new languages will be cleaner and faster.
-&gt; It completes changes like this one:
-&gt; <a href="https://chromium-review.googlesource.com/c/chromium/src/+/1940949">https://chromium-review.googlesource.com/c/chromium/src/+/1940949</a>
-&gt; and it's required for:
-&gt; <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2558099">https://chromium-review.googlesource.com/c/chromium/src/+/2558099</a>
-&gt;
-&gt; Bug: b:175082230
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I37bb6f8d595fa4625a22cd379430989a3dc81b82">I37bb6f8d595fa4625a22cd379430989a3dc81b82</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2712306">https://chromium-review.googlesource.com/c/chromium/src/+/2712306</a>
-&gt; Commit-Queue: Claudio M &lt;claudiomagni@chromium.org&gt;
-&gt; Reviewed-by: Ahmed Fakhry &lt;afakhry@chromium.org&gt;
-&gt; Reviewed-by: Reilly Grant &lt;reillyg@chromium.org&gt;
-&gt; Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#856929}
-
-Bug: b:175082230
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0d5bb2493862b238afddcacf97afbbf457bac8d1">I0d5bb2493862b238afddcacf97afbbf457bac8d1</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2716583">https://chromium-review.googlesource.com/c/chromium/src/+/2716583</a>
-Auto-Submit: Matt Stark &lt;msta@google.com&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#856957}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I84fcff3331830f842d92468decd713a7fd57aaf1">I84fcff3331830f842d92468decd713a7fd57aaf1</a>
+Bug: 1168157, 1154063
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2683862">https://chromium-review.googlesource.com/c/chromium/src/+/2683862</a>
+Commit-Queue: Martin Kreichgauer &lt;martinkr@google.com&gt;
+Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
+Reviewed-by: Adam Langley &lt;agl@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#856961}
 </pre>
 
 </body>
