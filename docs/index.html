@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/858291/"> 858291</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0cbab65e0a93e033935e339980e50588d85968df">0cbab65e0a93e033935e339980e50588d85968df</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/858346/"> 858346</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/48f3781bfb0427945fa3c4d72673b47b69ed4321">48f3781bfb0427945fa3c4d72673b47b69ed4321</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/858300/">858300</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5704813b064370530b15b440ef1b949ca963282c">5704813b064370530b15b440ef1b949ca963282c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/858337/">858337</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5d8602b4031447a67c8eaeab67e54be3920cd9b4">5d8602b4031447a67c8eaeab67e54be3920cd9b4</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0cbab65e0a93e033935e339980e50588d85968df
+   48f3781bfb0427945fa3c4d72673b47b69ed4321
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0cbab65e0a93e033935e339980e50588d85968df">
+    <a href="/chromium/src/+log/48f3781bfb0427945fa3c4d72673b47b69ed4321">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0cbab65e0a93e033935e339980e50588d85968df.tar.gz">
+    <a href="/chromium/src/+archive/48f3781bfb0427945fa3c4d72673b47b69ed4321.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   James Vecore &lt;vecore@google.com&gt;
+   Claude van der Merwe &lt;cvandermerwe@google.com&gt;
   </td>
   <td>
-   Fri Feb 26 21:44:33 2021
+   Sat Feb 27 00:22:52 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 26 21:44:33 2021
+   Sat Feb 27 00:22:52 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0cbab65e0a93e033935e339980e50588d85968df/">
-    32e158df449b9ac38369838897b6b8abcf880fab
+   <a href="/chromium/src/+/48f3781bfb0427945fa3c4d72673b47b69ed4321/">
+    bd40b8ec46463be4c92d24ad36bfd5b6026b2496
    </a>
   </td>
  </tr>
@@ -166,45 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0cbab65e0a93e033935e339980e50588d85968df%5E">
-    efdfd4d598a3e19f990410dba12926eccddd6f6a
+   <a href="/chromium/src/+/48f3781bfb0427945fa3c4d72673b47b69ed4321%5E">
+    dac89490eb8a2d97d22b79a5108c3c99df944082
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0cbab65e0a93e033935e339980e50588d85968df%5E%21/">
+    <a href="/chromium/src/+/48f3781bfb0427945fa3c4d72673b47b69ed4321%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Nearby] Uncoupled RegisterForegroundReceiveSurface from Advertising
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Nearby] Disable Nearby controls when feature is disabled
 
-This CL fixes a regression: crbug/1182509 introduced in this CL:
-<a href="https://crrev.com/c/2686763.">https://crrev.com/c/2686763.</a>
+This CL prevents users from interacting with Nearby controls
+while the feature is disabled.
 
-In the case of a new user on boarding, the user finishes setup which
-enables Nearby Share and start the utility process. The utility process
-starts advertising when the users settings allow it. The UI would then
-register the foreground surface and wait for a start advertising result
-before showing the high viz page. However, advertising was already
-running so no callback would happen and the UI would hang waiting for
-the register surface callback to finish.
+Screenshot: <a href="https://screenshot.googleplex.com/64wwH3uuB3QmzZK">https://screenshot.googleplex.com/64wwH3uuB3QmzZK</a>
 
-This fix always resolves the register surface callback without waiting
-for an advertisement result that might not come. A follow up CL will
-be necessary to ensure every case of high-viz failure is accounted for
-(see 1182827).
-
-This also happens to fix the aspect issue for the pulse animation at
-the same time.
-
-Fixed: 1182509, 1181927
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idda07dd5c55f7545c4c89022a3079bf2cda8ddb8">Idda07dd5c55f7545c4c89022a3079bf2cda8ddb8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2723217">https://chromium-review.googlesource.com/c/chromium/src/+/2723217</a>
-Commit-Queue: James Vecore &lt;vecore@google.com&gt;
-Reviewed-by: Josh Nohle &lt;nohle@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#858291}
+Fixed: 1181492
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6e63f0d520e0ae670744883ffc7b4ee86fcf7421">I6e63f0d520e0ae670744883ffc7b4ee86fcf7421</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2724572">https://chromium-review.googlesource.com/c/chromium/src/+/2724572</a>
+Reviewed-by: James Vecore &lt;vecore@google.com&gt;
+Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
+Commit-Queue: Claude van der Merwe &lt;cvandermerwe@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#858346}
 </pre>
 
 </body>
