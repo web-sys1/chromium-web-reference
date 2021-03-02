@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/858746/"> 858746</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/17118bb11b392dd9fddd2f0fdbd46a5f2a9e5ad9">17118bb11b392dd9fddd2f0fdbd46a5f2a9e5ad9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/858775/"> 858775</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c41080a7c462ce0e5fc772f6c5e4959e4fbbeb30">c41080a7c462ce0e5fc772f6c5e4959e4fbbeb30</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/858692/">858692</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   17118bb11b392dd9fddd2f0fdbd46a5f2a9e5ad9
+   c41080a7c462ce0e5fc772f6c5e4959e4fbbeb30
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/17118bb11b392dd9fddd2f0fdbd46a5f2a9e5ad9">
+    <a href="/chromium/src/+log/c41080a7c462ce0e5fc772f6c5e4959e4fbbeb30">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/17118bb11b392dd9fddd2f0fdbd46a5f2a9e5ad9.tar.gz">
+    <a href="/chromium/src/+archive/c41080a7c462ce0e5fc772f6c5e4959e4fbbeb30.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xi Han &lt;hanxi@google.com&gt;
+   Alex Newcomer &lt;newcomer@chromium.org&gt;
   </td>
   <td>
-   Mon Mar 01 22:56:30 2021
+   Tue Mar 02 00:11:21 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Mar 01 22:56:30 2021
+   Tue Mar 02 00:11:21 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/17118bb11b392dd9fddd2f0fdbd46a5f2a9e5ad9/">
-    76598fdc85d29d0f54905e8147026ce230431411
+   <a href="/chromium/src/+/c41080a7c462ce0e5fc772f6c5e4959e4fbbeb30/">
+    a8e4913f308a8780700a8283c54c7bc7b2715570
    </a>
   </td>
  </tr>
@@ -166,26 +166,63 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/17118bb11b392dd9fddd2f0fdbd46a5f2a9e5ad9%5E">
-    833e0ee590c8db941e8cff8e0ccaf99632f3b7a6
+   <a href="/chromium/src/+/c41080a7c462ce0e5fc772f6c5e4959e4fbbeb30%5E">
+    0fb2441b925bbcad9d202585cc91e0d66e86d6ca
    </a>
    <span>
     [
-    <a href="/chromium/src/+/17118bb11b392dd9fddd2f0fdbd46a5f2a9e5ad9%5E%21/">
+    <a href="/chromium/src/+/c41080a7c462ce0e5fc772f6c5e4959e4fbbeb30%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Start] Extend flag "enable-tab-switcher-on-return"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">cros: Make AcceleratorHistory higher priority
 
-Bug: 1181923
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic9a44df1e6acabe80b39eca4f3962983075063d3">Ic9a44df1e6acabe80b39eca4f3962983075063d3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2727660">https://chromium-review.googlesource.com/c/chromium/src/+/2727660</a>
-Reviewed-by: Wei-Yin Chen (陳威尹) &lt;wychen@chromium.org&gt;
-Commit-Queue: Xi Han &lt;hanxi@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#858746}
+Background: AcceleratorFilter keeps track of pressed keys through
+AcceleratorHistory. AcceleratorFilter is a PreTargetEventHandler on
+Shell.
+
+AcceleratorController uses AcceleratorHistory to ensure proper
+accelerators are triggered. For example, a user could press:
+1. Search key
+2. Release Search
+  - At this point, AcceleratorHistory is used to determine that no
+    other keys are pressed as Search is released.
+
+There are various issues where other PreTargetHandlers handle KeyEvents,
+preventing AcceleratorHistory from seeing them. This means that in some
+cases (crbug.com/1174603, crbug.com/1172970) AcceleratorHistory is
+tricked into thinking keys are always pressed.
+
+The control flow for AcceleratorController is:
+ - AcceleratorHistory learns of a KeyEvent
+ - AcceleratorController then uses AcceleratorHistory to validate
+   certain accelerators.
+
+The Solution:
+ - Make AcceleratorHistory observe aura env independently of
+   AcceleratorFilter.
+
+AcceleratorHistory then gets a guarantee that no other
+PreTargetEventHandlers will prevent it from seeing events.
+
+This is safe because AcceleratorHistory does not ever SetHandled() or
+StopPropagation() on events. It should have no effect on other areas of
+the code.
+
+In addition, AcceleratorHistory still learns of the event prior to
+its utilization by AcceleratorController.
+
+Bug: 1174603
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic3469f9bcf8f3dd14200bf09aa0bff444300f910">Ic3469f9bcf8f3dd14200bf09aa0bff444300f910</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2724033">https://chromium-review.googlesource.com/c/chromium/src/+/2724033</a>
+Reviewed-by: Ahmed Fakhry &lt;afakhry@chromium.org&gt;
+Reviewed-by: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
+Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+Commit-Queue: Alex Newcomer &lt;newcomer@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#858775}
 </pre>
 
 </body>
