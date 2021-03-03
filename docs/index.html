@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/859297/"> 859297</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d2faae6ee86fe8763382ca007824c4d48016efd0">d2faae6ee86fe8763382ca007824c4d48016efd0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/859310/"> 859310</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/da5ff1641148c9fd97251e5dc0bf86e19fbed085">da5ff1641148c9fd97251e5dc0bf86e19fbed085</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/859305/">859305</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d8899487fca4b4ffa26097d5ba6bea071101b6c3">d8899487fca4b4ffa26097d5ba6bea071101b6c3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/859293/">859293</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9a3c992949321216aff144cb11aa14a3bc335f30">9a3c992949321216aff144cb11aa14a3bc335f30</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d2faae6ee86fe8763382ca007824c4d48016efd0
+   da5ff1641148c9fd97251e5dc0bf86e19fbed085
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d2faae6ee86fe8763382ca007824c4d48016efd0">
+    <a href="/chromium/src/+log/da5ff1641148c9fd97251e5dc0bf86e19fbed085">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d2faae6ee86fe8763382ca007824c4d48016efd0.tar.gz">
+    <a href="/chromium/src/+archive/da5ff1641148c9fd97251e5dc0bf86e19fbed085.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Colin Blundell &lt;blundell@chromium.org&gt;
+   Antonio Sartori &lt;antoniosartori@chromium.org&gt;
   </td>
   <td>
-   Wed Mar 03 08:53:45 2021
+   Wed Mar 03 09:49:58 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 03 08:53:45 2021
+   Wed Mar 03 09:49:58 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d2faae6ee86fe8763382ca007824c4d48016efd0/">
-    797b823899fc84068457e36502a8c47e035f96c5
+   <a href="/chromium/src/+/da5ff1641148c9fd97251e5dc0bf86e19fbed085/">
+    9d18af0213a6f61f3edeebe7a193ba4e9444c118
    </a>
   </td>
  </tr>
@@ -166,51 +166,28 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d2faae6ee86fe8763382ca007824c4d48016efd0%5E">
-    d7ae4173ebe1a792a41f879e62e702a12cdedf01
+   <a href="/chromium/src/+/da5ff1641148c9fd97251e5dc0bf86e19fbed085%5E">
+    db962cfbbe11ff9f7a416dd8de1f6afce543e7af
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d2faae6ee86fe8763382ca007824c4d48016efd0%5E%21/">
+    <a href="/chromium/src/+/da5ff1641148c9fd97251e5dc0bf86e19fbed085%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[WebLayer] Eliminate flake in subresource filter browsertests
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[sheriff] Remove non-existent flag from tests
 
-//weblayer's subresource filter browsertests were subject to flake that
-showed up only on Win7. I have finally found the cause:
-- In these test flows, they create test ruleset data and inject that
-  data via RulesetService, listening for a "ruleset was published"
-  callback before proceeding with the test.
-- However, unlike Chrome, WebLayer indexes and publishes the ruleset
-  from disk as part of startup.
-- These browsertests were not waiting for that initial publishing to be
-  complete before starting their test flows.
-- Thus, it was possible that the initial publishing was still in process
-  when the test started listening for the "ruleset was published"
-  callback. This callback then got triggered for the completion of the
-  *initial* publishing, at which point the test proceeded with the
-  production data installed rather than the test data (the test data got
-  installed at some random later point).
+The flag LayoutNGFieldset does not exist and spams test error outputs.
 
-D'oh! Note that there is nothing Windows-specific about this race; it
-must just be a fruitful environment for tickling it.
-
-This CL changes //weblayer's SubresourceFilterBrowsertest to wait for
-the initial ruleset data to be published in SetUpOnMainThread() and
-re-enables the tests on Win7. On swarming the test suite passes a
-set of 100 runs with the fix (without the fix the flakes already show
-in a set of 10 runs).
-
-Bug: 1116095, 1152429
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I76f90c2af7bb400113fb9fc14312f0499a3d005f">I76f90c2af7bb400113fb9fc14312f0499a3d005f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2727329">https://chromium-review.googlesource.com/c/chromium/src/+/2727329</a>
-Reviewed-by: Charlie Harrison &lt;csharrison@chromium.org&gt;
-Commit-Queue: Colin Blundell &lt;blundell@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#859297}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iadf05808ef0d61be34c74bbd24355ade98c2df24">Iadf05808ef0d61be34c74bbd24355ade98c2df24</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2731570">https://chromium-review.googlesource.com/c/chromium/src/+/2731570</a>
+Auto-Submit: Antonio Sartori &lt;antoniosartori@chromium.org&gt;
+Reviewed-by: Morten Stenshorne &lt;mstensho@chromium.org&gt;
+Commit-Queue: Morten Stenshorne &lt;mstensho@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#859310}
 </pre>
 
 </body>
