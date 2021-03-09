@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/861073/"> 861073</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b4bfc012046fa3be16b21550665c9030bcadbc4b">b4bfc012046fa3be16b21550665c9030bcadbc4b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/861085/"> 861085</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9ca8609b81140984a328e42b9271b938c6064c10">9ca8609b81140984a328e42b9271b938c6064c10</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/861071/">861071</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b4bfc012046fa3be16b21550665c9030bcadbc4b
+   9ca8609b81140984a328e42b9271b938c6064c10
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b4bfc012046fa3be16b21550665c9030bcadbc4b">
+    <a href="/chromium/src/+log/9ca8609b81140984a328e42b9271b938c6064c10">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b4bfc012046fa3be16b21550665c9030bcadbc4b.tar.gz">
+    <a href="/chromium/src/+archive/9ca8609b81140984a328e42b9271b938c6064c10.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jérôme Lebel &lt;jlebel@chromium.org&gt;
+   Omar Morsi &lt;omorsi@google.com&gt;
   </td>
   <td>
-   Tue Mar 09 09:06:47 2021
+   Tue Mar 09 09:59:19 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 09 09:06:47 2021
+   Tue Mar 09 09:59:19 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b4bfc012046fa3be16b21550665c9030bcadbc4b/">
-    5b01dc7204e1f583c89539ed24bab4f1dfd3782a
+   <a href="/chromium/src/+/9ca8609b81140984a328e42b9271b938c6064c10/">
+    f81ab02d7ef204efe3036ccf6822733416c32b20
    </a>
   </td>
  </tr>
@@ -166,54 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b4bfc012046fa3be16b21550665c9030bcadbc4b%5E">
-    4c94bc2c4594d78dbdd31a6c6dd3397b2a897086
+   <a href="/chromium/src/+/9ca8609b81140984a328e42b9271b938c6064c10%5E">
+    4af467bbedf81dd6553446df699d17df490f0535
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b4bfc012046fa3be16b21550665c9030bcadbc4b%5E%21/">
+    <a href="/chromium/src/+/9ca8609b81140984a328e42b9271b938c6064c10%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[iOS] SimplifySignOutIOS cleanup"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">KeyPermissionsService: Delegate corporate flag queries to KPM
 
-This reverts commit 2e88ab1b3d6392b1f3983bbda8448c7b3be61b64.
+This CL changes the behavior of KeyPermissionsService when queried for
+corporate flag of keys on system token. Before this CL,
+KeyPermissionsService would immediately reply that all system token keys
+are corporate. With this CL, the check of whether a key on the system
+token is corporate or not will be delegated to the KeyPermissionsManager
+(KPM) so that the knowledge of "all system token keys are by default
+allowed for corporate usage" resides only in one place - KPM. This will
+make it easier for future changes in this behavior (as now it is only
+kept in one place) and for centralizing key permissions management.
 
-Reason for revert: This patch doesn't work with canary. kSimplifySignOutIOS is disabled. I think the best solution is keep both test cases, and use appConfigurationForTestCase to disable kSimplifySignOutIOS in AccountCollectionsTestCase. 
-
-Original change's description:
-&gt; [iOS] SimplifySignOutIOS cleanup
-&gt;
-&gt; Remove:
-&gt; +[SigninEarlGreyUI signOut]
-&gt; +[SigninEarlGreyUI signOutAndClearDataFromDevice]
-&gt;
-&gt; New API:
-&gt; +[SigninEarlGreyUI signOutWithConfirmationChoice:].
-&gt;
-&gt; * crrev.com/c/2742212 Deprecate old SigninEarlGreyUI APIs
-&gt; * crrev.com/i/3662965 Switch to new SigninEarlGreyUI APIs
-&gt; =&gt;crrev.com/c/2742474 Remove old SigninEarlGreyUI APIs
-&gt;
-&gt; Bug: 1166148
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I205988735d6e5426942a637ccd394d7fc5c113e6">I205988735d6e5426942a637ccd394d7fc5c113e6</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2742474">https://chromium-review.googlesource.com/c/chromium/src/+/2742474</a>
-&gt; Commit-Queue: Jérôme Lebel &lt;jlebel@chromium.org&gt;
-&gt; Reviewed-by: Nohemi Fernandez &lt;fernandex@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#860845}
-
-Bug: 1166148
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2a1ddf4989b3c73ef887fb183cbe6b18f97673ca">I2a1ddf4989b3c73ef887fb183cbe6b18f97673ca</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2745144">https://chromium-review.googlesource.com/c/chromium/src/+/2745144</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: Jérôme Lebel &lt;jlebel@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#861073}
+Bug: 1183708
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I01d1332827a6bcb5e501adbf0695f8df07c86fd9">I01d1332827a6bcb5e501adbf0695f8df07c86fd9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2741064">https://chromium-review.googlesource.com/c/chromium/src/+/2741064</a>
+Reviewed-by: Pavol Marko &lt;pmarko@chromium.org&gt;
+Commit-Queue: Omar Morsi &lt;omorsi@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#861085}
 </pre>
 
 </body>
