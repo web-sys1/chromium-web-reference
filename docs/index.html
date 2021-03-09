@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/861156/"> 861156</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/455c0212e477db40463020357278a004e9cd8f93">455c0212e477db40463020357278a004e9cd8f93</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/861171/"> 861171</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9cf9179278f23b29d5bb18dffb2d08bc99dcafb4">9cf9179278f23b29d5bb18dffb2d08bc99dcafb4</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/861161/">861161</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   455c0212e477db40463020357278a004e9cd8f93
+   9cf9179278f23b29d5bb18dffb2d08bc99dcafb4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/455c0212e477db40463020357278a004e9cd8f93">
+    <a href="/chromium/src/+log/9cf9179278f23b29d5bb18dffb2d08bc99dcafb4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/455c0212e477db40463020357278a004e9cd8f93.tar.gz">
+    <a href="/chromium/src/+archive/9cf9179278f23b29d5bb18dffb2d08bc99dcafb4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Joshua Pawlicki &lt;waffles@chromium.org&gt;
+   Lukasz Anforowicz &lt;lukasza@chromium.org&gt;
   </td>
   <td>
-   Tue Mar 09 15:28:50 2021
+   Tue Mar 09 16:31:49 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 09 15:28:50 2021
+   Tue Mar 09 16:31:49 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/455c0212e477db40463020357278a004e9cd8f93/">
-    147498a3aa2888afc72c57f048bd81ab26ccd02a
+   <a href="/chromium/src/+/9cf9179278f23b29d5bb18dffb2d08bc99dcafb4/">
+    b8f559872aeb87678a79092530613495c4546b7e
    </a>
   </td>
  </tr>
@@ -166,33 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/455c0212e477db40463020357278a004e9cd8f93%5E">
-    c8e1e5803dd084613e2aebbeb8692b4ea4a2e193
+   <a href="/chromium/src/+/9cf9179278f23b29d5bb18dffb2d08bc99dcafb4%5E">
+    072ba2f8022a533b2b90a8ac8b75d8fa16b77289
    </a>
    <span>
     [
-    <a href="/chromium/src/+/455c0212e477db40463020357278a004e9cd8f93%5E%21/">
+    <a href="/chromium/src/+/9cf9179278f23b29d5bb18dffb2d08bc99dcafb4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Sheriff: Disable Latch test on ChromeOS MSan
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix and re-enable ...SameDoc...NavigationWithNothingCommittedAfterCrash.
 
-The test is the culprit for 3/3 ChromeOS MSAN timeouts; see
-<a href="https://chromium-swarm.appspot.com/task?id=522cd645f6145610">https://chromium-swarm.appspot.com/task?id=522cd645f6145610</a>
-<a href="https://chromium-swarm.appspot.com/task?id=522f236b1e25f710">https://chromium-swarm.appspot.com/task?id=522f236b1e25f710</a>
-<a href="https://chromium-swarm.appspot.com/task?id=522f81969abdd510">https://chromium-swarm.appspot.com/task?id=522f81969abdd510</a>
+This CL removes the NOTREACHED in
+NotImplementedURLLoaderFactory::CreateLoaderAndStart that used to be
+flakily hit by the
+BrowserTest.SameDocumentHistoryNavigationWithNothingCommittedAfterCrash
+test.  The NOTREACHED was added in r794566 and 1) from the start was
+focused on renderers using non-frame-specific/non-browser-provided
+URLLoaderFactory (so removing the NOTREACHED shouldn't impact other,
+broader scenarios) and 2) the root cause for violating this assertion is
+known at this point and not _directly_ related to the scenario exercised
+by the flaky test (see <a href="https://crbug.com/1184292#c4">https://crbug.com/1184292#c4</a>) so the NOTREACHED
+is not adding much value at this point and can be temporarily taken out.
 
-Bug: 1185706
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If70527f13c9ff117eb75e189960449d9b5d5c326">If70527f13c9ff117eb75e189960449d9b5d5c326</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2745594">https://chromium-review.googlesource.com/c/chromium/src/+/2745594</a>
-Commit-Queue: Joshua Pawlicki &lt;waffles@chromium.org&gt;
-Commit-Queue: Richard Knoll &lt;knollr@chromium.org&gt;
-Auto-Submit: Joshua Pawlicki &lt;waffles@chromium.org&gt;
-Reviewed-by: Richard Knoll &lt;knollr@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#861156}
+This CL re-enables the test - it shouldn't be flaky anymore after
+the changes described above.
+
+Fixed: 1184168
+Bug: 1184292
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I869fefebb9aaab1f5fc31b296cd3535585199abe">I869fefebb9aaab1f5fc31b296cd3535585199abe</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2743415">https://chromium-review.googlesource.com/c/chromium/src/+/2743415</a>
+Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Reviewed-by: Peter Kasting &lt;pkasting@chromium.org&gt;
+Reviewed-by: Nate Chapin &lt;japhet@chromium.org&gt;
+Commit-Queue: Nate Chapin &lt;japhet@chromium.org&gt;
+Auto-Submit: Łukasz Anforowicz &lt;lukasza@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#861171}
 </pre>
 
 </body>
