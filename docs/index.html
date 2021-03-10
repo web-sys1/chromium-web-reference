@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/861641/"> 861641</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5fee3f1ba3a60f12642c2a89ae6d82d49e4a7f7d">5fee3f1ba3a60f12642c2a89ae6d82d49e4a7f7d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/861642/"> 861642</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a2927e33d04c24872f2ce8f5ff2297196e0ab83b">a2927e33d04c24872f2ce8f5ff2297196e0ab83b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/861641/">861641</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5fee3f1ba3a60f12642c2a89ae6d82d49e4a7f7d
+   a2927e33d04c24872f2ce8f5ff2297196e0ab83b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5fee3f1ba3a60f12642c2a89ae6d82d49e4a7f7d">
+    <a href="/chromium/src/+log/a2927e33d04c24872f2ce8f5ff2297196e0ab83b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5fee3f1ba3a60f12642c2a89ae6d82d49e4a7f7d.tar.gz">
+    <a href="/chromium/src/+archive/a2927e33d04c24872f2ce8f5ff2297196e0ab83b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   benjamin joyce &lt;bjoyce@chromium.org&gt;
+   Dirk Pranke &lt;dpranke@google.com&gt;
   </td>
   <td>
-   Wed Mar 10 19:23:58 2021
+   Wed Mar 10 20:57:25 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 10 19:23:58 2021
+   Wed Mar 10 20:57:25 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5fee3f1ba3a60f12642c2a89ae6d82d49e4a7f7d/">
-    0589e59d2b52c7315d71a098073e5aadb6970c42
+   <a href="/chromium/src/+/a2927e33d04c24872f2ce8f5ff2297196e0ab83b/">
+    453e811d2bf405de77ac981d66ae7cbf31c31ce4
    </a>
   </td>
  </tr>
@@ -166,48 +166,54 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5fee3f1ba3a60f12642c2a89ae6d82d49e4a7f7d%5E">
-    05c03a11fa142798891b804852b174f75b247f5c
+   <a href="/chromium/src/+/a2927e33d04c24872f2ce8f5ff2297196e0ab83b%5E">
+    5fee3f1ba3a60f12642c2a89ae6d82d49e4a7f7d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5fee3f1ba3a60f12642c2a89ae6d82d49e4a7f7d%5E%21/">
+    <a href="/chromium/src/+/a2927e33d04c24872f2ce8f5ff2297196e0ab83b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Reconfigure experimental builder configs."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Add test directory -&gt; monorail component metadata to test invocations."
 
-This reverts commit efe21e6b3a05bd808dd87beb0cf28a5493d4b857.
+This reverts commit 39b25a5f892c66354301b0bd505d45d5a38e6e74.
 
-Reason for revert: Didn't fix Glibc 2.28 not being found on bot nor use of clang_x86_v8_arm instead of clang_x86_v8_arm64
+Reason for revert: broke Win7 Tests x64 bot (<a href="https://ci.chromium.org/p/chromium/builders/ci/Win%207%20Tests%20x64%20%281%29/78401?">https://ci.chromium.org/p/chromium/builders/ci/Win%207%20Tests%20x64%20(1)/78401?</a>)
 
 Original change's description:
-&gt; Reconfigure experimental builder configs.
+&gt; Add test directory -&gt; monorail component metadata to test invocations.
 &gt;
-&gt; Removes fail_on_android_expectations which is the only gn difference
-&gt; between the working android-pie-arm64-coverage-rel.
+&gt; The new ResultDB system has the ability to associate test results with
+&gt; Monorail components and teams, but in order to do that, we need to
+&gt; upload the mapping information contained in the testing/DIR_METADATA
+&gt; files along with the test results.
 &gt;
+&gt; This CL adds a gclient hook to generate the metadata in a
+&gt; ResultDB-friendly format that can be accessed by `rdb` and uploaded
+&gt; as part of a test invocation, and makes the generated data a
+&gt; dependency of the bin/run_* test scripts, to ensure that every
+&gt; test invocation will have the data.
 &gt;
-&gt; Bug: 1182468
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I459b8e295bfd4923dcafe15a778ca5e832fd8efb">I459b8e295bfd4923dcafe15a778ca5e832fd8efb</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2746298">https://chromium-review.googlesource.com/c/chromium/src/+/2746298</a>
-&gt; Reviewed-by: Haiyang Pan &lt;hypan@google.com&gt;
-&gt; Commit-Queue: benjamin joyce &lt;bjoyce@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#861355}
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I83dcf7f460b6fbd1d4c23616d972510712019148">I83dcf7f460b6fbd1d4c23616d972510712019148</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2568896">https://chromium-review.googlesource.com/c/chromium/src/+/2568896</a>
+&gt; Commit-Queue: Dirk Pranke &lt;dpranke@google.com&gt;
+&gt; Reviewed-by: Chan Li &lt;chanli@chromium.org&gt;
+&gt; Reviewed-by: Nodir Turakulov &lt;nodir@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/master@{#861612}
 
-Bug: 1182468
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I22c39de38b5526ec4d696c415a620604a778f031">I22c39de38b5526ec4d696c415a620604a778f031</a>
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I024e516400daec4eb22edf2e0539baa1553948bc">I024e516400daec4eb22edf2e0539baa1553948bc</a>
 No-Presubmit: true
 No-Tree-Checks: true
 No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2749614">https://chromium-review.googlesource.com/c/chromium/src/+/2749614</a>
-Reviewed-by: Haiyang Pan &lt;hypan@google.com&gt;
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2749775">https://chromium-review.googlesource.com/c/chromium/src/+/2749775</a>
+Auto-Submit: Dirk Pranke &lt;dpranke@google.com&gt;
+Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
 Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: benjamin joyce &lt;bjoyce@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#861641}
+Cr-Commit-Position: refs/heads/master@{#861642}
 </pre>
 
 </body>
