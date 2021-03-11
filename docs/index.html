@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/861824/"> 861824</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/756ed1f35c9bfcefe07e3c5290bed429b2fcd995">756ed1f35c9bfcefe07e3c5290bed429b2fcd995</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/861836/"> 861836</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c6ab2683f49eeb3b9212612994c7d24830adc733">c6ab2683f49eeb3b9212612994c7d24830adc733</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/861824/">861824</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   756ed1f35c9bfcefe07e3c5290bed429b2fcd995
+   c6ab2683f49eeb3b9212612994c7d24830adc733
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/756ed1f35c9bfcefe07e3c5290bed429b2fcd995">
+    <a href="/chromium/src/+log/c6ab2683f49eeb3b9212612994c7d24830adc733">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/756ed1f35c9bfcefe07e3c5290bed429b2fcd995.tar.gz">
+    <a href="/chromium/src/+archive/c6ab2683f49eeb3b9212612994c7d24830adc733.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Meredith Lane &lt;meredithl@chromium.org&gt;
+   Nancy Wang &lt;nancylingwang@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 11 02:56:49 2021
+   Thu Mar 11 03:59:31 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 11 02:56:49 2021
+   Thu Mar 11 03:59:31 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/756ed1f35c9bfcefe07e3c5290bed429b2fcd995/">
-    8906464fb221e5d99166a4bebfdb8817115c3cdb
+   <a href="/chromium/src/+/c6ab2683f49eeb3b9212612994c7d24830adc733/">
+    244f4c350a2053ba782e230ae57a3504c60626b6
    </a>
   </td>
  </tr>
@@ -166,36 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/756ed1f35c9bfcefe07e3c5290bed429b2fcd995%5E">
-    7cd230d0a0f13f3cf74ab2551fe32c05ed8fa00c
+   <a href="/chromium/src/+/c6ab2683f49eeb3b9212612994c7d24830adc733%5E">
+    c62ff0ef3797cd5ee7399c9d387cf55c5c149792
    </a>
    <span>
     [
-    <a href="/chromium/src/+/756ed1f35c9bfcefe07e3c5290bed429b2fcd995%5E%21/">
+    <a href="/chromium/src/+/c6ab2683f49eeb3b9212612994c7d24830adc733%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Migrate notification methods from AXLayoutObject to AXNodeObject
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Replace HandleIntent with the AppService LaunchAppWithIntent interface.
 
-Refactor, no functional difference.
+This CL extends the intent, and replaces the mojom HandleIntent in
+StartSmartSelectionActionMenu with the AppService LaunchAppWithIntent
+interface to:
+1. Have a central place for UMA to record app launching.
+2. Save the app launch info for the full restore project.
 
-HandleActiveDescendantChanged relies on there being a Node, so this
-method should be moved to there.
+Fix the display issue for ARC app launch with smart selection menu. If
+the text from Chrome is shown from the external monitor, the ARC app is
+still launch from the labtop internal screen. This CL adds the cursor
+point to launch the ARC app from the same screen as the text selected.
+For example, if the text from Chrome is shown on the external monitor,
+launch ARC app on the external monitor as well.
 
-HandleAriaExpandedChanged appears to only be called from
-AXObjectCache::HandleAriaExpandedChangedWithCleanLayout, which does a
-GetOrCreate on the DOM node.
+The mojom HandleIntent interface is modified to add the display id and
+the window info in CL:2739291.
 
-AX-Relnotes: N/A
-Bug: 1093651
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibf585523edc8061529f6df4c50a4de883ea4e135">Ibf585523edc8061529f6df4c50a4de883ea4e135</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2732809">https://chromium-review.googlesource.com/c/chromium/src/+/2732809</a>
-Reviewed-by: Alice Boxhall &lt;aboxhall@chromium.org&gt;
-Commit-Queue: Meredith Lane &lt;meredithl@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#861824}
+Add unit tests to verify the intent functions.
+
+BUG=1146900
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I53b479f69c25da0768e569904cb748e1988cd19f">I53b479f69c25da0768e569904cb748e1988cd19f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2738591">https://chromium-review.googlesource.com/c/chromium/src/+/2738591</a>
+Commit-Queue: Nancy Wang &lt;nancylingwang@chromium.org&gt;
+Reviewed-by: Mark Pearson &lt;mpearson@chromium.org&gt;
+Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
+Reviewed-by: David Jacobo &lt;djacobo@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#861836}
 </pre>
 
 </body>
