@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/861930/"> 861930</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/56813b070c3f555f685cde5b7a4c9d01d3e4f185">56813b070c3f555f685cde5b7a4c9d01d3e4f185</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/861938/"> 861938</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ceaff180b7331b3cb049d485d262686892d04708">ceaff180b7331b3cb049d485d262686892d04708</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/861928/">861928</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/adb80885aed2c6a96daab860b7e1902d372a7fdd">adb80885aed2c6a96daab860b7e1902d372a7fdd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/861938/">861938</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ceaff180b7331b3cb049d485d262686892d04708">ceaff180b7331b3cb049d485d262686892d04708</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   56813b070c3f555f685cde5b7a4c9d01d3e4f185
+   ceaff180b7331b3cb049d485d262686892d04708
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/56813b070c3f555f685cde5b7a4c9d01d3e4f185">
+    <a href="/chromium/src/+log/ceaff180b7331b3cb049d485d262686892d04708">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/56813b070c3f555f685cde5b7a4c9d01d3e4f185.tar.gz">
+    <a href="/chromium/src/+archive/ceaff180b7331b3cb049d485d262686892d04708.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Oriol Brufau &lt;obrufau@igalia.com&gt;
+   Eugene Zemtsov &lt;eugene@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 11 11:02:43 2021
+   Thu Mar 11 11:52:44 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 11 11:02:43 2021
+   Thu Mar 11 11:52:44 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/56813b070c3f555f685cde5b7a4c9d01d3e4f185/">
-    db135e7f535ee266c71b00326e8015648fc3e518
+   <a href="/chromium/src/+/ceaff180b7331b3cb049d485d262686892d04708/">
+    88261bf0dd2d001b647e41cbebf6c2388bbc2561
    </a>
   </td>
  </tr>
@@ -166,42 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/56813b070c3f555f685cde5b7a4c9d01d3e4f185%5E">
-    44697094d1415f64148e59e870aa91f476519fdb
+   <a href="/chromium/src/+/ceaff180b7331b3cb049d485d262686892d04708%5E">
+    998c5589aaa01edfdd4e91497053c7bfdf0d71a5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/56813b070c3f555f685cde5b7a4c9d01d3e4f185%5E%21/">
+    <a href="/chromium/src/+/ceaff180b7331b3cb049d485d262686892d04708%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[editing] Fix condition in CompositeEditCommand::SplitTreeToNode
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Support for temporal scalability in media/ video encoders
 
-SplitTreeToNode shouldn't split a node when doing so would introduce an
-empty node. It has a condition to avoid that case, which checks if two
-VisiblePosition are different.
+1. Interface changes for media::VideoEncoder
+2. Support for temporal SVC in OpenH264 encoder
+3. Support for temporal SVC in libvpx encoder
+4. New unit test suite software_video_encoder_test:
+    - Test that SVC stream can be decoded with upper level missing
+    - Generic encoding tests (paying up the tech debt)
 
-However, VisiblePosition are not the right tool, it usually works but in
-edge cases an empty node can still be created due to the split, or a
-node may not be split but it should, resulting in a failed assertion.
-
-Therefore, this patch changes the condition to check whether the node is
-the first child or only has superfluous preceding siblings.
-
-Bug: 1186610
-
-TEST=ApplyBlockElementCommandTest.IndentHeadingIntoBlockquote
-TEST=ReplaceSelectionCommandTest.InsertImageAfterEmptyBlockInInline
-TEST=editing/deleting/pruning_after_merge.html
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0293665867de797b1ee2344497150be4f7404011">I0293665867de797b1ee2344497150be4f7404011</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2747382">https://chromium-review.googlesource.com/c/chromium/src/+/2747382</a>
-Reviewed-by: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Commit-Queue: Oriol Brufau &lt;obrufau@igalia.com&gt;
-Cr-Commit-Position: refs/heads/master@{#861930}
+Bug: 1176474
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9476c7b6a379f1188c39aad812ea45653f4aa8d0">I9476c7b6a379f1188c39aad812ea45653f4aa8d0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2747198">https://chromium-review.googlesource.com/c/chromium/src/+/2747198</a>
+Commit-Queue: Eugene Zemtsov &lt;eugene@chromium.org&gt;
+Reviewed-by: Dan Sanders &lt;sandersd@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#861938}
 </pre>
 
 </body>
