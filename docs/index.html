@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/862904/"> 862904</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c7609ddad6ce88a1f76a5567a7fe41bc1d322895">c7609ddad6ce88a1f76a5567a7fe41bc1d322895</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/862960/"> 862960</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6a7ba438e45695ecf6e943914cbb410103762f1b">6a7ba438e45695ecf6e943914cbb410103762f1b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/862937/">862937</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c7609ddad6ce88a1f76a5567a7fe41bc1d322895
+   6a7ba438e45695ecf6e943914cbb410103762f1b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c7609ddad6ce88a1f76a5567a7fe41bc1d322895">
+    <a href="/chromium/src/+log/6a7ba438e45695ecf6e943914cbb410103762f1b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c7609ddad6ce88a1f76a5567a7fe41bc1d322895.tar.gz">
+    <a href="/chromium/src/+archive/6a7ba438e45695ecf6e943914cbb410103762f1b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Lan Wei &lt;lanwei@chromium.org&gt;
+   Victor Hugo Vianna Silva &lt;victorvianna@google.com&gt;
   </td>
   <td>
-   Mon Mar 15 19:10:04 2021
+   Mon Mar 15 21:15:46 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Mar 15 19:10:04 2021
+   Mon Mar 15 21:15:46 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c7609ddad6ce88a1f76a5567a7fe41bc1d322895/">
-    cd24d8c7952accc066f6867add73a0aae629f0a0
+   <a href="/chromium/src/+/6a7ba438e45695ecf6e943914cbb410103762f1b/">
+    185c171246ec6beebd9cbfdfa916a2c8f744f81c
    </a>
   </td>
  </tr>
@@ -166,31 +166,77 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c7609ddad6ce88a1f76a5567a7fe41bc1d322895%5E">
-    7c13dc11bd1fffdd01b8e9666f01b06ed5b1e08d
+   <a href="/chromium/src/+/6a7ba438e45695ecf6e943914cbb410103762f1b%5E">
+    d3b13861bc3bdb32c0ae580023cee99fca335654
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c7609ddad6ce88a1f76a5567a7fe41bc1d322895%5E%21/">
+    <a href="/chromium/src/+/6a7ba438e45695ecf6e943914cbb410103762f1b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "Deflaky css/selectors/focus-visible-006.html on WebKit Linux Leak"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[sync] Make Cryptographer more singleton-like
 
-WPT test css/selectors/focus-visible-006.html is flaky on WebKit
-Linux Leak, because the page is still active when the test ends. I added
-action promise variable and changed step_func_done to step_func to make
-sure to end the test after the actions finish.
+Before this CL, ModelTypeRegistry and ModelTypeWorker would successively
+store snapshots of the latest version of the cryptographer (copies). In
+reality, there's one true cryptographer owned by NigoriState. So, with
+this CL:
 
-Bug: 1174806
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id5b92e34154c17601216bff718e6dd184586f42c">Id5b92e34154c17601216bff718e6dd184586f42c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2757668">https://chromium-review.googlesource.com/c/chromium/src/+/2757668</a>
-Reviewed-by: Liviu Tinta &lt;liviutinta@chromium.org&gt;
-Commit-Queue: Lan Wei &lt;lanwei@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#862904}
+1) There are no more copies, ModelTypeWorker-s and ModelTypeRegistry
+keep a reference to the same constant cryptographer.
+
+2) SyncEncryptionHandler now exposes a getter for the one cryptographer.
+This gives ModelTypeRegistry immediate access to it, avoiding some weird
+DCHECKs ("don't try to encrypt data before the cryptographer arrives").
+This is one step to fix a broader problem with SyncEncryptionHandler:
+its Observer-s are notified of changes to some state (e.g.
+PassphraseType) but this state is never exposed in the interface. Future
+CLs will add similar getters for the rest of the state, unblocking
+further simplifications.
+
+3) ModelTypeWorker continues to have the same setup Cryptographer-wise,
+i.e. it has a cryptographer iff the data type is encrypted. However, the
+obsolete UpdateCryptographer(std::unique_ptr&lt;Cryptographer&gt;) is split in
+2 parts:
+    Notification - OnCryptographerChange(): reacts to cryptography
+    changes as before. For instance, it attempts to decrypt pending
+    data if more encryption keys are now available.
+    Initialization - InitCryptographer(Cryptographer*): performs late
+    initialization of the cryptographer for a type that transitioned
+    from non-encrypted to encrypted. Internally calls
+    OnCryptographerChange().
+There's a subtle change in how often these codepaths are triggered in
+ModelTypeRegistry::OnEncryptedTypesChanged(). The change does *not*
+cause observable behavioral differences. Before this CL, every
+[enabled] type in the new "encrypted types" set used to get a
+notification. But OnEncryptedTypesChanged() isn't about changes to the
+cryptographer state, so there was no reason to notify types that
+already had a cryptographer. In this CL, we simply call
+InitCryptographer() for the set of types that just became encrypted,
+which leads to simpler code. Note that OnCryptographerChange() is
+still internally called to make sure the worker actually uses the new
+cryptographer.
+
+Finally:
+One interesting caveat is that there used to be one case where Sync had
+no cryptographer. This happened if the local nigori state was corrupted,
+see this return nullptr [1]. However, this case was never actually
+handled and caused a seg fault. The new code will always have a
+cryptographer, but will CHECK() for corruption of the local state,
+preventing regressions.
+
+[1] <a href="https://source.chromium.org/chromium/chromium/src/+/cbf394c0867c2570d39bbecc8c9751c14a97fce3:components/sync/nigori/cryptographer_impl.cc;l=40;bpv=1;bpt=1">https://source.chromium.org/chromium/chromium/src/+/cbf394c0867c2570d39bbecc8c9751c14a97fce3:components/sync/nigori/cryptographer_impl.cc;l=40;bpv=1;bpt=1</a>
+[2] <a href="https://source.chromium.org/chromium/chromium/src/+/cbf394c0867c2570d39bbecc8c9751c14a97fce3:components/sync/nigori/cryptographer_impl.cc;l=51;bpv=1;bpt=1">https://source.chromium.org/chromium/chromium/src/+/cbf394c0867c2570d39bbecc8c9751c14a97fce3:components/sync/nigori/cryptographer_impl.cc;l=51;bpv=1;bpt=1</a>
+
+Bug: 1109221, 1178418
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I317707edc126b4dc2722bc0d2b2cecbcd94e7b19">I317707edc126b4dc2722bc0d2b2cecbcd94e7b19</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2732148">https://chromium-review.googlesource.com/c/chromium/src/+/2732148</a>
+Commit-Queue: Victor Vianna &lt;victorvianna@google.com&gt;
+Reviewed-by: Mikel Astiz &lt;mastiz@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#862960}
 </pre>
 
 </body>
