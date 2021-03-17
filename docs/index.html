@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/863844/"> 863844</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c4efa50ca98cbf68b72faec3ff9c784d0186c652">c4efa50ca98cbf68b72faec3ff9c784d0186c652</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/863884/"> 863884</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2e77c7d64a62077b262aed48ef2c892b1de355f5">2e77c7d64a62077b262aed48ef2c892b1de355f5</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/863810/">863810</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/859d1d409f92189194cb770aad20f791fbe18627">859d1d409f92189194cb770aad20f791fbe18627</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/863886/">863886</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb87e8f454055445c1787de507579d2f999624b9">fb87e8f454055445c1787de507579d2f999624b9</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c4efa50ca98cbf68b72faec3ff9c784d0186c652
+   2e77c7d64a62077b262aed48ef2c892b1de355f5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c4efa50ca98cbf68b72faec3ff9c784d0186c652">
+    <a href="/chromium/src/+log/2e77c7d64a62077b262aed48ef2c892b1de355f5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c4efa50ca98cbf68b72faec3ff9c784d0186c652.tar.gz">
+    <a href="/chromium/src/+archive/2e77c7d64a62077b262aed48ef2c892b1de355f5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yuta Kitamura &lt;yutak@chromium.org&gt;
+   Mitsuru Oshima &lt;oshima@chromium.org&gt;
   </td>
   <td>
-   Wed Mar 17 17:45:20 2021
+   Wed Mar 17 18:56:22 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 17 17:45:20 2021
+   Wed Mar 17 18:56:22 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c4efa50ca98cbf68b72faec3ff9c784d0186c652/">
-    507562f44f6f9a36f8f3c8a13515ae8e9c16bfca
+   <a href="/chromium/src/+/2e77c7d64a62077b262aed48ef2c892b1de355f5/">
+    aef061dcb6cee9734bfbca4f3f28cbd615005c59
    </a>
   </td>
  </tr>
@@ -166,44 +166,27 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c4efa50ca98cbf68b72faec3ff9c784d0186c652%5E">
-    580eb7594faac91a396dc36913d55e9bf59c476d
+   <a href="/chromium/src/+/2e77c7d64a62077b262aed48ef2c892b1de355f5%5E">
+    0dba665eadfe8bd195325ca26aec4590844eb75c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c4efa50ca98cbf68b72faec3ff9c784d0186c652%5E%21/">
+    <a href="/chromium/src/+/2e77c7d64a62077b262aed48ef2c892b1de355f5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Bypass thread check in SchemeRegistry for test-only methods.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Run animation correctly in StatusWidgetDelegate::UpdateLayout
 
-Currently we have an issue that WTF::IsBeforeThreadCreated() always
-returns true regardless of whether a child thread is already created
-or not. It turns out fixing it would cause several other issues, too,
-so they must be cleared first.
+Bug: None
 
-One of them is thread check in SchemeRegistry. It uses IsBeforeThread-
-Created() to force modification of a variable to happen only before
-a child thread is created. However, TestRunner may mutate the said
-variable during and between tests, and that violates the expectation
-and would cause an assertion failure when IsBeforeThreadCreated() is
-fixed.
-
-This CL handles this issue by marking such accesses as test-only and
-allowing them to bypass the thread check, because mutations made by
-TestRunner are expected and should be considered safe, even though they
-may happen after a child thread is created.
-
-Bug: 1074302
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id99acd453a62143ad428c246baea27b7a10f5dce">Id99acd453a62143ad428c246baea27b7a10f5dce</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2763943">https://chromium-review.googlesource.com/c/chromium/src/+/2763943</a>
-Auto-Submit: Yuta Kitamura &lt;yutak@chromium.org&gt;
-Commit-Queue: Tom Sepez &lt;tsepez@chromium.org&gt;
-Reviewed-by: Tom Sepez &lt;tsepez@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#863844}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I430e9252aa9f2c7326229bc14327dcda0f4895f2">I430e9252aa9f2c7326229bc14327dcda0f4895f2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2762465">https://chromium-review.googlesource.com/c/chromium/src/+/2762465</a>
+Reviewed-by: Tetsui Ohkubo &lt;tetsui@chromium.org&gt;
+Commit-Queue: Mitsuru Oshima &lt;oshima@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#863884}
 </pre>
 
 </body>
