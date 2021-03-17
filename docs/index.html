@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/863806/"> 863806</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8435ddaffa4acfd9cae35eec959acdd4aa7de84b">8435ddaffa4acfd9cae35eec959acdd4aa7de84b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/863844/"> 863844</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c4efa50ca98cbf68b72faec3ff9c784d0186c652">c4efa50ca98cbf68b72faec3ff9c784d0186c652</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/863780/">863780</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c95c894d6282c56ad3da869b548ce096e63e664f">c95c894d6282c56ad3da869b548ce096e63e664f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/863810/">863810</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/859d1d409f92189194cb770aad20f791fbe18627">859d1d409f92189194cb770aad20f791fbe18627</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8435ddaffa4acfd9cae35eec959acdd4aa7de84b
+   c4efa50ca98cbf68b72faec3ff9c784d0186c652
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8435ddaffa4acfd9cae35eec959acdd4aa7de84b">
+    <a href="/chromium/src/+log/c4efa50ca98cbf68b72faec3ff9c784d0186c652">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8435ddaffa4acfd9cae35eec959acdd4aa7de84b.tar.gz">
+    <a href="/chromium/src/+archive/c4efa50ca98cbf68b72faec3ff9c784d0186c652.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   danakj &lt;danakj@chromium.org&gt;
+   Yuta Kitamura &lt;yutak@chromium.org&gt;
   </td>
   <td>
-   Wed Mar 17 16:46:48 2021
+   Wed Mar 17 17:45:20 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 17 16:46:48 2021
+   Wed Mar 17 17:45:20 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8435ddaffa4acfd9cae35eec959acdd4aa7de84b/">
-    cbd80352dee4c9d6cd9c2ac0413c66acdc91f18c
+   <a href="/chromium/src/+/c4efa50ca98cbf68b72faec3ff9c784d0186c652/">
+    507562f44f6f9a36f8f3c8a13515ae8e9c16bfca
    </a>
   </td>
  </tr>
@@ -166,35 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8435ddaffa4acfd9cae35eec959acdd4aa7de84b%5E">
-    c8c65c29d5ab915b9027da3effe2419690e5bcad
+   <a href="/chromium/src/+/c4efa50ca98cbf68b72faec3ff9c784d0186c652%5E">
+    580eb7594faac91a396dc36913d55e9bf59c476d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8435ddaffa4acfd9cae35eec959acdd4aa7de84b%5E%21/">
+    <a href="/chromium/src/+/c4efa50ca98cbf68b72faec3ff9c784d0186c652%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Restart same-doc navigation when document id doesn't match in renderer
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Bypass thread check in SchemeRegistry for test-only methods.
 
-This is probably a browser-side bug, but instead of crashing, restart
-the navigation and DumpWithoutCrashing both in the renderer and in the
-browser where the restart occurs.
+Currently we have an issue that WTF::IsBeforeThreadCreated() always
+returns true regardless of whether a child thread is already created
+or not. It turns out fixing it would cause several other issues, too,
+so they must be cleared first.
 
-This will eliminate the user-facing crashes that are occurring and
-provide us with more debug info.
+One of them is thread check in SchemeRegistry. It uses IsBeforeThread-
+Created() to force modification of a variable to happen only before
+a child thread is created. However, TestRunner may mutate the said
+variable during and between tests, and that violates the expectation
+and would cause an assertion failure when IsBeforeThreadCreated() is
+fixed.
 
-R=creis@chromium.org
+This CL handles this issue by marking such accesses as test-only and
+allowing them to bypass the thread check, because mutations made by
+TestRunner are expected and should be considered safe, even though they
+may happen after a child thread is created.
 
-Bug: 1188513
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia7de1a099c83ddea82185f6b43bec79b1d696b12">Ia7de1a099c83ddea82185f6b43bec79b1d696b12</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2765309">https://chromium-review.googlesource.com/c/chromium/src/+/2765309</a>
-Commit-Queue: danakj &lt;danakj@chromium.org&gt;
-Reviewed-by: Charlie Reis &lt;creis@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#863806}
+Bug: 1074302
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id99acd453a62143ad428c246baea27b7a10f5dce">Id99acd453a62143ad428c246baea27b7a10f5dce</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2763943">https://chromium-review.googlesource.com/c/chromium/src/+/2763943</a>
+Auto-Submit: Yuta Kitamura &lt;yutak@chromium.org&gt;
+Commit-Queue: Tom Sepez &lt;tsepez@chromium.org&gt;
+Reviewed-by: Tom Sepez &lt;tsepez@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#863844}
 </pre>
 
 </body>
