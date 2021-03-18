@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/864113/"> 864113</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8dd83d70ce0ffafde4ef550bb6d87e848bcc0b2d">8dd83d70ce0ffafde4ef550bb6d87e848bcc0b2d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/864101/"> 864101</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/67549d4ebe15799b424c62510ac2c7e0df312051">67549d4ebe15799b424c62510ac2c7e0df312051</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/864069/">864069</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8dd83d70ce0ffafde4ef550bb6d87e848bcc0b2d
+   67549d4ebe15799b424c62510ac2c7e0df312051
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8dd83d70ce0ffafde4ef550bb6d87e848bcc0b2d">
+    <a href="/chromium/src/+log/67549d4ebe15799b424c62510ac2c7e0df312051">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8dd83d70ce0ffafde4ef550bb6d87e848bcc0b2d.tar.gz">
+    <a href="/chromium/src/+archive/67549d4ebe15799b424c62510ac2c7e0df312051.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   James Cook &lt;jamescook@chromium.org&gt;
+   Sergey Ulanov &lt;sergeyu@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 18 04:30:05 2021
+   Thu Mar 18 03:34:29 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 18 04:30:05 2021
+   Thu Mar 18 03:34:29 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8dd83d70ce0ffafde4ef550bb6d87e848bcc0b2d/">
-    e962d4deb407eb27c7085f562ef7ecfc9a126de1
+   <a href="/chromium/src/+/67549d4ebe15799b424c62510ac2c7e0df312051/">
+    d6feb1002fc386066a99864440ff2fb174c436c0
    </a>
   </td>
  </tr>
@@ -166,33 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8dd83d70ce0ffafde4ef550bb6d87e848bcc0b2d%5E">
-    10fab58613433fbf6585f2f2d95b118839d43ebf
+   <a href="/chromium/src/+/67549d4ebe15799b424c62510ac2c7e0df312051%5E">
+    b3bb9f4d24a7d112d7e8b7059a3562ce1aadc690
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8dd83d70ce0ffafde4ef550bb6d87e848bcc0b2d%5E%21/">
+    <a href="/chromium/src/+/67549d4ebe15799b424c62510ac2c7e0df312051%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">chromeos: Disable flaky test AppsGridViewTest.MouseDragFlipToNextPage
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Fuchsia] Fix FuchsiaAudioRenderer to call Stop() only after Start()
 
-An earlier CL split MouseDragFlipPage into 2 tests. Only the first part
-is flaky, so disable that part instead of reverting the CL.
+AudioConsumer expects Stop() to be called after Start().
+FuchsiaAudioRenderer uses |state_| field to track the current state.
+Previously it was also used to track end-of-stream state, but
+end-of-stream packet may be processed without the stream being started.
+FuchsiaAudioRenderer::StartTicking() was assuming that state_!=kStopped
+indicates that the stream is started, but that wasn't always the case.
+Added a new boolean field to track end-of-stream, separately from
+started/stopped state, which allows to ensure that Stop() is never sent
+before Start().
 
-Sample failure:
-<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/linux-chromeos-dbg/23025/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/linux-chromeos-dbg/23025/overview</a>
-
-Bug: 1156634
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I34c380ca372c218880b2bc4cb7a3e5dddcf9606a">I34c380ca372c218880b2bc4cb7a3e5dddcf9606a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2771154">https://chromium-review.googlesource.com/c/chromium/src/+/2771154</a>
-Auto-Submit: James Cook &lt;jamescook@chromium.org&gt;
-Commit-Queue: calamity &lt;calamity@chromium.org&gt;
-Reviewed-by: calamity &lt;calamity@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#864113}
+Bug: 1177897
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4fb8926d4283329f2838a8cee658d8f38e396cb5">I4fb8926d4283329f2838a8cee658d8f38e396cb5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2769018">https://chromium-review.googlesource.com/c/chromium/src/+/2769018</a>
+Commit-Queue: Sergey Ulanov &lt;sergeyu@chromium.org&gt;
+Reviewed-by: David Dorwin &lt;ddorwin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#864101}
 </pre>
 
 </body>
