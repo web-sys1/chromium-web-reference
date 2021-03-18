@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/864064/"> 864064</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e7beffedf43eba019de33ff1921b82354dcf4e7e">e7beffedf43eba019de33ff1921b82354dcf4e7e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/864082/"> 864082</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/39bd1c6de6fdd87e61080f6e07179f8e119f04af">39bd1c6de6fdd87e61080f6e07179f8e119f04af</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/864032/">864032</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e7beffedf43eba019de33ff1921b82354dcf4e7e
+   39bd1c6de6fdd87e61080f6e07179f8e119f04af
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e7beffedf43eba019de33ff1921b82354dcf4e7e">
+    <a href="/chromium/src/+log/39bd1c6de6fdd87e61080f6e07179f8e119f04af">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e7beffedf43eba019de33ff1921b82354dcf4e7e.tar.gz">
+    <a href="/chromium/src/+archive/39bd1c6de6fdd87e61080f6e07179f8e119f04af.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Shane Fitzpatrick &lt;shanefitz@google.com&gt;
+   Chinglin Yu &lt;chinglinyu@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 18 01:32:39 2021
+   Thu Mar 18 02:22:20 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 18 01:32:39 2021
+   Thu Mar 18 02:22:20 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e7beffedf43eba019de33ff1921b82354dcf4e7e/">
-    07c431251b78144cfb1070b300a7f553b2df3539
+   <a href="/chromium/src/+/39bd1c6de6fdd87e61080f6e07179f8e119f04af/">
+    d5b71eb2e31e11a631c21e1723ce882c1c15044a
    </a>
   </td>
  </tr>
@@ -166,40 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e7beffedf43eba019de33ff1921b82354dcf4e7e%5E">
-    fe045c19103d7d7329c41bf57c5f2aa0d8f48e89
+   <a href="/chromium/src/+/39bd1c6de6fdd87e61080f6e07179f8e119f04af%5E">
+    bd1281dd760bf36262037875ec3d7f4bb26c4ce9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e7beffedf43eba019de33ff1921b82354dcf4e7e%5E%21/">
+    <a href="/chromium/src/+/39bd1c6de6fdd87e61080f6e07179f8e119f04af%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Nearby] Nearby Connections Uprev: a7b99e7
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">tracing: Fix data race with the SystemTracingService mojo remote.
 
-cl/363510487 Add a CountDownLatch test.
-cl/363444292 Do not destruct FrameProcessor(s) that are still in use.
-cl/363349889 Fixes A go/tsan error (data_race)
-cl/363347152 Add thread annotations in payload manager.
-cl/363345989 Invoke shutdown() in bwu_manager destructor.
-cl/363313403 Fixes go/asan error (heap_use_after_free)
-cl/363243327 Synchronous UnregisterFrameProcessor.
-cl/363058247 Refactor EndpointManager to use share_ptr + weak_ptr
-cl/362596467 Fix flaky unit test EndpointManagerTest SingleReadOnInvalidPayload
-cl/362403241 [Connections] Clear inProgressUpgrades when Disc fails to connect
-cl/362371994 Add thread annotations in PCP handler code.
-cl/361877303 Add thread check annotations to executors.
+The race happens because we bind the mojo::SharedRemote on the IO
+thread, and the mojo::SharedRemote::is_bound() is checked on the
+Perfetto task runner. An internal pointer is read/assigned on different
+threads and leads to a potential race.
+Fix the race by binding the remote on the Perfetto task runner when the
+pending remote is received.
 
-Regression checklist: <a href="https://docs.google.com/spreadsheets/d/1RnMjwDc4KkvxIY9fbjCJnborlawdlJOVfBJWejl6DZM/edit#gid=742209492">https://docs.google.com/spreadsheets/d/1RnMjwDc4KkvxIY9fbjCJnborlawdlJOVfBJWejl6DZM/edit#gid=742209492</a>
+Bug: 1187069, b:147789115
+Test: content_browsertests BackgroundTracingManagerBrowserTest.TraceMetadataInTrace passes without DCHEKC() crash.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2e001e41aa5f55017f17a3c9b5398b6a280d370a">I2e001e41aa5f55017f17a3c9b5398b6a280d370a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2768782">https://chromium-review.googlesource.com/c/chromium/src/+/2768782</a>
-Reviewed-by: James Vecore &lt;vecore@google.com&gt;
-Commit-Queue: Shane Fitzpatrick &lt;shanefitz@google.com&gt;
-Cr-Commit-Position: refs/heads/master@{#864064}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie8f94df95492839f840d3e50f186f1fe61c6f5ca">Ie8f94df95492839f840d3e50f186f1fe61c6f5ca</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2766975">https://chromium-review.googlesource.com/c/chromium/src/+/2766975</a>
+Reviewed-by: Sami Kyöstilä &lt;skyostil@chromium.org&gt;
+Reviewed-by: Eric Seckler &lt;eseckler@chromium.org&gt;
+Commit-Queue: Chinglin Yu &lt;chinglinyu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#864082}
 </pre>
 
 </body>
