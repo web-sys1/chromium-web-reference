@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/864082/"> 864082</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/39bd1c6de6fdd87e61080f6e07179f8e119f04af">39bd1c6de6fdd87e61080f6e07179f8e119f04af</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/864101/"> 864101</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/67549d4ebe15799b424c62510ac2c7e0df312051">67549d4ebe15799b424c62510ac2c7e0df312051</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/864032/">864032</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6c68cdc0cd4072e8a6b50a12e7e40ce0b6fdd087">6c68cdc0cd4072e8a6b50a12e7e40ce0b6fdd087</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/864069/">864069</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9541ad9b93da60c8b0b00525660d463594d52ff4">9541ad9b93da60c8b0b00525660d463594d52ff4</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   39bd1c6de6fdd87e61080f6e07179f8e119f04af
+   67549d4ebe15799b424c62510ac2c7e0df312051
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/39bd1c6de6fdd87e61080f6e07179f8e119f04af">
+    <a href="/chromium/src/+log/67549d4ebe15799b424c62510ac2c7e0df312051">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/39bd1c6de6fdd87e61080f6e07179f8e119f04af.tar.gz">
+    <a href="/chromium/src/+archive/67549d4ebe15799b424c62510ac2c7e0df312051.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chinglin Yu &lt;chinglinyu@chromium.org&gt;
+   Sergey Ulanov &lt;sergeyu@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 18 02:22:20 2021
+   Thu Mar 18 03:34:29 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 18 02:22:20 2021
+   Thu Mar 18 03:34:29 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/39bd1c6de6fdd87e61080f6e07179f8e119f04af/">
-    d5b71eb2e31e11a631c21e1723ce882c1c15044a
+   <a href="/chromium/src/+/67549d4ebe15799b424c62510ac2c7e0df312051/">
+    d6feb1002fc386066a99864440ff2fb174c436c0
    </a>
   </td>
  </tr>
@@ -166,36 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/39bd1c6de6fdd87e61080f6e07179f8e119f04af%5E">
-    bd1281dd760bf36262037875ec3d7f4bb26c4ce9
+   <a href="/chromium/src/+/67549d4ebe15799b424c62510ac2c7e0df312051%5E">
+    b3bb9f4d24a7d112d7e8b7059a3562ce1aadc690
    </a>
    <span>
     [
-    <a href="/chromium/src/+/39bd1c6de6fdd87e61080f6e07179f8e119f04af%5E%21/">
+    <a href="/chromium/src/+/67549d4ebe15799b424c62510ac2c7e0df312051%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">tracing: Fix data race with the SystemTracingService mojo remote.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Fuchsia] Fix FuchsiaAudioRenderer to call Stop() only after Start()
 
-The race happens because we bind the mojo::SharedRemote on the IO
-thread, and the mojo::SharedRemote::is_bound() is checked on the
-Perfetto task runner. An internal pointer is read/assigned on different
-threads and leads to a potential race.
-Fix the race by binding the remote on the Perfetto task runner when the
-pending remote is received.
+AudioConsumer expects Stop() to be called after Start().
+FuchsiaAudioRenderer uses |state_| field to track the current state.
+Previously it was also used to track end-of-stream state, but
+end-of-stream packet may be processed without the stream being started.
+FuchsiaAudioRenderer::StartTicking() was assuming that state_!=kStopped
+indicates that the stream is started, but that wasn't always the case.
+Added a new boolean field to track end-of-stream, separately from
+started/stopped state, which allows to ensure that Stop() is never sent
+before Start().
 
-Bug: 1187069, b:147789115
-Test: content_browsertests BackgroundTracingManagerBrowserTest.TraceMetadataInTrace passes without DCHEKC() crash.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie8f94df95492839f840d3e50f186f1fe61c6f5ca">Ie8f94df95492839f840d3e50f186f1fe61c6f5ca</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2766975">https://chromium-review.googlesource.com/c/chromium/src/+/2766975</a>
-Reviewed-by: Sami Kyöstilä &lt;skyostil@chromium.org&gt;
-Reviewed-by: Eric Seckler &lt;eseckler@chromium.org&gt;
-Commit-Queue: Chinglin Yu &lt;chinglinyu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#864082}
+Bug: 1177897
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4fb8926d4283329f2838a8cee658d8f38e396cb5">I4fb8926d4283329f2838a8cee658d8f38e396cb5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2769018">https://chromium-review.googlesource.com/c/chromium/src/+/2769018</a>
+Commit-Queue: Sergey Ulanov &lt;sergeyu@chromium.org&gt;
+Reviewed-by: David Dorwin &lt;ddorwin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#864101}
 </pre>
 
 </body>
