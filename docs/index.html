@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/864629/"> 864629</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/df3964ac6ecd366ea94c1efe3c037ed100225b71">df3964ac6ecd366ea94c1efe3c037ed100225b71</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/864650/"> 864650</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/61534e87e454d3455270b746ec433b74822ad4b2">61534e87e454d3455270b746ec433b74822ad4b2</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/864641/">864641</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   df3964ac6ecd366ea94c1efe3c037ed100225b71
+   61534e87e454d3455270b746ec433b74822ad4b2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/df3964ac6ecd366ea94c1efe3c037ed100225b71">
+    <a href="/chromium/src/+log/61534e87e454d3455270b746ec433b74822ad4b2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/df3964ac6ecd366ea94c1efe3c037ed100225b71.tar.gz">
+    <a href="/chromium/src/+archive/61534e87e454d3455270b746ec433b74822ad4b2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Antonio Sartori &lt;antoniosartori@chromium.org&gt;
+   Michael Thiessen &lt;mthiesse@chromium.org&gt;
   </td>
   <td>
-   Fri Mar 19 13:01:14 2021
+   Fri Mar 19 15:02:48 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 19 13:01:14 2021
+   Fri Mar 19 15:02:48 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/df3964ac6ecd366ea94c1efe3c037ed100225b71/">
-    3ee324a9f5cd07b40c9f49ae066273ea97b5fccd
+   <a href="/chromium/src/+/61534e87e454d3455270b746ec433b74822ad4b2/">
+    d365e836c6643260bb36ef3bae312417b1290a1a
    </a>
   </td>
  </tr>
@@ -166,41 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/df3964ac6ecd366ea94c1efe3c037ed100225b71%5E">
-    e809f3d8f42f2f1b870237751c051295417617a0
+   <a href="/chromium/src/+/61534e87e454d3455270b746ec433b74822ad4b2%5E">
+    320b0212a8a079063a7c00bf7cd828d46c3648cb
    </a>
    <span>
     [
-    <a href="/chromium/src/+/df3964ac6ecd366ea94c1efe3c037ed100225b71%5E%21/">
+    <a href="/chromium/src/+/61534e87e454d3455270b746ec433b74822ad4b2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">CSP: Expose network parser to blink
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Re-write FROM_HISTORY intents to always be MAIN intents.
 
-This is purely a refactoring.
+When an Activity self-finishes without removing its task, and is then
+launched from the recents/overview menu, it's launched with its base
+intent, which could be a View intent if that's what initially launched
+the Activity. This could lead to unexpectedly launching URLs extra
+times, firing app redirects multiple times, etc.
 
-This CL exposes the network Content Security Parser to blink directly.
-Previously, if one wanted to parse CSPs with the network parser from
-Blink, one had to construct a complete header string (starting with
-"HTTP/1.1 OK") and use the wrapper around PopulateParsedHeaders. Now
-one can just use directly the new function
-ParseContentSecurityPolicies.
+To avoid this, we can just re-write incoming FROM_HISTORY intents to
+look like the intents Android sends us when we don't self-finish and
+are resumed from history after being killed (MAIN Intents with the
+FROM_HISTORY flag).
 
-I plan to use this to replace the Blink CSP parser with the network
-parser in the cases that are still open (workers, meta elements,
-extensions).
-
-Bug: 1021462,1149272
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1f6a2a9a9e32b452db18ed6dcb8f1fa884537732">I1f6a2a9a9e32b452db18ed6dcb8f1fa884537732</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2756150">https://chromium-review.googlesource.com/c/chromium/src/+/2756150</a>
-Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
-Reviewed-by: Mike West &lt;mkwst@chromium.org&gt;
-Reviewed-by: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
-Commit-Queue: Antonio Sartori &lt;antoniosartori@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#864629}
+Bug: 945700
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaff7e60c1228b664d1bcdd2a78a889ba30cd65ce">Iaff7e60c1228b664d1bcdd2a78a889ba30cd65ce</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2768958">https://chromium-review.googlesource.com/c/chromium/src/+/2768958</a>
+Reviewed-by: Yaron Friedman &lt;yfriedman@chromium.org&gt;
+Reviewed-by: Ted Choc &lt;tedchoc@chromium.org&gt;
+Commit-Queue: Michael Thiessen &lt;mthiesse@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#864650}
 </pre>
 
 </body>
