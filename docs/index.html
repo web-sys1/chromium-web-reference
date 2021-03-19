@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/864593/"> 864593</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/92913f0f6320ea47d905790c51a6906731244026">92913f0f6320ea47d905790c51a6906731244026</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/864601/"> 864601</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c1ce99f4ed592d25d19ab37c18d6d9512655b14a">c1ce99f4ed592d25d19ab37c18d6d9512655b14a</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/864595/">864595</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/87ebf07f5028b8d9b1eea6c3d33a9725bcf68b80">87ebf07f5028b8d9b1eea6c3d33a9725bcf68b80</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/864603/">864603</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0e7e3b6129c87e998c6cbea6846fc4973a4f9f4">f0e7e3b6129c87e998c6cbea6846fc4973a4f9f4</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   92913f0f6320ea47d905790c51a6906731244026
+   c1ce99f4ed592d25d19ab37c18d6d9512655b14a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/92913f0f6320ea47d905790c51a6906731244026">
+    <a href="/chromium/src/+log/c1ce99f4ed592d25d19ab37c18d6d9512655b14a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/92913f0f6320ea47d905790c51a6906731244026.tar.gz">
+    <a href="/chromium/src/+archive/c1ce99f4ed592d25d19ab37c18d6d9512655b14a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alex Danilo &lt;adanilo@chromium.org&gt;
+   Christian Dullweber &lt;dullweber@chromium.org&gt;
   </td>
   <td>
-   Fri Mar 19 07:57:22 2021
+   Fri Mar 19 09:26:05 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 19 07:57:22 2021
+   Fri Mar 19 09:26:05 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/92913f0f6320ea47d905790c51a6906731244026/">
-    9630907f31ccff0a72183ec518698e8bf7f04208
+   <a href="/chromium/src/+/c1ce99f4ed592d25d19ab37c18d6d9512655b14a/">
+    fbf0b75109cc64b765e001548a00433ed9245b0a
    </a>
   </td>
  </tr>
@@ -166,47 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/92913f0f6320ea47d905790c51a6906731244026%5E">
-    d7114709c68847b72d70f16f3ed8f4f03c833c77
+   <a href="/chromium/src/+/c1ce99f4ed592d25d19ab37c18d6d9512655b14a%5E">
+    70716b3f731ae51d3b86955b71a5e937cae087f1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/92913f0f6320ea47d905790c51a6906731244026%5E%21/">
+    <a href="/chromium/src/+/c1ce99f4ed592d25d19ab37c18d6d9512655b14a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Files app, Image Loader, Audio and Video Player: Use chrome-extension://
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Expire favicons on cache deletion
 
-This is a preparation to be able to run optimize_webui=false loading
-each JS module individually.
+Mark favicons as expired when cache is deleted so they are downloaded
+again on next visit. This way website can not detect if a favicon was
+cached before the cache deletion.
 
-When running individual modules and importing a module from other
-extension it needs to be addressed using chrome-extension://$OTHER_ID/.
-Because the module can't be loaded using directory traversal "../../".
-
-Note this shouldn't cause changes in the normal build using rollup,
-because rollup has been configured to understand such URLs.
-
-The JS unittest are loaded in the browser tests via
-chrome://file_manager_test/ and any JS module imported as part of the
-dependency of the tested module, might import using chrome-extension://
-so we need to enable the extensions to be able to serve such files. For
-this kind of request which comes from the origin
-chrome://file_manager_test/ we need to allowlist each resource in the
-`web_accessible_resources` in the manifest for the extension serving the
-resource.
-
-NB: This is CL:2672988 by lucmult@ reapplied to the main branch.
-
-Bug: 1030998
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5f7bfc13f5935859b096a317368c3b2354b4f2d0">I5f7bfc13f5935859b096a317368c3b2354b4f2d0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2771403">https://chromium-review.googlesource.com/c/chromium/src/+/2771403</a>
-Reviewed-by: Noel Gordon &lt;noel@chromium.org&gt;
-Commit-Queue: Alex Danilo &lt;adanilo@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#864593}
+Bug: 1096660
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iae71ef6d5ec7045b1bd18fb1983285243609293b">Iae71ef6d5ec7045b1bd18fb1983285243609293b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2756151">https://chromium-review.googlesource.com/c/chromium/src/+/2756151</a>
+Commit-Queue: Christian Dullweber &lt;dullweber@chromium.org&gt;
+Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+Reviewed-by: Martin Šrámek &lt;msramek@chromium.org&gt;
+Reviewed-by: Mikel Astiz &lt;mastiz@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#864601}
 </pre>
 
 </body>
