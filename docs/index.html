@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/864666/"> 864666</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8f4a65e860c5f33e8e6c88875c293f55771f04d2">8f4a65e860c5f33e8e6c88875c293f55771f04d2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/864687/"> 864687</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/204d048290710bdbdb7b87da794ff24467af1af2">204d048290710bdbdb7b87da794ff24467af1af2</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/864679/">864679</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8f4a65e860c5f33e8e6c88875c293f55771f04d2
+   204d048290710bdbdb7b87da794ff24467af1af2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8f4a65e860c5f33e8e6c88875c293f55771f04d2">
+    <a href="/chromium/src/+log/204d048290710bdbdb7b87da794ff24467af1af2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8f4a65e860c5f33e8e6c88875c293f55771f04d2.tar.gz">
+    <a href="/chromium/src/+archive/204d048290710bdbdb7b87da794ff24467af1af2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ghazale Hosseinabadi &lt;ghazale@google.com&gt;
+   Stephen Nusko &lt;nuskos@chromium.org&gt;
   </td>
   <td>
-   Fri Mar 19 16:02:18 2021
+   Fri Mar 19 17:10:50 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 19 16:02:18 2021
+   Fri Mar 19 17:10:50 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8f4a65e860c5f33e8e6c88875c293f55771f04d2/">
-    9c416aff3c730e11b8f9feade95c71afee3ff98b
+   <a href="/chromium/src/+/204d048290710bdbdb7b87da794ff24467af1af2/">
+    5700c426bcf6c774e316670b0b2855ca810fff62
    </a>
   </td>
  </tr>
@@ -166,30 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8f4a65e860c5f33e8e6c88875c293f55771f04d2%5E">
-    2c79490ed60cddf2c7302f263b1ff7487f7f9733
+   <a href="/chromium/src/+/204d048290710bdbdb7b87da794ff24467af1af2%5E">
+    6cf1f2bcc84f014a8bee68bf1b70ff9690105dea
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8f4a65e860c5f33e8e6c88875c293f55771f04d2%5E%21/">
+    <a href="/chromium/src/+/204d048290710bdbdb7b87da794ff24467af1af2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Set ModuleServiceWorker to stable
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Handle animations calling onImageAvailable multiple times.
 
-Blink-dev intent to ship thread can be found at:
-<a href="https://groups.google.com/a/chromium.org/g/blink-dev/c/iJaPCv9HOrE/m/MRJDqCRvAgAJ">https://groups.google.com/a/chromium.org/g/blink-dev/c/iJaPCv9HOrE/m/MRJDqCRvAgAJ</a>
+Actually fix the crash by handling the fact that animations can cause
+onImageAvailable to be called multiple times (previously we thought 1
+draw equaled 1 onImageAvailable). Due to someone giving us a way to repo
+the crash I was able to determine that when a user clicks the toolbar we
+preform a ripple animation. We take a screenshot (in hardware or
+software mode), but I had baked in the assumption that onImageAvailable
+would only be called once per requestDraw(). This is incorrect so
+instead we now ignore calls after. This more closely replicates the
+software draw behaviour.
 
-Bug: 824647
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8623aab0b6988304fae4b8a101ce6b49c5c00de2">I8623aab0b6988304fae4b8a101ce6b49c5c00de2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2771996">https://chromium-review.googlesource.com/c/chromium/src/+/2771996</a>
-Reviewed-by: Dave Tapuska &lt;dtapuska@chromium.org&gt;
-Reviewed-by: Ben Kelly &lt;wanderview@chromium.org&gt;
-Commit-Queue: Dave Tapuska &lt;dtapuska@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#864666}
+A future optimization would be to not request a new bitmap when we are
+just doing an animation. In my tests we already had a bitmap before the
+animation that would have worked.
+
+Bug: 1185197,1186567,b:170620133
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8ee1adea1057fe7216693a6c6f3cde588fa29d69">I8ee1adea1057fe7216693a6c6f3cde588fa29d69</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2773198">https://chromium-review.googlesource.com/c/chromium/src/+/2773198</a>
+Auto-Submit: Stephen Nusko &lt;nuskos@chromium.org&gt;
+Commit-Queue: David Trainor &lt;dtrainor@chromium.org&gt;
+Reviewed-by: David Trainor &lt;dtrainor@chromium.org&gt;
+Reviewed-by: Sami Kyöstilä &lt;skyostil@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#864687}
 </pre>
 
 </body>
