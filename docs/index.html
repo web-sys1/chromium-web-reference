@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/865282/"> 865282</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/176bacab4d61f052ad344e150f9395efe4036813">176bacab4d61f052ad344e150f9395efe4036813</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/865319/"> 865319</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a37dddbb92697fca678b48fe850ce661c69bc5cf">a37dddbb92697fca678b48fe850ce661c69bc5cf</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/865221/">865221</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   176bacab4d61f052ad344e150f9395efe4036813
+   a37dddbb92697fca678b48fe850ce661c69bc5cf
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/176bacab4d61f052ad344e150f9395efe4036813">
+    <a href="/chromium/src/+log/a37dddbb92697fca678b48fe850ce661c69bc5cf">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/176bacab4d61f052ad344e150f9395efe4036813.tar.gz">
+    <a href="/chromium/src/+archive/a37dddbb92697fca678b48fe850ce661c69bc5cf.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   mcrouse &lt;mcrouse@google.com&gt;
+   Thiabaud Engelbrecht &lt;thiabaud@google.com&gt;
   </td>
   <td>
-   Mon Mar 22 18:49:01 2021
+   Mon Mar 22 20:01:07 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Mar 22 18:49:01 2021
+   Mon Mar 22 20:01:07 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/176bacab4d61f052ad344e150f9395efe4036813/">
-    68aa16d87bca53948556d62911951bee9db8ae94
+   <a href="/chromium/src/+/a37dddbb92697fca678b48fe850ce661c69bc5cf/">
+    9387c392eeb4d7b89e90e8b94a549beac0514a49
    </a>
   </td>
  </tr>
@@ -166,26 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/176bacab4d61f052ad344e150f9395efe4036813%5E">
-    8916bc65cd893b3b51503a853cdfd360ebb71f45
+   <a href="/chromium/src/+/a37dddbb92697fca678b48fe850ce661c69bc5cf%5E">
+    88d94a9877be92b30aa909e310594eda3f00be68
    </a>
    <span>
     [
-    <a href="/chromium/src/+/176bacab4d61f052ad344e150f9395efe4036813%5E%21/">
+    <a href="/chromium/src/+/a37dddbb92697fca678b48fe850ce661c69bc5cf%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix enum for OptGuide histogram.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[parkable_image] Add ParkableImageSegmentReader
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I429123fdf1219beae9c0b3f11f5a57e8ff7559c4">I429123fdf1219beae9c0b3f11f5a57e8ff7559c4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2778891">https://chromium-review.googlesource.com/c/chromium/src/+/2778891</a>
-Auto-Submit: Michael Crouse &lt;mcrouse@chromium.org&gt;
-Commit-Queue: Jesse Doherty &lt;jwd@chromium.org&gt;
-Reviewed-by: Jesse Doherty &lt;jwd@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#865282}
+Currently, the SegmentReader created by DeferredImageDecoder can be
+quite long-lived, even though the data inside it is not needed for most
+of its lifetime.
+
+However, since the SegmentReader currently needs direct access to the
+data inside ParkableImage, this would prevent said ParkableImage from
+being written to disk for the entire lifetime of the SegmentReader.
+
+This CL adds a SegmentReader that wraps a ParkableImage (instead of
+wrapping the internal data of the ParkableImage), fixing the above
+issue.
+
+This is hidden behind a feature flag which is disabled by default, so it
+should not cause any change in functionality.
+
+Bug: 1169387
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7bd55d9f154a0ccfed8e8d9dec98e05dffa5346b">I7bd55d9f154a0ccfed8e8d9dec98e05dffa5346b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2639865">https://chromium-review.googlesource.com/c/chromium/src/+/2639865</a>
+Commit-Queue: Thiabaud Engelbrecht &lt;thiabaud@google.com&gt;
+Reviewed-by: Leon Scroggins &lt;scroggo@google.com&gt;
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Reviewed-by: Benoit L &lt;lizeb@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#865319}
 </pre>
 
 </body>
