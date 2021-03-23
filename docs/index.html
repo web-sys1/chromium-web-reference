@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/865670/"> 865670</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d0e8a5cab859581499aad38921797e7104dbd08e">d0e8a5cab859581499aad38921797e7104dbd08e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/865704/"> 865704</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/06a814651aa46a6a78599e1ed2341d1a9b7f880c">06a814651aa46a6a78599e1ed2341d1a9b7f880c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/865714/">865714</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d0e8a5cab859581499aad38921797e7104dbd08e
+   06a814651aa46a6a78599e1ed2341d1a9b7f880c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d0e8a5cab859581499aad38921797e7104dbd08e">
+    <a href="/chromium/src/+log/06a814651aa46a6a78599e1ed2341d1a9b7f880c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d0e8a5cab859581499aad38921797e7104dbd08e.tar.gz">
+    <a href="/chromium/src/+archive/06a814651aa46a6a78599e1ed2341d1a9b7f880c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Christopher Cameron &lt;ccameron@chromium.org&gt;
+   Shimi Zhang &lt;ctzsm@chromium.org&gt;
   </td>
   <td>
-   Tue Mar 23 16:38:15 2021
+   Tue Mar 23 17:37:45 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 23 16:38:15 2021
+   Tue Mar 23 17:37:45 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d0e8a5cab859581499aad38921797e7104dbd08e/">
-    98c875ecce377c85993321280dbb465fd8f8fc34
+   <a href="/chromium/src/+/06a814651aa46a6a78599e1ed2341d1a9b7f880c/">
+    459acb29a9a6fd1491499cd0eb146b5a73a14981
    </a>
   </td>
  </tr>
@@ -166,38 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d0e8a5cab859581499aad38921797e7104dbd08e%5E">
-    7e31af44d0e30b08873a57106669998fa86f7a60
+   <a href="/chromium/src/+/06a814651aa46a6a78599e1ed2341d1a9b7f880c%5E">
+    23dad0c31bcad7f7e9adcda76a55b1f25244671f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d0e8a5cab859581499aad38921797e7104dbd08e%5E%21/">
+    <a href="/chromium/src/+/06a814651aa46a6a78599e1ed2341d1a9b7f880c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">MacDesktopCaptureV2: Move CGDisplayStream handler to main thread
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Android: Re-initialize WebContents instead of clear native reference
 
-When capture is initiated by the screen capture API, the
-DesktopCaptureDeviceMac is created on the main thread, and the use
-of CFRunLoopGetCurrent is fine.
+In swapping WebContents process for a Tab, we shouldn't clear the native
+reference of the Java object, which breaks the lifetime assumption for
+WebContents on both native and Java sides.
 
-When capture is streaming to ChromeCast via 3-dot &gt; Cast, it is a
-worker thread that doesn't use a CFRunLoop. Consequently, the
-CGDisplayStream's handler is never called.
+Instead, we pass dummy ViewAndroidDelegate, InternalAccessDelegate and
+a new InternalHolder to re-initialize the Java WebContents object, so we
+remove reference in Java back to the Tab.
 
-The fix here moves the handler to always be on the main thread, and
-has it post a task to the device thread when it receives a new
-IOSurface.
-
-Bug: 1185388
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8102436dc93ba5b1d9f332a026685d65839a4012">I8102436dc93ba5b1d9f332a026685d65839a4012</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2781260">https://chromium-review.googlesource.com/c/chromium/src/+/2781260</a>
-Reviewed-by: Robert Sesek &lt;rsesek@chromium.org&gt;
-Commit-Queue: ccameron &lt;ccameron@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#865670}
+Bug: 1174566, 1091229
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9054168802f61120eaff84c3ff33057cbe909fe7">I9054168802f61120eaff84c3ff33057cbe909fe7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2680039">https://chromium-review.googlesource.com/c/chromium/src/+/2680039</a>
+Reviewed-by: Ted Choc &lt;tedchoc@chromium.org&gt;
+Reviewed-by: Bo &lt;boliu@chromium.org&gt;
+Commit-Queue: Shimi Zhang &lt;ctzsm@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#865704}
 </pre>
 
 </body>
