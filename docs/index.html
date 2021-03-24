@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/866154/"> 866154</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8f1f380d65e21cadd416e0197aac3c42d382807f">8f1f380d65e21cadd416e0197aac3c42d382807f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/866186/"> 866186</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/767113540304e39c705d4da74be2a7f1bf0ee803">767113540304e39c705d4da74be2a7f1bf0ee803</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/866185/">866185</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8f1f380d65e21cadd416e0197aac3c42d382807f
+   767113540304e39c705d4da74be2a7f1bf0ee803
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8f1f380d65e21cadd416e0197aac3c42d382807f">
+    <a href="/chromium/src/+log/767113540304e39c705d4da74be2a7f1bf0ee803">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8f1f380d65e21cadd416e0197aac3c42d382807f.tar.gz">
+    <a href="/chromium/src/+archive/767113540304e39c705d4da74be2a7f1bf0ee803.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Michael Ludwig &lt;michaelludwig@google.com&gt;
+   Carlos Caballero &lt;carlscab@google.com&gt;
   </td>
   <td>
-   Wed Mar 24 16:32:22 2021
+   Wed Mar 24 17:38:21 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 24 16:32:22 2021
+   Wed Mar 24 17:38:21 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8f1f380d65e21cadd416e0197aac3c42d382807f/">
-    6e334a5d86c8a6d2d018f900370ce0a66d1481f3
+   <a href="/chromium/src/+/767113540304e39c705d4da74be2a7f1bf0ee803/">
+    48157322021eca93fc4af803cf213f36aae5083c
    </a>
   </td>
  </tr>
@@ -166,65 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8f1f380d65e21cadd416e0197aac3c42d382807f%5E">
-    4beb5d64b9bec840d91fae253c6a6ad3c4aa5cbd
+   <a href="/chromium/src/+/767113540304e39c705d4da74be2a7f1bf0ee803%5E">
+    3f070fb6e1d1731c40a763d2968a0b958a2d8455
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8f1f380d65e21cadd416e0197aac3c42d382807f%5E%21/">
+    <a href="/chromium/src/+/767113540304e39c705d4da74be2a7f1bf0ee803%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Combine text blob pixel tests into one suite
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[mparch] Allow subframe navigations during activation in the Prerender
 
-Use ::testing::Combine to generate all permutations over different
-testing strategies for how the text blob is drawn, the canvas matrix
-type, and LCD text state. This generates a superset of what was
-previously being tested and gives the instantiated tests more
-descriptive names since the parameter set is a lot larger now.
+Given that the FrameTreeNode does not change after activation for
+sub-frame navigations it *should* be safe to allow them. One possible
+caveat is that NavigationRequest might not support the change in
+associated NavigationController (owned by FrameTree), in particular not
+handing navigation entries correctly.
 
-The older tests are mapped as follows:
-P/OopTextBlobPixelTest.DrawTextBlob/0 = P/OopTextBlobPixelTest.Config/Direct_IdentityCTM_NoLCD
-P/OopTextBlobPixelTest.DrawTextBlob/1 = P/OopTextBlobPixelTest.Config/Direct_IdentityCTM_LCD
- - And in addition, DrawTextBlobOps are now tested under scale and complex CTMs x (no-lcd, lcd).
+We will need to have a closer look at this but there is a bug already
+for that. In the meantime we can unblock the removal of multiple
+WebContents implementation.
 
-P/OopRecordShaderPixelTest.ShaderWithTextScaled/0 = P/OopTextBlobPixelTest.Config/RecordShader_ScaledCTM_NoLCD
-P/OopRecordShaderPixelTest.ShaderWithTextScaled/1 = P/OopTextBlobPixelTest.Config/RecordShader_ScaledCTM_LCD
- - And in addition, RecordShaders containing text are tested with identity and complex CTMs.
+Note that the affected tests (DeferCrossOrigin*),  are currently
+disabled due to flakiness unrelated to what this patch fixes.
 
-P/OopRecordFilterPixelTest.FilterWithTextScaled/0 = P/OopTextBlobPixelTest.Config/RecordFilter_ScaledCTM_NoLCD
-P/OopRecordFilterPixelTest.FilterWithTextScaled/1 = P/OopTextBlobPixelTest.Config/RecordFilter_ScaledCTM_LCD
-P/OopRecordFilterPixelTest.FilterWithTextAndComplexCTM/0 = P/OopTextBlobPixelTest.Config/RecordFilter_ComplexCTM_NoLCD
-P/OopRecordFilterPixelTest.FilterWIthTextAndComplexCTM/1 = P/oopTextBlobPixelTest.Config/RecordFilter_ComplexCTM_LCD
- - And in addition, RecordFilters containing text are tested with identity CTMs.
+Bug: 1154501
+Bug: 1190644
 
-Because of increased CTM testing against text blobs, I noticed that
-the RecordShader tests had been using NN sampling if the record shader
-needed to be post-transformed by the CTM. This resulted in flaky tests
-that had high rgb differences because of popping between background and
-glyph colors.
-
-I updated the test code to just always use bilerp sampling when the text
-blob is embedded in a RecordShader or RecordFilter so that the magnitude
-of these flaky pixel differences is kept smaller. However, the increased
-testing coverage also required expanding how the fuzzy comparator was
-configured in order to keep the bots green.
-
-I was able to split the rules into OS and android version, since
-android lollipop (nexus 5) was the worst offender,
-android marshmallow (nexus 5x) was next, and then Mac and Windows having
-only very slight differences (Linux had none). I confirmed in all cases
-that these differences are not perceptible.
-
-Bug: 1187246
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7c1af7dc8cef937085836c0cfdd60c1284897f9a">I7c1af7dc8cef937085836c0cfdd60c1284897f9a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2756436">https://chromium-review.googlesource.com/c/chromium/src/+/2756436</a>
-Commit-Queue: Michael Ludwig &lt;michaelludwig@google.com&gt;
-Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#866154}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idb3c5f824513c88f92711b7b92befaf98afb43a7">Idb3c5f824513c88f92711b7b92befaf98afb43a7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2772996">https://chromium-review.googlesource.com/c/chromium/src/+/2772996</a>
+Commit-Queue: Carlos Caballero &lt;carlscab@google.com&gt;
+Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
+Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#866186}
 </pre>
 
 </body>
