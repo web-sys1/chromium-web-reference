@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/866213/"> 866213</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/38cd9b501c3df1d59a2b7ef4e1b413b45a60a150">38cd9b501c3df1d59a2b7ef4e1b413b45a60a150</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/866186/"> 866186</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/767113540304e39c705d4da74be2a7f1bf0ee803">767113540304e39c705d4da74be2a7f1bf0ee803</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/866185/">866185</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   38cd9b501c3df1d59a2b7ef4e1b413b45a60a150
+   767113540304e39c705d4da74be2a7f1bf0ee803
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/38cd9b501c3df1d59a2b7ef4e1b413b45a60a150">
+    <a href="/chromium/src/+log/767113540304e39c705d4da74be2a7f1bf0ee803">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/38cd9b501c3df1d59a2b7ef4e1b413b45a60a150.tar.gz">
+    <a href="/chromium/src/+archive/767113540304e39c705d4da74be2a7f1bf0ee803.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Aleks Totic &lt;atotic@chromium.org&gt;
+   Carlos Caballero &lt;carlscab@google.com&gt;
   </td>
   <td>
-   Wed Mar 24 18:50:04 2021
+   Wed Mar 24 17:38:21 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 24 18:50:04 2021
+   Wed Mar 24 17:38:21 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/38cd9b501c3df1d59a2b7ef4e1b413b45a60a150/">
-    621399b20c19ce0622ecc0472fc6872921761a29
+   <a href="/chromium/src/+/767113540304e39c705d4da74be2a7f1bf0ee803/">
+    48157322021eca93fc4af803cf213f36aae5083c
    </a>
   </td>
  </tr>
@@ -166,35 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/38cd9b501c3df1d59a2b7ef4e1b413b45a60a150%5E">
-    0e96a1961a449ce36b1861f0a480da038e3e0e53
+   <a href="/chromium/src/+/767113540304e39c705d4da74be2a7f1bf0ee803%5E">
+    3f070fb6e1d1731c40a763d2968a0b958a2d8455
    </a>
    <span>
     [
-    <a href="/chromium/src/+/38cd9b501c3df1d59a2b7ef4e1b413b45a60a150%5E%21/">
+    <a href="/chromium/src/+/767113540304e39c705d4da74be2a7f1bf0ee803%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[TablesNG] Rebaseline 3 tests
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[mparch] Allow subframe navigations during activation in the Prerender
 
-I've noticed that these 3 tests were off by a pixel.
-Collapsed borders in tests were 5px wide, making 1/2 borders 2.5px.
-Pixel snapping was making them not match reference.
+Given that the FrameTreeNode does not change after activation for
+sub-frame navigations it *should* be safe to allow them. One possible
+caveat is that NavigationRequest might not support the change in
+associated NavigationController (owned by FrameTree), in particular not
+handing navigation entries correctly.
 
-Changing the border size to an even number makes tests pass.
+We will need to have a closer look at this but there is a bug already
+for that. In the meantime we can unblock the removal of multiple
+WebContents implementation.
 
-paint/invalidation/table/collapsed-border-cell-change-width-composited-cell.html
-paint/invalidation/table/collapsed-border-cell-change-width-composited-row.html
-paint/invalidation/table/collapsed-border-cell-change-width-composited-section.html
+Note that the affected tests (DeferCrossOrigin*),  are currently
+disabled due to flakiness unrelated to what this patch fixes.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifb6b65f9a02b5e7db8f2b3120841e3f97a4811b3">Ifb6b65f9a02b5e7db8f2b3120841e3f97a4811b3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2783634">https://chromium-review.googlesource.com/c/chromium/src/+/2783634</a>
-Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
-Commit-Queue: Aleks Totic &lt;atotic@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#866213}
+Bug: 1154501
+Bug: 1190644
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idb3c5f824513c88f92711b7b92befaf98afb43a7">Idb3c5f824513c88f92711b7b92befaf98afb43a7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2772996">https://chromium-review.googlesource.com/c/chromium/src/+/2772996</a>
+Commit-Queue: Carlos Caballero &lt;carlscab@google.com&gt;
+Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
+Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#866186}
 </pre>
 
 </body>
