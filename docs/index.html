@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/866985/"> 866985</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/37fa773ee306fd8be351a06828f34dea3f74ba15">37fa773ee306fd8be351a06828f34dea3f74ba15</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/866987/"> 866987</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d264bd3a3dc19210ddc79554a40ac7fbe064266a">d264bd3a3dc19210ddc79554a40ac7fbe064266a</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/866986/">866986</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   37fa773ee306fd8be351a06828f34dea3f74ba15
+   d264bd3a3dc19210ddc79554a40ac7fbe064266a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/37fa773ee306fd8be351a06828f34dea3f74ba15">
+    <a href="/chromium/src/+log/d264bd3a3dc19210ddc79554a40ac7fbe064266a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/37fa773ee306fd8be351a06828f34dea3f74ba15.tar.gz">
+    <a href="/chromium/src/+archive/d264bd3a3dc19210ddc79554a40ac7fbe064266a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Tom Anderson &lt;thomasanderson@chromium.org&gt;
   </td>
   <td>
-   Fri Mar 26 21:01:19 2021
+   Fri Mar 26 21:47:56 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 26 21:01:19 2021
+   Fri Mar 26 21:47:56 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/37fa773ee306fd8be351a06828f34dea3f74ba15/">
-    035bff64afd50e5fbd779575f1674be05f885710
+   <a href="/chromium/src/+/d264bd3a3dc19210ddc79554a40ac7fbe064266a/">
+    6eb4c4537b74cc71f68bc2d7da46b1cf714531cf
    </a>
   </td>
  </tr>
@@ -166,41 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/37fa773ee306fd8be351a06828f34dea3f74ba15%5E">
-    f771d4e02c4816ebbf920f985ddd947320ec8c79
+   <a href="/chromium/src/+/d264bd3a3dc19210ddc79554a40ac7fbe064266a%5E">
+    69aeabb7d0f87bd4a753ce2daf243368419c8c5b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/37fa773ee306fd8be351a06828f34dea3f74ba15%5E%21/">
+    <a href="/chromium/src/+/d264bd3a3dc19210ddc79554a40ac7fbe064266a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Win32 PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add initial stubs for selecting GTK version at runtime
 
-Roll Chrome Win32 PGO profile from chrome-win32-master-1616770211-08bd5edf0bf3f63b257cf3ca5d08540dc34c60a0.profdata to chrome-win32-master-1616778792-1a164cf499744c6b960eab7e4a7a8ce7692c2856.profdata
+Since we only ship a single Chrome binary, we can only depend on one
+of Gtk3 or Gtk4.  However, we would like to use Gtk4 when it's
+available, so this CL adds the initial infrastructure for loading
+GTK at runtime.  When this is complete, we will be able to detect
+which version of GTK the system supports, and load it dynamically.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-win32-chromium">https://autoroll.skia.org/r/pgo-win32-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+* Set up build targets
+* Add initial signature files (to be expanded later)
+* Add gtk_types.h to provide types only available in specific
+  GTK versions.
+* Add gtk_compat to dlopen() the libraries and to provide
+  replacement functions for GTK functions whose interface has changed
+  across versions, but whose (symbol) names have not.
+* Add LogNoop to ignore unloaded symbols.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+BUG=1192861
+R=nickdiego
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:win-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4bdd2f18bfcb65d9c16d8d0bf7b7149c659bd16d">I4bdd2f18bfcb65d9c16d8d0bf7b7149c659bd16d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2788711">https://chromium-review.googlesource.com/c/chromium/src/+/2788711</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#866985}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I21cbddd0f133d195e3ee6f00774d082166057529">I21cbddd0f133d195e3ee6f00774d082166057529</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2787631">https://chromium-review.googlesource.com/c/chromium/src/+/2787631</a>
+Reviewed-by: Nick Yamane &lt;nickdiego@igalia.com&gt;
+Commit-Queue: Thomas Anderson &lt;thomasanderson@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#866987}
 </pre>
 
 </body>
