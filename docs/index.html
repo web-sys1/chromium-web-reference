@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/867067/"> 867067</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ed9dfe030038507bbf1497f9bb02ffa2996a6f08">ed9dfe030038507bbf1497f9bb02ffa2996a6f08</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/867069/"> 867069</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0f554daf435a9bd9de26bfd0688615ace5b83dcb">0f554daf435a9bd9de26bfd0688615ace5b83dcb</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/867067/">867067</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ed9dfe030038507bbf1497f9bb02ffa2996a6f08">ed9dfe030038507bbf1497f9bb02ffa2996a6f08</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/867069/">867069</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0f554daf435a9bd9de26bfd0688615ace5b83dcb">0f554daf435a9bd9de26bfd0688615ace5b83dcb</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ed9dfe030038507bbf1497f9bb02ffa2996a6f08
+   0f554daf435a9bd9de26bfd0688615ace5b83dcb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ed9dfe030038507bbf1497f9bb02ffa2996a6f08">
+    <a href="/chromium/src/+log/0f554daf435a9bd9de26bfd0688615ace5b83dcb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ed9dfe030038507bbf1497f9bb02ffa2996a6f08.tar.gz">
+    <a href="/chromium/src/+archive/0f554daf435a9bd9de26bfd0688615ace5b83dcb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Yuki Shiino &lt;yukishiino@chromium.org&gt;
   </td>
   <td>
-   Sun Mar 28 13:45:54 2021
+   Sun Mar 28 14:52:04 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Mar 28 13:45:54 2021
+   Sun Mar 28 14:52:04 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ed9dfe030038507bbf1497f9bb02ffa2996a6f08/">
-    ef8ab8afdecc735d750693ee9e579b50ce82aa5a
+   <a href="/chromium/src/+/0f554daf435a9bd9de26bfd0688615ace5b83dcb/">
+    bb5fd755d3d97e3e89492dc93f32c81895ea4080
    </a>
   </td>
  </tr>
@@ -166,41 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ed9dfe030038507bbf1497f9bb02ffa2996a6f08%5E">
-    005adf0fa62ac322d61059111ace6c2da53a86ca
+   <a href="/chromium/src/+/0f554daf435a9bd9de26bfd0688615ace5b83dcb%5E">
+    baf9243ac1646a8618ec26483557c3bee0953941
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ed9dfe030038507bbf1497f9bb02ffa2996a6f08%5E%21/">
+    <a href="/chromium/src/+/0f554daf435a9bd9de26bfd0688615ace5b83dcb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Mac PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">bind-gen: Fix the blink component of IDL typedefs
 
-Roll Chrome Mac PGO profile from chrome-mac-master-1616909642-cadebb3e3874de51e4b2e526d8a64c952ce04701.profdata to chrome-mac-master-1616932704-5a26aabf406346c68d43a897d1e7852a3762f3cd.profdata
+When generating a typedef to an union whose member is a typedef,
+respects the component of the member typedef.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-mac-chromium">https://autoroll.skia.org/r/pgo-mac-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+Example:
+    using V8UnionUUIDOrUnsignedLong = V8UnionStringOrUnsignedLong;
+will be generated in modules/ despite that both 'DOMString' and
+'unsigned long' are defined in core/, because
+    typedef DOMString UUID;
+is defined in modules/.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:mac-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I59b9d5225f060be5e832944abded6a2d8bab862e">I59b9d5225f060be5e832944abded6a2d8bab862e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2790055">https://chromium-review.googlesource.com/c/chromium/src/+/2790055</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#867067}
+Bug: 839389
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I82e25c3c20b4176e51bb00989dc51d5d69a67f05">I82e25c3c20b4176e51bb00989dc51d5d69a67f05</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2789076">https://chromium-review.googlesource.com/c/chromium/src/+/2789076</a>
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Commit-Queue: Yuki Shiino &lt;yukishiino@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#867069}
 </pre>
 
 </body>
