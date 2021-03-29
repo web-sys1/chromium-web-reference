@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/867143/"> 867143</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bd2a1e2056984f8c274c5171cf47a7baef4353fd">bd2a1e2056984f8c274c5171cf47a7baef4353fd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/867155/"> 867155</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0771a936188a7b81ee7107700d360feb055c9d74">0771a936188a7b81ee7107700d360feb055c9d74</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/867143/">867143</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bd2a1e2056984f8c274c5171cf47a7baef4353fd">bd2a1e2056984f8c274c5171cf47a7baef4353fd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/867157/">867157</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1513f6669229d0cfa5e51b3a6313611804530a92">1513f6669229d0cfa5e51b3a6313611804530a92</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   bd2a1e2056984f8c274c5171cf47a7baef4353fd
+   0771a936188a7b81ee7107700d360feb055c9d74
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/bd2a1e2056984f8c274c5171cf47a7baef4353fd">
+    <a href="/chromium/src/+log/0771a936188a7b81ee7107700d360feb055c9d74">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/bd2a1e2056984f8c274c5171cf47a7baef4353fd.tar.gz">
+    <a href="/chromium/src/+archive/0771a936188a7b81ee7107700d360feb055c9d74.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+   Henrik Boström &lt;hbos@chromium.org&gt;
   </td>
   <td>
-   Mon Mar 29 08:58:41 2021
+   Mon Mar 29 09:47:47 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Mar 29 08:58:41 2021
+   Mon Mar 29 09:47:47 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/bd2a1e2056984f8c274c5171cf47a7baef4353fd/">
-    933b72efcfc500240ceee2c025244b160e96a1e0
+   <a href="/chromium/src/+/0771a936188a7b81ee7107700d360feb055c9d74/">
+    045bea8ea23773f3b20407c33d54ae0f5600a70d
    </a>
   </td>
  </tr>
@@ -166,33 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/bd2a1e2056984f8c274c5171cf47a7baef4353fd%5E">
-    7aff584fcf50ecf08e379672677f31c7667912c0
+   <a href="/chromium/src/+/0771a936188a7b81ee7107700d360feb055c9d74%5E">
+    4067a4caa17030abf37f1903e76720506d4c6242
    </a>
    <span>
     [
-    <a href="/chromium/src/+/bd2a1e2056984f8c274c5171cf47a7baef4353fd%5E%21/">
+    <a href="/chromium/src/+/0771a936188a7b81ee7107700d360feb055c9d74%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Avoid redundant calculation in NGColumnLayoutAlgorithm::CalculateBalancedColumnBlockSize()
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">WebRtcVideoFrameAdapter: Fix bug in GetOrWrapFrameForSize().
 
-This patch changes |CalculateBalancedColumnBlockSize()| to avoid
-redundant calculation of tallest content run for improving code health.
+Prior to this CL, GetOrWrapFrameForSize() contained an early-return if
+"size == full_size_". The reasoning was that if no additional scaling
+had been applied to the adapter then there's no need to look at the
+scaled_frames_ because we should just go ahead and map frame_.
 
-|NGColumnLayoutAlgorithm::ConstrainColumnBlockSize(size)| always does
-|size = std::max(size, tallest_unbreakable_block_size_)|. Thus, we
-don't need to pass |size| less than |tallest_unbreakable_block_size_|.
+This failed to take into account the fact that frame_ could have
+soft-applied scaling, where the natural size is less than the coded
+size. In this case, even though "size == full_size_", the
+requested_scale_factor is not 1.0 and as such the best frame to map
+might be one of the scaled_frames_.
 
-Bug: 829028
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idcbabfac8792796229cc6447058005458254a6e3">Idcbabfac8792796229cc6447058005458254a6e3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2784202">https://chromium-review.googlesource.com/c/chromium/src/+/2784202</a>
-Commit-Queue: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Reviewed-by: Morten Stenshorne &lt;mstensho@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#867143}
+A unit test is added where the soft-applied scaling of a 720p frame to
+360p size results in a requested_scale_factor of 0.5 so that the best
+buffer to map is the 360p buffer. This would have hit the early return
+and fail the test, but we now pass that test.
+
+Bug: chromium:1157072
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1c3ff826c55a5d6a23954dd43204ed73c620ff33">I1c3ff826c55a5d6a23954dd43204ed73c620ff33</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2786945">https://chromium-review.googlesource.com/c/chromium/src/+/2786945</a>
+Reviewed-by: Ilya Nikolaevskiy &lt;ilnik@chromium.org&gt;
+Reviewed-by: Evan Shrubsole &lt;eshr@google.com&gt;
+Commit-Queue: Henrik Boström &lt;hbos@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#867155}
 </pre>
 
 </body>
