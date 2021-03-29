@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/867155/"> 867155</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0771a936188a7b81ee7107700d360feb055c9d74">0771a936188a7b81ee7107700d360feb055c9d74</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/867160/"> 867160</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b3a48d1721f8cbf37f18c63a5ce2cc08d64f484f">b3a48d1721f8cbf37f18c63a5ce2cc08d64f484f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/867161/">867161</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0771a936188a7b81ee7107700d360feb055c9d74
+   b3a48d1721f8cbf37f18c63a5ce2cc08d64f484f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0771a936188a7b81ee7107700d360feb055c9d74">
+    <a href="/chromium/src/+log/b3a48d1721f8cbf37f18c63a5ce2cc08d64f484f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0771a936188a7b81ee7107700d360feb055c9d74.tar.gz">
+    <a href="/chromium/src/+archive/b3a48d1721f8cbf37f18c63a5ce2cc08d64f484f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Henrik Boström &lt;hbos@chromium.org&gt;
+   Carlos Caballero &lt;carlscab@google.com&gt;
   </td>
   <td>
-   Mon Mar 29 09:47:47 2021
+   Mon Mar 29 10:43:31 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Mar 29 09:47:47 2021
+   Mon Mar 29 10:43:31 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0771a936188a7b81ee7107700d360feb055c9d74/">
-    045bea8ea23773f3b20407c33d54ae0f5600a70d
+   <a href="/chromium/src/+/b3a48d1721f8cbf37f18c63a5ce2cc08d64f484f/">
+    3bfbd6c217d7015f57ee16837585d2d3bb3a9e68
    </a>
   </td>
  </tr>
@@ -166,43 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0771a936188a7b81ee7107700d360feb055c9d74%5E">
-    4067a4caa17030abf37f1903e76720506d4c6242
+   <a href="/chromium/src/+/b3a48d1721f8cbf37f18c63a5ce2cc08d64f484f%5E">
+    daf65cf6daf15d8dcabf883280fad0ecf1dfbe36
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0771a936188a7b81ee7107700d360feb055c9d74%5E%21/">
+    <a href="/chromium/src/+/b3a48d1721f8cbf37f18c63a5ce2cc08d64f484f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">WebRtcVideoFrameAdapter: Fix bug in GetOrWrapFrameForSize().
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[mparch] Remove unnecessary use of WebContentsObserver::FrameDeleted
 
-Prior to this CL, GetOrWrapFrameForSize() contained an early-return if
-"size == full_size_". The reasoning was that if no additional scaling
-had been applied to the adapter then there's no need to look at the
-scaled_frames_ because we should just go ahead and map frame_.
+Clean up the page_load_metrics code to a point where uses of
+FrameDeleted only require the rfh-&gt;GetFrameTreeNodeId() in preparation
+for an API change that will pass int frame_tree_node_id as a param to
+WebContentsObserver::FrameDeleted.
 
-This failed to take into account the fact that frame_ could have
-soft-applied scaling, where the natural size is less than the coded
-size. In this case, even though "size == full_size_", the
-requested_scale_factor is not 1.0 and as such the best frame to map
-might be one of the scaled_frames_.
-
-A unit test is added where the soft-applied scaling of a 720p frame to
-360p size results in a requested_scale_factor of 0.5 so that the best
-buffer to map is the 360p buffer. This would have hit the early return
-and fail the test, but we now pass that test.
-
-Bug: chromium:1157072
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1c3ff826c55a5d6a23954dd43204ed73c620ff33">I1c3ff826c55a5d6a23954dd43204ed73c620ff33</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2786945">https://chromium-review.googlesource.com/c/chromium/src/+/2786945</a>
-Reviewed-by: Ilya Nikolaevskiy &lt;ilnik@chromium.org&gt;
-Reviewed-by: Evan Shrubsole &lt;eshr@google.com&gt;
-Commit-Queue: Henrik Boström &lt;hbos@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#867155}
+Bug: 1188721
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id99a9d1a82eb399b5ef44aa31342f90bcb7d97fd">Id99a9d1a82eb399b5ef44aa31342f90bcb7d97fd</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2778322">https://chromium-review.googlesource.com/c/chromium/src/+/2778322</a>
+Reviewed-by: Tom McKee &lt;tommckee@google.com&gt;
+Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
+Reviewed-by: Nicolás Peña Moreno &lt;npm@chromium.org&gt;
+Commit-Queue: Carlos Caballero &lt;carlscab@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#867160}
 </pre>
 
 </body>
