@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/867126/"> 867126</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8b615b447d070592bbdad64d75f6d398433f53fc">8b615b447d070592bbdad64d75f6d398433f53fc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/867143/"> 867143</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bd2a1e2056984f8c274c5171cf47a7baef4353fd">bd2a1e2056984f8c274c5171cf47a7baef4353fd</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/867125/">867125</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8b615b447d070592bbdad64d75f6d398433f53fc
+   bd2a1e2056984f8c274c5171cf47a7baef4353fd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8b615b447d070592bbdad64d75f6d398433f53fc">
+    <a href="/chromium/src/+log/bd2a1e2056984f8c274c5171cf47a7baef4353fd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8b615b447d070592bbdad64d75f6d398433f53fc.tar.gz">
+    <a href="/chromium/src/+archive/bd2a1e2056984f8c274c5171cf47a7baef4353fd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Matt Falkenhagen &lt;falken@chromium.org&gt;
+   Yoshifumi Inoue &lt;yosin@chromium.org&gt;
   </td>
   <td>
-   Mon Mar 29 08:04:18 2021
+   Mon Mar 29 08:58:41 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Mar 29 08:04:18 2021
+   Mon Mar 29 08:58:41 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8b615b447d070592bbdad64d75f6d398433f53fc/">
-    53a4f3f705ffb32a47134a1b1da0df4d5e79f807
+   <a href="/chromium/src/+/bd2a1e2056984f8c274c5171cf47a7baef4353fd/">
+    933b72efcfc500240ceee2c025244b160e96a1e0
    </a>
   </td>
  </tr>
@@ -166,29 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8b615b447d070592bbdad64d75f6d398433f53fc%5E">
-    66c54110ad4d42b75612aa1d1ccc44f60c9b08ba
+   <a href="/chromium/src/+/bd2a1e2056984f8c274c5171cf47a7baef4353fd%5E">
+    7aff584fcf50ecf08e379672677f31c7667912c0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8b615b447d070592bbdad64d75f6d398433f53fc%5E%21/">
+    <a href="/chromium/src/+/bd2a1e2056984f8c274c5171cf47a7baef4353fd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">loader: Avoid crashing in WebResourceRequestSender::SendAsync.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Avoid redundant calculation in NGColumnLayoutAlgorithm::CalculateBalancedColumnBlockSize()
 
-Adds a temporary early return until the root cause is discovered.
+This patch changes |CalculateBalancedColumnBlockSize()| to avoid
+redundant calculation of tallest content run for improving code health.
 
-Bug: 1175286
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I342c423fe535fd4fc96f35026eeb55f7bac67e6c">I342c423fe535fd4fc96f35026eeb55f7bac67e6c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2789089">https://chromium-review.googlesource.com/c/chromium/src/+/2789089</a>
-Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
-Reviewed-by: Minggang Wang &lt;minggang.wang@intel.com&gt;
-Commit-Queue: Matt Falkenhagen &lt;falken@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#867126}
+|NGColumnLayoutAlgorithm::ConstrainColumnBlockSize(size)| always does
+|size = std::max(size, tallest_unbreakable_block_size_)|. Thus, we
+don't need to pass |size| less than |tallest_unbreakable_block_size_|.
+
+Bug: 829028
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idcbabfac8792796229cc6447058005458254a6e3">Idcbabfac8792796229cc6447058005458254a6e3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2784202">https://chromium-review.googlesource.com/c/chromium/src/+/2784202</a>
+Commit-Queue: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+Reviewed-by: Morten Stenshorne &lt;mstensho@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#867143}
 </pre>
 
 </body>
