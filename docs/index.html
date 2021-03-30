@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/867572/"> 867572</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5fc1974fd8ade3bd016a14726aa5c592f698073f">5fc1974fd8ade3bd016a14726aa5c592f698073f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/867579/"> 867579</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7edfdeeea5f4eea1843960289b230fe7f0ba0e89">7edfdeeea5f4eea1843960289b230fe7f0ba0e89</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/867574/">867574</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b3cad98a3c8b45b4b86bf4ba32a00af84df9e2fc">b3cad98a3c8b45b4b86bf4ba32a00af84df9e2fc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/867589/">867589</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/91619ef39b6d43e73cb64fea8a45f0f17aeb38ca">91619ef39b6d43e73cb64fea8a45f0f17aeb38ca</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5fc1974fd8ade3bd016a14726aa5c592f698073f
+   7edfdeeea5f4eea1843960289b230fe7f0ba0e89
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5fc1974fd8ade3bd016a14726aa5c592f698073f">
+    <a href="/chromium/src/+log/7edfdeeea5f4eea1843960289b230fe7f0ba0e89">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5fc1974fd8ade3bd016a14726aa5c592f698073f.tar.gz">
+    <a href="/chromium/src/+archive/7edfdeeea5f4eea1843960289b230fe7f0ba0e89.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Amr Aboelkher &lt;amraboelkher@chromium.org&gt;
+   Victor Gomes &lt;victorgomes@chromium.org&gt;
   </td>
   <td>
-   Tue Mar 30 12:27:52 2021
+   Tue Mar 30 13:18:13 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 30 12:27:52 2021
+   Tue Mar 30 13:18:13 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5fc1974fd8ade3bd016a14726aa5c592f698073f/">
-    9d87256dce9cf9cbe26b6fd609b6bdcbc39378c8
+   <a href="/chromium/src/+/7edfdeeea5f4eea1843960289b230fe7f0ba0e89/">
+    c1a46d108fb12caad43d03dded2780e262f15576
    </a>
   </td>
  </tr>
@@ -166,65 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5fc1974fd8ade3bd016a14726aa5c592f698073f%5E">
-    a36cb300fd8c0fbae180d43ea5f69158afb6ced0
+   <a href="/chromium/src/+/7edfdeeea5f4eea1843960289b230fe7f0ba0e89%5E">
+    24716e87aaa694c3b68cb1b339055ab5ffa05a89
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5fc1974fd8ade3bd016a14726aa5c592f698073f%5E%21/">
+    <a href="/chromium/src/+/7edfdeeea5f4eea1843960289b230fe7f0ba0e89%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Layout: LayoutObject Oilpanization (2/4)"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[blink] Removes extra store when advancing a char in SegmentedString
 
-This reverts commit 8b1c5c942fae81b9e84234d07511ee4a0e1f397c.
+- Removes |current_char|
+- Returns the character immediately after advancing. If no more characters in the buffer, we return a null character.
+- No need to check if the source (in input stream) is empty after advancing whenever the character is not "special".
 
-Reason for revert: The following build fails: <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/Mac10.13%20Tests/36228/blamelist">https://ci.chromium.org/ui/p/chromium/builders/ci/Mac10.13%20Tests/36228/blamelist</a> cause of some blink related failure, and that CL is the only one in the list that changes that area. See BUG=chromium:1194030.
-
-Original change's description:
-&gt; Layout: LayoutObject Oilpanization (2/4)
-&gt;
-&gt; This CL is the second part of LayoutObject Oilpanization.
-&gt; 1st: <a href="https://crrev.com/c/2636747">https://crrev.com/c/2636747</a>
-&gt; 2nd: this CL
-&gt; 3rd: <a href="https://crrev.com/c/2636819">https://crrev.com/c/2636819</a>
-&gt; 4th: <a href="https://crrev.com/c/2636707">https://crrev.com/c/2636707</a>
-&gt; These CLs convert LayoutObject and related classes to GarbageCollected.
-&gt; Design doc: <a href="https://docs.google.com/document/d/1pBkyrJit7lCaEPgV9skf_dWte9PXt-8os4NhC1z-bnE/">https://docs.google.com/document/d/1pBkyrJit7lCaEPgV9skf_dWte9PXt-8os4NhC1z-bnE/</a>
-&gt; Performance test results: <a href="https://docs.google.com/document/d/1M-KX8EQ0QEoqYpp_uybUp26vRiSP7zngxe6m4-FjxGA">https://docs.google.com/document/d/1M-KX8EQ0QEoqYpp_uybUp26vRiSP7zngxe6m4-FjxGA</a>
-&gt;
-&gt; Detailed review is done in these individual CLs:
-&gt; NGInlineItem			<a href="https://crrev.com/c/2497355">https://crrev.com/c/2497355</a>
-&gt; NGLogicalLineItems		<a href="https://crrev.com/c/2500966">https://crrev.com/c/2500966</a>
-&gt; NGLayoutResult		        <a href="https://crrev.com/c/2546508">https://crrev.com/c/2546508</a>
-&gt; NGEarlyBreak			<a href="https://crrev.com/c/2546352">https://crrev.com/c/2546352</a>
-&gt; NGConstraintSpace		<a href="https://crrev.com/c/2546509">https://crrev.com/c/2546509</a>
-&gt; NGExclusionShapeData	        <a href="https://crrev.com/c/2546510">https://crrev.com/c/2546510</a>
-&gt; NGUnpositionedListMarker	<a href="https://crrev.com/c/2546311">https://crrev.com/c/2546311</a>
-&gt;
-&gt; Bug: 1030176
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibd8a45f4100dda009a1324c8abbd108108b6f11c">Ibd8a45f4100dda009a1324c8abbd108108b6f11c</a>
-&gt; Binary-Size: Size increase is unavoidable (see above).
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2637118">https://chromium-review.googlesource.com/c/chromium/src/+/2637118</a>
-&gt; Commit-Queue: Yuki Yamada &lt;yukiy@chromium.org&gt;
-&gt; Reviewed-by: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
-&gt; Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#867549}
-
-Bug: 1030176
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I53c91fa33b2c1fbf8f41f8214f107a474223e50c">I53c91fa33b2c1fbf8f41f8214f107a474223e50c</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2794481">https://chromium-review.googlesource.com/c/chromium/src/+/2794481</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Bug: chromium:1191991
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I09142406175d94f3fb2a04d76703a0a024eaba7f">I09142406175d94f3fb2a04d76703a0a024eaba7f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2784380">https://chromium-review.googlesource.com/c/chromium/src/+/2784380</a>
+Reviewed-by: Mason Freed &lt;masonf@chromium.org&gt;
 Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Reviewed-by: Amr Aboelkher &lt;amraboelkher@chromium.org&gt;
-Commit-Queue: Amr Aboelkher &lt;amraboelkher@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#867572}
+Auto-Submit: Victor Gomes &lt;victorgomes@chromium.org&gt;
+Commit-Queue: Victor Gomes &lt;victorgomes@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#867579}
 </pre>
 
 </body>
