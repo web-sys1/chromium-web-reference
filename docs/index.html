@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/869490/"> 869490</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c471d456ad104ec712e4833035a58f671919fc80">c471d456ad104ec712e4833035a58f671919fc80</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/869502/"> 869502</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/65a5c3cf1a9c75c7df70917f9e49975253e4a043">65a5c3cf1a9c75c7df70917f9e49975253e4a043</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/869497/">869497</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c471d456ad104ec712e4833035a58f671919fc80
+   65a5c3cf1a9c75c7df70917f9e49975253e4a043
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c471d456ad104ec712e4833035a58f671919fc80">
+    <a href="/chromium/src/+log/65a5c3cf1a9c75c7df70917f9e49975253e4a043">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c471d456ad104ec712e4833035a58f671919fc80.tar.gz">
+    <a href="/chromium/src/+archive/65a5c3cf1a9c75c7df70917f9e49975253e4a043.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Corentin Wallez &lt;cwallez@chromium.org&gt;
+   Sylvain Defresne &lt;sdefresne@chromium.org&gt;
   </td>
   <td>
-   Tue Apr 06 12:52:32 2021
+   Tue Apr 06 13:49:16 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 06 12:52:32 2021
+   Tue Apr 06 13:49:16 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c471d456ad104ec712e4833035a58f671919fc80/">
-    1bebe1df986a608692800f0eb4cc8d8ed9840949
+   <a href="/chromium/src/+/65a5c3cf1a9c75c7df70917f9e49975253e4a043/">
+    4e006fdbb5d2a57ac1eb9fa6108527bf2445dce3
    </a>
   </td>
  </tr>
@@ -166,32 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c471d456ad104ec712e4833035a58f671919fc80%5E">
-    f844e3510b6e39013a7a3f9cbbec6922e598878d
+   <a href="/chromium/src/+/65a5c3cf1a9c75c7df70917f9e49975253e4a043%5E">
+    7b8958f56af1e96675b334b4db1481309c9a17ec
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c471d456ad104ec712e4833035a58f671919fc80%5E%21/">
+    <a href="/chromium/src/+/65a5c3cf1a9c75c7df70917f9e49975253e4a043%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add build_overrides/vulkan_memory_allocator.gni
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ios] Change global JavaScriptFeature initialisation
 
-After <a href="https://chromium-review.googlesource.com/c/external/github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/+/2804453">https://chromium-review.googlesource.com/c/external/github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/+/2804453</a>
-the VulkanMemoryAllocator dependency will start including this config
-file to get the position of the vulkan-headers.
+Use base::NoDestructor&lt;T&gt; variable instead of std::unique_ptr&lt;T&gt;
+as those object don't have to be heap allocated and can instead
+be allocated inline.
 
-Bug: tint:700
-Bug: chromium:1195554
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icc6714c42eaf56797c7129b20d71cac8d9501c10">Icc6714c42eaf56797c7129b20d71cac8d9501c10</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2805716">https://chromium-review.googlesource.com/c/chromium/src/+/2805716</a>
-Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
-Commit-Queue: Nico Weber &lt;thakis@chromium.org&gt;
-Auto-Submit: Corentin Wallez &lt;cwallez@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#869490}
+Remove the dispatch_once() idiom used for the initialisation as
+initialisation of function scoped static variable is thread-safe
+since C++11.
+
+Implement script variable replacement using a repeating callback
+to allow the feature to use the correct value even when WebClient
+is updated by tests and thus avoid exposing implementation detail
+to the tests.
+
+Bug: none
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9065f59a2f8779cec7b68e98cb9bcc361848c76d">I9065f59a2f8779cec7b68e98cb9bcc361848c76d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2785046">https://chromium-review.googlesource.com/c/chromium/src/+/2785046</a>
+Auto-Submit: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+Commit-Queue: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+Reviewed-by: Mike Dougherty &lt;michaeldo@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#869502}
 </pre>
 
 </body>
