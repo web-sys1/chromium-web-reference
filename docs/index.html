@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/870444/"> 870444</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/58dbfd8e942d5f605ecd8ebea3f6812faa17e35f">58dbfd8e942d5f605ecd8ebea3f6812faa17e35f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/870460/"> 870460</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d379deac5a196c2a29d32637f37dc3059d946d98">d379deac5a196c2a29d32637f37dc3059d946d98</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/870445/">870445</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/45c50c55718d35ae90a7f2e4eef3306423fec2a1">45c50c55718d35ae90a7f2e4eef3306423fec2a1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/870464/">870464</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fe6b351e5b3e939f940fd569f348abf064e25aa8">fe6b351e5b3e939f940fd569f348abf064e25aa8</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   58dbfd8e942d5f605ecd8ebea3f6812faa17e35f
+   d379deac5a196c2a29d32637f37dc3059d946d98
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/58dbfd8e942d5f605ecd8ebea3f6812faa17e35f">
+    <a href="/chromium/src/+log/d379deac5a196c2a29d32637f37dc3059d946d98">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/58dbfd8e942d5f605ecd8ebea3f6812faa17e35f.tar.gz">
+    <a href="/chromium/src/+archive/d379deac5a196c2a29d32637f37dc3059d946d98.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+   Kenichi Ishibashi &lt;bashi@chromium.org&gt;
   </td>
   <td>
-   Thu Apr 08 10:23:37 2021
+   Thu Apr 08 11:21:27 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Apr 08 10:23:37 2021
+   Thu Apr 08 11:21:27 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/58dbfd8e942d5f605ecd8ebea3f6812faa17e35f/">
-    1be90dab424fc8b23e074fe238ca11e6eeddb85a
+   <a href="/chromium/src/+/d379deac5a196c2a29d32637f37dc3059d946d98/">
+    0db380beb74894f93b93d0c0a3b2d95f26567aa3
    </a>
   </td>
  </tr>
@@ -166,42 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/58dbfd8e942d5f605ecd8ebea3f6812faa17e35f%5E">
-    67e49c331f30ec0c9f76047acce3d55e97c3cf92
+   <a href="/chromium/src/+/d379deac5a196c2a29d32637f37dc3059d946d98%5E">
+    39270cd62352ae3ac1e36624ba4e9c65536532ea
    </a>
    <span>
     [
-    <a href="/chromium/src/+/58dbfd8e942d5f605ecd8ebea3f6812faa17e35f%5E%21/">
+    <a href="/chromium/src/+/d379deac5a196c2a29d32637f37dc3059d946d98%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ios] Stop accessing _browser after -settingsWillBeDismissed
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Cancel Early Hints preload when the response already exists in cache
 
-If an authentication is in progress during the app shutdown,
-it is possible for the authentication to complete after the
-settings have been shutdown but before the controller could
-be deallocated (e.g. it may be autoreleased and the poll not
-drained yet).
+When a response from a URLLoader comes from disk cache for a preload,
+NavigationEarlyHintsManager can cancel the URLLoader to avoid
+unnecessary disk access for reading body.
 
-Then -[AccountsTableViewController popViewIfSignedOut] could
-be called with a _browser being a dangling pointer leading
-to UAF and in the best case a crash during shutdown (it is
-probably hard to exploit as it requires the user to kill the
-app at a precise moment, so unlikely to be a security risk).
-
-Clear _browser in -settingsWillBeDismissed and ensure that
-the code does not use -authService when _browser is null.
-
-Bug: 1192993
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I788177beda6b0a5eab64f20e52573305412dd96c">I788177beda6b0a5eab64f20e52573305412dd96c</a>
-Fixed: 1192993
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2810298">https://chromium-review.googlesource.com/c/chromium/src/+/2810298</a>
-Commit-Queue: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
-Reviewed-by: Jérôme Lebel &lt;jlebel@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#870444}
+Bug: 671310
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6a343e24d3244ee2bb63ab54ef20a8306f97d6af">I6a343e24d3244ee2bb63ab54ef20a8306f97d6af</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2809718">https://chromium-review.googlesource.com/c/chromium/src/+/2809718</a>
+Commit-Queue: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
+Commit-Queue: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Auto-Submit: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
+Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
+Reviewed-by: Yutaka Hirano &lt;yhirano@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#870460}
 </pre>
 
 </body>
