@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/870891/"> 870891</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/05d861d75a04ebf35ae8e85e57a97d1fcd3326b1">05d861d75a04ebf35ae8e85e57a97d1fcd3326b1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/870902/"> 870902</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7ddc654538fc32828398d1d4713cf9c77b71e9eb">7ddc654538fc32828398d1d4713cf9c77b71e9eb</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/870883/">870883</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   05d861d75a04ebf35ae8e85e57a97d1fcd3326b1
+   7ddc654538fc32828398d1d4713cf9c77b71e9eb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/05d861d75a04ebf35ae8e85e57a97d1fcd3326b1">
+    <a href="/chromium/src/+log/7ddc654538fc32828398d1d4713cf9c77b71e9eb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/05d861d75a04ebf35ae8e85e57a97d1fcd3326b1.tar.gz">
+    <a href="/chromium/src/+archive/7ddc654538fc32828398d1d4713cf9c77b71e9eb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
+   arthursonzogni &lt;arthursonzogni@chromium.org&gt;
   </td>
   <td>
-   Fri Apr 09 08:19:37 2021
+   Fri Apr 09 09:16:50 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 09 08:19:37 2021
+   Fri Apr 09 09:16:50 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/05d861d75a04ebf35ae8e85e57a97d1fcd3326b1/">
-    a32b2862d177de72fbc3dce1e6db1b39f7faede6
+   <a href="/chromium/src/+/7ddc654538fc32828398d1d4713cf9c77b71e9eb/">
+    c79310a30d1bf7626222fdb66e3f631511c65cf5
    </a>
   </td>
  </tr>
@@ -166,43 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/05d861d75a04ebf35ae8e85e57a97d1fcd3326b1%5E">
-    253beaf6e5bd240e3e17fb235aff417d5d675fee
+   <a href="/chromium/src/+/7ddc654538fc32828398d1d4713cf9c77b71e9eb%5E">
+    68bcc06a7f4cbe685c2a9c798f67aec2979e36c7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/05d861d75a04ebf35ae8e85e57a97d1fcd3326b1%5E%21/">
+    <a href="/chromium/src/+/7ddc654538fc32828398d1d4713cf9c77b71e9eb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll src-internal from ada8a7fbfca2 to 12ff94971e60 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">NavigationRequest: Simplify override-user-agent logic.
 
-<a href="https://chrome-internal.googlesource.com/chrome/src-internal.git/+log/ada8a7fbfca2..12ff94971e60">https://chrome-internal.googlesource.com/chrome/src-internal.git/+log/ada8a7fbfca2..12ff94971e60</a>
+This patch simplify the logic in the NavigationRequest. It removes one
+unused content/public method.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://skia-autoroll.corp.goog/r/src-internal-chromium-autoroll">https://skia-autoroll.corp.goog/r/src-internal-chromium-autoroll</a>
-Please CC talp@google.com on the revert to ensure that a human
-is aware of the problem.
+This patch removes:
+- NavigationHandle::GetIsOverridingUserAgent()  [was unused]
+- NavigationRequest::GetIsOverridingUserAgent()
+- NavigationRequest::was_set_overriding_user_agent_called()
+- NavigationRequest::was_set_overriding_user_agent_called_
+- NavigationRequest::entry_overrides_ua()
+- NavigationRequest::entry_overrides_ua_
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+Goals:
+- Only one source of truth: |commit_params-&gt;is_overriding_user_agent|
+- Unconditionally write the "is_overriding_user_agent" into
+  NavigationEntry at DidCommitNavigation time.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Bug: None
-Tbr: talp@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I18266069f0e322bbbb3e2c08fa85f58005b02cb1">I18266069f0e322bbbb3e2c08fa85f58005b02cb1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2815142">https://chromium-review.googlesource.com/c/chromium/src/+/2815142</a>
-Commit-Queue: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Reviewed-by: Tal Pressman &lt;talp@google.com&gt;
-Cr-Commit-Position: refs/heads/master@{#870891}
+Bug: 1188400
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I13f9359669630d38f14bc20ee0c950d95f33328c">I13f9359669630d38f14bc20ee0c950d95f33328c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2780654">https://chromium-review.googlesource.com/c/chromium/src/+/2780654</a>
+Commit-Queue: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
+Reviewed-by: Charlie Reis &lt;creis@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#870902}
 </pre>
 
 </body>
