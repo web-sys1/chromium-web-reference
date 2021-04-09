@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/871107/"> 871107</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1f46dbf070a845cb6cde01e20c432a53db2cefbd">1f46dbf070a845cb6cde01e20c432a53db2cefbd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/871128/"> 871128</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/426ce502e73a8cd4727485b3154e5e6bb136f0e7">426ce502e73a8cd4727485b3154e5e6bb136f0e7</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/871124/">871124</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1f46dbf070a845cb6cde01e20c432a53db2cefbd
+   426ce502e73a8cd4727485b3154e5e6bb136f0e7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1f46dbf070a845cb6cde01e20c432a53db2cefbd">
+    <a href="/chromium/src/+log/426ce502e73a8cd4727485b3154e5e6bb136f0e7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1f46dbf070a845cb6cde01e20c432a53db2cefbd.tar.gz">
+    <a href="/chromium/src/+archive/426ce502e73a8cd4727485b3154e5e6bb136f0e7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jonathan Ross &lt;jonross@chromium.org&gt;
+   Joe DeBlasio &lt;jdeblasio@chromium.org&gt;
   </td>
   <td>
-   Fri Apr 09 21:09:30 2021
+   Fri Apr 09 22:03:39 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 09 21:09:30 2021
+   Fri Apr 09 22:03:39 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1f46dbf070a845cb6cde01e20c432a53db2cefbd/">
-    2fbc7cbb1e6696d596de964e6e1cfbc4e7afda95
+   <a href="/chromium/src/+/426ce502e73a8cd4727485b3154e5e6bb136f0e7/">
+    b182564ae303f61d648ea4707d613dc34f89f80c
    </a>
   </td>
  </tr>
@@ -166,34 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1f46dbf070a845cb6cde01e20c432a53db2cefbd%5E">
-    0f708e42c58ff1db8c3d4304f2581872695b9b76
+   <a href="/chromium/src/+/426ce502e73a8cd4727485b3154e5e6bb136f0e7%5E">
+    94817bd7b6f65b72683d8c6fd17a86b728967e20
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1f46dbf070a845cb6cde01e20c432a53db2cefbd%5E%21/">
+    <a href="/chromium/src/+/426ce502e73a8cd4727485b3154e5e6bb136f0e7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Switch PipelineReporter to use Global TraceIDs
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[MIX-DL] Fix blob: URL handling and clarify console messages
 
-We've been seeing traces where PipelineReporters are nested within each other.
-The reports are generated when the PipelineReporter is deleted, and was using a pointer as an identifier.
+This CL fixes a bug wherein the final URL in a redirect chain was
+considered as part of the middle of the redirect chain. This resulted in
+two seemingly-unrelated bugs:
+ * The console message always said that blocked downloads were
+   "redirected through" an insecure URL, even if there were no
+   redirects/the redirects were all secure.
+ * file:// and blob:// URLs were considered insecure, even when you got
+   there through secure means, and even though we had tried to
+   special-case them.
 
-However they represent timestamps that can pre-date their existence.
+The only non-test change in this CL is to exclude the last URL in the
+redirect chain when considering redirects, since the last URL in the
+chain is always the final URL.
 
-We seem to be running into hash conflicts when generating perfetto::Track. This change switches to using base::GetNextGlobalTraceId to get guaranteed unique Ids.
+This CL also adds a test for the blob case, and fixes the test harness
+so that the redirect chain behavior is consistent with Chrome (it
+previously was not including the final URL in the chain).
 
-Bug: 1196313
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I48c4b422aebb2a56caad3ca285ac5128007906d4">I48c4b422aebb2a56caad3ca285ac5128007906d4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2818479">https://chromium-review.googlesource.com/c/chromium/src/+/2818479</a>
-Reviewed-by: Jonathan Ross &lt;jonross@chromium.org&gt;
-Reviewed-by: Sadrul Chowdhury &lt;sadrul@chromium.org&gt;
-Commit-Queue: Jonathan Ross &lt;jonross@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#871107}
+Bug: 1197573
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1e624a31b47fd3f90aec5bb3032f74d19d2b47e4">I1e624a31b47fd3f90aec5bb3032f74d19d2b47e4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2818720">https://chromium-review.googlesource.com/c/chromium/src/+/2818720</a>
+Commit-Queue: Joe DeBlasio &lt;jdeblasio@chromium.org&gt;
+Reviewed-by: Mustafa Emre Acer &lt;meacer@chromium.org&gt;
+Reviewed-by: Xing Liu &lt;xingliu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#871128}
 </pre>
 
 </body>
