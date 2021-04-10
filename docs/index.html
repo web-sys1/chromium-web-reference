@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/871253/"> 871253</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dd416d133d9dbc3ba72a65927e3326f3cd307642">dd416d133d9dbc3ba72a65927e3326f3cd307642</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/871258/"> 871258</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/31bb7d55904d6e380b1682c8fd26c089d23c3665">31bb7d55904d6e380b1682c8fd26c089d23c3665</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/871253/">871253</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dd416d133d9dbc3ba72a65927e3326f3cd307642">dd416d133d9dbc3ba72a65927e3326f3cd307642</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/871258/">871258</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/31bb7d55904d6e380b1682c8fd26c089d23c3665">31bb7d55904d6e380b1682c8fd26c089d23c3665</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   dd416d133d9dbc3ba72a65927e3326f3cd307642
+   31bb7d55904d6e380b1682c8fd26c089d23c3665
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/dd416d133d9dbc3ba72a65927e3326f3cd307642">
+    <a href="/chromium/src/+log/31bb7d55904d6e380b1682c8fd26c089d23c3665">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/dd416d133d9dbc3ba72a65927e3326f3cd307642.tar.gz">
+    <a href="/chromium/src/+archive/31bb7d55904d6e380b1682c8fd26c089d23c3665.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   henrika &lt;henrika@chromium.org&gt;
   </td>
   <td>
-   Sat Apr 10 13:46:07 2021
+   Sat Apr 10 14:54:13 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Apr 10 13:46:07 2021
+   Sat Apr 10 14:54:13 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/dd416d133d9dbc3ba72a65927e3326f3cd307642/">
-    4d3366c5ed1c07bba33a483f44d0a416aed3fa79
+   <a href="/chromium/src/+/31bb7d55904d6e380b1682c8fd26c089d23c3665/">
+    77a45a7b02edded78efe2c39cec9292d45d6052f
    </a>
   </td>
  </tr>
@@ -166,41 +166,52 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/dd416d133d9dbc3ba72a65927e3326f3cd307642%5E">
-    47383a8adae8e23b57d690f3cf6ed82bf025750e
+   <a href="/chromium/src/+/31bb7d55904d6e380b1682c8fd26c089d23c3665%5E">
+    89f78847e5c64a5caf0452afea0befa9dda36624
    </a>
    <span>
     [
-    <a href="/chromium/src/+/dd416d133d9dbc3ba72a65927e3326f3cd307642%5E%21/">
+    <a href="/chromium/src/+/31bb7d55904d6e380b1682c8fd26c089d23c3665%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Mac PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Removes usage of IAudioClock in WASAPI input audio streams
 
-Roll Chrome Mac PGO profile from chrome-mac-master-1618033419-63e1b0a45d7229a85d6adf7b50b7fa507418e7d4.profdata to chrome-mac-master-1618055317-895d58df21336de853177d9ec7075cb13d5d1443.profdata
+This change removes usage of IAudioClock::GetPosition since it:
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-mac-chromium">https://autoroll.skia.org/r/pgo-mac-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+* Caused incorrect input audio capture time on Windows.
+* Could lead to duplicate timestamps in Breakout Box.
+* Should not be used at all in real-time threads since it is blocking,
+  involves a switch from user-mode to kernel-mode and back and can cause
+  glitches.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+The change also starts using IAudioCaptureClient::GetNextPacketSize since
+it makes it possible to clean up the structure and readability of the
+inner while loop which feeds us with captured audio. The performance and
+behavior is not changed by this.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
+Adds four new UMA histograms:
 
-Cq-Include-Trybots: luci.chrome.try:mac-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idc3ca8c8d0fb0553bad21ccc4bdeaae0009bec23">Idc3ca8c8d0fb0553bad21ccc4bdeaae0009bec23</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2819821">https://chromium-review.googlesource.com/c/chromium/src/+/2819821</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#871253}
+* Media.Audio.Capture.Win.Glitches: counts total number of
+  AUDCLNT_BUFFERFLAGS_DATA_DISCONTINUITY warnings during a session.
+* Media.Audio.Capture.Win.TimestampErrors: counts total number of
+  AUDCLNT_BUFFERFLAGS_TIMESTAMP_ERROR during a session.
+* Media.Audio.Capture.Win.TimeUntilFirstTimestampError: counts time from
+  start of input audio until first timestamp error was detected.
+* Media.Audio.Capture.Win.MonotonicTimestamps: indicates if a non-
+  monotonic timestamp sequence was detected or not.
+
+Bug: 825744, 1181547
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie4c4e4f05148bb4f3db5a7a264f8adb4047deb36">Ie4c4e4f05148bb4f3db5a7a264f8adb4047deb36</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2807621">https://chromium-review.googlesource.com/c/chromium/src/+/2807621</a>
+Commit-Queue: Henrik Andreasson &lt;henrika@chromium.org&gt;
+Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
+Reviewed-by: Thomas Guilbert &lt;tguilbert@chromium.org&gt;
+Reviewed-by: Caitlin Fischer &lt;caitlinfischer@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#871258}
 </pre>
 
 </body>
