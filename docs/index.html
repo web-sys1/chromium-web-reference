@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/871258/"> 871258</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/31bb7d55904d6e380b1682c8fd26c089d23c3665">31bb7d55904d6e380b1682c8fd26c089d23c3665</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/871265/"> 871265</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/429e6f78a88473208e96689afa2f6e91f07a4f8c">429e6f78a88473208e96689afa2f6e91f07a4f8c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/871260/">871260</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   31bb7d55904d6e380b1682c8fd26c089d23c3665
+   429e6f78a88473208e96689afa2f6e91f07a4f8c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/31bb7d55904d6e380b1682c8fd26c089d23c3665">
+    <a href="/chromium/src/+log/429e6f78a88473208e96689afa2f6e91f07a4f8c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/31bb7d55904d6e380b1682c8fd26c089d23c3665.tar.gz">
+    <a href="/chromium/src/+archive/429e6f78a88473208e96689afa2f6e91f07a4f8c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   henrika &lt;henrika@chromium.org&gt;
+   Stephan Hartmann &lt;stha09@googlemail.com&gt;
   </td>
   <td>
-   Sat Apr 10 14:54:13 2021
+   Sat Apr 10 17:02:49 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Apr 10 14:54:13 2021
+   Sat Apr 10 17:02:49 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/31bb7d55904d6e380b1682c8fd26c089d23c3665/">
-    77a45a7b02edded78efe2c39cec9292d45d6052f
+   <a href="/chromium/src/+/429e6f78a88473208e96689afa2f6e91f07a4f8c/">
+    203196756a1e947a6151969bfd4f94f1ffa18932
    </a>
   </td>
  </tr>
@@ -166,52 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/31bb7d55904d6e380b1682c8fd26c089d23c3665%5E">
-    89f78847e5c64a5caf0452afea0befa9dda36624
+   <a href="/chromium/src/+/429e6f78a88473208e96689afa2f6e91f07a4f8c%5E">
+    11e7c2c14c789cbf58851705bb9bf2848c76f04e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/31bb7d55904d6e380b1682c8fd26c089d23c3665%5E%21/">
+    <a href="/chromium/src/+/429e6f78a88473208e96689afa2f6e91f07a4f8c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Removes usage of IAudioClock in WASAPI input audio streams
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">GCC: fix vector types in pcscan
 
-This change removes usage of IAudioClock::GetPosition since it:
+ * _mm_cmpeq_epi64 result is __m128i
+ * maybe_ptrs is __m128i already and doesn't require cast
 
-* Caused incorrect input audio capture time on Windows.
-* Could lead to duplicate timestamps in Breakout Box.
-* Should not be used at all in real-time threads since it is blocking,
-  involves a switch from user-mode to kernel-mode and back and can cause
-  glitches.
-
-The change also starts using IAudioCaptureClient::GetNextPacketSize since
-it makes it possible to clean up the structure and readability of the
-inner while loop which feeds us with captured audio. The performance and
-behavior is not changed by this.
-
-Adds four new UMA histograms:
-
-* Media.Audio.Capture.Win.Glitches: counts total number of
-  AUDCLNT_BUFFERFLAGS_DATA_DISCONTINUITY warnings during a session.
-* Media.Audio.Capture.Win.TimestampErrors: counts total number of
-  AUDCLNT_BUFFERFLAGS_TIMESTAMP_ERROR during a session.
-* Media.Audio.Capture.Win.TimeUntilFirstTimestampError: counts time from
-  start of input audio until first timestamp error was detected.
-* Media.Audio.Capture.Win.MonotonicTimestamps: indicates if a non-
-  monotonic timestamp sequence was detected or not.
-
-Bug: 825744, 1181547
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie4c4e4f05148bb4f3db5a7a264f8adb4047deb36">Ie4c4e4f05148bb4f3db5a7a264f8adb4047deb36</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2807621">https://chromium-review.googlesource.com/c/chromium/src/+/2807621</a>
-Commit-Queue: Henrik Andreasson &lt;henrika@chromium.org&gt;
-Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
-Reviewed-by: Thomas Guilbert &lt;tguilbert@chromium.org&gt;
-Reviewed-by: Caitlin Fischer &lt;caitlinfischer@google.com&gt;
-Cr-Commit-Position: refs/heads/master@{#871258}
+Bug: 819294
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3f8c6cc327191827838e80aea1431ac09315fe88">I3f8c6cc327191827838e80aea1431ac09315fe88</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2817544">https://chromium-review.googlesource.com/c/chromium/src/+/2817544</a>
+Reviewed-by: Anton Bikineev &lt;bikineev@chromium.org&gt;
+Commit-Queue: Stephan Hartmann &lt;stha09@googlemail.com&gt;
+Cr-Commit-Position: refs/heads/master@{#871265}
 </pre>
 
 </body>
