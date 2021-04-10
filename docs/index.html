@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/871107/"> 871107</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1f46dbf070a845cb6cde01e20c432a53db2cefbd">1f46dbf070a845cb6cde01e20c432a53db2cefbd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/871170/"> 871170</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c1371c15b43f550a74de6de66cb83e97894a841b">c1371c15b43f550a74de6de66cb83e97894a841b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/871151/">871151</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d844cb6f22cfbc3cfd8bbb72a5ea80f84ed833bd">d844cb6f22cfbc3cfd8bbb72a5ea80f84ed833bd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/871167/">871167</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f53b342ecd8083d7c74d9fb792736fc2ae1d8dc9">f53b342ecd8083d7c74d9fb792736fc2ae1d8dc9</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1f46dbf070a845cb6cde01e20c432a53db2cefbd
+   c1371c15b43f550a74de6de66cb83e97894a841b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1f46dbf070a845cb6cde01e20c432a53db2cefbd">
+    <a href="/chromium/src/+log/c1371c15b43f550a74de6de66cb83e97894a841b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1f46dbf070a845cb6cde01e20c432a53db2cefbd.tar.gz">
+    <a href="/chromium/src/+archive/c1371c15b43f550a74de6de66cb83e97894a841b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jonathan Ross &lt;jonross@chromium.org&gt;
+   Mike Jackson &lt;mjackson@microsoft.com&gt;
   </td>
   <td>
-   Fri Apr 09 21:09:30 2021
+   Fri Apr 09 23:51:21 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 09 21:09:30 2021
+   Fri Apr 09 23:51:21 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1f46dbf070a845cb6cde01e20c432a53db2cefbd/">
-    2fbc7cbb1e6696d596de964e6e1cfbc4e7afda95
+   <a href="/chromium/src/+/c1371c15b43f550a74de6de66cb83e97894a841b/">
+    d3df844ca2fdd6b88a6d3cbbb3ee121231a3f5f8
    </a>
   </td>
  </tr>
@@ -166,34 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1f46dbf070a845cb6cde01e20c432a53db2cefbd%5E">
-    0f708e42c58ff1db8c3d4304f2581872695b9b76
+   <a href="/chromium/src/+/c1371c15b43f550a74de6de66cb83e97894a841b%5E">
+    81224755019478d25804aa7a7985f510aeadde8b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1f46dbf070a845cb6cde01e20c432a53db2cefbd%5E%21/">
+    <a href="/chromium/src/+/c1371c15b43f550a74de6de66cb83e97894a841b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Switch PipelineReporter to use Global TraceIDs
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">dpwas: Support protocol handlers on MacOS - Add uri info to bundle.
 
-We've been seeing traces where PipelineReporters are nested within each other.
-The reports are generated when the PipelineReporter is deleted, and was using a pointer as an identifier.
+This change adds protocol handler registration to the app shim bundle
+generated with PWA's are installed. This allows MacOS to see that an
+installed app can handle a specified protocol. There is a needed follow
+up change to the app shim itself, to allow the app to receive and handle
+the protocol.
 
-However they represent timestamps that can pre-date their existence.
+Testing:
+- Enable enable-desktop-pwas-protocol-handling
+- Install <a href="https://fabiorocha.github.io/pwa/">https://fabiorocha.github.io/pwa/</a>
+- 'Show Package Contents' on ~/Applications/Chromium Apps/Progress Web App
+- Then 'Contents/Info.plist' should contain entries for: web+testing,
+  web+profile, web+github, web+extrastuff, mailto
 
-We seem to be running into hash conflicts when generating perfetto::Track. This change switches to using base::GetNextGlobalTraceId to get guaranteed unique Ids.
-
-Bug: 1196313
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I48c4b422aebb2a56caad3ca285ac5128007906d4">I48c4b422aebb2a56caad3ca285ac5128007906d4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2818479">https://chromium-review.googlesource.com/c/chromium/src/+/2818479</a>
-Reviewed-by: Jonathan Ross &lt;jonross@chromium.org&gt;
-Reviewed-by: Sadrul Chowdhury &lt;sadrul@chromium.org&gt;
-Commit-Queue: Jonathan Ross &lt;jonross@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#871107}
+Bug: 1019239
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9046a4d017fdb797ae1f7f969cffb33342b31f57">I9046a4d017fdb797ae1f7f969cffb33342b31f57</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2815800">https://chromium-review.googlesource.com/c/chromium/src/+/2815800</a>
+Commit-Queue: Mike Jackson &lt;mjackson@microsoft.com&gt;
+Reviewed-by: Daniel Murphy &lt;dmurph@chromium.org&gt;
+Reviewed-by: Mark Mentovai &lt;mark@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#871170}
 </pre>
 
 </body>
