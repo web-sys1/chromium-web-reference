@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/872104/"> 872104</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/52a872762bf4ed3c8ac2499b0601517001b4e2b9">52a872762bf4ed3c8ac2499b0601517001b4e2b9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/872133/"> 872133</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c1607b2c72b96ce9f3a4816e4dd4ec75d59a5e4b">c1607b2c72b96ce9f3a4816e4dd4ec75d59a5e4b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/872101/">872101</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   52a872762bf4ed3c8ac2499b0601517001b4e2b9
+   c1607b2c72b96ce9f3a4816e4dd4ec75d59a5e4b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/52a872762bf4ed3c8ac2499b0601517001b4e2b9">
+    <a href="/chromium/src/+log/c1607b2c72b96ce9f3a4816e4dd4ec75d59a5e4b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/52a872762bf4ed3c8ac2499b0601517001b4e2b9.tar.gz">
+    <a href="/chromium/src/+archive/c1607b2c72b96ce9f3a4816e4dd4ec75d59a5e4b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Karandeep Bhatia &lt;karandeepb@chromium.org&gt;
+   Kelvin Jiang &lt;kelvinjiang@chromium.org&gt;
   </td>
   <td>
-   Tue Apr 13 20:56:24 2021
+   Tue Apr 13 21:57:52 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 13 20:56:24 2021
+   Tue Apr 13 21:57:52 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/52a872762bf4ed3c8ac2499b0601517001b4e2b9/">
-    48a76cf69a613eb5071342ce323a8acbf84a928b
+   <a href="/chromium/src/+/c1607b2c72b96ce9f3a4816e4dd4ec75d59a5e4b/">
+    75c1155349498921aefeeea7a8a203b54d0646e8
    </a>
   </td>
  </tr>
@@ -166,31 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/52a872762bf4ed3c8ac2499b0601517001b4e2b9%5E">
-    f8e8ca981b381670a371ea3d1cb6fc2e5be0bf05
+   <a href="/chromium/src/+/c1607b2c72b96ce9f3a4816e4dd4ec75d59a5e4b%5E">
+    fcf15d066dd2eb27d8515c34cc80d5d202e3868b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/52a872762bf4ed3c8ac2499b0601517001b4e2b9%5E%21/">
+    <a href="/chromium/src/+/c1607b2c72b96ce9f3a4816e4dd4ec75d59a5e4b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Extensions: Extend Extensions.DeclarativeNetRequest.ManifestRulesCount2.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Extensions] Fix use-after-free in RequestContentScript
 
-Extend the expiry of this (just) expired histogram. This is useful for
-learning about usage patterns of the declarativeNetRequest API as its
-usage grows.
+Now that ExtensionUserScriptLoader is destroyed when its backing
+extension is unloaded, classes which store the loader's backing pointer
+or try to access it in OnExtensionUnloaded can face a use-after-free, as
+we shouldn't assume the order which OnExtensionUnloaded calls are made.
 
-Bug: 1178539
+This CL attempts to fix this by having the RequestContentScript action
+listen to its associated ExtensionUserScriptLoader, and when the action
+is about to be destroyed, it calls the loader to remove its script only
+if the loader still exists.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7a550dd57c3e890b061c980f41d319f46519442d">I7a550dd57c3e890b061c980f41d319f46519442d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2819222">https://chromium-review.googlesource.com/c/chromium/src/+/2819222</a>
-Reviewed-by: Ilya Sherman &lt;isherman@chromium.org&gt;
-Commit-Queue: Karan Bhatia &lt;karandeepb@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#872104}
+Bug: 1196616
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I362de99141bfeb4adb241bbe3987bd4e760bda73">I362de99141bfeb4adb241bbe3987bd4e760bda73</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2823163">https://chromium-review.googlesource.com/c/chromium/src/+/2823163</a>
+Commit-Queue: Kelvin Jiang &lt;kelvinjiang@chromium.org&gt;
+Reviewed-by: Devlin &lt;rdevlin.cronin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#872133}
 </pre>
 
 </body>
