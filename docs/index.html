@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/873231/"> 873231</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a8009f8f719dfdf6af6d056471449ca43fa52fe0">a8009f8f719dfdf6af6d056471449ca43fa52fe0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/873236/"> 873236</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/da93b55aaae9c22edf896a47d5c08427a3736c05">da93b55aaae9c22edf896a47d5c08427a3736c05</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/873236/">873236</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a8009f8f719dfdf6af6d056471449ca43fa52fe0
+   da93b55aaae9c22edf896a47d5c08427a3736c05
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a8009f8f719dfdf6af6d056471449ca43fa52fe0">
+    <a href="/chromium/src/+log/da93b55aaae9c22edf896a47d5c08427a3736c05">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a8009f8f719dfdf6af6d056471449ca43fa52fe0.tar.gz">
+    <a href="/chromium/src/+archive/da93b55aaae9c22edf896a47d5c08427a3736c05.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+   Kent Tamura &lt;tkent@chromium.org&gt;
   </td>
   <td>
-   Fri Apr 16 08:05:17 2021
+   Fri Apr 16 08:50:22 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 16 08:05:17 2021
+   Fri Apr 16 08:50:22 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a8009f8f719dfdf6af6d056471449ca43fa52fe0/">
-    b8ab0bb2e1292afca1debceef4e68bfe6dfc93f7
+   <a href="/chromium/src/+/da93b55aaae9c22edf896a47d5c08427a3736c05/">
+    95681327f490fbbf321f73d9f527a1c3de880a8c
    </a>
   </td>
  </tr>
@@ -166,56 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a8009f8f719dfdf6af6d056471449ca43fa52fe0%5E">
-    33c71d28980bf90ee70e691d7dd824c023226475
+   <a href="/chromium/src/+/da93b55aaae9c22edf896a47d5c08427a3736c05%5E">
+    e49450b40eb18ad3e06eca87927c6e57dc1199d1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a8009f8f719dfdf6af6d056471449ca43fa52fe0%5E%21/">
+    <a href="/chromium/src/+/da93b55aaae9c22edf896a47d5c08427a3736c05%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Paints caret in multicol correctly
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">SVG Text NG: Add skeletons of NGSVGTextLayoutAttributesBuilder class
 
-This patch makes painting caret in multi-column correctly by checking
-whether painting caret by |NGPhysicalBoxFragment| instead of
-|LayoutBlock|.
+This is the first step of moving "3. Resolve character positioning"
+into the PrepareLayout() stage.
 
-Caret painting and paint invalidation are done as below:
- 1. |CaretDisplayItemClient| computes |LocalCaretRect| from caret DOM
-    position. |LocalCaretRect| holds layout object containing caret,
-    caret rect inside layout object, box fragment containing caret rect.
- 2. Box fragment painter asks |CaretDisplayItemClient| to paint caret in
-    the box fragment.
- 3. |CaretDisplayItemClient| paints caret if asked box fragment equals to
-    holding box fragment.
-
-Before this patch, we use |LayoutBlock| instead of |NGPhysicalBoxFragment|,
-so we paint caret multiple times == number of columns.
-
-After this patch, we paint caret once for |NGPhysicalBoxFragment| where
-caret rect is in.
-
-Note: This patch works only for multicol container has block level
-children == |LayoutMultiColumnFlowThread| is block level container.
-
-The CL[1] will make |LayoutMultiColumnFlowThread| to have block level
-children only.
-
-[1] <a href="http://crrev.com/c/2823033">http://crrev.com/c/2823033</a> Make LayoutMulticolFlowThread to have block
-level children only
-
-
-Bug: 829028
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I752e9f60d2075449d2ce293230ca33c405de39f9">I752e9f60d2075449d2ce293230ca33c405de39f9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2820193">https://chromium-review.googlesource.com/c/chromium/src/+/2820193</a>
+Bug: 1196576
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibe01f50d4f8f460bf9d0717db0b72abe1ec719cf">Ibe01f50d4f8f460bf9d0717db0b72abe1ec719cf</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2831118">https://chromium-review.googlesource.com/c/chromium/src/+/2831118</a>
 Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
-Auto-Submit: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#873231}
+Reviewed-by: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+Commit-Queue: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+Commit-Queue: Kent Tamura &lt;tkent@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#873236}
 </pre>
 
 </body>
