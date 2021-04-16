@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/873285/"> 873285</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d86d06dcaeb03d776acb68b6318a4f1074fae6fb">d86d06dcaeb03d776acb68b6318a4f1074fae6fb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/873303/"> 873303</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8e81fabe307827e222edc1f559922fdd6ba8b40b">8e81fabe307827e222edc1f559922fdd6ba8b40b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/873271/">873271</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1e90850b5e0f6d77f48f0fdafb20bac6c08d6645">1e90850b5e0f6d77f48f0fdafb20bac6c08d6645</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/873310/">873310</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c397af87189cc4ea1370ec0afbc1d80cc5c4a56f">c397af87189cc4ea1370ec0afbc1d80cc5c4a56f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d86d06dcaeb03d776acb68b6318a4f1074fae6fb
+   8e81fabe307827e222edc1f559922fdd6ba8b40b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d86d06dcaeb03d776acb68b6318a4f1074fae6fb">
+    <a href="/chromium/src/+log/8e81fabe307827e222edc1f559922fdd6ba8b40b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d86d06dcaeb03d776acb68b6318a4f1074fae6fb.tar.gz">
+    <a href="/chromium/src/+archive/8e81fabe307827e222edc1f559922fdd6ba8b40b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Gyuyoung Kim &lt;gyuyoung@igalia.com&gt;
+   Maksim Sisov &lt;msisov@igalia.com&gt;
   </td>
   <td>
-   Fri Apr 16 13:44:54 2021
+   Fri Apr 16 14:45:27 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 16 13:44:54 2021
+   Fri Apr 16 14:45:27 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d86d06dcaeb03d776acb68b6318a4f1074fae6fb/">
-    1974e3d4ae071fc7d4e234b776d934194cfd817a
+   <a href="/chromium/src/+/8e81fabe307827e222edc1f559922fdd6ba8b40b/">
+    9fa04ce420c6b6594adf74f47a72c233f0c03f8c
    </a>
   </td>
  </tr>
@@ -166,34 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d86d06dcaeb03d776acb68b6318a4f1074fae6fb%5E">
-    9452aee249d7ee66d4b39c995b29bb1b4858103b
+   <a href="/chromium/src/+/8e81fabe307827e222edc1f559922fdd6ba8b40b%5E">
+    26ced738e940416f4455660ef6189e6d08aaa11f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d86d06dcaeb03d776acb68b6318a4f1074fae6fb%5E%21/">
+    <a href="/chromium/src/+/8e81fabe307827e222edc1f559922fdd6ba8b40b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prerender: Test access to the Storage API Info is deferred
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ozone/wayland: watch fd on a dedicated thread.
 
-This CL adds the tests to ensure if the Storage API can be
-deferred until a prerenderer page is activated. Because the
-current decision is to defer the access to the Storage API
-until the prerendered page is activated. The Mojo capability
-control defers the access by default. So, this CL just adds
-a wpt-internal test to check it works as expected.
+Whenever user closes a popup window (or any additional window),
+the browser process can get stuck waiting for the gpu side to
+close. But the gpu thread can also get stuck because of destroying
+the wl_egl_surface. That is, internally, Wayland EGL implementation
+(it's something driver vendors provide) can try to also read events
+from the wl_display's fd and call wl_display_prepare_read, and
+then try to read the events. But it won't be possible as
+wl_display_read_events will block for them, because Ozone/Wayland
+has already prepared to read, but it doesn't read, because
+it waits for another thread to complete.
 
-Bug: 1199211
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8e80f01cd757390b495ddcb85a58e87b866a7587">I8e80f01cd757390b495ddcb85a58e87b866a7587</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2825713">https://chromium-review.googlesource.com/c/chromium/src/+/2825713</a>
-Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
-Reviewed-by: Lingqi Chi &lt;lingqi@chromium.org&gt;
-Commit-Queue: Gyuyoung Kim &lt;gyuyoung@igalia.com&gt;
-Cr-Commit-Position: refs/heads/master@{#873285}
+Thus, the most correct approach is to use a dedicated non-blocking
+thread that always watches the wayland fd and dispatches events
+on an original thread. Also, use a non-default event queue to avoid
+flushing events that may not belong to us (a toolkit or egl
+implementation uses a default queue). See also
+<a href="https://wayland.freedesktop.org/docs/html/apb.html#Client-classwl__display_1a40039c1169b153269a3dc0796a54ddb0">https://wayland.freedesktop.org/docs/html/apb.html#Client-classwl__display_1a40039c1169b153269a3dc0796a54ddb0</a>
+that explains this.
+
+Bug: 1117463
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I33fa21f84bb26592e97327c3f0a9c926868ad214">I33fa21f84bb26592e97327c3f0a9c926868ad214</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2814598">https://chromium-review.googlesource.com/c/chromium/src/+/2814598</a>
+Commit-Queue: Maksim Sisov &lt;msisov@igalia.com&gt;
+Reviewed-by: Robert Kroeger &lt;rjkroege@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#873303}
 </pre>
 
 </body>
