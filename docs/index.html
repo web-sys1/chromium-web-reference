@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/873271/"> 873271</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1e90850b5e0f6d77f48f0fdafb20bac6c08d6645">1e90850b5e0f6d77f48f0fdafb20bac6c08d6645</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/873285/"> 873285</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d86d06dcaeb03d776acb68b6318a4f1074fae6fb">d86d06dcaeb03d776acb68b6318a4f1074fae6fb</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/873271/">873271</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1e90850b5e0f6d77f48f0fdafb20bac6c08d6645
+   d86d06dcaeb03d776acb68b6318a4f1074fae6fb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1e90850b5e0f6d77f48f0fdafb20bac6c08d6645">
+    <a href="/chromium/src/+log/d86d06dcaeb03d776acb68b6318a4f1074fae6fb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1e90850b5e0f6d77f48f0fdafb20bac6c08d6645.tar.gz">
+    <a href="/chromium/src/+archive/d86d06dcaeb03d776acb68b6318a4f1074fae6fb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sean Harrison &lt;harrisonsean@chromium.org&gt;
+   Gyuyoung Kim &lt;gyuyoung@igalia.com&gt;
   </td>
   <td>
-   Fri Apr 16 12:30:54 2021
+   Fri Apr 16 13:44:54 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 16 12:30:54 2021
+   Fri Apr 16 13:44:54 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1e90850b5e0f6d77f48f0fdafb20bac6c08d6645/">
-    e5b2cbd026407a992e770d6ffe6aff723a2ae8b9
+   <a href="/chromium/src/+/d86d06dcaeb03d776acb68b6318a4f1074fae6fb/">
+    1974e3d4ae071fc7d4e234b776d934194cfd817a
    </a>
   </td>
  </tr>
@@ -166,60 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1e90850b5e0f6d77f48f0fdafb20bac6c08d6645%5E">
-    81a5fe3fc471dfc6d4ca3af1f154699646be7ba6
+   <a href="/chromium/src/+/d86d06dcaeb03d776acb68b6318a4f1074fae6fb%5E">
+    9452aee249d7ee66d4b39c995b29bb1b4858103b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1e90850b5e0f6d77f48f0fdafb20bac6c08d6645%5E%21/">
+    <a href="/chromium/src/+/d86d06dcaeb03d776acb68b6318a4f1074fae6fb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Use more conservative direct raster image scale."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prerender: Test access to the Storage API Info is deferred
 
-This reverts commit edb5c68141f43a8726bb2e375ce87fd96ae4af9b.
+This CL adds the tests to ensure if the Storage API can be
+deferred until a prerenderer page is activated. Because the
+current decision is to defer the access to the Storage API
+until the prerendered page is activated. The Mojo capability
+control defers the access by default. So, this CL just adds
+a wpt-internal test to check it works as expected.
 
-Reason for revert: Suspected source of failing blink_web_tests (virtual/gpu-rasterization/images/color-profile-border-fade.html) on the Win7 Test builder.
-
-Original change's description:
-&gt; Use more conservative direct raster image scale.
-&gt;
-&gt; Previously PictureLayerImpl was downscaling directly composited images
-&gt; only when the scale on the screen is below 1/4. This resulted in
-&gt; excessive memory usage, particularly for large images that are rendered
-&gt; at scale below 1/2. Updated PictureLayerImpl to downscale the image when
-&gt; the initial scale is below 1/2. The logic in ShouldAdjustRasterScale()
-&gt; is kept as it was before to reduce raster frequency: when scale is
-&gt; reduced the layer is rasterized only when then new value is below
-&gt; 1/4 of the previous scale.
-&gt;
-&gt; Also removed Fuchsia-specific workaround (see crbug.com/1161327).
-&gt;
-&gt; Bug: 1166923
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I57a948b5e4b38e787e416ffb87fc29ea6219b8d5">I57a948b5e4b38e787e416ffb87fc29ea6219b8d5</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2641324">https://chromium-review.googlesource.com/c/chromium/src/+/2641324</a>
-&gt; Commit-Queue: Sergey Ulanov &lt;sergeyu@chromium.org&gt;
-&gt; Reviewed-by: vmpstr &lt;vmpstr@chromium.org&gt;
-&gt; Reviewed-by: Daniel Libby &lt;dlibby@microsoft.com&gt;
-&gt; Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#873140}
-
-Bug: 1166923
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I13576718a53d2bd02850de8430045a59e2cec42b">I13576718a53d2bd02850de8430045a59e2cec42b</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2831615">https://chromium-review.googlesource.com/c/chromium/src/+/2831615</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Reviewed-by: Sean Harrison &lt;harrisonsean@chromium.org&gt;
-Reviewed-by: Christian Dullweber &lt;dullweber@chromium.org&gt;
-Owners-Override: Sean Harrison &lt;harrisonsean@chromium.org&gt;
-Auto-Submit: Sean Harrison &lt;harrisonsean@chromium.org&gt;
-Commit-Queue: Christian Dullweber &lt;dullweber@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#873271}
+Bug: 1199211
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8e80f01cd757390b495ddcb85a58e87b866a7587">I8e80f01cd757390b495ddcb85a58e87b866a7587</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2825713">https://chromium-review.googlesource.com/c/chromium/src/+/2825713</a>
+Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Reviewed-by: Lingqi Chi &lt;lingqi@chromium.org&gt;
+Commit-Queue: Gyuyoung Kim &lt;gyuyoung@igalia.com&gt;
+Cr-Commit-Position: refs/heads/master@{#873285}
 </pre>
 
 </body>
