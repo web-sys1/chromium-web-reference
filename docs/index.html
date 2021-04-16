@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/873303/"> 873303</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8e81fabe307827e222edc1f559922fdd6ba8b40b">8e81fabe307827e222edc1f559922fdd6ba8b40b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/873313/"> 873313</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/73e9c9ffb03c04f710fd36049412c1bd5b3abf94">73e9c9ffb03c04f710fd36049412c1bd5b3abf94</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/873310/">873310</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c397af87189cc4ea1370ec0afbc1d80cc5c4a56f">c397af87189cc4ea1370ec0afbc1d80cc5c4a56f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/873326/">873326</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/418ce24fdcef9aff7b46f7c4ac8decf100d7b86c">418ce24fdcef9aff7b46f7c4ac8decf100d7b86c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8e81fabe307827e222edc1f559922fdd6ba8b40b
+   73e9c9ffb03c04f710fd36049412c1bd5b3abf94
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8e81fabe307827e222edc1f559922fdd6ba8b40b">
+    <a href="/chromium/src/+log/73e9c9ffb03c04f710fd36049412c1bd5b3abf94">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8e81fabe307827e222edc1f559922fdd6ba8b40b.tar.gz">
+    <a href="/chromium/src/+archive/73e9c9ffb03c04f710fd36049412c1bd5b3abf94.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Maksim Sisov &lt;msisov@igalia.com&gt;
+   Zhenyao Mo &lt;zmo@chromium.org&gt;
   </td>
   <td>
-   Fri Apr 16 14:45:27 2021
+   Fri Apr 16 15:38:07 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 16 14:45:27 2021
+   Fri Apr 16 15:38:07 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8e81fabe307827e222edc1f559922fdd6ba8b40b/">
-    9fa04ce420c6b6594adf74f47a72c233f0c03f8c
+   <a href="/chromium/src/+/73e9c9ffb03c04f710fd36049412c1bd5b3abf94/">
+    774a8d5c0519c3bbc20ccb61c5edd776341dc4d9
    </a>
   </td>
  </tr>
@@ -166,45 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8e81fabe307827e222edc1f559922fdd6ba8b40b%5E">
-    26ced738e940416f4455660ef6189e6d08aaa11f
+   <a href="/chromium/src/+/73e9c9ffb03c04f710fd36049412c1bd5b3abf94%5E">
+    1bfcc689fe3d76f7286c22e731f075c904817b96
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8e81fabe307827e222edc1f559922fdd6ba8b40b%5E%21/">
+    <a href="/chromium/src/+/73e9c9ffb03c04f710fd36049412c1bd5b3abf94%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ozone/wayland: watch fd on a dedicated thread.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[reland] Remove the DISABLED GpuMode.
 
-Whenever user closes a popup window (or any additional window),
-the browser process can get stuck waiting for the gpu side to
-close. But the gpu thread can also get stuck because of destroying
-the wl_egl_surface. That is, internally, Wayland EGL implementation
-(it's something driver vendors provide) can try to also read events
-from the wl_display's fd and call wl_display_prepare_read, and
-then try to read the events. But it won't be possible as
-wl_display_read_events will block for them, because Ozone/Wayland
-has already prepared to read, but it doesn't read, because
-it waits for another thread to complete.
+Originally this mode is a leftover from launching SkiaRenderer on
+Windows. All other platforms no longer supports a mode without
+GPU process.
 
-Thus, the most correct approach is to use a dedicated non-blocking
-thread that always watches the wayland fd and dispatches events
-on an original thread. Also, use a non-default event queue to avoid
-flushing events that may not belong to us (a toolkit or egl
-implementation uses a default queue). See also
-<a href="https://wayland.freedesktop.org/docs/html/apb.html#Client-classwl__display_1a40039c1169b153269a3dc0796a54ddb0">https://wayland.freedesktop.org/docs/html/apb.html#Client-classwl__display_1a40039c1169b153269a3dc0796a54ddb0</a>
-that explains this.
+I noticed Cast/Audio also sneaked in code to use this mode. Switch
+it to a light-weight GPU process instead, i.e., no initialization
+or use of hardware gpu/driver.
 
-Bug: 1117463
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I33fa21f84bb26592e97327c3f0a9c926868ad214">I33fa21f84bb26592e97327c3f0a9c926868ad214</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2814598">https://chromium-review.googlesource.com/c/chromium/src/+/2814598</a>
-Commit-Queue: Maksim Sisov &lt;msisov@igalia.com&gt;
-Reviewed-by: Robert Kroeger &lt;rjkroege@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#873303}
+TEST=bots
+R=kylechar@chromium.org,rivr@chromium.org,gab@chromium.org
+
+Bug: 1199095
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id4c77d1a455e21333be11b64b6f6bd0e7194f66c">Id4c77d1a455e21333be11b64b6f6bd0e7194f66c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2829490">https://chromium-review.googlesource.com/c/chromium/src/+/2829490</a>
+Auto-Submit: Zhenyao Mo &lt;zmo@chromium.org&gt;
+Commit-Queue: Gabriel Charette &lt;gab@chromium.org&gt;
+Reviewed-by: kylechar &lt;kylechar@chromium.org&gt;
+Reviewed-by: Gabriel Charette &lt;gab@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#873313}
 </pre>
 
 </body>
