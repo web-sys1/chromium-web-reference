@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/873224/"> 873224</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6deb0c2bfdbe571bd215b0bd2b6049fbaa213451">6deb0c2bfdbe571bd215b0bd2b6049fbaa213451</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/873231/"> 873231</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a8009f8f719dfdf6af6d056471449ca43fa52fe0">a8009f8f719dfdf6af6d056471449ca43fa52fe0</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/873223/">873223</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/56b9e82b8a8a056f97e347b1314206656b548a3a">56b9e82b8a8a056f97e347b1314206656b548a3a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/873230/">873230</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/33c71d28980bf90ee70e691d7dd824c023226475">33c71d28980bf90ee70e691d7dd824c023226475</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6deb0c2bfdbe571bd215b0bd2b6049fbaa213451
+   a8009f8f719dfdf6af6d056471449ca43fa52fe0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6deb0c2bfdbe571bd215b0bd2b6049fbaa213451">
+    <a href="/chromium/src/+log/a8009f8f719dfdf6af6d056471449ca43fa52fe0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6deb0c2bfdbe571bd215b0bd2b6049fbaa213451.tar.gz">
+    <a href="/chromium/src/+archive/a8009f8f719dfdf6af6d056471449ca43fa52fe0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kinuko Yasuda &lt;kinuko@chromium.org&gt;
+   Yoshifumi Inoue &lt;yosin@chromium.org&gt;
   </td>
   <td>
-   Fri Apr 16 07:13:10 2021
+   Fri Apr 16 08:05:17 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 16 07:13:10 2021
+   Fri Apr 16 08:05:17 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6deb0c2bfdbe571bd215b0bd2b6049fbaa213451/">
-    69e235d6b4d13200b3f1faffc2eea00d588eaebe
+   <a href="/chromium/src/+/a8009f8f719dfdf6af6d056471449ca43fa52fe0/">
+    b8ab0bb2e1292afca1debceef4e68bfe6dfc93f7
    </a>
   </td>
  </tr>
@@ -166,60 +166,56 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6deb0c2bfdbe571bd215b0bd2b6049fbaa213451%5E">
-    56b9e82b8a8a056f97e347b1314206656b548a3a
+   <a href="/chromium/src/+/a8009f8f719dfdf6af6d056471449ca43fa52fe0%5E">
+    33c71d28980bf90ee70e691d7dd824c023226475
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6deb0c2bfdbe571bd215b0bd2b6049fbaa213451%5E%21/">
+    <a href="/chromium/src/+/a8009f8f719dfdf6af6d056471449ca43fa52fe0%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "wtf: Reinstate thread check in DEFINE_STATIC_LOCAL."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Paints caret in multicol correctly
 
-This reverts commit 0eb4dfcd81ee47b38d3c878d6c5056256034c3fe.
+This patch makes painting caret in multi-column correctly by checking
+whether painting caret by |NGPhysicalBoxFragment| instead of
+|LayoutBlock|.
 
-Reason for revert: broke tests by several assertion hits on Mac
+Caret painting and paint invalidation are done as below:
+ 1. |CaretDisplayItemClient| computes |LocalCaretRect| from caret DOM
+    position. |LocalCaretRect| holds layout object containing caret,
+    caret rect inside layout object, box fragment containing caret rect.
+ 2. Box fragment painter asks |CaretDisplayItemClient| to paint caret in
+    the box fragment.
+ 3. |CaretDisplayItemClient| paints caret if asked box fragment equals to
+    holding box fragment.
 
-The right approach would be to fix the callsite and reland this as enabling this assertion itself is great.
+Before this patch, we use |LayoutBlock| instead of |NGPhysicalBoxFragment|,
+so we paint caret multiple times == number of columns.
 
-Tests:
-<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/Mac10.15%20Tests%20%28dbg%29/303/test-results?q=">https://ci.chromium.org/ui/p/chromium/builders/ci/Mac10.15%20Tests%20(dbg)/303/test-results?q=</a>
-<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/Mac10.15%20Tests%20%28dbg%29/306/test-results?q=">https://ci.chromium.org/ui/p/chromium/builders/ci/Mac10.15%20Tests%20(dbg)/306/test-results?q=</a>
-<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/Mac10.15%20Tests%20%28dbg%29/307/test-results?q=">https://ci.chromium.org/ui/p/chromium/builders/ci/Mac10.15%20Tests%20(dbg)/307/test-results?q=</a>
+After this patch, we paint caret once for |NGPhysicalBoxFragment| where
+caret rect is in.
 
-Original change's description:
-&gt; wtf: Reinstate thread check in DEFINE_STATIC_LOCAL.
-&gt;
-&gt; DEFINE_STATIC_LOCAL() has a built-in assert that makes sure the variable
-&gt; is created on a non-racy manner. Unfortunately, this has not been
-&gt; working since the required WTF::WillCreateThread() call was accidentally
-&gt; removed.
-&gt;
-&gt; This CL reenables the check by reintroducing a call to
-&gt; WillCreateThread() when a child thread is about to be created.
-&gt;
-&gt; Bug: 1074302
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia2ce3d344d885eca32300b36aa23586af06f242e">Ia2ce3d344d885eca32300b36aa23586af06f242e</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2777626">https://chromium-review.googlesource.com/c/chromium/src/+/2777626</a>
-&gt; Commit-Queue: Kentaro Hara &lt;haraken@chromium.org&gt;
-&gt; Auto-Submit: Yuta Kitamura &lt;yutak@chromium.org&gt;
-&gt; Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#872293}
+Note: This patch works only for multicol container has block level
+children == |LayoutMultiColumnFlowThread| is block level container.
 
-Bug: 1074302
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If318ffdf505e2db1c8d47f8b36e80d0035a6b461">If318ffdf505e2db1c8d47f8b36e80d0035a6b461</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2830181">https://chromium-review.googlesource.com/c/chromium/src/+/2830181</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
-Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Reviewed-by: Yuta Kitamura &lt;yutak@chromium.org&gt;
-Owners-Override: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
-Commit-Queue: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#873224}
+The CL[1] will make |LayoutMultiColumnFlowThread| to have block level
+children only.
+
+[1] <a href="http://crrev.com/c/2823033">http://crrev.com/c/2823033</a> Make LayoutMulticolFlowThread to have block
+level children only
+
+
+Bug: 829028
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I752e9f60d2075449d2ce293230ca33c405de39f9">I752e9f60d2075449d2ce293230ca33c405de39f9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2820193">https://chromium-review.googlesource.com/c/chromium/src/+/2820193</a>
+Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
+Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
+Auto-Submit: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#873231}
 </pre>
 
 </body>
