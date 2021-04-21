@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/874539/"> 874539</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/83967c66cb3256f810549240463f37928e341d61">83967c66cb3256f810549240463f37928e341d61</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/874550/"> 874550</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7efba483f15891dd1bff429be5a93239d1f1388f">7efba483f15891dd1bff429be5a93239d1f1388f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/874545/">874545</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   83967c66cb3256f810549240463f37928e341d61
+   7efba483f15891dd1bff429be5a93239d1f1388f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/83967c66cb3256f810549240463f37928e341d61">
+    <a href="/chromium/src/+log/7efba483f15891dd1bff429be5a93239d1f1388f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/83967c66cb3256f810549240463f37928e341d61.tar.gz">
+    <a href="/chromium/src/+archive/7efba483f15891dd1bff429be5a93239d1f1388f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Avi Drissman &lt;avi@chromium.org&gt;
+   Rob Schonberger &lt;robsc@chromium.org&gt;
   </td>
   <td>
-   Wed Apr 21 02:10:15 2021
+   Wed Apr 21 03:12:45 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 21 02:10:15 2021
+   Wed Apr 21 03:12:45 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/83967c66cb3256f810549240463f37928e341d61/">
-    cc866e4f2365341f6286d80b7cc1fe54d903f4fa
+   <a href="/chromium/src/+/7efba483f15891dd1bff429be5a93239d1f1388f/">
+    50d98705c06a623126368f9219c6d0b620369905
    </a>
   </td>
  </tr>
@@ -166,27 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/83967c66cb3256f810549240463f37928e341d61%5E">
-    1c338187301d3cb8b56a06ac0462b77aa26d7c9b
+   <a href="/chromium/src/+/7efba483f15891dd1bff429be5a93239d1f1388f%5E">
+    0348b2ed3e8bb60f439c1deffe897e608ce41d03
    </a>
    <span>
     [
-    <a href="/chromium/src/+/83967c66cb3256f810549240463f37928e341d61%5E%21/">
+    <a href="/chromium/src/+/7efba483f15891dd1bff429be5a93239d1f1388f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Migrate to ExecJs/EvalJs in chrome/browser/chromeos
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Ozone: Honor Orientation when emitting x/y radius from touches.
 
-Bug: 1157718
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibeca8b7b0864ff94299a2af4ca7d51fe7b30e3d3">Ibeca8b7b0864ff94299a2af4ca7d51fe7b30e3d3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2832972">https://chromium-review.googlesource.com/c/chromium/src/+/2832972</a>
-Auto-Submit: Avi Drissman &lt;avi@chromium.org&gt;
-Commit-Queue: Keith Lee &lt;keithlee@chromium.org&gt;
-Reviewed-by: Keith Lee &lt;keithlee@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#874539}
+Per the Linux MT Protocol, e.g.
+<a href="https://www.kernel.org/doc/html/v4.16/input/multi-touch-protocol.html">https://www.kernel.org/doc/html/v4.16/input/multi-touch-protocol.html</a>
+
+When a simplified ABS_MT_ORIENTATION between [0,1] is available, honor
+that X&gt;Y when ABS_MT_ORIENTATION=1. Until now, we always assumed that
+TOUCH_MAJOR=X in output.
+
+This change does this by:
+1. Adding orientation to the type of data held in InProgressTouchEvdev.
+
+2. Renaming touch_major_scale and touch_minor scale to x/y scale
+respectively. Also adds precalculated rotated_* scales for when we
+have 'rotated' the screen.
+
+3. Refactoring the calculation of x/y radius from touch_major/minor
+into a method.
+
+4. Adding unit tests for this behavior.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic447d745b98886b19cbd3748219db30d643f7e04">Ic447d745b98886b19cbd3748219db30d643f7e04</a>
+Bug: b:185318572
+Test: Tested on one device, testing on eve next.
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2825982">https://chromium-review.googlesource.com/c/chromium/src/+/2825982</a>
+Reviewed-by: Michael Spang &lt;spang@chromium.org&gt;
+Commit-Queue: Rob Schonberger &lt;robsc@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#874550}
 </pre>
 
 </body>
