@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/874916/"> 874916</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3142d3c5c6e70b7a35662e8b47145174026d31b8">3142d3c5c6e70b7a35662e8b47145174026d31b8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/874966/"> 874966</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/02945f6d0c08adf6aa3e53e35a9045a35f0cdddd">02945f6d0c08adf6aa3e53e35a9045a35f0cdddd</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/874899/">874899</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cdb24f961da09b254a3ecea97e55bbc9bef99466">cdb24f961da09b254a3ecea97e55bbc9bef99466</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/874942/">874942</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/034840fcdb82735322ca77338b8e27f8ecfba7c0">034840fcdb82735322ca77338b8e27f8ecfba7c0</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3142d3c5c6e70b7a35662e8b47145174026d31b8
+   02945f6d0c08adf6aa3e53e35a9045a35f0cdddd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3142d3c5c6e70b7a35662e8b47145174026d31b8">
+    <a href="/chromium/src/+log/02945f6d0c08adf6aa3e53e35a9045a35f0cdddd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3142d3c5c6e70b7a35662e8b47145174026d31b8.tar.gz">
+    <a href="/chromium/src/+archive/02945f6d0c08adf6aa3e53e35a9045a35f0cdddd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alice Gong &lt;alicego@google.com&gt;
+   Ionel Popescu &lt;iopopesc@microsoft.com&gt;
   </td>
   <td>
-   Wed Apr 21 23:13:22 2021
+   Thu Apr 22 01:23:40 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 21 23:13:22 2021
+   Thu Apr 22 01:23:40 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3142d3c5c6e70b7a35662e8b47145174026d31b8/">
-    a97e263fa9e894560394720637cd70fab5e7fc38
+   <a href="/chromium/src/+/02945f6d0c08adf6aa3e53e35a9045a35f0cdddd/">
+    3dfd4290ce45a0899735043cbda6f523a3325428
    </a>
   </td>
  </tr>
@@ -166,37 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3142d3c5c6e70b7a35662e8b47145174026d31b8%5E">
-    133090b79ec9773fa5566070ab2cb23143e758aa
+   <a href="/chromium/src/+/02945f6d0c08adf6aa3e53e35a9045a35f0cdddd%5E">
+    be8820609b71ea0bb4ec4338d712e58a9894197b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3142d3c5c6e70b7a35662e8b47145174026d31b8%5E%21/">
+    <a href="/chromium/src/+/02945f6d0c08adf6aa3e53e35a9045a35f0cdddd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Part 5.3/5.6 for Box chunked upload: Move PostDeleteFileTask() and OnFileDeleted().
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Speculative fix for popup telemetry clusterfuzz crash.
 
-Move the methods from BoxWholeFileUploadApiCallFlow to
-BoxUploader, since both whole and chunked file uploads
-need to delete the local temporary file.
-- Delete checking for whether file was properly deleted in
-BoxWholeFileUploadApiCallFlowTest.
-+ Add checking for proper file deletion in BoxUploader_FileDeleteTest.
-~ Split BoxUploaderTest into BoxUploader_PreUploadTest and BoxUploader_WholeFileTest.
-+ New files box_uploader_test_helper.h/cc: Factor out class DownloadItemForTest and class BoxUploaderTestBase.
+There seems to be a situation where the popup telemetry is computed
+after the owner element's view is cleared.
 
-BUG=1192671
+I am not able to locally reproduce the clusterfuzz crash, so I am
+adding a check to prevent this situation.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5d00dd9e809f27077f3f239d5812eb7ee92ac642">I5d00dd9e809f27077f3f239d5812eb7ee92ac642</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2791224">https://chromium-review.googlesource.com/c/chromium/src/+/2791224</a>
-Commit-Queue: Alice Gong &lt;alicego@google.com&gt;
-Auto-Submit: Alice Gong &lt;alicego@google.com&gt;
-Reviewed-by: Roger Tawa &lt;rogerta@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#874916}
+For more context the popup telemetry was added by: <a href="http://crrev.com/c/2200425">http://crrev.com/c/2200425</a>
+
+Bug: 1200531
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If9d0ab29d9da1a0e5c5d56598d3c848b9bff4581">If9d0ab29d9da1a0e5c5d56598d3c848b9bff4581</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2841885">https://chromium-review.googlesource.com/c/chromium/src/+/2841885</a>
+Commit-Queue: Ionel Popescu &lt;iopopesc@microsoft.com&gt;
+Reviewed-by: Mason Freed &lt;masonf@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#874966}
 </pre>
 
 </body>
