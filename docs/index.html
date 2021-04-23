@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/875830/"> 875830</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0514517561aa3d67215f52896ea7a192275267c3">0514517561aa3d67215f52896ea7a192275267c3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/875865/"> 875865</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/18a2b695d794b27f788b9d1af368f7ffb8534fe2">18a2b695d794b27f788b9d1af368f7ffb8534fe2</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/875843/">875843</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0514517561aa3d67215f52896ea7a192275267c3
+   18a2b695d794b27f788b9d1af368f7ffb8534fe2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0514517561aa3d67215f52896ea7a192275267c3">
+    <a href="/chromium/src/+log/18a2b695d794b27f788b9d1af368f7ffb8534fe2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0514517561aa3d67215f52896ea7a192275267c3.tar.gz">
+    <a href="/chromium/src/+archive/18a2b695d794b27f788b9d1af368f7ffb8534fe2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Steven Bingler &lt;bingler@chromium.org&gt;
   </td>
   <td>
-   Fri Apr 23 20:39:10 2021
+   Fri Apr 23 21:47:11 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 23 20:39:10 2021
+   Fri Apr 23 21:47:11 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0514517561aa3d67215f52896ea7a192275267c3/">
-    811fc6905907a155da1df3b2c8ec3676c259d6f4
+   <a href="/chromium/src/+/18a2b695d794b27f788b9d1af368f7ffb8534fe2/">
+    35c4c1a91d952eaae3cfe0444dbf9048db55a1c4
    </a>
   </td>
  </tr>
@@ -166,40 +166,54 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0514517561aa3d67215f52896ea7a192275267c3%5E">
-    8f2b2987ac8ecf9c017d6488a35498b805337904
+   <a href="/chromium/src/+/18a2b695d794b27f788b9d1af368f7ffb8534fe2%5E">
+    9496615be3ad030cb08ad632f04b1f07338a6e28
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0514517561aa3d67215f52896ea7a192275267c3%5E%21/">
+    <a href="/chromium/src/+/18a2b695d794b27f788b9d1af368f7ffb8534fe2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Perfetto Trace Processor Linux from 7653b6f2efb6 to d1e644ae118c
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix BackgroundSyncManager Service Worker existence check
 
-<a href="https://android.googlesource.com/platform/external/perfetto.git/+log/7653b6f2efb6..d1e644ae118c">https://android.googlesource.com/platform/external/perfetto.git/+log/7653b6f2efb6..d1e644ae118c</a>
+This CL fixes a bug in which
+BackgroundSyncManager::UnregisterForOriginImpl() deletes its local
+service worker registration before it's done using it.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/perfetto-trace-processor-linux-chromium">https://autoroll.skia.org/r/perfetto-trace-processor-linux-chromium</a>
-Please CC perfetto-bugs@google.com on the revert to ensure that a human
-is aware of the problem.
+This is done by only erasing the registration from the active set until
+after StoreRegistrations() is called.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+The bug is as follows:
+BackgroundSyncManager has a set of active registrations it uses to
+determine which origins require background syncing.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
+When an origin is unregistered via UnregisterForOriginImpl() all
+associated registrations are removed from the set. The method then
+checks if a service worker's registration still exists in the service
+worker database via a call to StoreRegistrations() for each registration
+id. StoreRegistrations() uses the id to look up the registration's info
+in the active registration set. This look up is through the [] operator,
+which causes the std::map to create an empty entry (as the entry has
+already been removed).
 
-Tbr: perfetto-bugs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I42b87f7837dae39c5eddfcdcd09fd2428858b603">I42b87f7837dae39c5eddfcdcd09fd2428858b603</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2848613">https://chromium-review.googlesource.com/c/chromium/src/+/2848613</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#875830}
+This leads to StoreRegistrations() trying to find a registration for an
+empty origin which will cause UnregisterForOriginDidStore() to receive
+a kErrorNotFound, potentially skipping DisableAndClearManager() if the
+registration actually does exist in the SW database.
+
+This was found during refactor work for the associated bug (but is
+otherwise unrelated).
+
+Bug: 1199077
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4b3834bee6c2ff58a3702805928f9393c74a0a4d">I4b3834bee6c2ff58a3702805928f9393c74a0a4d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2844253">https://chromium-review.googlesource.com/c/chromium/src/+/2844253</a>
+Commit-Queue: Mugdha Lakhani &lt;nator@chromium.org&gt;
+Reviewed-by: Mugdha Lakhani &lt;nator@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#875865}
 </pre>
 
 </body>
