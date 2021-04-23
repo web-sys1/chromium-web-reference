@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/875466/"> 875466</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3447a7a52eecea83be3ddb03ae65d4c2f8df5b43">3447a7a52eecea83be3ddb03ae65d4c2f8df5b43</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/875490/"> 875490</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cf61fba3b6758e3e36d55811533e6abb490b3050">cf61fba3b6758e3e36d55811533e6abb490b3050</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/875458/">875458</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3fa26c102d3e22928d2fd1c826da6086f9b612b5">3fa26c102d3e22928d2fd1c826da6086f9b612b5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/875484/">875484</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d0af691bc403b238d51e819655f9789c5e8472ac">d0af691bc403b238d51e819655f9789c5e8472ac</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3447a7a52eecea83be3ddb03ae65d4c2f8df5b43
+   cf61fba3b6758e3e36d55811533e6abb490b3050
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3447a7a52eecea83be3ddb03ae65d4c2f8df5b43">
+    <a href="/chromium/src/+log/cf61fba3b6758e3e36d55811533e6abb490b3050">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3447a7a52eecea83be3ddb03ae65d4c2f8df5b43.tar.gz">
+    <a href="/chromium/src/+archive/cf61fba3b6758e3e36d55811533e6abb490b3050.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jesse McKenna &lt;jessemckenna@google.com&gt;
+   Yeunjoo Choi &lt;ychoi@igalia.com&gt;
   </td>
   <td>
-   Fri Apr 23 01:36:38 2021
+   Fri Apr 23 02:43:09 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 23 01:36:38 2021
+   Fri Apr 23 02:43:09 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3447a7a52eecea83be3ddb03ae65d4c2f8df5b43/">
-    fa3a5b3a78b46409c0185e56fbf7439f8ae77a01
+   <a href="/chromium/src/+/cf61fba3b6758e3e36d55811533e6abb490b3050/">
+    6e82522428ae102fd9d12dfd616506b24a878335
    </a>
   </td>
  </tr>
@@ -166,57 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3447a7a52eecea83be3ddb03ae65d4c2f8df5b43%5E">
-    adebb3fd61102a17d30af86ab1aea35287104b75
+   <a href="/chromium/src/+/cf61fba3b6758e3e36d55811533e6abb490b3050%5E">
+    625e5519cf63b8560354d625b21e1c1696f38fc4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3447a7a52eecea83be3ddb03ae65d4c2f8df5b43%5E%21/">
+    <a href="/chromium/src/+/cf61fba3b6758e3e36d55811533e6abb490b3050%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add SubframeShutdownDelay experiment
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Change namespace chromeos =&gt; ash for //c/b/ash/customization
 
-This change adds experiment SubframeShutdownDelay, which delays
-shutdown of subframe renderer processes by a few seconds. This
-experiment aims to increase the chance for subframe processes to be
-reused, particularly when navigating between pages that share a common
-subframe domain. Successful subframe-process reuse saves the cost of
-process recreation, which can take ~3 seconds of CPU time per
-navigation. This savings needs to be balanced against the memory cost
-of keeping each subframe renderer alive a few seconds longer.
+Code in //chrome/browser/ash/customization is a part of the ash-chrome,
+so namespace is changed to ash from chromeos.
 
-To this end, the experiment has multiple branches with different
-delays, in order to determine the best-performing method:
-* constant: a flat 2s delay
-* constant-long: a flat 8s delay
-* history-based: a 0-8s delay; the median
-              TimeSinceReusableProcessDestroyed in the past 5 subframe
-              navigations, with "no reuse possible" counting as 0s
-* history-based-long: a 0-8s delay; the 75th-percentile
-              TimeSinceReusableProcessDestroyed in the past 5 subframe
-              navigations, with "no reuse possible" counting as 0s
-* memory-based: a 2s delay when available memory is under 8 GB, and a
-                2-8s delay when it is higher, up to 16 GB
+To avoid churn during other namespace transitions in future, this CL has
+temporary 'using' declarations.
 
-These will be enabled via Finch, and can be manually enabled by
-appending command-line flag:
-   --enable-features="SubframeShutdownDelay:type/constant
-where "constant" can be any of the above experiment labels.
+This CL is part of the Chrome OS source code directory migration:
+<a href="https://docs.google.com/document/d/1g-98HpzA8XcoGBWUv1gQNr4rbnD5yfvbtYZyPDDbkaE.">https://docs.google.com/document/d/1g-98HpzA8XcoGBWUv1gQNr4rbnD5yfvbtYZyPDDbkaE.</a>
 
-Design doc:
-<a href="https://docs.google.com/document/d/1x_h4Gg4ForILEj8A4rMBX6d84uHWyQ9RSXmGVqMlBTk/edit">https://docs.google.com/document/d/1x_h4Gg4ForILEj8A4rMBX6d84uHWyQ9RSXmGVqMlBTk/edit</a>
-
-Bug: 894253
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I64c64532d6185412d7f3f97bf9917de9574aecc4">I64c64532d6185412d7f3f97bf9917de9574aecc4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2431587">https://chromium-review.googlesource.com/c/chromium/src/+/2431587</a>
-Commit-Queue: Jesse McKenna &lt;jessemckenna@google.com&gt;
-Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
-Reviewed-by: Olivier Li &lt;olivierli@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#875466}
+Bug: 1164001
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3cce382762ab730dba3e720c2b51e6c0010616e7">I3cce382762ab730dba3e720c2b51e6c0010616e7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2838789">https://chromium-review.googlesource.com/c/chromium/src/+/2838789</a>
+Commit-Queue: Yeunjoo Choi &lt;ychoi@igalia.com&gt;
+Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
+Owners-Override: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#875490}
 </pre>
 
 </body>
