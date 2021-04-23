@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/875595/"> 875595</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a9b59deb69c4a3a9cc45e0b58d47930350ae4556">a9b59deb69c4a3a9cc45e0b58d47930350ae4556</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/875620/"> 875620</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/08bd208891ccb47c8396487dc930d91c5b6c2f5f">08bd208891ccb47c8396487dc930d91c5b6c2f5f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/875593/">875593</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/14c1d8440f485e4a14d0f108f9d41974b4d60375">14c1d8440f485e4a14d0f108f9d41974b4d60375</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/875618/">875618</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/34c4d60fa1e12a44a54aaaf85c5338e68c96d834">34c4d60fa1e12a44a54aaaf85c5338e68c96d834</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a9b59deb69c4a3a9cc45e0b58d47930350ae4556
+   08bd208891ccb47c8396487dc930d91c5b6c2f5f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a9b59deb69c4a3a9cc45e0b58d47930350ae4556">
+    <a href="/chromium/src/+log/08bd208891ccb47c8396487dc930d91c5b6c2f5f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a9b59deb69c4a3a9cc45e0b58d47930350ae4556.tar.gz">
+    <a href="/chromium/src/+archive/08bd208891ccb47c8396487dc930d91c5b6c2f5f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Maksim Sisov &lt;msisov@igalia.com&gt;
+   Peng Huang &lt;penghuang@chromium.org&gt;
   </td>
   <td>
-   Fri Apr 23 10:19:03 2021
+   Fri Apr 23 12:09:11 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 23 10:19:03 2021
+   Fri Apr 23 12:09:11 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a9b59deb69c4a3a9cc45e0b58d47930350ae4556/">
-    082b13863220e9b0b31f2da8a62dae5804df9d27
+   <a href="/chromium/src/+/08bd208891ccb47c8396487dc930d91c5b6c2f5f/">
+    307853e535ceb615938392e5384feba7b64a194f
    </a>
   </td>
  </tr>
@@ -166,63 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a9b59deb69c4a3a9cc45e0b58d47930350ae4556%5E">
-    933eb0fa2637f786c3b53a3c04be62a18e49ac31
+   <a href="/chromium/src/+/08bd208891ccb47c8396487dc930d91c5b6c2f5f%5E">
+    e7f4c61ce0db28a25beb136a01c56b8caff11c38
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a9b59deb69c4a3a9cc45e0b58d47930350ae4556%5E%21/">
+    <a href="/chromium/src/+/08bd208891ccb47c8396487dc930d91c5b6c2f5f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "ozone/wayland: provide context for web popup menus."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix OOM problem in VulkanSwapChain
 
-This is a reland of de883ff00357000280530e11dc9647bf68d8ae58
+On Linux, sometimes the vulkan present engine will never release
+an image acquire fence, when it happens. Chrome will create new
+fences continuelly. It will cause OOM problem. To fix the OOM problem,
+the CL will add a limit on how many fences can be created. If the
+limit is reached, the VulkanSwapChian::SwapBuffers() related call
+will fail, and context lost will be triggered.
 
-This change revealed the same problem that exo has. Thus, disable the
-affected test. See more details at <a href="https://crbug.com/1126339">https://crbug.com/1126339</a> .
-
-Original change's description:
-&gt; ozone/wayland: provide context for web popup menus.
-&gt;
-&gt; HTML select tag uses WebPagePopup class that further creates a
-&gt; standalone Widget without a parent. That is, the bounds that are used
-&gt; for that new Widget are in Screen and that works nicely with X11 on
-&gt; Linux, but not with Wayland.
-&gt;
-&gt; For Wayland, any auxiliary windows such as menus, tooltips, popups
-&gt; must have a parent window so that Ozone/Wayland can position them
-&gt; correctly using local surface coordinates of a parent.
-&gt;
-&gt; Prior to this CL, Ozone/Wayland used to use a currently active window,
-&gt; which does not sound as very correct solution. That is, during
-&gt; construction of the WebPagePopup, the window that had a corresponding UI
-&gt; event can loose its focus (Wayland compositor decides so) and another
-&gt; window (if exists) can gain the focus. Thus, Ozone/Wayland will choose a
-&gt; wrong parent window.
-&gt;
-&gt; To eliminate this problem, provide a context via the Widget::InitParams
-&gt; as it is done for tooltips.
-&gt;
-&gt; Bug: 1198965
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7fac199f11b13343d88cc8345c57244592d6ae86">I7fac199f11b13343d88cc8345c57244592d6ae86</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2831291">https://chromium-review.googlesource.com/c/chromium/src/+/2831291</a>
-&gt; Commit-Queue: Maksim Sisov &lt;msisov@igalia.com&gt;
-&gt; Reviewed-by: Alexander Dunaev &lt;adunaev@igalia.com&gt;
-&gt; Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#874660}
-
-Bug: 1198965
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0bb95221459a52ea1ec2496ac7c2a6cbb302fbe9">I0bb95221459a52ea1ec2496ac7c2a6cbb302fbe9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2845390">https://chromium-review.googlesource.com/c/chromium/src/+/2845390</a>
-Reviewed-by: Alexander Dunaev &lt;adunaev@igalia.com&gt;
-Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Reviewed-by: Robert Kroeger &lt;rjkroege@chromium.org&gt;
-Commit-Queue: Maksim Sisov &lt;msisov@igalia.com&gt;
-Cr-Commit-Position: refs/heads/master@{#875595}
+Bug: 1189069
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I66f6368a4c1c1f3a95ce35827a89795060e450d9">I66f6368a4c1c1f3a95ce35827a89795060e450d9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2847040">https://chromium-review.googlesource.com/c/chromium/src/+/2847040</a>
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Commit-Queue: Peng Huang &lt;penghuang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#875620}
 </pre>
 
 </body>
