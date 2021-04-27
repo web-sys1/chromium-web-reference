@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/876489/"> 876489</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/32eadd144c40140ef56498676a03792c164b5781">32eadd144c40140ef56498676a03792c164b5781</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/876506/"> 876506</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/54193788816cb2aa3fc1ff2d265d97d94518c03a">54193788816cb2aa3fc1ff2d265d97d94518c03a</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/876497/">876497</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   32eadd144c40140ef56498676a03792c164b5781
+   54193788816cb2aa3fc1ff2d265d97d94518c03a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/32eadd144c40140ef56498676a03792c164b5781">
+    <a href="/chromium/src/+log/54193788816cb2aa3fc1ff2d265d97d94518c03a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/32eadd144c40140ef56498676a03792c164b5781.tar.gz">
+    <a href="/chromium/src/+archive/54193788816cb2aa3fc1ff2d265d97d94518c03a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Zufeng Wang &lt;zufeng@google.com&gt;
+   Alex Ilin &lt;alexilin@chromium.org&gt;
   </td>
   <td>
-   Tue Apr 27 07:55:55 2021
+   Tue Apr 27 08:59:25 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 27 07:55:55 2021
+   Tue Apr 27 08:59:25 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/32eadd144c40140ef56498676a03792c164b5781/">
-    186b823e62ff9ec1773c743cfba22597d76a1b9c
+   <a href="/chromium/src/+/54193788816cb2aa3fc1ff2d265d97d94518c03a/">
+    18cebd9bbbde1314449b7886ca6b6578d5593def
    </a>
   </td>
  </tr>
@@ -166,36 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/32eadd144c40140ef56498676a03792c164b5781%5E">
-    5661948a0f0e260893f3a6d835d57799691ccd1c
+   <a href="/chromium/src/+/54193788816cb2aa3fc1ff2d265d97d94518c03a%5E">
+    6ba01ad6f222794012dbc7c44ef411a6176742d4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/32eadd144c40140ef56498676a03792c164b5781%5E%21/">
+    <a href="/chromium/src/+/54193788816cb2aa3fc1ff2d265d97d94518c03a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Help app launcher search: Add message pipe API
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[profiles] Use params class for adding profile to attributes storage
 
-The two new messages are for updating the search index for launcher
-search and closing the page when background processing is done.
-Implement these in browser_proxy.js. A later CL will make the inner
-frame use these.
-Also delete a search test because the new test also covers search.
+This CL creates a new ProfileAttributesInitParams struct that holds all
+parameters needed for creation of a ProfileAttributesEntry and replaces
+all parameters of ProfileAttributesStorage::AddProfile() with a single
+struct parameter.
 
-The changes are mostly based on this similar CL:
-<a href="https://chromium-review.googlesource.com/c/chromium/src/+/2437560">https://chromium-review.googlesource.com/c/chromium/src/+/2437560</a>
+Google C++ style guide describes advantages of this approach [1]:
 
-Bug: b/182763045
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I718f2f2cb68ec5c0cb09ec8f8b46b79ed0be1b37">I718f2f2cb68ec5c0cb09ec8f8b46b79ed0be1b37</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2850239">https://chromium-review.googlesource.com/c/chromium/src/+/2850239</a>
-Commit-Queue: Zufeng Wang &lt;zufeng@google.com&gt;
-Reviewed-by: Patti &lt;patricialor@chromium.org&gt;
-Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#876489}
+"This approach has several advantages. Options are referenced by name
+at the call site, which clarifies their meaning. It also reduces
+function argument count, which makes function calls easier to read and
+write. As an added benefit, you don't have to change call sites when you
+add another option."
+
+[1] <a href="https://google.github.io/styleguide/cppguide.html#Function_Argument_Comments">https://google.github.io/styleguide/cppguide.html#Function_Argument_Comments</a>
+
+Bug: 1202141
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iec7d585289469011bad51b0a296b4e71ccbc37b8">Iec7d585289469011bad51b0a296b4e71ccbc37b8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2848405">https://chromium-review.googlesource.com/c/chromium/src/+/2848405</a>
+Reviewed-by: David Roger &lt;droger@chromium.org&gt;
+Commit-Queue: Alex Ilin &lt;alexilin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#876506}
 </pre>
 
 </body>
