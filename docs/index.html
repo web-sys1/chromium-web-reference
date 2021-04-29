@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/877604/"> 877604</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/56d6cee6818cc4d39d06e8a4f653d01384c93356">56d6cee6818cc4d39d06e8a4f653d01384c93356</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/877632/"> 877632</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a2503a71400352a4a2aacc8057e9d288a4426872">a2503a71400352a4a2aacc8057e9d288a4426872</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/877610/">877610</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8689c17928aae44b1a31f9dacba69faf1da10930">8689c17928aae44b1a31f9dacba69faf1da10930</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/877649/">877649</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/30b07370edebb018f028bbeb5f29ab4d79e017d5">30b07370edebb018f028bbeb5f29ab4d79e017d5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   56d6cee6818cc4d39d06e8a4f653d01384c93356
+   a2503a71400352a4a2aacc8057e9d288a4426872
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/56d6cee6818cc4d39d06e8a4f653d01384c93356">
+    <a href="/chromium/src/+log/a2503a71400352a4a2aacc8057e9d288a4426872">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/56d6cee6818cc4d39d06e8a4f653d01384c93356.tar.gz">
+    <a href="/chromium/src/+archive/a2503a71400352a4a2aacc8057e9d288a4426872.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Joshua Pawlicki &lt;waffles@chromium.org&gt;
+   Martin Kreichgauer &lt;martinkr@google.com&gt;
   </td>
   <td>
-   Thu Apr 29 19:43:09 2021
+   Thu Apr 29 20:53:48 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Apr 29 19:43:09 2021
+   Thu Apr 29 20:53:48 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/56d6cee6818cc4d39d06e8a4f653d01384c93356/">
-    7d77c1a1b61892d3eaa6fa7b31deec8ada8d34b8
+   <a href="/chromium/src/+/a2503a71400352a4a2aacc8057e9d288a4426872/">
+    4ecc8df778ccc148522859209fe72321940bcb0d
    </a>
   </td>
  </tr>
@@ -166,54 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/56d6cee6818cc4d39d06e8a4f653d01384c93356%5E">
-    ada9c54cabb32e52a128646e683a69d0c1a4ae26
+   <a href="/chromium/src/+/a2503a71400352a4a2aacc8057e9d288a4426872%5E">
+    751f4cf10a4abb7a1a4d048ddb835565016c20cd
    </a>
    <span>
     [
-    <a href="/chromium/src/+/56d6cee6818cc4d39d06e8a4f653d01384c93356%5E%21/">
+    <a href="/chromium/src/+/a2503a71400352a4a2aacc8057e9d288a4426872%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Re-enable resnap to focused test."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">fido: support the CTAP 2.1 makeCredUvNotRqd authenticator option
 
-This reverts commit aa64a8e08671f47286183e9da8adbaf4ea926434.
+CTAP 2.0 authenticators require a PIN to make any credential if PIN or
+UV have been set up. Therefore, Chrome will fall back to creating
+credentials over U2F if the WebAuthn request comes with uv=discouraged
+but the authenticator has a PIN or UV configured.
 
-Reason for revert: Test fails on Mac 10.12: <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/Mac10.12%20Tests/43398/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/Mac10.12%20Tests/43398/overview</a>
+CTAP 2.1 adds an optional authenticatorGetInfo response option,
+makeCredUvNotRqd. If an authenticator sets this option, non-discoverable
+credentials can be created on it without UV, as long as the alwaysUv
+option isn't set as well. This change parses the option from the
+authenticatorGetInfo response, and ensures credentials are created over
+CTAP2 if non-discoverable credential creation without UV was requested
+by the caller and is permitted by the authenticator.
 
-Original change's description:
-&gt; Re-enable resnap to focused test.
-&gt;
-&gt; Resnap functionality fixed in the following CL:
-&gt;
-&gt; <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2818660">https://chromium-review.googlesource.com/c/chromium/src/+/2818660</a>
-&gt;
-&gt; This is a followup CL to re-enable the associated test.  Prior to the
-&gt; above fix. The result was non-deterministic as the focused element or
-&gt; any other snap target aligned with the element could be selected. After
-&gt; the change, the results are deterministic as whether an element is
-&gt; focused serves as a tiebreaker for selecting the snap target.
-&gt;
-&gt; Bug: 1181466
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id23610f6d2a73d2ba5c7c4b17c1abb7613012789">Id23610f6d2a73d2ba5c7c4b17c1abb7613012789</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2857235">https://chromium-review.googlesource.com/c/chromium/src/+/2857235</a>
-&gt; Reviewed-by: Xida Chen &lt;xidachen@chromium.org&gt;
-&gt; Commit-Queue: Kevin Ellis &lt;kevers@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#877478}
-
-Bug: 1181466
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I47cf8975cc87ed784ebeeed764f7abf7c41896ae">I47cf8975cc87ed784ebeeed764f7abf7c41896ae</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2860884">https://chromium-review.googlesource.com/c/chromium/src/+/2860884</a>
-Auto-Submit: Joshua Pawlicki &lt;waffles@chromium.org&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#877604}
+Fixed: 1164986
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie2a300b076c384b9228a5d5acbdff906d5430495">Ie2a300b076c384b9228a5d5acbdff906d5430495</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2858260">https://chromium-review.googlesource.com/c/chromium/src/+/2858260</a>
+Commit-Queue: Martin Kreichgauer &lt;martinkr@google.com&gt;
+Reviewed-by: Adam Langley &lt;agl@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#877632}
 </pre>
 
 </body>
