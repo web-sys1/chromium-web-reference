@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/878089/"> 878089</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9e8b9688d662a2f474de1db32349c3e924820821">9e8b9688d662a2f474de1db32349c3e924820821</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/878124/"> 878124</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1bdb3701f9ae12efe63bbee960ade7da3b8bfe85">1bdb3701f9ae12efe63bbee960ade7da3b8bfe85</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/878108/">878108</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9e8b9688d662a2f474de1db32349c3e924820821
+   1bdb3701f9ae12efe63bbee960ade7da3b8bfe85
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9e8b9688d662a2f474de1db32349c3e924820821">
+    <a href="/chromium/src/+log/1bdb3701f9ae12efe63bbee960ade7da3b8bfe85">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9e8b9688d662a2f474de1db32349c3e924820821.tar.gz">
+    <a href="/chromium/src/+archive/1bdb3701f9ae12efe63bbee960ade7da3b8bfe85.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   David Bokan &lt;bokan@chromium.org&gt;
   </td>
   <td>
-   Fri Apr 30 21:09:23 2021
+   Fri Apr 30 22:02:35 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 30 21:09:23 2021
+   Fri Apr 30 22:02:35 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9e8b9688d662a2f474de1db32349c3e924820821/">
-    ff94314a457df13e082157223beb9ed57bf5d886
+   <a href="/chromium/src/+/1bdb3701f9ae12efe63bbee960ade7da3b8bfe85/">
+    17cd3dcd59cafe3c78477cffa0c0d0174c3a3b06
    </a>
   </td>
  </tr>
@@ -166,52 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9e8b9688d662a2f474de1db32349c3e924820821%5E">
-    332823ac672a0e9e6e4c1127a647f20672ca3c95
+   <a href="/chromium/src/+/1bdb3701f9ae12efe63bbee960ade7da3b8bfe85%5E">
+    55ba9aea37a270f3eb34648346a0aba58dc4ee74
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9e8b9688d662a2f474de1db32349c3e924820821%5E%21/">
+    <a href="/chromium/src/+/1bdb3701f9ae12efe63bbee960ade7da3b8bfe85%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Skia from 5276ba274b38 to a76e81c3649c (8 revisions)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove JavaScriptDialog and BFCache NavigationThrottles
 
-<a href="https://skia.googlesource.com/skia.git/+log/5276ba274b38..a76e81c3649c">https://skia.googlesource.com/skia.git/+log/5276ba274b38..a76e81c3649c</a>
+Both of these throttles want to conditionally defer a navigation from
+committing if it's happening in the primary frame tree. This means they
+need to defer only the "activating" navigation of a prerender or BFCache
+navigation. This forces us to run all throttles a second time for just
+these two cases.
 
-2021-04-30 skia-autoroll@skia-public.iam.gserviceaccount.com Roll SK Tool from 657a2591e9dc to 6613f376bd82
-2021-04-30 tdenniston@google.com [svg] Implement spot light sources
-2021-04-30 johnstiles@google.com Honor static statements in DSL C++ codegen.
-2021-04-30 johnstiles@google.com Fetch random numbers for TestCreate in a predictable order.
-2021-04-30 bsalomon@google.com Remove last usage of GrTextureAdjuster and delete it and parent class.
-2021-04-30 ethannicholas@google.com Added support for DSL global variables
-2021-04-30 ethannicholas@google.com Added DSL support for static if &amp; switch statements
-2021-04-30 jlavrova@google.com The first draft of improved &amp; simplified Text API
+In this CL we add a new content-internal mechanism for deferring a
+navigation commit, NavigationCommitDeferrer, and implement the
+functionality from these two throttles in it.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/skia-autoroll">https://autoroll.skia.org/r/skia-autoroll</a>
-Please CC jcgregorio@google.com on the revert to ensure that a human
-is aware of the problem.
+When ready to commit, a NavigationRequest checks with its delegate
+(WebContents) whether it's ready to commit the navigation. WebContents
+will try to create a NavigationCommitDeferrer. If a commit deferrer is
+needed the navigation commit will be deferred and the
+NavigationCommitDeferrer will then run the checks, in order, and resume
+the NavigationRequest when the checks are passed.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+See below doc for more discussion and details:
+<a href="https://docs.google.com/document/d/1gJhjnZvah9er3iKk_FZcqXtT0M5dar_jWkZNUHXYLRM/edit#heading=h.1e0iap127qb4">https://docs.google.com/document/d/1gJhjnZvah9er3iKk_FZcqXtT0M5dar_jWkZNUHXYLRM/edit#heading=h.1e0iap127qb4</a>
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chromium.try:android_optional_gpu_tests_rel;luci.chromium.try:linux-blink-rel;luci.chromium.try:linux-chromeos-compile-dbg;luci.chromium.try:linux_optional_gpu_tests_rel;luci.chromium.try:mac_optional_gpu_tests_rel;luci.chromium.try:win_optional_gpu_tests_rel
-Cq-Do-Not-Cancel-Tryjobs: true
-Bug: None
-Tbr: jcgregorio@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iabd838b24f83fb587ee4dc9c6241940fb12fe4a1">Iabd838b24f83fb587ee4dc9c6241940fb12fe4a1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2863236">https://chromium-review.googlesource.com/c/chromium/src/+/2863236</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#878089}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1112a031ffe3370e6a6554dd3878dfe43c1fae76">I1112a031ffe3370e6a6554dd3878dfe43c1fae76</a>
+Bug: 1199724
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2716161">https://chromium-review.googlesource.com/c/chromium/src/+/2716161</a>
+Commit-Queue: David Bokan &lt;bokan@chromium.org&gt;
+Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#878124}
 </pre>
 
 </body>
