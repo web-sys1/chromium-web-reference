@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/877798/"> 877798</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a9981795ac99c5e3b102943517f64fb7e96958a4">a9981795ac99c5e3b102943517f64fb7e96958a4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/877806/"> 877806</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4124da4f2da75c317cf1149b3a9df4c4d60eb794">4124da4f2da75c317cf1149b3a9df4c4d60eb794</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/877795/">877795</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/05540db987432508079fc3d4be3ffacbc77ac579">05540db987432508079fc3d4be3ffacbc77ac579</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/877804/">877804</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5916ae7647ac2e27ee2c0ebceacec7b292934b07">5916ae7647ac2e27ee2c0ebceacec7b292934b07</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a9981795ac99c5e3b102943517f64fb7e96958a4
+   4124da4f2da75c317cf1149b3a9df4c4d60eb794
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a9981795ac99c5e3b102943517f64fb7e96958a4">
+    <a href="/chromium/src/+log/4124da4f2da75c317cf1149b3a9df4c4d60eb794">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a9981795ac99c5e3b102943517f64fb7e96958a4.tar.gz">
+    <a href="/chromium/src/+archive/4124da4f2da75c317cf1149b3a9df4c4d60eb794.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ana SollanoKim &lt;ansollan@microsoft.com&gt;
+   Henrique Ferreiro &lt;hferreiro@igalia.com&gt;
   </td>
   <td>
-   Fri Apr 30 05:52:17 2021
+   Fri Apr 30 06:45:18 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 30 05:52:17 2021
+   Fri Apr 30 06:45:18 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a9981795ac99c5e3b102943517f64fb7e96958a4/">
-    cb73b3c4e5114ef4832d4c30d3fd5afdefad8d53
+   <a href="/chromium/src/+/4124da4f2da75c317cf1149b3a9df4c4d60eb794/">
+    ce1ca0ba8ec97f905248c5c9aacafab5dc706734
    </a>
   </td>
  </tr>
@@ -166,39 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a9981795ac99c5e3b102943517f64fb7e96958a4%5E">
-    a7e9a7f54c14eb3695bd0635217199f641a9edef
+   <a href="/chromium/src/+/4124da4f2da75c317cf1149b3a9df4c4d60eb794%5E">
+    534f98bb88dd9f770689beec6baf2f232d72bfcc
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a9981795ac99c5e3b102943517f64fb7e96958a4%5E%21/">
+    <a href="/chromium/src/+/4124da4f2da75c317cf1149b3a9df4c4d60eb794%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[GridNG] Compute the correct offset for out of flow items that start or
-end in the middle of a range
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Build media_blink_unittests in needed platforms in gn_all
 
-Previously, if an out of flow item happened to be in the middle of a
-range, its offset and size were computed incorrectly. In this change,
-helpers are added to compute the extra offset needed. Two web tests were
-added to validate this behaviour.
+//media/bink:media_blink_unittests needs to be added to //:gn_all as a
+dependency for every platform where it should run so that the target is
+found by gn. Currently it's restricted to Linux and Lacros, and it can
+be built in the rest of the platforms where Blink runs because
+//media/blink:blink is a dependency of //content/renderer, forcing the
+whole BUILD.gn file to be read. As media/blink/ is being moved to Blink
+this workaround will no longer work.
 
-Additionally, we now store range related data instead of the set indices
-for out of flow items, as in this case we need the first and last
-spanned range, as well as the offsets of the tracks. With this
-information, we can just compute the set indices on demand.
-
-Bug: 1045599
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I26c8e1027d89c601de8e81d3f31850e061423844">I26c8e1027d89c601de8e81d3f31850e061423844</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2757833">https://chromium-review.googlesource.com/c/chromium/src/+/2757833</a>
-Commit-Queue: Ana Sollano Kim &lt;ansollan@microsoft.com&gt;
-Reviewed-by: Ethan Jimenez &lt;ethavar@microsoft.com&gt;
-Reviewed-by: Kurt Catti-Schmidt &lt;kschmi@microsoft.com&gt;
-Reviewed-by: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#877798}
+Bug: 1198341
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I015a3e38d376f788b0cee6f124e0b4aec2d0f77a">I015a3e38d376f788b0cee6f124e0b4aec2d0f77a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2848395">https://chromium-review.googlesource.com/c/chromium/src/+/2848395</a>
+Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
+Reviewed-by: Will Cassella &lt;cassew@google.com&gt;
+Commit-Queue: Henrique Ferreiro &lt;hferreiro@igalia.com&gt;
+Cr-Commit-Position: refs/heads/master@{#877806}
 </pre>
 
 </body>
