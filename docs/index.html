@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/878124/"> 878124</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1bdb3701f9ae12efe63bbee960ade7da3b8bfe85">1bdb3701f9ae12efe63bbee960ade7da3b8bfe85</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/878142/"> 878142</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/da3bb54157d4603b9c820d6cfdf61859f804dfb2">da3bb54157d4603b9c820d6cfdf61859f804dfb2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/878108/">878108</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ee52a20ff0f982a48ccd315a2e1c9ee26ededc95">ee52a20ff0f982a48ccd315a2e1c9ee26ededc95</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/878136/">878136</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/72c71fc920fffda38973cf28b163bf31cd128e0d">72c71fc920fffda38973cf28b163bf31cd128e0d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1bdb3701f9ae12efe63bbee960ade7da3b8bfe85
+   da3bb54157d4603b9c820d6cfdf61859f804dfb2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1bdb3701f9ae12efe63bbee960ade7da3b8bfe85">
+    <a href="/chromium/src/+log/da3bb54157d4603b9c820d6cfdf61859f804dfb2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1bdb3701f9ae12efe63bbee960ade7da3b8bfe85.tar.gz">
+    <a href="/chromium/src/+archive/da3bb54157d4603b9c820d6cfdf61859f804dfb2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Bokan &lt;bokan@chromium.org&gt;
+   Torne (Richard Coles) &lt;torne@google.com&gt;
   </td>
   <td>
-   Fri Apr 30 22:02:35 2021
+   Fri Apr 30 23:03:37 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 30 22:02:35 2021
+   Fri Apr 30 23:03:37 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1bdb3701f9ae12efe63bbee960ade7da3b8bfe85/">
-    17cd3dcd59cafe3c78477cffa0c0d0174c3a3b06
+   <a href="/chromium/src/+/da3bb54157d4603b9c820d6cfdf61859f804dfb2/">
+    5fd577ca83843342bb2a596756be3c2c436486ab
    </a>
   </td>
  </tr>
@@ -166,47 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1bdb3701f9ae12efe63bbee960ade7da3b8bfe85%5E">
-    55ba9aea37a270f3eb34648346a0aba58dc4ee74
+   <a href="/chromium/src/+/da3bb54157d4603b9c820d6cfdf61859f804dfb2%5E">
+    11e12039a93df267c23718e3efe9639be1393a00
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1bdb3701f9ae12efe63bbee960ade7da3b8bfe85%5E%21/">
+    <a href="/chromium/src/+/da3bb54157d4603b9c820d6cfdf61859f804dfb2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove JavaScriptDialog and BFCache NavigationThrottles
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">android_webview: measure startup time with uptimeMillis().
 
-Both of these throttles want to conditionally defer a navigation from
-committing if it's happening in the primary frame tree. This means they
-need to defer only the "activating" navigation of a prerender or BFCache
-navigation. This forces us to run all throttles a second time for just
-these two cases.
+elapsedRealtime() includes system sleep time; this can make the
+measurements noisy since we can't be doing any startup while the CPU is
+asleep. Use uptimeMillis instead as this doesn't count sleep.
 
-In this CL we add a new content-internal mechanism for deferring a
-navigation commit, NavigationCommitDeferrer, and implement the
-functionality from these two throttles in it.
-
-When ready to commit, a NavigationRequest checks with its delegate
-(WebContents) whether it's ready to commit the navigation. WebContents
-will try to create a NavigationCommitDeferrer. If a commit deferrer is
-needed the navigation commit will be deferred and the
-NavigationCommitDeferrer will then run the checks, in order, and resume
-the NavigationRequest when the checks are passed.
-
-See below doc for more discussion and details:
-<a href="https://docs.google.com/document/d/1gJhjnZvah9er3iKk_FZcqXtT0M5dar_jWkZNUHXYLRM/edit#heading=h.1e0iap127qb4">https://docs.google.com/document/d/1gJhjnZvah9er3iKk_FZcqXtT0M5dar_jWkZNUHXYLRM/edit#heading=h.1e0iap127qb4</a>
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1112a031ffe3370e6a6554dd3878dfe43c1fae76">I1112a031ffe3370e6a6554dd3878dfe43c1fae76</a>
-Bug: 1199724
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2716161">https://chromium-review.googlesource.com/c/chromium/src/+/2716161</a>
-Commit-Queue: David Bokan &lt;bokan@chromium.org&gt;
-Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
-Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#878124}
+Bug: 1204623
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id7be8674238bd50364e54efd7c67b67b22ce8e5d">Id7be8674238bd50364e54efd7c67b67b22ce8e5d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2860307">https://chromium-review.googlesource.com/c/chromium/src/+/2860307</a>
+Auto-Submit: Richard Coles &lt;torne@chromium.org&gt;
+Reviewed-by: Mugdha Lakhani &lt;nator@chromium.org&gt;
+Commit-Queue: Mugdha Lakhani &lt;nator@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#878142}
 </pre>
 
 </body>
