@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/878519/"> 878519</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/16df40301dd5e6c298c8923cfc1370e26d8124da">16df40301dd5e6c298c8923cfc1370e26d8124da</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/878485/"> 878485</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/47967ff6934b933bd79e6d2df4e02f5c035347e6">47967ff6934b933bd79e6d2df4e02f5c035347e6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/878486/">878486</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   16df40301dd5e6c298c8923cfc1370e26d8124da
+   47967ff6934b933bd79e6d2df4e02f5c035347e6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/16df40301dd5e6c298c8923cfc1370e26d8124da">
+    <a href="/chromium/src/+log/47967ff6934b933bd79e6d2df4e02f5c035347e6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/16df40301dd5e6c298c8923cfc1370e26d8124da.tar.gz">
+    <a href="/chromium/src/+archive/47967ff6934b933bd79e6d2df4e02f5c035347e6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Wez &lt;wez@chromium.org&gt;
+   Vincent Boisselle &lt;vincb@google.com&gt;
   </td>
   <td>
-   Mon May 03 19:38:06 2021
+   Mon May 03 18:36:46 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon May 03 19:38:06 2021
+   Mon May 03 18:36:46 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/16df40301dd5e6c298c8923cfc1370e26d8124da/">
-    1c573914e6ff07c46e2d0e8b26c3e648a30416b4
+   <a href="/chromium/src/+/47967ff6934b933bd79e6d2df4e02f5c035347e6/">
+    72a75f8b98cb98ac104e5c707f04a3b37582fc66
    </a>
   </td>
  </tr>
@@ -166,49 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/16df40301dd5e6c298c8923cfc1370e26d8124da%5E">
-    d73390ed13f212365afb032bf5c5b405b6357c46
+   <a href="/chromium/src/+/47967ff6934b933bd79e6d2df4e02f5c035347e6%5E">
+    e762878c707bf45bb2025d073f322ed432722c8e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/16df40301dd5e6c298c8923cfc1370e26d8124da%5E%21/">
+    <a href="/chromium/src/+/47967ff6934b933bd79e6d2df4e02f5c035347e6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[fuchsia] Work-around inconsistent WebView base-background behaviour.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS]Remove calling #applicationDidBecomeActive when exiting safemode
 
-WebEngine's FrameImpl is intended to effectively provide a fully-
-transparent base-background colour over which web content is presented,
-to allow embedders to control the default background by choosing what
-is placed behind the View.
+There is a bug where calling #applicationDidBecomeActive when getting out
+of safemode triggers a nil reference error, see crbug.com/1204496.
 
-FrameImpl sets the Browser-side RenderWidgetHostView's background to
-transparent, which appears normally to result in the Renderer-side
-WebViewImpl's base-background being "overridden" to transparent. In some
-cases (yet to be fully diagnosed) this "override" was being lost, and
-the WebViewImpl's default base-background (white) was being displayed
-instead.
+This is only for iOS 12.
 
-WebEngine now explicitly sets the base-background for each RenderFrame's
-WebViewImpl to transparent, which both works around the inconsistent
-override logic and more directly expresses the intended behaviour.
+Why calling #applicationDidBecomeActive when exiting safemode isn't
+required? See crrev.com/c/2857816/3/ios/chrome/app/application_delegate/app_state.mm#b387
+where we analyze the code and its usefulness.
+  &gt; Handling intents isn't needed for safemode.
+  &gt; Open a new tab if needed is already handled by the scene controller.
+  &gt; Opening the helper bubble is already handle on
+    BrowserViewController#viewDidAppear.
+  &gt; Logging the startup duration metric isn't needed out of safemode. In
+    fact, it should not happen.
+  &gt; This is only for iOS 12 + Post SafeMode, which is really an edgy case.
 
-DEPS are also updated, to allow //fuchsia/engine/renderer to #include
-all Blink public APIs.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic10e731f8afff625a05e4c209177d71afc2ab845">Ic10e731f8afff625a05e4c209177d71afc2ab845</a>
-Bug: 1204666, 1204791, 1204793
-Bug: b/185401857
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2862886">https://chromium-review.googlesource.com/c/chromium/src/+/2862886</a>
-Auto-Submit: Wez &lt;wez@chromium.org&gt;
-Reviewed-by: David Dorwin &lt;ddorwin@chromium.org&gt;
-Reviewed-by: Kevin Marshall &lt;kmarshall@chromium.org&gt;
-Reviewed-by: danakj &lt;danakj@chromium.org&gt;
-Commit-Queue: Wez &lt;wez@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#878519}
+Bug: 1204496, 1198957
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ice9de258ad39baa0382fbd72f098d6f826031d1d">Ice9de258ad39baa0382fbd72f098d6f826031d1d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2862289">https://chromium-review.googlesource.com/c/chromium/src/+/2862289</a>
+Commit-Queue: Vincent Boisselle &lt;vincb@google.com&gt;
+Reviewed-by: Stepan Khapugin &lt;stkhapugin@chromium.org&gt;
+Reviewed-by: Mark Cogan &lt;marq@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#878485}
 </pre>
 
 </body>
