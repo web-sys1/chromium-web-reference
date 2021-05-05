@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/879361/"> 879361</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8ac87f419d2a0976d5bb514c46f07b2f206d3ac5">8ac87f419d2a0976d5bb514c46f07b2f206d3ac5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/879384/"> 879384</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4113e36a91c46ec5ea51d681597af3458594642b">4113e36a91c46ec5ea51d681597af3458594642b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/879358/">879358</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0a2564d092b2884a0923df8b1c90597a00cf340e">0a2564d092b2884a0923df8b1c90597a00cf340e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/879392/">879392</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/22b5923ec550222cf8f57591c970661234a6c2e9">22b5923ec550222cf8f57591c970661234a6c2e9</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8ac87f419d2a0976d5bb514c46f07b2f206d3ac5
+   4113e36a91c46ec5ea51d681597af3458594642b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8ac87f419d2a0976d5bb514c46f07b2f206d3ac5">
+    <a href="/chromium/src/+log/4113e36a91c46ec5ea51d681597af3458594642b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8ac87f419d2a0976d5bb514c46f07b2f206d3ac5.tar.gz">
+    <a href="/chromium/src/+archive/4113e36a91c46ec5ea51d681597af3458594642b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Olivier Li &lt;olivierli@chromium.org&gt;
+   Benoit Lize &lt;lizeb@chromium.org&gt;
   </td>
   <td>
-   Wed May 05 15:26:54 2021
+   Wed May 05 16:21:15 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed May 05 15:26:54 2021
+   Wed May 05 16:21:15 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8ac87f419d2a0976d5bb514c46f07b2f206d3ac5/">
-    113e560279fcfc4416132302ec21b83073d8f71a
+   <a href="/chromium/src/+/4113e36a91c46ec5ea51d681597af3458594642b/">
+    0fefc10b3d32165775baba7cf62a7b4faac3c477
    </a>
   </td>
  </tr>
@@ -166,25 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8ac87f419d2a0976d5bb514c46f07b2f206d3ac5%5E">
-    5181c674bd2ed0f2b65667ebb36ce9e7215c7fd2
+   <a href="/chromium/src/+/4113e36a91c46ec5ea51d681597af3458594642b%5E">
+    06634ba51bf43e2e19df4e4fe65c97105a054771
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8ac87f419d2a0976d5bb514c46f07b2f206d3ac5%5E%21/">
+    <a href="/chromium/src/+/4113e36a91c46ec5ea51d681597af3458594642b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add option to autotest.py to not use Android test wrappers.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PartitionAlloc] Don't use std::bitset::test() in fast paths.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifefece0df82f8c23c805cd8ea8c3a55ec8b3c610">Ifefece0df82f8c23c805cd8ea8c3a55ec8b3c610</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2870306">https://chromium-review.googlesource.com/c/chromium/src/+/2870306</a>
-Commit-Queue: Olivier Li &lt;olivierli@chromium.org&gt;
-Reviewed-by: Michael Thiessen &lt;mthiesse@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#879361}
+std::bitset::test() checks that the access is in-bounds, contrary to
+operator[]. This call is used on fast paths on 32 bit architectures,
+both on Android for a PA_CHECK(), and in BackupRefPtr.
+
+It seems that we've been saved by the "sufficiently smart compiler"
+though, as with the current settings it seems to realize that
+out-of-bounds accesses cannot happen. This commit moves to operator[] to
+avoid relying on that, and adds a static_assert() to ensure that OOB
+accesses really cannot happen.
+
+Bug: 998048
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I653578c6d50c17b39df4f2aaeaaa8e606440cea8">I653578c6d50c17b39df4f2aaeaaa8e606440cea8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2866551">https://chromium-review.googlesource.com/c/chromium/src/+/2866551</a>
+Commit-Queue: Benoit L &lt;lizeb@chromium.org&gt;
+Reviewed-by: Chris Palmer &lt;palmer@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#879384}
 </pre>
 
 </body>
