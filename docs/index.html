@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/880632/"> 880632</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c8edc4c427a5ff191039204965ff04808bf3b585">c8edc4c427a5ff191039204965ff04808bf3b585</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/880648/"> 880648</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0036915bf5e9e941f82a80af011b34cb681d0e14">0036915bf5e9e941f82a80af011b34cb681d0e14</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/880575/">880575</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c8edc4c427a5ff191039204965ff04808bf3b585
+   0036915bf5e9e941f82a80af011b34cb681d0e14
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c8edc4c427a5ff191039204965ff04808bf3b585">
+    <a href="/chromium/src/+log/0036915bf5e9e941f82a80af011b34cb681d0e14">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c8edc4c427a5ff191039204965ff04808bf3b585.tar.gz">
+    <a href="/chromium/src/+archive/0036915bf5e9e941f82a80af011b34cb681d0e14.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Austin Sullivan &lt;asully@chromium.org&gt;
+   Sorin Jianu &lt;sorin@chromium.org&gt;
   </td>
   <td>
-   Fri May 07 23:57:21 2021
+   Sat May 08 00:50:49 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri May 07 23:57:21 2021
+   Sat May 08 00:50:49 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c8edc4c427a5ff191039204965ff04808bf3b585/">
-    65fe23a6177c9c1e2259d64f84acbac5a0beb145
+   <a href="/chromium/src/+/0036915bf5e9e941f82a80af011b34cb681d0e14/">
+    d9c297ec9c09c76272a58269bb24a7eecff98c82
    </a>
   </td>
  </tr>
@@ -166,27 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c8edc4c427a5ff191039204965ff04808bf3b585%5E">
-    6159a88cb104002645602d0de0f21e27da953358
+   <a href="/chromium/src/+/0036915bf5e9e941f82a80af011b34cb681d0e14%5E">
+    f6651e0a40486127d795526a1fc3b44c88f905e8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c8edc4c427a5ff191039204965ff04808bf3b585%5E%21/">
+    <a href="/chromium/src/+/0036915bf5e9e941f82a80af011b34cb681d0e14%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Code Health] Remove uses of Value::GetAsDictionary() in remoting/
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Don't delete corp policy key when running updater tests.
 
-Bug: 1187011
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibecabce4df1cd169bbdb5bbb0ae6ffc2951657e1">Ibecabce4df1cd169bbdb5bbb0ae6ffc2951657e1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2875960">https://chromium-review.googlesource.com/c/chromium/src/+/2875960</a>
-Auto-Submit: Austin Sullivan &lt;asully@chromium.org&gt;
-Commit-Queue: Yuwei Huang &lt;yuweih@chromium.org&gt;
-Reviewed-by: Yuwei Huang &lt;yuweih@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#880632}
+The issue here is that running non-elevated tests can't
+delete the corp policy keys, so the tests fail when run
+on a developer system, which happens to have any corp
+policies set.
+
+The CL removes the deletion of the corp policy key.
+Instead of that, it attempts the cleanup of the
+updater's device management key, which the updater creates.
+
+If the tests fail on the dev system, then these device
+management keys must be cleaned up manually for the tests
+to pass.
+
+Bug: 1206858
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I86b7ad01a71da1bcaee79beaab786e1f1ceebcfd">I86b7ad01a71da1bcaee79beaab786e1f1ceebcfd</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2881184">https://chromium-review.googlesource.com/c/chromium/src/+/2881184</a>
+Reviewed-by: S. Ganesh &lt;ganesh@chromium.org&gt;
+Commit-Queue: Sorin Jianu &lt;sorin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#880648}
 </pre>
 
 </body>
