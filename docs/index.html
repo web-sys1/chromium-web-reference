@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/881456/"> 881456</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8f359779a4f80a95ca5daa3ce558e2b91acf8827">8f359779a4f80a95ca5daa3ce558e2b91acf8827</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/881471/"> 881471</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/103060d153d36cd9adba32ed85138872564ea62d">103060d153d36cd9adba32ed85138872564ea62d</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/881459/">881459</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c28fd616c972346f22784562e94a12e949eed918">c28fd616c972346f22784562e94a12e949eed918</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/881471/">881471</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/103060d153d36cd9adba32ed85138872564ea62d">103060d153d36cd9adba32ed85138872564ea62d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8f359779a4f80a95ca5daa3ce558e2b91acf8827
+   103060d153d36cd9adba32ed85138872564ea62d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8f359779a4f80a95ca5daa3ce558e2b91acf8827">
+    <a href="/chromium/src/+log/103060d153d36cd9adba32ed85138872564ea62d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8f359779a4f80a95ca5daa3ce558e2b91acf8827.tar.gz">
+    <a href="/chromium/src/+archive/103060d153d36cd9adba32ed85138872564ea62d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   dpapad &lt;dpapad@chromium.org&gt;
+   Antonio Sartori &lt;antoniosartori@google.com&gt;
   </td>
   <td>
-   Tue May 11 08:57:59 2021
+   Tue May 11 10:09:55 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue May 11 08:57:59 2021
+   Tue May 11 10:09:55 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8f359779a4f80a95ca5daa3ce558e2b91acf8827/">
-    052cb025a16019dca99b5df94a3892d14b126c25
+   <a href="/chromium/src/+/103060d153d36cd9adba32ed85138872564ea62d/">
+    51fba6547572fc9a34a27ea74fb829f86e7f4688
    </a>
   </td>
  </tr>
@@ -166,26 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8f359779a4f80a95ca5daa3ce558e2b91acf8827%5E">
-    c41e74415e56828f83848b8b8e7e0214a01cc975
+   <a href="/chromium/src/+/103060d153d36cd9adba32ed85138872564ea62d%5E">
+    805de27c7d522b3600a4d5c630a528ebd8a16588
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8f359779a4f80a95ca5daa3ce558e2b91acf8827%5E%21/">
+    <a href="/chromium/src/+/103060d153d36cd9adba32ed85138872564ea62d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add an entry in chrome://flags for kSettingsLandingPageRedesign.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix SharedArrayBuffer reverse origin trial
 
-Bug: 1204457
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9ad2340a4d370557f9e65fad55eabff5c94b4ae3">I9ad2340a4d370557f9e65fad55eabff5c94b4ae3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2884902">https://chromium-review.googlesource.com/c/chromium/src/+/2884902</a>
-Reviewed-by: John Lee &lt;johntlee@chromium.org&gt;
-Commit-Queue: dpapad &lt;dpapad@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#881456}
+SharedArrayBuffer will de disabled on non cross-origin isolated
+contexts. The UnrestrictedSharedArrayBuffer reverse origin trial makes
+it possible to temporarily keep SharedArrayBuffer.
+
+The previous implementation had two main problems:
+
+1. It was relying on a per-process v8 flag (while origin trials are
+set per document/worker).
+
+2. It did not support meta tags (because the v8 flag needed to be set
+early enough).
+
+This CL fixes those problems by using a newly implemented v8 mechanism
+(<a href="https://crrev.com/c/2867473">https://crrev.com/c/2867473</a>) which defines the SharedArrayBuffer
+constructor on a global object depending on the return value of a
+callback.
+
+Bug: 923807,1071424,1138860,1201589,1204271,1197529
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5c7077ae503918cf156e75bd63c88698f10e19c9">I5c7077ae503918cf156e75bd63c88698f10e19c9</a>
+Cq-Do-Not-Cancel-Tryjobs: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2874291">https://chromium-review.googlesource.com/c/chromium/src/+/2874291</a>
+Reviewed-by: Mike West &lt;mkwst@chromium.org&gt;
+Reviewed-by: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
+Commit-Queue: Antonio Sartori &lt;antoniosartori@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#881471}
 </pre>
 
 </body>
