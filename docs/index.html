@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/882574/"> 882574</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/66e7ae2ac4891349b982d017b9cf9739c0784860">66e7ae2ac4891349b982d017b9cf9739c0784860</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/882624/"> 882624</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d0eb76d28d3f0ec9555036f15571193c1e3b3bf6">d0eb76d28d3f0ec9555036f15571193c1e3b3bf6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/882575/">882575</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   66e7ae2ac4891349b982d017b9cf9739c0784860
+   d0eb76d28d3f0ec9555036f15571193c1e3b3bf6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/66e7ae2ac4891349b982d017b9cf9739c0784860">
+    <a href="/chromium/src/+log/d0eb76d28d3f0ec9555036f15571193c1e3b3bf6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/66e7ae2ac4891349b982d017b9cf9739c0784860.tar.gz">
+    <a href="/chromium/src/+archive/d0eb76d28d3f0ec9555036f15571193c1e3b3bf6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Garrett Beaty &lt;gbeaty@chromium.org&gt;
+   James Cook &lt;jamescook@chromium.org&gt;
   </td>
   <td>
-   Thu May 13 18:01:41 2021
+   Thu May 13 19:35:43 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 13 18:01:41 2021
+   Thu May 13 19:35:43 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/66e7ae2ac4891349b982d017b9cf9739c0784860/">
-    990bdee8631cce3c0a7e6b272d288a5ac8c5b4a0
+   <a href="/chromium/src/+/d0eb76d28d3f0ec9555036f15571193c1e3b3bf6/">
+    60ba07f7d23ba459c99619f29db704b18b5f8c52
    </a>
   </td>
  </tr>
@@ -166,27 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/66e7ae2ac4891349b982d017b9cf9739c0784860%5E">
-    4f4f309b2b990137eafb53653cb7bccaab6085b7
+   <a href="/chromium/src/+/d0eb76d28d3f0ec9555036f15571193c1e3b3bf6%5E">
+    a3e614f052c2e6a58a46ec2ba1791913d8b73f55
    </a>
    <span>
     [
-    <a href="/chromium/src/+/66e7ae2ac4891349b982d017b9cf9739c0784860%5E%21/">
+    <a href="/chromium/src/+/d0eb76d28d3f0ec9555036f15571193c1e3b3bf6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Activate chromium m90 LTS
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">chromeos: Consolidate bubble closing event filter logic
 
-Bug: 1208537
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I767cb832a578bb62c849cc9e1e9aef5eda5f7069">I767cb832a578bb62c849cc9e1e9aef5eda5f7069</a>
-No-Tree-Checks: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2891493">https://chromium-review.googlesource.com/c/chromium/src/+/2891493</a>
-Commit-Queue: Garrett Beaty &lt;gbeaty@chromium.org&gt;
-Reviewed-by: Ben Pastene &lt;bpastene@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#882574}
+Introduce bubble_utils::ShouldCloseBubbleForEvent() to hold the logic
+that ignores certain click and tap events. Events in capture mode and
+events that hit menus, settings bubbles, and the virtual keyboard are
+ignored.
+
+Use the utility in the existing app list event filter as well as the
+new event filter for AppListBubble.
+
+This is a utility function, and not a base class, because there are
+differences in which events are tracked by the various event filters.
+For example, the system tray bubble closes immediately on touch
+press. However, the peeking launcher waits for a full tap, so that
+the launcher can stay open during swipe gestures on the shelf.
+
+Introduce capture_mode_util::IsCaptureModeActive() to encapsulate
+both the check for the feature flag and whether the feature is
+active. This avoids including capture_mode_controller.h, which
+is large due to transitive mojo includes.
+
+Bug: 1208083
+Test: ash_unittests
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3e764cd1fc5306e7f3ad5821aa5fda6c915956ea">I3e764cd1fc5306e7f3ad5821aa5fda6c915956ea</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2893591">https://chromium-review.googlesource.com/c/chromium/src/+/2893591</a>
+Reviewed-by: Andrew Xu &lt;andrewxu@chromium.org&gt;
+Commit-Queue: James Cook &lt;jamescook@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#882624}
 </pre>
 
 </body>
