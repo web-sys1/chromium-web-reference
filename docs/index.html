@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/882875/"> 882875</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/250be95d481c5d0807ec2f154e8a11f4a85ea8e9">250be95d481c5d0807ec2f154e8a11f4a85ea8e9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/882893/"> 882893</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5797c49879782ab5193f2b8f5ec76da5fb6b5ae6">5797c49879782ab5193f2b8f5ec76da5fb6b5ae6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/882893/">882893</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   250be95d481c5d0807ec2f154e8a11f4a85ea8e9
+   5797c49879782ab5193f2b8f5ec76da5fb6b5ae6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/250be95d481c5d0807ec2f154e8a11f4a85ea8e9">
+    <a href="/chromium/src/+log/5797c49879782ab5193f2b8f5ec76da5fb6b5ae6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/250be95d481c5d0807ec2f154e8a11f4a85ea8e9.tar.gz">
+    <a href="/chromium/src/+archive/5797c49879782ab5193f2b8f5ec76da5fb6b5ae6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   mlcui &lt;mlcui@google.com&gt;
+   Jérémie Boulic &lt;jboulic@chromium.org&gt;
   </td>
   <td>
-   Fri May 14 06:16:50 2021
+   Fri May 14 07:10:56 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri May 14 06:16:50 2021
+   Fri May 14 07:10:56 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/250be95d481c5d0807ec2f154e8a11f4a85ea8e9/">
-    ef42a376f198fe80fbe93670d66a1e84e7ca3d1f
+   <a href="/chromium/src/+/5797c49879782ab5193f2b8f5ec76da5fb6b5ae6/">
+    3295be80e9654cabe50a226d39f4a911d9a1e42b
    </a>
   </td>
  </tr>
@@ -166,30 +166,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/250be95d481c5d0807ec2f154e8a11f4a85ea8e9%5E">
-    7dc18bac805c24a6d19e11d48485a4c642dc89ad
+   <a href="/chromium/src/+/5797c49879782ab5193f2b8f5ec76da5fb6b5ae6%5E">
+    8f015da90e5be730fddffbb643efacc9d22b4afe
    </a>
    <span>
     [
-    <a href="/chromium/src/+/250be95d481c5d0807ec2f154e8a11f4a85ea8e9%5E%21/">
+    <a href="/chromium/src/+/5797c49879782ab5193f2b8f5ec76da5fb6b5ae6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">OsSettingsLanguages: Fix incorrect input section title
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add move CopyOrMoveProgressTypes
 
-For Language Settings V2 Update 2, we intended on using the title
-"Inputs and keyboards" for the title of the input section, but this was
-missed during the implementation.
+Move operations are often implemented as "copy + delete". Since the
+operation can potentially fail during the copy or the delete part,
+distinct events have to be sent for both "end of copy" and "end of
+source deletion". kEndRemoveSource has been added for the source
+deletion part.
 
-Bug: b/187999257
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I06a30d6ea5de80e74ece1f09b7e31fd2e27532a8">I06a30d6ea5de80e74ece1f09b7e31fd2e27532a8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2893883">https://chromium-review.googlesource.com/c/chromium/src/+/2893883</a>
-Commit-Queue: Michael Cui &lt;mlcui@google.com&gt;
-Reviewed-by: Regan Hsu &lt;hsuregan@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#882875}
+kEndMove added for local moves, where the files are just renamed.
+
+The file manager is the only user using a switch statement on all these
+events. Other users use each of these events individually.
+On the file manager side:
+- Update CopyProgressStatusType to CopyOrMoveProgressStatusType and
+include the new "end of source deletion" type.
+- For name consistency, rename CopyProgressStatus to
+CopyOrMoveProgressStatus.
+
+In <a href="https://chromiumcodereview.appspot.com/24208005,">https://chromiumcodereview.appspot.com/24208005,</a> it was decided to
+not send a |destination_url| until the destination entry has been fully
+created. A |destination_url| can be some useful information to have
+when receiving kBegin and kProgress events (UI update). kBegin and
+kProgress events have been updated to be fired with a |destination_url|.
+
+Bug: 1183701, 784193
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id4f6eb6921e34fd9920da09ac49f594a80fc7ff1">Id4f6eb6921e34fd9920da09ac49f594a80fc7ff1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2852945">https://chromium-review.googlesource.com/c/chromium/src/+/2852945</a>
+Commit-Queue: Jeremie Boulic &lt;jboulic@chromium.org&gt;
+Reviewed-by: Marijn Kruisselbrink &lt;mek@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#882893}
 </pre>
 
 </body>
