@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/882908/"> 882908</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/049dd2a66e81c60adb17f213f39a6be2961118b2">049dd2a66e81c60adb17f213f39a6be2961118b2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/882921/"> 882921</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f35a2dafd2687ca63f93b76bc9135e4075159863">f35a2dafd2687ca63f93b76bc9135e4075159863</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/882893/">882893</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5797c49879782ab5193f2b8f5ec76da5fb6b5ae6">5797c49879782ab5193f2b8f5ec76da5fb6b5ae6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/882908/">882908</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/049dd2a66e81c60adb17f213f39a6be2961118b2">049dd2a66e81c60adb17f213f39a6be2961118b2</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   049dd2a66e81c60adb17f213f39a6be2961118b2
+   f35a2dafd2687ca63f93b76bc9135e4075159863
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/049dd2a66e81c60adb17f213f39a6be2961118b2">
+    <a href="/chromium/src/+log/f35a2dafd2687ca63f93b76bc9135e4075159863">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/049dd2a66e81c60adb17f213f39a6be2961118b2.tar.gz">
+    <a href="/chromium/src/+archive/f35a2dafd2687ca63f93b76bc9135e4075159863.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+   Eric Seckler &lt;eseckler@chromium.org&gt;
   </td>
   <td>
-   Fri May 14 08:10:22 2021
+   Fri May 14 08:56:42 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri May 14 08:10:22 2021
+   Fri May 14 08:56:42 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/049dd2a66e81c60adb17f213f39a6be2961118b2/">
-    d0b39be36ca691d59d959b9b2c0f428743c90ec1
+   <a href="/chromium/src/+/f35a2dafd2687ca63f93b76bc9135e4075159863/">
+    427cf23ebd30bfc073ef806647eac38728fcbedf
    </a>
   </td>
  </tr>
@@ -166,51 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/049dd2a66e81c60adb17f213f39a6be2961118b2%5E">
-    db16cf2e3d780bc44f9af64e7d5d44e258a6996d
+   <a href="/chromium/src/+/f35a2dafd2687ca63f93b76bc9135e4075159863%5E">
+    890a09fecdc11862f94cc0d09ea26ad108d3f84a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/049dd2a66e81c60adb17f213f39a6be2961118b2%5E%21/">
+    <a href="/chromium/src/+/f35a2dafd2687ca63f93b76bc9135e4075159863%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prerender: Fix DCHECK failure on back navigation after activation
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "tools/perf: Disable desktop_ui/tab_search benchmarks"
 
-This CL fixes a DCHECK failure on back navigation from a prerendered
-page.
+This reverts commit 91894cf54df36356687223691eaaa59b867f3d63.
 
-The failure happens like this:
-Activating the prerendered page creates a speculative RenderFrameHost
-like regular navigation and decides whether to swap BrowsingInstance.
-Actually activation always swaps BrowsingInstance, so the speculative
-RenderFrameHost is cleared during activation. On the other hand, the
-swap decision unexpectedly still remains after activation, and that
-causes the DCHECK failure when the back navigation starts.
+Reason for revert: benchmarks fixed with crrev.com/c/2875149.
 
-To fix the failure, this CL clears the swap decision in
-RenderFrameHostManager::ActivatePrerender() along with the speculative
-RenderFrameHost.
+Original change's description:
+&gt; tools/perf: Disable desktop_ui/tab_search benchmarks
+&gt;
+&gt; Bug: 1205850
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id5792724844c34c4a87406b34fab6251eed292ba">Id5792724844c34c4a87406b34fab6251eed292ba</a>
+&gt; No-Try: True
+&gt; TBR: johnchen@chromium.org
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2874310">https://chromium-review.googlesource.com/c/chromium/src/+/2874310</a>
+&gt; Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+&gt; Commit-Queue: Sami Kyöstilä &lt;skyostil@chromium.org&gt;
+&gt; Commit-Queue: Eric Seckler &lt;eseckler@chromium.org&gt;
+&gt; Reviewed-by: Eric Seckler &lt;eseckler@chromium.org&gt;
+&gt; Reviewed-by: Sami Kyöstilä &lt;skyostil@chromium.org&gt;
+&gt; Auto-Submit: Eric Seckler &lt;eseckler@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/master@{#879336}
 
-Notes:
-- This failure happened only when the BFCache for cross-site is
-  enabled (the BFCache for same-site is disabled).
-- Same-origin prerender activation allows the previous page to be cached
-  even when the BFCache for same-site (same-origin) is disabled. This is
-  because prerender activation always swaps BrowsingInstance and it
-  makes the previous page cacheacble unlike regular same-origin
-  navigation.
-
-Bug: 1190197, 1201914
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ice5018bacf2a7669ce7875bb965c9c84a98a51e5">Ice5018bacf2a7669ce7875bb965c9c84a98a51e5</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2852601">https://chromium-review.googlesource.com/c/chromium/src/+/2852601</a>
-Commit-Queue: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
-Reviewed-by: Rakina Zata Amni &lt;rakina@chromium.org&gt;
-Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#882908}
+Bug: 1205850
+No-Try: True
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I369a4e4900b32c73eb2a37b8f64fe8d8a97f5834">I369a4e4900b32c73eb2a37b8f64fe8d8a97f5834</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2876192">https://chromium-review.googlesource.com/c/chromium/src/+/2876192</a>
+Reviewed-by: Eric Seckler &lt;eseckler@chromium.org&gt;
+Reviewed-by: Sami Kyöstilä &lt;skyostil@chromium.org&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Commit-Queue: Eric Seckler &lt;eseckler@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#882921}
 </pre>
 
 </body>
