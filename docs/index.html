@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/882840/"> 882840</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4d69544d80f5e5dede5b914bdfa291ffc134dab3">4d69544d80f5e5dede5b914bdfa291ffc134dab3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/882847/"> 882847</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a050bc371d8b7937d27620a6ddcbe6a61ae157e5">a050bc371d8b7937d27620a6ddcbe6a61ae157e5</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/882813/">882813</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2e22eb8a25524a258ac943c9157a2b20a084495a">2e22eb8a25524a258ac943c9157a2b20a084495a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/882848/">882848</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e3c4b6b9d3c3bc98a13a3f8aac6c717271c3f360">e3c4b6b9d3c3bc98a13a3f8aac6c717271c3f360</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4d69544d80f5e5dede5b914bdfa291ffc134dab3
+   a050bc371d8b7937d27620a6ddcbe6a61ae157e5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4d69544d80f5e5dede5b914bdfa291ffc134dab3">
+    <a href="/chromium/src/+log/a050bc371d8b7937d27620a6ddcbe6a61ae157e5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4d69544d80f5e5dede5b914bdfa291ffc134dab3.tar.gz">
+    <a href="/chromium/src/+archive/a050bc371d8b7937d27620a6ddcbe6a61ae157e5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   mlcui &lt;mlcui@google.com&gt;
+   Asami Doi &lt;asamidoi@chromium.org&gt;
   </td>
   <td>
-   Fri May 14 03:01:59 2021
+   Fri May 14 03:53:54 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri May 14 03:01:59 2021
+   Fri May 14 03:53:54 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4d69544d80f5e5dede5b914bdfa291ffc134dab3/">
-    2e371d4b16e44d3ba26b3ad343bfa1f7f987fb0c
+   <a href="/chromium/src/+/a050bc371d8b7937d27620a6ddcbe6a61ae157e5/">
+    ccee87f1201dfd2f3fc953f6535b71cd3bbc7732
    </a>
   </td>
  </tr>
@@ -166,36 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4d69544d80f5e5dede5b914bdfa291ffc134dab3%5E">
-    9304d92374021168b263dd63db73d2ce1a6a398a
+   <a href="/chromium/src/+/a050bc371d8b7937d27620a6ddcbe6a61ae157e5%5E">
+    4f7fa13723a3e54c749e761e82f0f464a52cac71
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4d69544d80f5e5dede5b914bdfa291ffc134dab3%5E%21/">
+    <a href="/chromium/src/+/a050bc371d8b7937d27620a6ddcbe6a61ae157e5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Delete deprecated CrOS languages and input page
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Call OnJavascriptDisallowed in the dtor of ServiceWorkerInternalsHandler
 
-This includes the tests referring to the deleted pages. Because some
-CrOS strings are unused (and deleted) as a result of this cleanup, this
-CL also removes all references to chromeos in the browser settings
-languages_subpage.html - said page is currently unused on CrOS, and the
-change prevents any missing i18n strings from being included in the page
-on CrOS - even if it is unused.
+OnJavascriptDisallowed() should be called to remove observers from the
+observer list when a page is destructed but it may not be called when
+1) TabStripModel::ShouldRunUnloadListenerBeforeClosing() returns true
+   and FastShutdownIfPossible() is not called.
+2) FastShutdownIfPossible() returns early and OnJavascriptDisallowed.
 
-Drive-by: Delete inputMethodsExpandA11yLabel and its strings, as it is
-unused, and add missing deps to js_library("os_languages_section.m").
+To avoid the above cases, this CL calls OnJavascriptDisallowed()
+in the destructor of ServiceWorkerInternalsHandler.
 
-Bug: 1097328, 1109431
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia6665485540cd34af80ed8726dcb3c03e2caf5fe">Ia6665485540cd34af80ed8726dcb3c03e2caf5fe</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2890019">https://chromium-review.googlesource.com/c/chromium/src/+/2890019</a>
-Commit-Queue: Michael Cui &lt;mlcui@google.com&gt;
-Reviewed-by: Zentaro Kavanagh &lt;zentaro@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#882840}
+Bug: 1199198
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2bd8836c292acbbb00cca0789d8fd5c63d29de86">I2bd8836c292acbbb00cca0789d8fd5c63d29de86</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2887386">https://chromium-review.googlesource.com/c/chromium/src/+/2887386</a>
+Commit-Queue: Asami Doi &lt;asamidoi@chromium.org&gt;
+Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#882847}
 </pre>
 
 </body>
