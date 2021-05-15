@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/883260/"> 883260</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1df1a4b91a4e8cf4e0ed15b0baca738520f137a5">1df1a4b91a4e8cf4e0ed15b0baca738520f137a5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/883261/"> 883261</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d59bf5d0103da69d9b824876204119bf2b2c642c">d59bf5d0103da69d9b824876204119bf2b2c642c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/883254/">883254</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1df1a4b91a4e8cf4e0ed15b0baca738520f137a5
+   d59bf5d0103da69d9b824876204119bf2b2c642c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1df1a4b91a4e8cf4e0ed15b0baca738520f137a5">
+    <a href="/chromium/src/+log/d59bf5d0103da69d9b824876204119bf2b2c642c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1df1a4b91a4e8cf4e0ed15b0baca738520f137a5.tar.gz">
+    <a href="/chromium/src/+archive/d59bf5d0103da69d9b824876204119bf2b2c642c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Rune Lillesveen &lt;futhark@chromium.org&gt;
+   Nico Weber &lt;thakis@chromium.org&gt;
   </td>
   <td>
-   Sat May 15 12:08:04 2021
+   Sat May 15 15:09:12 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat May 15 12:08:04 2021
+   Sat May 15 15:09:12 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1df1a4b91a4e8cf4e0ed15b0baca738520f137a5/">
-    6fc254d71aeac9c09557cd6f9f12b43584cc4f0b
+   <a href="/chromium/src/+/d59bf5d0103da69d9b824876204119bf2b2c642c/">
+    2fe319b50825de172f4999fdd4ef2a83e6e51cf3
    </a>
   </td>
  </tr>
@@ -166,43 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1df1a4b91a4e8cf4e0ed15b0baca738520f137a5%5E">
-    e4ad086be5a176a7ff43569c9d64e8e17a56f566
+   <a href="/chromium/src/+/d59bf5d0103da69d9b824876204119bf2b2c642c%5E">
+    1df1a4b91a4e8cf4e0ed15b0baca738520f137a5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1df1a4b91a4e8cf4e0ed15b0baca738520f137a5%5E%21/">
+    <a href="/chromium/src/+/d59bf5d0103da69d9b824876204119bf2b2c642c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Delay load event waiting for object/embed to trigger fetch
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Migrate remaining (public) gclient hooks to Python3."
 
-The HTML object and embed elements should fetch resources depending on
-"being rendered" and delay the load event for the document. Since we do
-not know if they are being rendered until we do an
-UpdateStyleAndLayoutTree, we need to delay the load event until an
-UpdateStyleAndLayoutTree has been invoked when an object/embed is
-inserted into the document.
+This reverts commit 83f46b01284d77a8001abf94ffec3c4cc7a55cf3.
 
-This has been handled by doing a call to UpdateStyleAndLayoutTree when
-the parsing finishes in Document. However, that meant updating
-style/layout tree based on incomplete styling information when waiting
-for styles to load.
+Reason for revert: Seems to break win_toolchain.py at least here:
+<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/win32-archive-rel/22154/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/win32-archive-rel/22154/overview</a>
 
-This CL skips the forced style and layout tree updates if we are waiting
-for render blocking stylesheets on parsing finished, and block the load
-event until an UpdateStyleAndLayoutTree has been run as part of the
-lifecycle update or a forced update via scripts.
+Original change's description:
+&gt; Migrate remaining (public) gclient hooks to Python3.
+&gt;
+&gt; This flips all of the hook scripts listed in //DEPS that
+&gt; weren't already using Python3 to use Python3.
+&gt;
+&gt; Bug: 1208028
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I357c9faf099561c618c2de9c6b2ea248317c7de5">I357c9faf099561c618c2de9c6b2ea248317c7de5</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2889373">https://chromium-review.googlesource.com/c/chromium/src/+/2889373</a>
+&gt; Commit-Queue: Dirk Pranke &lt;dpranke@google.com&gt;
+&gt; Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
+&gt; Reviewed-by: Edward Lesmes &lt;ehmaldonado@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/master@{#883230}
 
-Bug: 332189
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I76dc7b38817af44da6afe16aac6661ae8364edb4">I76dc7b38817af44da6afe16aac6661ae8364edb4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2871469">https://chromium-review.googlesource.com/c/chromium/src/+/2871469</a>
-Reviewed-by: Chris Harrelson &lt;chrishtr@chromium.org&gt;
-Commit-Queue: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#883260}
+Bug: 1208028
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7324c97b371d3ce68d18e2798c26198f485b59fb">I7324c97b371d3ce68d18e2798c26198f485b59fb</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2899118">https://chromium-review.googlesource.com/c/chromium/src/+/2899118</a>
+Auto-Submit: Nico Weber &lt;thakis@chromium.org&gt;
+Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/master@{#883261}
 </pre>
 
 </body>
