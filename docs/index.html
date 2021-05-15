@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/883261/"> 883261</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d59bf5d0103da69d9b824876204119bf2b2c642c">d59bf5d0103da69d9b824876204119bf2b2c642c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/883263/"> 883263</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6ae5212d4180dcfb7ca09c74f0d2de05f30ab5b2">6ae5212d4180dcfb7ca09c74f0d2de05f30ab5b2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/883254/">883254</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f5cb47bb1aa16b79a0918ffc3beb5e76c8fa0f2c">f5cb47bb1aa16b79a0918ffc3beb5e76c8fa0f2c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/883263/">883263</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6ae5212d4180dcfb7ca09c74f0d2de05f30ab5b2">6ae5212d4180dcfb7ca09c74f0d2de05f30ab5b2</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d59bf5d0103da69d9b824876204119bf2b2c642c
+   6ae5212d4180dcfb7ca09c74f0d2de05f30ab5b2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d59bf5d0103da69d9b824876204119bf2b2c642c">
+    <a href="/chromium/src/+log/6ae5212d4180dcfb7ca09c74f0d2de05f30ab5b2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d59bf5d0103da69d9b824876204119bf2b2c642c.tar.gz">
+    <a href="/chromium/src/+archive/6ae5212d4180dcfb7ca09c74f0d2de05f30ab5b2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nico Weber &lt;thakis@chromium.org&gt;
+   ssid &lt;ssid@chromium.org&gt;
   </td>
   <td>
-   Sat May 15 15:09:12 2021
+   Sat May 15 17:05:03 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat May 15 15:09:12 2021
+   Sat May 15 17:05:03 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d59bf5d0103da69d9b824876204119bf2b2c642c/">
-    2fe319b50825de172f4999fdd4ef2a83e6e51cf3
+   <a href="/chromium/src/+/6ae5212d4180dcfb7ca09c74f0d2de05f30ab5b2/">
+    43172e1db76687b7bab6ffed53a7694bafac6c36
    </a>
   </td>
  </tr>
@@ -166,49 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d59bf5d0103da69d9b824876204119bf2b2c642c%5E">
-    1df1a4b91a4e8cf4e0ed15b0baca738520f137a5
+   <a href="/chromium/src/+/6ae5212d4180dcfb7ca09c74f0d2de05f30ab5b2%5E">
+    35829808d53e7ee3a6ec3b971fdde4d9248c9724
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d59bf5d0103da69d9b824876204119bf2b2c642c%5E%21/">
+    <a href="/chromium/src/+/6ae5212d4180dcfb7ca09c74f0d2de05f30ab5b2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Migrate remaining (public) gclient hooks to Python3."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Handle failures in shared db
 
-This reverts commit 83f46b01284d77a8001abf94ffec3c4cc7a55cf3.
+1. Retry opening metadata database if failed to open as intended in
+   code.
+2. Keep track of number of times shared db failed to open due to any
+   reason. Destroy the db and create new one on too many failures.
 
-Reason for revert: Seems to break win_toolchain.py at least here:
-<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/win32-archive-rel/22154/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/win32-archive-rel/22154/overview</a>
+BUG=1003951
 
-Original change's description:
-&gt; Migrate remaining (public) gclient hooks to Python3.
-&gt;
-&gt; This flips all of the hook scripts listed in //DEPS that
-&gt; weren't already using Python3 to use Python3.
-&gt;
-&gt; Bug: 1208028
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I357c9faf099561c618c2de9c6b2ea248317c7de5">I357c9faf099561c618c2de9c6b2ea248317c7de5</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2889373">https://chromium-review.googlesource.com/c/chromium/src/+/2889373</a>
-&gt; Commit-Queue: Dirk Pranke &lt;dpranke@google.com&gt;
-&gt; Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
-&gt; Reviewed-by: Edward Lesmes &lt;ehmaldonado@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#883230}
-
-Bug: 1208028
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7324c97b371d3ce68d18e2798c26198f485b59fb">I7324c97b371d3ce68d18e2798c26198f485b59fb</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2899118">https://chromium-review.googlesource.com/c/chromium/src/+/2899118</a>
-Auto-Submit: Nico Weber &lt;thakis@chromium.org&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#883261}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id4fb87497a8710814f8a5b91c3117bbce9a8fbd5">Id4fb87497a8710814f8a5b91c3117bbce9a8fbd5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2881315">https://chromium-review.googlesource.com/c/chromium/src/+/2881315</a>
+Commit-Queue: ssid &lt;ssid@chromium.org&gt;
+Reviewed-by: Salvador Guerrero &lt;salg@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#883263}
 </pre>
 
 </body>
