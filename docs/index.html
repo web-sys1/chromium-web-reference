@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/883315/"> 883315</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c96bd4300d789bddd417d2c544d0e98557228b5e">c96bd4300d789bddd417d2c544d0e98557228b5e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/883318/"> 883318</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a613b275d8e820801248486346d1dda3a54a415c">a613b275d8e820801248486346d1dda3a54a415c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/883315/">883315</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c96bd4300d789bddd417d2c544d0e98557228b5e">c96bd4300d789bddd417d2c544d0e98557228b5e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/883318/">883318</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a613b275d8e820801248486346d1dda3a54a415c">a613b275d8e820801248486346d1dda3a54a415c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c96bd4300d789bddd417d2c544d0e98557228b5e
+   a613b275d8e820801248486346d1dda3a54a415c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c96bd4300d789bddd417d2c544d0e98557228b5e">
+    <a href="/chromium/src/+log/a613b275d8e820801248486346d1dda3a54a415c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c96bd4300d789bddd417d2c544d0e98557228b5e.tar.gz">
+    <a href="/chromium/src/+archive/a613b275d8e820801248486346d1dda3a54a415c.tar.gz">
      tgz
     </a>
     ]
@@ -137,7 +137,7 @@ body{
    Lei Zhang &lt;thestig@chromium.org&gt;
   </td>
   <td>
-   Sun May 16 06:07:18 2021
+   Sun May 16 06:40:14 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun May 16 06:07:18 2021
+   Sun May 16 06:40:14 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c96bd4300d789bddd417d2c544d0e98557228b5e/">
-    82e61bbb5e0719e2323a7c1f7994ade330114043
+   <a href="/chromium/src/+/a613b275d8e820801248486346d1dda3a54a415c/">
+    acf6fa66263706b0d4096687e04e726b81299679
    </a>
   </td>
  </tr>
@@ -166,30 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c96bd4300d789bddd417d2c544d0e98557228b5e%5E">
-    de9a7a2e6e4ed975040553016e8af69ba5c47657
+   <a href="/chromium/src/+/a613b275d8e820801248486346d1dda3a54a415c%5E">
+    e9773d0a9ed2bccecf05b24bc0f0fe2f15bd8482
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c96bd4300d789bddd417d2c544d0e98557228b5e%5E%21/">
+    <a href="/chromium/src/+/a613b275d8e820801248486346d1dda3a54a415c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PDF Viewer: Use correct touch selection coordinates.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Delete most remaining unused STL includes.
 
-Take the plugin offset into account in
-OutOfProcessInstance::SelectionChanged(). The plugin offset used to
-always be (0, 0), but that is no longer the case with the current UI.
+Headers that do not contain "std::" do not need STL includes.
 
-Bug: 1204734
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I66db693d97939eb89469664b65eded7b73827e18">I66db693d97939eb89469664b65eded7b73827e18</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2896096">https://chromium-review.googlesource.com/c/chromium/src/+/2896096</a>
+This CL is first mechanically generated as follows:
+
+INCL="algorithm|array|list|map|memory|queue|set|string|unordered_map|unordered_set|utility|vector"
+git ls-files | grep '\.h$' | xargs grep -L std:: | \
+    xargs grep -El "#include &lt;($INCL)&gt;$" &gt; to_process.txt
+
+Remove a bunch of third party files from to_process.txt.
+
+INCL_ESCAPED="$(echo $INCL|sed 's/|/\\|/g')"
+cat to_process.txt | xargs sed -i "/^#include &lt;\($INCL_ESCAPED\)&gt;$/d"
+cat to_process.txt | xargs sed -i '/^$/N;/^\n$/D'
+
+Then fix the build in rlz/.
+
+Bug: 1200833
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7c48cdb53ec85412b6331df626f2f5c4c0174faa">I7c48cdb53ec85412b6331df626f2f5c4c0174faa</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2896225">https://chromium-review.googlesource.com/c/chromium/src/+/2896225</a>
 Commit-Queue: Lei Zhang &lt;thestig@chromium.org&gt;
-Reviewed-by: Daniel Hosseinian &lt;dhoss@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#883315}
+Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
+Owners-Override: Nico Weber &lt;thakis@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#883318}
 </pre>
 
 </body>
