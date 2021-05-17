@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/883356/"> 883356</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5d4e6958e8f495e12903d4c0282d3b3e20982ad7">5d4e6958e8f495e12903d4c0282d3b3e20982ad7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/883363/"> 883363</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3a3c21fd8df59c7aa38f838f89b983561707850f">3a3c21fd8df59c7aa38f838f89b983561707850f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/883356/">883356</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5d4e6958e8f495e12903d4c0282d3b3e20982ad7">5d4e6958e8f495e12903d4c0282d3b3e20982ad7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/883365/">883365</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a1717ef24f300d648eb107bfc838236517932465">a1717ef24f300d648eb107bfc838236517932465</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5d4e6958e8f495e12903d4c0282d3b3e20982ad7
+   3a3c21fd8df59c7aa38f838f89b983561707850f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5d4e6958e8f495e12903d4c0282d3b3e20982ad7">
+    <a href="/chromium/src/+log/3a3c21fd8df59c7aa38f838f89b983561707850f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5d4e6958e8f495e12903d4c0282d3b3e20982ad7.tar.gz">
+    <a href="/chromium/src/+archive/3a3c21fd8df59c7aa38f838f89b983561707850f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jérémie Boulic &lt;jboulic@chromium.org&gt;
+   Julie Jeongeun Kim &lt;jkim@igalia.com&gt;
   </td>
   <td>
-   Mon May 17 03:26:14 2021
+   Mon May 17 04:30:21 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon May 17 03:26:14 2021
+   Mon May 17 04:30:21 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5d4e6958e8f495e12903d4c0282d3b3e20982ad7/">
-    75a5d6f092fcb84863da334cc9b849030fd9c326
+   <a href="/chromium/src/+/3a3c21fd8df59c7aa38f838f89b983561707850f/">
+    09d56a3613628b5eb55b2aaced85ec1b4ac715ac
    </a>
   </td>
  </tr>
@@ -166,49 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5d4e6958e8f495e12903d4c0282d3b3e20982ad7%5E">
-    cfe05ce453a0ba015025db86305881f40c35d24c
+   <a href="/chromium/src/+/3a3c21fd8df59c7aa38f838f89b983561707850f%5E">
+    5b5a5861e9fb8314bf003b2d20cbed46e37fa125
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5d4e6958e8f495e12903d4c0282d3b3e20982ad7%5E%21/">
+    <a href="/chromium/src/+/3a3c21fd8df59c7aa38f838f89b983561707850f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Dispatch new events for Move operation
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[mparch] Introduce PrerenderBrowserTest.TitleWhilePrerendering
 
-In CL:2852945, 2 new progress types have been added for the move
-operation, kEndMove and kEndRemoveSource.
+This CL adds PrerenderBrowserTest.TitleWhilePrerendering to test
+if the prerendering doesn't affect WebContents::GetTitle().
 
-This change implements the usage of these progress types:
-- kEndMove is sent upon completion of a local move (rename/update of
-entry metadata).
-- both kEndCopy and kEndRemoveSource are sent for a "copy + delete"
-move.
-
-The CopyOrMoveOperationDelegate defines 3 subclasses that implements the
-Copy and the Move operations.
-Before this change these subclasses were responsible for sending
-kProgress events. kEndCopy or kError were sent by the delegate itself
-upon completion of the copy.
-The 3 subclasses are now responsible for sending all these progress
-events, since multiple success events now potentially need to be
-reported (kEndCopy + kEndRemoveSource for a
-cross-filesystem move).
-
-Test (new progress events - status callback):
-storage_unittests --gtest_filter=LocalFileSystemCopyOrMoveOperationTest*
-storage_unittests --gtest_filter=FileSystemOperationImplTest.*
-
-Bug: 784193
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5fc113dda55f5ba1f54218077ef130af5d5e8ac5">I5fc113dda55f5ba1f54218077ef130af5d5e8ac5</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2856297">https://chromium-review.googlesource.com/c/chromium/src/+/2856297</a>
-Commit-Queue: Jeremie Boulic &lt;jboulic@chromium.org&gt;
-Reviewed-by: Marijn Kruisselbrink &lt;mek@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#883356}
+Bug: 1208556
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I00bab0a1343e484cae203e5a050257970c8ee96c">I00bab0a1343e484cae203e5a050257970c8ee96c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2891237">https://chromium-review.googlesource.com/c/chromium/src/+/2891237</a>
+Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
+Commit-Queue: Julie Kim &lt;jkim@igalia.com&gt;
+Cr-Commit-Position: refs/heads/master@{#883363}
 </pre>
 
 </body>
