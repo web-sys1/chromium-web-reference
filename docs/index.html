@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/883604/"> 883604</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8187e9f461f3b6ccf26b55c258e502dce6942990">8187e9f461f3b6ccf26b55c258e502dce6942990</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/883689/"> 883689</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cacf2eb66c10dfdf4a8682ff4a073980fd476b7f">cacf2eb66c10dfdf4a8682ff4a073980fd476b7f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/883624/">883624</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a2cb384e4f80697be6f0aab0c316a949c8f0d824">a2cb384e4f80697be6f0aab0c316a949c8f0d824</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/883671/">883671</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9068934556456181e0b914fdd642e33e62a0dafd">9068934556456181e0b914fdd642e33e62a0dafd</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8187e9f461f3b6ccf26b55c258e502dce6942990
+   cacf2eb66c10dfdf4a8682ff4a073980fd476b7f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8187e9f461f3b6ccf26b55c258e502dce6942990">
+    <a href="/chromium/src/+log/cacf2eb66c10dfdf4a8682ff4a073980fd476b7f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8187e9f461f3b6ccf26b55c258e502dce6942990.tar.gz">
+    <a href="/chromium/src/+archive/cacf2eb66c10dfdf4a8682ff4a073980fd476b7f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Scott Violet &lt;sky@chromium.org&gt;
+   Toni Barzic &lt;tbarzic@chromium.org&gt;
   </td>
   <td>
-   Mon May 17 20:44:24 2021
+   Mon May 17 23:00:54 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon May 17 20:44:24 2021
+   Mon May 17 23:00:54 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8187e9f461f3b6ccf26b55c258e502dce6942990/">
-    bca1b4a2148f58508cd4ca746722ee5f23f7fd40
+   <a href="/chromium/src/+/cacf2eb66c10dfdf4a8682ff4a073980fd476b7f/">
+    1fd47af44e6bbeb4fd7ccbb923282fe564cbeaeb
    </a>
   </td>
  </tr>
@@ -166,36 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8187e9f461f3b6ccf26b55c258e502dce6942990%5E">
-    c028f88a5c737d07d22e18139070a162564ea976
+   <a href="/chromium/src/+/cacf2eb66c10dfdf4a8682ff4a073980fd476b7f%5E">
+    2e52344252ccb72322fb24605e38fc050e15aa85
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8187e9f461f3b6ccf26b55c258e502dce6942990%5E%21/">
+    <a href="/chromium/src/+/cacf2eb66c10dfdf4a8682ff4a073980fd476b7f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">weblayer: make feature enabling work with field-trial
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Some tweaks for microphone mute notification
 
-Tests should be able to enable features that weblayer explicitly
-disables. ConfigureFeaturesIfNotSet() is intended for this. Enabling
-features via the command line may also include field-trial information.
-This patch makes ConfigureFeaturesIfNotSet() account for that. In
-particular, enabling a feature with a field trial is encoded in a single
-string with the parts separated  by '&lt;'. This makes parsing deal
-with this.
+*  Change the notification content depending on whether audio input
+   is mute due to a hardware switch
+*  If the audio input is *not* muted by a hardware switch, add a button
+   to unmute input
+*  Make the notification pinned so it doesn't get dismissed
+*  If microphone gets muted while an app is already using the
+   microphone, lower the notification priority so it doesn't get shown
+   (the user should already see a toast informing them that the
+   microphone is muted)
+*  Do not show notification when the number of active audio input
+   clients decreases (but do update the notification content, as the
+   active app name may change)
+*  Update strings to the newest version provided by UX writers.
 
-BUG=none
-TEST=none
+BUG=1201371
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idfdbf5626ec394ba5b5def6581fd8133a3f55411">Idfdbf5626ec394ba5b5def6581fd8133a3f55411</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2900770">https://chromium-review.googlesource.com/c/chromium/src/+/2900770</a>
-Reviewed-by: John Abd-El-Malek &lt;jam@chromium.org&gt;
-Commit-Queue: Scott Violet &lt;sky@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#883604}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iedc09ea1b62e6fa3f5149438b49965444b59972c">Iedc09ea1b62e6fa3f5149438b49965444b59972c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2898797">https://chromium-review.googlesource.com/c/chromium/src/+/2898797</a>
+Reviewed-by: Ahmed Mehfooz &lt;amehfooz@chromium.org&gt;
+Commit-Queue: Toni Baržić &lt;tbarzic@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#883689}
 </pre>
 
 </body>
