@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/884438/"> 884438</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/818e6c111e64d4b775c9afc80bede70f14288643">818e6c111e64d4b775c9afc80bede70f14288643</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/884485/"> 884485</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7a527624195ab0fcd9dd8a425b16a6799236fb25">7a527624195ab0fcd9dd8a425b16a6799236fb25</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/884469/">884469</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/55baeefdeff9edc6365496d9ae2a15aecb9f6a63">55baeefdeff9edc6365496d9ae2a15aecb9f6a63</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/884487/">884487</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b33fd425a9c6314d868b81bd9fa347f89995e1e2">b33fd425a9c6314d868b81bd9fa347f89995e1e2</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   818e6c111e64d4b775c9afc80bede70f14288643
+   7a527624195ab0fcd9dd8a425b16a6799236fb25
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/818e6c111e64d4b775c9afc80bede70f14288643">
+    <a href="/chromium/src/+log/7a527624195ab0fcd9dd8a425b16a6799236fb25">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/818e6c111e64d4b775c9afc80bede70f14288643.tar.gz">
+    <a href="/chromium/src/+archive/7a527624195ab0fcd9dd8a425b16a6799236fb25.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Finnur Thorarinsson &lt;finnur@chromium.org&gt;
+   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
   </td>
   <td>
-   Wed May 19 13:06:46 2021
+   Wed May 19 15:21:01 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed May 19 13:06:46 2021
+   Wed May 19 15:21:01 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/818e6c111e64d4b775c9afc80bede70f14288643/">
-    8a68261f1f4c0cf00943a5d1437ebe2ecb600400
+   <a href="/chromium/src/+/7a527624195ab0fcd9dd8a425b16a6799236fb25/">
+    6f6cd19fe5cb481872ae96f2a0b68e5eb4a58e40
    </a>
   </td>
  </tr>
@@ -166,32 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/818e6c111e64d4b775c9afc80bede70f14288643%5E">
-    ead6de4e28a2159c361221f6e5a92cc7c1308332
+   <a href="/chromium/src/+/7a527624195ab0fcd9dd8a425b16a6799236fb25%5E">
+    c2f14fe9bba3c9afddcd0798d31585b555dae34a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/818e6c111e64d4b775c9afc80bede70f14288643%5E%21/">
+    <a href="/chromium/src/+/7a527624195ab0fcd9dd8a425b16a6799236fb25%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Android] Add update notification dialog for PWA updates.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Avoid unconditional strong references to scroll-linked animations
 
-The dialog triggers only when a name/icon change is detected,
-for apps that need update confirmation.
+We currently store strong references to animations that attach to
+ScrollTimelines. The are only two ways for an animation to leave the
+strong set: (1) if the timeline of the animation is changed, and
+(2) via Animation::Disposed (GC finalizer). This is problematic, because
+ScrollTimelines are strongly referenced by their associated scroll
+source (see Node::RegisterScrollTimeline) while any animation is
+attached. Hence, as long we don't switch the timeline or GC the
+source Node, scroll-linked animations can *never* be garbage collected
+once they are attached to a ScrollTimeline, no matter how hard they are
+canceled and forgotten about by JS.
 
-Bug: 1205472
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I02e9be7043299207d4a74ec3cab14aa2b287abbb">I02e9be7043299207d4a74ec3cab14aa2b287abbb</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2843331">https://chromium-review.googlesource.com/c/chromium/src/+/2843331</a>
-Auto-Submit: Finnur Thorarinsson &lt;finnur@chromium.org&gt;
-Commit-Queue: Finnur Thorarinsson &lt;finnur@chromium.org&gt;
-Reviewed-by: Boris Sazonov &lt;bsazonov@chromium.org&gt;
-Reviewed-by: Ella Ge &lt;eirage@chromium.org&gt;
-Reviewed-by: Peter Kotwicz &lt;pkotwicz@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#884438}
+AnimationTimeline already has a system for keeping relevant animations
+
+animations that need updates. This should be sufficient for
+ScrollTimeline as well, so we can just remove ScrollTimeline::
+scroll_animations_ and use AnimationTimeline::GetAnimations
+whenever we need to iterate through the animations attached to the
+ScrollTimeline.
+
+alive: a weak set for all attached animations, and a strong set for
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3e3a11567fbc97b4d5fbfae34d62f3e3c5633b39">I3e3a11567fbc97b4d5fbfae34d62f3e3c5633b39</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2876787">https://chromium-review.googlesource.com/c/chromium/src/+/2876787</a>
+Reviewed-by: Kevin Ellis &lt;kevers@chromium.org&gt;
+Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#884485}
 </pre>
 
 </body>
