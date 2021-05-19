@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/884179/"> 884179</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d4cb7f932026983364138f1083fbdca949074d92">d4cb7f932026983364138f1083fbdca949074d92</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/884203/"> 884203</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2f23573fb5940332abb8ba2a5388cc5fd50f7efc">2f23573fb5940332abb8ba2a5388cc5fd50f7efc</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/884179/">884179</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d4cb7f932026983364138f1083fbdca949074d92">d4cb7f932026983364138f1083fbdca949074d92</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/884205/">884205</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bb859ba64f882195b656f8aa55c6bcf92f66559d">bb859ba64f882195b656f8aa55c6bcf92f66559d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d4cb7f932026983364138f1083fbdca949074d92
+   2f23573fb5940332abb8ba2a5388cc5fd50f7efc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d4cb7f932026983364138f1083fbdca949074d92">
+    <a href="/chromium/src/+log/2f23573fb5940332abb8ba2a5388cc5fd50f7efc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d4cb7f932026983364138f1083fbdca949074d92.tar.gz">
+    <a href="/chromium/src/+archive/2f23573fb5940332abb8ba2a5388cc5fd50f7efc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Matt Menke &lt;mmenke@chromium.org&gt;
+   Sigurdur Asgeirsson &lt;siggi@chromium.org&gt;
   </td>
   <td>
-   Tue May 18 22:11:24 2021
+   Tue May 18 23:00:19 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue May 18 22:11:24 2021
+   Tue May 18 23:00:19 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d4cb7f932026983364138f1083fbdca949074d92/">
-    1e62146aa2627c243131fd40545de3e5da7aa6d2
+   <a href="/chromium/src/+/2f23573fb5940332abb8ba2a5388cc5fd50f7efc/">
+    cf03f1c7336e70821dd56c497c6f0e440b215fe2
    </a>
   </td>
  </tr>
@@ -166,39 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d4cb7f932026983364138f1083fbdca949074d92%5E">
-    f64b004d04dffe69f714987a7aada43e6bb72e2e
+   <a href="/chromium/src/+/2f23573fb5940332abb8ba2a5388cc5fd50f7efc%5E">
+    f878fcbe4b6542879a96e541ca785a6de5ef3a32
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d4cb7f932026983364138f1083fbdca949074d92%5E%21/">
+    <a href="/chromium/src/+/2f23573fb5940332abb8ba2a5388cc5fd50f7efc%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">FLEDGE: Move safety checking to AuctionRunner and use ReportBadMessage.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Retire ScopedObserver in /ios/chrome/browser/ui/fullscreen.
 
-Previously, AdAuction had safety checking for values received
-over Mojo from AuctionRunner. Now that AuctionRunner is in the browser
-process, it can use finer grained safety checks for values received
-over each Mojo type, and it can reject bids individually from bidder
-worklets that somehow manage to send bad data.
+ScopedObserver is being deprecated in favor of two new classes:
+- base::ScopedObservation for observers that only ever observe
+  a single source.
+- base::ScopedMultiSourceObservation for observers that do or may
+  observe more than a single source.
 
-Since AuctionRunner has a unit test fixture, too, this CL also adds
-tests.
+This CL was uploaded by git cl split.
 
-We want to (mostly) merge AuctionRunner and AdAuction, perhaps using
-a delegate/helper class for InterestGroup lookups, for easier unit
-testing, and this is a step in that direction.
+R=sczs@chromium.org
 
-Bug: 1205517
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I15bfae8c46439de5fe7d6d274c886a059ab4fc3f">I15bfae8c46439de5fe7d6d274c886a059ab4fc3f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2892804">https://chromium-review.googlesource.com/c/chromium/src/+/2892804</a>
-Commit-Queue: Matt Menke &lt;mmenke@chromium.org&gt;
-Reviewed-by: Maksim Orlovich &lt;morlovich@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#884179}
+Bug: 1145565
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5c37e78153bfc03a071b1e69b6b6ec8ced1de83b">I5c37e78153bfc03a071b1e69b6b6ec8ced1de83b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2904169">https://chromium-review.googlesource.com/c/chromium/src/+/2904169</a>
+Auto-Submit: Sigurður Ásgeirsson &lt;siggi@chromium.org&gt;
+Commit-Queue: Sergio Collazos &lt;sczs@chromium.org&gt;
+Reviewed-by: Sergio Collazos &lt;sczs@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#884203}
 </pre>
 
 </body>
