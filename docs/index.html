@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/885086/"> 885086</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3">19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/885135/"> 885135</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ab531c265c533cba1c2f6d8240cc0bf7679f605a">ab531c265c533cba1c2f6d8240cc0bf7679f605a</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/885082/">885082</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0e367128ebb73d1bfd9bec5a0d9a7d2b8638db6">f0e367128ebb73d1bfd9bec5a0d9a7d2b8638db6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/885133/">885133</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a6272c7e16706a3c081c3933306d0170f01d79ad">a6272c7e16706a3c081c3933306d0170f01d79ad</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3
+   ab531c265c533cba1c2f6d8240cc0bf7679f605a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3">
+    <a href="/chromium/src/+log/ab531c265c533cba1c2f6d8240cc0bf7679f605a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3.tar.gz">
+    <a href="/chromium/src/+archive/ab531c265c533cba1c2f6d8240cc0bf7679f605a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
+   Reid Kleckner &lt;rnk@google.com&gt;
   </td>
   <td>
-   Thu May 20 17:39:18 2021
+   Thu May 20 18:53:54 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 20 17:39:18 2021
+   Thu May 20 18:53:54 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3/">
-    aa0020ba69d357c98288ea108cd50f5845b6e150
+   <a href="/chromium/src/+/ab531c265c533cba1c2f6d8240cc0bf7679f605a/">
+    4f5b0944148eb9f5c7896272a53d5aa8412544df
    </a>
   </td>
  </tr>
@@ -166,39 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3%5E">
-    6afaae1d3a1ad276741d6d481d3ebc4ccb608aa6
+   <a href="/chromium/src/+/ab531c265c533cba1c2f6d8240cc0bf7679f605a%5E">
+    05c0c301eb582de4593255ccba4b6f33d236b5d7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3%5E%21/">
+    <a href="/chromium/src/+/ab531c265c533cba1c2f6d8240cc0bf7679f605a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Image descriptions should check security origin, not document url.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Enable ghashing at symbol_level 1 for faster links
 
-The image descriptions feature is limited by protocol: only allowed
-on http, https, file, and data urls. However, checking the document
-url isn't the best way to determine this, because an iframe created
-by a parent document without a "src" will appear to have a url of
-"about:blank", but it's actually controlled by its parent document.
+There is still type info emitted at symbol_level=1, and ghashing is just
+faster now.  Total link time of chrome.dll with symbol_level=1,
+coverage, and optimizations goes from 94353 ms to 84183 ms. Ghashing is
+done in parallel, but legacy type merging is not.
 
-The solution is to check the security origin, which returns the
-correct protocol of the owning document if different.
+R=thakis@chromium.org
 
-This enables the image description feature to work in Google Docs,
-among other places.
-
-Bug: 1211002
-AX-Relnotes: Fixes issue where automatic image descriptions weren't being generated in some iframes.
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib41b0e16b3970948dd10654774c3576b70cc6588">Ib41b0e16b3970948dd10654774c3576b70cc6588</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2906774">https://chromium-review.googlesource.com/c/chromium/src/+/2906774</a>
-Reviewed-by: Abigail Klein &lt;abigailbklein@google.com&gt;
-Commit-Queue: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#885086}
+Bug: 1005896
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibc1548cc4f41459edd83acfc12cb414bd850e772">Ibc1548cc4f41459edd83acfc12cb414bd850e772</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2910954">https://chromium-review.googlesource.com/c/chromium/src/+/2910954</a>
+Commit-Queue: Reid Kleckner &lt;rnk@chromium.org&gt;
+Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#885135}
 </pre>
 
 </body>
