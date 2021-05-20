@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/885007/"> 885007</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/562a694ba8b030761bc0667e41a545dcfe97d5ea">562a694ba8b030761bc0667e41a545dcfe97d5ea</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/885046/"> 885046</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3f86025096c130bdafc62aaaa86fd7990fa97440">3f86025096c130bdafc62aaaa86fd7990fa97440</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/885014/">885014</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f6725a2e23caab4f5abd0632964042dcdb77572d">f6725a2e23caab4f5abd0632964042dcdb77572d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/885033/">885033</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/702f4d4ddb963cafb0d133972282dfc803510b75">702f4d4ddb963cafb0d133972282dfc803510b75</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   562a694ba8b030761bc0667e41a545dcfe97d5ea
+   3f86025096c130bdafc62aaaa86fd7990fa97440
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/562a694ba8b030761bc0667e41a545dcfe97d5ea">
+    <a href="/chromium/src/+log/3f86025096c130bdafc62aaaa86fd7990fa97440">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/562a694ba8b030761bc0667e41a545dcfe97d5ea.tar.gz">
+    <a href="/chromium/src/+archive/3f86025096c130bdafc62aaaa86fd7990fa97440.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Vincent Boisselle &lt;vincb@google.com&gt;
+   Brian Geffon &lt;bgeffon@chromium.org&gt;
   </td>
   <td>
-   Thu May 20 14:07:45 2021
+   Thu May 20 15:55:57 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 20 14:07:45 2021
+   Thu May 20 15:55:57 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/562a694ba8b030761bc0667e41a545dcfe97d5ea/">
-    c25c1d3b871950b7f6686cf9521f3616acdfe877
+   <a href="/chromium/src/+/3f86025096c130bdafc62aaaa86fd7990fa97440/">
+    44d203a07b33735851463b502825119158c7aea5
    </a>
   </td>
  </tr>
@@ -166,55 +166,28 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/562a694ba8b030761bc0667e41a545dcfe97d5ea%5E">
-    3def238f21ed39dd67b1221f430c56462ae6e6e4
+   <a href="/chromium/src/+/3f86025096c130bdafc62aaaa86fd7990fa97440%5E">
+    d8dd5da8aef33e1be9fa74ad21a8242d43759f9a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/562a694ba8b030761bc0667e41a545dcfe97d5ea%5E%21/">
+    <a href="/chromium/src/+/3f86025096c130bdafc62aaaa86fd7990fa97440%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS]Partially replace isPresentingFirstRunUI by a FRE init stage
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Mojo: Linux channel break out of loop on read fail
 
-This is a subtask of moving FRE to an app state agent
-(crbug.com/1178821).
+Make sure we break out of both loops on read issues.
 
-We introduce a new InitStageFirstRun that sits between InitStageSafeMode
-and InitStageFinal. The app will remain in InitStageFirstRun while the
-FRE screens are being presented. The app will transition out of that
-stage when FRE is done.
-
-We still need to keep isPresentingFirstRunUI around during the
-initialization of the UI to propagate the information immediately to the
-other scenes, which isn't possible with init stages. This issue will be
-solve when the FRE is in an agent.
-
-The foreground active level branch in the scene controller will only
-be called when transitioned to the final stage out of the FRE.This
-code branch takes care of showing sign-in promo, handling external
-intents, and showing the startup surface if necessary.
-
-The post-FRE behaviour will be the exact same as the regular startup
-behaviour where a part of the UI is handled when the scene is active
-in the foreground. This will avoid ad hoc init code to handle post-FRE.
-
-Tested these cases (see crbug.com/1207586 for more details):
-  1) FRE with intents
-  2) FRE and restoration
-  3) FRE and regular startup
-  4) FRE and multi windows
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6281fdaeec5e9066ec6c9b6b808982d227b585df">I6281fdaeec5e9066ec6c9b6b808982d227b585df</a>
-Bug: 1207586
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2876445">https://chromium-review.googlesource.com/c/chromium/src/+/2876445</a>
-Reviewed-by: Rohit Rao &lt;rohitrao@chromium.org&gt;
-Reviewed-by: Stepan Khapugin &lt;stkhapugin@chromium.org&gt;
-Commit-Queue: Rohit Rao &lt;rohitrao@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#885007}
+Bug: chromium:1175855
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I979a06bb526fe32a03be5bfe5d04f737518e3646">I979a06bb526fe32a03be5bfe5d04f737518e3646</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2907112">https://chromium-review.googlesource.com/c/chromium/src/+/2907112</a>
+Reviewed-by: Ken Rockot &lt;rockot@google.com&gt;
+Commit-Queue: Brian Geffon &lt;bgeffon@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#885046}
 </pre>
 
 </body>
