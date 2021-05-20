@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/885061/"> 885061</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9b00b52a440ed96a3bd52e3e5f5fccfa33fc1dd4">9b00b52a440ed96a3bd52e3e5f5fccfa33fc1dd4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/885086/"> 885086</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3">19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/885033/">885033</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/702f4d4ddb963cafb0d133972282dfc803510b75">702f4d4ddb963cafb0d133972282dfc803510b75</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/885082/">885082</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0e367128ebb73d1bfd9bec5a0d9a7d2b8638db6">f0e367128ebb73d1bfd9bec5a0d9a7d2b8638db6</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9b00b52a440ed96a3bd52e3e5f5fccfa33fc1dd4
+   19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9b00b52a440ed96a3bd52e3e5f5fccfa33fc1dd4">
+    <a href="/chromium/src/+log/19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9b00b52a440ed96a3bd52e3e5f5fccfa33fc1dd4.tar.gz">
+    <a href="/chromium/src/+archive/19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ryan Sturm &lt;ryansturm@chromium.org&gt;
+   Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
   </td>
   <td>
-   Thu May 20 16:46:12 2021
+   Thu May 20 17:39:18 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 20 16:46:12 2021
+   Thu May 20 17:39:18 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9b00b52a440ed96a3bd52e3e5f5fccfa33fc1dd4/">
-    410f39e925d0b2595b7e82db0891e0e2676d1b2e
+   <a href="/chromium/src/+/19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3/">
+    aa0020ba69d357c98288ea108cd50f5845b6e150
    </a>
   </td>
  </tr>
@@ -166,31 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9b00b52a440ed96a3bd52e3e5f5fccfa33fc1dd4%5E">
-    520287b8d26d0642f5495f67306c34587310659a
+   <a href="/chromium/src/+/19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3%5E">
+    6afaae1d3a1ad276741d6d481d3ebc4ccb608aa6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9b00b52a440ed96a3bd52e3e5f5fccfa33fc1dd4%5E%21/">
+    <a href="/chromium/src/+/19ec52ce9968f9e3cf8b17a5c0f5747da06fb4e3%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add prefetch_with_subresources same origin support (speculations)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Image descriptions should check security origin, not document url.
 
-This CL adds speculation hints support for same origin prefetch with
-subresources. To achieve this, a navigation throttle verifies that the
-main frame resource stays in the same origin as the initator origin.
-Subresources may be cross origin from the main frame resource.
+The image descriptions feature is limited by protocol: only allowed
+on http, https, file, and data urls. However, checking the document
+url isn't the best way to determine this, because an iframe created
+by a parent document without a "src" will appear to have a url of
+"about:blank", but it's actually controlled by its parent document.
 
-Bug: 1190331
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6ff5737a211838ae777b8a12bc2be1e889c0c4b3">I6ff5737a211838ae777b8a12bc2be1e889c0c4b3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2908112">https://chromium-review.googlesource.com/c/chromium/src/+/2908112</a>
-Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
-Commit-Queue: Ryan Sturm &lt;ryansturm@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#885061}
+The solution is to check the security origin, which returns the
+correct protocol of the owning document if different.
+
+This enables the image description feature to work in Google Docs,
+among other places.
+
+Bug: 1211002
+AX-Relnotes: Fixes issue where automatic image descriptions weren't being generated in some iframes.
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib41b0e16b3970948dd10654774c3576b70cc6588">Ib41b0e16b3970948dd10654774c3576b70cc6588</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2906774">https://chromium-review.googlesource.com/c/chromium/src/+/2906774</a>
+Reviewed-by: Abigail Klein &lt;abigailbklein@google.com&gt;
+Commit-Queue: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#885086}
 </pre>
 
 </body>
