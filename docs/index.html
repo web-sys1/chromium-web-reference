@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/885856/"> 885856</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3531eb9e91b70f950760fb1cd049892ee80bd1dd">3531eb9e91b70f950760fb1cd049892ee80bd1dd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/885859/"> 885859</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/59624b2d0a9c6b3179494dc7dc56a1f8298027d4">59624b2d0a9c6b3179494dc7dc56a1f8298027d4</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/885849/">885849</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3531eb9e91b70f950760fb1cd049892ee80bd1dd
+   59624b2d0a9c6b3179494dc7dc56a1f8298027d4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3531eb9e91b70f950760fb1cd049892ee80bd1dd">
+    <a href="/chromium/src/+log/59624b2d0a9c6b3179494dc7dc56a1f8298027d4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3531eb9e91b70f950760fb1cd049892ee80bd1dd.tar.gz">
+    <a href="/chromium/src/+archive/59624b2d0a9c6b3179494dc7dc56a1f8298027d4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jinsuk Kim &lt;jinsukkim@chromium.org&gt;
+   Dominic Farolino &lt;dom@chromium.org&gt;
   </td>
   <td>
-   Mon May 24 01:48:34 2021
+   Mon May 24 02:43:41 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon May 24 01:48:34 2021
+   Mon May 24 02:43:41 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3531eb9e91b70f950760fb1cd049892ee80bd1dd/">
-    0f5b3ccc1724ae384672ff729e1400b60a3d939b
+   <a href="/chromium/src/+/59624b2d0a9c6b3179494dc7dc56a1f8298027d4/">
+    36b5828ac7abfc8ff8e7ce084f6262f6a5053677
    </a>
   </td>
  </tr>
@@ -166,31 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3531eb9e91b70f950760fb1cd049892ee80bd1dd%5E">
-    0632adeccca8af11922d691478170f85c907f862
+   <a href="/chromium/src/+/59624b2d0a9c6b3179494dc7dc56a1f8298027d4%5E">
+    4e2d1fddad880a617653af09b86de01a373bf631
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3531eb9e91b70f950760fb1cd049892ee80bd1dd%5E%21/">
+    <a href="/chromium/src/+/59624b2d0a9c6b3179494dc7dc56a1f8298027d4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Android: Remove some tab observables
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Always use browser-supplied IO TaskRunner for in-browser RenderProcesses
 
-Now that ActivityTabProvider is ObservableSupplierImpl&lt;Tab&gt;,
-use it directly where the type is required, and deletes
-the observables that are not necessary any more.
+Before this CL, RenderThreadImpl::GetIOTaskRunner() exists as an
+override of ChildThreadImpl::GetIOTaskRunner(). ChildThreadImpl's
+version would return the browser-process-supplied TaskRunner if the
+ChildProcess is running in-browser, and return
+ChildProcess::current()-&gt;io_task_runner() otherwise. But
+RenderThreadImpl::GetIOTaskRunner() would *always* return
+ChildProcess::current()-&gt;io_task_runner().
 
-Bug: 1100717
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iada8e7017716b934acc6fdd76e89c15a783c2793">Iada8e7017716b934acc6fdd76e89c15a783c2793</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2896654">https://chromium-review.googlesource.com/c/chromium/src/+/2896654</a>
-Commit-Queue: Jinsuk Kim &lt;jinsukkim@chromium.org&gt;
-Reviewed-by: Filip Gorski &lt;fgorski@chromium.org&gt;
-Reviewed-by: Theresa  &lt;twellington@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#885856}
+I believe this is causing a subtle multi-year-long race condition in
+RenderThreadImplBrowserTest, as described by the design doc below [1].
+We can land this and verify that the test stops being flaky on the CQ,
+and all should be well. However, this change has non-test consequences
+as well.
+
+[1]:
+<a href="https://docs.google.com/document/d/1lzyEc8g5BcfV67SDgBylJhl1_5HAVGjcXRuiD_ydZEw/edit">https://docs.google.com/document/d/1lzyEc8g5BcfV67SDgBylJhl1_5HAVGjcXRuiD_ydZEw/edit</a>
+
+Bug: 1126157
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib9e940e322e89f35e446b223222f7675f312c197">Ib9e940e322e89f35e446b223222f7675f312c197</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2913006">https://chromium-review.googlesource.com/c/chromium/src/+/2913006</a>
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Commit-Queue: Dominic Farolino &lt;dom@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#885859}
 </pre>
 
 </body>
