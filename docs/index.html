@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/885911/"> 885911</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9d3ade69094fd52040e22e1f24c9850157a93e5b">9d3ade69094fd52040e22e1f24c9850157a93e5b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/885917/"> 885917</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/95dff4e45d9ec28db149df49c8113b4bdd5edd76">95dff4e45d9ec28db149df49c8113b4bdd5edd76</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/885912/">885912</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/81a2537fd68082d9c10a5bdd55f783388842abef">81a2537fd68082d9c10a5bdd55f783388842abef</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/885918/">885918</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5901bf42964cf94c9d0b06b6cf16d4bf5d36e98f">5901bf42964cf94c9d0b06b6cf16d4bf5d36e98f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9d3ade69094fd52040e22e1f24c9850157a93e5b
+   95dff4e45d9ec28db149df49c8113b4bdd5edd76
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9d3ade69094fd52040e22e1f24c9850157a93e5b">
+    <a href="/chromium/src/+log/95dff4e45d9ec28db149df49c8113b4bdd5edd76">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9d3ade69094fd52040e22e1f24c9850157a93e5b.tar.gz">
+    <a href="/chromium/src/+archive/95dff4e45d9ec28db149df49c8113b4bdd5edd76.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Koji Ishii &lt;kojii@chromium.org&gt;
+   arthursonzogni &lt;arthursonzogni@chromium.org&gt;
   </td>
   <td>
-   Mon May 24 09:45:29 2021
+   Mon May 24 10:35:34 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon May 24 09:45:29 2021
+   Mon May 24 10:35:34 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9d3ade69094fd52040e22e1f24c9850157a93e5b/">
-    36526bc84c25a80b312f3b28b5e88bb7e0ba0300
+   <a href="/chromium/src/+/95dff4e45d9ec28db149df49c8113b4bdd5edd76/">
+    72d52ee06e92bd8d83878a13dd63e03978f8f05b
    </a>
   </td>
  </tr>
@@ -166,35 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9d3ade69094fd52040e22e1f24c9850157a93e5b%5E">
-    c07ae41baff0f213e31845eb1cdfa1d354e598ec
+   <a href="/chromium/src/+/95dff4e45d9ec28db149df49c8113b4bdd5edd76%5E">
+    a289766de4392815a66522808c080b20a74f0118
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9d3ade69094fd52040e22e1f24c9850157a93e5b%5E%21/">
+    <a href="/chromium/src/+/95dff4e45d9ec28db149df49c8113b4bdd5edd76%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Eliminate unnecessary parameters in `AddHyphen`
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">COOP/COI: Cleanup expired flags.
 
-The `const NGInlineItem&amp; item` parameter in `AddHyphen` is
-always the same as `item_result-&gt;item`. crrev.com/c/2909605
-assumed that with DCHECK.
+Remove the about flags:
+- cross-origin-opener-policy-reporting,
+- cross-origin-opener-policy-access-reorting,
+- cross-origin-isolated
 
-This patch eliminates the parapmeter.
+Remove the feature flag: kCrossOriginIsolated.
 
-This patch has no behavior changes.
+The two other feature flags are kept for a few more releases:
+- kCrossOriginOpenerPolicyReporting
+- kCrossOriginOpenerPolicyAccessReporting
+This is just in case a security/privacy bug if found. We can disable
+the feature quickly using Finch. Disabling reporting doesn't break
+website.
 
-Bug: 1211408
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I62e45703eec59c9edd0fc24890532d4a94f0a681">I62e45703eec59c9edd0fc24890532d4a94f0a681</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2913479">https://chromium-review.googlesource.com/c/chromium/src/+/2913479</a>
-Reviewed-by: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
-Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#885911}
+On the other side, disabling kCrossOriginIsolated using Finch would
+break websites, so this would anyway do more harm than good. No need
+to keep it any longer.
+
+Bug: 1207857
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I39bf8f80e9cd022c5d35d2d8e0bc1809f0479e0d">I39bf8f80e9cd022c5d35d2d8e0bc1809f0479e0d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2886000">https://chromium-review.googlesource.com/c/chromium/src/+/2886000</a>
+Commit-Queue: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
+Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#885917}
 </pre>
 
 </body>
