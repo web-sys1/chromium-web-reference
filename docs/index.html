@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/885859/"> 885859</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/59624b2d0a9c6b3179494dc7dc56a1f8298027d4">59624b2d0a9c6b3179494dc7dc56a1f8298027d4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/885870/"> 885870</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/256e7ce61d39136fb84244ba819f79badcc79d89">256e7ce61d39136fb84244ba819f79badcc79d89</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/885857/">885857</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   59624b2d0a9c6b3179494dc7dc56a1f8298027d4
+   256e7ce61d39136fb84244ba819f79badcc79d89
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/59624b2d0a9c6b3179494dc7dc56a1f8298027d4">
+    <a href="/chromium/src/+log/256e7ce61d39136fb84244ba819f79badcc79d89">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/59624b2d0a9c6b3179494dc7dc56a1f8298027d4.tar.gz">
+    <a href="/chromium/src/+archive/256e7ce61d39136fb84244ba819f79badcc79d89.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Dominic Farolino &lt;dom@chromium.org&gt;
+   Tim Sergeant &lt;tsergeant@chromium.org&gt;
   </td>
   <td>
-   Mon May 24 02:43:41 2021
+   Mon May 24 04:02:34 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon May 24 02:43:41 2021
+   Mon May 24 04:02:34 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/59624b2d0a9c6b3179494dc7dc56a1f8298027d4/">
-    36b5828ac7abfc8ff8e7ce084f6262f6a5053677
+   <a href="/chromium/src/+/256e7ce61d39136fb84244ba819f79badcc79d89/">
+    ab3dec7e0a1da4b3946efd85c707f337f18f55e6
    </a>
   </td>
  </tr>
@@ -166,43 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/59624b2d0a9c6b3179494dc7dc56a1f8298027d4%5E">
-    4e2d1fddad880a617653af09b86de01a373bf631
+   <a href="/chromium/src/+/256e7ce61d39136fb84244ba819f79badcc79d89%5E">
+    6db4669e3f84158da7a5f3d8d98b1851045625a4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/59624b2d0a9c6b3179494dc7dc56a1f8298027d4%5E%21/">
+    <a href="/chromium/src/+/256e7ce61d39136fb84244ba819f79badcc79d89%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Always use browser-supplied IO TaskRunner for in-browser RenderProcesses
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CrOS WebAPKS] Fix test flakiness caused by DBusThreadManager
 
-Before this CL, RenderThreadImpl::GetIOTaskRunner() exists as an
-override of ChildThreadImpl::GetIOTaskRunner(). ChildThreadImpl's
-version would return the browser-process-supplied TaskRunner if the
-ChildProcess is running in-browser, and return
-ChildProcess::current()-&gt;io_task_runner() otherwise. But
-RenderThreadImpl::GetIOTaskRunner() would *always* return
-ChildProcess::current()-&gt;io_task_runner().
+ArcAppTest starts DBusThreadManager in SetUp, but WebAPK tests
+were not shutting it down in TearDown. This was causing flakiness
+in other tests which expect DBusThreadManager to be shut down
+before their test runs.
 
-I believe this is causing a subtle multi-year-long race condition in
-RenderThreadImplBrowserTest, as described by the design doc below [1].
-We can land this and verify that the test stops being flaky on the CQ,
-and all should be well. However, this change has non-test consequences
-as well.
-
-[1]:
-<a href="https://docs.google.com/document/d/1lzyEc8g5BcfV67SDgBylJhl1_5HAVGjcXRuiD_ydZEw/edit">https://docs.google.com/document/d/1lzyEc8g5BcfV67SDgBylJhl1_5HAVGjcXRuiD_ydZEw/edit</a>
-
-Bug: 1126157
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib9e940e322e89f35e446b223222f7675f312c197">Ib9e940e322e89f35e446b223222f7675f312c197</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2913006">https://chromium-review.googlesource.com/c/chromium/src/+/2913006</a>
-Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Commit-Queue: Dominic Farolino &lt;dom@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#885859}
+Bug: 956719, 1198433
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iac9c3dae276ff43d2f1aee5c23711df47fc15bcb">Iac9c3dae276ff43d2f1aee5c23711df47fc15bcb</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2912243">https://chromium-review.googlesource.com/c/chromium/src/+/2912243</a>
+Auto-Submit: Tim Sergeant &lt;tsergeant@chromium.org&gt;
+Commit-Queue: Melissa Zhang &lt;melzhang@chromium.org&gt;
+Reviewed-by: David Bienvenu &lt;davidbienvenu@chromium.org&gt;
+Reviewed-by: Melissa Zhang &lt;melzhang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#885870}
 </pre>
 
 </body>
