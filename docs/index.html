@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/886166/"> 886166</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b47162db7fd32bf78037e258e18a3a8c28a2a8ae">b47162db7fd32bf78037e258e18a3a8c28a2a8ae</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/886174/"> 886174</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6791452d4888694f35f83eaadddc0c535f0ca5aa">6791452d4888694f35f83eaadddc0c535f0ca5aa</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/886174/">886174</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b47162db7fd32bf78037e258e18a3a8c28a2a8ae
+   6791452d4888694f35f83eaadddc0c535f0ca5aa
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b47162db7fd32bf78037e258e18a3a8c28a2a8ae">
+    <a href="/chromium/src/+log/6791452d4888694f35f83eaadddc0c535f0ca5aa">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b47162db7fd32bf78037e258e18a3a8c28a2a8ae.tar.gz">
+    <a href="/chromium/src/+archive/6791452d4888694f35f83eaadddc0c535f0ca5aa.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   François Degros &lt;fdegros@chromium.org&gt;
+   Ben Reich &lt;benreich@chromium.org&gt;
   </td>
   <td>
-   Tue May 25 03:35:57 2021
+   Tue May 25 04:29:28 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue May 25 03:35:57 2021
+   Tue May 25 04:29:28 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b47162db7fd32bf78037e258e18a3a8c28a2a8ae/">
-    a818b2c016c51819551a91831ee568ce40b8d619
+   <a href="/chromium/src/+/6791452d4888694f35f83eaadddc0c535f0ca5aa/">
+    8a9ddc91cc890e46880ffdb5b157761af8d47389
    </a>
   </td>
  </tr>
@@ -166,48 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b47162db7fd32bf78037e258e18a3a8c28a2a8ae%5E">
-    60dbd221bd0aaa2d49120bf974831d16660819ed
+   <a href="/chromium/src/+/6791452d4888694f35f83eaadddc0c535f0ca5aa%5E">
+    c45842747625184d710742be2f71437aa4ea2063
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b47162db7fd32bf78037e258e18a3a8c28a2a8ae%5E%21/">
+    <a href="/chromium/src/+/6791452d4888694f35f83eaadddc0c535f0ca5aa%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[zip] Use DFS instead of BFS
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[js-code-coverage] Add browser test for WebUI JS coverage
 
-Changed the zip tree exploration algorithm from Breadth-First
-Search (BFS) to Depth-First_Search (DFS). This has several benefits.
+Adds a smoke test to ensure the CollectCoverage method properly
+initializes the required folders and emits coverage when a JS test is
+executed.
 
-There is no need to create a list of all the items to zip from the
-start. Entries are added to the ZIP as they are discovered, reducing the
-need for string copies, memory allocations, etc.
+Moved the construction of the WebUICoverageObserver to the
+SetUpOnMainThread call as that occurs on the BrowserThread whereas the
+SetUpCommandLine call does not. When the WebUICoverageObserver adds
+itself as an Observer, the downstream call at
+content::SharedWorkerDevToolsManager::GetInstance() has a check to
+ensure it's being ran on the BrowserThread::UI.
 
-The order of items in the resulting ZIP is more natural, and is on par
-with what other archivers produce.
-
-Knowledge of which entries are files or folders is directly used to do
-the right thing, reducing the number of file system accesses.
-Previously, this information wasn't recorded in the BFS-produced list,
-and it had to be rediscovered during zipping at the cost of extra file
-system calls.
-
-Finally, this allows to recursively zip folders presented in the list of
-items to zip.
-
-BUG=chromium:912236
-TEST=out/release/zlib_unittests
-TEST=out/release/browser_tests --gtest_filter="ZipFileCreatorTest*
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I857d758573bfbb3ad2e5fe922581e5cb71af4691">I857d758573bfbb3ad2e5fe922581e5cb71af4691</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2912020">https://chromium-review.googlesource.com/c/chromium/src/+/2912020</a>
-Reviewed-by: Noel Gordon &lt;noel@chromium.org&gt;
-Commit-Queue: François Degros &lt;fdegros@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#886166}
+Bug: 1206082
+Test: browser_tests --gtest_filter=WebUICoverageTest*
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I622d46e98a30c4dacd3e918bfc4783120c70f8ab">I622d46e98a30c4dacd3e918bfc4783120c70f8ab</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2896113">https://chromium-review.googlesource.com/c/chromium/src/+/2896113</a>
+Reviewed-by: dpapad &lt;dpapad@chromium.org&gt;
+Commit-Queue: Ben Reich &lt;benreich@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#886174}
 </pre>
 
 </body>
