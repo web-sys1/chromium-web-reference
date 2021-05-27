@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/887080/"> 887080</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d64dfe8d219ed245f5ca01712abd54ede333df2d">d64dfe8d219ed245f5ca01712abd54ede333df2d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/887102/"> 887102</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/268d99dc58499a879a4c7e9647a57c4b1a7a4cd5">268d99dc58499a879a4c7e9647a57c4b1a7a4cd5</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/887069/">887069</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0a77738f4cfb3a9c8403d8a1df659cd99edd0654">0a77738f4cfb3a9c8403d8a1df659cd99edd0654</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/887102/">887102</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/268d99dc58499a879a4c7e9647a57c4b1a7a4cd5">268d99dc58499a879a4c7e9647a57c4b1a7a4cd5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d64dfe8d219ed245f5ca01712abd54ede333df2d
+   268d99dc58499a879a4c7e9647a57c4b1a7a4cd5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d64dfe8d219ed245f5ca01712abd54ede333df2d">
+    <a href="/chromium/src/+log/268d99dc58499a879a4c7e9647a57c4b1a7a4cd5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d64dfe8d219ed245f5ca01712abd54ede333df2d.tar.gz">
+    <a href="/chromium/src/+archive/268d99dc58499a879a4c7e9647a57c4b1a7a4cd5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Antonio Sartori &lt;antoniosartori@google.com&gt;
+   Jan Krcal &lt;jkrcal@chromium.org&gt;
   </td>
   <td>
-   Thu May 27 08:48:45 2021
+   Thu May 27 10:29:16 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 27 08:48:45 2021
+   Thu May 27 10:29:16 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d64dfe8d219ed245f5ca01712abd54ede333df2d/">
-    bb2c144404ecd1864dfb947c7d341195e864e32c
+   <a href="/chromium/src/+/268d99dc58499a879a4c7e9647a57c4b1a7a4cd5/">
+    cf5226361125d24408b3651c5a484506ee750004
    </a>
   </td>
  </tr>
@@ -166,51 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d64dfe8d219ed245f5ca01712abd54ede333df2d%5E">
-    a6890ebc4a5b8df4e448fa2da5489af71cb1f41e
+   <a href="/chromium/src/+/268d99dc58499a879a4c7e9647a57c4b1a7a4cd5%5E">
+    cf614abe7c5545e5028e7ee9fe29768883de0c90
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d64dfe8d219ed245f5ca01712abd54ede333df2d%5E%21/">
+    <a href="/chromium/src/+/268d99dc58499a879a4c7e9647a57c4b1a7a4cd5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PolicyContainer] Fix nullptr dereference
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Profile customization bubble] Handle invalid input and input deletion
 
-When committing a Javascript or a XSLT document, we must reuse the
-policy container of the previous document.
+This CL is a speculative fix for a range of crashers, making
+ProfileCustomizationBubbleSyncController more robust.
 
-In Blink, the `PolicyContainer` is attached to the `ExecutionContext`.
-When committing a Javascript/XSLT document, a new `ExecutionContext`
-for the new document is created, and we used to move the
-`PolicyContainer` from the previous `ExecutionContext` into the new
-one. This left the previous `ExecutionContext` without
-`PolicyContainer`, and calling, for example,
-`ExecutionContext::GetReferrerPolicy()` would trigger a nullptr
-dereference.
+Firstly, it deals with invalid input parameters and returns early.
+Secondly, it listens to deletion of the profile and of the anchor view
+and skips the bubble.
 
-It was my belief that the old `ExecutionContext` would not be used
-anymore. However, this is not true. The test included in this CL shows
-how `ExecutionContext::GetReferrerPolicy()` can actually be triggered
-for the old `ExecutionContext`.
-
-With this CL, we create a new `PolicyContainer` for the old
-`ExecutionContext` with a copy of the previous policies. The new
-`PolicyContainer` has no corresponding `PolicyContainerHost`. In fact,
-any corresponding document should be detached and in practice this
-`ExecutionContext` should be useless. However, having a valid
-`PolicyContainer` avoids the need of nullptr checks.
-
-Bug: 1196372
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2d234ced4e30ddce80c2b3fb571fe0aa8a651d90">I2d234ced4e30ddce80c2b3fb571fe0aa8a651d90</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2896901">https://chromium-review.googlesource.com/c/chromium/src/+/2896901</a>
-Commit-Queue: Antonio Sartori &lt;antoniosartori@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#887080}
+Bug: 1213109, 1213356, 1213112
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic3e07a91c49092f7d7cec393269602d2d155222f">Ic3e07a91c49092f7d7cec393269602d2d155222f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2919192">https://chromium-review.googlesource.com/c/chromium/src/+/2919192</a>
+Reviewed-by: David Roger &lt;droger@chromium.org&gt;
+Commit-Queue: Jan Krcal &lt;jkrcal@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#887102}
 </pre>
 
 </body>
