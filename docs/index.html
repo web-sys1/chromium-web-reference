@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/887070/"> 887070</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7975288cadff0564a353bbc308f2ff41e8c85635">7975288cadff0564a353bbc308f2ff41e8c85635</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/887080/"> 887080</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d64dfe8d219ed245f5ca01712abd54ede333df2d">d64dfe8d219ed245f5ca01712abd54ede333df2d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/887069/">887069</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7975288cadff0564a353bbc308f2ff41e8c85635
+   d64dfe8d219ed245f5ca01712abd54ede333df2d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7975288cadff0564a353bbc308f2ff41e8c85635">
+    <a href="/chromium/src/+log/d64dfe8d219ed245f5ca01712abd54ede333df2d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7975288cadff0564a353bbc308f2ff41e8c85635.tar.gz">
+    <a href="/chromium/src/+archive/d64dfe8d219ed245f5ca01712abd54ede333df2d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Gavin Williams &lt;gavinwill@chromium.org&gt;
+   Antonio Sartori &lt;antoniosartori@google.com&gt;
   </td>
   <td>
-   Thu May 27 07:49:26 2021
+   Thu May 27 08:48:45 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 27 07:49:26 2021
+   Thu May 27 08:48:45 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7975288cadff0564a353bbc308f2ff41e8c85635/">
-    842fa90b760acd94bc80d9745e2e67f933f5430a
+   <a href="/chromium/src/+/d64dfe8d219ed245f5ca01712abd54ede333df2d/">
+    bb2c144404ecd1864dfb947c7d341195e864e32c
    </a>
   </td>
  </tr>
@@ -166,32 +166,51 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7975288cadff0564a353bbc308f2ff41e8c85635%5E">
-    0a77738f4cfb3a9c8403d8a1df659cd99edd0654
+   <a href="/chromium/src/+/d64dfe8d219ed245f5ca01712abd54ede333df2d%5E">
+    a6890ebc4a5b8df4e448fa2da5489af71cb1f41e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7975288cadff0564a353bbc308f2ff41e8c85635%5E%21/">
+    <a href="/chromium/src/+/d64dfe8d219ed245f5ca01712abd54ede333df2d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">printing: Remove expired printer status feature flag
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PolicyContainer] Fix nullptr dereference
 
-- Flag is safe to be removed because of the feature stability
+When committing a Javascript or a XSLT document, we must reuse the
+policy container of the previous document.
 
-- Delete destination &lt;select&gt; element and associated JS code
+In Blink, the `PolicyContainer` is attached to the `ExecutionContext`.
+When committing a Javascript/XSLT document, a new `ExecutionContext`
+for the new document is created, and we used to move the
+`PolicyContainer` from the previous `ExecutionContext` into the new
+one. This left the previous `ExecutionContext` without
+`PolicyContainer`, and calling, for example,
+`ExecutionContext::GetReferrerPolicy()` would trigger a nullptr
+dereference.
 
-- Delete tests for testing the destination &lt;select&gt; element
+It was my belief that the old `ExecutionContext` would not be used
+anymore. However, this is not true. The test included in this CL shows
+how `ExecutionContext::GetReferrerPolicy()` can actually be triggered
+for the old `ExecutionContext`.
 
-Bug: 1213246
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1e8fb26b3f585e2411d499a4e18726e07fc98942">I1e8fb26b3f585e2411d499a4e18726e07fc98942</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2917576">https://chromium-review.googlesource.com/c/chromium/src/+/2917576</a>
-Reviewed-by: Rebekah Potter &lt;rbpotter@chromium.org&gt;
-Commit-Queue: Gavin Williams &lt;gavinwill@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#887070}
+With this CL, we create a new `PolicyContainer` for the old
+`ExecutionContext` with a copy of the previous policies. The new
+`PolicyContainer` has no corresponding `PolicyContainerHost`. In fact,
+any corresponding document should be detached and in practice this
+`ExecutionContext` should be useless. However, having a valid
+`PolicyContainer` avoids the need of nullptr checks.
+
+Bug: 1196372
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2d234ced4e30ddce80c2b3fb571fe0aa8a651d90">I2d234ced4e30ddce80c2b3fb571fe0aa8a651d90</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2896901">https://chromium-review.googlesource.com/c/chromium/src/+/2896901</a>
+Commit-Queue: Antonio Sartori &lt;antoniosartori@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#887080}
 </pre>
 
 </body>
