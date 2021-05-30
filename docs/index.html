@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/887616/"> 887616</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5ff9fea4332c3ce8d6320056ba7c386d7059e52e">5ff9fea4332c3ce8d6320056ba7c386d7059e52e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/887617/"> 887617</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/46293cadbc60609625b6ebed125a3708b4c05691">46293cadbc60609625b6ebed125a3708b4c05691</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/887616/">887616</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5ff9fea4332c3ce8d6320056ba7c386d7059e52e">5ff9fea4332c3ce8d6320056ba7c386d7059e52e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/887617/">887617</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/46293cadbc60609625b6ebed125a3708b4c05691">46293cadbc60609625b6ebed125a3708b4c05691</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5ff9fea4332c3ce8d6320056ba7c386d7059e52e
+   46293cadbc60609625b6ebed125a3708b4c05691
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5ff9fea4332c3ce8d6320056ba7c386d7059e52e">
+    <a href="/chromium/src/+log/46293cadbc60609625b6ebed125a3708b4c05691">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5ff9fea4332c3ce8d6320056ba7c386d7059e52e.tar.gz">
+    <a href="/chromium/src/+archive/46293cadbc60609625b6ebed125a3708b4c05691.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Timothy Gu &lt;timothygu@chromium.org&gt;
+   Internal Frameworks Autoroller &lt;bling-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun May 30 20:00:12 2021
+   Sun May 30 20:16:52 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun May 30 20:00:12 2021
+   Sun May 30 20:16:52 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5ff9fea4332c3ce8d6320056ba7c386d7059e52e/">
-    e2d5957b2d736dfb0dfbb9c6aec772f56d3fafc5
+   <a href="/chromium/src/+/46293cadbc60609625b6ebed125a3708b4c05691/">
+    8cd9010bd95e5c7fc4019709d36845011a89baa5
    </a>
   </td>
  </tr>
@@ -166,49 +166,25 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5ff9fea4332c3ce8d6320056ba7c386d7059e52e%5E">
-    6a5e2158a2f1bb53f8ac90b50db889aaccca2333
+   <a href="/chromium/src/+/46293cadbc60609625b6ebed125a3708b4c05691%5E">
+    5ff9fea4332c3ce8d6320056ba7c386d7059e52e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5ff9fea4332c3ce8d6320056ba7c386d7059e52e%5E%21/">
+    <a href="/chromium/src/+/46293cadbc60609625b6ebed125a3708b4c05691%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">url: percent-encode more characters in path URL fragments
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Frameworks roll] Roll to 376573057 piper revision
 
-In //url parlance, "path URLs" are URLs without a "special scheme" such
-as http and https. Currently, we are canonicalizing them quite loosely,
-allowing even un-encoded spaces to be in its fragment. This has
-contributed to interop problems such as [1].
-
-The solution is to percent-encode fragments consistently. In this
-commit, we encode path URL fragments the same way as HTTP and HTTPS URLs
-already are. More precisely, we encode those characters in the "fragment
-percent-encode set" [2] designated by the WHATWG URL Standard, which
-includes:
-
-        U+0000 through U+001F, U+0020 SPACE, " &lt; &gt; `, U+007F DEL
-
-Among existing other implementations, there is no great controversy over
-what characters to encode in the fragment part. Safari, Go, and Node.js
-all encode those characters, while Java and Ruby fail to parse the URL
-if any of those characters is present. As an exception, Firefox and curl
-only encode U+0020, U+007F, and the C0 controls.
-
-[1]: <a href="https://bugs.webkit.org/show_bug.cgi?id=225340">https://bugs.webkit.org/show_bug.cgi?id=225340</a>
-[2]: <a href="https://url.spec.whatwg.org/#fragment-percent-encode-set">https://url.spec.whatwg.org/#fragment-percent-encode-set</a>
-
-Bug: 803103
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I36acaf8130466aa75c88bd06b0328cde7e870407">I36acaf8130466aa75c88bd06b0328cde7e870407</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2889025">https://chromium-review.googlesource.com/c/chromium/src/+/2889025</a>
-Commit-Queue: Timothy Gu &lt;timothygu@chromium.org&gt;
-Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
-Reviewed-by: Mike West &lt;mkwst@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#887616}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idab2cce718fed3518efefe529958698324a89a17">Idab2cce718fed3518efefe529958698324a89a17</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2927335">https://chromium-review.googlesource.com/c/chromium/src/+/2927335</a>
+Commit-Queue: Internal Frameworks Autoroller &lt;bling-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+Bot-Commit: Internal Frameworks Autoroller &lt;bling-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/master@{#887617}
 </pre>
 
 </body>
