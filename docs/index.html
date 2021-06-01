@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/888083/"> 888083</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c6970d54773cd5c99bb104c91a9758fd7b83dc99">c6970d54773cd5c99bb104c91a9758fd7b83dc99</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/888131/"> 888131</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/dde975ad6d38e0ea8432cdd627b60f6ba0bfbc3b">dde975ad6d38e0ea8432cdd627b60f6ba0bfbc3b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/888050/">888050</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9f2ab1eaad4145d50d30ff5c882717fdc29f3d91">9f2ab1eaad4145d50d30ff5c882717fdc29f3d91</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/888097/">888097</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4f134cf84b6a762ec093983a7f564df37b694f9b">4f134cf84b6a762ec093983a7f564df37b694f9b</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c6970d54773cd5c99bb104c91a9758fd7b83dc99
+   dde975ad6d38e0ea8432cdd627b60f6ba0bfbc3b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c6970d54773cd5c99bb104c91a9758fd7b83dc99">
+    <a href="/chromium/src/+log/dde975ad6d38e0ea8432cdd627b60f6ba0bfbc3b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c6970d54773cd5c99bb104c91a9758fd7b83dc99.tar.gz">
+    <a href="/chromium/src/+archive/dde975ad6d38e0ea8432cdd627b60f6ba0bfbc3b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Victor Costan &lt;pwnall@chromium.org&gt;
+   Pavel Yatsuk &lt;pavely@google.com&gt;
   </td>
   <td>
-   Tue Jun 01 19:18:07 2021
+   Tue Jun 01 21:16:36 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jun 01 19:18:07 2021
+   Tue Jun 01 21:16:36 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c6970d54773cd5c99bb104c91a9758fd7b83dc99/">
-    a0e9f58d008f77889bb77a2e3acf51fa3b0bf90a
+   <a href="/chromium/src/+/dde975ad6d38e0ea8432cdd627b60f6ba0bfbc3b/">
+    ec5413e76a2ad9d40f1139d6c903a91bc1101992
    </a>
   </td>
  </tr>
@@ -166,39 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c6970d54773cd5c99bb104c91a9758fd7b83dc99%5E">
-    ae515e2ffb086079fa4f3a16ecf3331390e339f6
+   <a href="/chromium/src/+/dde975ad6d38e0ea8432cdd627b60f6ba0bfbc3b%5E">
+    36e60ea042992265c93337746269f1b3c84c4eae
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c6970d54773cd5c99bb104c91a9758fd7b83dc99%5E%21/">
+    <a href="/chromium/src/+/dde975ad6d38e0ea8432cdd627b60f6ba0bfbc3b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">WebSQL: Add factory method for DatabaseTracker.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Ensure ChromeMessageQueueMediator#setLayoutStateProvider is not called after destroy()
 
-This CL adds a DatabaseTracker::Create() method that must be used to
-instantiate the class.
+The crash stack suggests that mQueueController was null at the time when
+LayoutStateObserver#onStartedShowing was called. mQueueController is set
+in ctor and only reset to null in #destroy(), where mLayoutStateObserver
+is removed from observer list. This suggests that setLayoutStateProvider
+was called after the call to destroy().
 
-The DatabaseTracker constructor remains public, so base::MakeRefCounted
-can still be used with DatabaseTracker. Access to the constructor is
-restricted with a base::PassKey.
+This CL adds a check that throws an exception if setLayoutStateProvider
+is called after destroy() to help identify scenarios when it happens.
 
-This CL also turns DatabaseTracker constructor arguments from raw
-pointers to scoped_refptr when the DatabaseTracker constructor holds a
-reference to the instances.
+BUG=1199059
+R=lazzzis@chromium.org
 
-This CL does not introduce any functional changes.
-
-Bug: 1163048
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7b0074af323a4e7712ec0754544f53244d5feab3">I7b0074af323a4e7712ec0754544f53244d5feab3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2927932">https://chromium-review.googlesource.com/c/chromium/src/+/2927932</a>
-Reviewed-by: enne &lt;enne@chromium.org&gt;
-Commit-Queue: Victor Costan &lt;pwnall@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#888083}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2a8315ef8981541e94678667e0ac3731c75ff835">I2a8315ef8981541e94678667e0ac3731c75ff835</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2925749">https://chromium-review.googlesource.com/c/chromium/src/+/2925749</a>
+Reviewed-by: Lijin Shen &lt;lazzzis@google.com&gt;
+Commit-Queue: Pavel Yatsuk &lt;pavely@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#888131}
 </pre>
 
 </body>
