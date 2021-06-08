@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/890282/"> 890282</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d44ffe49e93185c0a03c04db19fd15ca39e1ed28">d44ffe49e93185c0a03c04db19fd15ca39e1ed28</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/890345/"> 890345</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/14c17a77150762e8159310f4c3b9a392a61e1195">14c17a77150762e8159310f4c3b9a392a61e1195</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/890269/">890269</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/886b32ac444a2b746e66718ecdca6c1e1981dfe5">886b32ac444a2b746e66718ecdca6c1e1981dfe5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/890342/">890342</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cde4a8503b8f458b4da7a8f1db42aee7ca890571">cde4a8503b8f458b4da7a8f1db42aee7ca890571</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d44ffe49e93185c0a03c04db19fd15ca39e1ed28
+   14c17a77150762e8159310f4c3b9a392a61e1195
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d44ffe49e93185c0a03c04db19fd15ca39e1ed28">
+    <a href="/chromium/src/+log/14c17a77150762e8159310f4c3b9a392a61e1195">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d44ffe49e93185c0a03c04db19fd15ca39e1ed28.tar.gz">
+    <a href="/chromium/src/+archive/14c17a77150762e8159310f4c3b9a392a61e1195.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Elly Fong-Jones &lt;ellyjones@chromium.org&gt;
+   Bruce Dawson &lt;brucedawson@chromium.org&gt;
   </td>
   <td>
-   Tue Jun 08 16:30:57 2021
+   Tue Jun 08 18:12:19 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jun 08 16:30:57 2021
+   Tue Jun 08 18:12:19 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d44ffe49e93185c0a03c04db19fd15ca39e1ed28/">
-    dbcc8fe36799f75189dd6b0d783a41d569ae9c65
+   <a href="/chromium/src/+/14c17a77150762e8159310f4c3b9a392a61e1195/">
+    e85a0390338c5671fba4a164261ed9f2b80e17a2
    </a>
   </td>
  </tr>
@@ -166,33 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d44ffe49e93185c0a03c04db19fd15ca39e1ed28%5E">
-    12b2a358f7a98bc3177453909261d23eef0c4580
+   <a href="/chromium/src/+/14c17a77150762e8159310f4c3b9a392a61e1195%5E">
+    f4a83c9d731234664b2a289e0cf40dccd71c4dee
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d44ffe49e93185c0a03c04db19fd15ca39e1ed28%5E%21/">
+    <a href="/chromium/src/+/14c17a77150762e8159310f4c3b9a392a61e1195%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">sharing: move logging for Sharing.AnyShareStarted
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix BrowserMinidumpTest for symbol_level=0
 
-This was being logged at the //chrome layer, but that makes it very
-awkward to log shares initiated in //components/browser_ui,
-especially those that happen via direct calls to ShareHelper. This
-change moves the logging of those events into ShareHelper, which
-causes ShareHelper#shareDirectly to now be logged correctly.
+Originally symbol_level=0 meant that we had no symbols, which made
+minidump tests irrelevant. That was changed a couple of years ago, but
+some of the assumptions remain. This means that these tests would fail
+if symbol_level=0:
 
-Bug: 1195038
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia09e5b28f3e4ceba8748a7bfda5ee7faf4bdf505">Ia09e5b28f3e4ceba8748a7bfda5ee7faf4bdf505</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2940359">https://chromium-review.googlesource.com/c/chromium/src/+/2940359</a>
-Reviewed-by: Tommy Nyquist &lt;nyquist@chromium.org&gt;
-Reviewed-by: sebsg &lt;sebsg@chromium.org&gt;
-Commit-Queue: Elly Fong-Jones &lt;ellyjones@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#890282}
+    vpython tools/perf/run_tests BrowserMinidumpTest --passthrough
+
+The fix is simply to adjust the dependencies so that the required tools
+get built for symbol_level=0.
+
+This unlocks the possibility of using symbol_level=0 on the CQ, which
+can improve bot performance.
+
+Bug: 1216163, 1005896
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I634a3a0c98cdd2224551120c09a135c0335ac626">I634a3a0c98cdd2224551120c09a135c0335ac626</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2946353">https://chromium-review.googlesource.com/c/chromium/src/+/2946353</a>
+Reviewed-by: Brian Sheedy &lt;bsheedy@chromium.org&gt;
+Commit-Queue: Bruce Dawson &lt;brucedawson@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#890345}
 </pre>
 
 </body>
