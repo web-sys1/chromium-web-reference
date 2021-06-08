@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/890345/"> 890345</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/14c17a77150762e8159310f4c3b9a392a61e1195">14c17a77150762e8159310f4c3b9a392a61e1195</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/890374/"> 890374</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5d1c40ad06cb136efcd5050998f9bf0564ffc454">5d1c40ad06cb136efcd5050998f9bf0564ffc454</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/890342/">890342</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cde4a8503b8f458b4da7a8f1db42aee7ca890571">cde4a8503b8f458b4da7a8f1db42aee7ca890571</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/890380/">890380</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/656b95dd948a6e6cf4563f4d28c1c37791100f38">656b95dd948a6e6cf4563f4d28c1c37791100f38</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   14c17a77150762e8159310f4c3b9a392a61e1195
+   5d1c40ad06cb136efcd5050998f9bf0564ffc454
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/14c17a77150762e8159310f4c3b9a392a61e1195">
+    <a href="/chromium/src/+log/5d1c40ad06cb136efcd5050998f9bf0564ffc454">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/14c17a77150762e8159310f4c3b9a392a61e1195.tar.gz">
+    <a href="/chromium/src/+archive/5d1c40ad06cb136efcd5050998f9bf0564ffc454.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Bruce Dawson &lt;brucedawson@chromium.org&gt;
+   Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
   </td>
   <td>
-   Tue Jun 08 18:12:19 2021
+   Tue Jun 08 19:03:14 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jun 08 18:12:19 2021
+   Tue Jun 08 19:03:14 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/14c17a77150762e8159310f4c3b9a392a61e1195/">
-    e85a0390338c5671fba4a164261ed9f2b80e17a2
+   <a href="/chromium/src/+/5d1c40ad06cb136efcd5050998f9bf0564ffc454/">
+    138f18952fe2d40e98ec492a55d3c72367cc3aa0
    </a>
   </td>
  </tr>
@@ -166,39 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/14c17a77150762e8159310f4c3b9a392a61e1195%5E">
-    f4a83c9d731234664b2a289e0cf40dccd71c4dee
+   <a href="/chromium/src/+/5d1c40ad06cb136efcd5050998f9bf0564ffc454%5E">
+    76f89d219dc6bfaf2410efd8b6995caa1cba6465
    </a>
    <span>
     [
-    <a href="/chromium/src/+/14c17a77150762e8159310f4c3b9a392a61e1195%5E%21/">
+    <a href="/chromium/src/+/5d1c40ad06cb136efcd5050998f9bf0564ffc454%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix BrowserMinidumpTest for symbol_level=0
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make sure VulkanImage has right queue on Android
 
-Originally symbol_level=0 meant that we had no symbols, which made
-minidump tests irrelevant. That was changed a couple of years ago, but
-some of the assumptions remain. This means that these tests would fail
-if symbol_level=0:
+This CL makes sure we create VulkanImage with the right queue (external
+or foreign) and transfer queue ownership when necessary.
 
-    vpython tools/perf/run_tests BrowserMinidumpTest --passthrough
-
-The fix is simply to adjust the dependencies so that the required tools
-get built for symbol_level=0.
-
-This unlocks the possibility of using symbol_level=0 on the CQ, which
-can improve bot performance.
-
-Bug: 1216163, 1005896
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I634a3a0c98cdd2224551120c09a135c0335ac626">I634a3a0c98cdd2224551120c09a135c0335ac626</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2946353">https://chromium-review.googlesource.com/c/chromium/src/+/2946353</a>
-Reviewed-by: Brian Sheedy &lt;bsheedy@chromium.org&gt;
-Commit-Queue: Bruce Dawson &lt;brucedawson@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#890345}
+Bug: 1213233
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia68689e7e91aa0ad3a226ae5632c2b18676a8b88">Ia68689e7e91aa0ad3a226ae5632c2b18676a8b88</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2941044">https://chromium-review.googlesource.com/c/chromium/src/+/2941044</a>
+Commit-Queue: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Reviewed-by: Peng Huang &lt;penghuang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#890374}
 </pre>
 
 </body>
