@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/890828/"> 890828</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b643eb3be44781ea8ea28ec46fc6af25264389e7">b643eb3be44781ea8ea28ec46fc6af25264389e7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/890869/"> 890869</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c31bf8d647e461f0c96cdec28bd4750a256cef13">c31bf8d647e461f0c96cdec28bd4750a256cef13</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/890853/">890853</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b643eb3be44781ea8ea28ec46fc6af25264389e7
+   c31bf8d647e461f0c96cdec28bd4750a256cef13
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b643eb3be44781ea8ea28ec46fc6af25264389e7">
+    <a href="/chromium/src/+log/c31bf8d647e461f0c96cdec28bd4750a256cef13">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b643eb3be44781ea8ea28ec46fc6af25264389e7.tar.gz">
+    <a href="/chromium/src/+archive/c31bf8d647e461f0c96cdec28bd4750a256cef13.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   manukh &lt;manukh@chromium.org&gt;
+   Xida Chen &lt;xidachen@chromium.org&gt;
   </td>
   <td>
-   Wed Jun 09 17:12:56 2021
+   Wed Jun 09 18:36:25 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jun 09 17:12:56 2021
+   Wed Jun 09 18:36:25 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b643eb3be44781ea8ea28ec46fc6af25264389e7/">
-    41d1c420412610e290872b3e31e8739b7fbbdcb8
+   <a href="/chromium/src/+/c31bf8d647e461f0c96cdec28bd4750a256cef13/">
+    9b7df5d43d3c1cc47a68ea369c73613d1d98616a
    </a>
   </td>
  </tr>
@@ -166,90 +166,58 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b643eb3be44781ea8ea28ec46fc6af25264389e7%5E">
-    42f92808ecfd56dc67d3589aeeca97de79eee68a
+   <a href="/chromium/src/+/c31bf8d647e461f0c96cdec28bd4750a256cef13%5E">
+    d3ab5585dd9de454519b3be10efb848e02647e22
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b643eb3be44781ea8ea28ec46fc6af25264389e7%5E%21/">
+    <a href="/chromium/src/+/c31bf8d647e461f0c96cdec28bd4750a256cef13%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[omnibox] [rich-autocompletion] IME compatibility.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "mac: Temporarily use lld as linker in non-official non-component builds"
 
-Moves `omnibox_additional_text_view_` after
-`ime_inline_autocomplete_view_`. This fixes the case when there is title
-AC with IME which would previously display the URL in between the input
-and autocompletion. E.g., input 'あ' and suggestion title 'ああ':
-  Before: あ    (URL.com)[あ]
-  Now:    あ[あ]    (URL.com)
+This reverts commit 8ad6a9e29a4b6d72a964cc4c810bb6771435c4a1.
 
+Reason for revert:
+break the tree:
+<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/mac-archive-rel/21675/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/mac-archive-rel/21675/overview</a>
 
-Adds `ime_prefix_autocomplete_view_` before `omnibox_view_`. This fixes
-the case when there is non prefix AC with IME which would previously
-hide the prefix autocompletion and calculate the suffix autocompletion
-as if the user input matched the suggestion prefix. E.g., input 'あ' and
-suggestion 'url.com/ああ':
-  - Before: あ[rl.com/ああ]
-  - Now:    [url.com/]あ[あ]
+Original change's description:
+&gt; mac: Temporarily use lld as linker in non-official non-component builds
+&gt;
+&gt; The motivation is to land this and revert this in a few hours again
+&gt; (well before the next canary is cut), to identify unknown problems.
+&gt;
+&gt; Sheriffs: If this breaks anything, please do revert. Finding things
+&gt; that this breaks that I don't yet know about is the point of landing
+&gt; this :)
+&gt;
+&gt; Bug: 1149587
+&gt; Cq-Include-Trybots: luci.chrome.try:mac-chrome
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I18ca0241655e7565abd9b3ed579a8cf89ab6fb20">I18ca0241655e7565abd9b3ed579a8cf89ab6fb20</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2885356">https://chromium-review.googlesource.com/c/chromium/src/+/2885356</a>
+&gt; Commit-Queue: Nico Weber &lt;thakis@chromium.org&gt;
+&gt; Commit-Queue: Hans Wennborg &lt;hans@chromium.org&gt;
+&gt; Auto-Submit: Nico Weber &lt;thakis@chromium.org&gt;
+&gt; Reviewed-by: Hans Wennborg &lt;hans@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/master@{#890858}
 
-
-Simplifies location bar layout calculations. Previously:
-  1) The entire width would be allocated for the omnibox
-  2) The omnibox would be resized to its required width if there was IME
-autocompletion
-  3) The 2 views would be further adjusted if there was insufficient
-width to completely display both
-  4) Additional processing would be done to split the allocated omnibox
-width between itself and `omnibox_additional_text_view_`.
-
-This approach had issues:
-  - It was difficult to scale for the new
-`ime_prefix_autocomplete_view_`
-  - It was unclear if steps (3) and (4) worked correctly together; i.e.
-the case when there was title AC, IME AC, and a small location bar
-width.
-  - It incorrectly preferred IME autocompletion over the user input when
-there was a small location bar. This was inconsistent with non-IME
-autocompletion.
-
-The new approach:
-  1) If the additional views are not visible, allocate the entire width
-for the omnibox and skip the following steps. Otherwise:
-  2) Distribute the available width between the 4 views with correct
-preference when there's insufficient width to display all.
-  3) Place them adjacently left to right.
-
-Step 1 in the new approach helps reduce the cases when the omnibox
-scroll is dirtied due to the omnibox resizing. It's not foolproof; e.g.,
-it's not possible to skip resizing the omnibox when IME or title
-autocompletion are present. But it is the status quo; i.e. it doesn't
-make the edge cases worse or more frequent. I'll explore a more robust
-alternative in followup CL.
-
-
-Removes the omnibox's border. Previously, the omnibox had a 3px border
-on all sides. Removing the border doesn't effect it when there is no IME
-autocompletion; importantly, the omnibox text will continue to be
-correctly left-aligned with the suggestion text. However, removing this
-border fixes positioning when there is IME autocompletion. This was
-especially noticeable when beginning IME input would shift the input 3px
-and the autocompletion 6px to the right. E.g., input 'あ' and suggestion
-'あああ':
-  - Before: [あ] あ [あ]
-  - Now:    [あ]あ[あ]
-
-
-Bug: 1062446
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idf6d208afd119e9e08a4762761ef853d3a173d04">Idf6d208afd119e9e08a4762761ef853d3a173d04</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2924246">https://chromium-review.googlesource.com/c/chromium/src/+/2924246</a>
-Reviewed-by: Stepan Khapugin &lt;stkhapugin@chromium.org&gt;
-Reviewed-by: Tommy Li &lt;tommycli@chromium.org&gt;
-Commit-Queue: manuk hovanesian &lt;manukh@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#890828}
+Bug: 1149587
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5772ed9bb6d3a8479121433475f318126dcf99e8">I5772ed9bb6d3a8479121433475f318126dcf99e8</a>
+Cq-Include-Trybots: luci.chrome.try:mac-chrome
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2950883">https://chromium-review.googlesource.com/c/chromium/src/+/2950883</a>
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Owners-Override: Xida Chen &lt;xidachen@chromium.org&gt;
+Auto-Submit: Xida Chen &lt;xidachen@chromium.org&gt;
+Commit-Queue: Xida Chen &lt;xidachen@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#890869}
 </pre>
 
 </body>
