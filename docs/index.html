@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/890558/"> 890558</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e11c552d9b892d1e907c15baa68b3b6834d97e15">e11c552d9b892d1e907c15baa68b3b6834d97e15</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/890592/"> 890592</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0916fd0a358a95397b10a976bc22191c7cc25aa4">0916fd0a358a95397b10a976bc22191c7cc25aa4</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/890565/">890565</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c809fef5cc108dfbf24811fc1ec0dbf6c8e1d0f5">c809fef5cc108dfbf24811fc1ec0dbf6c8e1d0f5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/890599/">890599</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e19b1dd4b388ee19dcc8acf203713a7fd77f2f74">e19b1dd4b388ee19dcc8acf203713a7fd77f2f74</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e11c552d9b892d1e907c15baa68b3b6834d97e15
+   0916fd0a358a95397b10a976bc22191c7cc25aa4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e11c552d9b892d1e907c15baa68b3b6834d97e15">
+    <a href="/chromium/src/+log/0916fd0a358a95397b10a976bc22191c7cc25aa4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e11c552d9b892d1e907c15baa68b3b6834d97e15.tar.gz">
+    <a href="/chromium/src/+archive/0916fd0a358a95397b10a976bc22191c7cc25aa4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+   Ikjoon Jang &lt;ikjn@chromium.org&gt;
   </td>
   <td>
-   Wed Jun 09 01:56:06 2021
+   Wed Jun 09 03:39:47 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jun 09 01:56:06 2021
+   Wed Jun 09 03:39:47 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e11c552d9b892d1e907c15baa68b3b6834d97e15/">
-    27323bcd7046ad5e1500d9649eb1b088ee249dcd
+   <a href="/chromium/src/+/0916fd0a358a95397b10a976bc22191c7cc25aa4/">
+    1f7bbc05195a5aefb15eac2dbea4d0bb54c4aa9c
    </a>
   </td>
  </tr>
@@ -166,41 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e11c552d9b892d1e907c15baa68b3b6834d97e15%5E">
-    6629521a597ef24228ed238eabee1ed73a9afd99
+   <a href="/chromium/src/+/0916fd0a358a95397b10a976bc22191c7cc25aa4%5E">
+    7965bf4a1133ac273ff702023cfef7e97a93547c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e11c552d9b892d1e907c15baa68b3b6834d97e15%5E%21/">
+    <a href="/chromium/src/+/0916fd0a358a95397b10a976bc22191c7cc25aa4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor paint under-invalidation checking
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">base/thread: skip latency_sensitive when kernel doesn't support it
 
-- Separate under-invalidation checking code from PaintController
-  into PaintUnderInvalidationChecker.
+Currently ChromeOS uses per-thread API for setting uclamp.latency_sensitive
+which is not always available for all kernel versions.
 
-- The end of under-invalidation checking: previously this was
-  determined by checking under_invalidation_checking_end_. Now
-  for single display item, under-invalidation checking ends after
-  checking the next display item; for subsequence, under-invalidation
-  checking ends when the subsequence ends.
+Apply other uclamp settings even when the system doesn't support
+per-thread latency_sensitive.
 
-- For paint chunks, check under-invalidation when the paint chunk
-  is complete instead of checking all paint chunks at the end of a
-  subsequence.
+BUG=b:189814845
+TEST=check chromeos threads' nice,cgroup,uclamp settings on kukui v5.10
 
-- Simplify API of PaintController::BeginSubsequence()/EndSubsequence()
-
-Bug: 1210247
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I16d5ab03b24930a85749fb87ba1596cdda228376">I16d5ab03b24930a85749fb87ba1596cdda228376</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2934857">https://chromium-review.googlesource.com/c/chromium/src/+/2934857</a>
-Commit-Queue: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
-Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#890558}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I04424c66bba5b74f5ce44d0f12d2b2bd3d931aa8">I04424c66bba5b74f5ce44d0f12d2b2bd3d931aa8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2940327">https://chromium-review.googlesource.com/c/chromium/src/+/2940327</a>
+Reviewed-by: danakj &lt;danakj@chromium.org&gt;
+Commit-Queue: Ikjoon Jang &lt;ikjn@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#890592}
 </pre>
 
 </body>
