@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/890539/"> 890539</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/10686cab7fa320f5ba250678c8e13d500b467365">10686cab7fa320f5ba250678c8e13d500b467365</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/890558/"> 890558</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e11c552d9b892d1e907c15baa68b3b6834d97e15">e11c552d9b892d1e907c15baa68b3b6834d97e15</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/890487/">890487</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dfd9158b85ab59f5c073367ecd663f9c8e47d2d6">dfd9158b85ab59f5c073367ecd663f9c8e47d2d6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/890538/">890538</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/48e2055db86f0d141e829e1574f67393d936a49e">48e2055db86f0d141e829e1574f67393d936a49e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   10686cab7fa320f5ba250678c8e13d500b467365
+   e11c552d9b892d1e907c15baa68b3b6834d97e15
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/10686cab7fa320f5ba250678c8e13d500b467365">
+    <a href="/chromium/src/+log/e11c552d9b892d1e907c15baa68b3b6834d97e15">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/10686cab7fa320f5ba250678c8e13d500b467365.tar.gz">
+    <a href="/chromium/src/+archive/e11c552d9b892d1e907c15baa68b3b6834d97e15.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Takuto Ikuta &lt;tikuta@chromium.org&gt;
+   Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
   </td>
   <td>
-   Wed Jun 09 01:02:10 2021
+   Wed Jun 09 01:56:06 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jun 09 01:02:10 2021
+   Wed Jun 09 01:56:06 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/10686cab7fa320f5ba250678c8e13d500b467365/">
-    17953e9a13d8c88370f98bf28cbbc41211ce45c2
+   <a href="/chromium/src/+/e11c552d9b892d1e907c15baa68b3b6834d97e15/">
+    27323bcd7046ad5e1500d9649eb1b088ee249dcd
    </a>
   </td>
  </tr>
@@ -166,36 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/10686cab7fa320f5ba250678c8e13d500b467365%5E">
-    48e2055db86f0d141e829e1574f67393d936a49e
+   <a href="/chromium/src/+/e11c552d9b892d1e907c15baa68b3b6834d97e15%5E">
+    6629521a597ef24228ed238eabee1ed73a9afd99
    </a>
    <span>
     [
-    <a href="/chromium/src/+/10686cab7fa320f5ba250678c8e13d500b467365%5E%21/">
+    <a href="/chromium/src/+/e11c552d9b892d1e907c15baa68b3b6834d97e15%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">build: remove reference to tools/swarming_client
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor paint under-invalidation checking
 
-This adds yet another dependency to logdog subdir repository and use
-that from pylib.
+- Separate under-invalidation checking code from PaintController
+  into PaintUnderInvalidationChecker.
 
-This is to remove deprecated python client //tools/swarming_client from
-DEPS later.
+- The end of under-invalidation checking: previously this was
+  determined by checking under_invalidation_checking_end_. Now
+  for single display item, under-invalidation checking ends after
+  checking the next display item; for subsequence, under-invalidation
+  checking ends when the subsequence ends.
 
-third_party addition is approved in
-<a href="http://g/chrome-eng-review/6BvlJENKYdA">http://g/chrome-eng-review/6BvlJENKYdA</a>
+- For paint chunks, check under-invalidation when the paint chunk
+  is complete instead of checking all paint chunks at the end of a
+  subsequence.
 
-Fixed: 1051854
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I521923a058e15a6cd36f083e854f472ca727b30d">I521923a058e15a6cd36f083e854f472ca727b30d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2939408">https://chromium-review.googlesource.com/c/chromium/src/+/2939408</a>
-Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Reviewed-by: Peter Wen &lt;wnwen@chromium.org&gt;
-Commit-Queue: Takuto Ikuta &lt;tikuta@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#890539}
+- Simplify API of PaintController::BeginSubsequence()/EndSubsequence()
+
+Bug: 1210247
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I16d5ab03b24930a85749fb87ba1596cdda228376">I16d5ab03b24930a85749fb87ba1596cdda228376</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2934857">https://chromium-review.googlesource.com/c/chromium/src/+/2934857</a>
+Commit-Queue: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#890558}
 </pre>
 
 </body>
