@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/891303/"> 891303</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1d269077e73b0a3c0a4322cf449acfc60ca34007">1d269077e73b0a3c0a4322cf449acfc60ca34007</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/891322/"> 891322</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b2cfdfecafa8aae4c4ac26d3460b26e93453a9c3">b2cfdfecafa8aae4c4ac26d3460b26e93453a9c3</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/891311/">891311</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1d269077e73b0a3c0a4322cf449acfc60ca34007
+   b2cfdfecafa8aae4c4ac26d3460b26e93453a9c3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1d269077e73b0a3c0a4322cf449acfc60ca34007">
+    <a href="/chromium/src/+log/b2cfdfecafa8aae4c4ac26d3460b26e93453a9c3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1d269077e73b0a3c0a4322cf449acfc60ca34007.tar.gz">
+    <a href="/chromium/src/+archive/b2cfdfecafa8aae4c4ac26d3460b26e93453a9c3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Michael Thiessen &lt;mthiesse@chromium.org&gt;
+   Bruce Dawson &lt;brucedawson@chromium.org&gt;
   </td>
   <td>
-   Thu Jun 10 18:14:33 2021
+   Thu Jun 10 19:01:20 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jun 10 18:14:33 2021
+   Thu Jun 10 19:01:20 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1d269077e73b0a3c0a4322cf449acfc60ca34007/">
-    aa4741c10a31aeaa07a2a6076659039e1325221d
+   <a href="/chromium/src/+/b2cfdfecafa8aae4c4ac26d3460b26e93453a9c3/">
+    8875b3cee29f53bafe0a0eec8baa8f8102d7474c
    </a>
   </td>
  </tr>
@@ -166,40 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1d269077e73b0a3c0a4322cf449acfc60ca34007%5E">
-    1b2949fffa7c03b2f0b7032e53976f73929f930f
+   <a href="/chromium/src/+/b2cfdfecafa8aae4c4ac26d3460b26e93453a9c3%5E">
+    7a73c646bd16d947f9c6f48226bbeedd56fcd300
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1d269077e73b0a3c0a4322cf449acfc60ca34007%5E%21/">
+    <a href="/chromium/src/+/b2cfdfecafa8aae4c4ac26d3460b26e93453a9c3%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move Trusted Intent creation/verification into IntentUtils
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Actually fix CheckForWindowsLineEndings
 
-The code to create and verify trusted intents is embedder-agnostic, and
-could be even be used by webview if it ever had cause to. We have some
-feature modules that need to use trusted intents and right now they're
-using hacky workarounds.
+Perhaps due to a recent git change (no longer showing \r\n line ending
+differences) the recent fix to CheckForWindowsLineEndings still doesn't
+work. This change uses input_api.ReadFile rather than f.ChangedContents
+to get the file text and this reliably finds \r\n line endings.
 
-This code could live in components/ or its own feature module, but the
-overhead of creating and using a new module or component is too high
-for something this small, which could just as well sit in base/
-
-This change also removes EXTRA_IS_OPENED_BY_CHROME, which was not
-useful and just begging to cause security bugs.
-
-Bug: 1181700, 1139479
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3a908fcc7b2e5476873146163804c472d5cbadaf">I3a908fcc7b2e5476873146163804c472d5cbadaf</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2939829">https://chromium-review.googlesource.com/c/chromium/src/+/2939829</a>
-Commit-Queue: Michael Thiessen &lt;mthiesse@chromium.org&gt;
-Reviewed-by: Peter Conn &lt;peconn@chromium.org&gt;
-Reviewed-by: Robert Sesek &lt;rsesek@chromium.org&gt;
-Reviewed-by: Yaron Friedman &lt;yfriedman@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#891303}
+Bug: 801033
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I35d047bff4545664a2524990bf752de8a53af805">I35d047bff4545664a2524990bf752de8a53af805</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2951931">https://chromium-review.googlesource.com/c/chromium/src/+/2951931</a>
+Reviewed-by: Mike Pinkerton &lt;pinkerton@chromium.org&gt;
+Commit-Queue: Bruce Dawson &lt;brucedawson@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#891322}
 </pre>
 
 </body>
