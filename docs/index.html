@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/891119/"> 891119</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0dda9554d6bccc560844cdc8bcc3cafcc880cc6f">0dda9554d6bccc560844cdc8bcc3cafcc880cc6f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/891130/"> 891130</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c42031b240bce3f5dde55a6e7fc54ec6a7ff3976">c42031b240bce3f5dde55a6e7fc54ec6a7ff3976</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/891109/">891109</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8a50f6cda07b6bad948b14479b3aa0362bab767b">8a50f6cda07b6bad948b14479b3aa0362bab767b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/891123/">891123</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e204e5744af015f2aeaa8e5679897720b9b4cfad">e204e5744af015f2aeaa8e5679897720b9b4cfad</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0dda9554d6bccc560844cdc8bcc3cafcc880cc6f
+   c42031b240bce3f5dde55a6e7fc54ec6a7ff3976
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0dda9554d6bccc560844cdc8bcc3cafcc880cc6f">
+    <a href="/chromium/src/+log/c42031b240bce3f5dde55a6e7fc54ec6a7ff3976">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0dda9554d6bccc560844cdc8bcc3cafcc880cc6f.tar.gz">
+    <a href="/chromium/src/+archive/c42031b240bce3f5dde55a6e7fc54ec6a7ff3976.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yusuke Sato &lt;yusukes@chromium.org&gt;
+   Hayato Ito &lt;hayato@chromium.org&gt;
   </td>
   <td>
-   Thu Jun 10 07:01:31 2021
+   Thu Jun 10 07:53:46 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jun 10 07:01:31 2021
+   Thu Jun 10 07:53:46 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0dda9554d6bccc560844cdc8bcc3cafcc880cc6f/">
-    3c3d089e623f1d9d98ff73a64c1c4babd816fdc7
+   <a href="/chromium/src/+/c42031b240bce3f5dde55a6e7fc54ec6a7ff3976/">
+    982fd1b355ea7589c0f73529e638a7ea92d69d86
    </a>
   </td>
  </tr>
@@ -166,43 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0dda9554d6bccc560844cdc8bcc3cafcc880cc6f%5E">
-    81f92f9af18141782a9ec97ecf60f83912e54f40
+   <a href="/chromium/src/+/c42031b240bce3f5dde55a6e7fc54ec6a7ff3976%5E">
+    21223b827870f27358490b63a40f6af185e8a196
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0dda9554d6bccc560844cdc8bcc3cafcc880cc6f%5E%21/">
+    <a href="/chromium/src/+/c42031b240bce3f5dde55a6e7fc54ec6a7ff3976%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">arcvm: Implement WorkingSetTrimmerPolicyChromeOS::ArcVmDelegate
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix a crash when activating a prerendered page which did a same-doc navi
 
-The new class, WorkingSetTrimmerPolicyArcVm, tells the Chrome OS
-policy class when it is safe to reclaim memory from ARCVM. More
-specifically, its IsEligibleForReclaim() function returns true
-when all the following conditions are met:
+This is a speculative fix for a crash when activating a prerendered
+page which did a same-doc navigation.
 
-- ARCVM has fully booted.
-- ARCVM app window is not focused.
-- |arcvm_inactivity_time| has passed since the last user interaction
-  with ARCVM. "user interaction" is recorded on all of the following
-  events:
-    - One of Arc.UserInteraction UMA metrics is recorded.
-    - ARCVM has fully booted.
-    - ARCVM app window has lost focus.
+A crash happens in HistoryService:
 
-BUG=b:186278424
-TEST=unit_tests
+&gt; DCHECK_EQ(add_page_args.url, add_page_args.redirects.back());
+(See bug 1211274 for details)
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8fcd325067bc1f1d103f2a4ca3bf480f029ba259">I8fcd325067bc1f1d103f2a4ca3bf480f029ba259</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2923690">https://chromium-review.googlesource.com/c/chromium/src/+/2923690</a>
-Commit-Queue: Yusuke Sato &lt;yusukes@chromium.org&gt;
-Reviewed-by: Chris Hamilton &lt;chrisha@chromium.org&gt;
-Reviewed-by: Brian Geffon &lt;bgeffon@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#891119}
+It seems a prerender activation doesn't update a NavigationRequest's
+redirect chain correctly. This CL clears a redirect chain so that the
+activation won't confuse the History Service or any other clients.
+
+A redirect chain seems one of the parameters which is out of sync after
+<a href="https://crrev.com/c/2674430.">https://crrev.com/c/2674430.</a>
+
+Confirmed that a crash won't happen in the repro case in bug 1211274.
+
+Bug: 1211274,1181712
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I45ea6e2e9081c9da777a03394d54e51fa57d7d1a">I45ea6e2e9081c9da777a03394d54e51fa57d7d1a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2939173">https://chromium-review.googlesource.com/c/chromium/src/+/2939173</a>
+Commit-Queue: Hayato Ito &lt;hayato@chromium.org&gt;
+Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#891130}
 </pre>
 
 </body>
