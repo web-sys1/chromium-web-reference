@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/891516/"> 891516</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/07b9ec5afb76fbc43d2a3cea85c24839aa6f83d5">07b9ec5afb76fbc43d2a3cea85c24839aa6f83d5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/891537/"> 891537</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e572e788cf6d850614b6d4413fbc1657f2b90ddc">e572e788cf6d850614b6d4413fbc1657f2b90ddc</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/891516/">891516</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   07b9ec5afb76fbc43d2a3cea85c24839aa6f83d5
+   e572e788cf6d850614b6d4413fbc1657f2b90ddc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/07b9ec5afb76fbc43d2a3cea85c24839aa6f83d5">
+    <a href="/chromium/src/+log/e572e788cf6d850614b6d4413fbc1657f2b90ddc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/07b9ec5afb76fbc43d2a3cea85c24839aa6f83d5.tar.gz">
+    <a href="/chromium/src/+archive/e572e788cf6d850614b6d4413fbc1657f2b90ddc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Darren Shen &lt;shend@chromium.org&gt;
+   Rakina Zata Amni &lt;rakina@chromium.org&gt;
   </td>
   <td>
-   Fri Jun 11 04:46:22 2021
+   Fri Jun 11 05:28:50 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jun 11 04:46:22 2021
+   Fri Jun 11 05:28:50 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/07b9ec5afb76fbc43d2a3cea85c24839aa6f83d5/">
-    24c4ba35b983b9b38808494ef0a1be9bc3f9a652
+   <a href="/chromium/src/+/e572e788cf6d850614b6d4413fbc1657f2b90ddc/">
+    aa94cec0bfb8700c1b9b35475cee6c35cb6a63fb
    </a>
   </td>
  </tr>
@@ -166,31 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/07b9ec5afb76fbc43d2a3cea85c24839aa6f83d5%5E">
-    a5a8e107e6ce319185c2e3411914b5f4e5bd6c62
+   <a href="/chromium/src/+/e572e788cf6d850614b6d4413fbc1657f2b90ddc%5E">
+    bb15b25e106a19ab362c7ca7ef3c7bf067c9b995
    </a>
    <span>
     [
-    <a href="/chromium/src/+/07b9ec5afb76fbc43d2a3cea85c24839aa6f83d5%5E%21/">
+    <a href="/chromium/src/+/e572e788cf6d850614b6d4413fbc1657f2b90ddc%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">views: Call NotifyAccessibilityEvent in Label::SetText.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Always replace on iframe synchronous about:blank commit
 
-A Label's accessible name can be dependent on its text. So we must
-call NotifyAccessibilityEvent when the text changes, or else the
-accessiblity automation tree will be stale.
+The synchronous about:blank commit should only happen when the frame is
+currently showing the initial empty document. Since all navigations
+that happen on the initial empty document should result in replacement,
+this CL makes sure all synchronous about:blank commit that happens
+at frame creation in HTMLFrameOwnerElement::LoadOrRedirectSubframe()
+will use kReplaceCurrentItem. (Previously, the frame load type can be
+set to kReloadBypassingCache when the frame is reloaded, setting the
+DidCommitParams' should_replace_current_entry to false, and causing a
+DwC hit in VerifyDidCommitParams).
 
-Bug: b/190248867
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I984e8d72d09208fe738493bcb4cf92bfeaf5ed33">I984e8d72d09208fe738493bcb4cf92bfeaf5ed33</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2951301">https://chromium-review.googlesource.com/c/chromium/src/+/2951301</a>
-Commit-Queue: Darren Shen &lt;shend@chromium.org&gt;
-Reviewed-by: Trent Apted &lt;tapted@chromium.org&gt;
-Reviewed-by: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#891516}
+Bug: 1204981, 1215096
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id96220c794a5c0fbe84ad0b4127165d6a7ce4e62">Id96220c794a5c0fbe84ad0b4127165d6a7ce4e62</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2945251">https://chromium-review.googlesource.com/c/chromium/src/+/2945251</a>
+Commit-Queue: Rakina Zata Amni &lt;rakina@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Charlie Reis &lt;creis@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#891537}
 </pre>
 
 </body>
