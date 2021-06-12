@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/891835/"> 891835</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b">7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/891849/"> 891849</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a8e2ca957b7535f5ef729e283ee88f0831b110d1">a8e2ca957b7535f5ef729e283ee88f0831b110d1</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/891823/">891823</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cb9b15cc7d1d4353ab5db143ded25f50dc5435de">cb9b15cc7d1d4353ab5db143ded25f50dc5435de</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/891839/">891839</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c5965118d133c0875ecc0e3128fbfeb3b8ed99e3">c5965118d133c0875ecc0e3128fbfeb3b8ed99e3</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b
+   a8e2ca957b7535f5ef729e283ee88f0831b110d1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b">
+    <a href="/chromium/src/+log/a8e2ca957b7535f5ef729e283ee88f0831b110d1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b.tar.gz">
+    <a href="/chromium/src/+archive/a8e2ca957b7535f5ef729e283ee88f0831b110d1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Bo Liu &lt;boliu@chromium.org&gt;
+   Shakti Sahu &lt;shaktisahu@chromium.org&gt;
   </td>
   <td>
-   Fri Jun 11 23:11:25 2021
+   Sat Jun 12 00:03:48 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jun 11 23:11:25 2021
+   Sat Jun 12 00:03:48 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b/">
-    879c3e7a80481a8a4f3550e1843e4d98b33aa8e1
+   <a href="/chromium/src/+/a8e2ca957b7535f5ef729e283ee88f0831b110d1/">
+    747b8b42b7c839b661b0d177be12db4e9081c37c
    </a>
   </td>
  </tr>
@@ -166,42 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b%5E">
-    2b2c91ef1cec7a300f18bd9f29a01228ddf17e20
+   <a href="/chromium/src/+/a8e2ca957b7535f5ef729e283ee88f0831b110d1%5E">
+    b49975ae52dc7e0d0bc529b5575f064b20125851
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b%5E%21/">
+    <a href="/chromium/src/+/a8e2ca957b7535f5ef729e283ee88f0831b110d1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">viz: Store incremental frame damage
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[segmentation_platform] Implemented signal database
 
-Previous implementation stores damage per buffer, and assumes GPU thread
-uses buffers in a circular order.
+This CL implements signal database for storing user actions, and
+histograms. The architecture and design doc are attached to the bug.
 
-Change to store incremental damage between frames instead. Main
-difference is union operation happens when computing the damage for next
-frame, instead of storing damage for a new frame. There is a corner case
-that there is full frame damage before there are enough frames swapped
-after reallocating buffers.
-
-The result should be identical to the previous implementation. The
-benefit is the new implementation does not assume a fixed number of
-buffers, and instead can allow the GPU thread to dynamically allocate
-buffers when needed. If there are fewer buffers, viz will just union
-damage across more frames than necessary, which is still correct, though
-not as efficient.
-
-Bug: 1211332
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia38b82c96b9a6a5b2976b93dad7c45d5db9a73af">Ia38b82c96b9a6a5b2976b93dad7c45d5db9a73af</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2926936">https://chromium-review.googlesource.com/c/chromium/src/+/2926936</a>
-Commit-Queue: Bo &lt;boliu@chromium.org&gt;
-Reviewed-by: kylechar &lt;kylechar@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#891835}
+Bug: 1212931
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I18ae66777800dcdc72eb2e85d015a261fb0c9bc1">I18ae66777800dcdc72eb2e85d015a261fb0c9bc1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2936018">https://chromium-review.googlesource.com/c/chromium/src/+/2936018</a>
+Commit-Queue: Shakti Sahu &lt;shaktisahu@chromium.org&gt;
+Reviewed-by: Tommy Nyquist &lt;nyquist@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#891849}
 </pre>
 
 </body>
