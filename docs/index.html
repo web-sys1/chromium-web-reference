@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/891820/"> 891820</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/47af07c8af588ae672ce95f645ac8ce26e8dccf1">47af07c8af588ae672ce95f645ac8ce26e8dccf1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/891835/"> 891835</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b">7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/891823/">891823</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   47af07c8af588ae672ce95f645ac8ce26e8dccf1
+   7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/47af07c8af588ae672ce95f645ac8ce26e8dccf1">
+    <a href="/chromium/src/+log/7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/47af07c8af588ae672ce95f645ac8ce26e8dccf1.tar.gz">
+    <a href="/chromium/src/+archive/7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tomasz Wiszkowski &lt;ender@google.com&gt;
+   Bo Liu &lt;boliu@chromium.org&gt;
   </td>
   <td>
-   Fri Jun 11 22:24:13 2021
+   Fri Jun 11 23:11:25 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jun 11 22:24:13 2021
+   Fri Jun 11 23:11:25 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/47af07c8af588ae672ce95f645ac8ce26e8dccf1/">
-    79f80fcf0fda84378d6f019ae0d565f60a43c76e
+   <a href="/chromium/src/+/7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b/">
+    879c3e7a80481a8a4f3550e1843e4d98b33aa8e1
    </a>
   </td>
  </tr>
@@ -166,29 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/47af07c8af588ae672ce95f645ac8ce26e8dccf1%5E">
-    09c730e582e41320140d09101415ac61aee8f348
+   <a href="/chromium/src/+/7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b%5E">
+    2b2c91ef1cec7a300f18bd9f29a01228ddf17e20
    </a>
    <span>
     [
-    <a href="/chromium/src/+/47af07c8af588ae672ce95f645ac8ce26e8dccf1%5E%21/">
+    <a href="/chromium/src/+/7e2e90fbac9c7a258c35be87b26c89cc13dc1e5b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Do not drop URL suggestions on suggestion delete.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">viz: Store incremental frame damage
 
-This surfaces when the user is exploring web-contextual suggestions
-and decides to delete listed personalized suggestions.
+Previous implementation stores damage per buffer, and assumes GPU thread
+uses buffers in a circular order.
 
-Bug: 1219021
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7ce96a2e52f471f07433ab1cc1d05c795f49fa30">I7ce96a2e52f471f07433ab1cc1d05c795f49fa30</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2957252">https://chromium-review.googlesource.com/c/chromium/src/+/2957252</a>
-Commit-Queue: Tomasz Wiszkowski &lt;ender@google.com&gt;
-Reviewed-by: Tommy Li &lt;tommycli@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#891820}
+Change to store incremental damage between frames instead. Main
+difference is union operation happens when computing the damage for next
+frame, instead of storing damage for a new frame. There is a corner case
+that there is full frame damage before there are enough frames swapped
+after reallocating buffers.
+
+The result should be identical to the previous implementation. The
+benefit is the new implementation does not assume a fixed number of
+buffers, and instead can allow the GPU thread to dynamically allocate
+buffers when needed. If there are fewer buffers, viz will just union
+damage across more frames than necessary, which is still correct, though
+not as efficient.
+
+Bug: 1211332
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia38b82c96b9a6a5b2976b93dad7c45d5db9a73af">Ia38b82c96b9a6a5b2976b93dad7c45d5db9a73af</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2926936">https://chromium-review.googlesource.com/c/chromium/src/+/2926936</a>
+Commit-Queue: Bo &lt;boliu@chromium.org&gt;
+Reviewed-by: kylechar &lt;kylechar@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#891835}
 </pre>
 
 </body>
