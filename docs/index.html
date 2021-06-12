@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/891906/"> 891906</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/151be64d1183d71cf4a930f5005b9f07c93c02d1">151be64d1183d71cf4a930f5005b9f07c93c02d1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/891907/"> 891907</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e2a239859c2b888b94cf7decad0445efac039a31">e2a239859c2b888b94cf7decad0445efac039a31</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/891906/">891906</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   151be64d1183d71cf4a930f5005b9f07c93c02d1
+   e2a239859c2b888b94cf7decad0445efac039a31
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/151be64d1183d71cf4a930f5005b9f07c93c02d1">
+    <a href="/chromium/src/+log/e2a239859c2b888b94cf7decad0445efac039a31">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/151be64d1183d71cf4a930f5005b9f07c93c02d1.tar.gz">
+    <a href="/chromium/src/+archive/e2a239859c2b888b94cf7decad0445efac039a31.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Peter Boström &lt;pbos@chromium.org&gt;
   </td>
   <td>
-   Sat Jun 12 13:55:59 2021
+   Sat Jun 12 15:03:50 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Jun 12 13:55:59 2021
+   Sat Jun 12 15:03:50 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/151be64d1183d71cf4a930f5005b9f07c93c02d1/">
-    b39018976e3e2e3b9f7f7fddcb169d241229b21e
+   <a href="/chromium/src/+/e2a239859c2b888b94cf7decad0445efac039a31/">
+    51a1ef5bf23252b0828c4bef51d31f6c839a2822
    </a>
   </td>
  </tr>
@@ -166,38 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/151be64d1183d71cf4a930f5005b9f07c93c02d1%5E">
-    c428683d38a011cc0b6e3df19240c4ebd2027544
+   <a href="/chromium/src/+/e2a239859c2b888b94cf7decad0445efac039a31%5E">
+    151be64d1183d71cf4a930f5005b9f07c93c02d1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/151be64d1183d71cf4a930f5005b9f07c93c02d1%5E%21/">
+    <a href="/chromium/src/+/e2a239859c2b888b94cf7decad0445efac039a31%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll RTS model from fUHNjtOsT... to HJ5WX9m9I...
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix StatusAreaWidget View ownership
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/rts-linux-amd64-chromium-autoroll">https://autoroll.skia.org/r/rts-linux-amd64-chromium-autoroll</a>
-Please CC nodir@google.com on the revert to ensure that a human
-is aware of the problem.
+This Widget held on to std::unique_ptr&lt;View&gt;, making them effectively
+set_owned_by_client(). This relied on ~StatusAreaWidget happening before
+~Widget would have deleted them from the View hierarchy as `delete View`
+removes the View from the hierarchy (does not double-delete).
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+Owning Views that are inside the View hierarchy is being disallowed and
+set_owned_by_client() is being removed. This changes the ownership model
+so that StatusAreaWidget holds on to pointers owned by the View
+hierarchy and the View hierarchy gets cleared out in ~Widget instead of
+implicitly through ~unique_ptr in ~StatusAreaWidget.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/master/autoroll/README.md</a>
+Destruction still happens roughly at the same point in time but there
+are no unique_ptrs to Views that are really owned by the hierarchy, or
+Views owned by the hierarchy that are really owned outside of it.
 
-Tbr: nodir@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6721f3545865283e37df33b5e7893391ae179322">I6721f3545865283e37df33b5e7893391ae179322</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2957484">https://chromium-review.googlesource.com/c/chromium/src/+/2957484</a>
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#891906}
+Bug: 1044687
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I84426108e90d99c544777e134f89b2115a7e3ce3">I84426108e90d99c544777e134f89b2115a7e3ce3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2957093">https://chromium-review.googlesource.com/c/chromium/src/+/2957093</a>
+Reviewed-by: James Cook &lt;jamescook@chromium.org&gt;
+Commit-Queue: Peter Boström &lt;pbos@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#891907}
 </pre>
 
 </body>
