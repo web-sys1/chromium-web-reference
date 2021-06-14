@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/892069/"> 892069</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7bfa7bef7be814b6d71e505e7a631648add58bbe">7bfa7bef7be814b6d71e505e7a631648add58bbe</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/892094/"> 892094</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0">fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/892072/">892072</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7bfa7bef7be814b6d71e505e7a631648add58bbe
+   fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7bfa7bef7be814b6d71e505e7a631648add58bbe">
+    <a href="/chromium/src/+log/fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7bfa7bef7be814b6d71e505e7a631648add58bbe.tar.gz">
+    <a href="/chromium/src/+archive/fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Richard Knoll &lt;knollr@chromium.org&gt;
+   kylechar &lt;kylechar@chromium.org&gt;
   </td>
   <td>
-   Mon Jun 14 14:35:28 2021
+   Mon Jun 14 16:06:39 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jun 14 14:35:28 2021
+   Mon Jun 14 16:06:39 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7bfa7bef7be814b6d71e505e7a631648add58bbe/">
-    effa9313f19a2e9da28106e3a6b2c22c23b8c251
+   <a href="/chromium/src/+/fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0/">
+    b3236dc7647af24b16dd53cec9dc7cdd60fad454
    </a>
   </td>
  </tr>
@@ -166,30 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7bfa7bef7be814b6d71e505e7a631648add58bbe%5E">
-    a5484aac266c48991f437e94494b542a2ad9310a
+   <a href="/chromium/src/+/fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0%5E">
+    bbcbeaa8cb187dc1dacb905aa56cf20416f7b4f1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7bfa7bef7be814b6d71e505e7a631648add58bbe%5E%21/">
+    <a href="/chromium/src/+/fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move CameraPanTiltZoomPermissionContext to //components
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Improve CompositorFrame validation
 
-This moves the permission context to //components and adds it to
-//weblayer so we can use this API.
-Context: <a href="https://web.dev/camera-pan-tilt-zoom">https://web.dev/camera-pan-tilt-zoom</a>
+Expand on the validation of CompositorFrames in SurfaceAggregator to
+check render pass structure is valid. In particular, check that render
+passes have unique ids and that CompositorRenderPassDrawQuads refer to a
+render pass that is drawn before the quad (which is required). This also
+moves the validation into ResolvedFrameData to make it easier to test.
 
-Bug: 1217671
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3693251c7cfd31e46372b924708adafcb039c1b6">I3693251c7cfd31e46372b924708adafcb039c1b6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2945124">https://chromium-review.googlesource.com/c/chromium/src/+/2945124</a>
-Commit-Queue: Richard Knoll &lt;knollr@chromium.org&gt;
-Reviewed-by: Colin Blundell &lt;blundell@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#892069}
+One behaviour change here is that CompositorFrames containing a render
+pass cycle are now rejected as invalid outright. Before the
+CompositorRenderPassDrawQuad that embedded a later render pass would
+just fail to produce anything since the render pass wouldn't be ready
+yet. There shouldn't be any code producing render pass cycles so it
+should be safe to reject them outright.
+
+Bug: 1194082
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6273de0eb627fabce3b50e1bf8ff8abb5cad0e75">I6273de0eb627fabce3b50e1bf8ff8abb5cad0e75</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2953905">https://chromium-review.googlesource.com/c/chromium/src/+/2953905</a>
+Commit-Queue: kylechar &lt;kylechar@chromium.org&gt;
+Reviewed-by: Peter McNeeley &lt;petermcneeley@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#892094}
 </pre>
 
 </body>
