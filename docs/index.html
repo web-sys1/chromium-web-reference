@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/892094/"> 892094</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0">fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/892115/"> 892115</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/28467f06bed12d15883635d4a356c9c46eedead2">28467f06bed12d15883635d4a356c9c46eedead2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/892094/">892094</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0">fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/892120/">892120</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/43e8cdf7a994a5cf527a9bfba703f49aa98687d3">43e8cdf7a994a5cf527a9bfba703f49aa98687d3</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0
+   28467f06bed12d15883635d4a356c9c46eedead2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0">
+    <a href="/chromium/src/+log/28467f06bed12d15883635d4a356c9c46eedead2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0.tar.gz">
+    <a href="/chromium/src/+archive/28467f06bed12d15883635d4a356c9c46eedead2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   kylechar &lt;kylechar@chromium.org&gt;
+   Eric Seckler &lt;eseckler@chromium.org&gt;
   </td>
   <td>
-   Mon Jun 14 16:06:39 2021
+   Mon Jun 14 16:56:59 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jun 14 16:06:39 2021
+   Mon Jun 14 16:56:59 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0/">
-    b3236dc7647af24b16dd53cec9dc7cdd60fad454
+   <a href="/chromium/src/+/28467f06bed12d15883635d4a356c9c46eedead2/">
+    8f5fc4c6b1673a4967d220684b36f7797726fbaa
    </a>
   </td>
  </tr>
@@ -166,39 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0%5E">
-    bbcbeaa8cb187dc1dacb905aa56cf20416f7b4f1
+   <a href="/chromium/src/+/28467f06bed12d15883635d4a356c9c46eedead2%5E">
+    0e9d83a1ed848c4f6390af395155216dfed4e6b3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/fc0513f009a2e9bc26f8c04b03d3a27fa12ebda0%5E%21/">
+    <a href="/chromium/src/+/28467f06bed12d15883635d4a356c9c46eedead2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Improve CompositorFrame validation
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">power: Extend CPU time UMAs and remove TimeBetweenEvents UMA
 
-Expand on the validation of CompositorFrames in SurfaceAggregator to
-check render pass structure is valid. In particular, check that render
-passes have unique ids and that CompositorRenderPassDrawQuads refer to a
-render pass that is drawn before the quad (which is required). This also
-moves the validation into ResolvedFrameData to make it easier to test.
+We still need the CPU time metrics, but the diagnostic
+Power.ForegroundBatteryDrain.TimeBetweenEvents metric
+is not needed anymore.
 
-One behaviour change here is that CompositorFrames containing a render
-pass cycle are now rejected as invalid outright. Before the
-CompositorRenderPassDrawQuad that embedded a later render pass would
-just fail to produce anything since the render pass wouldn't be ready
-yet. There shouldn't be any code producing render pass cycles so it
-should be safe to reject them outright.
-
-Bug: 1194082
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6273de0eb627fabce3b50e1bf8ff8abb5cad0e75">I6273de0eb627fabce3b50e1bf8ff8abb5cad0e75</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2953905">https://chromium-review.googlesource.com/c/chromium/src/+/2953905</a>
-Commit-Queue: kylechar &lt;kylechar@chromium.org&gt;
-Reviewed-by: Peter McNeeley &lt;petermcneeley@google.com&gt;
-Cr-Commit-Position: refs/heads/master@{#892094}
+Fixed: 1217242
+Fixed: 1212715
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I00dfd10a090f4fbb655000595e4700894ef7d406">I00dfd10a090f4fbb655000595e4700894ef7d406</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2959917">https://chromium-review.googlesource.com/c/chromium/src/+/2959917</a>
+Reviewed-by: Sébastien Marchand &lt;sebmarchand@chromium.org&gt;
+Reviewed-by: Sami Kyöstilä &lt;skyostil@chromium.org&gt;
+Commit-Queue: Eric Seckler &lt;eseckler@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#892115}
 </pre>
 
 </body>
