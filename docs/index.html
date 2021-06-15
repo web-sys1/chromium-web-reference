@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/892430/"> 892430</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6fb600b01d7e50eb815d4db13217f5b01f019d3c">6fb600b01d7e50eb815d4db13217f5b01f019d3c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/892439/"> 892439</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/93462c64bc643721ff7f9dc394db8b58d330a793">93462c64bc643721ff7f9dc394db8b58d330a793</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/892417/">892417</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9ba9a784d32065512ee0073528922c381dfe7e47">9ba9a784d32065512ee0073528922c381dfe7e47</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/892444/">892444</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/149c7c4fb5e5816b657623e50f17169d23bc291c">149c7c4fb5e5816b657623e50f17169d23bc291c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6fb600b01d7e50eb815d4db13217f5b01f019d3c
+   93462c64bc643721ff7f9dc394db8b58d330a793
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6fb600b01d7e50eb815d4db13217f5b01f019d3c">
+    <a href="/chromium/src/+log/93462c64bc643721ff7f9dc394db8b58d330a793">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6fb600b01d7e50eb815d4db13217f5b01f019d3c.tar.gz">
+    <a href="/chromium/src/+archive/93462c64bc643721ff7f9dc394db8b58d330a793.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
+   Lingqi Chi &lt;lingqi@chromium.org&gt;
   </td>
   <td>
-   Tue Jun 15 04:47:37 2021
+   Tue Jun 15 05:25:08 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jun 15 04:47:37 2021
+   Tue Jun 15 05:25:08 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6fb600b01d7e50eb815d4db13217f5b01f019d3c/">
-    cea60da436f007decefb891d291f1b79b860e7e5
+   <a href="/chromium/src/+/93462c64bc643721ff7f9dc394db8b58d330a793/">
+    49b1ad2a1a4449927a96ba8e3ba35e04cd2aff0f
    </a>
   </td>
  </tr>
@@ -166,38 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6fb600b01d7e50eb815d4db13217f5b01f019d3c%5E">
-    deb0cf657a5639f3ab7cf9deddd713558b24178d
+   <a href="/chromium/src/+/93462c64bc643721ff7f9dc394db8b58d330a793%5E">
+    a912b574405382b6e967455d9b70bab0e4f24630
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6fb600b01d7e50eb815d4db13217f5b01f019d3c%5E%21/">
+    <a href="/chromium/src/+/93462c64bc643721ff7f9dc394db8b58d330a793%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">webgl: Support texImage2D and drawImage from webgpu canvas
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prerender: Check MojoBinderPolicyApplier::GrantAll() is called within
+Mojo message calls
 
-This CL implements support for texImage2D and drawImage from a webgpu
-canvas by implementing GetImage for the webgpu context.  This is
-unfortunately a two-copy path since it's not trivial to detach the swap
-chain texture in Dawn while accessing it in GL.  This CL also allows
-experimentalImportTexture from a webgpu canvas to another webgpu canvas.
+This CL adds a DCHECK into MojoBinderPolicyApplier::GrantAll() to ensure
+this method is called within Mojo message call stacks.
+We should guarantee it because MojoBinderPolicyApplier::GrantAll()
+invokes BrowserInterfaceBrokerImpl::BindInterface(), and the
+BindInterface() method may call mojo::ReportBadMessage(), which should
+be called within a stack frame of a Mojo message dispatch.
 
-Adds pixel tests for the above scenarios and updates the existing pixel
-tests with webgpu spec changes (configureSwapChain -&gt; configure).
+(Now mojom::LocalFrameHost::DidActivateForPrerendering() invokes
+MojoBinderPolicyApplier::GrantAll(). See the issue description for more
+information.)
 
-Bug: 1200466, 1218185
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib6ebe2c02e950c4b13b6b26253bfbf3ad9d9599c">Ib6ebe2c02e950c4b13b6b26253bfbf3ad9d9599c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2827422">https://chromium-review.googlesource.com/c/chromium/src/+/2827422</a>
-Commit-Queue: Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
-Reviewed-by: Juanmi Huertas &lt;juanmihd@chromium.org&gt;
-Reviewed-by: Kai Ninomiya &lt;kainino@chromium.org&gt;
-Reviewed-by: Fernando Serboncini &lt;fserb@chromium.org&gt;
-Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#892430}
+Bug: 1217977
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib63811a753243756b778b1a1f02f5aa616dedeba">Ib63811a753243756b778b1a1f02f5aa616dedeba</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2952745">https://chromium-review.googlesource.com/c/chromium/src/+/2952745</a>
+Commit-Queue: Lingqi Chi &lt;lingqi@chromium.org&gt;
+Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#892439}
 </pre>
 
 </body>
