@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/893083/"> 893083</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/97e4e9a788f86da12ed337032f1e185cc61fc35f">97e4e9a788f86da12ed337032f1e185cc61fc35f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/893140/"> 893140</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ee08e56fbf2e2f928e544491be5ae9d94d21e309">ee08e56fbf2e2f928e544491be5ae9d94d21e309</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/893074/">893074</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/73374b0bd9f890dfbe87bcf0ccc2a8719b8671ad">73374b0bd9f890dfbe87bcf0ccc2a8719b8671ad</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/893125/">893125</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2084f7d6f2072dd1558851fd3a7d4643fb903ee0">2084f7d6f2072dd1558851fd3a7d4643fb903ee0</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   97e4e9a788f86da12ed337032f1e185cc61fc35f
+   ee08e56fbf2e2f928e544491be5ae9d94d21e309
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/97e4e9a788f86da12ed337032f1e185cc61fc35f">
+    <a href="/chromium/src/+log/ee08e56fbf2e2f928e544491be5ae9d94d21e309">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/97e4e9a788f86da12ed337032f1e185cc61fc35f.tar.gz">
+    <a href="/chromium/src/+archive/ee08e56fbf2e2f928e544491be5ae9d94d21e309.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Trevor Perrier &lt;perrier@chromium.org&gt;
+   Olesia Marukhno &lt;olesiamarukhno@google.com&gt;
   </td>
   <td>
-   Wed Jun 16 18:54:44 2021
+   Wed Jun 16 20:54:37 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jun 16 18:54:44 2021
+   Wed Jun 16 20:54:37 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/97e4e9a788f86da12ed337032f1e185cc61fc35f/">
-    0f0a145bc340e29cbf69d9029b4538daa34d1626
+   <a href="/chromium/src/+/ee08e56fbf2e2f928e544491be5ae9d94d21e309/">
+    65a588294975a59a96f12ac2813983d8f5197de0
    </a>
   </td>
  </tr>
@@ -166,46 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/97e4e9a788f86da12ed337032f1e185cc61fc35f%5E">
-    6630146a35c88e2cf3004fdf1815c527f8743ddc
+   <a href="/chromium/src/+/ee08e56fbf2e2f928e544491be5ae9d94d21e309%5E">
+    254af74d6a679a935baaff90b24536a05659d73f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/97e4e9a788f86da12ed337032f1e185cc61fc35f%5E%21/">
+    <a href="/chromium/src/+/ee08e56fbf2e2f928e544491be5ae9d94d21e309%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Android] fix isAvailableUiLanguage check
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move presenter inititialization from InitializeUiState to constructor
 
-This CL fixes a bug with LanguageItem.isAvailableUiLanguage. The issue
-is that we need to do two different types of availability checks:
+Currently, computing of the UI inputs and recodring of the opening
+page info UI is performed in PageInfo::InitializeUiState. All references
+create the instanse of the PageInfo and call InitializeUiState
+immediately.
 
- - Check that a locale exactly matches an available UI language.
- - Check that the base language is an available UI language.
+Page info v2 consists of multiple pages, each one of those is a
+representation of PageInfoUI. Now PageInfo construtration will
+compute UI inputs and recording opening dialog action. This makes the
+lifecycle more clear: PageInfo instance is bound to lifetime of the
+page info surface, not to the current implementation of the PageInfoUI.
+This allows to change between PageInfoUI while keeping shared PageInfo
+instance without recomputing values.
 
-This CL splits the current isAvailableUiLanguage method into two and
-moves them to AppLocaleUtils.
-
-For an exact match "en" should not be an available language since the
-only languages we have strings for are "en-GB" and "en-US".  However,
-"fr" is an exact match since the languages we have strings for are "fr"
-and "fr-CA" (and in this case "fr-FR" would not match).
-
-For the base language match just needs to check if for a given locale
-Chrome on Android can be displayed in it. (We rely on Android to
-correctly select the strings in "en-GB" when the device locale is
-something like "en-AU" or "en-IN").
-
-Bug: 1218113
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2ce6b3342a1200ab4ac9696fd56cfb1adc8bdae4">I2ce6b3342a1200ab4ac9696fd56cfb1adc8bdae4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2953114">https://chromium-review.googlesource.com/c/chromium/src/+/2953114</a>
-Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
-Reviewed-by: Josh Simmons &lt;jds@google.com&gt;
-Commit-Queue: Trevor Perrier &lt;perrier@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#893083}
+Bug: 1188101
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I09187716a21016d65609b654db6713ab53da5d53">I09187716a21016d65609b654db6713ab53da5d53</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2947014">https://chromium-review.googlesource.com/c/chromium/src/+/2947014</a>
+Reviewed-by: Emily Stark &lt;estark@chromium.org&gt;
+Commit-Queue: Olesia Marukhno &lt;olesiamarukhno@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#893140}
 </pre>
 
 </body>
