@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/893060/"> 893060</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/19c2bebe7d521d945f0430d18df076cab1a3962e">19c2bebe7d521d945f0430d18df076cab1a3962e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/893083/"> 893083</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/97e4e9a788f86da12ed337032f1e185cc61fc35f">97e4e9a788f86da12ed337032f1e185cc61fc35f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/893051/">893051</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   19c2bebe7d521d945f0430d18df076cab1a3962e
+   97e4e9a788f86da12ed337032f1e185cc61fc35f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/19c2bebe7d521d945f0430d18df076cab1a3962e">
+    <a href="/chromium/src/+log/97e4e9a788f86da12ed337032f1e185cc61fc35f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/19c2bebe7d521d945f0430d18df076cab1a3962e.tar.gz">
+    <a href="/chromium/src/+archive/97e4e9a788f86da12ed337032f1e185cc61fc35f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yuke Liao &lt;liaoyuke@chromium.org&gt;
+   Trevor Perrier &lt;perrier@chromium.org&gt;
   </td>
   <td>
-   Wed Jun 16 17:58:59 2021
+   Wed Jun 16 18:54:44 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jun 16 17:58:59 2021
+   Wed Jun 16 18:54:44 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/19c2bebe7d521d945f0430d18df076cab1a3962e/">
-    91e4eea11157cdbbab1622b7ac3887e3a53a4b64
+   <a href="/chromium/src/+/97e4e9a788f86da12ed337032f1e185cc61fc35f/">
+    0f0a145bc340e29cbf69d9029b4538daa34d1626
    </a>
   </td>
  </tr>
@@ -166,30 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/19c2bebe7d521d945f0430d18df076cab1a3962e%5E">
-    e8cd59092143a06aa344ef58559070101898366a
+   <a href="/chromium/src/+/97e4e9a788f86da12ed337032f1e185cc61fc35f%5E">
+    6630146a35c88e2cf3004fdf1815c527f8743ddc
    </a>
    <span>
     [
-    <a href="/chromium/src/+/19c2bebe7d521d945f0430d18df076cab1a3962e%5E%21/">
+    <a href="/chromium/src/+/97e4e9a788f86da12ed337032f1e185cc61fc35f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Lacros: Run lacros_smoke_tast_tests on Eve on CI/CQ
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Android] fix isAvailableUiLanguage check
 
-<a href="https://crrev.com/c/2963432">https://crrev.com/c/2963432</a> fixed a crashing issue when running Lacros
-Tast tests, so this CL starts running them on CI/CQ to prevent
-regressions.
+This CL fixes a bug with LanguageItem.isAvailableUiLanguage. The issue
+is that we need to do two different types of availability checks:
 
-Bug: 1216480
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib56ae68539e1f129b1630280101c176fc42327d2">Ib56ae68539e1f129b1630280101c176fc42327d2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2966860">https://chromium-review.googlesource.com/c/chromium/src/+/2966860</a>
-Reviewed-by: Sven Zheng &lt;svenzheng@chromium.org&gt;
-Commit-Queue: Yuke Liao &lt;liaoyuke@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#893060}
+ - Check that a locale exactly matches an available UI language.
+ - Check that the base language is an available UI language.
+
+This CL splits the current isAvailableUiLanguage method into two and
+moves them to AppLocaleUtils.
+
+For an exact match "en" should not be an available language since the
+only languages we have strings for are "en-GB" and "en-US".  However,
+"fr" is an exact match since the languages we have strings for are "fr"
+and "fr-CA" (and in this case "fr-FR" would not match).
+
+For the base language match just needs to check if for a given locale
+Chrome on Android can be displayed in it. (We rely on Android to
+correctly select the strings in "en-GB" when the device locale is
+something like "en-AU" or "en-IN").
+
+Bug: 1218113
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2ce6b3342a1200ab4ac9696fd56cfb1adc8bdae4">I2ce6b3342a1200ab4ac9696fd56cfb1adc8bdae4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2953114">https://chromium-review.googlesource.com/c/chromium/src/+/2953114</a>
+Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Reviewed-by: Josh Simmons &lt;jds@google.com&gt;
+Commit-Queue: Trevor Perrier &lt;perrier@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#893083}
 </pre>
 
 </body>
