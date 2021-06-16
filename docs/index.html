@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/892884/"> 892884</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7b6e56350538eec675e2f696d9df3f92ee9c065e">7b6e56350538eec675e2f696d9df3f92ee9c065e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/892904/"> 892904</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4733d76c276de8990c5067584aadcc86be4806cb">4733d76c276de8990c5067584aadcc86be4806cb</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/892895/">892895</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7b6e56350538eec675e2f696d9df3f92ee9c065e
+   4733d76c276de8990c5067584aadcc86be4806cb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7b6e56350538eec675e2f696d9df3f92ee9c065e">
+    <a href="/chromium/src/+log/4733d76c276de8990c5067584aadcc86be4806cb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7b6e56350538eec675e2f696d9df3f92ee9c065e.tar.gz">
+    <a href="/chromium/src/+archive/4733d76c276de8990c5067584aadcc86be4806cb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yoshifuim Inoue &lt;yosin@chromium.org&gt;
+   Christopher Lam &lt;calamity@chromium.org&gt;
   </td>
   <td>
-   Wed Jun 16 05:29:15 2021
+   Wed Jun 16 07:07:24 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jun 16 05:29:15 2021
+   Wed Jun 16 07:07:24 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7b6e56350538eec675e2f696d9df3f92ee9c065e/">
-    4112790b7c9597698b4d11d8710dcfc6b94f9373
+   <a href="/chromium/src/+/4733d76c276de8990c5067584aadcc86be4806cb/">
+    355cfc109e8d4a4056a4cd40e2cb6c1606c55d73
    </a>
   </td>
  </tr>
@@ -166,32 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7b6e56350538eec675e2f696d9df3f92ee9c065e%5E">
-    ad0bdc01077476a5fae61314692999328acc07f1
+   <a href="/chromium/src/+/4733d76c276de8990c5067584aadcc86be4806cb%5E">
+    28834ce635e64b443e75fe0a22eab208831e2008
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7b6e56350538eec675e2f696d9df3f92ee9c065e%5E%21/">
+    <a href="/chromium/src/+/4733d76c276de8990c5067584aadcc86be4806cb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Get rid of unused function NGFragmentItem::ContentsInkOverflow()
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[style_var_gen] Fix bug with variable references.
 
-This patch gets rid of unused function |ContentsInkOverflow()| in
-|NGFragmentItem| to reduce size of source code for improving code
-health.
+Previously, a variable referring to another variable would only generate
+a different RGB value in CSS.
 
-Bug: 1112923
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idf9d39086169285e5f92c6a88b36f7e3b34d9077">Idf9d39086169285e5f92c6a88b36f7e3b34d9077</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2966199">https://chromium-review.googlesource.com/c/chromium/src/+/2966199</a>
-Commit-Queue: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
-Auto-Submit: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#892884}
+i.e
+
+color_a: $color_b
+
+would generate
+
+--color-a-rgb: var(--color-b-rgb);
+--color-a: var(--color-a-rgb);
+
+This drops any opacity value that color_b may have had.
+
+Some tests and validation have also been added for self-references which
+caught me out last CL.
+
+Bug: 1018654
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8270864147c4dd6268b8efb7cd547788a051a14d">I8270864147c4dd6268b8efb7cd547788a051a14d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2959658">https://chromium-review.googlesource.com/c/chromium/src/+/2959658</a>
+Reviewed-by: Zain Afzal &lt;zafzal@google.com&gt;
+Commit-Queue: calamity &lt;calamity@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#892904}
 </pre>
 
 </body>
