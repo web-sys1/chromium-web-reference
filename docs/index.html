@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/893297/"> 893297</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dbc2e339e2dd5748516d58ed83ab4125681efcbc">dbc2e339e2dd5748516d58ed83ab4125681efcbc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/893315/"> 893315</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bd36b905f706008cbb04bdaaea1d2632634eecc3">bd36b905f706008cbb04bdaaea1d2632634eecc3</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/893301/">893301</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ab50099dd81838903ca12e95b7a15c55aa896029">ab50099dd81838903ca12e95b7a15c55aa896029</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/893317/">893317</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/10f1cc44e9d6d3a2fd559d7c7e7b14a08bfc43ea">10f1cc44e9d6d3a2fd559d7c7e7b14a08bfc43ea</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   dbc2e339e2dd5748516d58ed83ab4125681efcbc
+   bd36b905f706008cbb04bdaaea1d2632634eecc3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/dbc2e339e2dd5748516d58ed83ab4125681efcbc">
+    <a href="/chromium/src/+log/bd36b905f706008cbb04bdaaea1d2632634eecc3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/dbc2e339e2dd5748516d58ed83ab4125681efcbc.tar.gz">
+    <a href="/chromium/src/+archive/bd36b905f706008cbb04bdaaea1d2632634eecc3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Asami Doi &lt;asamidoi@chromium.org&gt;
+   Alex Rudenko &lt;alexrudenko@chromium.org&gt;
   </td>
   <td>
-   Thu Jun 17 04:28:24 2021
+   Thu Jun 17 06:17:11 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jun 17 04:28:24 2021
+   Thu Jun 17 06:17:11 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/dbc2e339e2dd5748516d58ed83ab4125681efcbc/">
-    2a9a7398ed90cd5b6bb9d451c3f181807edc8ab1
+   <a href="/chromium/src/+/bd36b905f706008cbb04bdaaea1d2632634eecc3/">
+    6164daf6b72f3c1d9ab585c042e9398f977061e3
    </a>
   </td>
  </tr>
@@ -166,38 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/dbc2e339e2dd5748516d58ed83ab4125681efcbc%5E">
-    35d44955a4906a965f0ccc96d19c2e5fef2bdef7
+   <a href="/chromium/src/+/bd36b905f706008cbb04bdaaea1d2632634eecc3%5E">
+    187c3088bc749595c2f1c8a2b279f938e538e688
    </a>
    <span>
     [
-    <a href="/chromium/src/+/dbc2e339e2dd5748516d58ed83ab4125681efcbc%5E%21/">
+    <a href="/chromium/src/+/bd36b905f706008cbb04bdaaea1d2632634eecc3%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PlzDedicatedWorker: exclude blob url workers from UseCounter
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Query a11y tree including ignored nodes
 
-This CL adds a new UseCounter, counts the number of dedicated workers
-that will not be controlled by any service workers after
-PlzDedicatedWorkerand the dedicated worker is NOT a blob URL worker.
-It's ok to exclude blob URL workers from the UseCounter because a blob
-URL worker inherits the URL of its parent document and use it for scope
-matching. If we allow blob URL workers to be recorded, it's always
-recorded.
+crrev.com/c/2505362 changed the logic for queryAXTree
+command to exclude ignored nodes. That was probably done
+by accident given that the original intention was
+to return ignored nodes as well as documented on the CDP
+level: <a href="https://chromedevtools.github.io/devtools-protocol/tot/Accessibility/#method-queryAXTree">https://chromedevtools.github.io/devtools-protocol/tot/Accessibility/#method-queryAXTree</a>
 
-Also adds the UseCounter to the UKM feature to analyze sites that
-records the UseCounter.
+We discovered the issue while working on the recorder: it's possible
+to compute an accessible name for ignored nodes but it's not possible
+to find the node later. Therefore, this CL reverts queryAXTree to the
+original behaviour.
 
-Bug: 906991
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id8c2ff4b68e8a1fd2d41bb8b2ff5bdf69269a65d">Id8c2ff4b68e8a1fd2d41bb8b2ff5bdf69269a65d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2963808">https://chromium-review.googlesource.com/c/chromium/src/+/2963808</a>
-Commit-Queue: Asami Doi &lt;asamidoi@chromium.org&gt;
-Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
-Reviewed-by: Jesse Doherty &lt;jwd@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#893297}
+Bug: chromium:1215440, chromium:1011245
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1e7d67dd229ccd96d2d13b855d22e12567487fdd">I1e7d67dd229ccd96d2d13b855d22e12567487fdd</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2965698">https://chromium-review.googlesource.com/c/chromium/src/+/2965698</a>
+Reviewed-by: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
+Commit-Queue: Alex Rudenko &lt;alexrudenko@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#893315}
 </pre>
 
 </body>
