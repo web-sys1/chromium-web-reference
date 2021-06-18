@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/893929/"> 893929</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4bd1f44054483e5ed809d236781571b93d89741e">4bd1f44054483e5ed809d236781571b93d89741e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/893997/"> 893997</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d97fca272cf389dbf3fc5e339da8e80ef5e84bdb">d97fca272cf389dbf3fc5e339da8e80ef5e84bdb</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/893929/">893929</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4bd1f44054483e5ed809d236781571b93d89741e
+   d97fca272cf389dbf3fc5e339da8e80ef5e84bdb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4bd1f44054483e5ed809d236781571b93d89741e">
+    <a href="/chromium/src/+log/d97fca272cf389dbf3fc5e339da8e80ef5e84bdb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4bd1f44054483e5ed809d236781571b93d89741e.tar.gz">
+    <a href="/chromium/src/+archive/d97fca272cf389dbf3fc5e339da8e80ef5e84bdb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Austin Sullivan &lt;asully@chromium.org&gt;
+   Sven Zheng &lt;svenzheng@chromium.org&gt;
   </td>
   <td>
-   Fri Jun 18 20:10:10 2021
+   Fri Jun 18 22:04:36 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jun 18 20:10:10 2021
+   Fri Jun 18 22:04:36 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4bd1f44054483e5ed809d236781571b93d89741e/">
-    0e97de0068d82b476e474833238141647ea5bb45
+   <a href="/chromium/src/+/d97fca272cf389dbf3fc5e339da8e80ef5e84bdb/">
+    4b46d9c0a7caea30338db738c83600481bda4930
    </a>
   </td>
  </tr>
@@ -166,64 +166,86 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4bd1f44054483e5ed809d236781571b93d89741e%5E">
-    28f8ab34e4c1d060d59a90af3a3c084e25819810
+   <a href="/chromium/src/+/d97fca272cf389dbf3fc5e339da8e80ef5e84bdb%5E">
+    03f3b612aa8aaff44e0c49d9f0d82e589fa86493
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4bd1f44054483e5ed809d236781571b93d89741e%5E%21/">
+    <a href="/chromium/src/+/d97fca272cf389dbf3fc5e339da8e80ef5e84bdb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Reland^3 "mac: Temporarily use lld as linker in non-pgo builds""""
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">no_symbols for linux-lacros-rel
 
-This reverts commit 2a9ff5c3af0a9f6a6340e4db96b80fe72d478be2.
+This will make compile step faster.
+Previously symbol_level=0 means no symbol. But llvm changed the
+behavior. Now it contains function names, which in general is
+fine for developers.
 
-Reason for revert: Suspect this may have closed the tree by breaking builds on mac-archive-rel <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/mac-archive-rel/21945/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/mac-archive-rel/21945/overview</a>
+This is the result for linux-lacros-rel:
+symbol_level=0: <a href="https://ci.chromium.org/p/chromium/builders/try/linux-lacros-rel/247920?">https://ci.chromium.org/p/chromium/builders/try/linux-lacros-rel/247920?</a>
+The browser_tests shard 0 contains:
+../../chrome/browser/profiles/profile_manager_browsertest.cc:616: Failure
+Expected equality of these values:
+  2U
+    Which is: 2
+  chrome::GetTotalBrowserCount()
+    Which is: 1
+Stack trace:
+#0 0x56441415eea1 ProfileManagerBrowserTest_PRE_AddMultipleProfiles_Test::RunTestOnMainThread()
+#1 0x56441a1d278c content::BrowserTestBase::ProxyRunTestOnMainThreadLoop()
+#2 0x564413970763 chrome_service_worker_browser_test::ChromeServiceWorkerLinkFetchTest::ManifestCallbackAndRun()
+#3 0x5644199f3cce ChromeBrowserMainParts::PreMainMessageLoopRunImpl()
+#4 0x5644199f3024 ChromeBrowserMainParts::PreMainMessageLoopRun()
+#5 0x564416e69bef content::BrowserMainLoop::PreMainMessageLoopRun()
+#6 0x56441740a676 content::StartupTaskRunner::RunAllTasksNow()
+#7 0x564416e69855 content::BrowserMainLoop::CreateStartupTasks()
+#8 0x564416e6c10b content::BrowserMainRunnerImpl::Initialize()
+#9 0x564416e67dd7 content::BrowserMain()
+#10 0x564417d95478 content::ContentMainRunnerImpl::RunBrowser()
+#11 0x564417d94ec0 content::ContentMainRunnerImpl::Run()
+#12 0x564417d92d1c content::RunContentProcess()
+#13 0x564417d92ded content::ContentMain()
+#14 0x56441a1d1a78 content::BrowserTestBase::SetUp()
+#15 0x5644197edc5e InProcessBrowserTest::SetUp()
 
-Original change's description:
-&gt; Reland^3 "mac: Temporarily use lld as linker in non-pgo builds"""
-&gt;
-&gt; This is a reland of 8ff07dfd3359105e6abe5b6f03c9a23a9e59163f
-&gt;
-&gt; Difference since last time:
-&gt; - Don't use in PGO builds for now to work around bug 1220128
-&gt; - Pass --deduplicate-literals to work around bug 1218958
-&gt; - Given absl hidden inline symbols in lld/mac builds for now to
-&gt;   work around bug 1220100
-&gt;
-&gt; The motivation is to land this and revert this in a few hours again
-&gt; (well before the next canary is cut), to identify unknown problems.
-&gt;
-&gt; Sheriffs: If this breaks anything, please do revert. Finding things
-&gt; that this breaks that I don't yet know about is the point of landing
-&gt; this :)
-&gt;
-&gt; Bug: 1149587
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I341de4af0fb1b65d1861985f221255ea397581b4">I341de4af0fb1b65d1861985f221255ea397581b4</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2973231">https://chromium-review.googlesource.com/c/chromium/src/+/2973231</a>
-&gt; Commit-Queue: Nico Weber &lt;thakis@chromium.org&gt;
-&gt; Commit-Queue: Leonard Grey &lt;lgrey@chromium.org&gt;
-&gt; Auto-Submit: Nico Weber &lt;thakis@chromium.org&gt;
-&gt; Reviewed-by: Leonard Grey &lt;lgrey@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#893921}
+symbol_level=1: <a href="https://ci.chromium.org/p/chromium/builders/try/linux-lacros-rel/248772">https://ci.chromium.org/p/chromium/builders/try/linux-lacros-rel/248772</a>
+The browser_tests shard 0 contains:
+../../chrome/browser/profiles/profile_manager_browsertest.cc:616: Failure
+Expected equality of these values:
+  2U
+    Which is: 2
+  chrome::GetTotalBrowserCount()
+    Which is: 1
+Stack trace:
+#0 0x5565d9f0f621 ProfileManagerBrowserTest_PRE_AddMultipleProfiles_Test::RunTestOnMainThread()
+#1 0x5565dff88ebc content::BrowserTestBase::ProxyRunTestOnMainThreadLoop()
+#2 0x5565d971fe93 chrome_service_worker_browser_test::ChromeServiceWorkerLinkFetchTest::ManifestCallbackAndRun()
+#3 0x5565df7aa9ce ChromeBrowserMainParts::PreMainMessageLoopRunImpl()
+#4 0x5565df7a9d24 ChromeBrowserMainParts::PreMainMessageLoopRun()
+#5 0x5565dcc1fbdf content::BrowserMainLoop::PreMainMessageLoopRun()
+#6 0x5565dd1c09c6 content::StartupTaskRunner::RunAllTasksNow()
+#7 0x5565dcc1f845 content::BrowserMainLoop::CreateStartupTasks()
+#8 0x5565dcc220fb content::BrowserMainRunnerImpl::Initialize()
+#9 0x5565dcc1ddc7 content::BrowserMain()
+#10 0x5565ddb4ce78 content::ContentMainRunnerImpl::RunBrowser()
+#11 0x5565ddb4c8c0 content::ContentMainRunnerImpl::Run()
+#12 0x5565ddb4a71c content::RunContentProcess()
+#13 0x5565ddb4a7ed content::ContentMain()
+#14 0x5565dff881a8 content::BrowserTestBase::SetUp()
+#15 0x5565df5a494e InProcessBrowserTest::SetUp()
+It's the same debug information.
 
-Bug: 1149587
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I63d91c07795b4a07a6cca95e704df0cb83fb713a">I63d91c07795b4a07a6cca95e704df0cb83fb713a</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2971846">https://chromium-review.googlesource.com/c/chromium/src/+/2971846</a>
-Auto-Submit: Austin Sullivan &lt;asully@chromium.org&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: Leonard Grey &lt;lgrey@chromium.org&gt;
-Reviewed-by: Austin Sullivan &lt;asully@chromium.org&gt;
-Reviewed-by: Leonard Grey &lt;lgrey@chromium.org&gt;
-Owners-Override: Austin Sullivan &lt;asully@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#893929}
+Bug: 1221324
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I96a0768508cf9bd073a5522e792a4120606bddb8">I96a0768508cf9bd073a5522e792a4120606bddb8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2965870">https://chromium-review.googlesource.com/c/chromium/src/+/2965870</a>
+Reviewed-by: Erik Staab &lt;estaab@chromium.org&gt;
+Reviewed-by: Yuke Liao &lt;liaoyuke@chromium.org&gt;
+Commit-Queue: Sven Zheng &lt;svenzheng@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#893997}
 </pre>
 
 </body>
