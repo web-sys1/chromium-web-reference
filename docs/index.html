@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/893737/"> 893737</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4f78ae5cc18a3494e5389c076ceea5d6a1ce78cd">4f78ae5cc18a3494e5389c076ceea5d6a1ce78cd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/893744/"> 893744</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/54afd5310fa1200e6fe06c81bd4a29ff07e56404">54afd5310fa1200e6fe06c81bd4a29ff07e56404</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/893734/">893734</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4f78ae5cc18a3494e5389c076ceea5d6a1ce78cd
+   54afd5310fa1200e6fe06c81bd4a29ff07e56404
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4f78ae5cc18a3494e5389c076ceea5d6a1ce78cd">
+    <a href="/chromium/src/+log/54afd5310fa1200e6fe06c81bd4a29ff07e56404">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4f78ae5cc18a3494e5389c076ceea5d6a1ce78cd.tar.gz">
+    <a href="/chromium/src/+archive/54afd5310fa1200e6fe06c81bd4a29ff07e56404.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   jlebel &lt;jlebel@chromium.org&gt;
+   Kazuki Takise &lt;takise@google.com&gt;
   </td>
   <td>
-   Fri Jun 18 07:48:01 2021
+   Fri Jun 18 08:27:21 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jun 18 07:48:01 2021
+   Fri Jun 18 08:27:21 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4f78ae5cc18a3494e5389c076ceea5d6a1ce78cd/">
-    6fadd5bc422e0d2ba3a2d8f500a06d1faa70ce37
+   <a href="/chromium/src/+/54afd5310fa1200e6fe06c81bd4a29ff07e56404/">
+    03762cc6816d5e211203abd5e7996f86eb11e0fc
    </a>
   </td>
  </tr>
@@ -166,50 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4f78ae5cc18a3494e5389c076ceea5d6a1ce78cd%5E">
-    34de1baa9ba14b1c7e7450b720df92c8e3633fba
+   <a href="/chromium/src/+/54afd5310fa1200e6fe06c81bd4a29ff07e56404%5E">
+    980e8ef8964a1dba42a9081c76900ab760e4bec5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4f78ae5cc18a3494e5389c076ceea5d6a1ce78cd%5E%21/">
+    <a href="/chromium/src/+/54afd5310fa1200e6fe06c81bd4a29ff07e56404%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS][MICE] Add metrics for the consistency promo
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Ensure to add FrameCenterButton to HeaderView
 
-Record Signin.AccountConsistencyPromoAction histograme for MICE web
-signin:
-  SUPPRESSED_NO_ACCOUNTS
-  DISMISSED_BACK
-  ADD_ACCOUNT_STARTED
-  SIGNED_IN_WITH_DEFAULT_ACCOUNT
-  SIGNED_IN_WITH_NON_DEFAULT_ACCOUNT
-  SHOWN
-  SUPPRESSED_SIGNIN_NOT_ALLOWED
-  SIGNED_IN_WITH_ADDED_ACCOUNT
-  DISMISSED_OTHER
-  AUTH_ERROR_SHOWN
-  GENERIC_ERROR_SHOWN
-  DISMISSED_BUTTON
-  ADD_ACCOUNT_COMPLETED
+It turns out, depending on the timing, UpdateCenterButton() is not
+triggered after the button is set because it's supposed to be
+called when the caption button mask is set in exo, but in the case
+of the center button, instantiating the button can be delayed
+as it requires app id to be set. So UpdateCenterButton needs to be
+explicitly called.
 
-The following cases are irrelevant for iOS:
-  DISMISSED_SCRIM
-  DISMISSED_SWIPE_DOWN
+Ideally, we want FrameView to call the function, but as it requres
+some amout of work to refactor, let's just call it from the client
+for now.
 
-SUPPRESSED_CONSECUTIVE_DISMISSALS will be implemented once the counter
-will be implemented.
+This CL also does some cleanup of removing the shell surface from
+UpdateCompatModeButton() as we've determined not to put maximized
+apps into compat mode.
 
-Bug: 1218430
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3640b0e28d0dec68963d653af807cc9409f88e24">I3640b0e28d0dec68963d653af807cc9409f88e24</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2962572">https://chromium-review.googlesource.com/c/chromium/src/+/2962572</a>
-Commit-Queue: Jérôme &lt;jlebel@chromium.org&gt;
-Reviewed-by: Mark Cogan &lt;marq@chromium.org&gt;
-Reviewed-by: Nohemi Fernandez &lt;fernandex@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#893737}
+BUG=b:191435012
+TEST=tast run DUT arc.ResizeLock
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic16e8d4b33ba2364109b6ac5a513eb0051f7e0bc">Ic16e8d4b33ba2364109b6ac5a513eb0051f7e0bc</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2971678">https://chromium-review.googlesource.com/c/chromium/src/+/2971678</a>
+Commit-Queue: Kazuki Takise &lt;takise@chromium.org&gt;
+Auto-Submit: Kazuki Takise &lt;takise@chromium.org&gt;
+Reviewed-by: Yuichiro Hanada &lt;yhanada@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#893744}
 </pre>
 
 </body>
