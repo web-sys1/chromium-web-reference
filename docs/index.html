@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/894186/"> 894186</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4ad19e2adda9a33a5ff79cedcfbe5d7d39387491">4ad19e2adda9a33a5ff79cedcfbe5d7d39387491</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/894194/"> 894194</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/18709eb9a177fe5fb2b778f064829cb9b69d3099">18709eb9a177fe5fb2b778f064829cb9b69d3099</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/894189/">894189</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0429a54efa5e04cffe61634107206abcaa7313d3">0429a54efa5e04cffe61634107206abcaa7313d3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/894194/">894194</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/18709eb9a177fe5fb2b778f064829cb9b69d3099">18709eb9a177fe5fb2b778f064829cb9b69d3099</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4ad19e2adda9a33a5ff79cedcfbe5d7d39387491
+   18709eb9a177fe5fb2b778f064829cb9b69d3099
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4ad19e2adda9a33a5ff79cedcfbe5d7d39387491">
+    <a href="/chromium/src/+log/18709eb9a177fe5fb2b778f064829cb9b69d3099">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4ad19e2adda9a33a5ff79cedcfbe5d7d39387491.tar.gz">
+    <a href="/chromium/src/+archive/18709eb9a177fe5fb2b778f064829cb9b69d3099.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   François Beaufort &lt;beaufort.francois@gmail.com&gt;
+   Fredrik Söderqvist &lt;fs@opera.com&gt;
   </td>
   <td>
-   Mon Jun 21 09:24:21 2021
+   Mon Jun 21 10:31:11 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jun 21 09:24:21 2021
+   Mon Jun 21 10:31:11 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4ad19e2adda9a33a5ff79cedcfbe5d7d39387491/">
-    5de11884c58e0cbff29cc8ffae7003a449d13231
+   <a href="/chromium/src/+/18709eb9a177fe5fb2b778f064829cb9b69d3099/">
+    c505718b083f2c887ecd62a62f3fa62718bd79c7
    </a>
   </td>
  </tr>
@@ -166,34 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4ad19e2adda9a33a5ff79cedcfbe5d7d39387491%5E">
-    7c83c671b60d6b27a31b13535c234110d9cf79cb
+   <a href="/chromium/src/+/18709eb9a177fe5fb2b778f064829cb9b69d3099%5E">
+    8e7c388320fe367674df642ac83a73db7cf36af3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4ad19e2adda9a33a5ff79cedcfbe5d7d39387491%5E%21/">
+    <a href="/chromium/src/+/18709eb9a177fe5fb2b778f064829cb9b69d3099%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Ship media HTML attribute support for &lt;meta name="theme-color"&gt;
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Factor out common single-tile draw optimization for BoxPainter
 
-This CL enables by default the flag to honor the media HTML attribute
-for &lt;meta name="theme-color"&gt;.
+Both DrawTiledBackground() and PaintFastBottomLayer() contain highly
+similar code for determining if a background image can be painted as a
+single tile (with a simple DrawImage all).
 
-Intent to ship: <a href="https://groups.google.com/a/chromium.org/g/blink-dev/c/6I-I3lZWy5k">https://groups.google.com/a/chromium.org/g/blink-dev/c/6I-I3lZWy5k</a>
-Spec PR: <a href="https://github.com/whatwg/html/pull/6569">https://github.com/whatwg/html/pull/6569</a>
-Demo: <a href="https://media-meta-theme-color.glitch.me/">https://media-meta-theme-color.glitch.me/</a>
+This keeps the (sometimes quirky) logic consistent between the two code-
+paths. For the existing (minor) differences in behavior, go with the
+more conservative version for the new function.
 
-Bug: 1200528
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic8fed423a4610a4f2dfbad31728715400aa0de24">Ic8fed423a4610a4f2dfbad31728715400aa0de24</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2959617">https://chromium-review.googlesource.com/c/chromium/src/+/2959617</a>
-Reviewed-by: Yoav Weiss &lt;yoavweiss@chromium.org&gt;
-Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Commit-Queue: François Beaufort &lt;beaufort.francois@gmail.com&gt;
-Cr-Commit-Position: refs/heads/master@{#894186}
+The no-intrinsic-size case is simplified quite a bit by recognizing that
+the tile scale will always be one.
+
+Bug: 1208044
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia7f48bd83f4332537bdc339e39de2632be6da94c">Ia7f48bd83f4332537bdc339e39de2632be6da94c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2969263">https://chromium-review.googlesource.com/c/chromium/src/+/2969263</a>
+Commit-Queue: Fredrik Söderquist &lt;fs@opera.com&gt;
+Reviewed-by: Stephen Chenney &lt;schenney@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#894194}
 </pre>
 
 </body>
