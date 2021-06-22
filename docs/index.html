@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/894503/"> 894503</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4a9d47b52e0259e131f0987d6338408ece228701">4a9d47b52e0259e131f0987d6338408ece228701</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/894514/"> 894514</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5a3d9feb3c127f5f3b127be71907d1e755c46106">5a3d9feb3c127f5f3b127be71907d1e755c46106</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/894507/">894507</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4a9d47b52e0259e131f0987d6338408ece228701
+   5a3d9feb3c127f5f3b127be71907d1e755c46106
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4a9d47b52e0259e131f0987d6338408ece228701">
+    <a href="/chromium/src/+log/5a3d9feb3c127f5f3b127be71907d1e755c46106">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4a9d47b52e0259e131f0987d6338408ece228701.tar.gz">
+    <a href="/chromium/src/+archive/5a3d9feb3c127f5f3b127be71907d1e755c46106.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   François Degros &lt;fdegros@chromium.org&gt;
+   Darren Shen &lt;shend@chromium.org&gt;
   </td>
   <td>
-   Tue Jun 22 01:58:25 2021
+   Tue Jun 22 02:43:10 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jun 22 01:58:25 2021
+   Tue Jun 22 02:43:10 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4a9d47b52e0259e131f0987d6338408ece228701/">
-    4e365ea93d4fc3d782e92e340e6e99bf7be7083b
+   <a href="/chromium/src/+/5a3d9feb3c127f5f3b127be71907d1e755c46106/">
+    e88a478f93ca9d4531b6bd7a1cd3e2874ad1b68c
    </a>
   </td>
  </tr>
@@ -166,34 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4a9d47b52e0259e131f0987d6338408ece228701%5E">
-    b8f706036fa1826a746c35e1b1c3d6e642480a4f
+   <a href="/chromium/src/+/5a3d9feb3c127f5f3b127be71907d1e755c46106%5E">
+    35549e981a449493f9ff6d03f2a9033773a96f43
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4a9d47b52e0259e131f0987d6338408ece228701%5E%21/">
+    <a href="/chromium/src/+/5a3d9feb3c127f5f3b127be71907d1e755c46106%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ZipFileCreator] Pass ZIP progress information via Mojo
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ime: [1/2] Use InputMethod instead of InputChannel.
 
-Added a way for the ZipFileCreator Mojo server to report regular
-progress information while creating a ZIP file. On the client side, this
-progress information is not used yet, but will be in a subsequent CL.
+Right now, there are three types of input method engines: "rule-based",
+"decoder" and "system". All three share the same mojo interface
+InputChannel.
 
-BUG=chromium:912236
-TEST=browser_tests --gtest_filter="ZipFileCreatorTest*
-TEST=Manual tests
+However, "decoder" is very different from "rule-based"/"system", which
+makes InputChannel a very confusing interface.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id1b57e5468ddfab35a3b95d01b05f61b7dbfb8fa">Id1b57e5468ddfab35a3b95d01b05f61b7dbfb8fa</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2952082">https://chromium-review.googlesource.com/c/chromium/src/+/2952082</a>
-Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
-Reviewed-by: Noel Gordon &lt;noel@chromium.org&gt;
-Commit-Queue: François Degros &lt;fdegros@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#894503}
+After this CL, "decoder" will be created via ConnectToImeEngine,
+and "rule-based" and "system" will be created via
+ConnectToInputMethodEngine. The former will use InputChannel and the
+latter will use a new interface called InputMethod. Move all the
+non-"decoder" methods to the new interface.
+
+Bug: 1194372
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If9b78f0b10ea5a0ffa8533cfc40cb31aa664e717">If9b78f0b10ea5a0ffa8533cfc40cb31aa664e717</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2960296">https://chromium-review.googlesource.com/c/chromium/src/+/2960296</a>
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Jing Wang &lt;jiwan@chromium.org&gt;
+Commit-Queue: Darren Shen &lt;shend@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#894514}
 </pre>
 
 </body>
