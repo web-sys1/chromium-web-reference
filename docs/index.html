@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/894514/"> 894514</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5a3d9feb3c127f5f3b127be71907d1e755c46106">5a3d9feb3c127f5f3b127be71907d1e755c46106</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/894522/"> 894522</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d051112a11f025a03bd02340a3099f895d77b191">d051112a11f025a03bd02340a3099f895d77b191</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/894507/">894507</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5654787d4c5f6ad23ac2bb9435f41dfd311cdf1c">5654787d4c5f6ad23ac2bb9435f41dfd311cdf1c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/894522/">894522</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d051112a11f025a03bd02340a3099f895d77b191">d051112a11f025a03bd02340a3099f895d77b191</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5a3d9feb3c127f5f3b127be71907d1e755c46106
+   d051112a11f025a03bd02340a3099f895d77b191
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5a3d9feb3c127f5f3b127be71907d1e755c46106">
+    <a href="/chromium/src/+log/d051112a11f025a03bd02340a3099f895d77b191">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5a3d9feb3c127f5f3b127be71907d1e755c46106.tar.gz">
+    <a href="/chromium/src/+archive/d051112a11f025a03bd02340a3099f895d77b191.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Darren Shen &lt;shend@chromium.org&gt;
+   Alexander Bolodurin &lt;alexbn@google.com&gt;
   </td>
   <td>
-   Tue Jun 22 02:43:10 2021
+   Tue Jun 22 03:19:09 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jun 22 02:43:10 2021
+   Tue Jun 22 03:19:09 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5a3d9feb3c127f5f3b127be71907d1e755c46106/">
-    e88a478f93ca9d4531b6bd7a1cd3e2874ad1b68c
+   <a href="/chromium/src/+/d051112a11f025a03bd02340a3099f895d77b191/">
+    fc4bb1dd3a6f862287209bab6e1df92a1d2671a6
    </a>
   </td>
  </tr>
@@ -166,40 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5a3d9feb3c127f5f3b127be71907d1e755c46106%5E">
-    35549e981a449493f9ff6d03f2a9033773a96f43
+   <a href="/chromium/src/+/d051112a11f025a03bd02340a3099f895d77b191%5E">
+    3cb387dd2d0fa8abdd9eab6afe30f5bdb7f72f66
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5a3d9feb3c127f5f3b127be71907d1e755c46106%5E%21/">
+    <a href="/chromium/src/+/d051112a11f025a03bd02340a3099f895d77b191%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ime: [1/2] Use InputMethod instead of InputChannel.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[lacros shelf] Handle tab drag in BrowserStatusMonitor
 
-Right now, there are three types of input method engines: "rule-based",
-"decoder" and "system". All three share the same mojo interface
-InputChannel.
+Redirect tab remove/insert events when a tab is dragged to a separate
+OnTabMoved callback. For now just delegate to OnTabInserted, as it
+handles both insertion and reparenting. This will help handling tab move
+event separately, simplify the insertion case later, and also validate
+that the tab lifecycle event order is correct.
 
-However, "decoder" is very different from "rule-based"/"system", which
-makes InputChannel a very confusing interface.
-
-After this CL, "decoder" will be created via ConnectToImeEngine,
-and "rule-based" and "system" will be created via
-ConnectToInputMethodEngine. The former will use InputChannel and the
-latter will use a new interface called InputMethod. Move all the
-non-"decoder" methods to the new interface.
-
-Bug: 1194372
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If9b78f0b10ea5a0ffa8533cfc40cb31aa664e717">If9b78f0b10ea5a0ffa8533cfc40cb31aa664e717</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2960296">https://chromium-review.googlesource.com/c/chromium/src/+/2960296</a>
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Reviewed-by: Jing Wang &lt;jiwan@chromium.org&gt;
-Commit-Queue: Darren Shen &lt;shend@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#894514}
+Bug: 1203992
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib0339a1f94a6741d4664a9ae8713f416d614da31">Ib0339a1f94a6741d4664a9ae8713f416d614da31</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2967486">https://chromium-review.googlesource.com/c/chromium/src/+/2967486</a>
+Commit-Queue: Alexander Bolodurin &lt;alexbn@google.com&gt;
+Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
+Reviewed-by: Nancy Wang &lt;nancylingwang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#894522}
 </pre>
 
 </body>
