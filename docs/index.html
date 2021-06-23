@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/895007/"> 895007</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/175dda1cc0aba6cc32ba4485d5901dd46b052efa">175dda1cc0aba6cc32ba4485d5901dd46b052efa</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/895011/"> 895011</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/76d783f0855810dd5a91da59831e0054828a1fdd">76d783f0855810dd5a91da59831e0054828a1fdd</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/895000/">895000</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/64ce8010b40bc6bc26b90c39c20a25fc7c331cd1">64ce8010b40bc6bc26b90c39c20a25fc7c331cd1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/895010/">895010</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6a666ba529bef837711b0c7f00a8647f42580c2c">6a666ba529bef837711b0c7f00a8647f42580c2c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   175dda1cc0aba6cc32ba4485d5901dd46b052efa
+   76d783f0855810dd5a91da59831e0054828a1fdd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/175dda1cc0aba6cc32ba4485d5901dd46b052efa">
+    <a href="/chromium/src/+log/76d783f0855810dd5a91da59831e0054828a1fdd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/175dda1cc0aba6cc32ba4485d5901dd46b052efa.tar.gz">
+    <a href="/chromium/src/+archive/76d783f0855810dd5a91da59831e0054828a1fdd.tar.gz">
      tgz
     </a>
     ]
@@ -137,7 +137,7 @@ body{
    Darren Shen &lt;shend@chromium.org&gt;
   </td>
   <td>
-   Wed Jun 23 03:53:50 2021
+   Wed Jun 23 04:27:32 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jun 23 03:53:50 2021
+   Wed Jun 23 04:27:32 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/175dda1cc0aba6cc32ba4485d5901dd46b052efa/">
-    1eb26c0f86459f830b4fc555bece4ac9f2185f2a
+   <a href="/chromium/src/+/76d783f0855810dd5a91da59831e0054828a1fdd/">
+    efc40c9d7e5eb65ad307ddb8445c64b9cdcd912e
    </a>
   </td>
  </tr>
@@ -166,34 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/175dda1cc0aba6cc32ba4485d5901dd46b052efa%5E">
-    be073112ccf72db1a39674ffd15148cc51ccdec0
+   <a href="/chromium/src/+/76d783f0855810dd5a91da59831e0054828a1fdd%5E">
+    6a666ba529bef837711b0c7f00a8647f42580c2c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/175dda1cc0aba6cc32ba4485d5901dd46b052efa%5E%21/">
+    <a href="/chromium/src/+/76d783f0855810dd5a91da59831e0054828a1fdd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ime: Use UTF-16 strings and offsets in IME Service mojoms.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ime: Move UTF normalization code into IMEs.
 
-Chrome uses UTF-16 for most of its text input system. Due to limitations
-of protobufs, IME Service currently uses UTF-8 strings with UTF-16
-indices and offsets.
+Unicode codepoints can be encoded in various normalization schemes.
+We currently normalize the output of our IMEs via
+NativeInputMethodEngine.
 
-Change IME Service mojoms to use UTF-16 where it makes sense, for
-strings as well indices and offsets.
+However, normalization may affect the length and indices of the string.
+Therefore, if an IME calls a function with an unnormalized string and
+an index into that unnormalized string, the index may become invalid.
 
-Bug: 1194372
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idfe0c0c8133a3c9a1df6c8d166cbd930ac5433ef">Idfe0c0c8133a3c9a1df6c8d166cbd930ac5433ef</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2976717">https://chromium-review.googlesource.com/c/chromium/src/+/2976717</a>
-Reviewed-by: Sam McNally &lt;sammc@chromium.org&gt;
+Therefore, the IME must do all the normalization itself rather than
+NativeInputMethodEngine doing it. Otherwise, NativeInputMethodEngine
+will need to adjust indices and offsets after normalization.
+
+BUG=1194372
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2322e2883fb540419aa7a3dc4095364735bdb48b">I2322e2883fb540419aa7a3dc4095364735bdb48b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2976480">https://chromium-review.googlesource.com/c/chromium/src/+/2976480</a>
 Reviewed-by: Jing Wang &lt;jiwan@chromium.org&gt;
 Commit-Queue: Darren Shen &lt;shend@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#895007}
+Cr-Commit-Position: refs/heads/master@{#895011}
 </pre>
 
 </body>
