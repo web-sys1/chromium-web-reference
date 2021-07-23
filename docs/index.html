@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/895884/"> 895884</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/054de1db3549742d4f2838606643924b1143cc85">054de1db3549742d4f2838606643924b1143cc85</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/904786/"> 904786</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4553f476f4a68d04a05b60503e9fca908043291e">4553f476f4a68d04a05b60503e9fca908043291e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/895889/">895889</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3c6ce6a0dee55b2662c9b62dd9b2d5d9af82d6b6">3c6ce6a0dee55b2662c9b62dd9b2d5d9af82d6b6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/904785/">904785</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ca8c6a489f295bb0dd817524de410694aa156ffa">ca8c6a489f295bb0dd817524de410694aa156ffa</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   054de1db3549742d4f2838606643924b1143cc85
+   4553f476f4a68d04a05b60503e9fca908043291e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/054de1db3549742d4f2838606643924b1143cc85">
+    <a href="/chromium/src/+log/4553f476f4a68d04a05b60503e9fca908043291e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/054de1db3549742d4f2838606643924b1143cc85.tar.gz">
+    <a href="/chromium/src/+archive/4553f476f4a68d04a05b60503e9fca908043291e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Peter Marshall &lt;petermarshall@chromium.org&gt;
+   Kevin Ellis &lt;kevers@chromium.org&gt;
   </td>
   <td>
-   Fri Jun 25 02:19:49 2021
+   Fri Jul 23 16:16:02 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jun 25 02:19:49 2021
+   Fri Jul 23 16:16:02 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/054de1db3549742d4f2838606643924b1143cc85/">
-    11f2d4c465bed7e6be6683e05ca201a751277d4f
+   <a href="/chromium/src/+/4553f476f4a68d04a05b60503e9fca908043291e/">
+    b9b16b49e4d5efc1baa21c42038f0d9128d4375d
    </a>
   </td>
  </tr>
@@ -166,40 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/054de1db3549742d4f2838606643924b1143cc85%5E">
-    7623f23c5e0e4f15c29e3ca64fc6cd238701dbd0
+   <a href="/chromium/src/+/4553f476f4a68d04a05b60503e9fca908043291e%5E">
+    ca8c6a489f295bb0dd817524de410694aa156ffa
    </a>
    <span>
     [
-    <a href="/chromium/src/+/054de1db3549742d4f2838606643924b1143cc85%5E%21/">
+    <a href="/chromium/src/+/4553f476f4a68d04a05b60503e9fca908043291e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Start removing taskId
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Speculative fix for wheel-scroll-latching-on-scrollbar
 
-Remove taskId from FileTask and replace it with a FileTaskDescriptor
-struct which has the three fields that make up with taskId.
+This patch aims at addressing some of the source of test flakes
+observed for this test.  We defer the start of the test until the
+compositor is ready, and wait for loading to complete before measuring
+positions. Though the end value of the scroll should precisely match
+being integer valued, we occasionally see an error of less than a pixel.
 
-Do not remove taskId from fileManagerPrivate.executeTask() yet. This
-will be done in a follow-up to avoid the CL getting too big.
+At the time of the patch, this was the top scoring flake for
+Blink&gt;Scroll.
 
-We need to introduce makeTaskID() to the frontend code to construct a
-TaskId from a descriptor. This is partially due to the in-between state
-until executeTask() and setDefaultTask() are updated, but also because
-we store taskIds in local storage and send them to UMA as enum values
-as well.
-
-Bug: 1220986
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iad4a71f9dd391182ef93d8039210bf8a760bc02a">Iad4a71f9dd391182ef93d8039210bf8a760bc02a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2966686">https://chromium-review.googlesource.com/c/chromium/src/+/2966686</a>
-Reviewed-by: Noel Gordon &lt;noel@chromium.org&gt;
-Reviewed-by: Luciano Pacheco &lt;lucmult@chromium.org&gt;
-Commit-Queue: Noel Gordon &lt;noel@chromium.org&gt;
-Commit-Queue: Peter Marshall &lt;petermarshall@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#895884}
+Bug: 1090860, 1232430
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I18cfafacec429fedb20edda31c98dfd38ccfb241">I18cfafacec429fedb20edda31c98dfd38ccfb241</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3041738">https://chromium-review.googlesource.com/c/chromium/src/+/3041738</a>
+Commit-Queue: Kevin Ellis &lt;kevers@chromium.org&gt;
+Reviewed-by: Steve Kobes &lt;skobes@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#904786}
 </pre>
 
 </body>
