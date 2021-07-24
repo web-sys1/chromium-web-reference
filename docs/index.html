@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/904972/"> 904972</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f8af55d718fa1e7d7ed779111899db3c131d24e6">f8af55d718fa1e7d7ed779111899db3c131d24e6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/904986/"> 904986</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a0464ebf50cfcc9272ff2259f144c5c32b687b9f">a0464ebf50cfcc9272ff2259f144c5c32b687b9f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/904961/">904961</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f8cc0ff1cdf3bad3301f768626aae9001431e389">f8cc0ff1cdf3bad3301f768626aae9001431e389</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/904975/">904975</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d6ba62ba800c28726df3c58cc61278eab2e120e4">d6ba62ba800c28726df3c58cc61278eab2e120e4</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f8af55d718fa1e7d7ed779111899db3c131d24e6
+   a0464ebf50cfcc9272ff2259f144c5c32b687b9f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f8af55d718fa1e7d7ed779111899db3c131d24e6">
+    <a href="/chromium/src/+log/a0464ebf50cfcc9272ff2259f144c5c32b687b9f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f8af55d718fa1e7d7ed779111899db3c131d24e6.tar.gz">
+    <a href="/chromium/src/+archive/a0464ebf50cfcc9272ff2259f144c5c32b687b9f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Van Cleve &lt;davidvc@chromium.org&gt;
+   cfredric &lt;cfredric@chromium.org&gt;
   </td>
   <td>
-   Sat Jul 24 00:36:44 2021
+   Sat Jul 24 01:26:39 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Jul 24 00:36:44 2021
+   Sat Jul 24 01:26:39 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f8af55d718fa1e7d7ed779111899db3c131d24e6/">
-    c4c14f8a575510037079fdd1252ab00529601eb3
+   <a href="/chromium/src/+/a0464ebf50cfcc9272ff2259f144c5c32b687b9f/">
+    c4fa3e51c0ea67a149beeb7cf59e81b21f58bba9
    </a>
   </td>
  </tr>
@@ -166,33 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f8af55d718fa1e7d7ed779111899db3c131d24e6%5E">
-    799f018b2081b923de1266b1c668b2e414f6fa3d
+   <a href="/chromium/src/+/a0464ebf50cfcc9272ff2259f144c5c32b687b9f%5E">
+    f0a57a58594c9e2fcf99ab146880ae131360dd4d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f8af55d718fa1e7d7ed779111899db3c131d24e6%5E%21/">
+    <a href="/chromium/src/+/a0464ebf50cfcc9272ff2259f144c5c32b687b9f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[sheriff] Disable LockScreenBlocksUserSession
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add BarrierCallback function (analog of BarrierClosure).
 
-This was previously marked as flaky on MSan only, but Flake Portal says that it's flaking on other ChromeOS bots too:
+There are cases when the results from a few tasks need to be used by a
+final "followup" task, similar to the use case of a BarrierClosure, but
+where each of the calls to `barrier_closure.Run()` have a result to pass
+along. This function provides an easy way of expressing this, instead of
+requiring callers to do this plumbing by hand (which is complicated and
+repetitive).
 
-<a href="https://analysis.chromium.org/p/chromium/flake-portal/flakes/occurrences?key=ag9zfmZpbmRpdC1mb3ItbWVyXQsSBUZsYWtlIlJjaHJvbWl1bUBicm93c2VyX3Rlc3RzQFN3aXRjaEFjY2Vzc0l0ZW1TY2FuTWFuYWdlclRlc3QuTG9ja1NjcmVlbkJsb2Nrc1VzZXJTZXNzaW9uDA&amp;show_all_occurrences=1">https://analysis.chromium.org/p/chromium/flake-portal/flakes/occurrences?key=ag9zfmZpbmRpdC1mb3ItbWVyXQsSBUZsYWtlIlJjaHJvbWl1bUBicm93c2VyX3Rlc3RzQFN3aXRjaEFjY2Vzc0l0ZW1TY2FuTWFuYWdlclRlc3QuTG9ja1NjcmVlbkJsb2Nrc1VzZXJTZXNzaW9uDA&amp;show_all_occurrences=1</a>
+In cases where the "results" are coming from off-sequence (e.g. from a
+callback passed to PostTaskAndReplyWithResult), this helper should be
+more efficient than the naive approach (of repeatedly posting back to
+the owning sequence with each result).
 
-Bug: 1219067
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0c35a920665d0cb75b8065ab31f6ca6336af0bbd">I0c35a920665d0cb75b8065ab31f6ca6336af0bbd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3048578">https://chromium-review.googlesource.com/c/chromium/src/+/3048578</a>
-Reviewed-by: David Benjamin &lt;davidben@chromium.org&gt;
-Commit-Queue: David Benjamin &lt;davidben@chromium.org&gt;
-Commit-Queue: David Van Cleve &lt;davidvc@chromium.org&gt;
-Owners-Override: David Van Cleve &lt;davidvc@chromium.org&gt;
-Auto-Submit: David Van Cleve &lt;davidvc@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#904972}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4079296d3300e8c04cbdc81985d4ba4e44facd92">I4079296d3300e8c04cbdc81985d4ba4e44facd92</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3043080">https://chromium-review.googlesource.com/c/chromium/src/+/3043080</a>
+Commit-Queue: Chris Fredrickson &lt;cfredric@chromium.org&gt;
+Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Auto-Submit: Chris Fredrickson &lt;cfredric@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: John Delaney &lt;johnidel@chromium.org&gt;
+Reviewed-by: Charlie Harrison &lt;csharrison@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#904986}
 </pre>
 
 </body>
