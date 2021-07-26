@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/905265/"> 905265</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5386d261a21b51b7c4a77902807040b39caa763b">5386d261a21b51b7c4a77902807040b39caa763b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/905250/"> 905250</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e70025cc10978ff62367aa36f2217d760e360749">e70025cc10978ff62367aa36f2217d760e360749</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/905237/">905237</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5386d261a21b51b7c4a77902807040b39caa763b
+   e70025cc10978ff62367aa36f2217d760e360749
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5386d261a21b51b7c4a77902807040b39caa763b">
+    <a href="/chromium/src/+log/e70025cc10978ff62367aa36f2217d760e360749">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5386d261a21b51b7c4a77902807040b39caa763b.tar.gz">
+    <a href="/chromium/src/+archive/e70025cc10978ff62367aa36f2217d760e360749.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Aya ElAttar &lt;ayaelattar@chromium.org&gt;
+   Ian Vollick &lt;vollick@chromium.org&gt;
   </td>
   <td>
-   Mon Jul 26 16:03:48 2021
+   Mon Jul 26 14:56:29 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jul 26 16:03:48 2021
+   Mon Jul 26 14:56:29 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5386d261a21b51b7c4a77902807040b39caa763b/">
-    c5e764bc08943b0f61d6def5efbc440f54c2fc8f
+   <a href="/chromium/src/+/e70025cc10978ff62367aa36f2217d760e360749/">
+    f74828a3f03c13f43d5ad8deb70ae9d9d1bbd79f
    </a>
   </td>
  </tr>
@@ -166,27 +166,82 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5386d261a21b51b7c4a77902807040b39caa763b%5E">
-    41092cc3e7f445a1125a4e855f3c5d481c84f829
+   <a href="/chromium/src/+/e70025cc10978ff62367aa36f2217d760e360749%5E">
+    1cb4c86ab138313ad1058ecf3dde95f6375d1dd6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5386d261a21b51b7c4a77902807040b39caa763b%5E%21/">
+    <a href="/chromium/src/+/e70025cc10978ff62367aa36f2217d760e360749%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add missing testcases for DeviceChromeVariations
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Defer password management / autofill until activation
 
-Bug: 1213429
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic7b73d5641f550fca69b5225026c352c8f4f1162">Ic7b73d5641f550fca69b5225026c352c8f4f1162</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3045798">https://chromium-review.googlesource.com/c/chromium/src/+/3045798</a>
-Commit-Queue: Aya Elsayed &lt;ayaelattar@chromium.org&gt;
-Commit-Queue: Alexander Hendrich &lt;hendrich@chromium.org&gt;
-Reviewed-by: Alexander Hendrich &lt;hendrich@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#905265}
+Defers sending messages from the render to ContentAutofillDriver
+and ContentPasswordManagerDriver until activation. I have also added
+corresponding browser-side checks to ensure that we don't receive
+unexpected messages from a renderer while it's prerendering (we tear
+down the renderer in this case).
+
+This should have no effect beyond prerendering.
+
+Although it would have been desirable to defer calls to the agents,
+I think there are some drawbacks to this approach
+ - There are a number of ways blink can interact with the agents (eg
+   RenderFrameObserver, FormTracker::Observer, WebAutofillClient) and
+   it's both possible that this current list is incomplete and that new
+   code gets introduced in future that should be deferred, but isn't.
+   I think the mojo interface is a clearly demarcated point of deferral
+   and consequently more likely to be correct, presently, and less
+   likely to break in future.
+ - Some calls take references to WebElements and retaining them could,
+   I think, transitively keep a far bit of DOM alive if pages are large
+   and churning during prerendering.
+For these reasons, I've deferred at the mojo level, simulating a slow
+browser process. This also aligns with the approach we're taking for
+mojo capability control for other features. We cannot take that approach
+directly since we're using channel associated interfaces, but we would
+similarly keep the renderer side code (apart from the mojo interface
+calls) ignorant of prerendering and could easily convert to mojo
+capability control if we move away from channel associated interfaces.
+
+The deferral was accomplished by creating "deferring" flavors of the
+mojo interfaces. This results in a fair bit of boilerplate. It seems
+like this is something that could be autogenerated, but I'm not sure
+it would be used widely enough to warrant the complexity of teaching
+mojo how to do this.
+
+Another means of deferring would have been to make these interfaces
+non-associated and then hooking them up, post-activation as we do for
+other features while prerendering, but this could reintroduce
+crbug.com/866616. To minimize risk, I've taken the current approach
+rather than switching back to non-associated interfaces and trying to
+fix the ordering/lifetime issues in another way.
+
+Since these deferred messages should not be sent if the prerender is
+cancelled, I don't think this deferral will cause the same issues.
+
+In order to test this, mocks needed to be dynamically injected for the
+prerendered frame. This happened to address crbug.com/1119526. The
+tests do a spot check on interfaces to check that a few messages are
+correctly deferred/re-sent -- they are not exhaustive.
+
+Also, thanks to altimin@ for helping address issues with the binding
+of the templated variadic function in the Deferring drivers, and thanks
+to mcnee@ for pointing out the need for PRESUBMIT.py.
+
+Bug: 1119526,1222780
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I131115e646c7ee5d896be8d00744a4300e81438a">I131115e646c7ee5d896be8d00744a4300e81438a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2970765">https://chromium-review.googlesource.com/c/chromium/src/+/2970765</a>
+Commit-Queue: Ian Vollick &lt;vollick@chromium.org&gt;
+Reviewed-by: Steven Holte &lt;holte@chromium.org&gt;
+Reviewed-by: Christoph Schwering &lt;schwering@google.com&gt;
+Reviewed-by: Lucas Gadani &lt;lfg@chromium.org&gt;
+Reviewed-by: Vasilii Sukhanov &lt;vasilii@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#905250}
 </pre>
 
 </body>
