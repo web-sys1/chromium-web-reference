@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/905108/"> 905108</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/db081b40ad68babe0e2e970bad2c1359b28aa7c5">db081b40ad68babe0e2e970bad2c1359b28aa7c5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/905113/"> 905113</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4c7028e52f089bc66707c3c55949b6bf728bf6c1">4c7028e52f089bc66707c3c55949b6bf728bf6c1</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/905112/">905112</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   db081b40ad68babe0e2e970bad2c1359b28aa7c5
+   4c7028e52f089bc66707c3c55949b6bf728bf6c1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/db081b40ad68babe0e2e970bad2c1359b28aa7c5">
+    <a href="/chromium/src/+log/4c7028e52f089bc66707c3c55949b6bf728bf6c1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/db081b40ad68babe0e2e970bad2c1359b28aa7c5.tar.gz">
+    <a href="/chromium/src/+archive/4c7028e52f089bc66707c3c55949b6bf728bf6c1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Trent Apted &lt;tapted@chromium.org&gt;
+   Dominick Ng &lt;dominickn@chromium.org&gt;
   </td>
   <td>
-   Mon Jul 26 01:45:41 2021
+   Mon Jul 26 02:41:21 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jul 26 01:45:41 2021
+   Mon Jul 26 02:41:21 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/db081b40ad68babe0e2e970bad2c1359b28aa7c5/">
-    eb4f3ef8666119a177a7812b4ccd308dc873b058
+   <a href="/chromium/src/+/4c7028e52f089bc66707c3c55949b6bf728bf6c1/">
+    62ce039235a48c1964bbcb4344b49ae39c3b3f39
    </a>
   </td>
  </tr>
@@ -166,45 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/db081b40ad68babe0e2e970bad2c1359b28aa7c5%5E">
-    27efd896ef9336013af33940c97c940f8167b5df
+   <a href="/chromium/src/+/4c7028e52f089bc66707c3c55949b6bf728bf6c1%5E">
+    eacaaef7ab22dab8ed199095ed30646e752316af
    </a>
    <span>
     [
-    <a href="/chromium/src/+/db081b40ad68babe0e2e970bad2c1359b28aa7c5%5E%21/">
+    <a href="/chromium/src/+/4c7028e52f089bc66707c3c55949b6bf728bf6c1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix gn check for `//chromeos/services/libassistant:internal` after r905012.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Ensure the result of apps::ArcActivityIconsToImageSkias is thread safe.
 
-gn check is failing on <a href="https://ci.chromium.org/p/chrome/builders/ci/linux-chromeos-chrome">https://ci.chromium.org/p/chrome/builders/ci/linux-chromeos-chrome</a>
-since <a href="https://crrev.com/c/3046838.">https://crrev.com/c/3046838.</a> //chrome/dbus/util was
-made into a target, and libassistant needs to depend on it now.
+ActivityIconLoader::OnAdaptiveIconGenerated receives the result of
+apps::ArcActivityIconsToImageSkias as a const vector of gfx::ImageSkias.
+This is immediately passed to a background thread which tries to read
+the images. If the icons are not already thread-safe before they are
+passed to the background thread, they will CHECK-fail in gfx::ImageSkia.
 
-Error is
-```
-ERROR at //chromeos/services/libassistant/util.cc:19:11: Can't include this header from here.
-#include "chromeos/dbus/util/version_loader.h"
-          ^----------------------------------
-The target:
-  //chromeos/services/libassistant:internal
-is including a file from the target:
-  //chromeos/dbus/util:util
-```
+This CL ensures that the images are thread safe, and adds an expectation
+in the existing test for the method.
 
-Bug: 1225516, 1232828
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id2b89cc0bc7468fe4056eace9abb3676c668bdd6">Id2b89cc0bc7468fe4056eace9abb3676c668bdd6</a>
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3052874">https://chromium-review.googlesource.com/c/chromium/src/+/3052874</a>
-Commit-Queue: Trent Apted &lt;tapted@chromium.org&gt;
-Commit-Queue: Andrew Xu &lt;andrewxu@google.com&gt;
-Owners-Override: Andrew Xu &lt;andrewxu@google.com&gt;
-Owners-Override: François Degros &lt;fdegros@chromium.org&gt;
-Reviewed-by: François Degros &lt;fdegros@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#905108}
+BUG=1174263
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic6c77d24349c69a1dcd42376c5ce2425cd789b8b">Ic6c77d24349c69a1dcd42376c5ce2425cd789b8b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3041045">https://chromium-review.googlesource.com/c/chromium/src/+/3041045</a>
+Reviewed-by: Nancy Wang &lt;nancylingwang@chromium.org&gt;
+Commit-Queue: Dominick Ng &lt;dominickn@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#905113}
 </pre>
 
 </body>
