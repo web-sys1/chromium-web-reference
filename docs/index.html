@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/905691/"> 905691</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4929a06ef55d96c519523eedece8fa7dfee0e1f7">4929a06ef55d96c519523eedece8fa7dfee0e1f7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/905701/"> 905701</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/84dc40483c5dde99e4c833d3afe166bdf2b4024a">84dc40483c5dde99e4c833d3afe166bdf2b4024a</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/905692/">905692</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4929a06ef55d96c519523eedece8fa7dfee0e1f7
+   84dc40483c5dde99e4c833d3afe166bdf2b4024a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4929a06ef55d96c519523eedece8fa7dfee0e1f7">
+    <a href="/chromium/src/+log/84dc40483c5dde99e4c833d3afe166bdf2b4024a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4929a06ef55d96c519523eedece8fa7dfee0e1f7.tar.gz">
+    <a href="/chromium/src/+archive/84dc40483c5dde99e4c833d3afe166bdf2b4024a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Victor Vianna &lt;victorvianna@google.com&gt;
+   Gabriel Charette &lt;gab@chromium.org&gt;
   </td>
   <td>
-   Tue Jul 27 12:17:23 2021
+   Tue Jul 27 13:08:03 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jul 27 12:17:23 2021
+   Tue Jul 27 13:08:03 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4929a06ef55d96c519523eedece8fa7dfee0e1f7/">
-    cc999a839b108d388e43ec0266108c8048942215
+   <a href="/chromium/src/+/84dc40483c5dde99e4c833d3afe166bdf2b4024a/">
+    f93418c2161677eca583496b36712accde3a1166
    </a>
   </td>
  </tr>
@@ -166,48 +166,52 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4929a06ef55d96c519523eedece8fa7dfee0e1f7%5E">
-    b036c85f89d3f2d8c3b346fd48fa5eee41404c91
+   <a href="/chromium/src/+/84dc40483c5dde99e4c833d3afe166bdf2b4024a%5E">
+    d3ca006636f52867a9d3ab00c17fd2b430ea3e4f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4929a06ef55d96c519523eedece8fa7dfee0e1f7%5E%21/">
+    <a href="/chromium/src/+/84dc40483c5dde99e4c833d3afe166bdf2b4024a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[base] Document more prereqs of IOJank constants with static_asserts"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[base] Make IOJankMonitoringWindow robust to a non-monotonic tick clock"
 
-This reverts commit 62d89fe5f479354a579d8b5ca7a3bced36cdbc68.
+This reverts commit 6ff4fee50c9cd36c2f0f0463244e2ea2593e056c.
 
-Reason for revert: Unrolling changes after 6ff4fee50c9cd36c2f0f0463244e2ea2593e056c
+Reason for revert: top crasher on Android...
 
 Original change's description:
-&gt; [base] Document more prereqs of IOJank constants with static_asserts
+&gt; [base] Make IOJankMonitoringWindow robust to a non-monotonic tick clock
 &gt;
-&gt; R=​chrisha@chromium.org
+&gt; The repro @ crbug.com/1209622#c34 involved an impossible TimeTicks
+&gt; value because it added 40ms to |recent_now|, causing |call_start_| to
+&gt; be behind |assigned_jank_window_-&gt;start_time_| which is not possible
+&gt; unless the monotonic tick clock somehow ticks backwards. Harden
+&gt; against this unexpected condition.
+&gt;
+&gt; Also harden a few more preconditions.
 &gt;
 &gt; Bug: 1209622
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I07085fa2cebc054454675eb3641793174874020b">I07085fa2cebc054454675eb3641793174874020b</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3054398">https://chromium-review.googlesource.com/c/chromium/src/+/3054398</a>
-&gt; Auto-Submit: Gabriel Charette &lt;gab@chromium.org&gt;
-&gt; Commit-Queue: Chris Hamilton &lt;chrisha@chromium.org&gt;
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I34450bf661f45414e69db4411ae63a9b5700b2a7">I34450bf661f45414e69db4411ae63a9b5700b2a7</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3042207">https://chromium-review.googlesource.com/c/chromium/src/+/3042207</a>
+&gt; Commit-Queue: Gabriel Charette &lt;gab@chromium.org&gt;
 &gt; Reviewed-by: Chris Hamilton &lt;chrisha@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#905533}
+&gt; Cr-Commit-Position: refs/heads/master@{#904891}
 
-Bug: 1209622, 1233483
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I934e3d7dca96231095fb7e7e8e057c606fcbeb6f">I934e3d7dca96231095fb7e7e8e057c606fcbeb6f</a>
 No-Presubmit: true
 No-Tree-Checks: true
 No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3055247">https://chromium-review.googlesource.com/c/chromium/src/+/3055247</a>
-Auto-Submit: Victor Vianna &lt;victorvianna@google.com&gt;
+Bug: 1209622, 1232736
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I50af255f6db47748b8bde2391034b973435a12e4">I50af255f6db47748b8bde2391034b973435a12e4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3054400">https://chromium-review.googlesource.com/c/chromium/src/+/3054400</a>
+Commit-Queue: Victor Vianna &lt;victorvianna@google.com&gt;
 Owners-Override: Victor Vianna &lt;victorvianna@google.com&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#905691}
+Reviewed-by: Chris Hamilton &lt;chrisha@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#905701}
 </pre>
 
 </body>
