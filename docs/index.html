@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/905939/"> 905939</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4c682e33f258a90797c9c2d2ac47f2cc5ef2867f">4c682e33f258a90797c9c2d2ac47f2cc5ef2867f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/905984/"> 905984</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/12c2f3c841ba8392c419006ebdf4839421ec3e58">12c2f3c841ba8392c419006ebdf4839421ec3e58</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/905901/">905901</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4c682e33f258a90797c9c2d2ac47f2cc5ef2867f
+   12c2f3c841ba8392c419006ebdf4839421ec3e58
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4c682e33f258a90797c9c2d2ac47f2cc5ef2867f">
+    <a href="/chromium/src/+log/12c2f3c841ba8392c419006ebdf4839421ec3e58">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4c682e33f258a90797c9c2d2ac47f2cc5ef2867f.tar.gz">
+    <a href="/chromium/src/+archive/12c2f3c841ba8392c419006ebdf4839421ec3e58.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Zhiyuan Cai &lt;zhiyuancai@chromium.org&gt;
+   Maksim Ivanov &lt;emaxx@chromium.org&gt;
   </td>
   <td>
-   Tue Jul 27 23:15:40 2021
+   Wed Jul 28 00:53:04 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jul 27 23:15:40 2021
+   Wed Jul 28 00:53:04 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4c682e33f258a90797c9c2d2ac47f2cc5ef2867f/">
-    7a8bf9801609d782514cfaca8babdd176eeb7d1c
+   <a href="/chromium/src/+/12c2f3c841ba8392c419006ebdf4839421ec3e58/">
+    42872650e9aa5a09f6aae95e8b8e4c67150bc914
    </a>
   </td>
  </tr>
@@ -166,27 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4c682e33f258a90797c9c2d2ac47f2cc5ef2867f%5E">
-    9e1e6121e4d0dd7e237b7d07e5ed9314407490f2
+   <a href="/chromium/src/+/12c2f3c841ba8392c419006ebdf4839421ec3e58%5E">
+    ab30629842411943c70202b70cec99d92152c5b0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4c682e33f258a90797c9c2d2ac47f2cc5ef2867f%5E%21/">
+    <a href="/chromium/src/+/12c2f3c841ba8392c419006ebdf4839421ec3e58%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PriceTracking] Add metrics for price message cards
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make VarSerializationRules refcounter thread-safe
 
-Bug: 1233215
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6dcafce3019cd1d084335ffd9360eb4a864460a5">I6dcafce3019cd1d084335ffd9360eb4a864460a5</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3054542">https://chromium-review.googlesource.com/c/chromium/src/+/3054542</a>
-Commit-Queue: Zhiyuan Cai &lt;zhiyuancai@chromium.org&gt;
-Reviewed-by: Caitlin Fischer &lt;caitlinfischer@google.com&gt;
-Reviewed-by: Mei Liang &lt;meiliang@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#905939}
+Switch the ppapi::proxy::VarSerializationRules to use a thread-safe
+reference counting. This fixes the DCHECKs being hit when running
+some NaCl applications.
+
+The underlying root cause is not fully understood, but it seems related
+to message passing, as the DCHECK stack trace (obtained by manually
+adding logs) points to the SerializedVarSendInputShmem class and its
+instantiation in PPB_Instance_Proxy::PostMessage(); the actual DCHECK
+hit is triggered when incrementing the VarSerializationRules's ref
+counter.
+
+It seems that the implementation of the whole PPAPI proxy is actually
+thread-safe due to the use of a global ppapi::ProxyLock. Therefore the
+DCHECK hits might actually be false positives, and switching
+VarSerializationRules from RefCounted to RefCountedThreadSafe should
+suppress them.
+
+Bug: 756531
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I675002e882cf21fdd8bba63ba4f078f71ffe5bfb">I675002e882cf21fdd8bba63ba4f078f71ffe5bfb</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3051930">https://chromium-review.googlesource.com/c/chromium/src/+/3051930</a>
+Reviewed-by: Derek Schuff &lt;dschuff@chromium.org&gt;
+Reviewed-by: Raymes Khoury &lt;raymes@chromium.org&gt;
+Auto-Submit: Maksim Ivanov &lt;emaxx@chromium.org&gt;
+Commit-Queue: Maksim Ivanov &lt;emaxx@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#905984}
 </pre>
 
 </body>
