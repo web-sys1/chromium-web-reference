@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/906378/"> 906378</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3bfaa5eba07db83d4ac7f67b543937abe23cd6ff">3bfaa5eba07db83d4ac7f67b543937abe23cd6ff</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/906401/"> 906401</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e2ad82ddcf260678a9e51db45f349ddf3f6b8013">e2ad82ddcf260678a9e51db45f349ddf3f6b8013</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/906336/">906336</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3bfaa5eba07db83d4ac7f67b543937abe23cd6ff
+   e2ad82ddcf260678a9e51db45f349ddf3f6b8013
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3bfaa5eba07db83d4ac7f67b543937abe23cd6ff">
+    <a href="/chromium/src/+log/e2ad82ddcf260678a9e51db45f349ddf3f6b8013">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3bfaa5eba07db83d4ac7f67b543937abe23cd6ff.tar.gz">
+    <a href="/chromium/src/+archive/e2ad82ddcf260678a9e51db45f349ddf3f6b8013.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   yilkal &lt;yilkal@chromium.org&gt;
+   Victor Hugo Vianna Silva &lt;victorvianna@google.com&gt;
   </td>
   <td>
-   Wed Jul 28 21:06:58 2021
+   Wed Jul 28 21:59:47 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jul 28 21:06:58 2021
+   Wed Jul 28 21:59:47 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3bfaa5eba07db83d4ac7f67b543937abe23cd6ff/">
-    9b5ec6cbd504149f7b829a8549039e1efdc9da4a
+   <a href="/chromium/src/+/e2ad82ddcf260678a9e51db45f349ddf3f6b8013/">
+    35d23847d47d6da36db47a2d7dcb81f8f0117824
    </a>
   </td>
  </tr>
@@ -166,30 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3bfaa5eba07db83d4ac7f67b543937abe23cd6ff%5E">
-    c67cb533d00432919efd7ea909a16f3d7a4a4e08
+   <a href="/chromium/src/+/e2ad82ddcf260678a9e51db45f349ddf3f6b8013%5E">
+    7d5aefbcd6ca00662150d389769338ccde87e20c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3bfaa5eba07db83d4ac7f67b543937abe23cd6ff%5E%21/">
+    <a href="/chromium/src/+/e2ad82ddcf260678a9e51db45f349ddf3f6b8013%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make example.com host match with www.example.com pattern
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[automated] Drop needless &lt;vector&gt; includes in /components/favicon
 
-This cl makes sure that a website with "example.*" host
-matches with "www.example.*" pattern. Some tests have been
-updated to reflect the needed change.
+This is among the most costful includes for the Chromium build.
+<a href="https://commondatastorage.googleapis.com/chromium-browser-clang/include-analysis.html">https://commondatastorage.googleapis.com/chromium-browser-clang/include-analysis.html</a>
 
-Bug: 1233607
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I806b024f9dffe21515a172a1b172eec04a0960e2">I806b024f9dffe21515a172a1b172eec04a0960e2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3059094">https://chromium-review.googlesource.com/c/chromium/src/+/3059094</a>
-Reviewed-by: Dan S &lt;danan@chromium.org&gt;
-Commit-Queue: Yilkal Abe &lt;yilkal@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#906378}
+This batch of CLs attempts to detect and remove leftover includes with a
+heuristic: choose files which don't contain 'std::vector' or 'push_back'.
+This doesn't really guarantee that std::vector is not being used, as
+shown by the snippets below, so please review carefully.
+```
+auto v = GetVector();
+MyVectorAlias v = GetVector();
+my_vector_ = GetVector();
+```
+
+This CL was uploaded by git cl split.
+
+R=pkotwicz@chromium.org
+
+Bug: 1233968
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifa926ab9b290ae08afe312ab7031859537b50d99">Ifa926ab9b290ae08afe312ab7031859537b50d99</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3059027">https://chromium-review.googlesource.com/c/chromium/src/+/3059027</a>
+Auto-Submit: Victor Vianna &lt;victorvianna@google.com&gt;
+Reviewed-by: Peter Kotwicz &lt;pkotwicz@chromium.org&gt;
+Commit-Queue: Peter Kotwicz &lt;pkotwicz@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#906401}
 </pre>
 
 </body>
