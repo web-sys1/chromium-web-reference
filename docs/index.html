@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/906500/"> 906500</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/67abdaf2b5932be73432f93403acd2fcc9dadeac">67abdaf2b5932be73432f93403acd2fcc9dadeac</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/906519/"> 906519</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b2f44200088f8216fde8487f623acdded1bc336f">b2f44200088f8216fde8487f623acdded1bc336f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/906486/">906486</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   67abdaf2b5932be73432f93403acd2fcc9dadeac
+   b2f44200088f8216fde8487f623acdded1bc336f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/67abdaf2b5932be73432f93403acd2fcc9dadeac">
+    <a href="/chromium/src/+log/b2f44200088f8216fde8487f623acdded1bc336f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/67abdaf2b5932be73432f93403acd2fcc9dadeac.tar.gz">
+    <a href="/chromium/src/+archive/b2f44200088f8216fde8487f623acdded1bc336f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ali Beyad &lt;abeyad@chromium.org&gt;
+   Lingqi Chi &lt;lingqi@chromium.org&gt;
   </td>
   <td>
-   Thu Jul 29 01:00:24 2021
+   Thu Jul 29 01:53:54 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jul 29 01:00:24 2021
+   Thu Jul 29 01:53:54 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/67abdaf2b5932be73432f93403acd2fcc9dadeac/">
-    fc980aff5ae98c87c57167e6a02c12a222dc4688
+   <a href="/chromium/src/+/b2f44200088f8216fde8487f623acdded1bc336f/">
+    0c62c3c2bb7551d3682d06c4f85ddf021702ecc2
    </a>
   </td>
  </tr>
@@ -166,39 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/67abdaf2b5932be73432f93403acd2fcc9dadeac%5E">
-    904d653b910c1f154007c8abb74ff537726849e2
+   <a href="/chromium/src/+/b2f44200088f8216fde8487f623acdded1bc336f%5E">
+    b69a1c6cc9127fc60acc593d36478693e3a4922b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/67abdaf2b5932be73432f93403acd2fcc9dadeac%5E%21/">
+    <a href="/chromium/src/+/b2f44200088f8216fde8487f623acdded1bc336f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add a Client Hint for the reduced User-Agent header string
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prerender: Cancel prerendering if it wants to change WebContents-level
+preferred size
 
-As part of allowing origins to opt into receiving the reduced user agent
-string, we are introducing a (temporarily-available) client hint
-Sec-CH-UA-Reduced, which if set to "?1", indicates to the origin that
-the User-Agent header contains the reduced user agent string.
+RenderFrameHostImpl will cancel prerendering if it receives
+the ContentsPreferredSizeChanged Mojo message.
+We decide to do so because:
+- We predict that this behavior will not significantly impact coverage
+because renderers only send this message when running in
+`PreferredSizeChanged` mode, which is enabled by extensions.
+- Supporting this feature in prerendering pages would be a big project.
 
-NB: this CL only adds the client hint.  A subsequent CL will add the
-functionality to send the client hint to the origin.
+This CL also impacts BackForwardCache, as we use
+`IsInactiveAndDisallowActivation` to check the activated state and
+cancel prerendering.
 
-Chrome Platform Status: <a href="https://chromestatus.com/feature/5704553745874944">https://chromestatus.com/feature/5704553745874944</a>
-Design Doc: <a href="https://docs.google.com/document/d/1feIxK9S7oNgT2oGGebbxE9X0O-4wTKcsP_gRaY99tq4">https://docs.google.com/document/d/1feIxK9S7oNgT2oGGebbxE9X0O-4wTKcsP_gRaY99tq4</a>
-
-Bug: 1222742
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia037f759f0ffec541751bea3cfc9cf35d64c96ea">Ia037f759f0ffec541751bea3cfc9cf35d64c96ea</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3002633">https://chromium-review.googlesource.com/c/chromium/src/+/3002633</a>
-Commit-Queue: Ali Beyad &lt;abeyad@chromium.org&gt;
-Reviewed-by: Mike West &lt;mkwst@chromium.org&gt;
-Reviewed-by: Aaron Tagliaboschi &lt;aarontag@chromium.org&gt;
+Bug: 1231961
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I37d275dea5b6ad5b236a7a17c3a0076de6e3d82e">I37d275dea5b6ad5b236a7a17c3a0076de6e3d82e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3053256">https://chromium-review.googlesource.com/c/chromium/src/+/3053256</a>
+Commit-Queue: Lingqi Chi &lt;lingqi@chromium.org&gt;
 Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#906500}
+Cr-Commit-Position: refs/heads/master@{#906519}
 </pre>
 
 </body>
