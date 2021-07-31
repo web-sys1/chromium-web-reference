@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/907308/"> 907308</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6e8f86208504947297312f542e188f0dc496c6ee">6e8f86208504947297312f542e188f0dc496c6ee</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/907327/"> 907327</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c4596c0a7b32c4f22f299807c9c0221317e8db52">c4596c0a7b32c4f22f299807c9c0221317e8db52</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/907278/">907278</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4c4633a85e472bd8326d410023674817064e8891">4c4633a85e472bd8326d410023674817064e8891</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/907320/">907320</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1a34b8bdb2cfec5e1a5e02dd6c7dc80894de28fd">1a34b8bdb2cfec5e1a5e02dd6c7dc80894de28fd</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6e8f86208504947297312f542e188f0dc496c6ee
+   c4596c0a7b32c4f22f299807c9c0221317e8db52
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6e8f86208504947297312f542e188f0dc496c6ee">
+    <a href="/chromium/src/+log/c4596c0a7b32c4f22f299807c9c0221317e8db52">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6e8f86208504947297312f542e188f0dc496c6ee.tar.gz">
+    <a href="/chromium/src/+archive/c4596c0a7b32c4f22f299807c9c0221317e8db52.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Claudius van der Merwe &lt;cvandermerwe@google.com&gt;
+   Rafael Cintron &lt;rafael.cintron@microsoft.com&gt;
   </td>
   <td>
-   Fri Jul 30 23:22:36 2021
+   Sat Jul 31 00:11:30 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jul 30 23:22:36 2021
+   Sat Jul 31 00:11:30 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6e8f86208504947297312f542e188f0dc496c6ee/">
-    e1754cc11fb0db95b1f9282bfc434c3ce34d17bb
+   <a href="/chromium/src/+/c4596c0a7b32c4f22f299807c9c0221317e8db52/">
+    4e41cdc7d03723928c1b140202e41fcac14de5c4
    </a>
   </td>
  </tr>
@@ -166,45 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6e8f86208504947297312f542e188f0dc496c6ee%5E">
-    10f029cdaaafce9a182648ba20b3be883b9327e4
+   <a href="/chromium/src/+/c4596c0a7b32c4f22f299807c9c0221317e8db52%5E">
+    b443c71219a7de8a4014c6a963e387b442234765
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6e8f86208504947297312f542e188f0dc496c6ee%5E%21/">
+    <a href="/chromium/src/+/c4596c0a7b32c4f22f299807c9c0221317e8db52%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PhoneHub] Modify keepalive intervals for battery performance
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use SetMultithreadedProtect(TRUE) for video capture process
 
-This CL increases the Nearby Connections layer keepalive from
-15 seconds to 25 seconds, the WebRTC keepalive from 2.5 seconds
-to 25 seconds, and both timeouts to 10 minutes to account for
-when the phone goes into deep sleep mode, during which it can
-take up to 8 minutes to receive keepalives from the phone.
+Since FrameServerClient background threads in the video capture
+process call EnqueueSetEvent on Chromium's D3D11 device at the same
+time that Chromium is actively using it in a worker thread, we need
+to protect access via ID3D10Multithreaded::SetMultithreadedProtect.
 
-The Nearby Connections keepalive values gets negotiated by the client
-that requests the connection so they will be used by the Phone as well.
+Unfortunately, leaving off the CREATE_DEVICE_SINGLETHREADED creation
+flag is not enough to protect us.
 
-The WebRTC keepalive will be changed on the phone side by setting the
-flags
-mediums_web_rtc_ice_check_interval_strong_connectivity_ms = 15000
-mediums_web_rtc_stable_writable_connection_ping_interval_ms = 30000
-mediums_web_rtc_ice_connection_receiving_timeout_ms = 600000
-
-See go/phone-hub-battery-fix for more information.
-
-Gated by nearby-keep-alive-fix flag.
-
-Bug: 1204325
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia6488d2d8e22912388a92a015323fe174c3bc9ac">Ia6488d2d8e22912388a92a015323fe174c3bc9ac</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3063898">https://chromium-review.googlesource.com/c/chromium/src/+/3063898</a>
-Commit-Queue: Claude van der Merwe &lt;cvandermerwe@google.com&gt;
-Reviewed-by: Josh Nohle &lt;nohle@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#907308}
+Bug: 1226033
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibf4a345aa32619a090cebfad0ac088138c852045">Ibf4a345aa32619a090cebfad0ac088138c852045</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3044357">https://chromium-review.googlesource.com/c/chromium/src/+/3044357</a>
+Reviewed-by: Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
+Reviewed-by: Will Cassella &lt;cassew@google.com&gt;
+Commit-Queue: Rafael Cintron &lt;rafael.cintron@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/master@{#907327}
 </pre>
 
 </body>
