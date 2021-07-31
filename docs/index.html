@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/907342/"> 907342</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1f205adae3aff6216b6a3af0fca3a55aa0bdf02d">1f205adae3aff6216b6a3af0fca3a55aa0bdf02d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/907347/"> 907347</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6402c824085e00163dbfe3e4afe4a403e809ca30">6402c824085e00163dbfe3e4afe4a403e809ca30</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/907320/">907320</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1a34b8bdb2cfec5e1a5e02dd6c7dc80894de28fd">1a34b8bdb2cfec5e1a5e02dd6c7dc80894de28fd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/907340/">907340</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f6ebeac20b10734571bb9a745a30d4d18c869324">f6ebeac20b10734571bb9a745a30d4d18c869324</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1f205adae3aff6216b6a3af0fca3a55aa0bdf02d
+   6402c824085e00163dbfe3e4afe4a403e809ca30
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1f205adae3aff6216b6a3af0fca3a55aa0bdf02d">
+    <a href="/chromium/src/+log/6402c824085e00163dbfe3e4afe4a403e809ca30">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1f205adae3aff6216b6a3af0fca3a55aa0bdf02d.tar.gz">
+    <a href="/chromium/src/+archive/6402c824085e00163dbfe3e4afe4a403e809ca30.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Haiyang Pan &lt;hypan@google.com&gt;
+   Will Cassella &lt;cassew@google.com&gt;
   </td>
   <td>
-   Sat Jul 31 01:47:52 2021
+   Sat Jul 31 02:07:43 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Jul 31 01:47:52 2021
+   Sat Jul 31 02:07:43 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1f205adae3aff6216b6a3af0fca3a55aa0bdf02d/">
-    4c1bd0a7fc507e7a43a62764171e7bb5e826e975
+   <a href="/chromium/src/+/6402c824085e00163dbfe3e4afe4a403e809ca30/">
+    45690523f881db1bc856c6366839d9387bd6da22
    </a>
   </td>
  </tr>
@@ -166,37 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1f205adae3aff6216b6a3af0fca3a55aa0bdf02d%5E">
-    2e3a5bd8f68eaa200dee6f21a3de8fdc2c386b67
+   <a href="/chromium/src/+/6402c824085e00163dbfe3e4afe4a403e809ca30%5E">
+    384b2ec825cc0f5bec90cb21650c3a786bf9366b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1f205adae3aff6216b6a3af0fca3a55aa0bdf02d%5E%21/">
+    <a href="/chromium/src/+/6402c824085e00163dbfe3e4afe4a403e809ca30%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reorganize the machine_type for android emulator builders
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use base::span instead of std::vector in MP2TS code
 
-For 4-cores, we have 400 n1 and 340 e2 bots. We used to differentiate
-the machine_type between n1 and e2. But this bring unnecessary
-monitoring effort for bot usage when adding more test suites to
-emulator builders.
+base::span is preferable to std::vector in situations where you do not
+require a growable array (ie, basically anywhere std::vector is passed
+by const&amp;). This is due to the fact that base::span can be trivially
+constructed from several different array types (c-style array,
+std::array, std::vector), without requiring a dynamic allocation. As can
+be seen in this CL, there are cases where an array constant is used as
+an argument which unnecessarily causes calls to `malloc` and `free` if a
+std::vector is used as the argument type.
 
-With this CL:
-* For 4-cores, we use "or" dimension to point to either of n1 or e2.
-* For 8-cores, since there are only 80 n1 (vs 1000+ e2), let's just
-  use e2. Meanwhile I will convert the n1 into e2.
+Further reading here: <a href="https://abseil.io/tips/93">https://abseil.io/tips/93</a> (refers to absl::span,
+but same idea).
 
-Bug: 922145
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I000543f04fba39d281c6c72a3bb8b3b4c4370ebd">I000543f04fba39d281c6c72a3bb8b3b4c4370ebd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3065039">https://chromium-review.googlesource.com/c/chromium/src/+/3065039</a>
-Reviewed-by: Yuke Liao &lt;liaoyuke@chromium.org&gt;
-Reviewed-by: Weizhong Xia &lt;weizhong@google.com&gt;
-Commit-Queue: Haiyang Pan &lt;hypan@google.com&gt;
-Cr-Commit-Position: refs/heads/master@{#907342}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I80c5e0e0d730a3813c77b983342316d0bd6b3b16">I80c5e0e0d730a3813c77b983342316d0bd6b3b16</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3045101">https://chromium-review.googlesource.com/c/chromium/src/+/3045101</a>
+Commit-Queue: Matthew Wolenetz &lt;wolenetz@chromium.org&gt;
+Reviewed-by: Matthew Wolenetz &lt;wolenetz@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#907347}
 </pre>
 
 </body>
