@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/907347/"> 907347</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6402c824085e00163dbfe3e4afe4a403e809ca30">6402c824085e00163dbfe3e4afe4a403e809ca30</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/907352/"> 907352</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d25e6cfb1a88274733ca04bf1aa3c16866a7a03c">d25e6cfb1a88274733ca04bf1aa3c16866a7a03c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/907340/">907340</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f6ebeac20b10734571bb9a745a30d4d18c869324">f6ebeac20b10734571bb9a745a30d4d18c869324</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/907347/">907347</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6402c824085e00163dbfe3e4afe4a403e809ca30">6402c824085e00163dbfe3e4afe4a403e809ca30</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6402c824085e00163dbfe3e4afe4a403e809ca30
+   d25e6cfb1a88274733ca04bf1aa3c16866a7a03c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6402c824085e00163dbfe3e4afe4a403e809ca30">
+    <a href="/chromium/src/+log/d25e6cfb1a88274733ca04bf1aa3c16866a7a03c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6402c824085e00163dbfe3e4afe4a403e809ca30.tar.gz">
+    <a href="/chromium/src/+archive/d25e6cfb1a88274733ca04bf1aa3c16866a7a03c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Will Cassella &lt;cassew@google.com&gt;
+   Eugene Zemtsov &lt;eugene@chromium.org&gt;
   </td>
   <td>
-   Sat Jul 31 02:07:43 2021
+   Sat Jul 31 03:22:32 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Jul 31 02:07:43 2021
+   Sat Jul 31 03:22:32 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6402c824085e00163dbfe3e4afe4a403e809ca30/">
-    45690523f881db1bc856c6366839d9387bd6da22
+   <a href="/chromium/src/+/d25e6cfb1a88274733ca04bf1aa3c16866a7a03c/">
+    854fc5f61756ba9171ea0dcabbde63791ad09b25
    </a>
   </td>
  </tr>
@@ -166,38 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6402c824085e00163dbfe3e4afe4a403e809ca30%5E">
-    384b2ec825cc0f5bec90cb21650c3a786bf9366b
+   <a href="/chromium/src/+/d25e6cfb1a88274733ca04bf1aa3c16866a7a03c%5E">
+    b4e31809dcdc2b9ed3893dd9549743d8345227ad
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6402c824085e00163dbfe3e4afe4a403e809ca30%5E%21/">
+    <a href="/chromium/src/+/d25e6cfb1a88274733ca04bf1aa3c16866a7a03c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use base::span instead of std::vector in MP2TS code
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">webcodecs: Connect VideoEncoderConfig.latencyMode to MF and VT encoders
 
-base::span is preferable to std::vector in situations where you do not
-require a growable array (ie, basically anywhere std::vector is passed
-by const&amp;). This is due to the fact that base::span can be trivially
-constructed from several different array types (c-style array,
-std::array, std::vector), without requiring a dynamic allocation. As can
-be seen in this CL, there are cases where an array constant is used as
-an argument which unnecessarily causes calls to `malloc` and `free` if a
-std::vector is used as the argument type.
+Switch low-latency/realtime modes in MediaFoundation and Video Toolbox
+encoder depending on configuration provided in VideoEncoderConfig.
 
-Further reading here: <a href="https://abseil.io/tips/93">https://abseil.io/tips/93</a> (refers to absl::span,
-but same idea).
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I80c5e0e0d730a3813c77b983342316d0bd6b3b16">I80c5e0e0d730a3813c77b983342316d0bd6b3b16</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3045101">https://chromium-review.googlesource.com/c/chromium/src/+/3045101</a>
-Commit-Queue: Matthew Wolenetz &lt;wolenetz@chromium.org&gt;
-Reviewed-by: Matthew Wolenetz &lt;wolenetz@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#907347}
+Bug: 1217840
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1d69179fe447a6a59e4d49f454c8b05cad93ee94">I1d69179fe447a6a59e4d49f454c8b05cad93ee94</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3057205">https://chromium-review.googlesource.com/c/chromium/src/+/3057205</a>
+Commit-Queue: Eugene Zemtsov &lt;eugene@chromium.org&gt;
+Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
+Reviewed-by: Brian Sheedy &lt;bsheedy@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#907352}
 </pre>
 
 </body>
