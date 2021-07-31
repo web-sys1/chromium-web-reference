@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/907387/"> 907387</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/651c6994be23cbb602dbaba728b533301d3b803a">651c6994be23cbb602dbaba728b533301d3b803a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/907388/"> 907388</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a1179182c69137e0e9adbb91970bf124f31c2476">a1179182c69137e0e9adbb91970bf124f31c2476</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/907386/">907386</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c5f029f5926e16799131c1f7a93d953aa82a7d30">c5f029f5926e16799131c1f7a93d953aa82a7d30</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/907388/">907388</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a1179182c69137e0e9adbb91970bf124f31c2476">a1179182c69137e0e9adbb91970bf124f31c2476</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   651c6994be23cbb602dbaba728b533301d3b803a
+   a1179182c69137e0e9adbb91970bf124f31c2476
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/651c6994be23cbb602dbaba728b533301d3b803a">
+    <a href="/chromium/src/+log/a1179182c69137e0e9adbb91970bf124f31c2476">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/651c6994be23cbb602dbaba728b533301d3b803a.tar.gz">
+    <a href="/chromium/src/+archive/a1179182c69137e0e9adbb91970bf124f31c2476.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Justin Cohen &lt;justincohen@chromium.org&gt;
+   Chris Dalton &lt;csmartdalton@google.com&gt;
   </td>
   <td>
-   Sat Jul 31 17:27:34 2021
+   Sat Jul 31 18:10:03 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Jul 31 17:27:34 2021
+   Sat Jul 31 18:10:03 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/651c6994be23cbb602dbaba728b533301d3b803a/">
-    13566ba4b66843aa614180b76cfb130f03701a7d
+   <a href="/chromium/src/+/a1179182c69137e0e9adbb91970bf124f31c2476/">
+    f8d39e6351ae779268764cc5ed4d642e8d7bc150
    </a>
   </td>
  </tr>
@@ -166,54 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/651c6994be23cbb602dbaba728b533301d3b803a%5E">
-    c5f029f5926e16799131c1f7a93d953aa82a7d30
+   <a href="/chromium/src/+/a1179182c69137e0e9adbb91970bf124f31c2476%5E">
+    651c6994be23cbb602dbaba728b533301d3b803a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/651c6994be23cbb602dbaba728b533301d3b803a%5E%21/">
+    <a href="/chromium/src/+/a1179182c69137e0e9adbb91970bf124f31c2476%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[iOS] CPE: Save newly generated credentials"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Enable the tessellation atlas for general path rendering
 
-This reverts commit a55462e707c6683a67764bc9c9a1d1a32f7a4bb7.
+This is a drastic change to how non-MSAA paths are rendered in Chrome.
+After this CL, and as long as multisample support is enabled, non-convex
+paths with 256^2 pixels or fewer will be rendered by tessellation in a
+2048x2048 multisampled alpha8 atlas. This will give tremendous
+improvements in path rendering times and overall CPU usge. This change
+will also cause Skia to quit caching path bitmaps in many cases, so we
+can expect to see some memory savings. Dropping the path cache is not
+expected to impact performance much because the tiles themselves are
+their own bitmap cache.
 
-Reason for revert: Failing on the bots, see comments.
-
-Original change's description:
-&gt; [iOS] CPE: Save newly generated credentials
-&gt;
-&gt; The password itself is stored into the keychain, and the Credential
-&gt; object is saved to NSUserDefaults, so it can be read the next time
-&gt; Chrome starts.
-&gt;
-&gt; After saving finishes, the extension also passes the credentials back
-&gt; to the website, closing itself.
-&gt;
-&gt; Bug: 1224974
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I622954e9b734f07400798de84f6f6ed4d6d0f3da">I622954e9b734f07400798de84f6f6ed4d6d0f3da</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3058648">https://chromium-review.googlesource.com/c/chromium/src/+/3058648</a>
-&gt; Commit-Queue: Robbie Gibson &lt;rkgibson@google.com&gt;
-&gt; Reviewed-by: Javier Flores &lt;javierrobles@chromium.org&gt;
-&gt; Reviewed-by: Mark Cogan &lt;marq@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#907168}
-
-Bug: 1224974
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6344d176c30b42ffd92ba20a7cb41e0c28f6d8fe">I6344d176c30b42ffd92ba20a7cb41e0c28f6d8fe</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3065598">https://chromium-review.googlesource.com/c/chromium/src/+/3065598</a>
-Auto-Submit: Justin Cohen &lt;justincohen@chromium.org&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: Javier Flores &lt;javierrobles@chromium.org&gt;
-Reviewed-by: Rohit Rao &lt;rohitrao@chromium.org&gt;
-Reviewed-by: Javier Flores &lt;javierrobles@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#907387}
+Bug: chromium:928984
+Bug: skia:12258
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1a4e2dba65d2db4a74f766aa944e4a64782df271">I1a4e2dba65d2db4a74f766aa944e4a64782df271</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3062518">https://chromium-review.googlesource.com/c/chromium/src/+/3062518</a>
+Auto-Submit: Chris Dalton &lt;csmartdalton@chromium.org&gt;
+Commit-Queue: Chris Dalton &lt;csmartdalton@chromium.org&gt;
+Reviewed-by: Brian Salomon &lt;bsalomon@google.com&gt;
+Reviewed-by: Michael Ludwig &lt;michaelludwig@google.com&gt;
+Reviewed-by: Justin Novosad &lt;junov@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#907388}
 </pre>
 
 </body>
