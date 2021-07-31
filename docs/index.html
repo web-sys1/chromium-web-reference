@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/907327/"> 907327</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c4596c0a7b32c4f22f299807c9c0221317e8db52">c4596c0a7b32c4f22f299807c9c0221317e8db52</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/907342/"> 907342</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1f205adae3aff6216b6a3af0fca3a55aa0bdf02d">1f205adae3aff6216b6a3af0fca3a55aa0bdf02d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/907320/">907320</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c4596c0a7b32c4f22f299807c9c0221317e8db52
+   1f205adae3aff6216b6a3af0fca3a55aa0bdf02d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c4596c0a7b32c4f22f299807c9c0221317e8db52">
+    <a href="/chromium/src/+log/1f205adae3aff6216b6a3af0fca3a55aa0bdf02d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c4596c0a7b32c4f22f299807c9c0221317e8db52.tar.gz">
+    <a href="/chromium/src/+archive/1f205adae3aff6216b6a3af0fca3a55aa0bdf02d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Rafael Cintron &lt;rafael.cintron@microsoft.com&gt;
+   Haiyang Pan &lt;hypan@google.com&gt;
   </td>
   <td>
-   Sat Jul 31 00:11:30 2021
+   Sat Jul 31 01:47:52 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Jul 31 00:11:30 2021
+   Sat Jul 31 01:47:52 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c4596c0a7b32c4f22f299807c9c0221317e8db52/">
-    4e41cdc7d03723928c1b140202e41fcac14de5c4
+   <a href="/chromium/src/+/1f205adae3aff6216b6a3af0fca3a55aa0bdf02d/">
+    4c1bd0a7fc507e7a43a62764171e7bb5e826e975
    </a>
   </td>
  </tr>
@@ -166,35 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c4596c0a7b32c4f22f299807c9c0221317e8db52%5E">
-    b443c71219a7de8a4014c6a963e387b442234765
+   <a href="/chromium/src/+/1f205adae3aff6216b6a3af0fca3a55aa0bdf02d%5E">
+    2e3a5bd8f68eaa200dee6f21a3de8fdc2c386b67
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c4596c0a7b32c4f22f299807c9c0221317e8db52%5E%21/">
+    <a href="/chromium/src/+/1f205adae3aff6216b6a3af0fca3a55aa0bdf02d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use SetMultithreadedProtect(TRUE) for video capture process
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reorganize the machine_type for android emulator builders
 
-Since FrameServerClient background threads in the video capture
-process call EnqueueSetEvent on Chromium's D3D11 device at the same
-time that Chromium is actively using it in a worker thread, we need
-to protect access via ID3D10Multithreaded::SetMultithreadedProtect.
+For 4-cores, we have 400 n1 and 340 e2 bots. We used to differentiate
+the machine_type between n1 and e2. But this bring unnecessary
+monitoring effort for bot usage when adding more test suites to
+emulator builders.
 
-Unfortunately, leaving off the CREATE_DEVICE_SINGLETHREADED creation
-flag is not enough to protect us.
+With this CL:
+* For 4-cores, we use "or" dimension to point to either of n1 or e2.
+* For 8-cores, since there are only 80 n1 (vs 1000+ e2), let's just
+  use e2. Meanwhile I will convert the n1 into e2.
 
-Bug: 1226033
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibf4a345aa32619a090cebfad0ac088138c852045">Ibf4a345aa32619a090cebfad0ac088138c852045</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3044357">https://chromium-review.googlesource.com/c/chromium/src/+/3044357</a>
-Reviewed-by: Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
-Reviewed-by: Will Cassella &lt;cassew@google.com&gt;
-Commit-Queue: Rafael Cintron &lt;rafael.cintron@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/master@{#907327}
+Bug: 922145
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I000543f04fba39d281c6c72a3bb8b3b4c4370ebd">I000543f04fba39d281c6c72a3bb8b3b4c4370ebd</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3065039">https://chromium-review.googlesource.com/c/chromium/src/+/3065039</a>
+Reviewed-by: Yuke Liao &lt;liaoyuke@chromium.org&gt;
+Reviewed-by: Weizhong Xia &lt;weizhong@google.com&gt;
+Commit-Queue: Haiyang Pan &lt;hypan@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#907342}
 </pre>
 
 </body>
