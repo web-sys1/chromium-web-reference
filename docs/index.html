@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/907530/"> 907530</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ad2959bc1d9a83b19461eb7177b42a43b0d9d259">ad2959bc1d9a83b19461eb7177b42a43b0d9d259</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/907542/"> 907542</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4cff0790dcecb8bed94931223f885e184344ad4d">4cff0790dcecb8bed94931223f885e184344ad4d</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/907529/">907529</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/24ec9794313dadbbb34d86580c55900db5b0c594">24ec9794313dadbbb34d86580c55900db5b0c594</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/907543/">907543</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7c9d73fbe0c8bc10b886d1c583cceac39ebe66dc">7c9d73fbe0c8bc10b886d1c583cceac39ebe66dc</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ad2959bc1d9a83b19461eb7177b42a43b0d9d259
+   4cff0790dcecb8bed94931223f885e184344ad4d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ad2959bc1d9a83b19461eb7177b42a43b0d9d259">
+    <a href="/chromium/src/+log/4cff0790dcecb8bed94931223f885e184344ad4d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ad2959bc1d9a83b19461eb7177b42a43b0d9d259.tar.gz">
+    <a href="/chromium/src/+archive/4cff0790dcecb8bed94931223f885e184344ad4d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Victor Costan &lt;pwnall@chromium.org&gt;
+   Olya Kalitova &lt;okalitova@chromium.org&gt;
   </td>
   <td>
-   Mon Aug 02 13:48:51 2021
+   Mon Aug 02 14:36:23 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 02 13:48:51 2021
+   Mon Aug 02 14:36:23 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ad2959bc1d9a83b19461eb7177b42a43b0d9d259/">
-    03ce61dadc9b0be1ba7582060c0895cf415369ad
+   <a href="/chromium/src/+/4cff0790dcecb8bed94931223f885e184344ad4d/">
+    633a67e1b18fc436c39e2cb2a33f623a9d042499
    </a>
   </td>
  </tr>
@@ -166,32 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ad2959bc1d9a83b19461eb7177b42a43b0d9d259%5E">
-    24ec9794313dadbbb34d86580c55900db5b0c594
+   <a href="/chromium/src/+/4cff0790dcecb8bed94931223f885e184344ad4d%5E">
+    4c1295348a264c53d4032f743e07bd57006b8976
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ad2959bc1d9a83b19461eb7177b42a43b0d9d259%5E%21/">
+    <a href="/chromium/src/+/4cff0790dcecb8bed94931223f885e184344ad4d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">NativeIO: Remove the WeakPtrFactory from NativeIOManager.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Run PolicyPrefsTest.PolicyToPrefsMapping also for Lacros
 
-None of the methods currently bound using weak pointers need the
-NativeIOManager context. This CL eliminates three methods altogether,
-and converts the remaining one into an inline lambda.
+Currently most of the testing for Lacros using policy_test_cases.json has been disabled due to
+differences in Lacros and Ash policy handlers. This CL returns these
+tests back by:
 
-This slightly simplifies the lifetime of NativeIOManager instances.
+1) Introducing two new supported os types ("chromeos_lacros" and "chromeos_ash").
+2) Reassigning supported os "chromeos" to "chromeos_ash" if the policy is supported on chromeos only.
+It is just currently true for most of the policies, two exceptions are: LacrosSecondaryProfilesAllowed and AttestationExtensionAllowlist.
+3) Reassigning supported os "chromeos" to "chromeos_ash", "chromeos_lacros" if policy is supported on chromeos and linux.
+3) Adding check in test that OS is covered (chromeos is covered) instead of directly checking that policy is supported on lacros or ash.
+As currently policy_templates.json has only indication that chromeos is supported, policies compiled for lacros are chromeos policies, but lot's of them do not have policy handlers in lacros. That is why tests on lacros could be skipped if policy is supported on ash.
+Same will apply for ash in the future. (Currently there are no only lacros policies.)
 
-Bug: 1221068
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6f3ccc481efe5ca6f71d8cceeb36f5cfc51a0e64">I6f3ccc481efe5ca6f71d8cceeb36f5cfc51a0e64</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3064250">https://chromium-review.googlesource.com/c/chromium/src/+/3064250</a>
-Reviewed-by: Richard Stotz &lt;rstz@chromium.org&gt;
-Commit-Queue: Victor Costan &lt;pwnall@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#907530}
+Test: PolicyPrefsTest.PolicyToPrefsMapping and PolicyPrefsTestCoverageTest.AllPoliciesHaveATestCase
+Bug: 1228434
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie6a06d360bfeedbcec0c1a2d44227d1ec636b844">Ie6a06d360bfeedbcec0c1a2d44227d1ec636b844</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3054075">https://chromium-review.googlesource.com/c/chromium/src/+/3054075</a>
+Commit-Queue: Olya Kalitova &lt;okalitova@chromium.org&gt;
+Reviewed-by: Alexander Hendrich &lt;hendrich@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#907542}
 </pre>
 
 </body>
