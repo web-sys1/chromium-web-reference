@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/908367/"> 908367</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d006c1cf3e44a619029605c609b65c37177d14dc">d006c1cf3e44a619029605c609b65c37177d14dc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/908383/"> 908383</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/dd1b13919da2357b4280d0200cf43721b59c9241">dd1b13919da2357b4280d0200cf43721b59c9241</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/908380/">908380</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d006c1cf3e44a619029605c609b65c37177d14dc
+   dd1b13919da2357b4280d0200cf43721b59c9241
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d006c1cf3e44a619029605c609b65c37177d14dc">
+    <a href="/chromium/src/+log/dd1b13919da2357b4280d0200cf43721b59c9241">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d006c1cf3e44a619029605c609b65c37177d14dc.tar.gz">
+    <a href="/chromium/src/+archive/dd1b13919da2357b4280d0200cf43721b59c9241.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Matt Falkenhagen &lt;falken@chromium.org&gt;
+   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 04 07:50:15 2021
+   Wed Aug 04 08:55:08 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 04 07:50:15 2021
+   Wed Aug 04 08:55:08 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d006c1cf3e44a619029605c609b65c37177d14dc/">
-    ad9dc856b04473e05aeb31bd32174ff1ff3ba995
+   <a href="/chromium/src/+/dd1b13919da2357b4280d0200cf43721b59c9241/">
+    4abc84c4868ad2b8749e1ec6f4ccccf3ff96d78c
    </a>
   </td>
  </tr>
@@ -166,56 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d006c1cf3e44a619029605c609b65c37177d14dc%5E">
-    69fdfb027861feb139d9b6299ea77d6abf8fca2a
+   <a href="/chromium/src/+/dd1b13919da2357b4280d0200cf43721b59c9241%5E">
+    ae47ab1303a4b1e9d442887a6ba70782cff57d16
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d006c1cf3e44a619029605c609b65c37177d14dc%5E%21/">
+    <a href="/chromium/src/+/dd1b13919da2357b4280d0200cf43721b59c9241%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">mparch: Make BackgroundFetch mparch-aware.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll androidx from Er2u3dWX5... to J5OBFe2_U...
 
-Prefer RenderFrameHost to WebContents as there can be multiple main
-frames associated with a WebContents.
+If this roll has caused a breakage, revert this CL and stop the roller
+using the controls here:
+<a href="https://autoroll.skia.org/r/androidx-chromium">https://autoroll.skia.org/r/androidx-chromium</a>
+Please CC mheikal@google.com,clank-library-failures@google.com on the revert to ensure that a human
+is aware of the problem.
 
-The code previously used WebContents only for main frames in order to
-check permissions for them: BackgroundFetchServiceImpl::CreateForFrame
-passed a `wc_getter` to BackgroundFetchServiceImpl's constructor only
-for main frames. Later, this `wc_getter` was used in
-BackgroundFetchDelegateProxy::GetPermissionForOrigin() to look up the
-WebContents, and then call GetPermissionStatusForFrame() on the main
-frame of the WebContents.
+To report a problem with the AutoRoller itself, please file a bug:
+<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
 
-This CL changes things to pass the RenderFrameHostImpl directly to
-BackgroundFetchDelegateProxy::GetPermissionForOrigin(), which calls
-GetPermissionStatusForFrame() only if it is a main frame. We *could*
-use the RenderFrameHostImpl always, but this would be inconsistent with
-the original code.
+Documentation for the AutoRoller is here:
+<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
 
-The code also previously filtered out non top-level frames when
-recording UKM. Because the intention appears to be to ensure that the
-page displayed to the user is the same as the one that initiated the
-background fetch, the UKM code is changed to filter out non-active
-render frames as these are not necessarily displayed to the user.
-
-Note that for prerendering, this is all moot, because prerender's Mojo
-Capability Control prevents prerendered documents from using background
-fetch, and does not create the BackgroundFetchService until after
-activation.
-
-Bug: 1061899
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6409956ad83728e28db09a505ed99487a3be38b1">I6409956ad83728e28db09a505ed99487a3be38b1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3053479">https://chromium-review.googlesource.com/c/chromium/src/+/3053479</a>
-Commit-Queue: Matt Falkenhagen &lt;falken@chromium.org&gt;
-Reviewed-by: Lucas Gadani &lt;lfg@chromium.org&gt;
-Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
-Reviewed-by: Rayan Kanso &lt;rayankans@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#908367}
+Tbr: mheikal@google.com,clank-library-failures@google.com
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic8c5f26939ba423ee0c6bc2f09c72c0844b90b1c">Ic8c5f26939ba423ee0c6bc2f09c72c0844b90b1c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3070549">https://chromium-review.googlesource.com/c/chromium/src/+/3070549</a>
+Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/master@{#908383}
 </pre>
 
 </body>
