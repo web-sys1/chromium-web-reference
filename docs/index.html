@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/908390/"> 908390</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a3dbb157f3fa6b17e5e77a5e5756158c39c208c7">a3dbb157f3fa6b17e5e77a5e5756158c39c208c7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/908399/"> 908399</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c2df1254b2cceff7b03cb8bade08958d7be7a286">c2df1254b2cceff7b03cb8bade08958d7be7a286</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/908389/">908389</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a3dbb157f3fa6b17e5e77a5e5756158c39c208c7
+   c2df1254b2cceff7b03cb8bade08958d7be7a286
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a3dbb157f3fa6b17e5e77a5e5756158c39c208c7">
+    <a href="/chromium/src/+log/c2df1254b2cceff7b03cb8bade08958d7be7a286">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a3dbb157f3fa6b17e5e77a5e5756158c39c208c7.tar.gz">
+    <a href="/chromium/src/+archive/c2df1254b2cceff7b03cb8bade08958d7be7a286.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Martin Robinson &lt;mrobinson@igalia.com&gt;
   </td>
   <td>
-   Wed Aug 04 09:40:33 2021
+   Wed Aug 04 10:32:17 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 04 09:40:33 2021
+   Wed Aug 04 10:32:17 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a3dbb157f3fa6b17e5e77a5e5756158c39c208c7/">
-    0cb6f339791ac4d25939cec7e360cc4efd91ccee
+   <a href="/chromium/src/+/c2df1254b2cceff7b03cb8bade08958d7be7a286/">
+    f2f9484a72dd8164b2305a72fa27c9d423e0ec1d
    </a>
   </td>
  </tr>
@@ -166,46 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a3dbb157f3fa6b17e5e77a5e5756158c39c208c7%5E">
-    529890afbcb7ce7a76cf8146cb841ed0368e4172
+   <a href="/chromium/src/+/c2df1254b2cceff7b03cb8bade08958d7be7a286%5E">
+    5adf3dec4c0957c5a67617765366f30897bfc583
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a3dbb157f3fa6b17e5e77a5e5756158c39c208c7%5E%21/">
+    <a href="/chromium/src/+/c2df1254b2cceff7b03cb8bade08958d7be7a286%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll AFDO from 93.0.4577.23_rc-r1-merged to 93.0.4577.25_rc-r1-merged
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Re-land: Fire live region events when a node is removed.
 
-This CL may cause a small binary size increase, roughly proportional
-to how long it's been since our last AFDO profile roll. For larger
-increases (around or exceeding 100KB), please file a bug against
-gbiv@chromium.org. Additional context: <a href="https://crbug.com/805539">https://crbug.com/805539</a>
+Adds an AXLiveRegionTracker class to keep track of live regions
+in an AXTree. Uses it to fix a bug where we weren't firing the
+LIVE_REGION_CHANGED event on the live root when a node was removed,
+only when a node was added or changed.
 
-Please note that, despite rolling to chrome/android, this profile is
-used for both Linux and Android.
+I'm going to follow this up with code that optionally computes
+the text of a live region change, that we can use on Android,
+Chrome OS, and some older versions of macOS. So AXLiveRegionTracker
+is simple now, but it will be a convenient place to put that
+logic.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/afdo-chromium-autoroll">https://autoroll.skia.org/r/afdo-chromium-autoroll</a>
-Please CC gbiv@chromium.org on the revert to ensure that a human
-is aware of the problem.
+Originally landed as <a href="https://crrev.com/c/1988742,">https://crrev.com/c/1988742,</a> but reverted due to
+a UAF. The issue was that node deletion always called
+FireLiveRegionEvents for the deleted node. In the case that the
+deleted node was live region root, this would trigger a
+LIVE_REGION_CHANGED on the deleted node. Instead of calling
+FireLiveRegionEvents for deleted nodes, this version will only trigger
+a LIVE_REGION_CHANGED event for the root on deletion and only when the
+deleted node is not itself the root of the live region.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Tbr: gbiv@chromium.org
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1d9d625764b3c868695f7b870ebb360e9c077be4">I1d9d625764b3c868695f7b870ebb360e9c077be4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3070747">https://chromium-review.googlesource.com/c/chromium/src/+/3070747</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#908390}
+Bug: 560599, 930763
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3fbcd9c122a55e7a59f6cfbe61a116409cefaba6">I3fbcd9c122a55e7a59f6cfbe61a116409cefaba6</a>
+AX-RelNotes: Fix an issue where VoiceOver failed to announce cleared live regions that were filled with the previous text.
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3013676">https://chromium-review.googlesource.com/c/chromium/src/+/3013676</a>
+Commit-Queue: Martin Robinson &lt;mrobinson@igalia.com&gt;
+Reviewed-by: Nektarios Paisios &lt;nektar@chromium.org&gt;
+Reviewed-by: Kevin Babbitt &lt;kbabbitt@microsoft.com&gt;
+Reviewed-by: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#908399}
 </pre>
 
 </body>
