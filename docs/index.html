@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/908399/"> 908399</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c2df1254b2cceff7b03cb8bade08958d7be7a286">c2df1254b2cceff7b03cb8bade08958d7be7a286</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/908412/"> 908412</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f55676962f25170f2a8c8131342993d8dd2db1e2">f55676962f25170f2a8c8131342993d8dd2db1e2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/908406/">908406</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cff91a77fb64d951c6819fadaf098ca489d9ebd4">cff91a77fb64d951c6819fadaf098ca489d9ebd4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/908414/">908414</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/acbb9255223e8a9d9d4eb2f0ce88522d03f92609">acbb9255223e8a9d9d4eb2f0ce88522d03f92609</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c2df1254b2cceff7b03cb8bade08958d7be7a286
+   f55676962f25170f2a8c8131342993d8dd2db1e2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c2df1254b2cceff7b03cb8bade08958d7be7a286">
+    <a href="/chromium/src/+log/f55676962f25170f2a8c8131342993d8dd2db1e2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c2df1254b2cceff7b03cb8bade08958d7be7a286.tar.gz">
+    <a href="/chromium/src/+archive/f55676962f25170f2a8c8131342993d8dd2db1e2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Martin Robinson &lt;mrobinson@igalia.com&gt;
+   jlebel &lt;jlebel@chromium.org&gt;
   </td>
   <td>
-   Wed Aug 04 10:32:17 2021
+   Wed Aug 04 12:07:22 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 04 10:32:17 2021
+   Wed Aug 04 12:07:22 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c2df1254b2cceff7b03cb8bade08958d7be7a286/">
-    f2f9484a72dd8164b2305a72fa27c9d423e0ec1d
+   <a href="/chromium/src/+/f55676962f25170f2a8c8131342993d8dd2db1e2/">
+    032bafac1bc78f4f5d0d4fdf4b2a30846b5bcffe
    </a>
   </td>
  </tr>
@@ -166,49 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c2df1254b2cceff7b03cb8bade08958d7be7a286%5E">
-    5adf3dec4c0957c5a67617765366f30897bfc583
+   <a href="/chromium/src/+/f55676962f25170f2a8c8131342993d8dd2db1e2%5E">
+    0351a2366cf5589235c0922fd2c9ba06704a80c5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c2df1254b2cceff7b03cb8bade08958d7be7a286%5E%21/">
+    <a href="/chromium/src/+/f55676962f25170f2a8c8131342993d8dd2db1e2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Re-land: Fire live region events when a node is removed.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS] Remove all the code related to create accounts options (bis)
 
-Adds an AXLiveRegionTracker class to keep track of live regions
-in an AXTree. Uses it to fix a bug where we weren't firing the
-LIVE_REGION_CHANGED event on the live root when a node was removed,
-only when a node was added or changed.
+This patch finishes the work done in crrev.com/c/3033245
 
-I'm going to follow this up with code that optionally computes
-the text of a live region change, that we can use on Android,
-Chrome OS, and some older versions of macOS. So AXLiveRegionTracker
-is simple now, but it will be a convenient place to put that
-logic.
-
-Originally landed as <a href="https://crrev.com/c/1988742,">https://crrev.com/c/1988742,</a> but reverted due to
-a UAF. The issue was that node deletion always called
-FireLiveRegionEvents for the deleted node. In the case that the
-deleted node was live region root, this would trigger a
-LIVE_REGION_CHANGED on the deleted node. Instead of calling
-FireLiveRegionEvents for deleted nodes, this version will only trigger
-a LIVE_REGION_CHANGED event for the root on deletion and only when the
-deleted node is not itself the root of the live region.
-
-Bug: 560599, 930763
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3fbcd9c122a55e7a59f6cfbe61a116409cefaba6">I3fbcd9c122a55e7a59f6cfbe61a116409cefaba6</a>
-AX-RelNotes: Fix an issue where VoiceOver failed to announce cleared live regions that were filled with the previous text.
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3013676">https://chromium-review.googlesource.com/c/chromium/src/+/3013676</a>
-Commit-Queue: Martin Robinson &lt;mrobinson@igalia.com&gt;
-Reviewed-by: Nektarios Paisios &lt;nektar@chromium.org&gt;
-Reviewed-by: Kevin Babbitt &lt;kbabbitt@microsoft.com&gt;
-Reviewed-by: Dominic Mazzoni &lt;dmazzoni@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#908399}
+Bug: 1217846
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ied1d8e652e85701952753fd4dc568b234196c1fc">Ied1d8e652e85701952753fd4dc568b234196c1fc</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3052501">https://chromium-review.googlesource.com/c/chromium/src/+/3052501</a>
+Auto-Submit: Jérôme &lt;jlebel@chromium.org&gt;
+Reviewed-by: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+Commit-Queue: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#908412}
 </pre>
 
 </body>
