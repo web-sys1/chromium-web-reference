@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/908365/"> 908365</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/067706859478f20ddec492715b5fc6592e791da7">067706859478f20ddec492715b5fc6592e791da7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/908367/"> 908367</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d006c1cf3e44a619029605c609b65c37177d14dc">d006c1cf3e44a619029605c609b65c37177d14dc</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/908351/">908351</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d3f7149fbb814488d77d2a8511ad6f023d6caa3e">d3f7149fbb814488d77d2a8511ad6f023d6caa3e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/908366/">908366</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/69fdfb027861feb139d9b6299ea77d6abf8fca2a">69fdfb027861feb139d9b6299ea77d6abf8fca2a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   067706859478f20ddec492715b5fc6592e791da7
+   d006c1cf3e44a619029605c609b65c37177d14dc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/067706859478f20ddec492715b5fc6592e791da7">
+    <a href="/chromium/src/+log/d006c1cf3e44a619029605c609b65c37177d14dc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/067706859478f20ddec492715b5fc6592e791da7.tar.gz">
+    <a href="/chromium/src/+archive/d006c1cf3e44a619029605c609b65c37177d14dc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Joel Hockey &lt;joelhockey@chromium.org&gt;
+   Matt Falkenhagen &lt;falken@chromium.org&gt;
   </td>
   <td>
-   Wed Aug 04 07:23:43 2021
+   Wed Aug 04 07:50:15 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 04 07:23:43 2021
+   Wed Aug 04 07:50:15 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/067706859478f20ddec492715b5fc6592e791da7/">
-    fab4754b56f357f720d51f0771d1f8dc08044e67
+   <a href="/chromium/src/+/d006c1cf3e44a619029605c609b65c37177d14dc/">
+    ad9dc856b04473e05aeb31bd32174ff1ff3ba995
    </a>
   </td>
  </tr>
@@ -166,45 +166,56 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/067706859478f20ddec492715b5fc6592e791da7%5E">
-    6b4292113e4612db3865f7ee46d95313222053bb
+   <a href="/chromium/src/+/d006c1cf3e44a619029605c609b65c37177d14dc%5E">
+    69fdfb027861feb139d9b6299ea77d6abf8fca2a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/067706859478f20ddec492715b5fc6592e791da7%5E%21/">
+    <a href="/chromium/src/+/d006c1cf3e44a619029605c609b65c37177d14dc%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Delete files in DriveFS rather than moving to .Trash
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">mparch: Make BackgroundFetch mparch-aware.
 
-DriveFS changed its trash folder path since 48 in M92 from
-.Trash to .Trash-1000, and also changed how .Trash works to
-match the XDG trash spec.
+Prefer RenderFrameHost to WebContents as there can be multiple main
+frames associated with a WebContents.
 
-As a result, rather than moving &lt;item&gt; into .Trash, users of
-DriveFS should create an entry in .Trash-1000/info/&lt;info&gt;.trashinfo
-and move &lt;item&gt; to .Trash-1000/files/&lt;item&gt;. See <a href="http://cl/363262122">http://cl/363262122</a>
+The code previously used WebContents only for main frames in order to
+check permissions for them: BackgroundFetchServiceImpl::CreateForFrame
+passed a `wc_getter` to BackgroundFetchServiceImpl's constructor only
+for main frames. Later, this `wc_getter` was used in
+BackgroundFetchDelegateProxy::GetPermissionForOrigin() to look up the
+WebContents, and then call GetPermissionStatusForFrame() on the main
+frame of the WebContents.
 
-When chrome://flags/#files-trash is enabled, the JS code will take
-care of creating *.trashinfo files and moving files into the correct
-dirs.
+This CL changes things to pass the RenderFrameHostImpl directly to
+BackgroundFetchDelegateProxy::GetPermissionForOrigin(), which calls
+GetPermissionStatusForFrame() only if it is a main frame. We *could*
+use the RenderFrameHostImpl always, but this would be inconsistent with
+the original code.
 
-When trash is not enabled, there is no need (and never has been) for
-FilesApp to move files to DriveFS trash folders.  It is fine to
-recursively delete the items locally.  DriveFS will keep the item
-in its cloud trash which can be seen in Drive web.
+The code also previously filtered out non top-level frames when
+recording UKM. Because the intention appears to be to ensure that the
+page displayed to the user is the same as the one that initiated the
+background fetch, the UKM code is changed to filter out non-active
+render frames as these are not necessarily displayed to the user.
 
-This change was missed in crrev.com/c/2771402.
+Note that for prerendering, this is all moot, because prerender's Mojo
+Capability Control prevents prerendered documents from using background
+fetch, and does not create the BackgroundFetchService until after
+activation.
 
-Bug: 1234228
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I149aa5c1c9877e1b4831abadc4eff1e0719882a7">I149aa5c1c9877e1b4831abadc4eff1e0719882a7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3065215">https://chromium-review.googlesource.com/c/chromium/src/+/3065215</a>
-Commit-Queue: Joel Hockey &lt;joelhockey@chromium.org&gt;
-Reviewed-by: Austin Tankiang &lt;austinct@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#908365}
+Bug: 1061899
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6409956ad83728e28db09a505ed99487a3be38b1">I6409956ad83728e28db09a505ed99487a3be38b1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3053479">https://chromium-review.googlesource.com/c/chromium/src/+/3053479</a>
+Commit-Queue: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Reviewed-by: Lucas Gadani &lt;lfg@chromium.org&gt;
+Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
+Reviewed-by: Rayan Kanso &lt;rayankans@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#908367}
 </pre>
 
 </body>
