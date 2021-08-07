@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/909612/"> 909612</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/37592ac314a8f53417bfab1c4a841f3a9184ce90">37592ac314a8f53417bfab1c4a841f3a9184ce90</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/909613/"> 909613</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7676f56f21defe8efb648c18d61b44410765f233">7676f56f21defe8efb648c18d61b44410765f233</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/909606/">909606</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6826a3b4f36ea7b49064454e1cef355b56e9bc23">6826a3b4f36ea7b49064454e1cef355b56e9bc23</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/909612/">909612</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/37592ac314a8f53417bfab1c4a841f3a9184ce90">37592ac314a8f53417bfab1c4a841f3a9184ce90</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   37592ac314a8f53417bfab1c4a841f3a9184ce90
+   7676f56f21defe8efb648c18d61b44410765f233
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/37592ac314a8f53417bfab1c4a841f3a9184ce90">
+    <a href="/chromium/src/+log/7676f56f21defe8efb648c18d61b44410765f233">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/37592ac314a8f53417bfab1c4a841f3a9184ce90.tar.gz">
+    <a href="/chromium/src/+archive/7676f56f21defe8efb648c18d61b44410765f233.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Benjamin Beaudry &lt;bebeaudr@microsoft.com&gt;
+   Peter Kasting &lt;pkasting@chromium.org&gt;
   </td>
   <td>
-   Sat Aug 07 05:53:46 2021
+   Sat Aug 07 06:38:19 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Aug 07 05:53:46 2021
+   Sat Aug 07 06:38:19 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/37592ac314a8f53417bfab1c4a841f3a9184ce90/">
-    2ebba3e087a831cda0ec4a8efa1b1e2b164a96f2
+   <a href="/chromium/src/+/7676f56f21defe8efb648c18d61b44410765f233/">
+    555eff3cc5d1f02cd54830d86202faae28ee6f85
    </a>
   </td>
  </tr>
@@ -166,44 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/37592ac314a8f53417bfab1c4a841f3a9184ce90%5E">
-    e00a2649d28a34bc3e8930cfa11f07bfa4c849d7
+   <a href="/chromium/src/+/7676f56f21defe8efb648c18d61b44410765f233%5E">
+    37592ac314a8f53417bfab1c4a841f3a9184ce90
    </a>
    <span>
     [
-    <a href="/chromium/src/+/37592ac314a8f53417bfab1c4a841f3a9184ce90%5E%21/">
+    <a href="/chromium/src/+/7676f56f21defe8efb648c18d61b44410765f233%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Keyboard Tooltip] Always UpdateTooltipFromKeyboard if focus set from keypress
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix some instances of -Wshorten-64-to-32.
 
-This CL fixes a bug where a keyboard-triggered tooltip isn't displayed
-when it should. Consider the following HTML:
+Lots of converting size_t to wtf_size_t, some adding explicit casts.
 
-&lt;button title="tooltip"&gt;hello&lt;/button&gt;
-&lt;button&gt;world&lt;/button&gt; &lt;!-- no title --&gt;
-
-If we were to tab to the first button, the tooltip would show up.
-However, after tabbing to the second button and shift + tab back to the
-first button, the tooltip wouldn't show up.
-
-This happens because the TooltipController doesn't get notified that the
-focus moved to another control that was devoided of tooltip text. It
-thinks that we are still on that same button, thus that we shouldn't
-show the tooltip again.
-
-This CL always calls UpdateTooltipFromKeyboard regardless of whether it
-has tooltip text or not.
-
-Bug: 829352
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4786aade06a08633c4031222291b115b01ab9fae">I4786aade06a08633c4031222291b115b01ab9fae</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3079099">https://chromium-review.googlesource.com/c/chromium/src/+/3079099</a>
-Commit-Queue: Benjamin Beaudry &lt;benjamin.beaudry@microsoft.com&gt;
-Reviewed-by: Daniel Libby &lt;dlibby@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/master@{#909612}
+Bug: 879657
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6f8bf567f14aaba95c614724eeeb3ee8b1dc5a16">I6f8bf567f14aaba95c614724eeeb3ee8b1dc5a16</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3076399">https://chromium-review.googlesource.com/c/chromium/src/+/3076399</a>
+Commit-Queue: Sam McNally &lt;sammc@chromium.org&gt;
+Auto-Submit: Peter Kasting &lt;pkasting@chromium.org&gt;
+Reviewed-by: Sam McNally &lt;sammc@chromium.org&gt;
+Reviewed-by: Hongchan Choi &lt;hongchan@chromium.org&gt;
+Reviewed-by: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#909613}
 </pre>
 
 </body>
