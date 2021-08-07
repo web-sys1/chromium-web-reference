@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/909578/"> 909578</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9466325750b718cd4e44aef6f4d2fc14a3b84481">9466325750b718cd4e44aef6f4d2fc14a3b84481</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/909595/"> 909595</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/181cc72fa4a02ab4a9b52874a90b2c8f8d7f2bab">181cc72fa4a02ab4a9b52874a90b2c8f8d7f2bab</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/909581/">909581</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8909e5008cc1cb410b9c431f0bb8e25e968eacfb">8909e5008cc1cb410b9c431f0bb8e25e968eacfb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/909588/">909588</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2773d4761873ab5f922a2321e8b5900a723a5372">2773d4761873ab5f922a2321e8b5900a723a5372</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9466325750b718cd4e44aef6f4d2fc14a3b84481
+   181cc72fa4a02ab4a9b52874a90b2c8f8d7f2bab
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9466325750b718cd4e44aef6f4d2fc14a3b84481">
+    <a href="/chromium/src/+log/181cc72fa4a02ab4a9b52874a90b2c8f8d7f2bab">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9466325750b718cd4e44aef6f4d2fc14a3b84481.tar.gz">
+    <a href="/chromium/src/+archive/181cc72fa4a02ab4a9b52874a90b2c8f8d7f2bab.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
+   Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
   </td>
   <td>
-   Sat Aug 07 01:00:45 2021
+   Sat Aug 07 02:35:35 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Aug 07 01:00:45 2021
+   Sat Aug 07 02:35:35 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9466325750b718cd4e44aef6f4d2fc14a3b84481/">
-    006dcf91ab738ab4d7ac7e4afc7c0d8597ae8bd8
+   <a href="/chromium/src/+/181cc72fa4a02ab4a9b52874a90b2c8f8d7f2bab/">
+    888593ebf188e7bfe3180fca60aa84d83b65b171
    </a>
   </td>
  </tr>
@@ -166,28 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9466325750b718cd4e44aef6f4d2fc14a3b84481%5E">
-    d8ace57522ad7d60e5ee105bd6252de044b950ce
+   <a href="/chromium/src/+/181cc72fa4a02ab4a9b52874a90b2c8f8d7f2bab%5E">
+    4ed267e9e9c258b38661e3d4629d6b536183d33c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9466325750b718cd4e44aef6f4d2fc14a3b84481%5E%21/">
+    <a href="/chromium/src/+/181cc72fa4a02ab4a9b52874a90b2c8f8d7f2bab%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[block-in-inline] Add new variable to reduce code churn.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">gpu: Keep DC layer overlay access in SkiaOutputDeviceGL
 
-There should be no behaviour change.
+Make SkiaOutputDeviceGL own the ScopedOverlayAccess and keep it until
+SwapBuffers completes.  This has the same effect as the previous code
+which passed along the scoped access in the DC layer params release
+callback so it removes the need for that callback.  This approach is
+better since the GLSurface is a ref counted object which could be kept
+alive in general after the SkiaOutputDeviceGL is gone, which would also
+make the scoped access outlive the shared image representation causing
+the CHECK failure in the bug.
 
-Bug: 716930
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I07dc8f20dfe751195dace03cf0ba842faa187323">I07dc8f20dfe751195dace03cf0ba842faa187323</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3077465">https://chromium-review.googlesource.com/c/chromium/src/+/3077465</a>
-Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
-Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#909578}
+Bug: 1227771
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I43bdd1f92b5cdfae57ec9aecc0cdfdfd75f0beb2">I43bdd1f92b5cdfae57ec9aecc0cdfdfd75f0beb2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3063792">https://chromium-review.googlesource.com/c/chromium/src/+/3063792</a>
+Auto-Submit: Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Commit-Queue: Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#909595}
 </pre>
 
 </body>
