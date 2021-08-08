@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/909655/"> 909655</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a135f48025c437e11555ab10a5a79e388cee03a4">a135f48025c437e11555ab10a5a79e388cee03a4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/909656/"> 909656</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4fb27f655d3c10e5c4f9636acc55f377112eb422">4fb27f655d3c10e5c4f9636acc55f377112eb422</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/909653/">909653</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/851b78d9051f3a82112e32bfa2331d5020f231aa">851b78d9051f3a82112e32bfa2331d5020f231aa</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/909656/">909656</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4fb27f655d3c10e5c4f9636acc55f377112eb422">4fb27f655d3c10e5c4f9636acc55f377112eb422</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a135f48025c437e11555ab10a5a79e388cee03a4
+   4fb27f655d3c10e5c4f9636acc55f377112eb422
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a135f48025c437e11555ab10a5a79e388cee03a4">
+    <a href="/chromium/src/+log/4fb27f655d3c10e5c4f9636acc55f377112eb422">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a135f48025c437e11555ab10a5a79e388cee03a4.tar.gz">
+    <a href="/chromium/src/+archive/4fb27f655d3c10e5c4f9636acc55f377112eb422.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Miguel Casas &lt;mcasas@chromium.org&gt;
+   Philip Rogers &lt;pdr@chromium.org&gt;
   </td>
   <td>
-   Sat Aug 07 23:27:28 2021
+   Sat Aug 07 23:33:48 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Aug 07 23:27:28 2021
+   Sat Aug 07 23:33:48 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a135f48025c437e11555ab10a5a79e388cee03a4/">
-    90d0e96f679e5a38ec4449e5064fe6e57bd0ead1
+   <a href="/chromium/src/+/4fb27f655d3c10e5c4f9636acc55f377112eb422/">
+    89323635a2ee0f432bf4458c7110c8506d991071
    </a>
   </td>
  </tr>
@@ -166,33 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a135f48025c437e11555ab10a5a79e388cee03a4%5E">
-    c781cf710792ab1d7f72a38163352eedb4029120
+   <a href="/chromium/src/+/4fb27f655d3c10e5c4f9636acc55f377112eb422%5E">
+    a135f48025c437e11555ab10a5a79e388cee03a4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a135f48025c437e11555ab10a5a79e388cee03a4%5E%21/">
+    <a href="/chromium/src/+/4fb27f655d3c10e5c4f9636acc55f377112eb422%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media/gpu/v4l2 (stateful): tolerate repeated timestamps
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Skip PaintChunksToCcLayer::UpdateLayerProperties on fully cached repaint
 
-crrev.com/c/3073340 landed a map of |encoding_timestamps_|. During
-other unrelated bug activities I noticed H.264 sometimes calls
-OnOutputBufferDequeued() with a repeated |flat_timespec| (at the very
-end of a playback), causing the DHECK() to trigger.
+This patch skips PaintChunksToCcLayer::UpdateLayerProperties when the
+paint chunks are all moved from a subsequence. This is valid because
+the data on PaintChunk is only set through paint, and it must be
+unchanged if the PaintChunk was moved from a subsequence.
 
-This CL turns the DCHECK() into an if() while we investigate.
+The callsite in PaintArtifactCompositor::Update is more expensive but is
+not trivial to remove because we would need to check both that the
+chunks were cached, and that the property tree states are unchanged.
 
-Bug: b:190615065
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8bb3e4f535428c48a45c7e9aa28e694e489e38da">I8bb3e4f535428c48a45c7e9aa28e694e489e38da</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3078754">https://chromium-review.googlesource.com/c/chromium/src/+/3078754</a>
-Commit-Queue: Miguel Casas &lt;mcasas@chromium.org&gt;
-Reviewed-by: Fritz Koenig &lt;frkoenig@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#909655}
+represents 0.1% of all non-idle renderer CPU time on Android:
+  <a href="https://uma.googleplex.com/p/chrome/callstacks?sid=376c740cefc4e6f1bfd6afece419b29a">https://uma.googleplex.com/p/chrome/callstacks?sid=376c740cefc4e6f1bfd6afece419b29a</a>
+And 0.08% on Windows:
+  <a href="https://uma.googleplex.com/p/chrome/callstacks?sid=b3f9af4945a64cb1216ff1fee5afcc7c">https://uma.googleplex.com/p/chrome/callstacks?sid=b3f9af4945a64cb1216ff1fee5afcc7c</a>
+
+PaintChunksToCcLayer: :UpdateLayerProperties under UpdateRepaintedLayers
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic894a46c339c01b6878e50df3682c5472994bd73">Ic894a46c339c01b6878e50df3682c5472994bd73</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3079407">https://chromium-review.googlesource.com/c/chromium/src/+/3079407</a>
+Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Commit-Queue: Philip Rogers &lt;pdr@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#909656}
 </pre>
 
 </body>
