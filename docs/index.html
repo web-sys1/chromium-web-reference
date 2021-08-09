@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/909969/"> 909969</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/06097aa3817636c89c1e6d1f4bda62f5ea797cf8">06097aa3817636c89c1e6d1f4bda62f5ea797cf8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/910027/"> 910027</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/743c5fa573323e2279db9a143cebf63b45b096f9">743c5fa573323e2279db9a143cebf63b45b096f9</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/909969/">909969</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/06097aa3817636c89c1e6d1f4bda62f5ea797cf8">06097aa3817636c89c1e6d1f4bda62f5ea797cf8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/910020/">910020</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/08455417031c5146c0c2232b5b8f78f7206957c7">08455417031c5146c0c2232b5b8f78f7206957c7</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   06097aa3817636c89c1e6d1f4bda62f5ea797cf8
+   743c5fa573323e2279db9a143cebf63b45b096f9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/06097aa3817636c89c1e6d1f4bda62f5ea797cf8">
+    <a href="/chromium/src/+log/743c5fa573323e2279db9a143cebf63b45b096f9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/06097aa3817636c89c1e6d1f4bda62f5ea797cf8.tar.gz">
+    <a href="/chromium/src/+archive/743c5fa573323e2279db9a143cebf63b45b096f9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Adam Langley &lt;agl@chromium.org&gt;
+   Colin Kincaid &lt;ckincaid@chromium.org&gt;
   </td>
   <td>
-   Mon Aug 09 20:58:38 2021
+   Mon Aug 09 22:38:23 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 09 20:58:38 2021
+   Mon Aug 09 22:38:23 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/06097aa3817636c89c1e6d1f4bda62f5ea797cf8/">
-    9903c8fc2188a58c964e259db29a04f7f9c34e79
+   <a href="/chromium/src/+/743c5fa573323e2279db9a143cebf63b45b096f9/">
+    c6ac23ae18621bfdbc817d6712b158e81c457353
    </a>
   </td>
  </tr>
@@ -166,37 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/06097aa3817636c89c1e6d1f4bda62f5ea797cf8%5E">
-    0ae99d7fc4c95f92ea95cd76d81c4bd7e3f05347
+   <a href="/chromium/src/+/743c5fa573323e2279db9a143cebf63b45b096f9%5E">
+    656985d037aae883595e5c55f39eb606abb6f0f2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/06097aa3817636c89c1e6d1f4bda62f5ea797cf8%5E%21/">
+    <a href="/chromium/src/+/743c5fa573323e2279db9a143cebf63b45b096f9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">webauthn: use different method for getting device name.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add MultiProfileDownloadNotifier abstraction
 
-In Android 12, reading the Bluetooth name requires the BLUETOOTH_CONNECT
-permission. Additionally, rather than just returning null when its not
-available, Android kills the process.
+MultiProfileDownloadNotifier wraps multiple AllDownloadItemNotifiers and
+handles the responsibility of creating and destroying those notifiers as
+their DownloadManagers' Profiles are created and destroyed. Notably, a
+MultiProfileDownloadNotifier has the capability of recognizing when a
+profile that it observes spawns a child profile, and it will observe the
+downloads from that profile as well.
 
-Therefore try reading the device name from Settings. It's harmless if
-it fails because we have a reasonable fallback.
-
-(This only affects QR-linking, which is not launched.)
-
-BUG=1237223
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifc389b47076a5750a4c886155b4b8c566cf74dda">Ifc389b47076a5750a4c886155b4b8c566cf74dda</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3078887">https://chromium-review.googlesource.com/c/chromium/src/+/3078887</a>
-Commit-Queue: Martin Kreichgauer &lt;martinkr@google.com&gt;
-Auto-Submit: Adam Langley &lt;agl@chromium.org&gt;
-Reviewed-by: Martin Kreichgauer &lt;martinkr@google.com&gt;
-Cr-Commit-Position: refs/heads/master@{#909969}
+Bug: 1208910
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2cdf6511b0aa8ee5f12b76b48f49735df07bbf70">I2cdf6511b0aa8ee5f12b76b48f49735df07bbf70</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3068044">https://chromium-review.googlesource.com/c/chromium/src/+/3068044</a>
+Commit-Queue: Colin Kincaid &lt;ckincaid@chromium.org&gt;
+Reviewed-by: Min Qin &lt;qinmin@chromium.org&gt;
+Reviewed-by: Xing Liu &lt;xingliu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#910027}
 </pre>
 
 </body>
