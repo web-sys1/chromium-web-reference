@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/909876/"> 909876</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2d6a48a7f0befdb72d625361b2e118022fcde585">2d6a48a7f0befdb72d625361b2e118022fcde585</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/909941/"> 909941</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4f1834c7a87db751f7f41960365ccaa1ec28863c">4f1834c7a87db751f7f41960365ccaa1ec28863c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/909893/">909893</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2d6a48a7f0befdb72d625361b2e118022fcde585
+   4f1834c7a87db751f7f41960365ccaa1ec28863c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2d6a48a7f0befdb72d625361b2e118022fcde585">
+    <a href="/chromium/src/+log/4f1834c7a87db751f7f41960365ccaa1ec28863c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2d6a48a7f0befdb72d625361b2e118022fcde585.tar.gz">
+    <a href="/chromium/src/+archive/4f1834c7a87db751f7f41960365ccaa1ec28863c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Dan McArdle &lt;dmcardle@chromium.org&gt;
   </td>
   <td>
-   Mon Aug 09 18:18:21 2021
+   Mon Aug 09 20:05:39 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 09 18:18:21 2021
+   Mon Aug 09 20:05:39 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2d6a48a7f0befdb72d625361b2e118022fcde585/">
-    9aaa84b8156f5d755681e06c11900e5d5175bfa3
+   <a href="/chromium/src/+/4f1834c7a87db751f7f41960365ccaa1ec28863c/">
+    5d8167bc221eb79628475bd2acf8964ff4b1a404
    </a>
   </td>
  </tr>
@@ -166,43 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2d6a48a7f0befdb72d625361b2e118022fcde585%5E">
-    7bf5527e5f020afc9086484f47b9c37bf0734d9b
+   <a href="/chromium/src/+/4f1834c7a87db751f7f41960365ccaa1ec28863c%5E">
+    9a35b308d201d7ab05fd3d05ef3b93426ca9d596
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2d6a48a7f0befdb72d625361b2e118022fcde585%5E%21/">
+    <a href="/chromium/src/+/4f1834c7a87db751f7f41960365ccaa1ec28863c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update V8 to version 9.4.121.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[WTF::HashMap Refactor] Use DeprecatedAtOrEmptyValue() in /third_party/blink/renderer/modules/accessibility
 
-Summary of changes available at:
-<a href="https://chromium.googlesource.com/v8/v8/+log/8b6157a7..ae254f30">https://chromium.googlesource.com/v8/v8/+log/8b6157a7..ae254f30</a>
+This CL is a true behavior-preserving refactor. It will not affect
+performance because HashMap&lt;&gt;::DeprecatedAtOrEmptyValue() has an
+identical implementation to HashMap&lt;&gt;::at().
 
-Please follow these instructions for assigning/CC'ing issues:
-<a href="https://v8.dev/docs/triage-issues">https://v8.dev/docs/triage-issues</a>
+In the near future, we will change the definition of HashMap&lt;&gt;::at() to
+CHECK that the map contains the given key.
 
-Please close rolling in case of a roll revert:
-<a href="https://v8-roll.appspot.com/">https://v8-roll.appspot.com/</a>
-This only works with a Google account.
+All occurrences of DeprecatedAtOrEmptyValue will need to be cleaned up.
+If the caller cannot know whether the map already contains the given
+key, one possible workaround is to use HashMap&lt;&gt;::find() instead.
 
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:linux-blink-rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:linux_optional_gpu_tests_rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:mac_optional_gpu_tests_rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:win_optional_gpu_tests_rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:android_optional_gpu_tests_rel
+Design doc: <a href="https://docs.google.com/document/d/18JIiajErikZaBzCtZvl-wwAJShqZsg0jT9wVyPBhSdU/edit?usp=sharing">https://docs.google.com/document/d/18JIiajErikZaBzCtZvl-wwAJShqZsg0jT9wVyPBhSdU/edit?usp=sharing</a>
 
-R=hablich@chromium.org,vahl@chromium.org,v8-waterfall-sheriff@grotations.appspotmail.com
+This CL was uploaded by git cl split.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I266c06a8bfeef62f7ad237b74ec00b068eb1616a">I266c06a8bfeef62f7ad237b74ec00b068eb1616a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3082221">https://chromium-review.googlesource.com/c/chromium/src/+/3082221</a>
-Bot-Commit: v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
-Commit-Queue: v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#909876}
+R=nektar@chromium.org
+
+Bug: 1058527
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I873c828962fc24074d1c5f3342212b524a32e5a3">I873c828962fc24074d1c5f3342212b524a32e5a3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3082227">https://chromium-review.googlesource.com/c/chromium/src/+/3082227</a>
+Auto-Submit: Dan McArdle &lt;dmcardle@chromium.org&gt;
+Reviewed-by: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
+Commit-Queue: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#909941}
 </pre>
 
 </body>
