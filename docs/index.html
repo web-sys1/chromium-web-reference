@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/910027/"> 910027</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/743c5fa573323e2279db9a143cebf63b45b096f9">743c5fa573323e2279db9a143cebf63b45b096f9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/910066/"> 910066</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cb8d668a1b1c3d0f280b2c26cbff146c45b73b3a">cb8d668a1b1c3d0f280b2c26cbff146c45b73b3a</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/910041/">910041</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/45ff925948420b9f848f72db9ea4d1d2348f4d63">45ff925948420b9f848f72db9ea4d1d2348f4d63</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/910065/">910065</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/76ef0684b3895e6b43a2c1ff8c8e90c51c4e6242">76ef0684b3895e6b43a2c1ff8c8e90c51c4e6242</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   743c5fa573323e2279db9a143cebf63b45b096f9
+   cb8d668a1b1c3d0f280b2c26cbff146c45b73b3a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/743c5fa573323e2279db9a143cebf63b45b096f9">
+    <a href="/chromium/src/+log/cb8d668a1b1c3d0f280b2c26cbff146c45b73b3a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/743c5fa573323e2279db9a143cebf63b45b096f9.tar.gz">
+    <a href="/chromium/src/+archive/cb8d668a1b1c3d0f280b2c26cbff146c45b73b3a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Colin Kincaid &lt;ckincaid@chromium.org&gt;
+   Raymes Khoury &lt;raymes@chromium.org&gt;
   </td>
   <td>
-   Mon Aug 09 22:38:23 2021
+   Tue Aug 10 00:07:18 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 09 22:38:23 2021
+   Tue Aug 10 00:07:18 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/743c5fa573323e2279db9a143cebf63b45b096f9/">
-    c6ac23ae18621bfdbc817d6712b158e81c457353
+   <a href="/chromium/src/+/cb8d668a1b1c3d0f280b2c26cbff146c45b73b3a/">
+    67833736a753deef8a2b4e473051e6902fadf051
    </a>
   </td>
  </tr>
@@ -166,34 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/743c5fa573323e2279db9a143cebf63b45b096f9%5E">
-    656985d037aae883595e5c55f39eb606abb6f0f2
+   <a href="/chromium/src/+/cb8d668a1b1c3d0f280b2c26cbff146c45b73b3a%5E">
+    76ef0684b3895e6b43a2c1ff8c8e90c51c4e6242
    </a>
    <span>
     [
-    <a href="/chromium/src/+/743c5fa573323e2279db9a143cebf63b45b096f9%5E%21/">
+    <a href="/chromium/src/+/cb8d668a1b1c3d0f280b2c26cbff146c45b73b3a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add MultiProfileDownloadNotifier abstraction
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Convert AppServiceInstanceRegistry::OnInstances to use InstanceKey
 
-MultiProfileDownloadNotifier wraps multiple AllDownloadItemNotifiers and
-handles the responsibility of creating and destroying those notifiers as
-their DownloadManagers' Profiles are created and destroyed. Notably, a
-MultiProfileDownloadNotifier has the capability of recognizing when a
-profile that it observes spawns a child profile, and it will observe the
-downloads from that profile as well.
+aura::Window* will not be available in Ash for web apps that run in
+tabs after Lacros is enabled. Any code that uses an aura::Window* to
+refer to an instance should instead use an InstanceKey unless it is
+guaranteed to only be referring to top level aura::Window*s (which
+will still be available in Ash with Lacros).
 
-Bug: 1208910
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2cdf6511b0aa8ee5f12b76b48f49735df07bbf70">I2cdf6511b0aa8ee5f12b76b48f49735df07bbf70</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3068044">https://chromium-review.googlesource.com/c/chromium/src/+/3068044</a>
-Commit-Queue: Colin Kincaid &lt;ckincaid@chromium.org&gt;
-Reviewed-by: Min Qin &lt;qinmin@chromium.org&gt;
-Reviewed-by: Xing Liu &lt;xingliu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#910027}
+This CL changes the OnInstances function to use InstanceKey.
+
+BUG=1235206
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ida2aef00faf2c7da96823e34e0a3e066b58ae860">Ida2aef00faf2c7da96823e34e0a3e066b58ae860</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3073481">https://chromium-review.googlesource.com/c/chromium/src/+/3073481</a>
+Commit-Queue: Raymes Khoury &lt;raymes@chromium.org&gt;
+Reviewed-by: Nancy Wang &lt;nancylingwang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#910066}
 </pre>
 
 </body>
