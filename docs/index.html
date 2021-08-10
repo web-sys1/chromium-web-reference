@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/910328/"> 910328</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f913e5042cabe43493f5014e906b5548bf74f74a">f913e5042cabe43493f5014e906b5548bf74f74a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/910346/"> 910346</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e270ce5d08b9aaba5d3821a6d600fa74eb3724f8">e270ce5d08b9aaba5d3821a6d600fa74eb3724f8</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/910363/">910363</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f913e5042cabe43493f5014e906b5548bf74f74a
+   e270ce5d08b9aaba5d3821a6d600fa74eb3724f8
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f913e5042cabe43493f5014e906b5548bf74f74a">
+    <a href="/chromium/src/+log/e270ce5d08b9aaba5d3821a6d600fa74eb3724f8">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f913e5042cabe43493f5014e906b5548bf74f74a.tar.gz">
+    <a href="/chromium/src/+archive/e270ce5d08b9aaba5d3821a6d600fa74eb3724f8.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sophie Chang &lt;sophiechang@chromium.org&gt;
+   Etienne Bergeron &lt;etienneb@chromium.org&gt;
   </td>
   <td>
-   Tue Aug 10 15:55:07 2021
+   Tue Aug 10 16:43:06 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 10 15:55:07 2021
+   Tue Aug 10 16:43:06 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f913e5042cabe43493f5014e906b5548bf74f74a/">
-    3aa609265ce53ce7aab5cd96df5f5df04c65f931
+   <a href="/chromium/src/+/e270ce5d08b9aaba5d3821a6d600fa74eb3724f8/">
+    b6fee82521585a3e7633443d75d75f486cc4d2b0
    </a>
   </td>
  </tr>
@@ -166,32 +166,61 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f913e5042cabe43493f5014e906b5548bf74f74a%5E">
-    0cf8ff17c126c4dd0ad246fa23bac0f8448c7d86
+   <a href="/chromium/src/+/e270ce5d08b9aaba5d3821a6d600fa74eb3724f8%5E">
+    ea30055b4d7177e457622cad77acc5d89eafecf3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f913e5042cabe43493f5014e906b5548bf74f74a%5E%21/">
+    <a href="/chromium/src/+/e270ce5d08b9aaba5d3821a6d600fa74eb3724f8%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[memories] Write entities into HistoryService if the entities model executed
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix priority inversion with protobufs initialization on Windows
 
-This adds a migration for the content_annotations database to add a new
-|entities| string column that uses the same (de)serialization mechanism
-as the existing topics column.
+This CL is fixing a priority inversion caused by process-wide lock used
+to guard recursive protobufs initialization.
 
-Bug: 1234578
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If13e530e22ed6419f782de99e65b898f3f6eab4a">If13e530e22ed6419f782de99e65b898f3f6eab4a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3061906">https://chromium-review.googlesource.com/c/chromium/src/+/3061906</a>
-Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Reviewed-by: Michael Crouse &lt;mcrouse@chromium.org&gt;
-Reviewed-by: Robert Ogden &lt;robertogden@chromium.org&gt;
-Commit-Queue: Sophie Chang &lt;sophiechang@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#910328}
+Protobuf are lazily initialized and inner protobufs are recursively
+initialized at that same time. To avoid conflicts (parallel loading)
+a lock is used to ensure only one thread is currently loading some
+protobufs definition.
+
+The priority inversion is caused when a background thread is creating
+a protobuf and needs to load it. Any attempt to initialize a other
+protobuf (even not related) will be blocked until the completion of
+the background loading.
+
+This CL is proposing to boost thread priority while loading protobuf.
+Since protobuf are lazily loaded, they can only be loaded once.
+
+
+Example:
+  68fee496149cd484
+
+Main Thread:
+  NtWaitForAlertByThreadId
+  RtlAcquireSRWLockExclusive
+  google::protobuf::internal::InitSCCImpl
+  autofill::AutofillPageQueryRequest::AutofillPageQueryRequest
+
+Background Thread:
+  InitDefaultsscc_info_VisualFeatures_ColorHistogramBin_components_2fsafe_5fbrowsing_2fcore_2fproto_2fcsd_2eproto
+  [...]
+  google::protobuf::internal::`anonymous namespace'::InitSCC_DFS
+  google::protobuf::internal::InitSCCImpl
+  safe_browsing::ClientSideModel::ClientSideModel
+
+
+Bug: 1218253
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I145cf2087bc2189ec14998ec594b4042c0a09cc2">I145cf2087bc2189ec14998ec594b4042c0a09cc2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3076381">https://chromium-review.googlesource.com/c/chromium/src/+/3076381</a>
+Commit-Queue: Etienne Bergeron &lt;etienneb@chromium.org&gt;
+Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
+Reviewed-by: Leonard Grey &lt;lgrey@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#910346}
 </pre>
 
 </body>
