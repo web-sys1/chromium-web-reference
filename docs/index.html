@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/910524/"> 910524</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/47f86d849d371cf25664130257bb243aeb6417d8">47f86d849d371cf25664130257bb243aeb6417d8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/910593/"> 910593</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/281090b4a2a42fb230270c87ef49e49f95ea89ef">281090b4a2a42fb230270c87ef49e49f95ea89ef</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/910467/">910467</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e9e2ea2e7175fedf7718566a4f4fd454b02b8314">e9e2ea2e7175fedf7718566a4f4fd454b02b8314</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/910589/">910589</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/60610c73b9527e538de17746d0a452b94da4748f">60610c73b9527e538de17746d0a452b94da4748f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   47f86d849d371cf25664130257bb243aeb6417d8
+   281090b4a2a42fb230270c87ef49e49f95ea89ef
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/47f86d849d371cf25664130257bb243aeb6417d8">
+    <a href="/chromium/src/+log/281090b4a2a42fb230270c87ef49e49f95ea89ef">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/47f86d849d371cf25664130257bb243aeb6417d8.tar.gz">
+    <a href="/chromium/src/+archive/281090b4a2a42fb230270c87ef49e49f95ea89ef.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xing Liu &lt;xingliu@chromium.org&gt;
+   Will Cassella &lt;cassew@google.com&gt;
   </td>
   <td>
-   Tue Aug 10 22:37:53 2021
+   Wed Aug 11 00:25:17 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 10 22:37:53 2021
+   Wed Aug 11 00:25:17 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/47f86d849d371cf25664130257bb243aeb6417d8/">
-    78752803e02c9e07c40b1a7c4cbe3503690957bc
+   <a href="/chromium/src/+/281090b4a2a42fb230270c87ef49e49f95ea89ef/">
+    b096f429e6a741d3527b3c03a5310a8d7fc55359
    </a>
   </td>
  </tr>
@@ -166,29 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/47f86d849d371cf25664130257bb243aeb6417d8%5E">
-    c41a462b0f4f95b2733436b432438cb197b37a09
+   <a href="/chromium/src/+/281090b4a2a42fb230270c87ef49e49f95ea89ef%5E">
+    42f8f835e70bb1d03e7572c2a3290053680c51e3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/47f86d849d371cf25664130257bb243aeb6417d8%5E%21/">
+    <a href="/chromium/src/+/281090b4a2a42fb230270c87ef49e49f95ea89ef%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Background download: Use WeakPtr in NetworkStatusListenerImpl.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Release internal lock before running ChunkDemuxer::open_cb_
 
-Use WeakPtr in NetworkStatusListenerImpl.
+(passed in during construction), in what is effectivately a tail-call.
+It may be useful to, for example, run |ChunkDemuxer::AddId| within that
+callback but if the lock is still held then Chrome will crash. This CL
+ensures that the lock is released before running the callback (and adds
+a unit test to avoid regressing), which is safe due to the call being a
+tail-call.
 
-Bug: 1238268
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I434c226151346e1a9405cb6a5a74cd04b064b5cf">I434c226151346e1a9405cb6a5a74cd04b064b5cf</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3086726">https://chromium-review.googlesource.com/c/chromium/src/+/3086726</a>
-Reviewed-by: Min Qin &lt;qinmin@chromium.org&gt;
-Reviewed-by: Shakti Sahu &lt;shaktisahu@chromium.org&gt;
-Commit-Queue: Xing Liu &lt;xingliu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#910524}
+ChunkDemuxer: :Initialize results in a call to ChunkDemuxer::open_cb_
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If4d843bd452dfa19bbd62c788e7b1bce9ba8db58">If4d843bd452dfa19bbd62c788e7b1bce9ba8db58</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3088152">https://chromium-review.googlesource.com/c/chromium/src/+/3088152</a>
+Commit-Queue: Will Cassella &lt;cassew@google.com&gt;
+Reviewed-by: Matthew Wolenetz &lt;wolenetz@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#910593}
 </pre>
 
 </body>
