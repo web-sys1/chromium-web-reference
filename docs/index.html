@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/911337/"> 911337</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bdae36e298ded1664cb7ea03a8509d043c389741">bdae36e298ded1664cb7ea03a8509d043c389741</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/911364/"> 911364</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0be3b1b25a98f42d3a035334d7fe3cd45235f930">0be3b1b25a98f42d3a035334d7fe3cd45235f930</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/911336/">911336</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/101337ecc99c5da5f18932dbf1cfebf6ee17736b">101337ecc99c5da5f18932dbf1cfebf6ee17736b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/911362/">911362</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/43475b560ce5c18078b5e7441c504d79a5109979">43475b560ce5c18078b5e7441c504d79a5109979</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   bdae36e298ded1664cb7ea03a8509d043c389741
+   0be3b1b25a98f42d3a035334d7fe3cd45235f930
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/bdae36e298ded1664cb7ea03a8509d043c389741">
+    <a href="/chromium/src/+log/0be3b1b25a98f42d3a035334d7fe3cd45235f930">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/bdae36e298ded1664cb7ea03a8509d043c389741.tar.gz">
+    <a href="/chromium/src/+archive/0be3b1b25a98f42d3a035334d7fe3cd45235f930.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Morten Stenshorne &lt;mstensho@chromium.org&gt;
+   Sreeja Kamishetty &lt;sreejakshetty@chromium.org&gt;
   </td>
   <td>
-   Thu Aug 12 16:12:34 2021
+   Thu Aug 12 17:04:15 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Aug 12 16:12:34 2021
+   Thu Aug 12 17:04:15 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/bdae36e298ded1664cb7ea03a8509d043c389741/">
-    16faf8f7e7c9e935b63040872858b246c863191e
+   <a href="/chromium/src/+/0be3b1b25a98f42d3a035334d7fe3cd45235f930/">
+    bd49938a0ab2f7717be559f1d8983377b690c124
    </a>
   </td>
  </tr>
@@ -166,53 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/bdae36e298ded1664cb7ea03a8509d043c389741%5E">
-    101337ecc99c5da5f18932dbf1cfebf6ee17736b
+   <a href="/chromium/src/+/0be3b1b25a98f42d3a035334d7fe3cd45235f930%5E">
+    58d87d028a924673703aa8b635669099b045d9aa
    </a>
    <span>
     [
-    <a href="/chromium/src/+/bdae36e298ded1664cb7ea03a8509d043c389741%5E%21/">
+    <a href="/chromium/src/+/0be3b1b25a98f42d3a035334d7fe3cd45235f930%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Remove ContentBrowserClient::GetStoragePartitionIdForSite"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prerendering: Fire WebContentsObserver::LoadProgressChanged only on activation
 
-This reverts commit 868f6b26218dad809b6f29bda9d960cdafa3847c.
+This CL delays firing LoadProgressChanged for prerender frame tree and
+dispatches the notification only on activation during calls to
+DidStartLoading and DidStopLoading which invoked on activation.
 
-Reason for revert: Breaks DefaultKeyboardExtensionBrowserTest tests.
-I bisected.
-<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/linux-chromeos-dbg/25027/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/linux-chromeos-dbg/25027/overview</a>
+Why?
 
-Original change's description:
-&gt; Remove ContentBrowserClient::GetStoragePartitionIdForSite
-&gt;
-&gt; This removes ContentBrowserClient::GetStoragePartitionIdForSite, its
-&gt; overrides, and extensions::util::IsExtensionSiteWithIsolatedStorage,
-&gt; which was only used by
-&gt; ChromeContentBrowserClient::GetStoragePartitionIdForSite.
-&gt;
-&gt; Bug: 1229912
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7ae73c78f8fa1071237b2f2b78b215b6bb48ac0c">I7ae73c78f8fa1071237b2f2b78b215b6bb48ac0c</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3087996">https://chromium-review.googlesource.com/c/chromium/src/+/3087996</a>
-&gt; Commit-Queue: Robbie McElrath &lt;rmcelrath@chromium.org&gt;
-&gt; Reviewed-by: Reilly Grant &lt;reillyg@chromium.org&gt;
-&gt; Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/master@{#911145}
+This is done to ensure that WebContentsObserver::LoadProgressChanged is
+per-WebContents i.e., it is not affected by navigations in the
+prerendering frame tree.
 
-Bug: 1229912
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I390b0ba5fa19d6fe1a5f9b621f0b3fe46e8d1297">I390b0ba5fa19d6fe1a5f9b621f0b3fe46e8d1297</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3090948">https://chromium-review.googlesource.com/c/chromium/src/+/3090948</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Owners-Override: Morten Stenshorne &lt;mstensho@chromium.org&gt;
-Auto-Submit: Morten Stenshorne &lt;mstensho@chromium.org&gt;
-Commit-Queue: Takumi Fujimoto &lt;takumif@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#911337}
+Now the observers don't use LoadProgressChanged to dispatch show UI
+visible changes and other events on an inactive RenderFrameHost.
+
+Document explaining load events and prerendering:
+<a href="https://docs.google.com/document/d/1WqzPSpWtJ9bqaaecYWTWvg6h2Q1UMh7kVB8C61o8QL4/edit?usp=sharing&amp;resourcekey=0-q9YIhsh5LS-ZfBXcBQCOew">https://docs.google.com/document/d/1WqzPSpWtJ9bqaaecYWTWvg6h2Q1UMh7kVB8C61o8QL4/edit?usp=sharing&amp;resourcekey=0-q9YIhsh5LS-ZfBXcBQCOew</a>
+
+Bug: 1199682
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I638d319802a6b6e77748af4057835dc47461fa5f">I638d319802a6b6e77748af4057835dc47461fa5f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2993855">https://chromium-review.googlesource.com/c/chromium/src/+/2993855</a>
+Commit-Queue: Sreeja Kamishetty &lt;sreejakshetty@chromium.org&gt;
+Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
+Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#911364}
 </pre>
 
 </body>
