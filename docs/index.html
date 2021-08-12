@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/911364/"> 911364</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0be3b1b25a98f42d3a035334d7fe3cd45235f930">0be3b1b25a98f42d3a035334d7fe3cd45235f930</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/911380/"> 911380</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/494d3a2a09bb5ee1dbd38ad2ee5bd313c49ad0cd">494d3a2a09bb5ee1dbd38ad2ee5bd313c49ad0cd</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/911379/">911379</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/089ac707904090925dd9def077b46e923b6fd278">089ac707904090925dd9def077b46e923b6fd278</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/911409/">911409</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7c6cec77b07b0f897b71e8995617a7090e1967f2">7c6cec77b07b0f897b71e8995617a7090e1967f2</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0be3b1b25a98f42d3a035334d7fe3cd45235f930
+   494d3a2a09bb5ee1dbd38ad2ee5bd313c49ad0cd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0be3b1b25a98f42d3a035334d7fe3cd45235f930">
+    <a href="/chromium/src/+log/494d3a2a09bb5ee1dbd38ad2ee5bd313c49ad0cd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0be3b1b25a98f42d3a035334d7fe3cd45235f930.tar.gz">
+    <a href="/chromium/src/+archive/494d3a2a09bb5ee1dbd38ad2ee5bd313c49ad0cd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sreeja Kamishetty &lt;sreejakshetty@chromium.org&gt;
+   Fredrik Söderqvist &lt;fs@opera.com&gt;
   </td>
   <td>
-   Thu Aug 12 17:04:15 2021
+   Thu Aug 12 17:53:53 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Aug 12 17:04:15 2021
+   Thu Aug 12 17:53:53 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0be3b1b25a98f42d3a035334d7fe3cd45235f930/">
-    bd49938a0ab2f7717be559f1d8983377b690c124
+   <a href="/chromium/src/+/494d3a2a09bb5ee1dbd38ad2ee5bd313c49ad0cd/">
+    a3c321c9713b015c62c6713b0051a5de8e115f5b
    </a>
   </td>
  </tr>
@@ -166,44 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0be3b1b25a98f42d3a035334d7fe3cd45235f930%5E">
-    58d87d028a924673703aa8b635669099b045d9aa
+   <a href="/chromium/src/+/494d3a2a09bb5ee1dbd38ad2ee5bd313c49ad0cd%5E">
+    089ac707904090925dd9def077b46e923b6fd278
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0be3b1b25a98f42d3a035334d7fe3cd45235f930%5E%21/">
+    <a href="/chromium/src/+/494d3a2a09bb5ee1dbd38ad2ee5bd313c49ad0cd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prerendering: Fire WebContentsObserver::LoadProgressChanged only on activation
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove unnecessary includes of layout_object.h
 
-This CL delays firing LoadProgressChanged for prerender frame tree and
-dispatches the notification only on activation during calls to
-DidStartLoading and DidStopLoading which invoked on activation.
+This is a large header so avoid including it if possible.
+Remove inclusions of it where it's not used, or where there are more
+specific includes (like layout_text.h or layout_box.h). In some cases
+some other unnecessary includes that was found in the vicinity was
+removed as well.
 
-Why?
-
-This is done to ensure that WebContentsObserver::LoadProgressChanged is
-per-WebContents i.e., it is not affected by navigations in the
-prerendering frame tree.
-
-Now the observers don't use LoadProgressChanged to dispatch show UI
-visible changes and other events on an inactive RenderFrameHost.
-
-Document explaining load events and prerendering:
-<a href="https://docs.google.com/document/d/1WqzPSpWtJ9bqaaecYWTWvg6h2Q1UMh7kVB8C61o8QL4/edit?usp=sharing&amp;resourcekey=0-q9YIhsh5LS-ZfBXcBQCOew">https://docs.google.com/document/d/1WqzPSpWtJ9bqaaecYWTWvg6h2Q1UMh7kVB8C61o8QL4/edit?usp=sharing&amp;resourcekey=0-q9YIhsh5LS-ZfBXcBQCOew</a>
-
-Bug: 1199682
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I638d319802a6b6e77748af4057835dc47461fa5f">I638d319802a6b6e77748af4057835dc47461fa5f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2993855">https://chromium-review.googlesource.com/c/chromium/src/+/2993855</a>
-Commit-Queue: Sreeja Kamishetty &lt;sreejakshetty@chromium.org&gt;
-Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
-Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
-Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#911364}
+Bug: 242216
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6318134d98ecfa2a5cff2fb15cf6703dab0e66de">I6318134d98ecfa2a5cff2fb15cf6703dab0e66de</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3090846">https://chromium-review.googlesource.com/c/chromium/src/+/3090846</a>
+Reviewed-by: Xida Chen &lt;xidachen@chromium.org&gt;
+Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
+Commit-Queue: Fredrik Söderquist &lt;fs@opera.com&gt;
+Cr-Commit-Position: refs/heads/master@{#911380}
 </pre>
 
 </body>
