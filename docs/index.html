@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/911644/"> 911644</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4256601cff6f96a298971f2f6f029b768604b7dd">4256601cff6f96a298971f2f6f029b768604b7dd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/911648/"> 911648</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9687a18f03e5547123975a67b2f076cea2c3b9ff">9687a18f03e5547123975a67b2f076cea2c3b9ff</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/911640/">911640</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c7a32c08ed682fad35830462696ba3440d46b437">c7a32c08ed682fad35830462696ba3440d46b437</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/911647/">911647</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/77d6cb6241528cb55653af1599b7cb4e116386fc">77d6cb6241528cb55653af1599b7cb4e116386fc</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4256601cff6f96a298971f2f6f029b768604b7dd
+   9687a18f03e5547123975a67b2f076cea2c3b9ff
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4256601cff6f96a298971f2f6f029b768604b7dd">
+    <a href="/chromium/src/+log/9687a18f03e5547123975a67b2f076cea2c3b9ff">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4256601cff6f96a298971f2f6f029b768604b7dd.tar.gz">
+    <a href="/chromium/src/+archive/9687a18f03e5547123975a67b2f076cea2c3b9ff.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Liquan (Max) Gu &lt;maxlg@chromium.org&gt;
+   Yuichiro Hanada &lt;yhanada@google.com&gt;
   </td>
   <td>
-   Fri Aug 13 04:48:51 2021
+   Fri Aug 13 05:33:45 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Aug 13 04:48:51 2021
+   Fri Aug 13 05:33:45 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4256601cff6f96a298971f2f6f029b768604b7dd/">
-    3893b37d26dff61b81c0dcb37a4228c57796c3cd
+   <a href="/chromium/src/+/9687a18f03e5547123975a67b2f076cea2c3b9ff/">
+    3513ec38b621a666f774dd3af7c5b34e2590165c
    </a>
   </td>
  </tr>
@@ -166,40 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4256601cff6f96a298971f2f6f029b768604b7dd%5E">
-    c2a877191cfdd063be7c73c347b491366f60e8d3
+   <a href="/chromium/src/+/9687a18f03e5547123975a67b2f076cea2c3b9ff%5E">
+    77d6cb6241528cb55653af1599b7cb4e116386fc
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4256601cff6f96a298971f2f6f029b768604b7dd%5E%21/">
+    <a href="/chromium/src/+/9687a18f03e5547123975a67b2f076cea2c3b9ff%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[SPCV3] Support isCrossOrigin for Payment Credential assertion
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Delay creating KeyboardUI until Profile is ready.
 
-Before the change, in the SPC assertion flow, ClientDataJson's
-"isCrossOrigin" was always false. After the change, the field equals to
-whether the assertion's caller is in a frame whose origin is in a
-cross-origin relationship with the main frame.
+KeyboardControllerImpl::CreateVirtualKeyboard is called during
+PreProfileInit(). Creating KeyboardUI in the method can cause unexpected
+initialization of Profile before a user actually logins.
+This CL delays checking the force enable/disable command line flag until
+the profile is created.
 
-Changes:
-* The Android and Desktop's internalAuthenticators became initiated
-  with the caller frame instead of the main frame.
-* SecurePaymentConfirmationAppFactory::OnAppIcon() no longer requires
-  the caller frame to be a mainframe to create the SPC payment app.
-* PaymentAppServiceBridge::CreateInternalAuthenticator() will use the
-  caller's frame instead of its mainframe to creates
-  InternalAuthenticatorAndroid.
-
-Bug: 1210488
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2dad3a6a560be567d1520d7135d4b30ceb055557">I2dad3a6a560be567d1520d7135d4b30ceb055557</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3079745">https://chromium-review.googlesource.com/c/chromium/src/+/3079745</a>
-Commit-Queue: Liquan (Max) Gu &lt;maxlg@chromium.org&gt;
-Reviewed-by: Rouslan Solomakhin &lt;rouslan@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#911644}
+Bug: 1187750
+Test: '--enable-virtual-keyboard' flag works with DCHECK enabled.
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9ee12162292d0a9615883077ca11ccd00c014486">I9ee12162292d0a9615883077ca11ccd00c014486</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3093391">https://chromium-review.googlesource.com/c/chromium/src/+/3093391</a>
+Reviewed-by: Darren Shen &lt;shend@chromium.org&gt;
+Commit-Queue: Yuichiro Hanada &lt;yhanada@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#911648}
 </pre>
 
 </body>
