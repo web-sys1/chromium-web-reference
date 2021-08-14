@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/911956/"> 911956</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8010ab0215078b21ef9e473040b0cd049b368300">8010ab0215078b21ef9e473040b0cd049b368300</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/911964/"> 911964</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5b057157e8b8eb62fee432614722801b53763f2c">5b057157e8b8eb62fee432614722801b53763f2c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/911949/">911949</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/61eaf99d9176138eb0cae79e33b57980eb85b30c">61eaf99d9176138eb0cae79e33b57980eb85b30c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/911962/">911962</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/aa5355179c6d706a0ce0be9a5df03a6e84fb6b1f">aa5355179c6d706a0ce0be9a5df03a6e84fb6b1f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8010ab0215078b21ef9e473040b0cd049b368300
+   5b057157e8b8eb62fee432614722801b53763f2c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8010ab0215078b21ef9e473040b0cd049b368300">
+    <a href="/chromium/src/+log/5b057157e8b8eb62fee432614722801b53763f2c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8010ab0215078b21ef9e473040b0cd049b368300.tar.gz">
+    <a href="/chromium/src/+archive/5b057157e8b8eb62fee432614722801b53763f2c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Frédéric Wang &lt;fwang@igalia.com&gt;
+   James Zern &lt;jzern@chromium.org&gt;
   </td>
   <td>
-   Sat Aug 14 00:54:58 2021
+   Sat Aug 14 01:46:35 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Aug 14 00:54:58 2021
+   Sat Aug 14 01:46:35 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8010ab0215078b21ef9e473040b0cd049b368300/">
-    4e1e0de39f7961aa63c524bdd1c58b6522717c8c
+   <a href="/chromium/src/+/5b057157e8b8eb62fee432614722801b53763f2c/">
+    79d3e9880fcde37e0b3180e42a8ff665d46acc44
    </a>
   </td>
  </tr>
@@ -166,50 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8010ab0215078b21ef9e473040b0cd049b368300%5E">
-    0d1cbd2dbd4cff6819164223fb8ed6638c8630c7
+   <a href="/chromium/src/+/5b057157e8b8eb62fee432614722801b53763f2c%5E">
+    689145393d3b3951a17cc38d36dba37d923f6565
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8010ab0215078b21ef9e473040b0cd049b368300%5E%21/">
+    <a href="/chromium/src/+/5b057157e8b8eb62fee432614722801b53763f2c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rely on the CSS serializer for internals.pageProperty('font-family', ...)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">blink,image_decoder.cc: rm incorrect DCHECK for webp
 
-Static function PrintContext::PageProperty is only used to implement
-internals.pageProperty for web tests. Moreover, the 'font-family'
-is only queried in printing/page-rule-selection.html corresponding to a
-list with a single font family name.
+WebPGetFeatures() may return an error code when given invalid data. In
+GetCompressionFormat() kUndefinedFormat can be used when the error code
+is anything besides VP8_STATUS_NOT_ENOUGH_DATA to maintain the existing
+behavior wrt to mime-types.
 
-PrintContext::PageProperty's implementation for 'font-family' is just to
-return the string corresponding to the font name without any special
-formatting, which works well for its unique usage but is not very
-consistent with how the CSS font-family property is normally serialized
-per the CSSOM spec [1][2][3]. Also, serialization is currently not
-working properly for generic font-family name like "serif" because of
-how these are parsed internally [4].
-
-This CL instead changes that implementation so that it just relies on
-the CSS serializer. This thus improves consistency while still being
-compatible with the unique API usage. It also removes one more place
-where custom serialization is implemented for font-family, so that it
-is easier to fix [4].
-
-[1] <a href="https://drafts.csswg.org/cssom/#serialize-a-comma-separated-list">https://drafts.csswg.org/cssom/#serialize-a-comma-separated-list</a>
-[2] <a href="https://drafts.csswg.org/cssom/#serialize-a-string">https://drafts.csswg.org/cssom/#serialize-a-string</a>
-[3] <a href="https://drafts.csswg.org/cssom/#serialize-an-identifier">https://drafts.csswg.org/cssom/#serialize-an-identifier</a>
-[4] <a href="https://bugs.chromium.org/p/chromium/issues/detail?id=1065468">https://bugs.chromium.org/p/chromium/issues/detail?id=1065468</a>
-
-Bug: 1065468
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6580380b4543b33d98e59d7f56487cf3f81d5f50">I6580380b4543b33d98e59d7f56487cf3f81d5f50</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3086565">https://chromium-review.googlesource.com/c/chromium/src/+/3086565</a>
-Commit-Queue: Frédéric Wang &lt;fwang@igalia.com&gt;
-Reviewed-by: Mason Freed &lt;masonf@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#911956}
+Bug: 1235775
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie01de395e197e33b90d3bcaee0249972d306adeb">Ie01de395e197e33b90d3bcaee0249972d306adeb</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3094514">https://chromium-review.googlesource.com/c/chromium/src/+/3094514</a>
+Reviewed-by: Leon Scroggins &lt;scroggo@google.com&gt;
+Commit-Queue: James Zern &lt;jzern@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#911964}
 </pre>
 
 </body>
