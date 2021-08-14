@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/911993/"> 911993</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/92c16d58e2929bf5b4f057b5779cfc22cdecd8a9">92c16d58e2929bf5b4f057b5779cfc22cdecd8a9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/911995/"> 911995</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0e6e2bac0c6495e315156133343db0658e7a6a40">0e6e2bac0c6495e315156133343db0658e7a6a40</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/911995/">911995</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   92c16d58e2929bf5b4f057b5779cfc22cdecd8a9
+   0e6e2bac0c6495e315156133343db0658e7a6a40
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/92c16d58e2929bf5b4f057b5779cfc22cdecd8a9">
+    <a href="/chromium/src/+log/0e6e2bac0c6495e315156133343db0658e7a6a40">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/92c16d58e2929bf5b4f057b5779cfc22cdecd8a9.tar.gz">
+    <a href="/chromium/src/+archive/0e6e2bac0c6495e315156133343db0658e7a6a40.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Frédéric Wang &lt;fwang@igalia.com&gt;
   </td>
   <td>
-   Sat Aug 14 10:48:54 2021
+   Sat Aug 14 12:47:36 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Aug 14 10:48:54 2021
+   Sat Aug 14 12:47:36 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/92c16d58e2929bf5b4f057b5779cfc22cdecd8a9/">
-    86ce3ec164f8ebcdbf2308c2fb58ff349838161f
+   <a href="/chromium/src/+/0e6e2bac0c6495e315156133343db0658e7a6a40/">
+    3e631b6a311f5561c668924960938e3597120374
    </a>
   </td>
  </tr>
@@ -166,40 +166,51 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/92c16d58e2929bf5b4f057b5779cfc22cdecd8a9%5E">
-    60c3a4bbd41fc546c0f076745323fa7616dc25e7
+   <a href="/chromium/src/+/0e6e2bac0c6495e315156133343db0658e7a6a40%5E">
+    fb40c6dfe70f362966c2dc5faf347a92fc5109c9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/92c16d58e2929bf5b4f057b5779cfc22cdecd8a9%5E%21/">
+    <a href="/chromium/src/+/0e6e2bac0c6495e315156133343db0658e7a6a40%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll ChromeOS Bigcore AFDO profile from 94-4577.15-1627898841-benchmark-94.0.4601.0-r1 to 94-4588.0-1628505690-benchmark-94.0.4606.3-r1
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">InternalPopupMenu: Rely on CSS serializer for serializing font-family
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/cros-afdo-bigcore-chromium">https://autoroll.skia.org/r/cros-afdo-bigcore-chromium</a>
-Please CC c-compiler-chrome@google.com on the revert to ensure that a human
-is aware of the problem.
+Currently InternalPopupMenu serializes font-family as an array of
+strings (font-family names) ; listPicker.js parses that array and
+rebuilds a font-family string by quoting each item and joining them
+with commas. This is incorrect for generic font families : they
+should not be quoted [1].
 
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+Additionally, the serialization of each item relies on
+FontFamily::Family() which can lead to results different from
+standard CSS serialization [2] [3] [4]. In particular, some
+generic names like "cursive" are currently parsed internally as
+"-webkit-cursive" which is the non-standard value listPicker.js
+would receive (see for example popup-menu-appearance-styled.html).
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+This CL simplifies this by relying on the CSS serializer to serialize
+the whole font-family value and then passing it as it to listPicker.js
+so it can directly set font-family without further work. This removes
+one more place where a custom serialization of font-family is made,
+fixing inconsistencies and helping with the goal of fixing [5].
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
+[1] <a href="https://www.w3.org/TR/css-fonts-4/#generic-family-value">https://www.w3.org/TR/css-fonts-4/#generic-family-value</a>
+[2] <a href="https://drafts.csswg.org/cssom/#serialize-a-comma-separated-list">https://drafts.csswg.org/cssom/#serialize-a-comma-separated-list</a>
+[3] <a href="https://drafts.csswg.org/cssom/#serialize-a-string">https://drafts.csswg.org/cssom/#serialize-a-string</a>
+[4] <a href="https://drafts.csswg.org/cssom/#serialize-an-identifier">https://drafts.csswg.org/cssom/#serialize-an-identifier</a>
+[5] <a href="https://bugs.chromium.org/p/chromium/issues/detail?id=1065468">https://bugs.chromium.org/p/chromium/issues/detail?id=1065468</a>
 
-Tbr: c-compiler-chrome@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I739378910f030b06056e21465033beca68d7457c">I739378910f030b06056e21465033beca68d7457c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3095331">https://chromium-review.googlesource.com/c/chromium/src/+/3095331</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#911993}
+Bug: 1065468
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6baaec10d86de2b27045b64657586849e5361c96">I6baaec10d86de2b27045b64657586849e5361c96</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3087350">https://chromium-review.googlesource.com/c/chromium/src/+/3087350</a>
+Commit-Queue: Frédéric Wang &lt;fwang@igalia.com&gt;
+Reviewed-by: Mason Freed &lt;masonf@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#911995}
 </pre>
 
 </body>
