@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/911910/"> 911910</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e28dde210d281c84a4699b555590fa04b731f495">e28dde210d281c84a4699b555590fa04b731f495</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/911926/"> 911926</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d30668754e28963f133f4b00238e05f783f953c2">d30668754e28963f133f4b00238e05f783f953c2</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/911907/">911907</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e28dde210d281c84a4699b555590fa04b731f495
+   d30668754e28963f133f4b00238e05f783f953c2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e28dde210d281c84a4699b555590fa04b731f495">
+    <a href="/chromium/src/+log/d30668754e28963f133f4b00238e05f783f953c2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e28dde210d281c84a4699b555590fa04b731f495.tar.gz">
+    <a href="/chromium/src/+archive/d30668754e28963f133f4b00238e05f783f953c2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Peter Wen &lt;wnwen@chromium.org&gt;
+   Philip Rogers &lt;pdr@chromium.org&gt;
   </td>
   <td>
-   Fri Aug 13 22:32:11 2021
+   Fri Aug 13 23:23:27 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Aug 13 22:32:11 2021
+   Fri Aug 13 23:23:27 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e28dde210d281c84a4699b555590fa04b731f495/">
-    177a892e5143fd4d80f7e614ca225bee721fa7d3
+   <a href="/chromium/src/+/d30668754e28963f133f4b00238e05f783f953c2/">
+    6c9c5237877cbaf2299112bdf6a2082509bb2239
    </a>
   </td>
  </tr>
@@ -166,31 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e28dde210d281c84a4699b555590fa04b731f495%5E">
-    f74d3f5775e3421da16ba6634725717970568c3f
+   <a href="/chromium/src/+/d30668754e28963f133f4b00238e05f783f953c2%5E">
+    3e64087328f48a30c71a12ede7ecf5f7caf432fd
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e28dde210d281c84a4699b555590fa04b731f495%5E%21/">
+    <a href="/chromium/src/+/d30668754e28963f133f4b00238e05f783f953c2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Android: Update aapt2 to 7.1.0-alpha07-7569047
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CompositeAfterPaint] Paint content under animating non-invertible xform
 
-Includes fix to resource_utils.py to avoid transforming resources twice
-and fix for a regression caused by newer aapt2 binaries not including
-the package when there are no entries in the resource table.
+Before this patch, painting of content under non-invertible transforms
+was skipped in two places. This is problematic because a composited
+transform animation may become invertible later, but the compositor will
+not have content to show. This patch causes this content to paint.
 
-Bug: 1237059
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3c37394a3966e796a96d838bea241c6f0928b9c7">I3c37394a3966e796a96d838bea241c6f0928b9c7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3092672">https://chromium-review.googlesource.com/c/chromium/src/+/3092672</a>
-Commit-Queue: Peter Wen &lt;wnwen@chromium.org&gt;
-Auto-Submit: Peter Wen &lt;wnwen@chromium.org&gt;
-Reviewed-by: Peter Kotwicz &lt;pkotwicz@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#911910}
+Another approach would be to not composite these animations, but the
+composited animation system already needs to handle non-invertible
+transforms (e.g., when animating scale(1) to scale(-1)) so these are
+compositable.
+
+Bug: 1227011
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idd41abef0919404e40473117064e6ffe221511ff">Idd41abef0919404e40473117064e6ffe221511ff</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3093707">https://chromium-review.googlesource.com/c/chromium/src/+/3093707</a>
+Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Commit-Queue: Philip Rogers &lt;pdr@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#911926}
 </pre>
 
 </body>
