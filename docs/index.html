@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/911945/"> 911945</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3a81069c637264ca0e8b093355a4e5b71110221d">3a81069c637264ca0e8b093355a4e5b71110221d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/911956/"> 911956</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8010ab0215078b21ef9e473040b0cd049b368300">8010ab0215078b21ef9e473040b0cd049b368300</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/911949/">911949</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3a81069c637264ca0e8b093355a4e5b71110221d
+   8010ab0215078b21ef9e473040b0cd049b368300
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3a81069c637264ca0e8b093355a4e5b71110221d">
+    <a href="/chromium/src/+log/8010ab0215078b21ef9e473040b0cd049b368300">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3a81069c637264ca0e8b093355a4e5b71110221d.tar.gz">
+    <a href="/chromium/src/+archive/8010ab0215078b21ef9e473040b0cd049b368300.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Antony Vu &lt;antonyvu@google.com&gt;
+   Frédéric Wang &lt;fwang@igalia.com&gt;
   </td>
   <td>
-   Sat Aug 14 00:09:27 2021
+   Sat Aug 14 00:54:58 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Aug 14 00:09:27 2021
+   Sat Aug 14 00:54:58 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3a81069c637264ca0e8b093355a4e5b71110221d/">
-    3a37a23c5bfbebb89b8e931c9262097c7864de4b
+   <a href="/chromium/src/+/8010ab0215078b21ef9e473040b0cd049b368300/">
+    4e1e0de39f7961aa63c524bdd1c58b6522717c8c
    </a>
   </td>
  </tr>
@@ -166,33 +166,50 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3a81069c637264ca0e8b093355a4e5b71110221d%5E">
-    78a335166c39cd729525fade56bdd63aa0976740
+   <a href="/chromium/src/+/8010ab0215078b21ef9e473040b0cd049b368300%5E">
+    0d1cbd2dbd4cff6819164223fb8ed6638c8630c7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3a81069c637264ca0e8b093355a4e5b71110221d%5E%21/">
+    <a href="/chromium/src/+/8010ab0215078b21ef9e473040b0cd049b368300%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Fuchsia] Allow ram_size_mb to be modified for fvdl
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rely on the CSS serializer for internals.pageProperty('font-family', ...)
 
-Add ram_size_mb argument for fvdl.
-Add unit test for ram_size_mb argument.
-Allow start_emulator to use this argument as well.
-Change common_args to use 8192 as default for ram_size_mb.
+Static function PrintContext::PageProperty is only used to implement
+internals.pageProperty for web tests. Moreover, the 'font-family'
+is only queried in printing/page-rule-selection.html corresponding to a
+list with a single font family name.
 
-Bug: 1236244
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic40c5b4f7483eec130f8f58218efdbbc5f37ce49">Ic40c5b4f7483eec130f8f58218efdbbc5f37ce49</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3091381">https://chromium-review.googlesource.com/c/chromium/src/+/3091381</a>
-Commit-Queue: Antony Vu &lt;antonyvu@google.com&gt;
-Reviewed-by: David Dorwin &lt;ddorwin@chromium.org&gt;
-Reviewed-by: Rohan Pavone &lt;rohpavone@google.com&gt;
-Reviewed-by: Chong Gu &lt;chonggu@google.com&gt;
-Cr-Commit-Position: refs/heads/master@{#911945}
+PrintContext::PageProperty's implementation for 'font-family' is just to
+return the string corresponding to the font name without any special
+formatting, which works well for its unique usage but is not very
+consistent with how the CSS font-family property is normally serialized
+per the CSSOM spec [1][2][3]. Also, serialization is currently not
+working properly for generic font-family name like "serif" because of
+how these are parsed internally [4].
+
+This CL instead changes that implementation so that it just relies on
+the CSS serializer. This thus improves consistency while still being
+compatible with the unique API usage. It also removes one more place
+where custom serialization is implemented for font-family, so that it
+is easier to fix [4].
+
+[1] <a href="https://drafts.csswg.org/cssom/#serialize-a-comma-separated-list">https://drafts.csswg.org/cssom/#serialize-a-comma-separated-list</a>
+[2] <a href="https://drafts.csswg.org/cssom/#serialize-a-string">https://drafts.csswg.org/cssom/#serialize-a-string</a>
+[3] <a href="https://drafts.csswg.org/cssom/#serialize-an-identifier">https://drafts.csswg.org/cssom/#serialize-an-identifier</a>
+[4] <a href="https://bugs.chromium.org/p/chromium/issues/detail?id=1065468">https://bugs.chromium.org/p/chromium/issues/detail?id=1065468</a>
+
+Bug: 1065468
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6580380b4543b33d98e59d7f56487cf3f81d5f50">I6580380b4543b33d98e59d7f56487cf3f81d5f50</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3086565">https://chromium-review.googlesource.com/c/chromium/src/+/3086565</a>
+Commit-Queue: Frédéric Wang &lt;fwang@igalia.com&gt;
+Reviewed-by: Mason Freed &lt;masonf@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#911956}
 </pre>
 
 </body>
