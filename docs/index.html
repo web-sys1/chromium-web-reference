@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/912060/"> 912060</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/67b8ec7ed93efc74c216f148b3ab9251e9b5c1cb">67b8ec7ed93efc74c216f148b3ab9251e9b5c1cb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/912066/"> 912066</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/91a5efe930dadf63ad15aa3f185262c3b32ff462">91a5efe930dadf63ad15aa3f185262c3b32ff462</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/912056/">912056</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   67b8ec7ed93efc74c216f148b3ab9251e9b5c1cb
+   91a5efe930dadf63ad15aa3f185262c3b32ff462
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/67b8ec7ed93efc74c216f148b3ab9251e9b5c1cb">
+    <a href="/chromium/src/+log/91a5efe930dadf63ad15aa3f185262c3b32ff462">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/67b8ec7ed93efc74c216f148b3ab9251e9b5c1cb.tar.gz">
+    <a href="/chromium/src/+archive/91a5efe930dadf63ad15aa3f185262c3b32ff462.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sara Kato &lt;sarakato@chromium.org&gt;
+   Kenichi Ishibashi &lt;bashi@chromium.org&gt;
   </td>
   <td>
-   Mon Aug 16 03:57:56 2021
+   Mon Aug 16 04:42:31 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 16 03:57:56 2021
+   Mon Aug 16 04:42:31 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/67b8ec7ed93efc74c216f148b3ab9251e9b5c1cb/">
-    d284c6e7063723074c766f286ce62fa812a7fea2
+   <a href="/chromium/src/+/91a5efe930dadf63ad15aa3f185262c3b32ff462/">
+    1041453133fa94c82a87b9d9acf8314f688059a7
    </a>
   </td>
  </tr>
@@ -166,32 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/67b8ec7ed93efc74c216f148b3ab9251e9b5c1cb%5E">
-    58d50f0777ad51c1e4530f64a4e3b52f8cf0213a
+   <a href="/chromium/src/+/91a5efe930dadf63ad15aa3f185262c3b32ff462%5E">
+    a8628edc599fa6e03d75f2ee09a256a6b30e5f45
    </a>
    <span>
     [
-    <a href="/chromium/src/+/67b8ec7ed93efc74c216f148b3ab9251e9b5c1cb%5E%21/">
+    <a href="/chromium/src/+/91a5efe930dadf63ad15aa3f185262c3b32ff462%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">arc-notifications: Use Chrome flag for notifications revamp
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Early Hints: Check NetworkAccessed() instead of WasCached()
 
-Android side CL: ag/15580484
+blink::ResourceResponse::WasCached() wasn't a good condition to detect
+whether a resource was fetched by Early Hints. Consider a situation
+where the document (the final response) requests a subresource fetch
+while the corresponding Early Hints triggered fetch is still coming
+from the network. In this case, the network stack queues the request
+from the document and the request is handled after the request from
+Early Hints is finished. The request from the document is served from
+the cache, but WasCached() isn't true since at the beginning of the
+request the response wasn't available on the cache.
 
-TEST=manual. Enable NotificationsRefresh and confirm
-ro.boot.enable_notifications_refresh is enabled on Android side.
-BUG=b/186603004
+A better to check if a resource was fetched by Early Hints is to use
+NetworkAccessed(). This is false for such situations.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I419a1df68d4e2bca23bd42d61fb0d9b323eb8703">I419a1df68d4e2bca23bd42d61fb0d9b323eb8703</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3096685">https://chromium-review.googlesource.com/c/chromium/src/+/3096685</a>
-Commit-Queue: Sara Kato &lt;sarakato@chromium.org&gt;
-Auto-Submit: Sara Kato &lt;sarakato@chromium.org&gt;
-Reviewed-by: Yuichiro Hanada &lt;yhanada@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#912060}
+Bug: 1212542
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ieec3e717e334f62ec270471e78f629f3dde62cdb">Ieec3e717e334f62ec270471e78f629f3dde62cdb</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3093019">https://chromium-review.googlesource.com/c/chromium/src/+/3093019</a>
+Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
+Commit-Queue: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#912066}
 </pre>
 
 </body>
