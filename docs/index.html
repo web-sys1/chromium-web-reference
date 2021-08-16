@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/912123/"> 912123</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/94e222dde3f73e1e48332eabcb03a91ae14bb6d4">94e222dde3f73e1e48332eabcb03a91ae14bb6d4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/912131/"> 912131</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/171b147600dc963fec534459949332fe5f0e386b">171b147600dc963fec534459949332fe5f0e386b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/912112/">912112</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9b4695e08effecebd430fe245bfb5cba832b9ba5">9b4695e08effecebd430fe245bfb5cba832b9ba5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/912123/">912123</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/94e222dde3f73e1e48332eabcb03a91ae14bb6d4">94e222dde3f73e1e48332eabcb03a91ae14bb6d4</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   94e222dde3f73e1e48332eabcb03a91ae14bb6d4
+   171b147600dc963fec534459949332fe5f0e386b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/94e222dde3f73e1e48332eabcb03a91ae14bb6d4">
+    <a href="/chromium/src/+log/171b147600dc963fec534459949332fe5f0e386b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/94e222dde3f73e1e48332eabcb03a91ae14bb6d4.tar.gz">
+    <a href="/chromium/src/+archive/171b147600dc963fec534459949332fe5f0e386b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Frédéric Wang &lt;fwang@igalia.com&gt;
+   Fredrik Söderqvist &lt;fs@opera.com&gt;
   </td>
   <td>
-   Mon Aug 16 11:01:48 2021
+   Mon Aug 16 11:59:12 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 16 11:01:48 2021
+   Mon Aug 16 11:59:12 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/94e222dde3f73e1e48332eabcb03a91ae14bb6d4/">
-    064268515fe83825a5eb3859d92b8e06fc178d04
+   <a href="/chromium/src/+/171b147600dc963fec534459949332fe5f0e386b/">
+    fad3af5b33c32570ca096ee59eb65bf4c37dc53e
    </a>
   </td>
  </tr>
@@ -166,49 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/94e222dde3f73e1e48332eabcb03a91ae14bb6d4%5E">
-    39e84fb9c132ef1f2bd5054626ab6abb3de84e76
+   <a href="/chromium/src/+/171b147600dc963fec534459949332fe5f0e386b%5E">
+    0e6ac6164f21120ce8ece14725320b6b09ed96f7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/94e222dde3f73e1e48332eabcb03a91ae14bb6d4%5E%21/">
+    <a href="/chromium/src/+/171b147600dc963fec534459949332fe5f0e386b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Convert beforeSelectorOnCodeElement.html to WPT tests
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove include of css_interpolation_type.h from property_registration.h
 
-This test was originally added for WebKit's bug 11197 [1] [2] as a crash
-test. It is not clear whether a pixel test was needed to check visual
-rendering but the description of the test suggests it is also testing
-the circle before and the square after.
+Remove an unused using directive (CSSInterpolationTypes) and drop the
+associated include. Dodge the need to include interpolation_type.h by
+out-of-lining the destructor. With that done also switch to a forward-
+declaration of CSSVariableData.
 
-This test was later tweaked several times with some font-related rules
-to keep ensuring it matches the pixel expectation, leading for example
-to the introduction of the non-standard value '-webkit-monospace' that
-is intended to be removed [3] or of a workaround for bug [4] that is
-actually fixed now.
+This severs a path to style_resolver_state.h (which in turn ends up
+pulling non-trivial things like layout_object.h and various dom bits).
 
-This CL upstream the original test to WPT as a crash test. It also
-converts the visual part of the testing to a reftest. However, because
-Chromium does not render counter-style "square" as specified, the
-test remains internal for now [5].
-
-Bug: 1065468
-
-[1] <a href="https://bugs.webkit.org/show_bug.cgi?id=11197">https://bugs.webkit.org/show_bug.cgi?id=11197</a>
-[2] <a href="https://source.chromium.org/chromium/chromium/src/+/2203391429cd40f45325c1d275209c84b5c0dc57">https://source.chromium.org/chromium/chromium/src/+/2203391429cd40f45325c1d275209c84b5c0dc57</a>
-[3] <a href="https://crbug.com/1065468">https://crbug.com/1065468</a>
-[4] <a href="https://crbug.com/939823">https://crbug.com/939823</a>
-[5] <a href="https://github.com/w3c/csswg-drafts/issues/6200">https://github.com/w3c/csswg-drafts/issues/6200</a>
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I70e489e6824c9afed1087b23ecee27c1bb861dc0">I70e489e6824c9afed1087b23ecee27c1bb861dc0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3094428">https://chromium-review.googlesource.com/c/chromium/src/+/3094428</a>
-Reviewed-by: Dominik Röttsches &lt;drott@chromium.org&gt;
-Commit-Queue: Frédéric Wang &lt;fwang@igalia.com&gt;
-Cr-Commit-Position: refs/heads/master@{#912123}
+Bug: 242216
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5bcbd747377e551d38fc6ed8482fddd111f52dee">I5bcbd747377e551d38fc6ed8482fddd111f52dee</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3093808">https://chromium-review.googlesource.com/c/chromium/src/+/3093808</a>
+Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+Reviewed-by: Xida Chen &lt;xidachen@chromium.org&gt;
+Commit-Queue: Fredrik Söderquist &lt;fs@opera.com&gt;
+Cr-Commit-Position: refs/heads/master@{#912131}
 </pre>
 
 </body>
