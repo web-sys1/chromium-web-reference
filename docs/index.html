@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/912108/"> 912108</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b05a6859d79a3663e30cc0046c5b25ab5794deb9">b05a6859d79a3663e30cc0046c5b25ab5794deb9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/912114/"> 912114</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/12b10671b0b2042e3ffb16bd9203c3f83ead1297">12b10671b0b2042e3ffb16bd9203c3f83ead1297</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/912103/">912103</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f5cbe39a9d0ff85ced867cf51482147bd24c2ee6">f5cbe39a9d0ff85ced867cf51482147bd24c2ee6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/912112/">912112</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9b4695e08effecebd430fe245bfb5cba832b9ba5">9b4695e08effecebd430fe245bfb5cba832b9ba5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b05a6859d79a3663e30cc0046c5b25ab5794deb9
+   12b10671b0b2042e3ffb16bd9203c3f83ead1297
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b05a6859d79a3663e30cc0046c5b25ab5794deb9">
+    <a href="/chromium/src/+log/12b10671b0b2042e3ffb16bd9203c3f83ead1297">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b05a6859d79a3663e30cc0046c5b25ab5794deb9.tar.gz">
+    <a href="/chromium/src/+archive/12b10671b0b2042e3ffb16bd9203c3f83ead1297.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+   Fredrik Söderqvist &lt;fs@opera.com&gt;
   </td>
   <td>
-   Mon Aug 16 09:34:19 2021
+   Mon Aug 16 10:21:29 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 16 09:34:19 2021
+   Mon Aug 16 10:21:29 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b05a6859d79a3663e30cc0046c5b25ab5794deb9/">
-    248728d7d37f91fa80061ab56d50098f31e3ea83
+   <a href="/chromium/src/+/12b10671b0b2042e3ffb16bd9203c3f83ead1297/">
+    188a0c04caed54837041d1701a462ca72ca1eb9d
    </a>
   </td>
  </tr>
@@ -166,56 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b05a6859d79a3663e30cc0046c5b25ab5794deb9%5E">
-    4f7131425b5274aea8c0b6d430aa34663433809b
+   <a href="/chromium/src/+/12b10671b0b2042e3ffb16bd9203c3f83ead1297%5E">
+    e9e6f78d7891da5b894929bae1254f72959fe231
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b05a6859d79a3663e30cc0046c5b25ab5794deb9%5E%21/">
+    <a href="/chromium/src/+/12b10671b0b2042e3ffb16bd9203c3f83ead1297%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Support container queries with isolated animation updates
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove include of scoped_refptr.h from css_value.h
 
-Previous CLs implemented isolated animation updates, but it did not
-work for container queries, since the second animation update pass
-would only include a second round of style and layout-tree building.
+Not used.
 
-This CL extends that to also do a second round of layout, if necessary:
-
- - When container queries are not in use: we handle the second round
-   in Document::UpdateStyle, and ignore layout.
- - When container queries *are* in use: we handle the second round
-   in LocalFrameView:UpdateStyleAndLayoutInternal.
-
-Currently "container-queries-are-in-use" is a Document-global flag.
-Hopefully this can be narrowed down in the future.
-
-Note that:
-
- - This CL currently adds *all* Elements participating in a style
-   recalc to a HashMap on DocumentAnimations. Obviously this is not
-   shippable as-is. It will be reduced later.
- - For each of the calls to LFV::UpdateStyleAndLayoutInternal in
-   ::UpdateStyleAndLayout, we are now doing it twice. We already
-   have the behavior of triggering animation updates for each
-   and every style resolution, so this preserves that behavior as
-   much as possible. I don't know if we really want to trigger animation
-   updates as a result of auto-sizing, but since we currently do that,
-   this CL does that as well.
-
-Bug: 1180159
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2fbdba0366ed0bd4b862d23404341eb56368ec41">I2fbdba0366ed0bd4b862d23404341eb56368ec41</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3071362">https://chromium-review.googlesource.com/c/chromium/src/+/3071362</a>
-Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
-Reviewed-by: Kevin Ellis &lt;kevers@chromium.org&gt;
+Bug: 242216
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ica16e7c1bcc7719d3510f037d67a897c70f958c6">Ica16e7c1bcc7719d3510f037d67a897c70f958c6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3094050">https://chromium-review.googlesource.com/c/chromium/src/+/3094050</a>
 Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#912108}
+Auto-Submit: Fredrik Söderquist &lt;fs@opera.com&gt;
+Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#912114}
 </pre>
 
 </body>
