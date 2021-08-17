@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/912600/"> 912600</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5264033a606dfd70413acacd582be5ce4e558525">5264033a606dfd70413acacd582be5ce4e558525</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/912619/"> 912619</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/98e60df521f13c0d5ae07857e916840f11325dba">98e60df521f13c0d5ae07857e916840f11325dba</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/912579/">912579</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5264033a606dfd70413acacd582be5ce4e558525
+   98e60df521f13c0d5ae07857e916840f11325dba
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5264033a606dfd70413acacd582be5ce4e558525">
+    <a href="/chromium/src/+log/98e60df521f13c0d5ae07857e916840f11325dba">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5264033a606dfd70413acacd582be5ce4e558525.tar.gz">
+    <a href="/chromium/src/+archive/98e60df521f13c0d5ae07857e916840f11325dba.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sven Zheng &lt;svenzheng@chromium.org&gt;
+   Jesse McKenna &lt;jessemckenna@google.com&gt;
   </td>
   <td>
-   Tue Aug 17 16:04:09 2021
+   Tue Aug 17 16:57:08 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 17 16:04:09 2021
+   Tue Aug 17 16:57:08 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5264033a606dfd70413acacd582be5ce4e558525/">
-    ad0b99d7fcd3f3beee436287c50c3ae53bb60a08
+   <a href="/chromium/src/+/98e60df521f13c0d5ae07857e916840f11325dba/">
+    fccee392df7120e68d52abbd08e3e4e0386c9b5f
    </a>
   </td>
  </tr>
@@ -166,30 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5264033a606dfd70413acacd582be5ce4e558525%5E">
-    2e7c27f5e1e5b4e6bfab9762c285f7abab8654c5
+   <a href="/chromium/src/+/98e60df521f13c0d5ae07857e916840f11325dba%5E">
+    4ba0f228cb964bc178d1f2e50222bbbc610e8008
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5264033a606dfd70413acacd582be5ce4e558525%5E%21/">
+    <a href="/chromium/src/+/98e60df521f13c0d5ae07857e916840f11325dba%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Adds ash beta to Lacros version skew testing CI/CQ
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">breadcrumbs: add desktop entry point
 
-The tests are pretty stable on fyi builder:
-<a href="https://ci.chromium.org/p/chromium/builders/ci/linux-lacros-version-skew-fyi">https://ci.chromium.org/p/chromium/builders/ci/linux-lacros-version-skew-fyi</a>
+This change adds an entry point to breadcrumbs for desktop. This does
+not enable breadcrumbs logging - that will be done via gradual
+rollout of the kLogBreadcrumbs feature.
 
-Bug: 1236127
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3a6dd2be3e1112393af29c331810835b6c37782b">I3a6dd2be3e1112393af29c331810835b6c37782b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3099138">https://chromium-review.googlesource.com/c/chromium/src/+/3099138</a>
-Auto-Submit: Sven Zheng &lt;svenzheng@chromium.org&gt;
-Commit-Queue: Yuke Liao &lt;liaoyuke@chromium.org&gt;
-Reviewed-by: Yuke Liao &lt;liaoyuke@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#912600}
+As part of adding the entry point, this change creates a
+BreadcrumbManagerKeyedServiceFactory for desktop. It exists to create
+a BreadcrumbManagerKeyedService for a given BrowserContext
+(essentially, a profile). The keyed service, in turn, exists to attach
+a BreadcrumbManager (which stores breadcrumb events) to its associated
+BrowserContext.
+
+A parallel implementation of the keyed-service factory exists for iOS
+at ios/chrome/browser/crash_report/breadcrumbs/
+breadcrumb_manager_keyed_service_factory.h. Parallel implementations
+are needed because iOS does not have BrowserContexts or profiles; it
+has BrowserStates (of which there are only two, normal and incognito).
+
+Bug: 1163762
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ida50c3290738d8b40a0438cb2f63cc2753c16634">Ida50c3290738d8b40a0438cb2f63cc2753c16634</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3021746">https://chromium-review.googlesource.com/c/chromium/src/+/3021746</a>
+Commit-Queue: Jesse McKenna &lt;jessemckenna@google.com&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: David Roger &lt;droger@chromium.org&gt;
+Reviewed-by: Mike Dougherty &lt;michaeldo@chromium.org&gt;
+Cr-Commit-Position: refs/heads/master@{#912619}
 </pre>
 
 </body>
