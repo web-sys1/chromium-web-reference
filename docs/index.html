@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/912842/"> 912842</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/032004b9b6b61ac93ce3d30810ea301fe63ee7a9">032004b9b6b61ac93ce3d30810ea301fe63ee7a9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/912859/"> 912859</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0534810feb619aab5c6e0811d807a7ca839e63f6">0534810feb619aab5c6e0811d807a7ca839e63f6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/912852/">912852</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   032004b9b6b61ac93ce3d30810ea301fe63ee7a9
+   0534810feb619aab5c6e0811d807a7ca839e63f6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/032004b9b6b61ac93ce3d30810ea301fe63ee7a9">
+    <a href="/chromium/src/+log/0534810feb619aab5c6e0811d807a7ca839e63f6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/032004b9b6b61ac93ce3d30810ea301fe63ee7a9.tar.gz">
+    <a href="/chromium/src/+archive/0534810feb619aab5c6e0811d807a7ca839e63f6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Gyuyoung Kim &lt;gyuyoung@igalia.com&gt;
   </td>
   <td>
-   Wed Aug 18 01:17:40 2021
+   Wed Aug 18 02:14:58 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 18 01:17:40 2021
+   Wed Aug 18 02:14:58 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/032004b9b6b61ac93ce3d30810ea301fe63ee7a9/">
-    3bdded41fbbc63ff0ec492e64a20f8351351b04a
+   <a href="/chromium/src/+/0534810feb619aab5c6e0811d807a7ca839e63f6/">
+    b69f6d74279f56521b17b1bd92093bf310e2d927
    </a>
   </td>
  </tr>
@@ -166,49 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/032004b9b6b61ac93ce3d30810ea301fe63ee7a9%5E">
-    621dc6c547eebd146af1ad18f14b008f5126b514
+   <a href="/chromium/src/+/0534810feb619aab5c6e0811d807a7ca839e63f6%5E">
+    a815b214e488053cfd2a6acbe108362923c72c7f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/032004b9b6b61ac93ce3d30810ea301fe63ee7a9%5E%21/">
+    <a href="/chromium/src/+/0534810feb619aab5c6e0811d807a7ca839e63f6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll WebRTC from 45b3e530cb49 to 9d8c3d90100e (4 revisions)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">fixup! MPArch: Ensure NavigationPredictor work only on the primary mainframe
 
-<a href="https://webrtc.googlesource.com/src.git/+log/45b3e530cb49..9d8c3d90100e">https://webrtc.googlesource.com/src.git/+log/45b3e530cb49..9d8c3d90100e</a>
+The original CL ensured that non-primary pages doesn't create
+NavigationPredictor where links cannot be clicked via the test
+case and DCHECK with content::Page::IsPrimary method.
 
-2021-08-17 titovartem@google.com Use separate queue for alive frames when self view is enabled in DVQA
-2021-08-17 sprang@webrtc.org Reland "Rename vp9::FrameInfo to vp9::UncompressedHeader and add more fields."
-2021-08-17 sergeysu@webrtc.org dcsctp: fixed grammar in one comment, added comment regarding the threading contract
-2021-08-17 nisse@webrtc.org Delete AsyncSocket class, merge into Socket class
+However, IsPrimary can return a false on bfcache, which can work
+on primary when navigating back/forward user behavior. But, the
+original CL only tested it using the prerendering simulation
+because the bfcache test simulation is not ready to test yet.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/webrtc-chromium-autoroll">https://autoroll.skia.org/r/webrtc-chromium-autoroll</a>
-Please CC webrtc-chromium-sheriffs-robots@google.com on the revert to ensure that a human
-is aware of the problem.
+So, this CL changes the DCHECK from content::Page::IsPrimary
+to IsPrerendering until bfcache test is added.
 
-To file a bug in WebRTC: <a href="https://bugs.chromium.org/p/webrtc/issues/entry">https://bugs.chromium.org/p/webrtc/issues/entry</a>
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Bug: chromium:1230448
-Tbr: webrtc-chromium-sheriffs-robots@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1c4cff375ed8cd862fab50013a36027f7b8ee856">I1c4cff375ed8cd862fab50013a36027f7b8ee856</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3102285">https://chromium-review.googlesource.com/c/chromium/src/+/3102285</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/master@{#912842}
+Bug: 1229617, 1239310
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I67b79af16fd53a11969412cc9f286d0963ffa8d1">I67b79af16fd53a11969412cc9f286d0963ffa8d1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3096365">https://chromium-review.googlesource.com/c/chromium/src/+/3096365</a>
+Reviewed-by: Michael Crouse &lt;mcrouse@chromium.org&gt;
+Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+Commit-Queue: Gyuyoung Kim &lt;gyuyoung@igalia.com&gt;
+Cr-Commit-Position: refs/heads/master@{#912859}
 </pre>
 
 </body>
