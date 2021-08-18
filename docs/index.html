@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/912942/"> 912942</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e81c633f7691ed2ba6fa6fbca24f368d73dfc8b0">e81c633f7691ed2ba6fa6fbca24f368d73dfc8b0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/912949/"> 912949</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/18470a08b6f6aace0777d0aa09d62f870048a1f0">18470a08b6f6aace0777d0aa09d62f870048a1f0</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/912945/">912945</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/89322bab5d5ad7436b8c174a6674c5654ea7adbf">89322bab5d5ad7436b8c174a6674c5654ea7adbf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/912950/">912950</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/32c45a5ad0f9144633290dea5a7db263434786dc">32c45a5ad0f9144633290dea5a7db263434786dc</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e81c633f7691ed2ba6fa6fbca24f368d73dfc8b0
+   18470a08b6f6aace0777d0aa09d62f870048a1f0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e81c633f7691ed2ba6fa6fbca24f368d73dfc8b0">
+    <a href="/chromium/src/+log/18470a08b6f6aace0777d0aa09d62f870048a1f0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e81c633f7691ed2ba6fa6fbca24f368d73dfc8b0.tar.gz">
+    <a href="/chromium/src/+archive/18470a08b6f6aace0777d0aa09d62f870048a1f0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+   Artem Sumaneev &lt;asumaneev@google.com&gt;
   </td>
   <td>
-   Wed Aug 18 10:21:48 2021
+   Wed Aug 18 11:12:54 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 18 10:21:48 2021
+   Wed Aug 18 11:12:54 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e81c633f7691ed2ba6fa6fbca24f368d73dfc8b0/">
-    ec2726ac4aa021c19d737a2cd10788433fc14dc9
+   <a href="/chromium/src/+/18470a08b6f6aace0777d0aa09d62f870048a1f0/">
+    2c1536a1b4ad7afd4eb6a610ded1cb6abb2165bb
    </a>
   </td>
  </tr>
@@ -166,34 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e81c633f7691ed2ba6fa6fbca24f368d73dfc8b0%5E">
-    a6aa8e748631683cdc7e2160f95b6f92480fb946
+   <a href="/chromium/src/+/18470a08b6f6aace0777d0aa09d62f870048a1f0%5E">
+    9bd8a8c564ee5af47be8558b597d1081c90e89eb
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e81c633f7691ed2ba6fa6fbca24f368d73dfc8b0%5E%21/">
+    <a href="/chromium/src/+/18470a08b6f6aace0777d0aa09d62f870048a1f0%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Do not crash when serializing inverted zero via CSSTransformValue
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Drop enrollment from DeviceCloudPolicyInitializer.
 
-There seems to be plenty of opportunities for CSSStyleValue::ToCSSValue
-to return nullptr, so the DCHECK seems wrong.
+Remove the enrollment flow from DeviceCloudPolicyInitializer and move it
+to its only user EnterpriseEnrollmentHelperImpl. The change is not
+expected to bring any functional changes but refactoring.
 
-I'm not testing in WPT that the return value is "", since it's not
-actually supposed to be "". But the full fix for that should probably
-be done separately. Filed crbug.com/1240306 for this.
+Unpredictable lifetime of the initializer caused crashes in the
+enrollment helper which depended on it. Now the initializer is fully
+internal part of BrowserPolicyConnectorAsh and may have any lifespan.
 
-Fixed: 1232775
-Bug: 1240306
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1d087cdbefb8d48bddf4b06de495934006975614">I1d087cdbefb8d48bddf4b06de495934006975614</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3097607">https://chromium-review.googlesource.com/c/chromium/src/+/3097607</a>
-Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Cr-Commit-Position: refs/heads/master@{#912942}
+Before this change the initializer did not connect the policy manager if
+enrollment was in progress. It also did not reconnect the manager once
+connected. With this change the initializer is not blocked by the
+enrollment and the enrollment helper does not reconnect the policy
+manager if it has been connected previously.
+
+Bug: chromium:1219487, chromium:705758
+Test: unit tests, manual on device.
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I90e12a7145c07890ee9da190ef51944d47841023">I90e12a7145c07890ee9da190ef51944d47841023</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3056885">https://chromium-review.googlesource.com/c/chromium/src/+/3056885</a>
+Reviewed-by: Maksim Ivanov &lt;emaxx@chromium.org&gt;
+Reviewed-by: Roland Bock &lt;rbock@google.com&gt;
+Commit-Queue: Artem Sumaneev &lt;asumaneev@google.com&gt;
+Cr-Commit-Position: refs/heads/master@{#912949}
 </pre>
 
 </body>
