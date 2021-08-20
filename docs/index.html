@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/913716/"> 913716</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/39abd0dfa2cdb7efed5cae09ba68899302b462f2">39abd0dfa2cdb7efed5cae09ba68899302b462f2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/913721/"> 913721</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3d96d661c0bf586277ece3acabde90c34b5041f1">3d96d661c0bf586277ece3acabde90c34b5041f1</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/913681/">913681</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/157f65d596d64c95aaa199d75e4f34a3cea426b3">157f65d596d64c95aaa199d75e4f34a3cea426b3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/913708/">913708</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/62ee5f64b17f816da34529ab94ca878b4afedd65">62ee5f64b17f816da34529ab94ca878b4afedd65</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   39abd0dfa2cdb7efed5cae09ba68899302b462f2
+   3d96d661c0bf586277ece3acabde90c34b5041f1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/39abd0dfa2cdb7efed5cae09ba68899302b462f2">
+    <a href="/chromium/src/+log/3d96d661c0bf586277ece3acabde90c34b5041f1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/39abd0dfa2cdb7efed5cae09ba68899302b462f2.tar.gz">
+    <a href="/chromium/src/+archive/3d96d661c0bf586277ece3acabde90c34b5041f1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Pi-Hsun Shih &lt;pihsun@chromium.org&gt;
+   Yoshifumi Inoue &lt;yosin@chromium.org&gt;
   </td>
   <td>
-   Fri Aug 20 08:06:33 2021
+   Fri Aug 20 08:27:34 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Aug 20 08:06:33 2021
+   Fri Aug 20 08:27:34 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/39abd0dfa2cdb7efed5cae09ba68899302b462f2/">
-    c172d5d0e7fd7eb303badcdd67481fbbf99fd8a3
+   <a href="/chromium/src/+/3d96d661c0bf586277ece3acabde90c34b5041f1/">
+    9f5bd9d30eca7ef187616503ccf307e1421ad363
    </a>
   </td>
  </tr>
@@ -166,35 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/39abd0dfa2cdb7efed5cae09ba68899302b462f2%5E">
-    8a59d54e71de62a5b21c8d2325fc09d397ec369a
+   <a href="/chromium/src/+/3d96d661c0bf586277ece3acabde90c34b5041f1%5E">
+    9634383c863c7d2123d659d2ec1c9d09a93baf44
    </a>
    <span>
     [
-    <a href="/chromium/src/+/39abd0dfa2cdb7efed5cae09ba68899302b462f2%5E%21/">
+    <a href="/chromium/src/+/3d96d661c0bf586277ece3acabde90c34b5041f1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">CCA: Merge Facing.UNKNOWN to Facing.NOT_SET
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[block-in-inline] Make NextWordPosition() to work with block in inline
 
-The only remaining usage of Facing.UNKNOWN is at few default values in
-constructors that will always be overridden later, and NOT_SET works
-equally well in this case. This is also confirmed by metrics that
-there's 0 reported case of Facing UNKNOWN.
+This patch changes |CreateInlineContentsFromBlockFlow()| to find
+first and last layout objects in block flow by iterating from first
+child to last child or block-in-inline instead of scanning from
+first child and scanning from last child because block-in-inline is
+boundary of inline contents.
 
-Change all remaining UNKNOWN to NOT_SET and remove UNKNOWN.
+This patch makes following tests to pass:
+  * editing/selection/extend/extend_selection_07_ltr_forward_word.html
+  * editing/selection/extend/extend_selection_07_ltr_right_word.html
 
-Bug: None
-Test: closure compiler passed
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I96ecc996d1768b0ffb957440b4e6abc89483860d">I96ecc996d1768b0ffb957440b4e6abc89483860d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3109267">https://chromium-review.googlesource.com/c/chromium/src/+/3109267</a>
-Reviewed-by: Wei Lee &lt;wtlee@chromium.org&gt;
-Reviewed-by: Shik Chen &lt;shik@chromium.org&gt;
-Commit-Queue: Pi-Hsun Shih &lt;pihsun@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#913716}
+Bug: 716930
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iacf949b43318f56401b82637cb5ff359d57c1ece">Iacf949b43318f56401b82637cb5ff359d57c1ece</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3102482">https://chromium-review.googlesource.com/c/chromium/src/+/3102482</a>
+Commit-Queue: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+Auto-Submit: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#913721}
 </pre>
 
 </body>
