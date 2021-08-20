@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/913775/"> 913775</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6d0eb35487af73d75eba7a00c4fb5f6aae9c84d7">6d0eb35487af73d75eba7a00c4fb5f6aae9c84d7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/913785/"> 913785</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9824bdf69be7780a8d73a42cb9719c046193dc3c">9824bdf69be7780a8d73a42cb9719c046193dc3c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/913774/">913774</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6d0eb35487af73d75eba7a00c4fb5f6aae9c84d7
+   9824bdf69be7780a8d73a42cb9719c046193dc3c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6d0eb35487af73d75eba7a00c4fb5f6aae9c84d7">
+    <a href="/chromium/src/+log/9824bdf69be7780a8d73a42cb9719c046193dc3c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6d0eb35487af73d75eba7a00c4fb5f6aae9c84d7.tar.gz">
+    <a href="/chromium/src/+archive/9824bdf69be7780a8d73a42cb9719c046193dc3c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
+   Yi Gu &lt;yigu@chromium.org&gt;
   </td>
   <td>
-   Fri Aug 20 13:44:32 2021
+   Fri Aug 20 14:23:10 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Aug 20 13:44:32 2021
+   Fri Aug 20 14:23:10 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6d0eb35487af73d75eba7a00c4fb5f6aae9c84d7/">
-    e22cf3000f998932955fa441e049e4ffeb883559
+   <a href="/chromium/src/+/9824bdf69be7780a8d73a42cb9719c046193dc3c/">
+    adc458c47e48451b7877188427e2168da33ee07e
    </a>
   </td>
  </tr>
@@ -166,48 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6d0eb35487af73d75eba7a00c4fb5f6aae9c84d7%5E">
-    7ba47d250e46af1335906ef41d888a8d996c7b5c
+   <a href="/chromium/src/+/9824bdf69be7780a8d73a42cb9719c046193dc3c%5E">
+    cdc4b63690632690274f67929ce0a49720eb1af3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6d0eb35487af73d75eba7a00c4fb5f6aae9c84d7%5E%21/">
+    <a href="/chromium/src/+/9824bdf69be7780a8d73a42cb9719c046193dc3c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[attribution_reporting] Use single callback for ConversionReporter
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Add absl/numeric:bits to absl component"
 
-Instead of one per conversion ID.
+This reverts commit 4ad9426348f24f6157c33e4024bd0af61d458444.
 
-Prior to this CL, if two reports for the same conversion ID were added
-to the ConversionReporter, the earlier one's callback would be dropped
-and never run. For timed sends, this is fine, as the only action
-performed by the callback is deleting the report, for which it doesn't
-matter which of the two callbacks is run, since their behavior is the
-same. But if at least one of the callbacks corresponds to a
-send-all-reports-now action triggered by the internals UI, then the
-callback acts as a barrier that ensures that the UI is only refreshed
-once all the reports have been sent. If that callback isn't run, then
-the UI will never automatically refresh.
+Reason for revert: Tree closure: <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/mac-arm64-rel/6630/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/mac-arm64-rel/6630/overview</a>
 
-This CL makes this situation impossible, by using only a single callback
-for the ConversionReporter, specified at construction time, and removing
-the internals UI barrier. Instead, the ConversionManager tracks the
-outstanding report IDs; once the count reaches zero, it runs the
-internals UI callback.
+Original change's description:
+&gt; Add absl/numeric:bits to absl component
+&gt;
+&gt; To allow it to be used by third_party code.
+&gt;
+&gt; Bug: None
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia9d46e37dd8a271b58bd0c607874d548745b3615">Ia9d46e37dd8a271b58bd0c607874d548745b3615</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3110185">https://chromium-review.googlesource.com/c/chromium/src/+/3110185</a>
+&gt; Reviewed-by: Mirko Bonadei &lt;mbonadei@chromium.org&gt;
+&gt; Commit-Queue: Danil Chapovalov &lt;danilchap@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#913779}
 
-To simplify the implementation further, we allow only a single
-outstanding send-all-reports-now action, as we expect multiple
-simultaneous calls to be rare and without benefit.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2a555d78a5740da03bdf64cd1ec87d7756e93dd6">I2a555d78a5740da03bdf64cd1ec87d7756e93dd6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3107568">https://chromium-review.googlesource.com/c/chromium/src/+/3107568</a>
-Commit-Queue: Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
-Reviewed-by: John Delaney &lt;johnidel@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#913775}
+Bug: None
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5bdf4d4566d9e1964552eb2f94852392995bddda">I5bdf4d4566d9e1964552eb2f94852392995bddda</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3110967">https://chromium-review.googlesource.com/c/chromium/src/+/3110967</a>
+Commit-Queue: Yi Gu &lt;yigu@chromium.org&gt;
+Owners-Override: Yi Gu &lt;yigu@chromium.org&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#913785}
 </pre>
 
 </body>
