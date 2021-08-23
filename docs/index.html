@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/914189/"> 914189</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b50bb36ed98ab45707d28bb116e3e3f85b4e8129">b50bb36ed98ab45707d28bb116e3e3f85b4e8129</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/914195/"> 914195</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1b74210e0f1a7e0d230126b11f38659e2423b44f">1b74210e0f1a7e0d230126b11f38659e2423b44f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/914188/">914188</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/29f4b58370d97304e699e6e84342413426d62771">29f4b58370d97304e699e6e84342413426d62771</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/914194/">914194</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5368edb74fc9125870d9f1a61252dba8237f29a8">5368edb74fc9125870d9f1a61252dba8237f29a8</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b50bb36ed98ab45707d28bb116e3e3f85b4e8129
+   1b74210e0f1a7e0d230126b11f38659e2423b44f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b50bb36ed98ab45707d28bb116e3e3f85b4e8129">
+    <a href="/chromium/src/+log/1b74210e0f1a7e0d230126b11f38659e2423b44f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b50bb36ed98ab45707d28bb116e3e3f85b4e8129.tar.gz">
+    <a href="/chromium/src/+archive/1b74210e0f1a7e0d230126b11f38659e2423b44f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   tby &lt;tby@chromium.org&gt;
+   Luciano Pacheco &lt;lucmult@chromium.org&gt;
   </td>
   <td>
-   Mon Aug 23 05:23:41 2021
+   Mon Aug 23 06:09:04 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 23 05:23:41 2021
+   Mon Aug 23 06:09:04 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b50bb36ed98ab45707d28bb116e3e3f85b4e8129/">
-    63ab75e2e556088ba0301d337007301f1fc64ca0
+   <a href="/chromium/src/+/1b74210e0f1a7e0d230126b11f38659e2423b44f/">
+    997976f82e02aadeb790cb6b4a2fedf24552e6ef
    </a>
   </td>
  </tr>
@@ -166,54 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b50bb36ed98ab45707d28bb116e3e3f85b4e8129%5E">
-    29f4b58370d97304e699e6e84342413426d62771
+   <a href="/chromium/src/+/1b74210e0f1a7e0d230126b11f38659e2423b44f%5E">
+    5368edb74fc9125870d9f1a61252dba8237f29a8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b50bb36ed98ab45707d28bb116e3e3f85b4e8129%5E%21/">
+    <a href="/chromium/src/+/1b74210e0f1a7e0d230126b11f38659e2423b44f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Launcher] Add persistent proto class
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Files SWA: Fix OpenItem for SWA
 
-I want to make our handling of on-disk state more consistent across
-the various classes that handle ranking. The idea is that they should
-all just save state as protos into the launcher/ directory of the
-cryptohome.
+Change ExecuteFileTask() to redirect the tasks for Files app extension
+to the SWA when the SWA flag is enabled.
 
-We have a proliferation of Read and Write methods for doing this right
-now. So this CL adds a utility class called PersistentProto that acts
-as a write-through cache for proto on disk. After this is submitted,
-I'll migrate all of our ranking systems to use it.
-
-This mostly isn't new code, it's a tweaked version of
-//components/metrics/structured/persistent_proto. The big change is to
-make this a header-only template class, rather than splitting the logic
-into a cc. That was a bit of a hack and requires changing the
-persistent proto class itself for each new class to be persisted.
-
-I've had to make one code-quality compromise to make this header-only:
-the code structure looks like this:
-
- - some enum definitions
- - an anonymous namespace containing Read and Write
- - the class itself
-
-Ideally there wouldn't need to be an anon namespace at all, and Read
-and Write could be private methods. However I need these to be free
-functions due to a limitation of PostTaskAndReplyWithResult, and they
-require the enums to be defined, hence the weird code structure.
-
-Bug: 1199206
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I726a42539f1a2d643adcbe89cf6d37fc191fd9e5">I726a42539f1a2d643adcbe89cf6d37fc191fd9e5</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3112942">https://chromium-review.googlesource.com/c/chromium/src/+/3112942</a>
-Reviewed-by: Amanda Deacon &lt;amandadeacon@chromium.org&gt;
-Commit-Queue: Tony Yeoman &lt;tby@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#914189}
+Bug: b:194252786
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ide038d3e65dcd846479d8eab48f5be433a8198fa">Ide038d3e65dcd846479d8eab48f5be433a8198fa</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3080581">https://chromium-review.googlesource.com/c/chromium/src/+/3080581</a>
+Reviewed-by: Bo Majewski &lt;majewski@chromium.org&gt;
+Reviewed-by: Peter Marshall &lt;petermarshall@chromium.org&gt;
+Commit-Queue: Luciano Pacheco &lt;lucmult@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#914195}
 </pre>
 
 </body>
