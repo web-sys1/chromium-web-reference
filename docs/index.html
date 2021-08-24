@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/914688/"> 914688</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/64ecb65ed79b73e410e0f26c8f81a697b176f688">64ecb65ed79b73e410e0f26c8f81a697b176f688</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/914692/"> 914692</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7532d4af10bdc4d17b5db846d4995ba2a9956289">7532d4af10bdc4d17b5db846d4995ba2a9956289</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/914683/">914683</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/70ef1dce72eb2b80dc3db64780b83026c05713e7">70ef1dce72eb2b80dc3db64780b83026c05713e7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/914692/">914692</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7532d4af10bdc4d17b5db846d4995ba2a9956289">7532d4af10bdc4d17b5db846d4995ba2a9956289</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   64ecb65ed79b73e410e0f26c8f81a697b176f688
+   7532d4af10bdc4d17b5db846d4995ba2a9956289
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/64ecb65ed79b73e410e0f26c8f81a697b176f688">
+    <a href="/chromium/src/+log/7532d4af10bdc4d17b5db846d4995ba2a9956289">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/64ecb65ed79b73e410e0f26c8f81a697b176f688.tar.gz">
+    <a href="/chromium/src/+archive/7532d4af10bdc4d17b5db846d4995ba2a9956289.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Friedrich Horschig &lt;fhorschig@chromium.org&gt;
+   Benoit Lize &lt;lizeb@chromium.org&gt;
   </td>
   <td>
-   Tue Aug 24 10:52:14 2021
+   Tue Aug 24 11:34:04 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 24 10:52:14 2021
+   Tue Aug 24 11:34:04 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/64ecb65ed79b73e410e0f26c8f81a697b176f688/">
-    41564be3c1bdbe842b1708baf9740ae566eeb339
+   <a href="/chromium/src/+/7532d4af10bdc4d17b5db846d4995ba2a9956289/">
+    9be7c8fead08de65d2a275f97bcf908261201dc6
    </a>
   </td>
  </tr>
@@ -166,47 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/64ecb65ed79b73e410e0f26c8f81a697b176f688%5E">
-    373bd085c13a46b1f5d156f6f11c2679d92b2d66
+   <a href="/chromium/src/+/7532d4af10bdc4d17b5db846d4995ba2a9956289%5E">
+    d5217846d9cd2b4d03a5d615563ce2406954cf91
    </a>
    <span>
     [
-    <a href="/chromium/src/+/64ecb65ed79b73e410e0f26c8f81a697b176f688%5E%21/">
+    <a href="/chromium/src/+/7532d4af10bdc4d17b5db846d4995ba2a9956289%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "[Passwords] Instantiate Android-specific backend only if internal API exists"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[base] Make InsecureRandomGenerator seeded in its constructor.
 
-This is a reland of baa2208e92c27230c5ba10e1e2718d9b00595979
+This changes base::InsecureRandomGenerator so that there is no need to
+seed it before using, as its constructor now makes sure it is seeded.
+Since the constructor is no longer constexpr, its use in PartitionAlloc
+is updated to initialize it upon first use.
 
-Original change's description:
-&gt; [Passwords] Instantiate Android-specific backend only if internal API exists
-&gt;
-&gt; This CL is effectively a noop but it prevents crrev.com/c/2704560 from
-&gt; breaking the build if enable_chrome_android_internal = false.
-&gt;
-&gt; To support local password development, this CL moves the factory methods
-&gt; into separate files that are only used if Chrome on Android is compiled
-&gt; with internal sources.
-&gt; That allows to keep using the local backend on Android and prevents
-&gt; attempts to compile Chrome without the missing ChromeSync SDK.
-&gt;
-&gt; Bug: 1229654
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I86467bc6e713adc3142ad36428cdcee75cda06d5">I86467bc6e713adc3142ad36428cdcee75cda06d5</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3109867">https://chromium-review.googlesource.com/c/chromium/src/+/3109867</a>
-&gt; Reviewed-by: Vasilii Sukhanov &lt;vasilii@chromium.org&gt;
-&gt; Commit-Queue: Friedrich [CET] &lt;fhorschig@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#914239}
-
-Bug: 1229654
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I23a414a3da7c97d2d9d82330c6975616de8552dd">I23a414a3da7c97d2d9d82330c6975616de8552dd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3114065">https://chromium-review.googlesource.com/c/chromium/src/+/3114065</a>
-Commit-Queue: Friedrich [CET] &lt;fhorschig@chromium.org&gt;
-Reviewed-by: Vasilii Sukhanov &lt;vasilii@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#914688}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iae3c63102ef5bf0416751956874e8ffcd045685b">Iae3c63102ef5bf0416751956874e8ffcd045685b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3006803">https://chromium-review.googlesource.com/c/chromium/src/+/3006803</a>
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Sami Kyöstilä &lt;skyostil@chromium.org&gt;
+Commit-Queue: Benoit L &lt;lizeb@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#914692}
 </pre>
 
 </body>
