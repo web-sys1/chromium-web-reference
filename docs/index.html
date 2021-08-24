@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/914626/"> 914626</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c9260c1c47afad2c6629f8661b5d8da7ab8457e4">c9260c1c47afad2c6629f8661b5d8da7ab8457e4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/914633/"> 914633</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/956790350746356f248ddbe0dfaf2dc2f2ee4218">956790350746356f248ddbe0dfaf2dc2f2ee4218</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/914624/">914624</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/16aa00fdcd6817df39f9d4666e18994b6ae8b7b3">16aa00fdcd6817df39f9d4666e18994b6ae8b7b3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/914632/">914632</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/588aef4a185bb804c068581f6f5f0f54899afba0">588aef4a185bb804c068581f6f5f0f54899afba0</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c9260c1c47afad2c6629f8661b5d8da7ab8457e4
+   956790350746356f248ddbe0dfaf2dc2f2ee4218
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c9260c1c47afad2c6629f8661b5d8da7ab8457e4">
+    <a href="/chromium/src/+log/956790350746356f248ddbe0dfaf2dc2f2ee4218">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c9260c1c47afad2c6629f8661b5d8da7ab8457e4.tar.gz">
+    <a href="/chromium/src/+archive/956790350746356f248ddbe0dfaf2dc2f2ee4218.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xiaocheng Hu &lt;xiaochengh@chromium.org&gt;
+   Charles William Dick &lt;cwd@google.com&gt;
   </td>
   <td>
-   Tue Aug 24 04:41:34 2021
+   Tue Aug 24 05:25:25 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 24 04:41:34 2021
+   Tue Aug 24 05:25:25 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c9260c1c47afad2c6629f8661b5d8da7ab8457e4/">
-    0ffc0a1b21ddc43457fe4a7398156deb1004994d
+   <a href="/chromium/src/+/956790350746356f248ddbe0dfaf2dc2f2ee4218/">
+    02a804b8939d3fbcd2d1032f00845d601f7e9428
    </a>
   </td>
  </tr>
@@ -166,38 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c9260c1c47afad2c6629f8661b5d8da7ab8457e4%5E">
-    4caa039a2237ff43816e801d9ccf8139de3e2075
+   <a href="/chromium/src/+/956790350746356f248ddbe0dfaf2dc2f2ee4218%5E">
+    588aef4a185bb804c068581f6f5f0f54899afba0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c9260c1c47afad2c6629f8661b5d8da7ab8457e4%5E%21/">
+    <a href="/chromium/src/+/956790350746356f248ddbe0dfaf2dc2f2ee4218%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[@layer] Gather layers from all sheets and compute layer ordering
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ArcVmBalloonPolicy experiment
 
-This patch:
+Update ResourcedClient to support the new memory signal.
 
-- For each origin and tree scope, gathers cascade layers from all active
-  style sheets into a CascadeLayerMap
+Forward the ARC memory pressure signal from resourced to ARC so that it
+can kill processes in response to host memory pressure.
 
-- In each CascadeLayerMap, computes the layer ordering and builds a
-  mapping from each layer in each sheet into the order number
+Add BalloonPolicyOptions to the StartArcVmRequest to configure the
+virtio_balloon policy to avoid triggering lmkd, as we can now kill apps
+directly.
 
-This allows ElementRuleCollector to know the layer order number of each
-matched rule, which will be implemented by a follow-up patch.
+Bug: b:194632077
+Test: tast run dut multivm.Lifecycle.arc_host
+  multivm.LifecycleShifting.arc_host
+./testing/xvfb.py ./out/Default/components_unittests
+  --gtest_filter='*ArcMemoryPressureBridgeTest*'
+./testing/xvfb.py ./out/Default/components_unittests
+  --gtest_filter='*ArcVmClientAdapterTest*'
 
-Bug: 1095765
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I20d8518b932b7ef9927ead82af6c43caceb31642">I20d8518b932b7ef9927ead82af6c43caceb31642</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3108418">https://chromium-review.googlesource.com/c/chromium/src/+/3108418</a>
-Commit-Queue: Xiaocheng Hu &lt;xiaochengh@chromium.org&gt;
-Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#914626}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I22638b259acdac5e01ea0c52ce6e8390c5370e44">I22638b259acdac5e01ea0c52ce6e8390c5370e44</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3096423">https://chromium-review.googlesource.com/c/chromium/src/+/3096423</a>
+Reviewed-by: Willie Koomson &lt;wvk@google.com&gt;
+Reviewed-by: Mattias Nissler &lt;mnissler@chromium.org&gt;
+Reviewed-by: Yusuke Sato &lt;yusukes@chromium.org&gt;
+Reviewed-by: Kuo-Hsin Yang &lt;vovoy@chromium.org&gt;
+Commit-Queue: Charles William Dick &lt;cwd@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#914633}
 </pre>
 
 </body>
