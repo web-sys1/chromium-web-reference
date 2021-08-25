@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/915114/"> 915114</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7c78f441e563fbc30d5e40c40ad2ff8669365821">7c78f441e563fbc30d5e40c40ad2ff8669365821</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/915121/"> 915121</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d945b5bf74563277718eed9fd27da6d834495a2c">d945b5bf74563277718eed9fd27da6d834495a2c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/915079/">915079</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7c78f441e563fbc30d5e40c40ad2ff8669365821
+   d945b5bf74563277718eed9fd27da6d834495a2c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7c78f441e563fbc30d5e40c40ad2ff8669365821">
+    <a href="/chromium/src/+log/d945b5bf74563277718eed9fd27da6d834495a2c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7c78f441e563fbc30d5e40c40ad2ff8669365821.tar.gz">
+    <a href="/chromium/src/+archive/d945b5bf74563277718eed9fd27da6d834495a2c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Robert Lin &lt;robertlin@chromium.org&gt;
+   bttk &lt;bttk@chromium.org&gt;
   </td>
   <td>
-   Wed Aug 25 09:25:26 2021
+   Wed Aug 25 10:03:23 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 25 09:25:26 2021
+   Wed Aug 25 10:03:23 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7c78f441e563fbc30d5e40c40ad2ff8669365821/">
-    cbdbd8ef68c92faaf2d5743fed45c1ebb389d34b
+   <a href="/chromium/src/+/d945b5bf74563277718eed9fd27da6d834495a2c/">
+    b2877ef23e910522261b92f56857153be8b323c9
    </a>
   </td>
  </tr>
@@ -166,41 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7c78f441e563fbc30d5e40c40ad2ff8669365821%5E">
-    5d484d5dc51402641779252cc2faccd8c3ea4307
+   <a href="/chromium/src/+/d945b5bf74563277718eed9fd27da6d834495a2c%5E">
+    8a116adf1b1189a439978b936223015c2b2fc036
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7c78f441e563fbc30d5e40c40ad2ff8669365821%5E%21/">
+    <a href="/chromium/src/+/d945b5bf74563277718eed9fd27da6d834495a2c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">prerender: refactor PrerenderSubframeNavigationThrottle
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make KeyIteratorController respect shared db prefix
 
-Address post-commit comments about the commit
-dbdafd174991aedcb6fa57b78b2aa78977b940b2
-on <a href="https://crrev.com/c/3077117">https://crrev.com/c/3077117</a>
+By mistake the controller had full control over iteration. After
+reading the last entry in its section of the shared db the iteration
+continued. StripPrefix silently failed to strip the prefix and
+controller received the full key.
 
-This CL makes changes as follows:
-- Stop observing the prerender activation earlier to avoid receiving
-  uninterested navigation events. Before this CL, those events are
-  ignored, so this doesn't change the behavior.
-- Return early in WillProcessResponse() if the page is not in
-  prerendering mode.
-- Replace a non-null pointer on function arguments with a const
-  reference as this is recommended by the style guide.
-- Update comments about the same-origin checks.
+Before this change the new LoadKeysAndEntriesWhile test case failed on
+the DCHECK in StripPrefix.
 
-Bug: 1229027
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7309a27a7a90fc13c9df6fd64a057edfef94e996">I7309a27a7a90fc13c9df6fd64a057edfef94e996</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3105507">https://chromium-review.googlesource.com/c/chromium/src/+/3105507</a>
-Commit-Queue: Huanpo Lin &lt;robertlin@chromium.org&gt;
-Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
-Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#915114}
+Bug: 1242693
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6abffa5c283ad636133acb7ed6d1cb815ab57dd3">I6abffa5c283ad636133acb7ed6d1cb815ab57dd3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3115586">https://chromium-review.googlesource.com/c/chromium/src/+/3115586</a>
+Commit-Queue: bttk &lt;bttk@chromium.org&gt;
+Reviewed-by: Shakti Sahu &lt;shaktisahu@chromium.org&gt;
+Reviewed-by: ssid &lt;ssid@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#915121}
 </pre>
 
 </body>
