@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/915094/"> 915094</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/843553602e0f2b3d120ea8f7f6be6036d8d93d9a">843553602e0f2b3d120ea8f7f6be6036d8d93d9a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/915114/"> 915114</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7c78f441e563fbc30d5e40c40ad2ff8669365821">7c78f441e563fbc30d5e40c40ad2ff8669365821</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/915079/">915079</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   843553602e0f2b3d120ea8f7f6be6036d8d93d9a
+   7c78f441e563fbc30d5e40c40ad2ff8669365821
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/843553602e0f2b3d120ea8f7f6be6036d8d93d9a">
+    <a href="/chromium/src/+log/7c78f441e563fbc30d5e40c40ad2ff8669365821">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/843553602e0f2b3d120ea8f7f6be6036d8d93d9a.tar.gz">
+    <a href="/chromium/src/+archive/7c78f441e563fbc30d5e40c40ad2ff8669365821.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Fredrik Söderqvist &lt;fs@opera.com&gt;
+   Robert Lin &lt;robertlin@chromium.org&gt;
   </td>
   <td>
-   Wed Aug 25 08:31:29 2021
+   Wed Aug 25 09:25:26 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 25 08:31:29 2021
+   Wed Aug 25 09:25:26 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/843553602e0f2b3d120ea8f7f6be6036d8d93d9a/">
-    9fce2269cc6fb880d302da60a2a89612651cd326
+   <a href="/chromium/src/+/7c78f441e563fbc30d5e40c40ad2ff8669365821/">
+    cbdbd8ef68c92faaf2d5743fed45c1ebb389d34b
    </a>
   </td>
  </tr>
@@ -166,31 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/843553602e0f2b3d120ea8f7f6be6036d8d93d9a%5E">
-    48999bd25df7ba44f122c872b54ddb4fb97e0e2f
+   <a href="/chromium/src/+/7c78f441e563fbc30d5e40c40ad2ff8669365821%5E">
+    5d484d5dc51402641779252cc2faccd8c3ea4307
    </a>
    <span>
     [
-    <a href="/chromium/src/+/843553602e0f2b3d120ea8f7f6be6036d8d93d9a%5E%21/">
+    <a href="/chromium/src/+/7c78f441e563fbc30d5e40c40ad2ff8669365821%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove implicit type dependencies from ComputedStyle generation
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">prerender: refactor PrerenderSubframeNavigationThrottle
 
-Attempt to make the type-dependencies more explicit by removing some
-hard-coded includes and adding the corresponding include path to the
-property definition.
-Fix what looks like incorrect dependencies on LayoutTheme from a few
--internal-forced-* properties.
+Address post-commit comments about the commit
+dbdafd174991aedcb6fa57b78b2aa78977b940b2
+on <a href="https://crrev.com/c/3077117">https://crrev.com/c/3077117</a>
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If4a130077c872ab9e78349eabd0a3a6301c9c21a">If4a130077c872ab9e78349eabd0a3a6301c9c21a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3116255">https://chromium-review.googlesource.com/c/chromium/src/+/3116255</a>
-Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Commit-Queue: Fredrik Söderquist &lt;fs@opera.com&gt;
-Cr-Commit-Position: refs/heads/main@{#915094}
+This CL makes changes as follows:
+- Stop observing the prerender activation earlier to avoid receiving
+  uninterested navigation events. Before this CL, those events are
+  ignored, so this doesn't change the behavior.
+- Return early in WillProcessResponse() if the page is not in
+  prerendering mode.
+- Replace a non-null pointer on function arguments with a const
+  reference as this is recommended by the style guide.
+- Update comments about the same-origin checks.
+
+Bug: 1229027
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7309a27a7a90fc13c9df6fd64a057edfef94e996">I7309a27a7a90fc13c9df6fd64a057edfef94e996</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3105507">https://chromium-review.googlesource.com/c/chromium/src/+/3105507</a>
+Commit-Queue: Huanpo Lin &lt;robertlin@chromium.org&gt;
+Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#915114}
 </pre>
 
 </body>
