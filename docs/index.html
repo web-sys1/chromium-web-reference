@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/915518/"> 915518</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b676c35b1caa5d801ae42b11472c72b4fd1c8738">b676c35b1caa5d801ae42b11472c72b4fd1c8738</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/915530/"> 915530</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b1fcc4f68ac7fdd9a66e6e88b2b4d3dacd3a7045">b1fcc4f68ac7fdd9a66e6e88b2b4d3dacd3a7045</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/915529/">915529</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b676c35b1caa5d801ae42b11472c72b4fd1c8738
+   b1fcc4f68ac7fdd9a66e6e88b2b4d3dacd3a7045
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b676c35b1caa5d801ae42b11472c72b4fd1c8738">
+    <a href="/chromium/src/+log/b1fcc4f68ac7fdd9a66e6e88b2b4d3dacd3a7045">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b676c35b1caa5d801ae42b11472c72b4fd1c8738.tar.gz">
+    <a href="/chromium/src/+archive/b1fcc4f68ac7fdd9a66e6e88b2b4d3dacd3a7045.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yuki Yamada &lt;yukiy@chromium.org&gt;
+   Delan Azabani &lt;dazabani@igalia.com&gt;
   </td>
   <td>
-   Thu Aug 26 09:34:27 2021
+   Thu Aug 26 10:09:48 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Aug 26 09:34:27 2021
+   Thu Aug 26 10:09:48 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b676c35b1caa5d801ae42b11472c72b4fd1c8738/">
-    d554f03159cf5dbc03c6d34b6ad665d8bcf90041
+   <a href="/chromium/src/+/b1fcc4f68ac7fdd9a66e6e88b2b4d3dacd3a7045/">
+    66b103689804b1e53e85cb17032b791edf507d50
    </a>
   </td>
  </tr>
@@ -166,33 +166,57 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b676c35b1caa5d801ae42b11472c72b4fd1c8738%5E">
-    010785d3d85b2235151ca498834e4ae8160c78a0
+   <a href="/chromium/src/+/b1fcc4f68ac7fdd9a66e6e88b2b4d3dacd3a7045%5E">
+    bf440e49599650560366f8f4c723e47358d9e7fa
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b676c35b1caa5d801ae42b11472c72b4fd1c8738%5E%21/">
+    <a href="/chromium/src/+/b1fcc4f68ac7fdd9a66e6e88b2b4d3dacd3a7045%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Layout: Apply DISALLOW_NEW to SearchCandidate
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[NFC] CSS highlight painting: clean up selection rect logic
 
-Apply DISALLOW_NEW to SearchCandidate to replace UntracedMembers in it
-added by <a href="https://crrev.com/c/2465602">https://crrev.com/c/2465602</a> to Member.
+SelectionPaintState calculates the selection rect on demand, caching
+the result in a field. This makes sense, because it’s a non-trivial
+calculation that isn’t always needed, and the conditions that affect
+whether or not it’s needed are complicated.
 
-This CL is a follow-up for LayoutObject conversion, so this will be
-landed after that.
+CL:2647046 added a field that saves the original coordinates when we
+rotate the selection rect for a vertical writing-mode, but I did it in
+a hacky way that wasn’t very explicit about coordinate spaces. This
+patch tries to improve that.
 
-Bug: 1030176
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id81823628fd50f55673dda4e7d33fbd4ea4cb003">Id81823628fd50f55673dda4e7d33fbd4ea4cb003</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2397059">https://chromium-review.googlesource.com/c/chromium/src/+/2397059</a>
+ComputeSelectionRect was also a misleading design, because the offset
+arg is only used the first time, and strictly speaking we sometimes
+passed coordinates in the wrong space [0]. This patch also eliminates
+ComputeSelectionRect in favour of a nullopt check inside the other
+selection rect methods, computing the rect if needed using the offset
+given in the ctor (which is always in physical space).
+
+Performance impact should be minimal. CurrentLocalSelectionRectForText
+is called exactly as often as it used to be, there are two new nullopt
+checks per selection painted, and ComputeBoxRect (relatively cheap) is
+called only slightly more often than before.
+
+[0] The offset should be in physical space. We pass |box_rect.offset|
+at every call site, but after writing-mode rotation, |box_rect| is in
+writing-mode space. This merely happens to work because the canvas is
+rotated around |box_rect.offset|, so that point is invariant, but it’s
+still incorrect. Coordinate handling in text paint code needs systemic
+rework to better leverage the type system, or problems like these will
+continue to cause pain while we impl compliant highlight painting.
+
+Bug: 1147859
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I968726cdf3d73ce9faff6bad8191d2778f46332a">I968726cdf3d73ce9faff6bad8191d2778f46332a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3108999">https://chromium-review.googlesource.com/c/chromium/src/+/3108999</a>
+Commit-Queue: Delan Azabani &lt;dazabani@igalia.com&gt;
 Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
-Reviewed-by: Keishi Hattori &lt;keishi@chromium.org&gt;
-Commit-Queue: Yuki Yamada &lt;yukiy@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#915518}
+Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#915530}
 </pre>
 
 </body>
