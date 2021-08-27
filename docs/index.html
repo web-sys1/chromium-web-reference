@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/915940/"> 915940</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/97d6e9c16991a75919ef817a700df1884bf022e1">97d6e9c16991a75919ef817a700df1884bf022e1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/915956/"> 915956</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d2532ff35cf3f78b043cc3b05e200421a684785e">d2532ff35cf3f78b043cc3b05e200421a684785e</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/915919/">915919</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   97d6e9c16991a75919ef817a700df1884bf022e1
+   d2532ff35cf3f78b043cc3b05e200421a684785e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/97d6e9c16991a75919ef817a700df1884bf022e1">
+    <a href="/chromium/src/+log/d2532ff35cf3f78b043cc3b05e200421a684785e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/97d6e9c16991a75919ef817a700df1884bf022e1.tar.gz">
+    <a href="/chromium/src/+archive/d2532ff35cf3f78b043cc3b05e200421a684785e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Elad Alon &lt;eladalon@chromium.org&gt;
+   Ben Mason &lt;benmason@chromium.org&gt;
   </td>
   <td>
-   Fri Aug 27 13:29:14 2021
+   Fri Aug 27 14:20:11 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Aug 27 13:29:14 2021
+   Fri Aug 27 14:20:11 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/97d6e9c16991a75919ef817a700df1884bf022e1/">
-    85d4ff5dbf5ce06c0247c80165eb8003afcc2298
+   <a href="/chromium/src/+/d2532ff35cf3f78b043cc3b05e200421a684785e/">
+    0fd88933cd16bbacd590f029a5a38662f160c547
    </a>
   </td>
  </tr>
@@ -166,65 +166,26 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/97d6e9c16991a75919ef817a700df1884bf022e1%5E">
-    760c315247eccfc73aef0795799ebddfe7742e93
+   <a href="/chromium/src/+/d2532ff35cf3f78b043cc3b05e200421a684785e%5E">
+    13c16dcca8e2ff996fe8115bca40bce6cfbf337b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/97d6e9c16991a75919ef817a700df1884bf022e1%5E%21/">
+    <a href="/chromium/src/+/d2532ff35cf3f78b043cc3b05e200421a684785e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Conditional Focus][#1] Expose focus logic
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Updating XTBs based on .GRDs from branch main
 
-Design doc:
-<a href="https://docs.google.com/document/d/1cfxcOfNVCgIzZM_yV6KGZSeU1rMrDbYP_RtOSvfQ8zI/edit?usp=sharing&amp;resourcekey=0-4wB76nSgpLEbt1P8OWCcsg">https://docs.google.com/document/d/1cfxcOfNVCgIzZM_yV6KGZSeU1rMrDbYP_RtOSvfQ8zI/edit?usp=sharing&amp;resourcekey=0-4wB76nSgpLEbt1P8OWCcsg</a>
-
-Background:
-Conditional Focus allows a called to getDisplayMedia() to decide
-whether the captured display surface (tab/window) should be focused.
-There is a window of 1s during which focus can be triggered or
-suppressed. If the application does not explicitly decide within
-the allotted time, the captured display surface IS focused,
-in line with previous behavior.
-
-This CL:
-Previously, the logic for focusing was hard-coded deep inside the UI.
-Now, the logic for focusing is exposed to MediaStreamManager. From here
-future CLs in this chain can trigger the logic with ease, going from
-Blink to MediaStreamDispatcherHost and then finally to MSM.
-
-Note:
-This CL does not introduce any new unit-tests or browser-tests.
-It's easier to check this feature once all parts are landed.
-This is safe because everything is gated by a command-line flag
-and is no-op so long as the command-line flag is not provided.
-
-Next CLs, in order:
-1. Expose the API in Blink.
-2. Add a microtask to close the focus-window when finishing the task
-   on which the Promise&lt;MediaStream&gt; was resolved, even if 1s has
-   not yet elapsed.
-3. Add browser tests.
-4. Remove the browser-side command-line flag.
-5. Change the Blink feature-gating to OT-gating.
-
-Bug: 1215480
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4eabd8c45f7ea868ba23e90e9adb6f7646f9770c">I4eabd8c45f7ea868ba23e90e9adb6f7646f9770c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3107189">https://chromium-review.googlesource.com/c/chromium/src/+/3107189</a>
-Auto-Submit: Elad Alon &lt;eladalon@chromium.org&gt;
-Commit-Queue: Yaron Friedman &lt;yfriedman@chromium.org&gt;
-Reviewed-by: Yaron Friedman &lt;yfriedman@chromium.org&gt;
-Reviewed-by: mark a. foltz &lt;mfoltz@chromium.org&gt;
-Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
-Reviewed-by: Alexander Alekseev &lt;alemate@chromium.org&gt;
-Reviewed-by: Thomas Guilbert &lt;tguilbert@chromium.org&gt;
-Reviewed-by: Henrik Boström &lt;hbos@chromium.org&gt;
-Reviewed-by: Elly Fong-Jones &lt;ellyjones@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#915940}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7f290dbe9021a5d34bcc4bc7a0ce6b07d078f15d">I7f290dbe9021a5d34bcc4bc7a0ce6b07d078f15d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3124523">https://chromium-review.googlesource.com/c/chromium/src/+/3124523</a>
+Auto-Submit: Ben Mason &lt;benmason@chromium.org&gt;
+Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#915956}
 </pre>
 
 </body>
