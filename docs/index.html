@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/915967/"> 915967</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0e330ec0e4097c6f038270c1e18be828f637235d">0e330ec0e4097c6f038270c1e18be828f637235d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/916001/"> 916001</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/dbc0a3994c71edae9596c40d29207f97740122e9">dbc0a3994c71edae9596c40d29207f97740122e9</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/915952/">915952</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0e330ec0e4097c6f038270c1e18be828f637235d
+   dbc0a3994c71edae9596c40d29207f97740122e9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0e330ec0e4097c6f038270c1e18be828f637235d">
+    <a href="/chromium/src/+log/dbc0a3994c71edae9596c40d29207f97740122e9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0e330ec0e4097c6f038270c1e18be828f637235d.tar.gz">
+    <a href="/chromium/src/+archive/dbc0a3994c71edae9596c40d29207f97740122e9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   kouhei &lt;kouhei@chromium.org&gt;
+   Jesse Doherty &lt;jwd@google.com&gt;
   </td>
   <td>
-   Fri Aug 27 14:59:35 2021
+   Fri Aug 27 16:41:16 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Aug 27 14:59:35 2021
+   Fri Aug 27 16:41:16 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0e330ec0e4097c6f038270c1e18be828f637235d/">
-    75f182ab9c8078208fd8d16a55dfeeb79df0232c
+   <a href="/chromium/src/+/dbc0a3994c71edae9596c40d29207f97740122e9/">
+    7804b40eae07e7767a198f66abb8b9e5200f559e
    </a>
   </td>
  </tr>
@@ -166,40 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0e330ec0e4097c6f038270c1e18be828f637235d%5E">
-    0c36952d780dd832c638e851a229332b55f828dc
+   <a href="/chromium/src/+/dbc0a3994c71edae9596c40d29207f97740122e9%5E">
+    ea3884f3d2a9504af310d8460a008b48bc31ae2a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0e330ec0e4097c6f038270c1e18be828f637235d%5E%21/">
+    <a href="/chromium/src/+/dbc0a3994c71edae9596c40d29207f97740122e9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move ImportMap responsibilities from ModulatorImplBase to Modulator
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Validate studies before checking their filters.
 
-Before this CL, `Modulator::RegisterImportMap()` was also responsible
-for throwing the V8 error. This CL moves it to
-`PendingImportMap::RegisterImportMap()`.
+This came up while creating a fuzz test for CreateTrialsFromSeed, which was producing invalid min_version filters.
 
-The above makes `Modulator::RegisterImportMap()` trivial enough that it
-can be migrated to Modulator. This CL moves ImportMap management methods
-from ModulatorImplBase to Modulator.
+In a debug build this crashes (due to DCHECKs), in a non-debug build it would do the comparison with an invalid version. My understanding of the code is that an invalid version will always be bigger than a valid one. This means an invalid max_version filter will always pass.
 
-`Modulator::GetImportMap()` protected method is temporarily introduced,
-so that `ModulatorImplBase::ResolveModuleSpecifier()` can make use of
-`Modulator::import_map_`, until `ResolveModuleSpecifier()` is also
-moved to Modulator.
+The comments on CompareToWildcardString also state that IsValidWildcard must be true before using it.
 
-Bug: 1214824
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I608c07619ee93385b344f1cfaa3990c05ed60a8b">I608c07619ee93385b344f1cfaa3990c05ed60a8b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3096887">https://chromium-review.googlesource.com/c/chromium/src/+/3096887</a>
-Commit-Queue: Kouhei Ueno &lt;kouhei@chromium.org&gt;
-Reviewed-by: Dan Clark &lt;daniec@microsoft.com&gt;
-Reviewed-by: Hiroshige Hayashizaki &lt;hiroshige@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#915967}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7923c50d5c90b3cf2fec34b121de5579106e070c">I7923c50d5c90b3cf2fec34b121de5579106e070c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3116231">https://chromium-review.googlesource.com/c/chromium/src/+/3116231</a>
+Commit-Queue: Jesse Doherty &lt;jwd@chromium.org&gt;
+Reviewed-by: Robert Kaplow &lt;rkaplow@chromium.org&gt;
+Reviewed-by: Alexei Svitkine &lt;asvitkine@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#916001}
 </pre>
 
 </body>
