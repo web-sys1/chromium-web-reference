@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/916214/"> 916214</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/92be91462d9040e9163172a93d07a3ab60f9068e">92be91462d9040e9163172a93d07a3ab60f9068e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/916218/"> 916218</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f2fbeb7ad3ed97a57d60eb9635b7930842ce4cb3">f2fbeb7ad3ed97a57d60eb9635b7930842ce4cb3</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/916201/">916201</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/60b3796a421c3cf04f1d7ca90889145c38cb6ac5">60b3796a421c3cf04f1d7ca90889145c38cb6ac5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/916214/">916214</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/92be91462d9040e9163172a93d07a3ab60f9068e">92be91462d9040e9163172a93d07a3ab60f9068e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   92be91462d9040e9163172a93d07a3ab60f9068e
+   f2fbeb7ad3ed97a57d60eb9635b7930842ce4cb3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/92be91462d9040e9163172a93d07a3ab60f9068e">
+    <a href="/chromium/src/+log/f2fbeb7ad3ed97a57d60eb9635b7930842ce4cb3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/92be91462d9040e9163172a93d07a3ab60f9068e.tar.gz">
+    <a href="/chromium/src/+archive/f2fbeb7ad3ed97a57d60eb9635b7930842ce4cb3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Benjamin Beaudry &lt;bebeaudr@microsoft.com&gt;
+   Alan Screen &lt;awscreen@chromium.org&gt;
   </td>
   <td>
-   Sat Aug 28 04:41:46 2021
+   Sat Aug 28 05:27:38 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Aug 28 04:41:46 2021
+   Sat Aug 28 05:27:38 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/92be91462d9040e9163172a93d07a3ab60f9068e/">
-    4501e764069fab8319150d08c58ebe59a67d2ed1
+   <a href="/chromium/src/+/f2fbeb7ad3ed97a57d60eb9635b7930842ce4cb3/">
+    104dbaaec7f18c486f7dacc16436c0a9a8942138
    </a>
   </td>
  </tr>
@@ -166,42 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/92be91462d9040e9163172a93d07a3ab60f9068e%5E">
-    577a7a98716c081705620d51fd0e1647839e5887
+   <a href="/chromium/src/+/f2fbeb7ad3ed97a57d60eb9635b7930842ce4cb3%5E">
+    d1a0482edd387a742afd7bf859b465908705e971
    </a>
    <span>
     [
-    <a href="/chromium/src/+/92be91462d9040e9163172a93d07a3ab60f9068e%5E%21/">
+    <a href="/chromium/src/+/f2fbeb7ad3ed97a57d60eb9635b7930842ce4cb3%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Keyboard Tooltip] Show tooltip on element focus set from JS when initiated from keypress
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Introduce TestPrintingContext &amp; test UpdatePrintSettings
 
-We want to show a tooltip when we call .focus() with JS initiated from
-a keydown event.
+Ability to test out-of-process print paths benefits from having a test
+abstraction layer as close as possible to where the operating system
+print APIs are made.  For printing this is primarily in two classes,
+PrintBackend and PrintingContext.
 
-E.g.:
-    document.addEventListener('keydown', (e) =&gt; {
-      if (e.keyCode == 37) {
-        document.getElementById('b1').focus(); // Show tooltip!
-      } else if (e.keyCode == 39) {
-        document.getElementById('b2').focus(); // Show tooltip!
-      }
-    });
+Introduce a new TestPrintingContext class which is analogous to the
+existing TestPrintBackend class.  This will support test scenarios for
+printing a document, allowing for more testing coverage of the full
+printing stack.
 
-To achieve that, we exposed a new state "IsHandlingKeyEvent" on the
-KeyboardEventManager and we added the new FocusType kUnknownKeyPress.
+Start off with an implementation filled in for UpdatePrinterSettings(),
+which is used at the start of the document printing pipeline.  This
+enables testing to be introduced which provides coverage of
+PrintJobWorker::UpdatePrintSettings() for Windows, macOS, and Linux.
 
-Bug: 1243913
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8d08e1968b900b6204d5bce8acf5bec04f4297fa">I8d08e1968b900b6204d5bce8acf5bec04f4297fa</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3124135">https://chromium-review.googlesource.com/c/chromium/src/+/3124135</a>
-Commit-Queue: Benjamin Beaudry &lt;benjamin.beaudry@microsoft.com&gt;
-Reviewed-by: Daniel Libby &lt;dlibby@microsoft.com&gt;
-Reviewed-by: Emily Stark &lt;estark@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#916214}
+Bug: 809738, 822505
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iee7b0be9e770226f88c6f1f834b4d01c5659a1d8">Iee7b0be9e770226f88c6f1f834b4d01c5659a1d8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3058038">https://chromium-review.googlesource.com/c/chromium/src/+/3058038</a>
+Commit-Queue: Alan Screen &lt;awscreen@chromium.org&gt;
+Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#916218}
 </pre>
 
 </body>
