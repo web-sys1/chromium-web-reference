@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/916300/"> 916300</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e2a255b5efe2190dc29e52671f6155b96a7a19bc">e2a255b5efe2190dc29e52671f6155b96a7a19bc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/916304/"> 916304</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/076dea374d55d9ba464762a97556944563200cec">076dea374d55d9ba464762a97556944563200cec</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/916300/">916300</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e2a255b5efe2190dc29e52671f6155b96a7a19bc
+   076dea374d55d9ba464762a97556944563200cec
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e2a255b5efe2190dc29e52671f6155b96a7a19bc">
+    <a href="/chromium/src/+log/076dea374d55d9ba464762a97556944563200cec">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e2a255b5efe2190dc29e52671f6155b96a7a19bc.tar.gz">
+    <a href="/chromium/src/+archive/076dea374d55d9ba464762a97556944563200cec.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alexey Baskakov &lt;loyso@chromium.org&gt;
+   Yuki Shiino &lt;yukishiino@chromium.org&gt;
   </td>
   <td>
-   Mon Aug 30 02:26:59 2021
+   Mon Aug 30 03:19:30 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 30 02:26:59 2021
+   Mon Aug 30 03:19:30 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e2a255b5efe2190dc29e52671f6155b96a7a19bc/">
-    b8393f32c423344596d3925f2f053689c2affd9b
+   <a href="/chromium/src/+/076dea374d55d9ba464762a97556944563200cec/">
+    200f00fa320de833105a995ad629aacd16c94cf0
    </a>
   </td>
  </tr>
@@ -166,62 +166,81 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e2a255b5efe2190dc29e52671f6155b96a7a19bc%5E">
-    1dacbcad9786e04459c4b65766588e4e34cf5ca2
+   <a href="/chromium/src/+/076dea374d55d9ba464762a97556944563200cec%5E">
+    26bbff79b16b522b614ae8ea1063a5317e2b9ddd
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e2a255b5efe2190dc29e52671f6155b96a7a19bc%5E%21/">
+    <a href="/chromium/src/+/076dea374d55d9ba464762a97556944563200cec%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">dpwa: Avoid overwriting manifest fields if web app already exists.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Reland "Populate pointerId, pointerType for contextmenu event""
 
-Background:
-The same web app can be installed and uninstalled by a number
-of systems (multiple sources). We add an extra source and
-update the web app manifest and icons if the app already exists.
+This reverts commit d02efa408f9e1cdd3299e0068e27f7d54c2061dc.
 
-kWebAppStore and kDefault install sources provide an offline
-manifest fields, which may represent a subset or out-of-date
-fields from the real web site's manifest.
+Reason for revert: Suspicious about causing test failures of
+external/wpt/pointerevents/pointerevent_contextmenu_is_a_pointerevent.html?touch
+<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/Mac10.13%20Tests/41310/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/Mac10.13%20Tests/41310/overview</a>
 
-The problem:
-If the already existing app is installed by a user or sync
-(the app has fresh manifest fields from online) then
-its data gets overwritten by fallback manifest data,
-including sync_fallback_data (sync_fallback_data is empty
-for kWebAppStore and kDefault install sources).
-As a result, we upload empty sync_fallback_data to the sync
-server and then it gets replicated as empty to all synced
-devices.
+Original change's description:
+&gt; Reland "Populate pointerId, pointerType for contextmenu event"
+&gt;
+&gt; This is a reland of a6d69d5243dd02afbd8ef02e5a5c557dd8c4a9e9
+&gt;
+&gt; I believe the reason for the test failures when this landed
+&gt; the first time was related to how pointerId was populated
+&gt; for the contextmenu pointer event.
+&gt; With crrev.com/c/2889205 landed, we have a robust way to
+&gt; associate the gesture event sequence with the corresponding
+&gt; pointer event sequence.
+&gt; This CL uses the approach in crrev.com/c/2889205 to populate
+&gt; the pointerId for the contextmenu pointer event.
+&gt;
+&gt;
+&gt; Original change's description:
+&gt; &gt; Populate pointerId, pointerType for contextmenu event
+&gt; &gt;
+&gt; &gt; For contextmenu as a pointer event pointerId and pointerType
+&gt; &gt; were not populated.
+&gt; &gt;
+&gt; &gt; In this CL we are populating pointerId/pointerType for contextmenu
+&gt; &gt; coming from touch and mouse.
+&gt; &gt; For touch we use a similar approach to crrev.com/c/2800231
+&gt; &gt; for populating pointerId,pointerType for clicks generated in
+&gt; &gt; GestureManager::HandleGestureTap.
+&gt; &gt; The main change will be in EventHandler::SendContextMenuEvent
+&gt; &gt; where we'll be passing id and pointer type to the call to
+&gt; &gt; MouseEventManager::DispatchMouseEvent. This in turn will
+&gt; &gt; populate pointerId and pointerType correctly when the contextmenu
+&gt; &gt; PointerEvent is created.
+&gt; &gt;
+&gt; &gt; Bug: 1150442,1150441
+&gt; &gt; TEST: external/wpt/pointerevents/pointerevent_contextmenu_is_a_pointerevent.html
+&gt; &gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If2408d9cf0d5f00b08efcf2236ff7933472972ce">If2408d9cf0d5f00b08efcf2236ff7933472972ce</a>
+&gt; &gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2874026">https://chromium-review.googlesource.com/c/chromium/src/+/2874026</a>
+&gt; &gt; Commit-Queue: Liviu Tinta &lt;liviutinta@chromium.org&gt;
+&gt; &gt; Reviewed-by: Robert Flack &lt;flackr@chromium.org&gt;
+&gt; &gt; Cr-Commit-Position: refs/heads/master@{#881145}
+&gt;
+&gt; Bug: 1150442,1150441,1207709
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iffaa60373a3811a10f54ff123e64850801450883">Iffaa60373a3811a10f54ff123e64850801450883</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3101585">https://chromium-review.googlesource.com/c/chromium/src/+/3101585</a>
+&gt; Commit-Queue: Liviu Tinta &lt;liviutinta@chromium.org&gt;
+&gt; Reviewed-by: Mustaq Ahmed &lt;mustaq@chromium.org&gt;
+&gt; Reviewed-by: Robert Flack &lt;flackr@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#916130}
 
-The fix:
-Introduce overwrite_existing_manifest_fields flag in InstallParams
-to denote that a call site prefers fresh existing manifest
-fields.
-
-This CL plumbs `force_reinstall` from ExternalInstallOptions to
-WebAppInstallParams as is.
-
-Alternative approach considered but rejected:
-<a href="https://chromium-review.googlesource.com/c/chromium/src/+/3096397">https://chromium-review.googlesource.com/c/chromium/src/+/3096397</a>
-
-In next CLs: add more tests for multiple sources situations in
-various systems.
-
-Bug: 1238622
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4912c230d961de9bbd4ca291889b1ec305ba7dc7">I4912c230d961de9bbd4ca291889b1ec305ba7dc7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3097263">https://chromium-review.googlesource.com/c/chromium/src/+/3097263</a>
-Commit-Queue: Alexey Baskakov &lt;loyso@chromium.org&gt;
-Reviewed-by: Alan Cutter &lt;alancutter@chromium.org&gt;
-Reviewed-by: Marc Treib &lt;treib@chromium.org&gt;
-Reviewed-by: Reilly Grant &lt;reillyg@chromium.org&gt;
-Reviewed-by: Tim Sergeant &lt;tsergeant@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#916300}
+Bug: 1150442,1150441,1207709
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie5c5ae516f3ed428c25a3d2feac9557fce8755fb">Ie5c5ae516f3ed428c25a3d2feac9557fce8755fb</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3128400">https://chromium-review.googlesource.com/c/chromium/src/+/3128400</a>
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Commit-Queue: Yuki Shiino &lt;yukishiino@chromium.org&gt;
+Owners-Override: Yuki Shiino &lt;yukishiino@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#916304}
 </pre>
 
 </body>
