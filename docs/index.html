@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/916413/"> 916413</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b7889388cdccb07f0be1228a8d0ff25c2d0fa5c1">b7889388cdccb07f0be1228a8d0ff25c2d0fa5c1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/916420/"> 916420</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/633bc8feaf5d32dda2b01c71dc51239cfb85bad4">633bc8feaf5d32dda2b01c71dc51239cfb85bad4</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/916414/">916414</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b7889388cdccb07f0be1228a8d0ff25c2d0fa5c1
+   633bc8feaf5d32dda2b01c71dc51239cfb85bad4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b7889388cdccb07f0be1228a8d0ff25c2d0fa5c1">
+    <a href="/chromium/src/+log/633bc8feaf5d32dda2b01c71dc51239cfb85bad4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b7889388cdccb07f0be1228a8d0ff25c2d0fa5c1.tar.gz">
+    <a href="/chromium/src/+archive/633bc8feaf5d32dda2b01c71dc51239cfb85bad4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Justin Novosad &lt;junov@chromium.org&gt;
+   Elad Alon &lt;eladalon@chromium.org&gt;
   </td>
   <td>
-   Mon Aug 30 14:35:36 2021
+   Mon Aug 30 15:16:04 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 30 14:35:36 2021
+   Mon Aug 30 15:16:04 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b7889388cdccb07f0be1228a8d0ff25c2d0fa5c1/">
-    69f22e654641f73d819bc1d7a320e8807bae7b24
+   <a href="/chromium/src/+/633bc8feaf5d32dda2b01c71dc51239cfb85bad4/">
+    1f32c85f5a9aa1afa39f29c2072de8cb89fd006c
    </a>
   </td>
  </tr>
@@ -166,70 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b7889388cdccb07f0be1228a8d0ff25c2d0fa5c1%5E">
-    2357bfc342621f0143d150f5527af93ca976bc7a
+   <a href="/chromium/src/+/633bc8feaf5d32dda2b01c71dc51239cfb85bad4%5E">
+    ab73ba09518dd2c7b4dddd36bdf35c60d66058d7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b7889388cdccb07f0be1228a8d0ff25c2d0fa5c1%5E%21/">
+    <a href="/chromium/src/+/633bc8feaf5d32dda2b01c71dc51239cfb85bad4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Remove overdraw detection logic from 2d canvas"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Microtask changes focus without conditional-focus
 
-This reverts commit b3b2a41bb2fa2a867088b1d76cabe1f00a577efc.
+Even when not using conditional-focus, the microtask should
+be fired and be used to trigger an immediate focus-change,
+rather than wait for 1s before the browser-side timer fires
+and triggers this change.
 
-Reason for revert: Memory regression: crbug.com/1244272
-
-Bug: 1244272
-
-Original change's description:
-&gt; Remove overdraw detection logic from 2d canvas
-&gt;
-&gt; Historical context: Overdraw optimizations were originally
-&gt; implemented to improve Chrome's score on legacy benchmarks that were
-&gt; used by the press for comparing browser performance.  Overdraw
-&gt; optimization refers to the logic that discards all pending draw
-&gt; operations whenever a single draw operation occludes the entire canvas.
-&gt; Typically, this optimization only affects animations that are not
-&gt; synchronized with the display, which was the norm before the
-&gt; introduction of the requestAnimationFrame API.
-&gt;
-&gt; The logic for determining whether a draw operation occludes the canvas
-&gt; is cumbersome. Even in the simplest early-exit scenarios it includes
-&gt; non-inlinable function calls and conditional branches on every single
-&gt; draw call. This resulted in measurable overhead that brought no benefit
-&gt; to well designed JS animation code.
-&gt;
-&gt; This CL proposes a compromise: it still performs overdraw optimization
-&gt; when the canvas is explicitly cleared, but it avoids overdraw detection
-&gt; logic on every single draw call. This way, most animations that are not
-&gt; synchronized with the display (do not use rAF) can still benefit from
-&gt; the optimization because they reset the canvas at the start of each
-&gt; animation frame. All the while, the runtime of canvas draw methods is
-&gt; slightly reduced.  As a result of this change the performance a few old
-&gt; or poorly written web pages may suffer, but code that respects best
-&gt; practices will benefit.
-&gt;
-&gt; With this change, the Canvas Lines test of the MotionMark benchmark
-&gt; (which is CPU-bound on the renderer main thread) runs about 3% faster.
-&gt;
-&gt; Bug: 1232600
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I30bbae3e3e579996fa9d1f8796f5b4ebae703664">I30bbae3e3e579996fa9d1f8796f5b4ebae703664</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3114397">https://chromium-review.googlesource.com/c/chromium/src/+/3114397</a>
-&gt; Reviewed-by: Aaron Krajeski &lt;aaronhk@chromium.org&gt;
-&gt; Commit-Queue: Justin Novosad &lt;junov@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#915974}
-
-Bug: 1232600
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ida2dc641cf1d2a37d8a39936a7fa8ba49446e399">Ida2dc641cf1d2a37d8a39936a7fa8ba49446e399</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3129620">https://chromium-review.googlesource.com/c/chromium/src/+/3129620</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: Justin Novosad &lt;junov@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#916413}
+Bug: 1215480
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8b0fa5bdb97c7785426d12f963428986a0706f14">I8b0fa5bdb97c7785426d12f963428986a0706f14</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3129404">https://chromium-review.googlesource.com/c/chromium/src/+/3129404</a>
+Commit-Queue: Elad Alon &lt;eladalon@chromium.org&gt;
+Commit-Queue: Henrik Boström &lt;hbos@chromium.org&gt;
+Auto-Submit: Elad Alon &lt;eladalon@chromium.org&gt;
+Reviewed-by: Henrik Boström &lt;hbos@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#916420}
 </pre>
 
 </body>
