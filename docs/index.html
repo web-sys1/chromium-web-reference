@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/916498/"> 916498</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cff3667eea3946bbcb890ebf141d6e86f1272c39">cff3667eea3946bbcb890ebf141d6e86f1272c39</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/916500/"> 916500</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4300dde73a5036bee8d7c00944fda7e8dc5df8d4">4300dde73a5036bee8d7c00944fda7e8dc5df8d4</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/916467/">916467</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   cff3667eea3946bbcb890ebf141d6e86f1272c39
+   4300dde73a5036bee8d7c00944fda7e8dc5df8d4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/cff3667eea3946bbcb890ebf141d6e86f1272c39">
+    <a href="/chromium/src/+log/4300dde73a5036bee8d7c00944fda7e8dc5df8d4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/cff3667eea3946bbcb890ebf141d6e86f1272c39.tar.gz">
+    <a href="/chromium/src/+archive/4300dde73a5036bee8d7c00944fda7e8dc5df8d4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   rbpotter &lt;rbpotter@chromium.org&gt;
+   Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
   </td>
   <td>
-   Mon Aug 30 20:01:12 2021
+   Mon Aug 30 20:51:21 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 30 20:01:12 2021
+   Mon Aug 30 20:51:21 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/cff3667eea3946bbcb890ebf141d6e86f1272c39/">
-    a3c0f0c4e09b6b5e4b6ba0b37deae7b2272a382e
+   <a href="/chromium/src/+/4300dde73a5036bee8d7c00944fda7e8dc5df8d4/">
+    fe4dbe85758e0a68aa60dc74e6ecc13276fcd301
    </a>
   </td>
  </tr>
@@ -166,30 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/cff3667eea3946bbcb890ebf141d6e86f1272c39%5E">
-    9a5ca313c038946553086d67aed9ec2845beba9d
+   <a href="/chromium/src/+/4300dde73a5036bee8d7c00944fda7e8dc5df8d4%5E">
+    84f9b82d1d915ce62734c51de1c2204ab1afb9ab
    </a>
    <span>
     [
-    <a href="/chromium/src/+/cff3667eea3946bbcb890ebf141d6e86f1272c39%5E%21/">
+    <a href="/chromium/src/+/4300dde73a5036bee8d7c00944fda7e8dc5df8d4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Print Preview: Convert more files to class based syntax
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Extensions] Add promise support to chrome.storage
 
-- media_size_settings.js
-- more_settings.js
-- number_settings_section.js
+Add promise support to the chrome.storage API. Since chrome.storage uses
+custom types for the StorageAreas, this required modifying the bespoke
+StorageArea C++ class in the renderer. This CL:
+- Re-adds the "returns_async" schema definition in storage.json (to
+  indicate that the signature supports promises)
+- Implements promise handling in the StorageArea class
+- Adds targeted unit tests in the renderer for the StorageArea
+- Adds end-to-end browser tests exercising the flow with a "real"
+  extension.
 
-Bug: 1206112
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I19cf7aa586505fd2e187d135846fc921ca1b3424">I19cf7aa586505fd2e187d135846fc921ca1b3424</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3123786">https://chromium-review.googlesource.com/c/chromium/src/+/3123786</a>
-Commit-Queue: Rebekah Potter &lt;rbpotter@chromium.org&gt;
-Reviewed-by: John Lee &lt;johntlee@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#916498}
+After this, MV3 extensions can use promises with the storage API, e.g.
+
+await chrome.storage.set({foo: 'bar'});
+const {foo} = await chrome.storage.get('foo');
+
+Bug: 328932
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifcc73c0a6f56a8f8a1e68d719504d682d57b3356">Ifcc73c0a6f56a8f8a1e68d719504d682d57b3356</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3123999">https://chromium-review.googlesource.com/c/chromium/src/+/3123999</a>
+Reviewed-by: David Bertoni &lt;dbertoni@chromium.org&gt;
+Commit-Queue: Devlin &lt;rdevlin.cronin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#916500}
 </pre>
 
 </body>
