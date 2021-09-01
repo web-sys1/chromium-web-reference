@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/917376/"> 917376</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/57cd705129dffa63de5a3ce506e0ae4f803697f0">57cd705129dffa63de5a3ce506e0ae4f803697f0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/917395/"> 917395</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/08d0ba0537b4b254f8b561ba86e46540ffe39741">08d0ba0537b4b254f8b561ba86e46540ffe39741</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/917361/">917361</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   57cd705129dffa63de5a3ce506e0ae4f803697f0
+   08d0ba0537b4b254f8b561ba86e46540ffe39741
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/57cd705129dffa63de5a3ce506e0ae4f803697f0">
+    <a href="/chromium/src/+log/08d0ba0537b4b254f8b561ba86e46540ffe39741">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/57cd705129dffa63de5a3ce506e0ae4f803697f0.tar.gz">
+    <a href="/chromium/src/+archive/08d0ba0537b4b254f8b561ba86e46540ffe39741.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Will Harris &lt;wfh@chromium.org&gt;
   </td>
   <td>
-   Wed Sep 01 21:03:05 2021
+   Wed Sep 01 21:35:24 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 01 21:03:05 2021
+   Wed Sep 01 21:35:24 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/57cd705129dffa63de5a3ce506e0ae4f803697f0/">
-    77f6d40a9d724e73a505fc96948ba1d8a31bed6e
+   <a href="/chromium/src/+/08d0ba0537b4b254f8b561ba86e46540ffe39741/">
+    558244b2eae4d555257b67cf2e14373589948393
    </a>
   </td>
  </tr>
@@ -166,50 +166,57 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/57cd705129dffa63de5a3ce506e0ae4f803697f0%5E">
-    3c8ebd65d1612505685636ae6575bd05a72d628d
+   <a href="/chromium/src/+/08d0ba0537b4b254f8b561ba86e46540ffe39741%5E">
+    c666ffc8c3ce31014df8f6c207961b72581ab47d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/57cd705129dffa63de5a3ce506e0ae4f803697f0%5E%21/">
+    <a href="/chromium/src/+/08d0ba0537b4b254f8b561ba86e46540ffe39741%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Skia from 0fc6bedf5a14 to facffbe0936d (3 revisions)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Permit migration of network service data to a subdirectory.
 
-<a href="https://skia.googlesource.com/skia.git/+log/0fc6bedf5a14..facffbe0936d">https://skia.googlesource.com/skia.git/+log/0fc6bedf5a14..facffbe0936d</a>
+This CL adds a new field in the NetworkContextFilePaths
+called `unsandboxed_data_path` which enables the migration
+of data currently contained in the `data_path` to a new
+directory.
 
-2021-09-01 kjlubick@google.com [infra] Add go/skia-break-glass to gardener documentation
-2021-09-01 robertphillips@google.com Move more Ops to skgpu::v1 namespace (take 2)
-2021-09-01 robertphillips@google.com Reland "Fix compilation w/ "skia_enable_svg = false" (take 2)"
+Setting `unsandboxed_data_path` will perform a migration
+of any network context data from `unsandboxed_data_path`
+to `data_path` and also allow the sandbox access to files
+contained within `data_path`. This is achieved on
+Windows by setting an ACE (Access Control Entry) to allow
+the LPAC sandbox to access these files. Support for other
+platforms will be added in future CLs, thus allowing the
+set of files that the network service process can access
+to be further tightened as the sandbox is enabled.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/skia-autoroll">https://autoroll.skia.org/r/skia-autoroll</a>
-Please CC fmalita@google.com on the revert to ensure that a human
-is aware of the problem.
+It now becomes an unsupported operation (protected by
+DCHECK) to try and enable the LPAC sandbox on Windows
+without specifying a `unsandboxed_data_path`.
 
-To file a bug in Skia: <a href="https://bugs.chromium.org/p/skia/issues/entry">https://bugs.chromium.org/p/skia/issues/entry</a>
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+This CL does not yet migrate any data, as no code outside
+of testing specifies the `unsandboxed_data_path`. As such,
+no behavior changes are to be expected. These will be
+added in follow-up CLs.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+This CL also removes
+MaybeSetNetworkContextSandboxPermissions which was an
+unused function.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
+BUG=841001,1173622
 
-Cq-Include-Trybots: luci.chromium.try:android_optional_gpu_tests_rel;luci.chromium.try:linux-blink-rel;luci.chromium.try:linux-chromeos-compile-dbg;luci.chromium.try:linux_optional_gpu_tests_rel;luci.chromium.try:mac_optional_gpu_tests_rel;luci.chromium.try:win_optional_gpu_tests_rel
-Cq-Do-Not-Cancel-Tryjobs: true
-Bug: None
-Tbr: fmalita@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic453b068c53286768decf3945a977d6d33a03874">Ic453b068c53286768decf3945a977d6d33a03874</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3138033">https://chromium-review.googlesource.com/c/chromium/src/+/3138033</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#917376}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I68303a25be4327994169e8abfac18bd96289f9e5">I68303a25be4327994169e8abfac18bd96289f9e5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3105176">https://chromium-review.googlesource.com/c/chromium/src/+/3105176</a>
+Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Reviewed-by: Nasko Oskov &lt;nasko@chromium.org&gt;
+Reviewed-by: Matt Menke &lt;mmenke@chromium.org&gt;
+Commit-Queue: Will Harris &lt;wfh@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#917395}
 </pre>
 
 </body>
