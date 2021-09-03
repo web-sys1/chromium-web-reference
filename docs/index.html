@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/918119/"> 918119</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9cc600ef0b60ff1ec76683a2bfb98a6bdbb05d1e">9cc600ef0b60ff1ec76683a2bfb98a6bdbb05d1e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/918128/"> 918128</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a39c122c8f1d5d1baecf881b282fe0283b08cded">a39c122c8f1d5d1baecf881b282fe0283b08cded</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/918084/">918084</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9cc600ef0b60ff1ec76683a2bfb98a6bdbb05d1e
+   a39c122c8f1d5d1baecf881b282fe0283b08cded
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9cc600ef0b60ff1ec76683a2bfb98a6bdbb05d1e">
+    <a href="/chromium/src/+log/a39c122c8f1d5d1baecf881b282fe0283b08cded">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9cc600ef0b60ff1ec76683a2bfb98a6bdbb05d1e.tar.gz">
+    <a href="/chromium/src/+archive/a39c122c8f1d5d1baecf881b282fe0283b08cded.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   ckitagawa &lt;ckitagawa@chromium.org&gt;
+   Igor Ruvinov &lt;igorruvinov@chromium.org&gt;
   </td>
   <td>
-   Fri Sep 03 15:48:28 2021
+   Fri Sep 03 16:29:07 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Sep 03 15:48:28 2021
+   Fri Sep 03 16:29:07 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9cc600ef0b60ff1ec76683a2bfb98a6bdbb05d1e/">
-    cea80b6b5d4696eb21780bb04ec34416afb0abbf
+   <a href="/chromium/src/+/a39c122c8f1d5d1baecf881b282fe0283b08cded/">
+    6357bf2257eb0f109a1c52e91c32105740d49fbf
    </a>
   </td>
  </tr>
@@ -166,46 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9cc600ef0b60ff1ec76683a2bfb98a6bdbb05d1e%5E">
-    38524b689a5bfb34ea4bcf5a2375f7cba094205f
+   <a href="/chromium/src/+/a39c122c8f1d5d1baecf881b282fe0283b08cded%5E">
+    0063180114cce2373966721ea6b98b7dafa9d7dc
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9cc600ef0b60ff1ec76683a2bfb98a6bdbb05d1e%5E%21/">
+    <a href="/chromium/src/+/a39c122c8f1d5d1baecf881b282fe0283b08cded%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Zucchini] DEX Version 38 Support
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Specialize policy priority enum for browser priorities.
 
-DEX Version 38 added:
-* CallSiteId &amp; CallSite items
-* MethodHandle items
-* invoke-polymorphic containing meth@BBBB and proto@HHHH references
-* invoke-custom containing a call_site@BBBB reference
+The policy priority enum is specialized for priorities which can be
+applied to the browser. This is done to isolate the complex
+source-to-priority mapping in Chrome Browser from the simple 1:1 mapping
+in Chrome OS.
 
-This CL:
-* Adds CallSiteIdToCallSite
-* Adds MethodHandleTo{MethodId, FieldId}
-* Adds CodeToProtoId16 for invoke-polymorphic
-* Adds CodeToCallSiteId16 and WriteCallSiteId16 for invoke-custom
-* Updates CodeToMethodId16 for invoke-polymorphic
+As a result, the CompareEntryPriority(...) method also behaves
+differently for browser (scope and source are used to determine the
+priority, which is then compared) and OS (scope and source are compared
+directly).
 
-Fuzzed about 1 million iterations locally and uploaded new samples to
-the clusterfuzz bucket. 97% coverage.
-
-Manually tested on hand-written dex files using smali as well as the
-dexdump test corpus.
-
-Bug: 1231885
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icd885be2cfd433d0befe689d16c4a1e99573ca6c">Icd885be2cfd433d0befe689d16c4a1e99573ca6c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3060745">https://chromium-review.googlesource.com/c/chromium/src/+/3060745</a>
-Reviewed-by: Samuel Huang &lt;huangs@chromium.org&gt;
-Reviewed-by: Etienne Pierre-Doray &lt;etiennep@chromium.org&gt;
-Commit-Queue: Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#918119}
+Bug: 1011820, b/191893338
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic2a81d319e70245a5b06ee082238ec26191067ca">Ic2a81d319e70245a5b06ee082238ec26191067ca</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3073319">https://chromium-review.googlesource.com/c/chromium/src/+/3073319</a>
+Commit-Queue: Igor Ruvinov &lt;igorruvinov@chromium.org&gt;
+Reviewed-by: Alexander Hendrich &lt;hendrich@chromium.org&gt;
+Reviewed-by: Owen Min &lt;zmin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#918128}
 </pre>
 
 </body>
