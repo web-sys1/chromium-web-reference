@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/918349/"> 918349</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/47dbd9766966f5ea950a93db75c4f30f7b77903b">47dbd9766966f5ea950a93db75c4f30f7b77903b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/918354/"> 918354</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/30e56a70f14fa2b8be367c44616f1fd00b606dad">30e56a70f14fa2b8be367c44616f1fd00b606dad</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/918343/">918343</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   47dbd9766966f5ea950a93db75c4f30f7b77903b
+   30e56a70f14fa2b8be367c44616f1fd00b606dad
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/47dbd9766966f5ea950a93db75c4f30f7b77903b">
+    <a href="/chromium/src/+log/30e56a70f14fa2b8be367c44616f1fd00b606dad">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/47dbd9766966f5ea950a93db75c4f30f7b77903b.tar.gz">
+    <a href="/chromium/src/+archive/30e56a70f14fa2b8be367c44616f1fd00b606dad.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
+   Alan Ding &lt;alanding@google.com&gt;
   </td>
   <td>
-   Sat Sep 04 04:54:42 2021
+   Sat Sep 04 06:09:04 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Sep 04 04:54:42 2021
+   Sat Sep 04 06:09:04 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/47dbd9766966f5ea950a93db75c4f30f7b77903b/">
-    dbcf8ea2dd085be10f9fffdd8832ba141e0ea506
+   <a href="/chromium/src/+/30e56a70f14fa2b8be367c44616f1fd00b606dad/">
+    0b4cb66aafb0fdeb678d5e4f69aece109840b74e
    </a>
   </td>
  </tr>
@@ -166,42 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/47dbd9766966f5ea950a93db75c4f30f7b77903b%5E">
-    99d2dd25c505754afc0a14927c18369f2043c766
+   <a href="/chromium/src/+/30e56a70f14fa2b8be367c44616f1fd00b606dad%5E">
+    da20dd9c46e1a9cfc1d1ae1d1c64fe24a3faf6da
    </a>
    <span>
     [
-    <a href="/chromium/src/+/47dbd9766966f5ea950a93db75c4f30f7b77903b%5E%21/">
+    <a href="/chromium/src/+/30e56a70f14fa2b8be367c44616f1fd00b606dad%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll src-internal from 320fa7714dae to e75ccd0a2ba3 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">arc: Refactor Nearby Share code to fix DCHECKs and reset window observer
 
-<a href="https://chrome-internal.googlesource.com/chrome/src-internal.git/+log/320fa7714dae..e75ccd0a2ba3">https://chrome-internal.googlesource.com/chrome/src-internal.git/+log/320fa7714dae..e75ccd0a2ba3</a>
+Currently we are not abiding by contract:
+- BrowserContext::GetScopedFileSystemContext() must be called from
+Chrome_UIThread.
+- Task running inside threadpool marked as blocking being called from
+a scope that disallows blocking.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://skia-autoroll.corp.goog/r/src-internal-chromium-autoroll">https://skia-autoroll.corp.goog/r/src-internal-chromium-autoroll</a>
-Please CC  on the revert to ensure that a human
-is aware of the problem.
+See bug for detailed logs. This CL fixes code to run with
+`dcheck_always_on` but functionally should be the same except where
+we reset ARC window observer once the ARC Nearby Share view is closed.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+BUG=b:198809220, b:184720732
+TEST='dcheck_always_on` and tested sharing files / text scenarios while
+verifying cleanup is done in all cases.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Bug: None
-Tbr: 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0309cee84653a6b424140eb18c97db14b7852efd">I0309cee84653a6b424140eb18c97db14b7852efd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3141047">https://chromium-review.googlesource.com/c/chromium/src/+/3141047</a>
-Commit-Queue: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#918349}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I751bd2cc8469eb3c8a37b2ee9b2c3951b395d028">I751bd2cc8469eb3c8a37b2ee9b2c3951b395d028</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3142250">https://chromium-review.googlesource.com/c/chromium/src/+/3142250</a>
+Commit-Queue: Alan Ding &lt;alanding@chromium.org&gt;
+Reviewed-by: David Jacobo &lt;djacobo@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#918354}
 </pre>
 
 </body>
