@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/918706/"> 918706</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/86b7dc44c88009aba3684bb740f3fdef5f7fa43d">86b7dc44c88009aba3684bb740f3fdef5f7fa43d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/918715/"> 918715</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0535e8d1cf086bc957a7b20bd42318ec8890560c">0535e8d1cf086bc957a7b20bd42318ec8890560c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/918701/">918701</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/34073d2cb5dbde07f5bdbc4c67777c7df820621b">34073d2cb5dbde07f5bdbc4c67777c7df820621b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/918722/">918722</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0413695ec306822dc7b3c5bcd9683c7558b9ec70">0413695ec306822dc7b3c5bcd9683c7558b9ec70</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   86b7dc44c88009aba3684bb740f3fdef5f7fa43d
+   0535e8d1cf086bc957a7b20bd42318ec8890560c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/86b7dc44c88009aba3684bb740f3fdef5f7fa43d">
+    <a href="/chromium/src/+log/0535e8d1cf086bc957a7b20bd42318ec8890560c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/86b7dc44c88009aba3684bb740f3fdef5f7fa43d.tar.gz">
+    <a href="/chromium/src/+archive/0535e8d1cf086bc957a7b20bd42318ec8890560c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Anton Bikineev &lt;bikineev@chromium.org&gt;
   </td>
   <td>
-   Tue Sep 07 07:40:53 2021
+   Tue Sep 07 08:25:08 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 07 07:40:53 2021
+   Tue Sep 07 08:25:08 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/86b7dc44c88009aba3684bb740f3fdef5f7fa43d/">
-    d446897daebf9dacb1ed89edadcd01e44b2733ed
+   <a href="/chromium/src/+/0535e8d1cf086bc957a7b20bd42318ec8890560c/">
+    8ee1e322e636ffc920a9b7a6d570fd3189b63eab
    </a>
   </td>
  </tr>
@@ -166,43 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/86b7dc44c88009aba3684bb740f3fdef5f7fa43d%5E">
-    8179b41bf8256c83426ff79201956b950730d702
+   <a href="/chromium/src/+/0535e8d1cf086bc957a7b20bd42318ec8890560c%5E">
+    adff6fc70bfa7c89016cc4ed8a5f132551d74a21
    </a>
    <span>
     [
-    <a href="/chromium/src/+/86b7dc44c88009aba3684bb740f3fdef5f7fa43d%5E%21/">
+    <a href="/chromium/src/+/0535e8d1cf086bc957a7b20bd42318ec8890560c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update V8 to version 9.5.143.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">*Scan: Temporarily disable *Scan on try-bots
 
-Summary of changes available at:
-<a href="https://chromium.googlesource.com/v8/v8/+log/0e83aacb..065d52e3">https://chromium.googlesource.com/v8/v8/+log/0e83aacb..065d52e3</a>
+*Scan + safepoints cause builds with enabled coverage to time out due to
+huge contention around counters.
 
-Please follow these instructions for assigning/CC'ing issues:
-<a href="https://v8.dev/docs/triage-issues">https://v8.dev/docs/triage-issues</a>
+In code instrumented with coverage, every source line (roughly) has a
+corresponding global counter that gets incremented when the line is
+executed. In a single test there can be &gt;10 threads participating in
+scanning. The scanning code is very dense, so there is a huge contention
+around counters. This leads to cache-line ping-pongs -&gt; observable
+slow-down -&gt; timeouts. There is a related discussion:
+<a href="https://lists.llvm.org/pipermail/llvm-dev/2014-April/072155.html.">https://lists.llvm.org/pipermail/llvm-dev/2014-April/072155.html.</a>
 
-Please close rolling in case of a roll revert:
-<a href="https://v8-roll.appspot.com/">https://v8-roll.appspot.com/</a>
-This only works with a Google account.
+My hypothesis why we start seeing timeouts now. A fairly trivial or
+stylish CL changes a PA function used in the scanning routine: a new
+line is added, a new forwarding single-line function is introduced, a
+new DCHECK, etc... All of this can increase/reduce the number of
+counters, which has effect on contention.
 
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:linux-blink-rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:linux_optional_gpu_tests_rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:mac_optional_gpu_tests_rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:win_optional_gpu_tests_rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:android_optional_gpu_tests_rel
+This CL temporarily disables *Scan on try-bots.
 
-R=hablich@chromium.org,vahl@chromium.org,v8-waterfall-sheriff@grotations.appspotmail.com
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I55d4ca0811b0cdca50442f7b407e817af495defb">I55d4ca0811b0cdca50442f7b407e817af495defb</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3144650">https://chromium-review.googlesource.com/c/chromium/src/+/3144650</a>
-Bot-Commit: v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
-Commit-Queue: v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#918706}
+Bug: 1247061
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6993231731a1ebc412d07afefb204585a703b03a">I6993231731a1ebc412d07afefb204585a703b03a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3140087">https://chromium-review.googlesource.com/c/chromium/src/+/3140087</a>
+Auto-Submit: Anton Bikineev &lt;bikineev@chromium.org&gt;
+Commit-Queue: Michael Lippautz &lt;mlippautz@chromium.org&gt;
+Reviewed-by: Michael Lippautz &lt;mlippautz@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#918715}
 </pre>
 
 </body>
