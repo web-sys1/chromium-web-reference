@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/918723/"> 918723</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4a1962c9183cdcae55f2e85e3ba11ec3c8df303f">4a1962c9183cdcae55f2e85e3ba11ec3c8df303f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/918733/"> 918733</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/dd4efc6763c577d3c46d63b01cc687e4c2e5cff7">dd4efc6763c577d3c46d63b01cc687e4c2e5cff7</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/918728/">918728</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4a1962c9183cdcae55f2e85e3ba11ec3c8df303f
+   dd4efc6763c577d3c46d63b01cc687e4c2e5cff7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4a1962c9183cdcae55f2e85e3ba11ec3c8df303f">
+    <a href="/chromium/src/+log/dd4efc6763c577d3c46d63b01cc687e4c2e5cff7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4a1962c9183cdcae55f2e85e3ba11ec3c8df303f.tar.gz">
+    <a href="/chromium/src/+archive/dd4efc6763c577d3c46d63b01cc687e4c2e5cff7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jeroen Dhollander &lt;jeroendh@chromium.org&gt;
+   Christoph Schwering &lt;schwering@google.com&gt;
   </td>
   <td>
-   Tue Sep 07 08:50:54 2021
+   Tue Sep 07 09:43:06 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 07 08:50:54 2021
+   Tue Sep 07 09:43:06 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4a1962c9183cdcae55f2e85e3ba11ec3c8df303f/">
-    f0332d82e0b374577eab62fc38bdc37384f7a5d8
+   <a href="/chromium/src/+/dd4efc6763c577d3c46d63b01cc687e4c2e5cff7/">
+    38848c01a91ff260b52ccb644d66bd20cf354f07
    </a>
   </td>
  </tr>
@@ -166,67 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4a1962c9183cdcae55f2e85e3ba11ec3c8df303f%5E">
-    0413695ec306822dc7b3c5bcd9683c7558b9ec70
+   <a href="/chromium/src/+/dd4efc6763c577d3c46d63b01cc687e4c2e5cff7%5E">
+    9ef087208922faa42598b8b2566b02b1c4f0ab5b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4a1962c9183cdcae55f2e85e3ba11ec3c8df303f%5E%21/">
+    <a href="/chromium/src/+/dd4efc6763c577d3c46d63b01cc687e4c2e5cff7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Add cast_shell_linux_arm64 builder"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Autofill] Fixed circular dependency in driver destruction.
 
-This reverts commit e5e7f60264a099d116d674d592ab154b28f33cd6.
+This CL fixes a circular dependency: ~ContentAutofillDriverFactory()
+destroys ContentAutofillDriverFactory::router_ and afterwards calls
+~AutofillDriverFactory(), which implicitly deletes all drivers and thus
+calls ~ContentAutofillDriver(), which again refers to
+ContentAutofillDriverFactory::router_.
 
-Reason for revert: It has been broken since introduction: 
-<a href="https://ci.chromium.org/p/chromium/builders/ci/Cast%20Linux%20ARM64?limit=200">https://ci.chromium.org/p/chromium/builders/ci/Cast%20Linux%20ARM64?limit=200</a>
+This CL also eliminates ContentAutofillRouter::Reset() to simplify
+the destruction API.
 
-Failure:
-
-Step _generate_buildfiles failed. Error logs are shown below:
-ERROR at //build/config/sysroot.gni:64:7: Assertion failed.
-      assert(
-      ^-----
-Missing sysroot (//build/linux/debian_sid_arm64-sysroot). To fix, run: build/linux/sysroot_scripts/install-sysroot.py --arch=arm64
-See //build/config/sysroot.gni:65:11: 
-          exec_script("//build/dir_exists.py",
-          ^-----------------------------------
-This is where it was set.
-See //chrome/installer/BUILD.gn:8:1: whence it was imported.
-import("//build/config/sysroot.gni")
-^----------------------------------
-See //BUILD.gn:79:5: which caused the file to be included.
-    "//chrome/installer",
-
-
-Original change's description:
-&gt; Add cast_shell_linux_arm64 builder
-&gt;
-&gt; Build cast_shell with target_cpu='arm64'.
-&gt;
-&gt; Bug: 1242252
-&gt; Test: 1. Locally build CastShell ARM64; 2. Test `md gen`.
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iea157a9644fc525a2d8dc8c79eb727160a6eb613">Iea157a9644fc525a2d8dc8c79eb727160a6eb613</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3132868">https://chromium-review.googlesource.com/c/chromium/src/+/3132868</a>
-&gt; Commit-Queue: Jiawei Li &lt;lijiawei@chromium.org&gt;
-&gt; Reviewed-by: Ben Pastene &lt;bpastene@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#918529}
-
-Bug: 1242252
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie629d0debf94260130cf2d961935b3663d726494">Ie629d0debf94260130cf2d961935b3663d726494</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3144061">https://chromium-review.googlesource.com/c/chromium/src/+/3144061</a>
-Auto-Submit: Jeroen Dhollander &lt;jeroendh@chromium.org&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: Jeroen Dhollander &lt;jeroendh@chromium.org&gt;
-Owners-Override: Jeroen Dhollander &lt;jeroendh@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#918723}
+Bug: 1187842
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2c904292a771b757db806a24de732768251e4fb6">I2c904292a771b757db806a24de732768251e4fb6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3137732">https://chromium-review.googlesource.com/c/chromium/src/+/3137732</a>
+Reviewed-by: Dominic Battré &lt;battre@chromium.org&gt;
+Commit-Queue: Christoph Schwering &lt;schwering@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#918733}
 </pre>
 
 </body>
