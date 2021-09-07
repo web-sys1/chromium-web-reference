@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/918715/"> 918715</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0535e8d1cf086bc957a7b20bd42318ec8890560c">0535e8d1cf086bc957a7b20bd42318ec8890560c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/918723/"> 918723</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4a1962c9183cdcae55f2e85e3ba11ec3c8df303f">4a1962c9183cdcae55f2e85e3ba11ec3c8df303f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/918722/">918722</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0413695ec306822dc7b3c5bcd9683c7558b9ec70">0413695ec306822dc7b3c5bcd9683c7558b9ec70</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/918728/">918728</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/824c001d713fafd1b36fa72ae85946d5e44214f5">824c001d713fafd1b36fa72ae85946d5e44214f5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0535e8d1cf086bc957a7b20bd42318ec8890560c
+   4a1962c9183cdcae55f2e85e3ba11ec3c8df303f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0535e8d1cf086bc957a7b20bd42318ec8890560c">
+    <a href="/chromium/src/+log/4a1962c9183cdcae55f2e85e3ba11ec3c8df303f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0535e8d1cf086bc957a7b20bd42318ec8890560c.tar.gz">
+    <a href="/chromium/src/+archive/4a1962c9183cdcae55f2e85e3ba11ec3c8df303f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anton Bikineev &lt;bikineev@chromium.org&gt;
+   Jeroen Dhollander &lt;jeroendh@chromium.org&gt;
   </td>
   <td>
-   Tue Sep 07 08:25:08 2021
+   Tue Sep 07 08:50:54 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 07 08:25:08 2021
+   Tue Sep 07 08:50:54 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0535e8d1cf086bc957a7b20bd42318ec8890560c/">
-    8ee1e322e636ffc920a9b7a6d570fd3189b63eab
+   <a href="/chromium/src/+/4a1962c9183cdcae55f2e85e3ba11ec3c8df303f/">
+    f0332d82e0b374577eab62fc38bdc37384f7a5d8
    </a>
   </td>
  </tr>
@@ -166,46 +166,67 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0535e8d1cf086bc957a7b20bd42318ec8890560c%5E">
-    adff6fc70bfa7c89016cc4ed8a5f132551d74a21
+   <a href="/chromium/src/+/4a1962c9183cdcae55f2e85e3ba11ec3c8df303f%5E">
+    0413695ec306822dc7b3c5bcd9683c7558b9ec70
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0535e8d1cf086bc957a7b20bd42318ec8890560c%5E%21/">
+    <a href="/chromium/src/+/4a1962c9183cdcae55f2e85e3ba11ec3c8df303f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">*Scan: Temporarily disable *Scan on try-bots
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Add cast_shell_linux_arm64 builder"
 
-*Scan + safepoints cause builds with enabled coverage to time out due to
-huge contention around counters.
+This reverts commit e5e7f60264a099d116d674d592ab154b28f33cd6.
 
-In code instrumented with coverage, every source line (roughly) has a
-corresponding global counter that gets incremented when the line is
-executed. In a single test there can be &gt;10 threads participating in
-scanning. The scanning code is very dense, so there is a huge contention
-around counters. This leads to cache-line ping-pongs -&gt; observable
-slow-down -&gt; timeouts. There is a related discussion:
-<a href="https://lists.llvm.org/pipermail/llvm-dev/2014-April/072155.html.">https://lists.llvm.org/pipermail/llvm-dev/2014-April/072155.html.</a>
+Reason for revert: It has been broken since introduction: 
+<a href="https://ci.chromium.org/p/chromium/builders/ci/Cast%20Linux%20ARM64?limit=200">https://ci.chromium.org/p/chromium/builders/ci/Cast%20Linux%20ARM64?limit=200</a>
 
-My hypothesis why we start seeing timeouts now. A fairly trivial or
-stylish CL changes a PA function used in the scanning routine: a new
-line is added, a new forwarding single-line function is introduced, a
-new DCHECK, etc... All of this can increase/reduce the number of
-counters, which has effect on contention.
+Failure:
 
-This CL temporarily disables *Scan on try-bots.
+Step _generate_buildfiles failed. Error logs are shown below:
+ERROR at //build/config/sysroot.gni:64:7: Assertion failed.
+      assert(
+      ^-----
+Missing sysroot (//build/linux/debian_sid_arm64-sysroot). To fix, run: build/linux/sysroot_scripts/install-sysroot.py --arch=arm64
+See //build/config/sysroot.gni:65:11: 
+          exec_script("//build/dir_exists.py",
+          ^-----------------------------------
+This is where it was set.
+See //chrome/installer/BUILD.gn:8:1: whence it was imported.
+import("//build/config/sysroot.gni")
+^----------------------------------
+See //BUILD.gn:79:5: which caused the file to be included.
+    "//chrome/installer",
 
-Bug: 1247061
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6993231731a1ebc412d07afefb204585a703b03a">I6993231731a1ebc412d07afefb204585a703b03a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3140087">https://chromium-review.googlesource.com/c/chromium/src/+/3140087</a>
-Auto-Submit: Anton Bikineev &lt;bikineev@chromium.org&gt;
-Commit-Queue: Michael Lippautz &lt;mlippautz@chromium.org&gt;
-Reviewed-by: Michael Lippautz &lt;mlippautz@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#918715}
+
+Original change's description:
+&gt; Add cast_shell_linux_arm64 builder
+&gt;
+&gt; Build cast_shell with target_cpu='arm64'.
+&gt;
+&gt; Bug: 1242252
+&gt; Test: 1. Locally build CastShell ARM64; 2. Test `md gen`.
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iea157a9644fc525a2d8dc8c79eb727160a6eb613">Iea157a9644fc525a2d8dc8c79eb727160a6eb613</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3132868">https://chromium-review.googlesource.com/c/chromium/src/+/3132868</a>
+&gt; Commit-Queue: Jiawei Li &lt;lijiawei@chromium.org&gt;
+&gt; Reviewed-by: Ben Pastene &lt;bpastene@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#918529}
+
+Bug: 1242252
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie629d0debf94260130cf2d961935b3663d726494">Ie629d0debf94260130cf2d961935b3663d726494</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3144061">https://chromium-review.googlesource.com/c/chromium/src/+/3144061</a>
+Auto-Submit: Jeroen Dhollander &lt;jeroendh@chromium.org&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Commit-Queue: Jeroen Dhollander &lt;jeroendh@chromium.org&gt;
+Owners-Override: Jeroen Dhollander &lt;jeroendh@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#918723}
 </pre>
 
 </body>
