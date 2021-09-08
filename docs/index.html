@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/919305/"> 919305</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1c936ed5331eb32a2492cc39121b5f159636b750">1c936ed5331eb32a2492cc39121b5f159636b750</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/919335/"> 919335</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fe9a9df438b246a21d53191095ab28601796109a">fe9a9df438b246a21d53191095ab28601796109a</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/919345/">919345</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ef3c0b7e3f9387e57570cdfd6c7e65ee5add4ec9">ef3c0b7e3f9387e57570cdfd6c7e65ee5add4ec9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/919365/">919365</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bd5c421aa6067bdae626df646d5c1e3637e98976">bd5c421aa6067bdae626df646d5c1e3637e98976</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1c936ed5331eb32a2492cc39121b5f159636b750
+   fe9a9df438b246a21d53191095ab28601796109a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1c936ed5331eb32a2492cc39121b5f159636b750">
+    <a href="/chromium/src/+log/fe9a9df438b246a21d53191095ab28601796109a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1c936ed5331eb32a2492cc39121b5f159636b750.tar.gz">
+    <a href="/chromium/src/+archive/fe9a9df438b246a21d53191095ab28601796109a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Juanmi Huertas &lt;juanmihd@chromium.org&gt;
+   Matt Menke &lt;mmenke@chromium.org&gt;
   </td>
   <td>
-   Wed Sep 08 17:12:18 2021
+   Wed Sep 08 17:55:24 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 08 17:12:18 2021
+   Wed Sep 08 17:55:24 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1c936ed5331eb32a2492cc39121b5f159636b750/">
-    31d5b2f0dc38502dedd84592679b9c007178d3e4
+   <a href="/chromium/src/+/fe9a9df438b246a21d53191095ab28601796109a/">
+    c3677d18918fac2bcc13c589f620192db7ca1fa7
    </a>
   </td>
  </tr>
@@ -166,51 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1c936ed5331eb32a2492cc39121b5f159636b750%5E">
-    4bb9027014a3be9568c18d6d2faf00bebd3bce3a
+   <a href="/chromium/src/+/fe9a9df438b246a21d53191095ab28601796109a%5E">
+    89e7572699a0ff66841c8c4b467bd9db78ee6a72
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1c936ed5331eb32a2492cc39121b5f159636b750%5E%21/">
+    <a href="/chromium/src/+/fe9a9df438b246a21d53191095ab28601796109a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Force DisplayLocks in &lt;input type=image&gt; layout APIs"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">URLRequest: Reject WS/WSS when expecting HTTP/HTTPS and vice versa.
 
-This reverts commit 96b0fd22d085b82fb64f5fdef57adcfeeb9a8a94.
+Currently the NetworkService has no protection against requesting
+WebSocket URLs via the URLLoader API, and doing so with a
+main frame's IsolationInfo actually triggers a DCHECKs in
+cookie_util.cc.
 
-Reason for revert: This newly added test is failing in several bots <a href="https://bugs.chromium.org/p/chromium/issues/detail?id=1247714">https://bugs.chromium.org/p/chromium/issues/detail?id=1247714</a>
+This CL fixes this issue by rejecting WS/WSS URL requests made through
+APIs expecting an HTTP/HTTPS URL. It also rejects HTTP/HTTP URL requests
+made through APIs expecting WebSockets.
 
-Original change's description:
-&gt; Force DisplayLocks in &lt;input type=image&gt; layout APIs
-&gt;
-&gt; Without this patch, the width and height properties of image input types
-&gt; return zero inside c-v:hidden subtrees due to layout being skipped for
-&gt; DisplayLocking.
-&gt;
-&gt; Bug: 1247417
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2fb4e2f9388bbf351011efab525237f6a203323b">I2fb4e2f9388bbf351011efab525237f6a203323b</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3145723">https://chromium-review.googlesource.com/c/chromium/src/+/3145723</a>
-&gt; Auto-Submit: Joey Arhar &lt;jarhar@chromium.org&gt;
-&gt; Commit-Queue: vmpstr &lt;vmpstr@chromium.org&gt;
-&gt; Reviewed-by: vmpstr &lt;vmpstr@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#919246}
-
-Bug: 1247417
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I436e7994615b0ab411c81a03616500a472902655">I436e7994615b0ab411c81a03616500a472902655</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3149552">https://chromium-review.googlesource.com/c/chromium/src/+/3149552</a>
-Auto-Submit: Juanmi Huertas &lt;juanmihd@chromium.org&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: Juanmi Huertas &lt;juanmihd@chromium.org&gt;
-Reviewed-by: Devlin &lt;rdevlin.cronin@chromium.org&gt;
-Owners-Override: Juanmi Huertas &lt;juanmihd@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#919305}
+Bug: 1245115
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I73fcc42a6602171215b55fa7a8189e95e19c0b10">I73fcc42a6602171215b55fa7a8189e95e19c0b10</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3132002">https://chromium-review.googlesource.com/c/chromium/src/+/3132002</a>
+Reviewed-by: Maksim Orlovich &lt;morlovich@chromium.org&gt;
+Commit-Queue: Matt Menke &lt;mmenke@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#919335}
 </pre>
 
 </body>
