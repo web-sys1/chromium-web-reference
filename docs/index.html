@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/919890/"> 919890</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4af10fc9a7b3ee55f70945fa71df81113e6c9e4a">4af10fc9a7b3ee55f70945fa71df81113e6c9e4a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/919912/"> 919912</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f6608d9c9cfc4354d17b4305905fb9e7bda3cc35">f6608d9c9cfc4354d17b4305905fb9e7bda3cc35</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/919892/">919892</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fdcb0119fb753b386ef9d868e8f00f9ab814f59c">fdcb0119fb753b386ef9d868e8f00f9ab814f59c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/919912/">919912</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f6608d9c9cfc4354d17b4305905fb9e7bda3cc35">f6608d9c9cfc4354d17b4305905fb9e7bda3cc35</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4af10fc9a7b3ee55f70945fa71df81113e6c9e4a
+   f6608d9c9cfc4354d17b4305905fb9e7bda3cc35
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4af10fc9a7b3ee55f70945fa71df81113e6c9e4a">
+    <a href="/chromium/src/+log/f6608d9c9cfc4354d17b4305905fb9e7bda3cc35">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4af10fc9a7b3ee55f70945fa71df81113e6c9e4a.tar.gz">
+    <a href="/chromium/src/+archive/f6608d9c9cfc4354d17b4305905fb9e7bda3cc35.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Gayane Petrosyan &lt;gayane@google.com&gt;
+   James Cook &lt;jamescook@chromium.org&gt;
   </td>
   <td>
-   Thu Sep 09 18:33:13 2021
+   Thu Sep 09 19:08:31 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Sep 09 18:33:13 2021
+   Thu Sep 09 19:08:31 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4af10fc9a7b3ee55f70945fa71df81113e6c9e4a/">
-    32fa542cc5903370f17b888a3140e4077081a97d
+   <a href="/chromium/src/+/f6608d9c9cfc4354d17b4305905fb9e7bda3cc35/">
+    bb64ee4a1590d6af04b7df3b590bd070166be386
    </a>
   </td>
  </tr>
@@ -166,46 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4af10fc9a7b3ee55f70945fa71df81113e6c9e4a%5E">
-    e84fb52f84aaf333d33bbb0c4c4cd3ab61bdd23f
+   <a href="/chromium/src/+/f6608d9c9cfc4354d17b4305905fb9e7bda3cc35%5E">
+    5647685014cd0fd663c5a6d022b98d14cb5b74e0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4af10fc9a7b3ee55f70945fa71df81113e6c9e4a%5E%21/">
+    <a href="/chromium/src/+/f6608d9c9cfc4354d17b4305905fb9e7bda3cc35%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[anonymous_iframe] Add WPT for partitioned shared workers"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">app_list: Make some AppsGridView tests work with feature AppListBubble
 
-This reverts commit f028bc8bcc042eb6aceb8209e66eee86248e2b6a.
+Two goals:
+* Reuse existing tests to get more coverage of AppListBubble
+* Prepare for the day when AppListBubble is enabled by default
 
-Reason for revert: failing Mac10.14 Tests crbug.com/1248140
+Therefore:
+- Remove test parameterization by "new drag spec", since this feature
+  is launched and on-by-default. This reduces the number of
+  combinations of tests we need to run.
+- Introduce AppsGridViewClamshellTest, which is parameterized by
+  feature AppListBubble
+- Introduce AppsGridViewNonBubbleTest, to mark tests that are
+  explicitly not expected to work with AppListBubble, and can be
+  deleted when the flag is removed.
+- Move a couple of tests to other suites, closer to the code under
+  test.
 
-Original change's description:
-&gt; [anonymous_iframe] Add WPT for partitioned shared workers
-&gt;
-&gt; This CL adds a test checking that anonymous iframes get partitioned
-&gt; shared workers.
-&gt;
-&gt; Bug: 1226469
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic11085834b567ca178a952828f638b5243eae25d">Ic11085834b567ca178a952828f638b5243eae25d</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3148055">https://chromium-review.googlesource.com/c/chromium/src/+/3148055</a>
-&gt; Commit-Queue: Antonio Sartori &lt;antoniosartori@chromium.org&gt;
-&gt; Reviewed-by: Arthur Hemery &lt;ahemery@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#919676}
+Future work: Parameterize AppsGridViewDragAndDropTest. I didn't put
+it in this CL, since this CL is getting large. My intent is to move
+the drag helper functions into the AppsGridViewTest base class, or
+maybe into AppListTestHelper.
 
-Bug: 1248140
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib66e9199b1a40fd02fbb08bb25f76da71c1f7e25">Ib66e9199b1a40fd02fbb08bb25f76da71c1f7e25</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3149816">https://chromium-review.googlesource.com/c/chromium/src/+/3149816</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: Gayane Petrosyan &lt;gayane@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#919890}
+Bug: 1211608
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I21e69793302125cadd47d019f6eb6b6cf204d94e">I21e69793302125cadd47d019f6eb6b6cf204d94e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3150691">https://chromium-review.googlesource.com/c/chromium/src/+/3150691</a>
+Reviewed-by: Matthew Mourgos &lt;mmourgos@chromium.org&gt;
+Commit-Queue: James Cook &lt;jamescook@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#919912}
 </pre>
 
 </body>
