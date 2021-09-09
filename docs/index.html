@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/919696/"> 919696</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0548dd9d10add21f75e4685e91389ff72dc99a5d">0548dd9d10add21f75e4685e91389ff72dc99a5d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/919710/"> 919710</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d72c001c52d4ef19b50ae126b129ab55f704f1bd">d72c001c52d4ef19b50ae126b129ab55f704f1bd</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/919659/">919659</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0548dd9d10add21f75e4685e91389ff72dc99a5d
+   d72c001c52d4ef19b50ae126b129ab55f704f1bd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0548dd9d10add21f75e4685e91389ff72dc99a5d">
+    <a href="/chromium/src/+log/d72c001c52d4ef19b50ae126b129ab55f704f1bd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0548dd9d10add21f75e4685e91389ff72dc99a5d.tar.gz">
+    <a href="/chromium/src/+archive/d72c001c52d4ef19b50ae126b129ab55f704f1bd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+   Ari Chivukula &lt;arichiv@chromium.org&gt;
   </td>
   <td>
-   Thu Sep 09 08:51:35 2021
+   Thu Sep 09 09:40:14 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Sep 09 08:51:35 2021
+   Thu Sep 09 09:40:14 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0548dd9d10add21f75e4685e91389ff72dc99a5d/">
-    715ba8ba055f5c79e6d119ea226e20995e87050d
+   <a href="/chromium/src/+/d72c001c52d4ef19b50ae126b129ab55f704f1bd/">
+    23ce97251582ba38410858b13e0fc24cfe6a9c2b
    </a>
   </td>
  </tr>
@@ -166,72 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0548dd9d10add21f75e4685e91389ff72dc99a5d%5E">
-    a02a57f31d42ed604596154ee4e6d16d6f45fe90
+   <a href="/chromium/src/+/d72c001c52d4ef19b50ae126b129ab55f704f1bd%5E">
+    93bdd9eb5490e0c005bee959bea2ef85ae0e0956
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0548dd9d10add21f75e4685e91389ff72dc99a5d%5E%21/">
+    <a href="/chromium/src/+/d72c001c52d4ef19b50ae126b129ab55f704f1bd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[@container] Delayed animation updates
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Re-Factor Client Hints] (3) Consolidate client hint name lists
 
-This CL implements a new approach [1][2] for dealing with animated
-container queries. The approach can be summarized as:
+Right now there's a map of names in
+services/network/public/cpp/client_hints.cc and
+third_party/blink/common/client_hints/client_hints.cc that mirror each
+other. Let's consolidate them to reduce redundancy. The actual enum
+they're using lives in services/network/public, so its client_hints.cc
+list name should be the one true one.
 
-  1) Delaying application of the CSSAnimationUpdate until after
-     layout, and
-  2) Remembering the "original" old-styles for relevant elements.
+This is a part of a series of CLs to re-factor the client hints code:
+(1) Label hints with legacy names
+(2) Fix the naming of (unlaunched) `lang` client hint
+(3) Consolidate client hint name lists
+(4) Migrate from array to map indexing for client hint names
+(5) Remove (unlaunched) `lang` client hint
 
-Both of these things were also required for the previous solution
-(currently behind the runtime flag CSSIsolatedAnimationUpdates),
-so they are already mostly in place. Apart from these two things,
-however, the new solution actually has more in common with how
-things already work on stable than with CSSIsolatedAnimationUpdates,
-so this this CL effectively reverts that code.
-
-The new approach in this CL works like this:
-
- - During StyleResolver::ResolveStyle, elements that have a non-
-   empty animation update gets added to a set on DocumentAnimations.
- - A stack-allocated object CSSAnimationUpdateScope is placed on the
-   sites where we do style and layout, and it ensures that any
-   collected pending updates are applied before we exit that scope.
- - Old-styles are temporarily added for each element we resolve
-   style for, with a lifetime that's also tied to
-   CSSAnimationUpdateScope.
-
-Regarding InApplyAnimationUpdateScope: it turns out that applying
-an animation update can cause calls to Element::
-SetNeedsAnimationStyleRecalc. On main, these calls are ignored,
-because we always apply the animation update during style recalc,
-and we early-out from SetNeedsAnimationStyleRecalc if we're currently
-in style recalc. With the changes in this CL, we apply the same
-update *after* style recalc, so we need another way to early-out
-from SetNeedsAnimationStyleRecalc, and this is what the
-InApplyAnimationUpdateScope is for.
-
-Note: It probably makes sense to store the elements-with-pending-
-      updates set and the old-styles on the CSSAnimationUpdateScope
-      itself, but I'll try that in a separate CL.
-Note: We still store old-styles for way too many elements. An
-      improvement for that is coming soon.
-
-[1] <a href="https://docs.google.com/document/d/1Ef9V-Ra_6I3R9DY0o10fZ7HTriPm9oHYw1xUN0bRcHw">https://docs.google.com/document/d/1Ef9V-Ra_6I3R9DY0o10fZ7HTriPm9oHYw1xUN0bRcHw</a>
-[2] <a href="https://github.com/w3c/csswg-drafts/issues/6398#issuecomment-904754453">https://github.com/w3c/csswg-drafts/issues/6398#issuecomment-904754453</a>
-
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I735b9113c12ef57696b82470b2256c639884ef48">I735b9113c12ef57696b82470b2256c639884ef48</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3129367">https://chromium-review.googlesource.com/c/chromium/src/+/3129367</a>
-Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Reviewed-by: Kevin Ellis &lt;kevers@chromium.org&gt;
-Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#919696}
+Bug: 1227043
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8966f4237726454f76c15ccd5dd199d23e0a77d0">I8966f4237726454f76c15ccd5dd199d23e0a77d0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3149492">https://chromium-review.googlesource.com/c/chromium/src/+/3149492</a>
+Commit-Queue: Ari Chivukula &lt;arichiv@chromium.org&gt;
+Auto-Submit: Ari Chivukula &lt;arichiv@chromium.org&gt;
+Reviewed-by: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Reviewed-by: Yoav Weiss &lt;yoavweiss@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#919710}
 </pre>
 
 </body>
