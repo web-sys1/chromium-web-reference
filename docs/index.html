@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/919507/"> 919507</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/197353ab043523091faaf5043035b1e9ef05f37b">197353ab043523091faaf5043035b1e9ef05f37b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/919536/"> 919536</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb637916bc7410690031991c64cb5fe3b49bd53b">fb637916bc7410690031991c64cb5fe3b49bd53b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/919510/">919510</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/38f5f5471383399ecaa0d77a8ff0e356635d15b7">38f5f5471383399ecaa0d77a8ff0e356635d15b7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/919534/">919534</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7b6d93553bf6308f75782c1fb454110d1dcef0ee">7b6d93553bf6308f75782c1fb454110d1dcef0ee</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   197353ab043523091faaf5043035b1e9ef05f37b
+   fb637916bc7410690031991c64cb5fe3b49bd53b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/197353ab043523091faaf5043035b1e9ef05f37b">
+    <a href="/chromium/src/+log/fb637916bc7410690031991c64cb5fe3b49bd53b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/197353ab043523091faaf5043035b1e9ef05f37b.tar.gz">
+    <a href="/chromium/src/+archive/fb637916bc7410690031991c64cb5fe3b49bd53b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Meilin Wang &lt;meilinw@google.com&gt;
+   Luciano Pacheco &lt;lucmult@chromium.org&gt;
   </td>
   <td>
-   Wed Sep 08 22:58:24 2021
+   Thu Sep 09 00:31:42 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 08 22:58:24 2021
+   Thu Sep 09 00:31:42 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/197353ab043523091faaf5043035b1e9ef05f37b/">
-    079a8ba0b9b0912d6b317321d8966e7e25012227
+   <a href="/chromium/src/+/fb637916bc7410690031991c64cb5fe3b49bd53b/">
+    c5a45c58c64a77b15bcc4f3ae91f5870a1ed0995
    </a>
   </td>
  </tr>
@@ -166,52 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/197353ab043523091faaf5043035b1e9ef05f37b%5E">
-    73d380650dda376c5d03ebc026e8cb3faf49cf97
+   <a href="/chromium/src/+/fb637916bc7410690031991c64cb5fe3b49bd53b%5E">
+    f07914d38ec0b9717c30dd77ebe707ad2d3ed0d8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/197353ab043523091faaf5043035b1e9ef05f37b%5E%21/">
+    <a href="/chromium/src/+/fb637916bc7410690031991c64cb5fe3b49bd53b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "[LibassistantV2] Wire up V2 entry point |AssistantClientImpl|."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Files SWA: Fix ShowItemInFolder() opening a file in SWA
 
-This is a reland of 6679ebc53f634576ad2a36d84690ad76e3adc2ce
+The download and screenshot notifications "Show in folder" button calls
+ShowItemInFolder(), which was passing the full file path as current
+directory to Files SWA, causing the file name to appear in the
+breadcrumbs.
 
-Previously the above CL got reverted for breaking betty-pi-arc builds
-(see crbug.com/1241330). A fix (crrev.com/c/3138305) has been landed to
-avoid this symbol lookup error on ChromeOS. This CL is a reland of the
-original CL after the fix.
+This CL fixes the issue by always providing the file or directory as the
+selectionURL.  The JS code already handles well if this is a file or a
+directory.
 
-Original change's description:
-&gt; [LibassistantV2] Wire up V2 entry point |AssistantClientImpl|.
-&gt;
-&gt; - Wires up |AssistantClientImpl| with |ServiceController|, which manages
-&gt;   the lifecycle of Libassistant.
-&gt; - Guards the entry point behind a chromeos feature flag "LibAssistantV2"
-&gt;   and we can switch to V2 with that feature flag enabled.
-&gt;
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I021cbab34249004faef70408be7a0f751ba88694">I021cbab34249004faef70408be7a0f751ba88694</a>
-&gt; Bug: b/186687608
-&gt; Test: run chromeos_unittests --gtest-filter=Assistant*
-&gt; Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2954188">https://chromium-review.googlesource.com/c/chromium/src/+/2954188</a>
-&gt; Reviewed-by: Tao Wu &lt;wutao@chromium.org&gt;
-&gt; Reviewed-by: Xiaohui Chen &lt;xiaohuic@chromium.org&gt;
-&gt; Commit-Queue: Meilin Wang &lt;meilinw@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#913204}
-
-Bug: b/186687608
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib0340b72c7e809abab651e1ff0b48d85e9610b16">Ib0340b72c7e809abab651e1ff0b48d85e9610b16</a>
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3115314">https://chromium-review.googlesource.com/c/chromium/src/+/3115314</a>
-Reviewed-by: Xiaohui Chen &lt;xiaohuic@chromium.org&gt;
-Commit-Queue: Meilin Wang &lt;meilinw@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#919507}
+Test: browser_tests --gtest_filter="*fileDisplayLaunchOnLocalFile* : *fileDisplayLaunchOnLocalFolder*"
+Bug: b:194252786
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I70ddc929ecc4df4f26456cc19e346cc21ea5406f">I70ddc929ecc4df4f26456cc19e346cc21ea5406f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3143791">https://chromium-review.googlesource.com/c/chromium/src/+/3143791</a>
+Auto-Submit: Luciano Pacheco &lt;lucmult@chromium.org&gt;
+Reviewed-by: Bo Majewski &lt;majewski@chromium.org&gt;
+Commit-Queue: Luciano Pacheco &lt;lucmult@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#919536}
 </pre>
 
 </body>
