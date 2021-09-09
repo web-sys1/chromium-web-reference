@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/919665/"> 919665</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/70f198ef21e8775e32cb86f3d913a9a45da606a9">70f198ef21e8775e32cb86f3d913a9a45da606a9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/919696/"> 919696</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0548dd9d10add21f75e4685e91389ff72dc99a5d">0548dd9d10add21f75e4685e91389ff72dc99a5d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/919659/">919659</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   70f198ef21e8775e32cb86f3d913a9a45da606a9
+   0548dd9d10add21f75e4685e91389ff72dc99a5d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/70f198ef21e8775e32cb86f3d913a9a45da606a9">
+    <a href="/chromium/src/+log/0548dd9d10add21f75e4685e91389ff72dc99a5d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/70f198ef21e8775e32cb86f3d913a9a45da606a9.tar.gz">
+    <a href="/chromium/src/+archive/0548dd9d10add21f75e4685e91389ff72dc99a5d.tar.gz">
      tgz
     </a>
     ]
@@ -137,7 +137,7 @@ body{
    Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
   </td>
   <td>
-   Thu Sep 09 06:43:59 2021
+   Thu Sep 09 08:51:35 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Sep 09 06:43:59 2021
+   Thu Sep 09 08:51:35 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/70f198ef21e8775e32cb86f3d913a9a45da606a9/">
-    094457a0f33adf7d99e7ce1e50e43d080fd99f8c
+   <a href="/chromium/src/+/0548dd9d10add21f75e4685e91389ff72dc99a5d/">
+    715ba8ba055f5c79e6d119ea226e20995e87050d
    </a>
   </td>
  </tr>
@@ -166,36 +166,72 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/70f198ef21e8775e32cb86f3d913a9a45da606a9%5E">
-    10378e94483ce555b9efb287c33ba627c61499eb
+   <a href="/chromium/src/+/0548dd9d10add21f75e4685e91389ff72dc99a5d%5E">
+    a02a57f31d42ed604596154ee4e6d16d6f45fe90
    </a>
    <span>
     [
-    <a href="/chromium/src/+/70f198ef21e8775e32cb86f3d913a9a45da606a9%5E%21/">
+    <a href="/chromium/src/+/0548dd9d10add21f75e4685e91389ff72dc99a5d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update animation flags when calculating animation updates
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[@container] Delayed animation updates
 
-Currently, we apply the pending animation update first, then inspect
-the resulting Animations and set flags on ComputedStyle accordingly.
-This is not compatible with the planned solution for animated container
-queries, because the animation update will be postponed until after
-layout has finished.
+This CL implements a new approach [1][2] for dealing with animated
+container queries. The approach can be summarized as:
 
-Hence this CL changes the calculation of those flags to use the
-information on the CSSAnimationUpdate, before it's actually applied.
+  1) Delaying application of the CSSAnimationUpdate until after
+     layout, and
+  2) Remembering the "original" old-styles for relevant elements.
 
-Bug: 1180159
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I892db31288fbaf65d8211e5497e895f2eef6e4eb">I892db31288fbaf65d8211e5497e895f2eef6e4eb</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3124777">https://chromium-review.googlesource.com/c/chromium/src/+/3124777</a>
+Both of these things were also required for the previous solution
+(currently behind the runtime flag CSSIsolatedAnimationUpdates),
+so they are already mostly in place. Apart from these two things,
+however, the new solution actually has more in common with how
+things already work on stable than with CSSIsolatedAnimationUpdates,
+so this this CL effectively reverts that code.
+
+The new approach in this CL works like this:
+
+ - During StyleResolver::ResolveStyle, elements that have a non-
+   empty animation update gets added to a set on DocumentAnimations.
+ - A stack-allocated object CSSAnimationUpdateScope is placed on the
+   sites where we do style and layout, and it ensures that any
+   collected pending updates are applied before we exit that scope.
+ - Old-styles are temporarily added for each element we resolve
+   style for, with a lifetime that's also tied to
+   CSSAnimationUpdateScope.
+
+Regarding InApplyAnimationUpdateScope: it turns out that applying
+an animation update can cause calls to Element::
+SetNeedsAnimationStyleRecalc. On main, these calls are ignored,
+because we always apply the animation update during style recalc,
+and we early-out from SetNeedsAnimationStyleRecalc if we're currently
+in style recalc. With the changes in this CL, we apply the same
+update *after* style recalc, so we need another way to early-out
+from SetNeedsAnimationStyleRecalc, and this is what the
+InApplyAnimationUpdateScope is for.
+
+Note: It probably makes sense to store the elements-with-pending-
+      updates set and the old-styles on the CSSAnimationUpdateScope
+      itself, but I'll try that in a separate CL.
+Note: We still store old-styles for way too many elements. An
+      improvement for that is coming soon.
+
+[1] <a href="https://docs.google.com/document/d/1Ef9V-Ra_6I3R9DY0o10fZ7HTriPm9oHYw1xUN0bRcHw">https://docs.google.com/document/d/1Ef9V-Ra_6I3R9DY0o10fZ7HTriPm9oHYw1xUN0bRcHw</a>
+[2] <a href="https://github.com/w3c/csswg-drafts/issues/6398#issuecomment-904754453">https://github.com/w3c/csswg-drafts/issues/6398#issuecomment-904754453</a>
+
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I735b9113c12ef57696b82470b2256c639884ef48">I735b9113c12ef57696b82470b2256c639884ef48</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3129367">https://chromium-review.googlesource.com/c/chromium/src/+/3129367</a>
 Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Reviewed-by: Robert Flack &lt;flackr@chromium.org&gt;
 Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#919665}
+Reviewed-by: Kevin Ellis &lt;kevers@chromium.org&gt;
+Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#919696}
 </pre>
 
 </body>
