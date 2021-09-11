@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/920496/"> 920496</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5976753844d12dbeb9c83747fd230395053e8389">5976753844d12dbeb9c83747fd230395053e8389</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/920497/"> 920497</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/87b4a9134b56ad6bf8a3a4d5d0d3a44acd9fb2cd">87b4a9134b56ad6bf8a3a4d5d0d3a44acd9fb2cd</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/920445/">920445</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5976753844d12dbeb9c83747fd230395053e8389
+   87b4a9134b56ad6bf8a3a4d5d0d3a44acd9fb2cd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5976753844d12dbeb9c83747fd230395053e8389">
+    <a href="/chromium/src/+log/87b4a9134b56ad6bf8a3a4d5d0d3a44acd9fb2cd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5976753844d12dbeb9c83747fd230395053e8389.tar.gz">
+    <a href="/chromium/src/+archive/87b4a9134b56ad6bf8a3a4d5d0d3a44acd9fb2cd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alan Screen &lt;awscreen@chromium.org&gt;
+   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Sep 11 05:14:53 2021
+   Sat Sep 11 05:22:33 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Sep 11 05:14:53 2021
+   Sat Sep 11 05:22:33 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5976753844d12dbeb9c83747fd230395053e8389/">
-    17c6a9d89e78c2218e350ca2082dda66e7618e2a
+   <a href="/chromium/src/+/87b4a9134b56ad6bf8a3a4d5d0d3a44acd9fb2cd/">
+    8bba5933f2e5495b8e967e7cb86865ecfa241e67
    </a>
   </td>
  </tr>
@@ -166,52 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5976753844d12dbeb9c83747fd230395053e8389%5E">
-    ef23890100ca0fa17893803f41f2afd0d2c33963
+   <a href="/chromium/src/+/87b4a9134b56ad6bf8a3a4d5d0d3a44acd9fb2cd%5E">
+    5976753844d12dbeb9c83747fd230395053e8389
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5976753844d12dbeb9c83747fd230395053e8389%5E%21/">
+    <a href="/chromium/src/+/87b4a9134b56ad6bf8a3a4d5d0d3a44acd9fb2cd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add UpdatePrintSettings to Print Backend Service
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Win64 PGO Profile
 
-Incorporate support in the Print Backend service to convert job
-settings into print settings.  This involves a conversion and some
-incorporation of the printer's driver settings.  This is effectively
-incorporating the bulk of the work of
-PrintJobWorker::UpdatePrintSettings() into the Print Backend service.
-For Linux with CUPS, this includes extending the provided job setting's
-advanced settings with the driver's basic info options.
+Roll Chrome Win64 PGO profile from chrome-win64-main-1631318314-4fc362c04966bbc9279874a2f1913a6e2ad4e190.profdata to chrome-win64-main-1631329049-1ccf408245d9d12e82b5916862ff848b451ef663.profdata
 
-The platform-specific implementations for
-PrintingContext::UpdatePrinterSettings() can involve overriding some
-of the settings based upon values from the driver, but this is not
-necessarily done to all members.  To assist with testing, include in
-this change an update to TestPrintingContext::UpdatePrinterSettings()
-to include logic which ensures that some of user-selected settings
-persist unmodified by driver defaults.  Choose to keep the provided DPI
-(applicable to all platforms) and advanced settings (Linux/ChromeOS
-specific) as unmodified by the simulated driver settings for testing.
+If this roll has caused a breakage, revert this CL and stop the roller
+using the controls here:
+<a href="https://autoroll.skia.org/r/pgo-win64-chromium">https://autoroll.skia.org/r/pgo-win64-chromium</a>
+Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
+is aware of the problem.
 
-This update to a printing context is not retained by the service, but
-is a one-time use and then discarded.  The process model does not
-guarantee that the process used for this conversion will be the same
-one used when printing of the job is performed.  The necessary print
-settings will be provided to StartPrinting() and used in a
-PrintingContext established at that time.
+To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
 
-Bug: 809738
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7c4b2fe104da128a553c850d793f409d4f07f2a4">I7c4b2fe104da128a553c850d793f409d4f07f2a4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3146419">https://chromium-review.googlesource.com/c/chromium/src/+/3146419</a>
-Commit-Queue: Alan Screen &lt;awscreen@chromium.org&gt;
-Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
-Reviewed-by: Robert Sesek &lt;rsesek@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#920496}
+To report a problem with the AutoRoller itself, please file a bug:
+<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+
+Documentation for the AutoRoller is here:
+<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
+
+Cq-Include-Trybots: luci.chrome.try:win64-chrome
+Tbr: pgo-profile-sheriffs@google.com
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia22fe194fda9af527f14e0c350f087af1bfe643a">Ia22fe194fda9af527f14e0c350f087af1bfe643a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3156462">https://chromium-review.googlesource.com/c/chromium/src/+/3156462</a>
+Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#920497}
 </pre>
 
 </body>
