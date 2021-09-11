@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/920489/"> 920489</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9e0127d087c153804ce985129c0e4358ed0bc00b">9e0127d087c153804ce985129c0e4358ed0bc00b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/920496/"> 920496</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5976753844d12dbeb9c83747fd230395053e8389">5976753844d12dbeb9c83747fd230395053e8389</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/920445/">920445</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9e0127d087c153804ce985129c0e4358ed0bc00b
+   5976753844d12dbeb9c83747fd230395053e8389
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9e0127d087c153804ce985129c0e4358ed0bc00b">
+    <a href="/chromium/src/+log/5976753844d12dbeb9c83747fd230395053e8389">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9e0127d087c153804ce985129c0e4358ed0bc00b.tar.gz">
+    <a href="/chromium/src/+archive/5976753844d12dbeb9c83747fd230395053e8389.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   jahchuen &lt;ahchuen@google.com&gt;
+   Alan Screen &lt;awscreen@chromium.org&gt;
   </td>
   <td>
-   Sat Sep 11 03:51:39 2021
+   Sat Sep 11 05:14:53 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Sep 11 03:51:39 2021
+   Sat Sep 11 05:14:53 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9e0127d087c153804ce985129c0e4358ed0bc00b/">
-    e51f1d52b12b1bb7670f0997634c52d335924d45
+   <a href="/chromium/src/+/5976753844d12dbeb9c83747fd230395053e8389/">
+    17c6a9d89e78c2218e350ca2082dda66e7618e2a
    </a>
   </td>
  </tr>
@@ -166,26 +166,52 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9e0127d087c153804ce985129c0e4358ed0bc00b%5E">
-    63753273c242d09130df586caf545746f091852a
+   <a href="/chromium/src/+/5976753844d12dbeb9c83747fd230395053e8389%5E">
+    ef23890100ca0fa17893803f41f2afd0d2c33963
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9e0127d087c153804ce985129c0e4358ed0bc00b%5E%21/">
+    <a href="/chromium/src/+/5976753844d12dbeb9c83747fd230395053e8389%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CrOS Settings] Check in polymer3 for os_a11y_page
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add UpdatePrintSettings to Print Backend Service
 
-Bug: 1180979
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib99217a18db5dda202138df58829628c2c77a5ea">Ib99217a18db5dda202138df58829628c2c77a5ea</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3155566">https://chromium-review.googlesource.com/c/chromium/src/+/3155566</a>
-Commit-Queue: Jason Ah Chuen &lt;ahchuen@google.com&gt;
-Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#920489}
+Incorporate support in the Print Backend service to convert job
+settings into print settings.  This involves a conversion and some
+incorporation of the printer's driver settings.  This is effectively
+incorporating the bulk of the work of
+PrintJobWorker::UpdatePrintSettings() into the Print Backend service.
+For Linux with CUPS, this includes extending the provided job setting's
+advanced settings with the driver's basic info options.
+
+The platform-specific implementations for
+PrintingContext::UpdatePrinterSettings() can involve overriding some
+of the settings based upon values from the driver, but this is not
+necessarily done to all members.  To assist with testing, include in
+this change an update to TestPrintingContext::UpdatePrinterSettings()
+to include logic which ensures that some of user-selected settings
+persist unmodified by driver defaults.  Choose to keep the provided DPI
+(applicable to all platforms) and advanced settings (Linux/ChromeOS
+specific) as unmodified by the simulated driver settings for testing.
+
+This update to a printing context is not retained by the service, but
+is a one-time use and then discarded.  The process model does not
+guarantee that the process used for this conversion will be the same
+one used when printing of the job is performed.  The necessary print
+settings will be provided to StartPrinting() and used in a
+PrintingContext established at that time.
+
+Bug: 809738
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7c4b2fe104da128a553c850d793f409d4f07f2a4">I7c4b2fe104da128a553c850d793f409d4f07f2a4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3146419">https://chromium-review.googlesource.com/c/chromium/src/+/3146419</a>
+Commit-Queue: Alan Screen &lt;awscreen@chromium.org&gt;
+Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
+Reviewed-by: Robert Sesek &lt;rsesek@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#920496}
 </pre>
 
 </body>
