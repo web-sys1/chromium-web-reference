@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/920645/"> 920645</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/21d8819e4ec3567d18ce232a05b24f1124b08b04">21d8819e4ec3567d18ce232a05b24f1124b08b04</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/920657/"> 920657</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a37071ca7daf1919fced48def386bd4dc9faa642">a37071ca7daf1919fced48def386bd4dc9faa642</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/920648/">920648</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e1c3aedac36d748de80c36175e52b337d9b9ab34">e1c3aedac36d748de80c36175e52b337d9b9ab34</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/920657/">920657</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a37071ca7daf1919fced48def386bd4dc9faa642">a37071ca7daf1919fced48def386bd4dc9faa642</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   21d8819e4ec3567d18ce232a05b24f1124b08b04
+   a37071ca7daf1919fced48def386bd4dc9faa642
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/21d8819e4ec3567d18ce232a05b24f1124b08b04">
+    <a href="/chromium/src/+log/a37071ca7daf1919fced48def386bd4dc9faa642">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/21d8819e4ec3567d18ce232a05b24f1124b08b04.tar.gz">
+    <a href="/chromium/src/+archive/a37071ca7daf1919fced48def386bd4dc9faa642.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nancy Wang &lt;nancylingwang@chromium.org&gt;
+   Eric Willigers &lt;ericwilligers@chromium.org&gt;
   </td>
   <td>
-   Mon Sep 13 04:38:45 2021
+   Mon Sep 13 05:55:50 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Sep 13 04:38:45 2021
+   Mon Sep 13 05:55:50 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/21d8819e4ec3567d18ce232a05b24f1124b08b04/">
-    a503978437ef312bd05e0a59a1fdb0a32ea83d69
+   <a href="/chromium/src/+/a37071ca7daf1919fced48def386bd4dc9faa642/">
+    d5144236843bdb6bd080775e621a6452f6ec1560
    </a>
   </td>
  </tr>
@@ -166,35 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/21d8819e4ec3567d18ce232a05b24f1124b08b04%5E">
-    7c1ba61a0c3d534b437f4adfe4b06b47566612ab
+   <a href="/chromium/src/+/a37071ca7daf1919fced48def386bd4dc9faa642%5E">
+    65c950c3813bf94318eac82580f62bb488ea7a58
    </a>
    <span>
     [
-    <a href="/chromium/src/+/21d8819e4ec3567d18ce232a05b24f1124b08b04%5E%21/">
+    <a href="/chromium/src/+/a37071ca7daf1919fced48def386bd4dc9faa642%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Check PriorReadiness for App Install Ukm.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">FileStreamDataPipeGetter waits for all receivers
 
-Based on Apps.PreviousReadinessStatus:
-<a href="https://uma.googleplex.com/p/chrome/histograms?sid=1fab940418f225fb1e8e338797126514">https://uma.googleplex.com/p/chrome/histograms?sid=1fab940418f225fb1e8e338797126514</a>
+FileStreamDataPipeGetter is self owned, and each instance waits for all
+receivers to disconnect before deleting itself. Previously,
+FileStreamDataPipeGetter would only wait for the first receiver to
+disconnect.
 
-For the file app, the prior readiness could be terminated when the
-app is ready during the run time. So modify the App Install Ukm, to
-check the prior readiness. If the prior readiness is not installed,
-record the install ukm, otherwise, don't record the install ukm.
+FileStreamDataPipeGetter now implements the DataPipeGetter interface
+correctly, allowing Read() to be called more than once.
 
-BUG=1245456
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4e1db6300038f4817121286e7f5287fc9e4f8645">I4e1db6300038f4817121286e7f5287fc9e4f8645</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3156763">https://chromium-review.googlesource.com/c/chromium/src/+/3156763</a>
-Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
-Commit-Queue: Nancy Wang &lt;nancylingwang@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#920645}
+Bug: 1235204
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib0586964b4ce614eea62d7c8e1af7f9915c7d8f7">Ib0586964b4ce614eea62d7c8e1af7f9915c7d8f7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3157802">https://chromium-review.googlesource.com/c/chromium/src/+/3157802</a>
+Auto-Submit: Eric Willigers &lt;ericwilligers@chromium.org&gt;
+Commit-Queue: Tim Sergeant &lt;tsergeant@chromium.org&gt;
+Reviewed-by: Tim Sergeant &lt;tsergeant@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#920657}
 </pre>
 
 </body>
