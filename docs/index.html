@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921105/"> 921105</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7a36e9390e6cc61996bfd706a0c266a85e1b0c56">7a36e9390e6cc61996bfd706a0c266a85e1b0c56</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921112/"> 921112</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/08957c86490a6b808de03725979577a832fcdf8b">08957c86490a6b808de03725979577a832fcdf8b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/921065/">921065</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2be9384937b210a5de9467fbbf9b91db2c5ccd26">2be9384937b210a5de9467fbbf9b91db2c5ccd26</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/921090/">921090</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4d4bcde0e3effff363e2b7ad4d21245d70779b2b">4d4bcde0e3effff363e2b7ad4d21245d70779b2b</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7a36e9390e6cc61996bfd706a0c266a85e1b0c56
+   08957c86490a6b808de03725979577a832fcdf8b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7a36e9390e6cc61996bfd706a0c266a85e1b0c56">
+    <a href="/chromium/src/+log/08957c86490a6b808de03725979577a832fcdf8b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7a36e9390e6cc61996bfd706a0c266a85e1b0c56.tar.gz">
+    <a href="/chromium/src/+archive/08957c86490a6b808de03725979577a832fcdf8b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Roger &lt;droger@chromium.org&gt;
+   Tomasz Śniatowski &lt;tsniatowski@vewd.com&gt;
   </td>
   <td>
-   Tue Sep 14 08:38:23 2021
+   Tue Sep 14 09:26:32 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 14 08:38:23 2021
+   Tue Sep 14 09:26:32 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7a36e9390e6cc61996bfd706a0c266a85e1b0c56/">
-    e7991890fe29831384d356c5016f3fdb9349b403
+   <a href="/chromium/src/+/08957c86490a6b808de03725979577a832fcdf8b/">
+    8de52e13e25e54d1357413d13e5325ac645ecbbf
    </a>
   </td>
  </tr>
@@ -166,46 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7a36e9390e6cc61996bfd706a0c266a85e1b0c56%5E">
-    0300c938a7fe3c693053c51205a09ebadabd4789
+   <a href="/chromium/src/+/08957c86490a6b808de03725979577a832fcdf8b%5E">
+    e2fd6168b8fbb38941507deabe1a14e0ed881ae9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7a36e9390e6cc61996bfd706a0c266a85e1b0c56%5E%21/">
+    <a href="/chromium/src/+/08957c86490a6b808de03725979577a832fcdf8b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Lacros] Initial implementation of AccountProfileMapper
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix gn config visibility in mac build templates
 
-AccountProfileMapper is the main class maintaining the mapping between
-accounts and profiles. There is only one global AccountProfileMapper (it
-is not attached to a particular `Profile` instance).
-Its two main tasks are:
-- Persisting the mapping to disk (in `ProfileAttributesStorage`), and
-  resolve conflicts at startup, as the system accounts may change while
-  Lacros is not running.
-- Implement an API similar to AccountManagerFacade, but split by
-  profile. This API is consumed by ProfileAccountManager (a per-profile
-  object), which then updates the corresponding IdentityManager.
+The "_framework_public_config" config is used via public_deps
+directly in the "+link" target, and not in the plain
+"_framework_target". Old gn ignored config visibility, but an
+upcoming roll will start enforcing this properly, so this
+needs a fix.
 
-Design considerations:
-- The AccountProfileMapper calls GetAccounts() at construction. While
-  this call is in flight, consumers have to wait.
-- To avoid race conditions, the AccountProfileMapper does not forward
-  the notifications from the facade. Instead, GetAccounts() is called.
-- When GetAccounts() completes, the AccountProfileMapper compares the
-  system accounts with the storage accounts. Then, it updates the
-  storage accordingly, and notifies the observers.
+Bug: gn:252
 
-Bug: 1226045
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iedd8cb180104a615b38b4aaa69f2bcf54db1876b">Iedd8cb180104a615b38b4aaa69f2bcf54db1876b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3085344">https://chromium-review.googlesource.com/c/chromium/src/+/3085344</a>
-Reviewed-by: Boris Sazonov &lt;bsazonov@chromium.org&gt;
-Commit-Queue: David Roger &lt;droger@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#921105}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibdfd741a3c6f81a70d0410274c90bd4cb56b0ca4">Ibdfd741a3c6f81a70d0410274c90bd4cb56b0ca4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3158044">https://chromium-review.googlesource.com/c/chromium/src/+/3158044</a>
+Commit-Queue: Tomasz Śniatowski &lt;tsniatowski@vewd.com&gt;
+Reviewed-by: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#921112}
 </pre>
 
 </body>
