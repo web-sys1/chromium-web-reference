@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921293/"> 921293</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9689fa9a54fe15181df2e0c70e4a05e7dcde9ac1">9689fa9a54fe15181df2e0c70e4a05e7dcde9ac1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921318/"> 921318</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/79dbf612f1535f0022ac3624b2167f114f1374ad">79dbf612f1535f0022ac3624b2167f114f1374ad</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/921254/">921254</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9689fa9a54fe15181df2e0c70e4a05e7dcde9ac1
+   79dbf612f1535f0022ac3624b2167f114f1374ad
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9689fa9a54fe15181df2e0c70e4a05e7dcde9ac1">
+    <a href="/chromium/src/+log/79dbf612f1535f0022ac3624b2167f114f1374ad">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9689fa9a54fe15181df2e0c70e4a05e7dcde9ac1.tar.gz">
+    <a href="/chromium/src/+archive/79dbf612f1535f0022ac3624b2167f114f1374ad.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Francois Doray &lt;fdoray@chromium.org&gt;
+   Andres Calderon Jaramillo &lt;andrescj@chromium.org&gt;
   </td>
   <td>
-   Tue Sep 14 17:34:55 2021
+   Tue Sep 14 18:12:34 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 14 17:34:55 2021
+   Tue Sep 14 18:12:34 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9689fa9a54fe15181df2e0c70e4a05e7dcde9ac1/">
-    9108e197cc010c919e0a64628f8de50ec4cd7c12
+   <a href="/chromium/src/+/79dbf612f1535f0022ac3624b2167f114f1374ad/">
+    4dd14eacc29cfb920ae6b3b030afdefd4130f34c
    </a>
   </td>
  </tr>
@@ -166,31 +166,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9689fa9a54fe15181df2e0c70e4a05e7dcde9ac1%5E">
-    380557e6b592531eb360513791968dd7ab0ee77d
+   <a href="/chromium/src/+/79dbf612f1535f0022ac3624b2167f114f1374ad%5E">
+    9c34dcdb8f62b7ec7746d877b54f4e6e925e5430
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9689fa9a54fe15181df2e0c70e4a05e7dcde9ac1%5E%21/">
+    <a href="/chromium/src/+/79dbf612f1535f0022ac3624b2167f114f1374ad%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[UMA] Remove sebmarchand as a histogram owner.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media: Remove VD-SFC code.
 
-sebmarchand switched team.
+This CL is a controlled revert of CL:2641088 which introduced code to
+use the VD-SFC capability of Intel devices to scale protected content.
 
-Bug: 1246420
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3cfc92fc4b246e1bfc034c6634c93d28fec4c950">I3cfc92fc4b246e1bfc034c6634c93d28fec4c950</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3150754">https://chromium-review.googlesource.com/c/chromium/src/+/3150754</a>
-Reviewed-by: Chris Hamilton &lt;chrisha@chromium.org&gt;
-Reviewed-by: Gabriel Charette &lt;gab@chromium.org&gt;
-Reviewed-by: Sébastien Marchand &lt;sebmarchand@chromium.org&gt;
-Reviewed-by: Mark Pearson &lt;mpearson@chromium.org&gt;
-Commit-Queue: François Doray &lt;fdoray@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#921293}
+Since then, we have landed CL:3089495 which switches to using VE-SFC for
+this purpose. Therefore, the VD-SFC path is no longer needed.
+
+By "controlled revert," I mean reverting only the parts of CL:2641088
+that are no longer useful.
+
+Additionally, I sprinkled a couple of minor aesthetic fixes in
+vaapi_video_decoder.cc:
+
+- I replaced |output_pic_size| with |decoder_pic_size| when calculating
+the |decode_to_output_scale_factor|: numerically, they're the same at
+that point, but semantically, it makes more sense to use
+|decoder_pic_size|.
+
+- Passed |decoder_pic_size| instead of decoder_-&gt;GetPicSize() to
+vaapi_wrapper_-&gt;CreateContext().
+
+Test: video.PlayDRM.cencv1_h264_ctr on volteer.
+Bug: b:190545350
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idabf3f384d871842e26286e5f3bbf04e7ebc91df">Idabf3f384d871842e26286e5f3bbf04e7ebc91df</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3159089">https://chromium-review.googlesource.com/c/chromium/src/+/3159089</a>
+Reviewed-by: Jeffrey Kardatzke &lt;jkardatzke@google.com&gt;
+Reviewed-by: J Kardatzke &lt;jkardatzke@chromium.org&gt;
+Commit-Queue: Andres Calderon Jaramillo &lt;andrescj@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#921318}
 </pre>
 
 </body>
