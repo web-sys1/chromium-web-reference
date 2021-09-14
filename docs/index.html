@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921097/"> 921097</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/95d2a5c282f252beacb88bc85e0ed163bbefd906">95d2a5c282f252beacb88bc85e0ed163bbefd906</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921105/"> 921105</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7a36e9390e6cc61996bfd706a0c266a85e1b0c56">7a36e9390e6cc61996bfd706a0c266a85e1b0c56</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/921065/">921065</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   95d2a5c282f252beacb88bc85e0ed163bbefd906
+   7a36e9390e6cc61996bfd706a0c266a85e1b0c56
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/95d2a5c282f252beacb88bc85e0ed163bbefd906">
+    <a href="/chromium/src/+log/7a36e9390e6cc61996bfd706a0c266a85e1b0c56">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/95d2a5c282f252beacb88bc85e0ed163bbefd906.tar.gz">
+    <a href="/chromium/src/+archive/7a36e9390e6cc61996bfd706a0c266a85e1b0c56.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   David Roger &lt;droger@chromium.org&gt;
   </td>
   <td>
-   Tue Sep 14 08:11:53 2021
+   Tue Sep 14 08:38:23 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 14 08:11:53 2021
+   Tue Sep 14 08:38:23 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/95d2a5c282f252beacb88bc85e0ed163bbefd906/">
-    580b7cf90ec0ebe3244aef17849aeea92136fd15
+   <a href="/chromium/src/+/7a36e9390e6cc61996bfd706a0c266a85e1b0c56/">
+    e7991890fe29831384d356c5016f3fdb9349b403
    </a>
   </td>
  </tr>
@@ -166,43 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/95d2a5c282f252beacb88bc85e0ed163bbefd906%5E">
-    2f9d3f95b3596409a8255f20fdef91720270be21
+   <a href="/chromium/src/+/7a36e9390e6cc61996bfd706a0c266a85e1b0c56%5E">
+    0300c938a7fe3c693053c51205a09ebadabd4789
    </a>
    <span>
     [
-    <a href="/chromium/src/+/95d2a5c282f252beacb88bc85e0ed163bbefd906%5E%21/">
+    <a href="/chromium/src/+/7a36e9390e6cc61996bfd706a0c266a85e1b0c56%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Linux PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Lacros] Initial implementation of AccountProfileMapper
 
-Roll Chrome Linux PGO profile from chrome-linux-main-1631577587-bac4bbb6a196cba30804c2f4e28385463647f2b9.profdata to chrome-linux-main-1631598904-451110a13506c71b319370f1e7d18b052a3aa515.profdata
+AccountProfileMapper is the main class maintaining the mapping between
+accounts and profiles. There is only one global AccountProfileMapper (it
+is not attached to a particular `Profile` instance).
+Its two main tasks are:
+- Persisting the mapping to disk (in `ProfileAttributesStorage`), and
+  resolve conflicts at startup, as the system accounts may change while
+  Lacros is not running.
+- Implement an API similar to AccountManagerFacade, but split by
+  profile. This API is consumed by ProfileAccountManager (a per-profile
+  object), which then updates the corresponding IdentityManager.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-linux-chromium">https://autoroll.skia.org/r/pgo-linux-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+Design considerations:
+- The AccountProfileMapper calls GetAccounts() at construction. While
+  this call is in flight, consumers have to wait.
+- To avoid race conditions, the AccountProfileMapper does not forward
+  the notifications from the facade. Instead, GetAccounts() is called.
+- When GetAccounts() completes, the AccountProfileMapper compares the
+  system accounts with the storage accounts. Then, it updates the
+  storage accordingly, and notifies the observers.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:linux-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iee87ec23388603200481bb22d54049cd4c06d010">Iee87ec23388603200481bb22d54049cd4c06d010</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3160256">https://chromium-review.googlesource.com/c/chromium/src/+/3160256</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#921097}
+Bug: 1226045
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iedd8cb180104a615b38b4aaa69f2bcf54db1876b">Iedd8cb180104a615b38b4aaa69f2bcf54db1876b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3085344">https://chromium-review.googlesource.com/c/chromium/src/+/3085344</a>
+Reviewed-by: Boris Sazonov &lt;bsazonov@chromium.org&gt;
+Commit-Queue: David Roger &lt;droger@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#921105}
 </pre>
 
 </body>
