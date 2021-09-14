@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921112/"> 921112</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/08957c86490a6b808de03725979577a832fcdf8b">08957c86490a6b808de03725979577a832fcdf8b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921120/"> 921120</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e209e020ac75c0916c7d89f2f5b3a76272b0eb76">e209e020ac75c0916c7d89f2f5b3a76272b0eb76</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/921090/">921090</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4d4bcde0e3effff363e2b7ad4d21245d70779b2b">4d4bcde0e3effff363e2b7ad4d21245d70779b2b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/921065/">921065</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2be9384937b210a5de9467fbbf9b91db2c5ccd26">2be9384937b210a5de9467fbbf9b91db2c5ccd26</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   08957c86490a6b808de03725979577a832fcdf8b
+   e209e020ac75c0916c7d89f2f5b3a76272b0eb76
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/08957c86490a6b808de03725979577a832fcdf8b">
+    <a href="/chromium/src/+log/e209e020ac75c0916c7d89f2f5b3a76272b0eb76">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/08957c86490a6b808de03725979577a832fcdf8b.tar.gz">
+    <a href="/chromium/src/+archive/e209e020ac75c0916c7d89f2f5b3a76272b0eb76.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tomasz Śniatowski &lt;tsniatowski@vewd.com&gt;
+   ainozaki &lt;ainozaki@google.com&gt;
   </td>
   <td>
-   Tue Sep 14 09:26:32 2021
+   Tue Sep 14 10:13:19 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 14 09:26:32 2021
+   Tue Sep 14 10:13:19 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/08957c86490a6b808de03725979577a832fcdf8b/">
-    8de52e13e25e54d1357413d13e5325ac645ecbbf
+   <a href="/chromium/src/+/e209e020ac75c0916c7d89f2f5b3a76272b0eb76/">
+    381bcd550be598c8ee535f1a944fd27ddf94ba13
    </a>
   </td>
  </tr>
@@ -166,33 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/08957c86490a6b808de03725979577a832fcdf8b%5E">
-    e2fd6168b8fbb38941507deabe1a14e0ed881ae9
+   <a href="/chromium/src/+/e209e020ac75c0916c7d89f2f5b3a76272b0eb76%5E">
+    9429faa3d8261a8222b2b5508b1791e77a94b822
    </a>
    <span>
     [
-    <a href="/chromium/src/+/08957c86490a6b808de03725979577a832fcdf8b%5E%21/">
+    <a href="/chromium/src/+/e209e020ac75c0916c7d89f2f5b3a76272b0eb76%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix gn config visibility in mac build templates
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">CORS: Logging preflight cache checking
 
-The "_framework_public_config" config is used via public_deps
-directly in the "+link" target, and not in the plain
-"_framework_target". Old gn ignored config visibility, but an
-upcoming roll will start enforcing this properly, so this
-needs a fix.
+This CL is one of the patches of logging CORS preflight request in
+NetLog. design doc (Internal):
+<a href="https://docs.google.com/document/d/1VambUhLsBYXPg9tOXPtTmYgUHXXuArIbBOQAOw8YcKU/edit?usp=sharing">https://docs.google.com/document/d/1VambUhLsBYXPg9tOXPtTmYgUHXXuArIbBOQAOw8YcKU/edit?usp=sharing</a>
 
-Bug: gn:252
+Before sending a preflight request, PreflightController checks if there
+is a preflight cache. This CL takes logs of the checking result:
+"hit-and-pass"/"hit-and-fail"/"miss"/"stale". Contents of the cache will
+be logged in following CLs.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibdfd741a3c6f81a70d0410274c90bd4cb56b0ca4">Ibdfd741a3c6f81a70d0410274c90bd4cb56b0ca4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3158044">https://chromium-review.googlesource.com/c/chromium/src/+/3158044</a>
-Commit-Queue: Tomasz Śniatowski &lt;tsniatowski@vewd.com&gt;
-Reviewed-by: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#921112}
+Bug: 124451
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I30b2e4a077aa5c9a560d9c5abbec6b5f1ef8a1d3">I30b2e4a077aa5c9a560d9c5abbec6b5f1ef8a1d3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3151042">https://chromium-review.googlesource.com/c/chromium/src/+/3151042</a>
+Commit-Queue: Ai Nozaki &lt;ainozaki@google.com&gt;
+Reviewed-by: Matt Menke &lt;mmenke@chromium.org&gt;
+Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Reviewed-by: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#921120}
 </pre>
 
 </body>
