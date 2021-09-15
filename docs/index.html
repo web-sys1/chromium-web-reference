@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921711/"> 921711</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6883f87629bf1cf2deb86f5e7b716e33e31c0cb7">6883f87629bf1cf2deb86f5e7b716e33e31c0cb7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921736/"> 921736</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b87c7a4269d3531e432dd455e18d787aadac2642">b87c7a4269d3531e432dd455e18d787aadac2642</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/921659/">921659</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6883f87629bf1cf2deb86f5e7b716e33e31c0cb7
+   b87c7a4269d3531e432dd455e18d787aadac2642
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6883f87629bf1cf2deb86f5e7b716e33e31c0cb7">
+    <a href="/chromium/src/+log/b87c7a4269d3531e432dd455e18d787aadac2642">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6883f87629bf1cf2deb86f5e7b716e33e31c0cb7.tar.gz">
+    <a href="/chromium/src/+archive/b87c7a4269d3531e432dd455e18d787aadac2642.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   CT Log list updates bot &lt;mdb.chrome-pki-metadata@google.com&gt;
+   Caitlin Fischer &lt;caitlinfischer@google.com&gt;
   </td>
   <td>
-   Wed Sep 15 17:06:45 2021
+   Wed Sep 15 17:43:42 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 15 17:06:45 2021
+   Wed Sep 15 17:43:42 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6883f87629bf1cf2deb86f5e7b716e33e31c0cb7/">
-    8b940804bf8496caf07939b2c5c93fe13518dfcd
+   <a href="/chromium/src/+/b87c7a4269d3531e432dd455e18d787aadac2642/">
+    13c243ba421ae42677cb64747bb9d9badb70496e
    </a>
   </td>
  </tr>
@@ -166,27 +166,53 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6883f87629bf1cf2deb86f5e7b716e33e31c0cb7%5E">
-    a1facd1c0215d4cf2dfac82049f236fbdf5322ec
+   <a href="/chromium/src/+/b87c7a4269d3531e432dd455e18d787aadac2642%5E">
+    168d2356490778812b984f49d66d95b8a4b9c7da
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6883f87629bf1cf2deb86f5e7b716e33e31c0cb7%5E%21/">
+    <a href="/chromium/src/+/b87c7a4269d3531e432dd455e18d787aadac2642%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Automatic update for log_list.json
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Instantiate the FieldTrialList earlier in Android WebLayer and WebView.
 
-Automatic update for 2021-09-15 UTC
+Moving the instantiation earlier on these platforms is being moved out
+of crrev.com/c/3137621 in case this causes problems.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I177f841292d512b6c91e1c7a11011a52d5b9d353">I177f841292d512b6c91e1c7a11011a52d5b9d353</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3162164">https://chromium-review.googlesource.com/c/chromium/src/+/3162164</a>
-Commit-Queue: CT Log list updates bot &lt;mdb.chrome-pki-metadata@google.com&gt;
-Bot-Commit: CT Log list updates bot &lt;mdb.chrome-pki-metadata@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#921711}
+The motivation behind this change and crrev.com/c/3137621 is being able
+to assign clients to experiment groups when the CleanExitBeacon init
+steps occur, as in crrev.com/c/3120545.
+
+As a part of this change, the instantiation of the FieldTrialList on
+Android WebLayer and WebView is moved earlier. This is necessary because
+we can't write the beacon value before initializing the CleanExitBeacon,
+and we can't initialize the beacon until after the FieldTrialList has
+been instantiated. However, with the status quo implementation, it is
+possible for WL or WV to try to write the beacon value via the below
+sequence of calls before the FieldTrialList has been instantiated.
+
+AndroidMetricsServiceClient::Initialize()
+AndroidMetricsServiceClient::MaybeStartMetrics()
+AndroidMetricsServiceClient::RegisterMetricsProvidersAndInitState()
+MetricsService::InitializeMetricsRecordingState()
+MetricsService::InitializeMetricsState()
+CleanExitBeacon::WriteBeaconValue()
+
+This happens when AndroidMetricsServiceClient::SetHaveMetricsConsent()
+returns before AndroidMetricsServiceClient::Initialize().
+
+Bug: 1249496, 1246410
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6e7df9656a5aea0d549e855ad17755f6ad7f2b88">I6e7df9656a5aea0d549e855ad17755f6ad7f2b88</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3160866">https://chromium-review.googlesource.com/c/chromium/src/+/3160866</a>
+Commit-Queue: Caitlin Fischer &lt;caitlinfischer@google.com&gt;
+Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+Reviewed-by: Nate Fischer &lt;ntfschr@chromium.org&gt;
+Reviewed-by: Alexei Svitkine &lt;asvitkine@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#921736}
 </pre>
 
 </body>
