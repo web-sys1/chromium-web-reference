@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921736/"> 921736</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b87c7a4269d3531e432dd455e18d787aadac2642">b87c7a4269d3531e432dd455e18d787aadac2642</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921761/"> 921761</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/befc767db44a9c1a711793d8d45f8e622fb1d66c">befc767db44a9c1a711793d8d45f8e622fb1d66c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/921659/">921659</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/772f00eaee67c393ec838b9fa6f28b52e8f13abb">772f00eaee67c393ec838b9fa6f28b52e8f13abb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/921703/">921703</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7d3ba03954c85ad129c08d0fed61b9eba2be5241">7d3ba03954c85ad129c08d0fed61b9eba2be5241</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b87c7a4269d3531e432dd455e18d787aadac2642
+   befc767db44a9c1a711793d8d45f8e622fb1d66c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b87c7a4269d3531e432dd455e18d787aadac2642">
+    <a href="/chromium/src/+log/befc767db44a9c1a711793d8d45f8e622fb1d66c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b87c7a4269d3531e432dd455e18d787aadac2642.tar.gz">
+    <a href="/chromium/src/+archive/befc767db44a9c1a711793d8d45f8e622fb1d66c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Caitlin Fischer &lt;caitlinfischer@google.com&gt;
+   Koji Ishii &lt;kojii@chromium.org&gt;
   </td>
   <td>
-   Wed Sep 15 17:43:42 2021
+   Wed Sep 15 18:34:34 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 15 17:43:42 2021
+   Wed Sep 15 18:34:34 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b87c7a4269d3531e432dd455e18d787aadac2642/">
-    13c243ba421ae42677cb64747bb9d9badb70496e
+   <a href="/chromium/src/+/befc767db44a9c1a711793d8d45f8e622fb1d66c/">
+    e449a3d8e9ad50683c8c40b2c56ff461e8c2f82f
    </a>
   </td>
  </tr>
@@ -166,53 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b87c7a4269d3531e432dd455e18d787aadac2642%5E">
-    168d2356490778812b984f49d66d95b8a4b9c7da
+   <a href="/chromium/src/+/befc767db44a9c1a711793d8d45f8e622fb1d66c%5E">
+    e5c1c54ed2a33ff648afd8a2d33d9d502ee5c47a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b87c7a4269d3531e432dd455e18d787aadac2642%5E%21/">
+    <a href="/chromium/src/+/befc767db44a9c1a711793d8d45f8e622fb1d66c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Instantiate the FieldTrialList earlier in Android WebLayer and WebView.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Propagate OOFs across line boxes
 
-Moving the instantiation earlier on these platforms is being moved out
-of crrev.com/c/3137621 in case this causes problems.
+On top of crrev.com/c/3124721, this patch propagates OOF in
+block fragmentation contexts across line boxes.
 
-The motivation behind this change and crrev.com/c/3137621 is being able
-to assign clients to experiment groups when the CleanExitBeacon init
-steps occur, as in crrev.com/c/3120545.
+This CL fixes the `AssertLaidOut` failure in
+  external/wpt/css/css-break/out-of-flow-in-multicolumn-059.html
+when both NGBlockFragmentation and NGBlockInInline are enabled.
 
-As a part of this change, the instantiation of the FieldTrialList on
-Android WebLayer and WebView is moved earlier. This is necessary because
-we can't write the beacon value before initializing the CleanExitBeacon,
-and we can't initialize the beacon until after the FieldTrialList has
-been instantiated. However, with the status quo implementation, it is
-possible for WL or WV to try to write the beacon value via the below
-sequence of calls before the FieldTrialList has been instantiated.
+The test still fails to apply relpos applied to the `&lt;span&gt;`.
+Probably we fail to find inline containing block across block-
+in-inline. Investigating it will be in following patches.
 
-AndroidMetricsServiceClient::Initialize()
-AndroidMetricsServiceClient::MaybeStartMetrics()
-AndroidMetricsServiceClient::RegisterMetricsProvidersAndInitState()
-MetricsService::InitializeMetricsRecordingState()
-MetricsService::InitializeMetricsState()
-CleanExitBeacon::WriteBeaconValue()
-
-This happens when AndroidMetricsServiceClient::SetHaveMetricsConsent()
-returns before AndroidMetricsServiceClient::Initialize().
-
-Bug: 1249496, 1246410
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6e7df9656a5aea0d549e855ad17755f6ad7f2b88">I6e7df9656a5aea0d549e855ad17755f6ad7f2b88</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3160866">https://chromium-review.googlesource.com/c/chromium/src/+/3160866</a>
-Commit-Queue: Caitlin Fischer &lt;caitlinfischer@google.com&gt;
-Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Reviewed-by: Nate Fischer &lt;ntfschr@chromium.org&gt;
-Reviewed-by: Alexei Svitkine &lt;asvitkine@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#921736}
+Bug: 716930
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9c448cc403d82c6115e883b43937adb10246182a">I9c448cc403d82c6115e883b43937adb10246182a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3140515">https://chromium-review.googlesource.com/c/chromium/src/+/3140515</a>
+Reviewed-by: Alison Maher &lt;almaher@microsoft.com&gt;
+Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#921761}
 </pre>
 
 </body>
