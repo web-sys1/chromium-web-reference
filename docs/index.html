@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921538/"> 921538</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c0ebe5997a66150603da25f52bffe05852fe81b6">c0ebe5997a66150603da25f52bffe05852fe81b6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921540/"> 921540</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ea8f2255a59b695e08c7e2119d56844902df90b1">ea8f2255a59b695e08c7e2119d56844902df90b1</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/921520/">921520</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c0ebe5997a66150603da25f52bffe05852fe81b6
+   ea8f2255a59b695e08c7e2119d56844902df90b1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c0ebe5997a66150603da25f52bffe05852fe81b6">
+    <a href="/chromium/src/+log/ea8f2255a59b695e08c7e2119d56844902df90b1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c0ebe5997a66150603da25f52bffe05852fe81b6.tar.gz">
+    <a href="/chromium/src/+archive/ea8f2255a59b695e08c7e2119d56844902df90b1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Matt Falkenhagen &lt;falken@chromium.org&gt;
+   Peter Boström &lt;pbos@chromium.org&gt;
   </td>
   <td>
-   Wed Sep 15 05:55:40 2021
+   Wed Sep 15 06:35:54 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 15 05:55:40 2021
+   Wed Sep 15 06:35:54 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c0ebe5997a66150603da25f52bffe05852fe81b6/">
-    fa218650bee51152af40e55d02674ac5cca6c926
+   <a href="/chromium/src/+/ea8f2255a59b695e08c7e2119d56844902df90b1/">
+    e6f989733bd7c7d9af4c9dff1e5ff7e81db1c86c
    </a>
   </td>
  </tr>
@@ -166,29 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c0ebe5997a66150603da25f52bffe05852fe81b6%5E">
-    4a0e62faa4b6775f4a6a35a6fc9d94b70f62db15
+   <a href="/chromium/src/+/ea8f2255a59b695e08c7e2119d56844902df90b1%5E">
+    693cfa6847a08a51b415a2eaf30a98e0460f5692
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c0ebe5997a66150603da25f52bffe05852fe81b6%5E%21/">
+    <a href="/chromium/src/+/ea8f2255a59b695e08c7e2119d56844902df90b1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">service worker: Further UI thread simplifications.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use OnWidgetDestroying() in WidgetFadeAnimator
 
-The "service worker core thread" is just the UI thread, so
-RunOrPostTaskOnThread just invokes the function directly.
+OnWidgetClosing() is going away as an API (WidgetObservers expect this
+to always be called, but it's only called if an explicit Close() request
+is the reason for its closure, so it's commonly a UAF risk).
 
-Bug: 1138155
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib7737b812ab9866ab010ef588721eb289875b8d3">Ib7737b812ab9866ab010ef588721eb289875b8d3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3159814">https://chromium-review.googlesource.com/c/chromium/src/+/3159814</a>
-Reviewed-by: Asami Doi &lt;asamidoi@chromium.org&gt;
-Commit-Queue: Matt Falkenhagen &lt;falken@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#921538}
+This is maybe(???) also a speculative fix for crbug.com/1245948 as it's
+possible that something is requesting the closure of this widget on the
+same stack that it's created but before it's been used. If that's the
+case then it's possible that WidgetFadeAnimator's `widget_` is cleared
+out between its construction and first call to ::FadeIn().
+
+Bug: 1240365, 1245948
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6bb28511086ed528442dba7dedd028b8f48b2f1f">I6bb28511086ed528442dba7dedd028b8f48b2f1f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3160852">https://chromium-review.googlesource.com/c/chromium/src/+/3160852</a>
+Reviewed-by: Dana Fried &lt;dfried@chromium.org&gt;
+Commit-Queue: Peter Boström &lt;pbos@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#921540}
 </pre>
 
 </body>
