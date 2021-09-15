@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921788/"> 921788</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb243fe21bc4d2bf7a88d8f4bb819dad2a9b9b61">fb243fe21bc4d2bf7a88d8f4bb819dad2a9b9b61</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921835/"> 921835</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c880aeba9df24db139beb75f7f4faf696d6e46b4">c880aeba9df24db139beb75f7f4faf696d6e46b4</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/921703/">921703</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   fb243fe21bc4d2bf7a88d8f4bb819dad2a9b9b61
+   c880aeba9df24db139beb75f7f4faf696d6e46b4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/fb243fe21bc4d2bf7a88d8f4bb819dad2a9b9b61">
+    <a href="/chromium/src/+log/c880aeba9df24db139beb75f7f4faf696d6e46b4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/fb243fe21bc4d2bf7a88d8f4bb819dad2a9b9b61.tar.gz">
+    <a href="/chromium/src/+archive/c880aeba9df24db139beb75f7f4faf696d6e46b4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ryan Keane &lt;rwkeane@google.com&gt;
+   Dylan Cutler &lt;dylancutler@google.com&gt;
   </td>
   <td>
-   Wed Sep 15 19:10:29 2021
+   Wed Sep 15 20:35:27 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 15 19:10:29 2021
+   Wed Sep 15 20:35:27 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/fb243fe21bc4d2bf7a88d8f4bb819dad2a9b9b61/">
-    9be6bcb46529ac86bed8b5726fa7ad56dd9f32c3
+   <a href="/chromium/src/+/c880aeba9df24db139beb75f7f4faf696d6e46b4/">
+    3f4aff035b08001c10fde535a3378eca448a4f05
    </a>
   </td>
  </tr>
@@ -166,29 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/fb243fe21bc4d2bf7a88d8f4bb819dad2a9b9b61%5E">
-    8500edcd70e6c8fdb551ee70908e84650da8c1a6
+   <a href="/chromium/src/+/c880aeba9df24db139beb75f7f4faf696d6e46b4%5E">
+    744f90c1648623fc98521b3e76e376b2beba13a6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/fb243fe21bc4d2bf7a88d8f4bb819dad2a9b9b61%5E%21/">
+    <a href="/chromium/src/+/c880aeba9df24db139beb75f7f4faf696d6e46b4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add //chromecast Unit Tests to CQ
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Change order of unique constraint on cookies SQLite table.
 
-It looks like BuildBots aren't actually running some of the UTs for
-//chromecast that get built. This adds them.
+When I first added the top_frame_site_key, I made it the first part of
+the unique constraint (and internal index) without realizing
+CookieMonster only loads cookies and tracks pending cookie loading tasks
+by host key only.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0e1e4b49e7a21a94a6d7da864f52775d7825f8b4">I0e1e4b49e7a21a94a6d7da864f52775d7825f8b4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3149413">https://chromium-review.googlesource.com/c/chromium/src/+/3149413</a>
-Reviewed-by: Erik Staab &lt;estaab@chromium.org&gt;
-Reviewed-by: Yuchen Liu &lt;yucliu@chromium.org&gt;
-Commit-Queue: Ryan Keane &lt;rwkeane@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#921788}
+For now, we can keep this behavior and load all Partitioned cookies for
+a given site into CookieMonster. If we find that prolific third-parties
+need to load cookies across a lot of partitions, the new unique
+constraint allows us to also load cookies by top_frame_site_key while
+still using the index.
+
+Bug: 1225444
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I24bbe004cdde3f69a829ba2709d8be75d1b77edf">I24bbe004cdde3f69a829ba2709d8be75d1b77edf</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3152897">https://chromium-review.googlesource.com/c/chromium/src/+/3152897</a>
+Commit-Queue: Dylan Cutler &lt;dylancutler@google.com&gt;
+Reviewed-by: Steven Bingler &lt;bingler@chromium.org&gt;
+Reviewed-by: Victor Costan &lt;pwnall@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#921835}
 </pre>
 
 </body>
