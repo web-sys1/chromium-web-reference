@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921835/"> 921835</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c880aeba9df24db139beb75f7f4faf696d6e46b4">c880aeba9df24db139beb75f7f4faf696d6e46b4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/921856/"> 921856</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb818a52fccbd6952505ca1978623b3fd15df4ab">fb818a52fccbd6952505ca1978623b3fd15df4ab</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/921703/">921703</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7d3ba03954c85ad129c08d0fed61b9eba2be5241">7d3ba03954c85ad129c08d0fed61b9eba2be5241</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/921788/">921788</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb243fe21bc4d2bf7a88d8f4bb819dad2a9b9b61">fb243fe21bc4d2bf7a88d8f4bb819dad2a9b9b61</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c880aeba9df24db139beb75f7f4faf696d6e46b4
+   fb818a52fccbd6952505ca1978623b3fd15df4ab
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c880aeba9df24db139beb75f7f4faf696d6e46b4">
+    <a href="/chromium/src/+log/fb818a52fccbd6952505ca1978623b3fd15df4ab">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c880aeba9df24db139beb75f7f4faf696d6e46b4.tar.gz">
+    <a href="/chromium/src/+archive/fb818a52fccbd6952505ca1978623b3fd15df4ab.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Dylan Cutler &lt;dylancutler@google.com&gt;
+   Andrew Williams &lt;awillia@google.com&gt;
   </td>
   <td>
-   Wed Sep 15 20:35:27 2021
+   Wed Sep 15 21:15:00 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 15 20:35:27 2021
+   Wed Sep 15 21:15:00 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c880aeba9df24db139beb75f7f4faf696d6e46b4/">
-    3f4aff035b08001c10fde535a3378eca448a4f05
+   <a href="/chromium/src/+/fb818a52fccbd6952505ca1978623b3fd15df4ab/">
+    98218d01b78877fab8943b650e6e646157464588
    </a>
   </td>
  </tr>
@@ -166,38 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c880aeba9df24db139beb75f7f4faf696d6e46b4%5E">
-    744f90c1648623fc98521b3e76e376b2beba13a6
+   <a href="/chromium/src/+/fb818a52fccbd6952505ca1978623b3fd15df4ab%5E">
+    0005d10068ec1e767d9b4a78ba44868dd28cf0ff
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c880aeba9df24db139beb75f7f4faf696d6e46b4%5E%21/">
+    <a href="/chromium/src/+/fb818a52fccbd6952505ca1978623b3fd15df4ab%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Change order of unique constraint on cookies SQLite table.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Allow tabs and reject other CTLs in cookie tests
 
-When I first added the top_frame_site_key, I made it the first part of
-the unique constraint (and internal index) without realizing
-CookieMonster only loads cookies and tracks pending cookie loading tasks
-by host key only.
+Updates the cookie control character tests to match the recent updates
+to RFC6265bis - specifically, the tab character is now permitted, but
+all other control characters cause the entire cookie to be rejected
+(previously \x00, \x0D, and \x0A caused the cookie line being parsed
+to be truncated instead of rejecting the whole cookie line).
 
-For now, we can keep this behavior and load all Partitioned cookies for
-a given site into CookieMonster. If we find that prolific third-parties
-need to load cookies across a lot of partitions, the new unique
-constraint allows us to also load cookies by top_frame_site_key while
-still using the index.
-
-Bug: 1225444
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I24bbe004cdde3f69a829ba2709d8be75d1b77edf">I24bbe004cdde3f69a829ba2709d8be75d1b77edf</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3152897">https://chromium-review.googlesource.com/c/chromium/src/+/3152897</a>
-Commit-Queue: Dylan Cutler &lt;dylancutler@google.com&gt;
+Bug: 1237551
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I94e13af43efd641f7b5a3706471ea0c91a0be2f1">I94e13af43efd641f7b5a3706471ea0c91a0be2f1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3084521">https://chromium-review.googlesource.com/c/chromium/src/+/3084521</a>
 Reviewed-by: Steven Bingler &lt;bingler@chromium.org&gt;
-Reviewed-by: Victor Costan &lt;pwnall@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#921835}
+Commit-Queue: Andrew Williams &lt;awillia@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#921856}
 </pre>
 
 </body>
