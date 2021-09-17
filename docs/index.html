@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/922558/"> 922558</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/da141a3858e3750a4e9d91d0e123157c8727ff98">da141a3858e3750a4e9d91d0e123157c8727ff98</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/922615/"> 922615</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4b13e65c914599d4be74a9f4db257fa1218b865b">4b13e65c914599d4be74a9f4db257fa1218b865b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/922556/">922556</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bc6d983842a7798f4508ae5fb17627d1ecd5f684">bc6d983842a7798f4508ae5fb17627d1ecd5f684</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/922558/">922558</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/da141a3858e3750a4e9d91d0e123157c8727ff98">da141a3858e3750a4e9d91d0e123157c8727ff98</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   da141a3858e3750a4e9d91d0e123157c8727ff98
+   4b13e65c914599d4be74a9f4db257fa1218b865b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/da141a3858e3750a4e9d91d0e123157c8727ff98">
+    <a href="/chromium/src/+log/4b13e65c914599d4be74a9f4db257fa1218b865b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/da141a3858e3750a4e9d91d0e123157c8727ff98.tar.gz">
+    <a href="/chromium/src/+archive/4b13e65c914599d4be74a9f4db257fa1218b865b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   amraboelkher &lt;amraboelkher@chromium.org&gt;
+   Vladimir Levin &lt;vmpstr@chromium.org&gt;
   </td>
   <td>
-   Fri Sep 17 18:38:03 2021
+   Fri Sep 17 19:41:42 2021
   </td>
  </tr>
  <tr>
@@ -145,10 +145,10 @@ body{
    committer
   </th>
   <td>
-   Amr Aboelkher &lt;amraboelkher@chromium.org&gt;
+   Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Sep 17 18:38:03 2021
+   Fri Sep 17 19:41:42 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/da141a3858e3750a4e9d91d0e123157c8727ff98/">
-    a51cd1ea1a95b94894903e3bafbab3145a4bf3bb
+   <a href="/chromium/src/+/4b13e65c914599d4be74a9f4db257fa1218b865b/">
+    9cc7408a3889d9add5af5ff209468b8858c23d76
    </a>
   </td>
  </tr>
@@ -166,56 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/da141a3858e3750a4e9d91d0e123157c8727ff98%5E">
-    1739ca10123433962e1c1bd70b2673a1068429c3
+   <a href="/chromium/src/+/4b13e65c914599d4be74a9f4db257fa1218b865b%5E">
+    81cf4e9133526a6e6b8880c9b8b24999edf5a78a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/da141a3858e3750a4e9d91d0e123157c8727ff98%5E%21/">
+    <a href="/chromium/src/+/4b13e65c914599d4be74a9f4db257fa1218b865b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Move top-level files from chrome/browser/ash/login/ to namespace ash [2/2]"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">content-visibility: Don't expose NearestLockedExclusiveAncestor.
 
-This reverts commit 88a8086f87112b21011e75d09f75e97710fa145e.
+This function is being used to check for layout blocking and paint
+blocking and maybe other cases too. However, when we move to the model
+that allows some of the phases to happen, then it will be confusing
+to figure out whether this is the right function to use.
 
-Reason for revert: Breaks the chromeos build and I (sheriff) had to close the tree until that revert land.
+This patch changes all uses to an explicit LockedAncestorPreventing*
+functions.
 
-See: <a href="https://logs.chromium.org/logs/chrome/buildbucket/cr-buildbucket/8835828362427336641/+/u/compile__with_patch_/raw_io.output_failure_summary_">https://logs.chromium.org/logs/chrome/buildbucket/cr-buildbucket/8835828362427336641/+/u/compile__with_patch_/raw_io.output_failure_summary_</a>
-See:
-'ash::system'; did you mean 'chromeos::system::kIsVmKey'
+Also cleans up unused functions.
 
+R=chrishtr@chromium.org
 
-Original change's description:
-&gt; Move top-level files from chrome/browser/ash/login/ to namespace ash [2/2]
-&gt;
-&gt; The migration of chromeos/browser/chromeos/login/ was finished in
-&gt; <a href="https://crrev.com/c/2722175.">https://crrev.com/c/2722175.</a> This CL changes the namespace from chromeos
-&gt; to ash to the remaining files.
-&gt;
-&gt; This CL is part of the Chrome OS source code directory migration:
-&gt; <a href="https://docs.google.com/document/d/1g-98HpzA8XcoGBWUv1gQNr4rbnD5yfvbtYZyPDDbkaE.">https://docs.google.com/document/d/1g-98HpzA8XcoGBWUv1gQNr4rbnD5yfvbtYZyPDDbkaE.</a>
-&gt;
-&gt; Bug: 1164001
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I774a7c33238512bf4f69735e95d5ee8de6ca9fa6">I774a7c33238512bf4f69735e95d5ee8de6ca9fa6</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3161996">https://chromium-review.googlesource.com/c/chromium/src/+/3161996</a>
-&gt; Commit-Queue: Henrique Ferreiro &lt;hferreiro@igalia.com&gt;
-&gt; Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
-&gt; Owners-Override: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#922221}
-
-Bug: 1164001
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id3577c9517c319606fbfa2032a83ffb12ba1da2a">Id3577c9517c319606fbfa2032a83ffb12ba1da2a</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3168598">https://chromium-review.googlesource.com/c/chromium/src/+/3168598</a>
-Reviewed-by: Liviu Tinta &lt;liviutinta@chromium.org&gt;
-Owners-Override: Liviu Tinta &lt;liviutinta@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#922558}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6fc4d9c5397d071aced7578ffa2680b38778666d">I6fc4d9c5397d071aced7578ffa2680b38778666d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3165358">https://chromium-review.googlesource.com/c/chromium/src/+/3165358</a>
+Commit-Queue: vmpstr &lt;vmpstr@chromium.org&gt;
+Reviewed-by: Chris Harrelson &lt;chrishtr@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#922615}
 </pre>
 
 </body>
