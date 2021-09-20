@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/922942/"> 922942</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b2ab802b719ac7470561efcb910c0d670d2b2d78">b2ab802b719ac7470561efcb910c0d670d2b2d78</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/922961/"> 922961</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f766053b00ca0801ab728c8adc020114435b3a95">f766053b00ca0801ab728c8adc020114435b3a95</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/922944/">922944</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e45aa22e633356bf5407f503b58ba46a5aae5f99">e45aa22e633356bf5407f503b58ba46a5aae5f99</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/922997/">922997</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0f5561484dd356f3ef578e7e6d1e5e0c0f1cf5d">f0f5561484dd356f3ef578e7e6d1e5e0c0f1cf5d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b2ab802b719ac7470561efcb910c0d670d2b2d78
+   f766053b00ca0801ab728c8adc020114435b3a95
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b2ab802b719ac7470561efcb910c0d670d2b2d78">
+    <a href="/chromium/src/+log/f766053b00ca0801ab728c8adc020114435b3a95">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b2ab802b719ac7470561efcb910c0d670d2b2d78.tar.gz">
+    <a href="/chromium/src/+archive/f766053b00ca0801ab728c8adc020114435b3a95.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Benjamin &lt;davidben@chromium.org&gt;
+   Nina Satragno &lt;nsatragno@chromium.org&gt;
   </td>
   <td>
-   Mon Sep 20 17:22:18 2021
+   Mon Sep 20 18:03:35 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Sep 20 17:22:18 2021
+   Mon Sep 20 18:03:35 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b2ab802b719ac7470561efcb910c0d670d2b2d78/">
-    4b72d157a1f50b67e6a36c12bd3bbe02cc790636
+   <a href="/chromium/src/+/f766053b00ca0801ab728c8adc020114435b3a95/">
+    f13e656bd02c0bf24b36379a036ee0787f317699
    </a>
   </td>
  </tr>
@@ -166,40 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b2ab802b719ac7470561efcb910c0d670d2b2d78%5E">
-    2667062079fe974cec858469fa536e3f275b693b
+   <a href="/chromium/src/+/f766053b00ca0801ab728c8adc020114435b3a95%5E">
+    598283686174bca10aa2ce21a406c38cb1085fd5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b2ab802b719ac7470561efcb910c0d670d2b2d78%5E%21/">
+    <a href="/chromium/src/+/f766053b00ca0801ab728c8adc020114435b3a95%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Close self.pipe_out immediately after launching the test server
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add presubmit warning for forgetting MAYBE_prefix
 
-When launching a child process with a pipe, it is standard for the
-parent process to close the child's (writing) half of the pipe. This
-ensures that, if the child dies, the parent's (reading) half of the pipe
-will observe EOF and be visible through select.
+When disabling tests based on some condition, sometimes developers
+forget to add a MAYBE_ prefix to the test they're disabling. This
+presubmit check warns when a #define MAYBE_* is found without a
+corresponding TEST(MAYBE_...). A slightly modified version of the script
+ran against all C++ tests found 16 cases (see crbug.com/1248543).
 
-This fixes the bug where, if the test server fails to start,
-chrome_test_server_spawner.py just hangs until the timeout.
+The check misses some cases where there is ambiguity (such as having
+multiple instances of the same test or suite name in the file), and
+there are rare false positives across the codebase (such as wrapping
+test names in macros), but it should be good enough for a warning.
 
-While not the cause of issue #946475, after this we maybe can remove the
-timeout. The timeout is pretty tight and causes a lot of fragility with
-cold vpython caches. (I'll leave that to infra folks to decide, as they
-own this script.)
-
-Bug: 946475
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0e1185ce6a9c8bfb9447c3ca81c8190f08ffa29a">I0e1185ce6a9c8bfb9447c3ca81c8190f08ffa29a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3165278">https://chromium-review.googlesource.com/c/chromium/src/+/3165278</a>
-Commit-Queue: David Benjamin &lt;davidben@chromium.org&gt;
-Auto-Submit: David Benjamin &lt;davidben@chromium.org&gt;
+Fixed: 1246006
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idc330d61fb928baf4d45296ca2b9cd15ee03c284">Idc330d61fb928baf4d45296ca2b9cd15ee03c284</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3169473">https://chromium-review.googlesource.com/c/chromium/src/+/3169473</a>
 Reviewed-by: Dirk Pranke &lt;dpranke@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#922942}
+Commit-Queue: Nina Satragno &lt;nsatragno@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#922961}
 </pre>
 
 </body>
