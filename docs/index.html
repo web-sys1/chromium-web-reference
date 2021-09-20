@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/922923/"> 922923</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/660001040530dee250b07f5a313d0c444926b777">660001040530dee250b07f5a313d0c444926b777</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/922942/"> 922942</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b2ab802b719ac7470561efcb910c0d670d2b2d78">b2ab802b719ac7470561efcb910c0d670d2b2d78</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/922909/">922909</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/baee0d5d42ca44451bd29ec1fb29b8fa4ec439a6">baee0d5d42ca44451bd29ec1fb29b8fa4ec439a6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/922944/">922944</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e45aa22e633356bf5407f503b58ba46a5aae5f99">e45aa22e633356bf5407f503b58ba46a5aae5f99</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   660001040530dee250b07f5a313d0c444926b777
+   b2ab802b719ac7470561efcb910c0d670d2b2d78
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/660001040530dee250b07f5a313d0c444926b777">
+    <a href="/chromium/src/+log/b2ab802b719ac7470561efcb910c0d670d2b2d78">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/660001040530dee250b07f5a313d0c444926b777.tar.gz">
+    <a href="/chromium/src/+archive/b2ab802b719ac7470561efcb910c0d670d2b2d78.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nektarios Paisios &lt;nektar@chromium.org&gt;
+   David Benjamin &lt;davidben@chromium.org&gt;
   </td>
   <td>
-   Mon Sep 20 16:43:23 2021
+   Mon Sep 20 17:22:18 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Sep 20 16:43:23 2021
+   Mon Sep 20 17:22:18 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/660001040530dee250b07f5a313d0c444926b777/">
-    14695ef43496fe881e57e4402ebf4f7e6052f999
+   <a href="/chromium/src/+/b2ab802b719ac7470561efcb910c0d670d2b2d78/">
+    4b72d157a1f50b67e6a36c12bd3bbe02cc790636
    </a>
   </td>
  </tr>
@@ -166,36 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/660001040530dee250b07f5a313d0c444926b777%5E">
-    fe2539b7f880dd1f59e66d90a56747331240ec3a
+   <a href="/chromium/src/+/b2ab802b719ac7470561efcb910c0d670d2b2d78%5E">
+    2667062079fe974cec858469fa536e3f275b693b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/660001040530dee250b07f5a313d0c444926b777%5E%21/">
+    <a href="/chromium/src/+/b2ab802b719ac7470561efcb910c0d670d2b2d78%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Creates an interface for a tree source annotator component
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Close self.pipe_out immediately after launching the test server
 
-This patch sets the foundations for an AXTreeSourceAnnotator component which will be shared
-between Blink and PDF accessibility trees, with the
-possibility of extending its usage to the Chrome OS automation desktop
-tree. so that it can be used in Chrome OS native apps.
+When launching a child process with a pipe, it is standard for the
+parent process to close the child's (writing) half of the pipe. This
+ensures that, if the child dies, the parent's (reading) half of the pipe
+will observe EOF and be visible through select.
 
-Design doc: <a href="https://docs.google.com/document/d/1Xe1BBncEddGz8DYYnGdTHI0cwhJ_3BvfELCQY6T1rBw/edit?usp=sharing">https://docs.google.com/document/d/1Xe1BBncEddGz8DYYnGdTHI0cwhJ_3BvfELCQY6T1rBw/edit?usp=sharing</a>
+This fixes the bug where, if the test server fails to start,
+chrome_test_server_spawner.py just hangs until the timeout.
 
-R=dtseng@chromium.org, mschillaci@google.com
+While not the cause of issue #946475, after this we maybe can remove the
+timeout. The timeout is pretty tight and causes a lot of fragility with
+cold vpython caches. (I'll leave that to infra folks to decide, as they
+own this script.)
 
-AX-Relnotes: n/a.
-Bug: 1248380
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0fd2ba9ec8e6924cfb0eadf72eff5b8efff3106f">I0fd2ba9ec8e6924cfb0eadf72eff5b8efff3106f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3151880">https://chromium-review.googlesource.com/c/chromium/src/+/3151880</a>
-Commit-Queue: Nektarios Paisios &lt;nektar@chromium.org&gt;
-Reviewed-by: Mark Schillaci &lt;mschillaci@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#922923}
+Bug: 946475
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0e1185ce6a9c8bfb9447c3ca81c8190f08ffa29a">I0e1185ce6a9c8bfb9447c3ca81c8190f08ffa29a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3165278">https://chromium-review.googlesource.com/c/chromium/src/+/3165278</a>
+Commit-Queue: David Benjamin &lt;davidben@chromium.org&gt;
+Auto-Submit: David Benjamin &lt;davidben@chromium.org&gt;
+Reviewed-by: Dirk Pranke &lt;dpranke@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#922942}
 </pre>
 
 </body>
