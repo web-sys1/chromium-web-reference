@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/923112/"> 923112</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/27c20f8c06763e2d85d22d9a7bbfb18c18b00fbc">27c20f8c06763e2d85d22d9a7bbfb18c18b00fbc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/923147/"> 923147</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d0ef9e100662032602b7498f02ec8f9737fc0945">d0ef9e100662032602b7498f02ec8f9737fc0945</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/923078/">923078</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1ed49415b080496c4bd7ae0b54e4baf0fbf15f2e">1ed49415b080496c4bd7ae0b54e4baf0fbf15f2e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/923123/">923123</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8eb37875c0a5c91fcfa4aa25228c8290ca477424">8eb37875c0a5c91fcfa4aa25228c8290ca477424</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   27c20f8c06763e2d85d22d9a7bbfb18c18b00fbc
+   d0ef9e100662032602b7498f02ec8f9737fc0945
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/27c20f8c06763e2d85d22d9a7bbfb18c18b00fbc">
+    <a href="/chromium/src/+log/d0ef9e100662032602b7498f02ec8f9737fc0945">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/27c20f8c06763e2d85d22d9a7bbfb18c18b00fbc.tar.gz">
+    <a href="/chromium/src/+archive/d0ef9e100662032602b7498f02ec8f9737fc0945.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Hirthanan Subenderan &lt;hirthanan@google.com&gt;
+   Joe Mason &lt;joenotcharles@google.com&gt;
   </td>
   <td>
-   Mon Sep 20 22:48:11 2021
+   Tue Sep 21 00:18:22 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Sep 20 22:48:11 2021
+   Tue Sep 21 00:18:22 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/27c20f8c06763e2d85d22d9a7bbfb18c18b00fbc/">
-    c1919f258709b88066620fd4bce8523620e86a02
+   <a href="/chromium/src/+/d0ef9e100662032602b7498f02ec8f9737fc0945/">
+    5d47d6b86e185200f931835d590d9d317be61f73
    </a>
   </td>
  </tr>
@@ -166,33 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/27c20f8c06763e2d85d22d9a7bbfb18c18b00fbc%5E">
-    92b21970ffc4d2333c5081ccd1175d6c0ed9c6b0
+   <a href="/chromium/src/+/d0ef9e100662032602b7498f02ec8f9737fc0945%5E">
+    353ab38aa4bef38ff83c4daad31112999062a851
    </a>
    <span>
     [
-    <a href="/chromium/src/+/27c20f8c06763e2d85d22d9a7bbfb18c18b00fbc%5E%21/">
+    <a href="/chromium/src/+/d0ef9e100662032602b7498f02ec8f9737fc0945%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Initialize DeviceActivityController singleton.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Always allow background tracing to end when saving to a local file
 
-The DeviceActivityController manages the lifecycle of the network and
-signin triggers. Add feature flag for Fresnel Client rollout.
+This refactors the two ChromeTracingDelegate::IsAllowed functions to call the
+same helper to find out if tracing actions are allowed. This prevents the logic
+when traces are allowed to begin and end from getting out of sync.
 
-The Fresnel Client will be instantiated in
-chrome_browser_main_chromeos.cc PostBrowserStart(). This flag will
-control the experiment groups that the rollout is released to.
+Fixes a regression introduced in
+<a href="https://chromium-review.googlesource.com/c/chromium/src/+/2860569">https://chromium-review.googlesource.com/c/chromium/src/+/2860569</a> where using
+the command-line to write traces to a local file would start tracing, but never
+write the file because of throttling.  Traces saved to a local file should
+always be allowed because they're requested explicitly by the user.
 
-Bug: 1204630
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iee0ff6cb2d777352686847c3d39457db58911a10">Iee0ff6cb2d777352686847c3d39457db58911a10</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3073355">https://chromium-review.googlesource.com/c/chromium/src/+/3073355</a>
-Commit-Queue: Hirthanan Subenderan &lt;hirthanan@google.com&gt;
-Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#923112}
+Also adds more browser tests.
+
+R=ssid
+
+Bug: 1214073
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0700062255e1e8eedc42ffdb51f3b224ffefe912">I0700062255e1e8eedc42ffdb51f3b224ffefe912</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3166390">https://chromium-review.googlesource.com/c/chromium/src/+/3166390</a>
+Reviewed-by: ssid &lt;ssid@chromium.org&gt;
+Commit-Queue: ssid &lt;ssid@chromium.org&gt;
+Auto-Submit: Joe Mason &lt;joenotcharles@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#923147}
 </pre>
 
 </body>
