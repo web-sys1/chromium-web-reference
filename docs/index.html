@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/923758/"> 923758</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1ee77c5d197b7f821cc9eb655621c3cda7435529">1ee77c5d197b7f821cc9eb655621c3cda7435529</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/923770/"> 923770</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f50ae42daa8b4d22db68202a38afa9dc17680b06">f50ae42daa8b4d22db68202a38afa9dc17680b06</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/923733/">923733</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/35cb5d90c8c3d190228d1815815ed1ce423cef7f">35cb5d90c8c3d190228d1815815ed1ce423cef7f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/923769/">923769</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c4ec6945310efe623d9bc10c4fc70e730eb3f51a">c4ec6945310efe623d9bc10c4fc70e730eb3f51a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1ee77c5d197b7f821cc9eb655621c3cda7435529
+   f50ae42daa8b4d22db68202a38afa9dc17680b06
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1ee77c5d197b7f821cc9eb655621c3cda7435529">
+    <a href="/chromium/src/+log/f50ae42daa8b4d22db68202a38afa9dc17680b06">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1ee77c5d197b7f821cc9eb655621c3cda7435529.tar.gz">
+    <a href="/chromium/src/+archive/f50ae42daa8b4d22db68202a38afa9dc17680b06.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Asami Doi &lt;asamidoi@chromium.org&gt;
+   Prameet Shah &lt;phshah@google.com&gt;
   </td>
   <td>
-   Wed Sep 22 07:34:15 2021
+   Wed Sep 22 08:13:28 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 22 07:34:15 2021
+   Wed Sep 22 08:13:28 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1ee77c5d197b7f821cc9eb655621c3cda7435529/">
-    6b65e2ce009004927a1e2a3fe16e44f16e73f321
+   <a href="/chromium/src/+/f50ae42daa8b4d22db68202a38afa9dc17680b06/">
+    43bd0a8e1791fafc522c4264ff2685bd37c78459
    </a>
   </td>
  </tr>
@@ -166,38 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1ee77c5d197b7f821cc9eb655621c3cda7435529%5E">
-    89140e0da963b3724bcc0b5f22f0b4896db7c3fb
+   <a href="/chromium/src/+/f50ae42daa8b4d22db68202a38afa9dc17680b06%5E">
+    c4ec6945310efe623d9bc10c4fc70e730eb3f51a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1ee77c5d197b7f821cc9eb655621c3cda7435529%5E%21/">
+    <a href="/chromium/src/+/f50ae42daa8b4d22db68202a38afa9dc17680b06%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">MPArch: remove container_host_-&gt;GetFrameTreeNodeId() from SWMainResourceLoader
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Sharesheet] Call CloseCallback after the bubble has closed.
 
-This CL removes `container_host_-&gt;GetFrameTreeNodeId()` from
-ServiceWorkerMainResourceLoader::StartRequest() because the frame tree
-node id may be stale after the navigation commit.
+In SharesheetBubbleView, run CloseCallback after the bubble has fully
+closed. Previously, CloseCallback ran before the bubble closed, where
+SharesheetBubbleViewDelegate::IsBubbleVisible() could return true.
 
-Instead, plumb `frame_tree_node_id` from SWMainResourceLoaderInterceptor
-via SWControlleeRequestHandler.
+BUG=b:197588898,b:184720732
+TEST=Using Photos, verified that CloseCallback is called after the
+     Nearby Share bubble is closed
 
-`GetFrameTreeNodeId()` in SWContainerHost is now only called from
-StoragePartitionImpl so this CL also adds
-`base::PassKey&lt;StoragePartitionImpl&gt;` to make sure it.
-
-Bug: 1223838
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I96121245d077cafa724b1e8f53cb8b04f184979b">I96121245d077cafa724b1e8f53cb8b04f184979b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3161865">https://chromium-review.googlesource.com/c/chromium/src/+/3161865</a>
-Commit-Queue: Asami Doi &lt;asamidoi@chromium.org&gt;
-Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
-Reviewed-by: Daniel Murphy &lt;dmurph@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#923758}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I26c5175224edbdf7deec7259fa11bcff6ce8507e">I26c5175224edbdf7deec7259fa11bcff6ce8507e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3160813">https://chromium-review.googlesource.com/c/chromium/src/+/3160813</a>
+Auto-Submit: Prameet Shah &lt;phshah@chromium.org&gt;
+Commit-Queue: Melissa Zhang &lt;melzhang@chromium.org&gt;
+Reviewed-by: Melissa Zhang &lt;melzhang@chromium.org&gt;
+Reviewed-by: Alan Ding &lt;alanding@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#923770}
 </pre>
 
 </body>
