@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/923734/"> 923734</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8d36c7878236dedac82a11b73807a1b92e34c56a">8d36c7878236dedac82a11b73807a1b92e34c56a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/923758/"> 923758</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1ee77c5d197b7f821cc9eb655621c3cda7435529">1ee77c5d197b7f821cc9eb655621c3cda7435529</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/923733/">923733</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8d36c7878236dedac82a11b73807a1b92e34c56a
+   1ee77c5d197b7f821cc9eb655621c3cda7435529
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8d36c7878236dedac82a11b73807a1b92e34c56a">
+    <a href="/chromium/src/+log/1ee77c5d197b7f821cc9eb655621c3cda7435529">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8d36c7878236dedac82a11b73807a1b92e34c56a.tar.gz">
+    <a href="/chromium/src/+archive/1ee77c5d197b7f821cc9eb655621c3cda7435529.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Fergus Dall &lt;sidereal@google.com&gt;
+   Asami Doi &lt;asamidoi@chromium.org&gt;
   </td>
   <td>
-   Wed Sep 22 06:57:37 2021
+   Wed Sep 22 07:34:15 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 22 06:57:37 2021
+   Wed Sep 22 07:34:15 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8d36c7878236dedac82a11b73807a1b92e34c56a/">
-    9766d6c5b1a7ce08ae26fd05b0a3b6515b4a01b9
+   <a href="/chromium/src/+/1ee77c5d197b7f821cc9eb655621c3cda7435529/">
+    6b65e2ce009004927a1e2a3fe16e44f16e73f321
    </a>
   </td>
  </tr>
@@ -166,49 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8d36c7878236dedac82a11b73807a1b92e34c56a%5E">
-    35cb5d90c8c3d190228d1815815ed1ce423cef7f
+   <a href="/chromium/src/+/1ee77c5d197b7f821cc9eb655621c3cda7435529%5E">
+    89140e0da963b3724bcc0b5f22f0b4896db7c3fb
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8d36c7878236dedac82a11b73807a1b92e34c56a%5E%21/">
+    <a href="/chromium/src/+/1ee77c5d197b7f821cc9eb655621c3cda7435529%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[IntentHandling] Remove FindFileHandlerTasks"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">MPArch: remove container_host_-&gt;GetFrameTreeNodeId() from SWMainResourceLoader
 
-This reverts commit 7adf225479710e37c35286c045ceb920563e17db.
+This CL removes `container_host_-&gt;GetFrameTreeNodeId()` from
+ServiceWorkerMainResourceLoader::StartRequest() because the frame tree
+node id may be stale after the navigation commit.
 
-Reason for revert: Required to revert CL:3153013
+Instead, plumb `frame_tree_node_id` from SWMainResourceLoaderInterceptor
+via SWControlleeRequestHandler.
 
-Original change's description:
-&gt; [IntentHandling] Remove FindFileHandlerTasks
-&gt;
-&gt; Move some remaining functionality into the App Service implementation
-&gt; and move some tests over as well.
-&gt;
-&gt; Bug: 1240018
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I58b836965b1297ecacd102a4c2888b0ac9975f09">I58b836965b1297ecacd102a4c2888b0ac9975f09</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3168581">https://chromium-review.googlesource.com/c/chromium/src/+/3168581</a>
-&gt; Reviewed-by: Luciano Pacheco &lt;lucmult@chromium.org&gt;
-&gt; Reviewed-by: Maggie Cai &lt;mxcai@chromium.org&gt;
-&gt; Commit-Queue: Peter Marshall &lt;petermarshall@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#923264}
+`GetFrameTreeNodeId()` in SWContainerHost is now only called from
+StoragePartitionImpl so this CL also adds
+`base::PassKey&lt;StoragePartitionImpl&gt;` to make sure it.
 
-Bug: 1240018
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2ccf9557a0f543f7cd5aab1498c911409718f520">I2ccf9557a0f543f7cd5aab1498c911409718f520</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3172908">https://chromium-review.googlesource.com/c/chromium/src/+/3172908</a>
-Auto-Submit: Fergus Dall &lt;sidereal@google.com&gt;
-Owners-Override: Fergus Dall &lt;sidereal@google.com&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#923734}
+Bug: 1223838
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I96121245d077cafa724b1e8f53cb8b04f184979b">I96121245d077cafa724b1e8f53cb8b04f184979b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3161865">https://chromium-review.googlesource.com/c/chromium/src/+/3161865</a>
+Commit-Queue: Asami Doi &lt;asamidoi@chromium.org&gt;
+Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+Reviewed-by: Daniel Murphy &lt;dmurph@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#923758}
 </pre>
 
 </body>
