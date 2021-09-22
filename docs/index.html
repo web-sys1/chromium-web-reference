@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/923836/"> 923836</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/529a991ac3698714af30960e2779bfdfc33ae976">529a991ac3698714af30960e2779bfdfc33ae976</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/923848/"> 923848</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1d7a22c08a5601235d8b496fcaca53ba1ae070b4">1d7a22c08a5601235d8b496fcaca53ba1ae070b4</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/923840/">923840</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   529a991ac3698714af30960e2779bfdfc33ae976
+   1d7a22c08a5601235d8b496fcaca53ba1ae070b4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/529a991ac3698714af30960e2779bfdfc33ae976">
+    <a href="/chromium/src/+log/1d7a22c08a5601235d8b496fcaca53ba1ae070b4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/529a991ac3698714af30960e2779bfdfc33ae976.tar.gz">
+    <a href="/chromium/src/+archive/1d7a22c08a5601235d8b496fcaca53ba1ae070b4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Thiemo Nagel &lt;tnagel@chromium.org&gt;
+   Benoit L &lt;lizeb@chromium.org&gt;
   </td>
   <td>
-   Wed Sep 22 13:45:22 2021
+   Wed Sep 22 14:35:32 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 22 13:45:22 2021
+   Wed Sep 22 14:35:32 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/529a991ac3698714af30960e2779bfdfc33ae976/">
-    ac8bca1ef6ee092271d0c5f4ef952baac16a3eca
+   <a href="/chromium/src/+/1d7a22c08a5601235d8b496fcaca53ba1ae070b4/">
+    2d6178f1f47e5308c9a36c5e2687df688f05272d
    </a>
   </td>
  </tr>
@@ -166,31 +166,76 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/529a991ac3698714af30960e2779bfdfc33ae976%5E">
-    217f04ddd22751b6bb684c2ba8856e454ad90a72
+   <a href="/chromium/src/+/1d7a22c08a5601235d8b496fcaca53ba1ae070b4%5E">
+    e5086f768bca0283b2b377a613618c8c80b11905
    </a>
    <span>
     [
-    <a href="/chromium/src/+/529a991ac3698714af30960e2779bfdfc33ae976%5E%21/">
+    <a href="/chromium/src/+/1d7a22c08a5601235d8b496fcaca53ba1ae070b4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Sheriff] Disable flaky extension test ClickingContextMenuButton
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[PartitionAlloc] Use a larger empty slot span ring buffer on Linux."
 
-Disabling for Linux.
+This reverts commit 4268d48d4c5fc389bb9f2149aa3249bbc6f99c15.
 
-Bug: 1251961
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id80306e92379f4d2ece92e73d4b8342896de5be4">Id80306e92379f4d2ece92e73d4b8342896de5be4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3172644">https://chromium-review.googlesource.com/c/chromium/src/+/3172644</a>
-Commit-Queue: Thiemo Nagel &lt;tnagel@chromium.org&gt;
-Commit-Queue: Theodore Olsauskas-Warren &lt;sauski@google.com&gt;
-Owners-Override: Thiemo Nagel &lt;tnagel@chromium.org&gt;
-Auto-Submit: Thiemo Nagel &lt;tnagel@chromium.org&gt;
-Reviewed-by: Theodore Olsauskas-Warren &lt;sauski@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#923836}
+Reason for revert: Regresses PMF on bots. While this is not necessarily
+   a big issue, since we cannot measure the real metric we want to
+   focus on (peak committed memory), it's likely better to revert.
+   See details in crbug.com/1251665.
+
+Original change's description:
+&gt; [PartitionAlloc] Use a larger empty slot span ring buffer on Linux.
+&gt;
+&gt; Document and change the empty SlotSpan ring buffer limits.
+&gt;
+&gt; When running Speedometer 2.0 on Linux (release build, no DCHECK()s),
+&gt; ~90-100k system calls are made from PartitionAlloc. A common way for the
+&gt; allocator to make a system call is when decommitting an empty SlotSpan,
+&gt; then when a recommit is required.
+&gt;
+&gt; While this is not necessarily a large performance issue on Linux,
+&gt; reducing the number of system calls is always a good idea, as most of
+&gt; them are made with the root lock held, and can incur high tail
+&gt; latency. Furthermore, while Linux is performing very well with these
+&gt; calls (from local testing, &lt;1us per call), this is not necessarily the
+&gt; case of all operating systems.
+&gt;
+&gt; A way to reduce the number of syscalls is to increase the size of the
+&gt; ring buffer. This may increase peak committed memory, which we
+&gt; monitor. Showing the median of 3 runs on a 56 hyperthreads Linux machine
+&gt; (Xeon "Haswell", core count matters since it is linked to the number of
+&gt; worker threads Chrome typically creates):
+&gt;
+&gt; - Size 16:
+&gt;   - Syscalls: 101k
+&gt;   - Total syscall time: 812ms
+&gt;   - Peak committed memory: 36796kiB
+&gt; - Size 126:
+&gt;   - Syscalls: 47.9k
+&gt;   - Total syscall time: 422ms
+&gt;   - Peak committed memory: 36104kiB
+&gt;
+&gt; So it *seems* to not impact peak committed memory. Nevertheless, only
+&gt; bump the size to 127 on Linux, to assess the impact on performance bots.
+&gt;
+&gt; Bug: 1250288
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I83ee913fe57824be21a1b2306b21029b70f5625d">I83ee913fe57824be21a1b2306b21029b70f5625d</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3168880">https://chromium-review.googlesource.com/c/chromium/src/+/3168880</a>
+&gt; Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+&gt; Commit-Queue: Benoit L &lt;lizeb@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#923342}
+
+Bug: 1250288, 1251665
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I10d69e9ef66291ef4245b6e4ceb0b296c68e8a06">I10d69e9ef66291ef4245b6e4ceb0b296c68e8a06</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3172528">https://chromium-review.googlesource.com/c/chromium/src/+/3172528</a>
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Commit-Queue: Benoit L &lt;lizeb@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#923848}
 </pre>
 
 </body>
