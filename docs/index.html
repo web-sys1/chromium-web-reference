@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/923723/"> 923723</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d7245c4aab195c2d6139ffdf5b89a6b6c1efa538">d7245c4aab195c2d6139ffdf5b89a6b6c1efa538</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/923729/"> 923729</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1bb99cf9ff15541bc0a2646628125ce68edba878">1bb99cf9ff15541bc0a2646628125ce68edba878</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/923688/">923688</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d7245c4aab195c2d6139ffdf5b89a6b6c1efa538
+   1bb99cf9ff15541bc0a2646628125ce68edba878
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d7245c4aab195c2d6139ffdf5b89a6b6c1efa538">
+    <a href="/chromium/src/+log/1bb99cf9ff15541bc0a2646628125ce68edba878">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d7245c4aab195c2d6139ffdf5b89a6b6c1efa538.tar.gz">
+    <a href="/chromium/src/+archive/1bb99cf9ff15541bc0a2646628125ce68edba878.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Asami Doi &lt;asamidoi@chromium.org&gt;
+   Lukasz Anforowicz &lt;lukasza@chromium.org&gt;
   </td>
   <td>
-   Wed Sep 22 04:02:16 2021
+   Wed Sep 22 04:44:10 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 22 04:02:16 2021
+   Wed Sep 22 04:44:10 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d7245c4aab195c2d6139ffdf5b89a6b6c1efa538/">
-    dbe8f975c05121489110d6f3ced19a0dc83270e1
+   <a href="/chromium/src/+/1bb99cf9ff15541bc0a2646628125ce68edba878/">
+    0301dc8da0860c5bd6ddbb8feda9105c808c10de
    </a>
   </td>
  </tr>
@@ -166,30 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d7245c4aab195c2d6139ffdf5b89a6b6c1efa538%5E">
-    5b12d6f9f82b5598c51abddd66d13640592c146b
+   <a href="/chromium/src/+/1bb99cf9ff15541bc0a2646628125ce68edba878%5E">
+    d6b9c1f02c56f51b39213aa73b281665158767c1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d7245c4aab195c2d6139ffdf5b89a6b6c1efa538%5E%21/">
+    <a href="/chromium/src/+/1bb99cf9ff15541bc0a2646628125ce68edba878%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Sheriff: disable SSLClientCertificateSelectorMultiProfileTest
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Introduce separate, explicit HandleEndOfSniffableResponseBody.
 
-Bug: 1249827, 1249705
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2dd715238fcb3d379e87a87e76e324e1bce97cd0">I2dd715238fcb3d379e87a87e76e324e1bce97cd0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3173373">https://chromium-review.googlesource.com/c/chromium/src/+/3173373</a>
-Commit-Queue: Asami Doi &lt;asamidoi@chromium.org&gt;
-Commit-Queue: Kentaro Hara &lt;haraken@chromium.org&gt;
-Owners-Override: Asami Doi &lt;asamidoi@chromium.org&gt;
-Auto-Submit: Asami Doi &lt;asamidoi@chromium.org&gt;
-Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Reviewed-by: Takashi Sakamoto &lt;tasak@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#923723}
+Before this CL, getting Decision::kSniffMore would *implicitly*
+translate into Decision::kAllow when there is nothing more to sniff
+(e.g. because sniffing reached the end of the response body, or we have
+sniffed more than the maximum number of bytes).
+
+After this CL, this decision is handled *explicitly* by a new,
+separate method: HandleEndOfSniffableResponseBody.  The explicit
+behavior is more readable.  Additionally, a separate virtual method
+supports switching to a different fallback behavior in ORB.
+
+Bug: 1178928
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I64712bf5c5f71c53c3f0f089de8a5cc6ee2c7224">I64712bf5c5f71c53c3f0f089de8a5cc6ee2c7224</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3119809">https://chromium-review.googlesource.com/c/chromium/src/+/3119809</a>
+Auto-Submit: Łukasz Anforowicz &lt;lukasza@chromium.org&gt;
+Commit-Queue: Yutaka Hirano &lt;yhirano@chromium.org&gt;
+Reviewed-by: Yutaka Hirano &lt;yhirano@chromium.org&gt;
+Reviewed-by: Charlie Reis &lt;creis@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#923729}
 </pre>
 
 </body>
