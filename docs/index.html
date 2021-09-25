@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/925039/"> 925039</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3d00e52a131bb80346eefef75a95a92859acbe7d">3d00e52a131bb80346eefef75a95a92859acbe7d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/925042/"> 925042</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9b1a945e8106a49b25cf4e79528cfdb33fab5503">9b1a945e8106a49b25cf4e79528cfdb33fab5503</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/925036/">925036</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a1988e22362ee74a80625a6481a4850b52de1beb">a1988e22362ee74a80625a6481a4850b52de1beb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/925043/">925043</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/23fe5635e14491037b33a9e21bf1f934ca888953">23fe5635e14491037b33a9e21bf1f934ca888953</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3d00e52a131bb80346eefef75a95a92859acbe7d
+   9b1a945e8106a49b25cf4e79528cfdb33fab5503
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3d00e52a131bb80346eefef75a95a92859acbe7d">
+    <a href="/chromium/src/+log/9b1a945e8106a49b25cf4e79528cfdb33fab5503">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3d00e52a131bb80346eefef75a95a92859acbe7d.tar.gz">
+    <a href="/chromium/src/+archive/9b1a945e8106a49b25cf4e79528cfdb33fab5503.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Nick Diego Yamane &lt;nickdiego@igalia.com&gt;
   </td>
   <td>
-   Sat Sep 25 11:14:16 2021
+   Sat Sep 25 12:40:04 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Sep 25 11:14:16 2021
+   Sat Sep 25 12:40:04 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3d00e52a131bb80346eefef75a95a92859acbe7d/">
-    9848fa52de97f06c8433438bdd75ca74281b67f9
+   <a href="/chromium/src/+/9b1a945e8106a49b25cf4e79528cfdb33fab5503/">
+    b52cee8a12565aa7e4af37e2888baf86533c62d9
    </a>
   </td>
  </tr>
@@ -166,43 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3d00e52a131bb80346eefef75a95a92859acbe7d%5E">
-    f4116a258d808b193fa9a9e57d7fe2d1f368c497
+   <a href="/chromium/src/+/9b1a945e8106a49b25cf4e79528cfdb33fab5503%5E">
+    9630e99efbb77d5772ee93e4eada0fb303efe253
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3d00e52a131bb80346eefef75a95a92859acbe7d%5E%21/">
+    <a href="/chromium/src/+/9b1a945e8106a49b25cf4e79528cfdb33fab5503%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Win32 PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">wayland: fix more input hangs when web contents is quickly dragged
 
-Roll Chrome Win32 PGO profile from chrome-win32-main-1632548054-6f16a736e66e0c44e71f7c21b592130c479acc9d.profdata to chrome-win32-main-1632559331-bf1dfc923a802cc245518b35dca12e564a03633c.profdata
+Drag session start may be triggered asynchronously, eg: dragging web
+contents, which might lead to race conditions where mouse button release
+is processed at compositor-side, sent to the client and processed just
+after the start_drag request is issued. In such cases, the compositor
+may ignore the request, and protocol-wise there is no explicit mechanism
+for clients to be notified about it (eg: an error event), and the only
+way of detecting that, for now, is to monitor wl_pointer events in data
+drag controller and abort the session if a button release comes in.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-win32-chromium">https://autoroll.skia.org/r/pgo-win32-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+This fix is complementary to crrev.com/c/2897163 and the recent patch
+series improving serial tracking in ozone/wayland, see crbug.com/1211874
+for further info.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+R=tonikitoo@igalia.com
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+ - Automated: ozone_unittests --gtest_filter='*WaylandDataDragControllerTest.AsyncNoopStartDrag*'
+ - Manually select a web page text (eg: Ctrl+A) quickly drag and drop it (must be really quick :))
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:win-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaac770c02463adb893f656faba987acf887f561e">Iaac770c02463adb893f656faba987acf887f561e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3183838">https://chromium-review.googlesource.com/c/chromium/src/+/3183838</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#925039}
+Test: 
+Bug: 1244992, 1209269
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6c63dbf378968f8168ee86b764c1f1e65fb61edb">I6c63dbf378968f8168ee86b764c1f1e65fb61edb</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3183900">https://chromium-review.googlesource.com/c/chromium/src/+/3183900</a>
+Commit-Queue: Nick Yamane &lt;nickdiego@igalia.com&gt;
+Reviewed-by: Antonio Gomes &lt;tonikitoo@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#925042}
 </pre>
 
 </body>
