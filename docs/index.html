@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/925346/"> 925346</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/031517cf2ef34d9d1f32cbfd2291f2e9066b0870">031517cf2ef34d9d1f32cbfd2291f2e9066b0870</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/925384/"> 925384</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a9e340b62bf82e0c2594897f662b11b8190d8ef0">a9e340b62bf82e0c2594897f662b11b8190d8ef0</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/925344/">925344</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   031517cf2ef34d9d1f32cbfd2291f2e9066b0870
+   a9e340b62bf82e0c2594897f662b11b8190d8ef0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/031517cf2ef34d9d1f32cbfd2291f2e9066b0870">
+    <a href="/chromium/src/+log/a9e340b62bf82e0c2594897f662b11b8190d8ef0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/031517cf2ef34d9d1f32cbfd2291f2e9066b0870.tar.gz">
+    <a href="/chromium/src/+archive/a9e340b62bf82e0c2594897f662b11b8190d8ef0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Katie Dektar &lt;katie@chromium.org&gt;
+   Daniel Cheng &lt;dcheng@chromium.org&gt;
   </td>
   <td>
-   Mon Sep 27 18:54:37 2021
+   Mon Sep 27 19:50:55 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Sep 27 18:54:37 2021
+   Mon Sep 27 19:50:55 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/031517cf2ef34d9d1f32cbfd2291f2e9066b0870/">
-    3440a5bf600d5b305dc371494a8779d4253fe9b4
+   <a href="/chromium/src/+/a9e340b62bf82e0c2594897f662b11b8190d8ef0/">
+    48c6c27e20ade23979df809eede2b4cbc637f173
    </a>
   </td>
  </tr>
@@ -166,27 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/031517cf2ef34d9d1f32cbfd2291f2e9066b0870%5E">
-    9984c3a77bfa55170ca884eea220dc8f640105dd
+   <a href="/chromium/src/+/a9e340b62bf82e0c2594897f662b11b8190d8ef0%5E">
+    238b89a9b13dfe31e9db53ce28020f1adb801f6f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/031517cf2ef34d9d1f32cbfd2291f2e9066b0870%5E%21/">
+    <a href="/chromium/src/+/a9e340b62bf82e0c2594897f662b11b8190d8ef0%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Push reader mode flag expiration to M100 per PM request.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Migrate the only use of base::DoNothing + Then() to a lambda.
 
-Bug: NONE
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic24418f11038cee68f6e26a55d06ef54ecdee458">Ic24418f11038cee68f6e26a55d06ef54ecdee458</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3187870">https://chromium-review.googlesource.com/c/chromium/src/+/3187870</a>
-Auto-Submit: Katie Dektar &lt;katie@chromium.org&gt;
-Reviewed-by: Josiah Krutz &lt;josiahk@google.com&gt;
-Commit-Queue: Katie Dektar &lt;katie@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#925346}
+While it is possible to add a new helper that would exactly match the
+current base::DoNothing() in functionality:
+
+- it would lead to multiple ways of doing the same thing
+- it would be inefficient when used as the functor of a bind call, in
+  the same way base::BindOnce(base::DoNothing::Once, ...) is
+  inefficient: dispatching the callback requires jumping through an
+  additional thunk.
+- writing it with a lambda is actually (and somewhat surprisingly)
+  shorter.
+
+Bug: 1252980
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia8fd52681abe612b0be1fa1b61602bf279b37ca5">Ia8fd52681abe612b0be1fa1b61602bf279b37ca5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3183702">https://chromium-review.googlesource.com/c/chromium/src/+/3183702</a>
+Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Steven Bennetts &lt;stevenjb@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#925384}
 </pre>
 
 </body>
