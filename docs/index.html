@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/925135/"> 925135</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3b6d66a75afe5d1394544073a5d96580fab70e67">3b6d66a75afe5d1394544073a5d96580fab70e67</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/925141/"> 925141</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/be97d5c7402f4d88f8744fdf660f64d38d8b38bd">be97d5c7402f4d88f8744fdf660f64d38d8b38bd</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/925139/">925139</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3b6d66a75afe5d1394544073a5d96580fab70e67
+   be97d5c7402f4d88f8744fdf660f64d38d8b38bd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3b6d66a75afe5d1394544073a5d96580fab70e67">
+    <a href="/chromium/src/+log/be97d5c7402f4d88f8744fdf660f64d38d8b38bd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3b6d66a75afe5d1394544073a5d96580fab70e67.tar.gz">
+    <a href="/chromium/src/+archive/be97d5c7402f4d88f8744fdf660f64d38d8b38bd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Koji Ishii &lt;kojii@chromium.org&gt;
+   Matt Falkenhagen &lt;falken@chromium.org&gt;
   </td>
   <td>
-   Mon Sep 27 03:48:24 2021
+   Mon Sep 27 04:40:59 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Sep 27 03:48:24 2021
+   Mon Sep 27 04:40:59 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3b6d66a75afe5d1394544073a5d96580fab70e67/">
-    45471470304fe8a6014598856819f48b9b10087a
+   <a href="/chromium/src/+/be97d5c7402f4d88f8744fdf660f64d38d8b38bd/">
+    0ad05c99769cf0da953bdab81fe0705061d22e6d
    </a>
   </td>
  </tr>
@@ -166,53 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3b6d66a75afe5d1394544073a5d96580fab70e67%5E">
-    9bd1b2e0af2e644d97ec99a9e2ac3b6dd9189904
+   <a href="/chromium/src/+/be97d5c7402f4d88f8744fdf660f64d38d8b38bd%5E">
+    ce5fbd9e8ecfc5a97d7de1bea42ff2a89d8f5775
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3b6d66a75afe5d1394544073a5d96580fab70e67%5E%21/">
+    <a href="/chromium/src/+/be97d5c7402f4d88f8744fdf660f64d38d8b38bd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add use-counters for |OffsetWidth| etc. when block-in-inline
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">service worker: Handle expiring "StartTiming" histograms.
 
-This patch adds use counters for:
-1. LayoutInline::OffsetWidth
-2. LayoutInline::OffsetHeight
-3. LayoutInline::PhysicalLinesBoundingBox
-when they have continuations. They are ignored in legacy and
-NG, but NGBlockInInline includes them as of ToT. The use
-counters are to estimate the impact of the behavior change.
+These are mostly useful diagnostic metrics for when there is a startup
+time regression. Extending these for a year.
 
-1 and 2 are called from:
-a. HTMLElement::Offset{Width,Height}ForBinding
-b. Element::Offset{Width,Height} (internal version of a., used
-   by inspector and modules/xr.)
-c. ComputedStyleUtils::ValueForPositionOffset
-d. MediaControlSliderElement::TrackWidth
-
-3 is their underlying function, used by some more callers:
-e. LayoutBoxModelObject::UpdateStickyPositionConstraints
-f. LayoutBox::ContainingBlockLogicalHeightForPositioned
-g. PaintLayer::UpdateSize
-h. CSSMaskPainter::MaskBoundingBox
-i. InspectorHighlightBase::BuildNodeQuads
-j. HasRenderedNonAnonymousDescendantsWithHeight (visible_units.cc)
-<a href="https://source.chromium.org/search?q=PhysicalLinesBoundingBox%20-file:test.cc&amp;sq=&amp;ss=chromium%2Fchromium%2Fsrc">https://source.chromium.org/search?q=PhysicalLinesBoundingBox%20-file:test.cc&amp;sq=&amp;ss=chromium%2Fchromium%2Fsrc</a>
-
-CSSWG issue:
-<a href="https://github.com/w3c/csswg-drafts/issues/6588">https://github.com/w3c/csswg-drafts/issues/6588</a>
-
-Bug: 716930
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I76311f81750c3a4c5c6d6c21705b874d5abcc2cb">I76311f81750c3a4c5c6d6c21705b874d5abcc2cb</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3181761">https://chromium-review.googlesource.com/c/chromium/src/+/3181761</a>
-Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
-Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#925135}
+Bug: 988711, 1222296, 1095048
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifd7d99ae75ab2c24bdd591b50a0440e9eadeb3b6">Ifd7d99ae75ab2c24bdd591b50a0440e9eadeb3b6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3179690">https://chromium-review.googlesource.com/c/chromium/src/+/3179690</a>
+Reviewed-by: Ben Kelly &lt;wanderview@chromium.org&gt;
+Reviewed-by: Asami Doi &lt;asamidoi@chromium.org&gt;
+Commit-Queue: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#925141}
 </pre>
 
 </body>
