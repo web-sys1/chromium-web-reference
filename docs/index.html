@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/925934/"> 925934</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6ed2ee091e1a146004301cf63b9809f70a5c2fa7">6ed2ee091e1a146004301cf63b9809f70a5c2fa7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/925955/"> 925955</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ad27452027b357dd2f642b1c351d4f5c2b98d662">ad27452027b357dd2f642b1c351d4f5c2b98d662</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/925911/">925911</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6ed2ee091e1a146004301cf63b9809f70a5c2fa7
+   ad27452027b357dd2f642b1c351d4f5c2b98d662
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6ed2ee091e1a146004301cf63b9809f70a5c2fa7">
+    <a href="/chromium/src/+log/ad27452027b357dd2f642b1c351d4f5c2b98d662">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6ed2ee091e1a146004301cf63b9809f70a5c2fa7.tar.gz">
+    <a href="/chromium/src/+archive/ad27452027b357dd2f642b1c351d4f5c2b98d662.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nancy Wang &lt;nancylingwang@chromium.org&gt;
+   Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
   </td>
   <td>
-   Tue Sep 28 20:59:40 2021
+   Tue Sep 28 21:44:43 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 28 20:59:40 2021
+   Tue Sep 28 21:44:43 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6ed2ee091e1a146004301cf63b9809f70a5c2fa7/">
-    0cf76e07248ae9264f0cb4bbfe43241defb3f475
+   <a href="/chromium/src/+/ad27452027b357dd2f642b1c351d4f5c2b98d662/">
+    a0bf0fc293c8cb2bda9bf633046d2497dc91bf4b
    </a>
   </td>
  </tr>
@@ -166,49 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6ed2ee091e1a146004301cf63b9809f70a5c2fa7%5E">
-    8d131d03f2e9b1cfd351e2bcd7473300386236f7
+   <a href="/chromium/src/+/ad27452027b357dd2f642b1c351d4f5c2b98d662%5E">
+    f96b62edc6764b85e84aacdd5fecaf1c28d7635e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6ed2ee091e1a146004301cf63b9809f70a5c2fa7%5E%21/">
+    <a href="/chromium/src/+/ad27452027b357dd2f642b1c351d4f5c2b98d662%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rename apps::mojom::InstallSource to apps::mojom::InstallReason part 1.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[attribution_reporting] Prevent erroneous deletion of reports removed from queue
 
-Doc: <a href="https://docs.google.com/document/d/1h2aSTCJJ815ORzEPzkr7CJIWiQYnBYUOn_lQqDInPJ0">https://docs.google.com/document/d/1h2aSTCJJ815ORzEPzkr7CJIWiQYnBYUOn_lQqDInPJ0</a>
+Without this change, the reporter invokes the manager's OnReportSent
+callback with kDropped, which causes the manager to delete the
+associated report from storage. For reports that were actually deleted
+by ConversionStorage::ClearData this is redundant but safe, but for
+reports that were pessimistically removed from the queue but not
+actually deleted, this wrongly causes the report to be deleted in
+ConversionManagerImpl::OnReportSent.
 
-InstallSource is renamed to InstallReason, so that we can add a new
-InstallSource to define where the app is installed, e.g. from play
-store, chrome web store, etc.
+This was an oversight in crrev.com/c/3071159 which may have been
+prevented if the ConversionManagerImpl unit tests used a real reporter
+instead of a mock one, since I made the mock's implementation of
+RemoveAllReportsFromQueue a no-op.
 
-This is the part 1 to rename InstallSource to InstallReason in
-AppService mojom, and address the related build issue.
+We fix this by distinguishing kDropped from kRemovedFromQueue and
+changing the mock reporter to call OnReportSent with the latter.
 
-There will be follow up CLs to change the related function, variable
-names[TODO]:
-1. Modify app update to rename InstallSource to InstallReason for all
-related functions, variables.
-2. Modify crosapi to rename InstallSource to InstallReason.
-3. Modify other code, e.g. app platform metrics, to rename the related
-functions, variables from InstallSource to InstallReason.
-
-This CL is pure renaming/refactor, no function change.
-
-BUG=1250971
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I833ef912d9cb593e0ea25e4add9156f0ecaca9ac">I833ef912d9cb593e0ea25e4add9156f0ecaca9ac</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3187791">https://chromium-review.googlesource.com/c/chromium/src/+/3187791</a>
-Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
-Reviewed-by: Erik Chen &lt;erikchen@chromium.org&gt;
-Reviewed-by: Justin DeWitt &lt;dewittj@chromium.org&gt;
-Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
-Commit-Queue: Nancy Wang &lt;nancylingwang@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#925934}
+Bug: 1073070, 1253979
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iec98f68e7289d5d33f5d13298d847d3cc30fe427">Iec98f68e7289d5d33f5d13298d847d3cc30fe427</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3190410">https://chromium-review.googlesource.com/c/chromium/src/+/3190410</a>
+Commit-Queue: Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
+Reviewed-by: John Delaney &lt;johnidel@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#925955}
 </pre>
 
 </body>
