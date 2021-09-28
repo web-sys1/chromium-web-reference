@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/925666/"> 925666</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d61bae00a0cb7399e6ee5c2bbd523c514be7ef7d">d61bae00a0cb7399e6ee5c2bbd523c514be7ef7d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/925682/"> 925682</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/db5d03ea9a0919c9ccec3685a6c7b4fab2f16f72">db5d03ea9a0919c9ccec3685a6c7b4fab2f16f72</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/925666/">925666</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d61bae00a0cb7399e6ee5c2bbd523c514be7ef7d">d61bae00a0cb7399e6ee5c2bbd523c514be7ef7d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/925680/">925680</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/62b027e6c6ce3e830a956fe2021e3f3c28027144">62b027e6c6ce3e830a956fe2021e3f3c28027144</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d61bae00a0cb7399e6ee5c2bbd523c514be7ef7d
+   db5d03ea9a0919c9ccec3685a6c7b4fab2f16f72
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d61bae00a0cb7399e6ee5c2bbd523c514be7ef7d">
+    <a href="/chromium/src/+log/db5d03ea9a0919c9ccec3685a6c7b4fab2f16f72">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d61bae00a0cb7399e6ee5c2bbd523c514be7ef7d.tar.gz">
+    <a href="/chromium/src/+archive/db5d03ea9a0919c9ccec3685a6c7b4fab2f16f72.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mohamed Amir Yosef &lt;mamir@chromium.org&gt;
+   Matt Falkenhagen &lt;falken@chromium.org&gt;
   </td>
   <td>
-   Tue Sep 28 09:36:41 2021
+   Tue Sep 28 10:14:21 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 28 09:36:41 2021
+   Tue Sep 28 10:14:21 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d61bae00a0cb7399e6ee5c2bbd523c514be7ef7d/">
-    e29167e92c2f0279603ba769e7ab30f54821c13a
+   <a href="/chromium/src/+/db5d03ea9a0919c9ccec3685a6c7b4fab2f16f72/">
+    56966744c76036e9882e5f65dd2d2faeadb5f321
    </a>
   </td>
  </tr>
@@ -166,50 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d61bae00a0cb7399e6ee5c2bbd523c514be7ef7d%5E">
-    c02b9cf28dbdc2ab494c08686e55ee60159c31b2
+   <a href="/chromium/src/+/db5d03ea9a0919c9ccec3685a6c7b4fab2f16f72%5E">
+    6dd4c78b700d370eff082691b028ce3afffbc5a2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d61bae00a0cb7399e6ee5c2bbd523c514be7ef7d%5E%21/">
+    <a href="/chromium/src/+/db5d03ea9a0919c9ccec3685a6c7b4fab2f16f72%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Autofill] Set max width for address suggestion instead of the dropdown
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">service worker: Remove GetCoreThreadId().
 
-This is a follow up to <a href="https://crrev.com/c/3168859">https://crrev.com/c/3168859</a> that reverts some of
-the added code added and on top does the following:
+This always just returns BrowserThread::UI, so callers can just use
+that directly. This CL:
+- Replaces DCHECK_CURRENTLY_ON(GetCoreThreadId()) calls with
+  DCHECK_CURRENTLY_ON(BrowserThread::UI) in bulk.
+- Replaces uses of GetTaskRunnerForThread(GetCoreThreadId()) with
+  GetUIThreadTaskRunner().
+- Removes GetCoreThreadId().
+- Collapses some unnecessary helpers in service_worker_test_helpers.cc.
+- Removes some comments mentioning GetCoreThreadId().
 
-When the feature AutofillTypeSpecificPopupWidth is enabled:
-1- Only the address dropdown has a maximum width (the credit card
-dropdown width will not be affected by this experiment).
-2- The Dropdown is in principle allowed to shrink to a minimum width of
-zero.
-3- When the text in the address dropdown entry is longer than the
-available space that is capped by the maximum width, the text is elided.
-
-Updated specs:
-<a href="https://www.figma.com/file/lUukdnTrNE5VQYoYZU1BRu/Desktop-Autofill-2.0?node-id=1214%3A41923">https://www.figma.com/file/lUukdnTrNE5VQYoYZU1BRu/Desktop-Autofill-2.0?node-id=1214%3A41923</a>
-
-screenshot:
-1- Address dropdown with long main text
-<a href="http://screen/BWdwnmHTYmYm9fR">http://screen/BWdwnmHTYmYm9fR</a>
-2- Address dropdown with long sub text
-<a href="http://screen/3B5bt8NMTdtHnrH">http://screen/3B5bt8NMTdtHnrH</a>
-3- Address dropdown with short main and sub text
-<a href="http://screen/7u7sY4nYxRtmLB3">http://screen/7u7sY4nYxRtmLB3</a>
-4- Password dropdown with short username and password
-<a href="http://screen/5ukLqHpWN9NB82Q">http://screen/5ukLqHpWN9NB82Q</a>
-
-Bug: 1251131,1252347
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I913780b9270bf00f6cb28170f079d46242185628">I913780b9270bf00f6cb28170f079d46242185628</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3182561">https://chromium-review.googlesource.com/c/chromium/src/+/3182561</a>
-Commit-Queue: Mohamed Amir Yosef &lt;mamir@chromium.org&gt;
-Reviewed-by: Matthias Körber &lt;koerber@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#925666}
+Bug: 1138155
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I277bf56998b04305d42b3a0d4d8ac9b6ea928c75">I277bf56998b04305d42b3a0d4d8ac9b6ea928c75</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3185719">https://chromium-review.googlesource.com/c/chromium/src/+/3185719</a>
+Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
+Commit-Queue: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Owners-Override: Matt Falkenhagen &lt;falken@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#925682}
 </pre>
 
 </body>
