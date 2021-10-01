@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/927212/"> 927212</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/843b5f9df3165c47daba8fb5c11308f0ec781ef9">843b5f9df3165c47daba8fb5c11308f0ec781ef9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/927228/"> 927228</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b7fc7c481a5c79c11a4260e4400165e051e37585">b7fc7c481a5c79c11a4260e4400165e051e37585</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/927197/">927197</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ad55ffdb63981e0a28828417662ffacdfff55dac">ad55ffdb63981e0a28828417662ffacdfff55dac</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/927222/">927222</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/587c01282cf51c6a103af2adaa400db5f1519939">587c01282cf51c6a103af2adaa400db5f1519939</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   843b5f9df3165c47daba8fb5c11308f0ec781ef9
+   b7fc7c481a5c79c11a4260e4400165e051e37585
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/843b5f9df3165c47daba8fb5c11308f0ec781ef9">
+    <a href="/chromium/src/+log/b7fc7c481a5c79c11a4260e4400165e051e37585">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/843b5f9df3165c47daba8fb5c11308f0ec781ef9.tar.gz">
+    <a href="/chromium/src/+archive/b7fc7c481a5c79c11a4260e4400165e051e37585.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andrew Xu &lt;andrewxu@chromium.org&gt;
+   Nicolas Ouellet-Payeur &lt;nicolaso@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 01 14:47:22 2021
+   Fri Oct 01 16:08:34 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 01 14:47:22 2021
+   Fri Oct 01 16:08:34 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/843b5f9df3165c47daba8fb5c11308f0ec781ef9/">
-    b09aba2b69aa6d23ce342d5b77ab30e84ea58ca5
+   <a href="/chromium/src/+/b7fc7c481a5c79c11a4260e4400165e051e37585/">
+    d7a679f77113e8976f19454fa081fb8aae790181
    </a>
   </td>
  </tr>
@@ -166,45 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/843b5f9df3165c47daba8fb5c11308f0ec781ef9%5E">
-    1ec60fb5423cbaed76d65afd8f8771c05852fb68
+   <a href="/chromium/src/+/b7fc7c481a5c79c11a4260e4400165e051e37585%5E">
+    3a0b4415972f905c27dbac6c4092aa0c7f7345e3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/843b5f9df3165c47daba8fb5c11308f0ec781ef9%5E%21/">
+    <a href="/chromium/src/+/b7fc7c481a5c79c11a4260e4400165e051e37585%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[AppList Sync] Refactor on setting ChromeAppListItem name
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Traffic Annotations] Use UTF-8 in may_contain_annotations()
 
-This CL refactors the code that sets the ChromeAppListItem instance's
-name. In detail, this CL does the following things:
+crrev.com/c/3150470 introduced may_contain_annotations() as way to speed
+up scanning C++/Java source files by pre-filtering them. However, it
+doesn't pass the encoding="utf-8" parameter, causing issues with
+non-ASCII characters on Windows.
 
-(1) Make ChromeAppListItem::SetName() and ChromeAppListItem::SetName-
-AndShortName() both protected member functions so that these two
-functions can be called only by ChromeAppListItem and its
-subclasses. The external classes should use ChromeAppListModelUpdater
-to set the item name (or short name).
-
-(2) Avoid calling the model updater in ChromeAppListItem::SetName()
-or ChromeAppListItem::SetNameAndShortName().
-
-(3) Change FakeAppListModelUpdater::OnItemAdded() so that it becomes
-more similar to ChromeAppListModelUpdater::OnItemAdded(). Actually
-I tried to erase FakeAppListModelUpdater::OnItemAdded() but it is not
-easy.
-
-This CL should not bring any noticeable change to product users.
-
-Bug: 1252021
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia7fb03d539d833486d03abca3e79150c55542ac0">Ia7fb03d539d833486d03abca3e79150c55542ac0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3198297">https://chromium-review.googlesource.com/c/chromium/src/+/3198297</a>
-Commit-Queue: Andrew Xu &lt;andrewxu@chromium.org&gt;
-Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#927212}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id42a877b9a85acfd8a6584be109d61bf50ea78e0">Id42a877b9a85acfd8a6584be109d61bf50ea78e0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3197879">https://chromium-review.googlesource.com/c/chromium/src/+/3197879</a>
+Commit-Queue: Nicolas Ouellet-Payeur &lt;nicolaso@chromium.org&gt;
+Commit-Queue: Igor Ruvinov &lt;igorruvinov@chromium.org&gt;
+Auto-Submit: Nicolas Ouellet-Payeur &lt;nicolaso@chromium.org&gt;
+Reviewed-by: Igor Ruvinov &lt;igorruvinov@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#927228}
 </pre>
 
 </body>
