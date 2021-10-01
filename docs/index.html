@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/926994/"> 926994</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/15580a4ed1bea62b20cbb3d96c79df6e0cbea748">15580a4ed1bea62b20cbb3d96c79df6e0cbea748</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/927031/"> 927031</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e0fc463ca6d8dedd64bb520779aa367c0831581b">e0fc463ca6d8dedd64bb520779aa367c0831581b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/926956/">926956</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   15580a4ed1bea62b20cbb3d96c79df6e0cbea748
+   e0fc463ca6d8dedd64bb520779aa367c0831581b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/15580a4ed1bea62b20cbb3d96c79df6e0cbea748">
+    <a href="/chromium/src/+log/e0fc463ca6d8dedd64bb520779aa367c0831581b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/15580a4ed1bea62b20cbb3d96c79df6e0cbea748.tar.gz">
+    <a href="/chromium/src/+archive/e0fc463ca6d8dedd64bb520779aa367c0831581b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nancy Wang &lt;nancylingwang@chromium.org&gt;
+   Daniel Cheng &lt;dcheng@chromium.org&gt;
   </td>
   <td>
-   Thu Sep 30 23:14:32 2021
+   Fri Oct 01 00:37:41 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Sep 30 23:14:32 2021
+   Fri Oct 01 00:37:41 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/15580a4ed1bea62b20cbb3d96c79df6e0cbea748/">
-    0af9b233d4ce83201263f815586f405125a968fa
+   <a href="/chromium/src/+/e0fc463ca6d8dedd64bb520779aa367c0831581b/">
+    e684565566ccc3d6d23a0dc4f5bfc1a646a68077
    </a>
   </td>
  </tr>
@@ -166,40 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/15580a4ed1bea62b20cbb3d96c79df6e0cbea748%5E">
-    f98b57e592f04788e52872297cf27dda3938f750
+   <a href="/chromium/src/+/e0fc463ca6d8dedd64bb520779aa367c0831581b%5E">
+    c8d21dfecb0b6bdd85c163fa6aacc15bbc73e6f7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/15580a4ed1bea62b20cbb3d96c79df6e0cbea748%5E%21/">
+    <a href="/chromium/src/+/e0fc463ca6d8dedd64bb520779aa367c0831581b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rename InstallSource to InstallReason (part 5).
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update base::DoNothing() / base::NullCallback() to use a type tag.
 
-Doc: <a href="https://docs.google.com/document/d/1h2aSTCJJ815ORzEPzkr7CJIWiQYnBYUOn_lQqDInPJ0">https://docs.google.com/document/d/1h2aSTCJJ815ORzEPzkr7CJIWiQYnBYUOn_lQqDInPJ0</a>
+This allows both helpers to be used in contexts where the original
+helper required templated arguments to be explicitly specified,
+generally leading to more concise code.
 
-InstallSource is renamed to InstallReason, so that we can add a new
-InstallSource to define where the app is installed, e.g. from play
-store, chrome web store, etc.
+However, since base::DoNothing() only returns a type tag now, it can no
+longer be used as a functor with base::BindOnce/base::BindRepeating.
+In general, this seems to be a net neutral to slight positive change:
+the lambda version is actually shorter—though some might argue less
+readable—and it generates more efficient code since running the callback
+now jumps through one less thunk.
 
-This is the part 5 to rename InstallSource to InstallReason in
-crosapi mojom, and managed_apps_test.
-
-This CL is pure renaming/refactor, no function change.
-
-BUG=1250971
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I733a56d4912af2c2b8d44ac8320e9a77892b6384">I733a56d4912af2c2b8d44ac8320e9a77892b6384</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3195431">https://chromium-review.googlesource.com/c/chromium/src/+/3195431</a>
-Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
-Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
-Reviewed-by: Erik Chen &lt;erikchen@chromium.org&gt;
-Commit-Queue: Nancy Wang &lt;nancylingwang@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#926994}
+Bug: 1252980
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6b72230fe9d583865ff3d40fc51025f6195ebbc4">I6b72230fe9d583865ff3d40fc51025f6195ebbc4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3180101">https://chromium-review.googlesource.com/c/chromium/src/+/3180101</a>
+Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Commit-Queue: danakj &lt;danakj@chromium.org&gt;
+Reviewed-by: danakj &lt;danakj@chromium.org&gt;
+Owners-Override: danakj &lt;danakj@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#927031}
 </pre>
 
 </body>
