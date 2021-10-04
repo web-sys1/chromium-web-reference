@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/927694/"> 927694</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/67abbb2fbfb68b4c1355ec918cec4c25eacbbf03">67abbb2fbfb68b4c1355ec918cec4c25eacbbf03</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/927707/"> 927707</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5d4a666c767032e57006dd30f9d7d3a729141ce5">5d4a666c767032e57006dd30f9d7d3a729141ce5</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/927709/">927709</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   67abbb2fbfb68b4c1355ec918cec4c25eacbbf03
+   5d4a666c767032e57006dd30f9d7d3a729141ce5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/67abbb2fbfb68b4c1355ec918cec4c25eacbbf03">
+    <a href="/chromium/src/+log/5d4a666c767032e57006dd30f9d7d3a729141ce5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/67abbb2fbfb68b4c1355ec918cec4c25eacbbf03.tar.gz">
+    <a href="/chromium/src/+archive/5d4a666c767032e57006dd30f9d7d3a729141ce5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Daniel Vogelheim &lt;vogelheim@chromium.org&gt;
+   Wez &lt;wez@chromium.org&gt;
   </td>
   <td>
-   Mon Oct 04 15:53:33 2021
+   Mon Oct 04 16:41:36 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Oct 04 15:53:33 2021
+   Mon Oct 04 16:41:36 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/67abbb2fbfb68b4c1355ec918cec4c25eacbbf03/">
-    d30d26a5596f67ecd801b387b67d54e2d2da4270
+   <a href="/chromium/src/+/5d4a666c767032e57006dd30f9d7d3a729141ce5/">
+    b49a5373123e774c31a7ba35751f6210afc4f2ae
    </a>
   </td>
  </tr>
@@ -166,56 +166,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/67abbb2fbfb68b4c1355ec918cec4c25eacbbf03%5E">
-    c0814143b16de72f0612bb663a29488761d1c136
+   <a href="/chromium/src/+/5d4a666c767032e57006dd30f9d7d3a729141ce5%5E">
+    31af4559c14fd3f5bbe00281e78bfc3f2feb2a01
    </a>
    <span>
     [
-    <a href="/chromium/src/+/67abbb2fbfb68b4c1355ec918cec4c25eacbbf03%5E%21/">
+    <a href="/chromium/src/+/5d4a666c767032e57006dd30f9d7d3a729141ce5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[Trusted Types] Ensure execCommand('insertHTML') is TT-safe."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[fuchsia] Automatically set attribution tag for process logs.
 
-This reverts commit 628878ce7584ce5b9b1fbe00832cd1c11dbf0a48.
+ScopedFxLogger::CreateForProcess() now prepends an attribution tag,
+based on the calling process command-line's "program" argument, to any
+caller-supplied tags, to ensure useful attribution of log output.
 
-Reason for revert: Potential breakage, reported in 1255546.
+This has two benefits:
+1. It avoids relying on the fuchsia.logger.LogSink implementation being
+   able to correctly attribute logs to the Component, via the special
+   COMPONENT_NAME tag, which is currently broken in some common cases.
+2. It avoids relying on the fuchsia.logger.LogSink implementation
+   implicitly adding an attribution tag to messages logged with no tags.
 
-Bug: 1230567, 1255546
+and addresses two known issues with COMPONENT_NAME:
+- "run-test-component" causes the test Component to be mis-attributed
+  as "UNKNOWN".
+- WebInstanceHost creates a web_instance.cmx that receives LogSink from
+  the calling component, and is therefore mis-attributed.
 
+ScopedFxLogger is also updated to support callers supplying more than
+one tag, and to provide a convenience default for the zero-tags case.
 
-Original change's description:
-&gt; [Trusted Types] Ensure execCommand('insertHTML') is TT-safe.
-&gt;
-&gt; Trusted Types protects against XSS by providing a configurable boundary
-&gt; for HTML insertion into the DOM. execCommand with the "insertHTML" command
-&gt; works around these. This introduces Trusted Types check for
-&gt; execCommand("insertHTML") that are the exact equivalent of element.innerHTML.
-&gt;
-&gt; Tests ensure that - if TT is not enabled - execCommand will work as before.
-&gt; Tests also ensure that - if TT is enabled - execCommand with "insertHTML"
-&gt; will obey TT policies and the default policy, while other sub-commands will
-&gt; continue to work as before.
-&gt;
-&gt; Bug: 1230567
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaa50b01bec4061f53b6d66b0b21f63527f2b71a9">Iaa50b01bec4061f53b6d66b0b21f63527f2b71a9</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3048161">https://chromium-review.googlesource.com/c/chromium/src/+/3048161</a>
-&gt; Reviewed-by: Mike West &lt;mkwst@chromium.org&gt;
-&gt; Reviewed-by: Xiaocheng Hu &lt;xiaochengh@chromium.org&gt;
-&gt; Reviewed-by: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-&gt; Commit-Queue: Daniel Vogelheim &lt;vogelheim@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#927214}
-
-Bug: 1230567
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7fc1eba34917f71a0883c8d39c4853c04f6a385c">I7fc1eba34917f71a0883c8d39c4853c04f6a385c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3201975">https://chromium-review.googlesource.com/c/chromium/src/+/3201975</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Reviewed-by: Mike West &lt;mkwst@chromium.org&gt;
-Commit-Queue: Daniel Vogelheim &lt;vogelheim@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#927694}
+Bug: 1253637, fuchsia:85457
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I87121f856f15c6acfb0129278efd0c518f2adc22">I87121f856f15c6acfb0129278efd0c518f2adc22</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3199916">https://chromium-review.googlesource.com/c/chromium/src/+/3199916</a>
+Commit-Queue: Wez &lt;wez@chromium.org&gt;
+Commit-Queue: Benjamin Lerman &lt;qsr@chromium.org&gt;
+Auto-Submit: Wez &lt;wez@chromium.org&gt;
+Reviewed-by: Benjamin Lerman &lt;qsr@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#927707}
 </pre>
 
 </body>
