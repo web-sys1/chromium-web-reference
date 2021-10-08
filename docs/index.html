@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/929769/"> 929769</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7c30ae02d6d79c5e2c2ab38d2d880b043d16ec00">7c30ae02d6d79c5e2c2ab38d2d880b043d16ec00</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/929803/"> 929803</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5398516ae5ac7ce24bd00e72da18ee941083b8e7">5398516ae5ac7ce24bd00e72da18ee941083b8e7</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/929776/">929776</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ab02fe441d1e7b55ee9c2fd8ac2d396f287f9d3a">ab02fe441d1e7b55ee9c2fd8ac2d396f287f9d3a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/929803/">929803</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5398516ae5ac7ce24bd00e72da18ee941083b8e7">5398516ae5ac7ce24bd00e72da18ee941083b8e7</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7c30ae02d6d79c5e2c2ab38d2d880b043d16ec00
+   5398516ae5ac7ce24bd00e72da18ee941083b8e7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7c30ae02d6d79c5e2c2ab38d2d880b043d16ec00">
+    <a href="/chromium/src/+log/5398516ae5ac7ce24bd00e72da18ee941083b8e7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7c30ae02d6d79c5e2c2ab38d2d880b043d16ec00.tar.gz">
+    <a href="/chromium/src/+archive/5398516ae5ac7ce24bd00e72da18ee941083b8e7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Junbo Ke &lt;juke@chromium.org&gt;
+   Gordon Seto &lt;gordonseto@google.com&gt;
   </td>
   <td>
-   Fri Oct 08 17:39:52 2021
+   Fri Oct 08 18:24:29 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 08 17:39:52 2021
+   Fri Oct 08 18:24:29 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7c30ae02d6d79c5e2c2ab38d2d880b043d16ec00/">
-    48419839d159d2c956019a52f97262f20085bd14
+   <a href="/chromium/src/+/5398516ae5ac7ce24bd00e72da18ee941083b8e7/">
+    792d3b4e918b23ca1d13142393f69c5aa71af828
    </a>
   </td>
  </tr>
@@ -166,33 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7c30ae02d6d79c5e2c2ab38d2d880b043d16ec00%5E">
-    4828573058efe3a9b360ebd14137cd06fa4d1f5d
+   <a href="/chromium/src/+/5398516ae5ac7ce24bd00e72da18ee941083b8e7%5E">
+    e82ab71f61bc25075e18f0ffb076f575a2f3dfd3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7c30ae02d6d79c5e2c2ab38d2d880b043d16ec00%5E%21/">
+    <a href="/chromium/src/+/5398516ae5ac7ce24bd00e72da18ee941083b8e7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Chromecast] Fix a potential race condition in AudioSocketBrokerTest.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CrOS Bluetooth] Update CrosBluetoothConfig initialization.
 
-The socket FD is default to non-blocking, which makes recvmsg return -1
-immediately if there are no pending incoming messages. Make the accepted
-FD blocking to make sure the message sent with sendmsg is guaranteed to
-reach the receiving end.
+Update CrosBluetoothConfig to initialize early in
+ChromeBrowserMainPartsAsh. Previously, it was lazy-initialized by the
+first client to bind to it. Because CrosBluetoothConfg will have
+services that use prefs, including local device prefs, this needs to be
+updated to be initialized at earlier because it needs access to prefs
+before any client binds to it. Classes that will use the prefs will be
+added in follow-up CLs.
 
-Bug: b:200081217
-Test: cast_shell_unittests
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8fb1358ee846358cd0cf2cd50cf62fddb1bef86b">I8fb1358ee846358cd0cf2cd50cf62fddb1bef86b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3213514">https://chromium-review.googlesource.com/c/chromium/src/+/3213514</a>
-Reviewed-by: Kenneth MacKay &lt;kmackay@chromium.org&gt;
-Reviewed-by: Yuchen Liu &lt;yucliu@chromium.org&gt;
-Commit-Queue: Junbo Ke &lt;juke@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#929769}
+Bug: 1010321
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I26d9900647fa32c5222f25f0d1307b07032a4c07">I26d9900647fa32c5222f25f0d1307b07032a4c07</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3202980">https://chromium-review.googlesource.com/c/chromium/src/+/3202980</a>
+Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
+Commit-Queue: Gordon Seto &lt;gordonseto@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#929803}
 </pre>
 
 </body>
