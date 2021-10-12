@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/930478/"> 930478</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/db51f46b4688b7ab896feedae679c5ad0d2ce94d">db51f46b4688b7ab896feedae679c5ad0d2ce94d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/930484/"> 930484</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e6dadde678d737769b9f614cf9a9febec9717553">e6dadde678d737769b9f614cf9a9febec9717553</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/930477/">930477</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b1083f5d958dc21ab3db3c76a252328461baa3b0">b1083f5d958dc21ab3db3c76a252328461baa3b0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/930480/">930480</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c787e42c3aba6d1241c0afc2af17361109aa48b2">c787e42c3aba6d1241c0afc2af17361109aa48b2</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   db51f46b4688b7ab896feedae679c5ad0d2ce94d
+   e6dadde678d737769b9f614cf9a9febec9717553
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/db51f46b4688b7ab896feedae679c5ad0d2ce94d">
+    <a href="/chromium/src/+log/e6dadde678d737769b9f614cf9a9febec9717553">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/db51f46b4688b7ab896feedae679c5ad0d2ce94d.tar.gz">
+    <a href="/chromium/src/+archive/e6dadde678d737769b9f614cf9a9febec9717553.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Pavol Marko &lt;pmarko@google.com&gt;
+   Benoit Lize &lt;lizeb@chromium.org&gt;
   </td>
   <td>
-   Tue Oct 12 09:43:38 2021
+   Tue Oct 12 10:31:41 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Oct 12 09:43:38 2021
+   Tue Oct 12 10:31:41 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/db51f46b4688b7ab896feedae679c5ad0d2ce94d/">
-    24534a4c69c44f7b51ea38de106db9aa436e4357
+   <a href="/chromium/src/+/e6dadde678d737769b9f614cf9a9febec9717553/">
+    abdd9e4f000522aef230a825dbaadd6f7c5506cf
    </a>
   </td>
  </tr>
@@ -166,48 +166,25 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/db51f46b4688b7ab896feedae679c5ad0d2ce94d%5E">
-    b1083f5d958dc21ab3db3c76a252328461baa3b0
+   <a href="/chromium/src/+/e6dadde678d737769b9f614cf9a9febec9717553%5E">
+    b442542b28554125274a74ed54057b7e7a54c2da
    </a>
    <span>
     [
-    <a href="/chromium/src/+/db51f46b4688b7ab896feedae679c5ad0d2ce94d%5E%21/">
+    <a href="/chromium/src/+/e6dadde678d737769b9f614cf9a9febec9717553%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Generate software-backed RSA keys in chaps
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PartitionAlloc] Centralize and document cacheline alignment.
 
-Add support for generating software-backed RSA keys in chaps
-to PlatformKeysService.
-
-This is implemented by calling PKCS#11 functions on libchaps.so
-directly. A few layers were introduced to support this:
-- ChapsSlotSession:
-  Loads libchaps.so, resolves relevant PKCS#11 functions on it, and
-  opens/closes a read-write PKCS#11 session for the slot. Allows calling
-  C_GenerateKey, C_GetAttributeValue and C_SetAttributeValue.
-- ChapsSlotSessionFactory:
-  Creates ChapsSlotSessions. Useful so ChapsSlotSession creation can be
-  replaced with a fake for unit tests.
-- ChapsUtil:
-  Implements generating a key pair by performing the actual PKCS#11
-  calls. Also sets CKA_ID of the generated key pair to the value NSS
-  would set.
-  Uses ChapsSlotSession{Factory} to perform the chaps PKCS#11 calls.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5e5869058aa04f74d6eed0223efc710c76b5d702">I5e5869058aa04f74d6eed0223efc710c76b5d702</a>
-Bug: 1252410
-Test: unit &amp; browser test, also deploy_chrome with additional trigger code
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3173358">https://chromium-review.googlesource.com/c/chromium/src/+/3173358</a>
-Commit-Queue: Pavol Marko &lt;pmarko@chromium.org&gt;
-Auto-Submit: Pavol Marko &lt;pmarko@chromium.org&gt;
-Reviewed-by: Yves Arrouye &lt;drcrash@chromium.org&gt;
-Reviewed-by: Reilly Grant &lt;reillyg@chromium.org&gt;
-Reviewed-by: Omar Morsi &lt;omorsi@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#930478}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I04efb8ad0691a1b210d4e85567b1e8f4aab05cdf">I04efb8ad0691a1b210d4e85567b1e8f4aab05cdf</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3217464">https://chromium-review.googlesource.com/c/chromium/src/+/3217464</a>
+Commit-Queue: Benoit L &lt;lizeb@chromium.org&gt;
+Reviewed-by: Bartek Nowierski &lt;bartekn@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#930484}
 </pre>
 
 </body>
