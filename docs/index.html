@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/930365/"> 930365</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ec569389922f7fc66486dcd94a5b4b5ccd0a15a9">ec569389922f7fc66486dcd94a5b4b5ccd0a15a9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/930399/"> 930399</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cac37f3d48390b365eb463f131fdd3510ed8f3b2">cac37f3d48390b365eb463f131fdd3510ed8f3b2</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/930386/">930386</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ec569389922f7fc66486dcd94a5b4b5ccd0a15a9
+   cac37f3d48390b365eb463f131fdd3510ed8f3b2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ec569389922f7fc66486dcd94a5b4b5ccd0a15a9">
+    <a href="/chromium/src/+log/cac37f3d48390b365eb463f131fdd3510ed8f3b2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ec569389922f7fc66486dcd94a5b4b5ccd0a15a9.tar.gz">
+    <a href="/chromium/src/+archive/cac37f3d48390b365eb463f131fdd3510ed8f3b2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alex Gough &lt;ajgo@chromium.org&gt;
+   Ben Reich &lt;benreich@chromium.org&gt;
   </td>
   <td>
-   Tue Oct 12 00:55:44 2021
+   Tue Oct 12 02:54:36 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Oct 12 00:55:44 2021
+   Tue Oct 12 02:54:36 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ec569389922f7fc66486dcd94a5b4b5ccd0a15a9/">
-    827250007f94b8f416769d5312c278b94e503b43
+   <a href="/chromium/src/+/cac37f3d48390b365eb463f131fdd3510ed8f3b2/">
+    695cdcc307f77e9a53504d366a1da6b1a6ed1b31
    </a>
   </td>
  </tr>
@@ -166,48 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ec569389922f7fc66486dcd94a5b4b5ccd0a15a9%5E">
-    bdefe0507e7520a7d640f279d0f2a62eb14b18de
+   <a href="/chromium/src/+/cac37f3d48390b365eb463f131fdd3510ed8f3b2%5E">
+    6fc6b1f1571d8d4d4bb69fedb217c36b3421729f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ec569389922f7fc66486dcd94a5b4b5ccd0a15a9%5E%21/">
+    <a href="/chromium/src/+/cac37f3d48390b365eb463f131fdd3510ed8f3b2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Specify Audio and Network sandboxes in mojo
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[FilesSwa] Record UMA for DEVICE_FAIL notification
 
-Adds ServiceSandbox attribute to AudioService and NetworkService
-interfaces and deletes the final service_sandbox_type.h file. All
-service sandboxes are now specified this way.
+Record a DEVICE_FAIL for the Notification.Show histogram when a device
+is plugged in that has an unsupported file system or a multi partition
+file system has been mounted where at least one of the partition is
+unsupported. This is porting the logic from device_handler.js in
+preparation for the SWA version of the Files app.
 
-These two services are different, however. Their sandboxes can be
-disabled (to kNoSandbox) by policy or feature flags. This means
-the service launching machinery must know how to do this. In this
-CL we move this logic into the ServiceProcessHost which in turn
-asks the ContentBrowserClient if the sandboxes should be enabled.
-As this is only necessary for two sandbox types we have not
-generalised the CBC interface.
-
-We also delete `sandbox_type` from service process host options
-as it cannot be specified as an option and must be specified using
-the ServiceSandbox attribute on the launched mojom. We migrate
-the type used within ServiceProcessHost to sandbox::mojom::Sandbox.
-A future CL will replace sandbox::policy::mojom::SandboxType with
-the mojom type throughout.
-
-Bug: 1210301
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4de13359487158a52da8ad414c8beb9cd93033bb">I4de13359487158a52da8ad414c8beb9cd93033bb</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3209992">https://chromium-review.googlesource.com/c/chromium/src/+/3209992</a>
-Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
-Reviewed-by: Ken Rockot &lt;rockot@google.com&gt;
-Reviewed-by: Will Harris &lt;wfh@chromium.org&gt;
-Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
-Commit-Queue: Alex Gough &lt;ajgo@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#930365}
+Bug: b:202087510
+Test: unit_tests --gtest_filter=SystemNotificationManagerTest.*
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie9667813d420e375fe50ae33ae92a29477e10ce4">Ie9667813d420e375fe50ae33ae92a29477e10ce4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3210528">https://chromium-review.googlesource.com/c/chromium/src/+/3210528</a>
+Reviewed-by: Bo Majewski &lt;majewski@chromium.org&gt;
+Commit-Queue: Ben Reich &lt;benreich@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#930399}
 </pre>
 
 </body>
