@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/931404/"> 931404</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/638c1546d80ee0449fb6802826b1451b3c8e9235">638c1546d80ee0449fb6802826b1451b3c8e9235</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/931408/"> 931408</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b35194229662a74ee2a497ad5964d90e6cb87de3">b35194229662a74ee2a497ad5964d90e6cb87de3</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/931401/">931401</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ae15ed83a114eb0b497c6c15c217705bf22b414d">ae15ed83a114eb0b497c6c15c217705bf22b414d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/931408/">931408</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b35194229662a74ee2a497ad5964d90e6cb87de3">b35194229662a74ee2a497ad5964d90e6cb87de3</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   638c1546d80ee0449fb6802826b1451b3c8e9235
+   b35194229662a74ee2a497ad5964d90e6cb87de3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/638c1546d80ee0449fb6802826b1451b3c8e9235">
+    <a href="/chromium/src/+log/b35194229662a74ee2a497ad5964d90e6cb87de3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/638c1546d80ee0449fb6802826b1451b3c8e9235.tar.gz">
+    <a href="/chromium/src/+archive/b35194229662a74ee2a497ad5964d90e6cb87de3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chrome-weblayer-builder &lt;chrome-weblayer-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Tim Sergeant &lt;tsergeant@chromium.org&gt;
   </td>
   <td>
-   Thu Oct 14 07:17:52 2021
+   Thu Oct 14 07:37:25 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Oct 14 07:17:52 2021
+   Thu Oct 14 07:37:25 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/638c1546d80ee0449fb6802826b1451b3c8e9235/">
-    6bec2b6b135be1011440bbbb86a5b1fd082a745f
+   <a href="/chromium/src/+/b35194229662a74ee2a497ad5964d90e6cb87de3/">
+    dc9d04c96e30cf62a9f3df2d51d02c4b1ad3c2ec
    </a>
   </td>
  </tr>
@@ -166,35 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/638c1546d80ee0449fb6802826b1451b3c8e9235%5E">
-    f002c0f52ffef067d2ceeae7c6f59000bbfb4e93
+   <a href="/chromium/src/+/b35194229662a74ee2a497ad5964d90e6cb87de3%5E">
+    a635a88f96feec2a8cac32f97b5eb9d7c815c4df
    </a>
    <span>
     [
-    <a href="/chromium/src/+/638c1546d80ee0449fb6802826b1451b3c8e9235%5E%21/">
+    <a href="/chromium/src/+/b35194229662a74ee2a497ad5964d90e6cb87de3%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[lacros skew tests] Refresh skew tests for M94
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CrOS WebAPKs] Don't generate WebAPKs for apps with no manifest URL
 
-This CL updates the ash version 94.0.4606.97 for Lacros version skew testing.
-If this CL caused regressions, please revert and stop the autoroller
-at <a href="https://luci-scheduler.appspot.com/jobs/chrome/lacros-version-skew-roller">https://luci-scheduler.appspot.com/jobs/chrome/lacros-version-skew-roller</a>
-Also please file a bug to OS&gt;LaCrOS&gt;Partner, and CC svenzheng@chromium.org,
-liaoyuke@chromium.org, yjt@google.com.
+Manifest URL storage has only been added in the last few milestones, so
+apps which haven't been used recently may not have a manifest URL saved.
+However, the WebAPK Minter requires a manifest URL, and sending a
+request without it fails.
 
-R=rubber-stamper@appspot.gserviceaccount.com
+This CL detects this case in WebAPKInstallTask and exits early,
+preventing local work and a network request. Ideally we'd cancel the
+process even earlier, in WebApkManager, but that class does not have
+access to WebAppRegistrar, and the manifest URL is not available through
+App Service.
 
-Bug: None
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3b2d8484a3f8e1d52315e0b1ab3c4c46162e0fd3">I3b2d8484a3f8e1d52315e0b1ab3c4c46162e0fd3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3221494">https://chromium-review.googlesource.com/c/chromium/src/+/3221494</a>
-Auto-Submit: chrome-weblayer-builder &lt;chrome-weblayer-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#931404}
+Bug: 1259821
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibf290c2b2839b3d42a96a09274b66d1c884e080d">Ibf290c2b2839b3d42a96a09274b66d1c884e080d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3222323">https://chromium-review.googlesource.com/c/chromium/src/+/3222323</a>
+Commit-Queue: Tim Sergeant &lt;tsergeant@chromium.org&gt;
+Commit-Queue: Melissa Zhang &lt;melzhang@chromium.org&gt;
+Auto-Submit: Tim Sergeant &lt;tsergeant@chromium.org&gt;
+Reviewed-by: Melissa Zhang &lt;melzhang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#931408}
 </pre>
 
 </body>
