@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/931966/"> 931966</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9e331c3b7185cb28b6eed7b7de978138bc90f06e">9e331c3b7185cb28b6eed7b7de978138bc90f06e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/931971/"> 931971</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/dbb0749fda695be7c3db087294bacddfdf8d5796">dbb0749fda695be7c3db087294bacddfdf8d5796</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/931962/">931962</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b2759759828a3b01edac0ac135810e90a383e4c2">b2759759828a3b01edac0ac135810e90a383e4c2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/931974/">931974</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/179ddc39ac98d3c2620dfe5f4f6e1c0365358ba9">179ddc39ac98d3c2620dfe5f4f6e1c0365358ba9</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9e331c3b7185cb28b6eed7b7de978138bc90f06e
+   dbb0749fda695be7c3db087294bacddfdf8d5796
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9e331c3b7185cb28b6eed7b7de978138bc90f06e">
+    <a href="/chromium/src/+log/dbb0749fda695be7c3db087294bacddfdf8d5796">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9e331c3b7185cb28b6eed7b7de978138bc90f06e.tar.gz">
+    <a href="/chromium/src/+archive/dbb0749fda695be7c3db087294bacddfdf8d5796.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Ting Shao &lt;ting.shao@intel.com&gt;
   </td>
   <td>
-   Fri Oct 15 11:17:26 2021
+   Fri Oct 15 12:05:36 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 15 11:17:26 2021
+   Fri Oct 15 12:05:36 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9e331c3b7185cb28b6eed7b7de978138bc90f06e/">
-    48656d1b67b336e5eb8e2ca1e4a32bd9c5a05159
+   <a href="/chromium/src/+/dbb0749fda695be7c3db087294bacddfdf8d5796/">
+    95514abcb36c186b92fe7864feabcd743bb3d157
    </a>
   </td>
  </tr>
@@ -166,46 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9e331c3b7185cb28b6eed7b7de978138bc90f06e%5E">
-    cabb50c2652dbceef80cac31d4780fec431ac573
+   <a href="/chromium/src/+/dbb0749fda695be7c3db087294bacddfdf8d5796%5E">
+    9a70fc28a5d0aa85bc40bfa5578dc50d2af4fcab
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9e331c3b7185cb28b6eed7b7de978138bc90f06e%5E%21/">
+    <a href="/chromium/src/+/dbb0749fda695be7c3db087294bacddfdf8d5796%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Perfetto from d160778c81da to 12aced85d964 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Improve request scheduling with help of cache
 
-<a href="https://android.googlesource.com/platform/external/perfetto.git/+log/d160778c81da..12aced85d964">https://android.googlesource.com/platform/external/perfetto.git/+log/d160778c81da..12aced85d964</a>
+In network service, requests that already exist in cache may still be
+queued for quite a long time. Even for those that don't perform any
+validation and don't contend for the network. Schedule these requests
+with consideration of cache data may improve the loading.
 
-2021-10-15 octaviant@google.com Merge "Do minor refactorings in adb code."
+This change introduces a timer that checks if there are any pending
+requests that are cached and have been queued for a long time. Start
+them if any.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/perfetto-chromium-autoroll">https://autoroll.skia.org/r/perfetto-chromium-autoroll</a>
-Please CC perfetto-bugs@google.com on the revert to ensure that a human
-is aware of the problem.
-
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chromium.try:linux-perfetto-rel
-Bug: None
-Tbr: perfetto-bugs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I624d1e5c640ddb00014e821aa6f979e115e7def8">I624d1e5c640ddb00014e821aa6f979e115e7def8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3225946">https://chromium-review.googlesource.com/c/chromium/src/+/3225946</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#931966}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic08802704a9fefc842ea786dc0971cc4a123ca66">Ic08802704a9fefc842ea786dc0971cc4a123ca66</a>
+Bug: 1252291
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3174379">https://chromium-review.googlesource.com/c/chromium/src/+/3174379</a>
+Reviewed-by: Yutaka Hirano &lt;yhirano@chromium.org&gt;
+Reviewed-by: Adam Rice &lt;ricea@chromium.org&gt;
+Commit-Queue: Ting Shao &lt;ting.shao@intel.com&gt;
+Cr-Commit-Position: refs/heads/main@{#931971}
 </pre>
 
 </body>
