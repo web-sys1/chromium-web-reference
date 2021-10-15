@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/931800/"> 931800</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fc4cef6cba0735ecea9ad0afb86f972fa88853c9">fc4cef6cba0735ecea9ad0afb86f972fa88853c9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/931817/"> 931817</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/91e87d9417e897874764ce15444f5e79d3dcba65">91e87d9417e897874764ce15444f5e79d3dcba65</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/931800/">931800</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   fc4cef6cba0735ecea9ad0afb86f972fa88853c9
+   91e87d9417e897874764ce15444f5e79d3dcba65
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/fc4cef6cba0735ecea9ad0afb86f972fa88853c9">
+    <a href="/chromium/src/+log/91e87d9417e897874764ce15444f5e79d3dcba65">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/fc4cef6cba0735ecea9ad0afb86f972fa88853c9.tar.gz">
+    <a href="/chromium/src/+archive/91e87d9417e897874764ce15444f5e79d3dcba65.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+   manukh &lt;manukh@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 15 00:46:25 2021
+   Fri Oct 15 01:33:09 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 15 00:46:25 2021
+   Fri Oct 15 01:33:09 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/fc4cef6cba0735ecea9ad0afb86f972fa88853c9/">
-    ff0363d8bc742cfcdf81816652bc8d1fd9ab1b82
+   <a href="/chromium/src/+/91e87d9417e897874764ce15444f5e79d3dcba65/">
+    b894bf544dd95d5f409be2ad67679b079892830b
    </a>
   </td>
  </tr>
@@ -166,59 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/fc4cef6cba0735ecea9ad0afb86f972fa88853c9%5E">
-    f5cbb8d780a8646ca92995167cacce75d19d6205
+   <a href="/chromium/src/+/91e87d9417e897874764ce15444f5e79d3dcba65%5E">
+    c0df060dcc98b35377a93dc9b02b00ef3852f1ae
    </a>
    <span>
     [
-    <a href="/chromium/src/+/fc4cef6cba0735ecea9ad0afb86f972fa88853c9%5E%21/">
+    <a href="/chromium/src/+/91e87d9417e897874764ce15444f5e79d3dcba65%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Resolve colors for ComputedStyle::Border[Visually]Equal
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[omnibox] [rich-autocompletion] Extend and update flags.
 
-There is currently a bug where we don't sufficiently invalidate
-the color of collapsed borders when color-scheme changes.
+The flag expired in m95. This CL extends the expiration to m105.
+Additionally, this CL adds the variation we plan to continue with to
+flag options.
 
-LayoutNGTable* currently checks for the following conditions to
-try to detect border color changes:
-
- - BorderVisuallyEqual
- - TextDecorationOrColorChanged &amp;&amp;
-   HasBorderColorReferencingCurrentColor
-
-However, BorderVisuallyEqual does not do what it says (it does not
-resolve computed colors into used colors), and the
-TextDecorationOrColorChanged flag is not set for color-scheme changes:
-we set the NeedsPaintInvalidation flag instead, and assume that this
-will be enough to repaint any colors affected by the color scheme
-change. But for tables, using NeedsPaintInvalidation to regenerate
-borders is not desirable, since it's an expensive operation, and we
-want to avoid doing this when the flag is set for an unrelated reason.
-
-Therefore, this CL addresses the issue by making BorderVisuallyEqual
-actually resolve the colors before comparing. This should also work
-for system color keywords other than currentColor. (We likely have
-bugs for this as well).
-
- - We no longer need to check for HasBorderColorReferencingCurrentColor
-   in any place we check for Border[Visually]Equal, since what we hope
-   to achieve with checking that flag is now already included in
-   Border[Visually]Equal.
- - LayoutObject::AdjustStyleDifference does not need to check
-   HasBorderColorReferencingCurrentColor either, since
-   ComputedStyle::AdjustDiffForNeedsPaintInvalidation already
-   sets NeedsPaintInvalidation if !BorderVisuallyEqual.
-
-Fixed: 1256758
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I61f8ea60d4dd886800ae9533cda90ca80141cbd0">I61f8ea60d4dd886800ae9533cda90ca80141cbd0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3222587">https://chromium-review.googlesource.com/c/chromium/src/+/3222587</a>
-Reviewed-by: Aleks Totic &lt;atotic@chromium.org&gt;
-Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#931800}
+Bug: 1062446
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I72738c0df02a5a3505b0f9c0cac98126b9a57238">I72738c0df02a5a3505b0f9c0cac98126b9a57238</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3212653">https://chromium-review.googlesource.com/c/chromium/src/+/3212653</a>
+Reviewed-by: Orin Jaworski &lt;orinj@chromium.org&gt;
+Commit-Queue: manuk hovanesian &lt;manukh@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#931817}
 </pre>
 
 </body>
