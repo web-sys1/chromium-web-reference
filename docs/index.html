@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/933451/"> 933451</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d3cecdde0cbaf9ac44c83b02a7a7acd75977b584">d3cecdde0cbaf9ac44c83b02a7a7acd75977b584</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/933458/"> 933458</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6aceb2dfdcdce3702facde596676727d458782de">6aceb2dfdcdce3702facde596676727d458782de</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/933449/">933449</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d3cecdde0cbaf9ac44c83b02a7a7acd75977b584
+   6aceb2dfdcdce3702facde596676727d458782de
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d3cecdde0cbaf9ac44c83b02a7a7acd75977b584">
+    <a href="/chromium/src/+log/6aceb2dfdcdce3702facde596676727d458782de">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d3cecdde0cbaf9ac44c83b02a7a7acd75977b584.tar.gz">
+    <a href="/chromium/src/+archive/6aceb2dfdcdce3702facde596676727d458782de.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
   </td>
   <td>
-   Wed Oct 20 14:02:33 2021
+   Wed Oct 20 14:39:39 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Oct 20 14:02:33 2021
+   Wed Oct 20 14:39:39 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d3cecdde0cbaf9ac44c83b02a7a7acd75977b584/">
-    446ab6f5e0d0667eca9364af4e9612b2adfd68f1
+   <a href="/chromium/src/+/6aceb2dfdcdce3702facde596676727d458782de/">
+    a309350e66cd5d5f44619e77e45594500f2c2786
    </a>
   </td>
  </tr>
@@ -166,43 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d3cecdde0cbaf9ac44c83b02a7a7acd75977b584%5E">
-    97a5dbe2de321b4076509de57a949cee33acfba9
+   <a href="/chromium/src/+/6aceb2dfdcdce3702facde596676727d458782de%5E">
+    8fb4c62bc915a396786f6ae9657be9304b2131cc
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d3cecdde0cbaf9ac44c83b02a7a7acd75977b584%5E%21/">
+    <a href="/chromium/src/+/6aceb2dfdcdce3702facde596676727d458782de%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Mac PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[mq-4] Let the State functions consume tokens
 
-Roll Chrome Mac PGO profile from chrome-mac-main-1634709559-57fb15e592de366016045bbc587fb7afb6c1bff4.profdata to chrome-mac-main-1634730693-ae49eb735e41edaa34ac98945613cb3d2fcd1c37.profdata
+Currently, tokens are processed like this:
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-mac-chromium">https://autoroll.skia.org/r/pgo-mac-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+ - MediaQueryParser::ParseImpl goes through the range and calls
+   ProcessToken until the range is empty.
+ - ProcessToken Consumes the token (except with
+   state=kReadFeatureValue), and passes the already-consumed token
+   to the handler function.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+This mostly ensures that we're always advancing the range, which is
+good, but it makes it hard to make good use of the current set of
+parsing utilities. For example, we can not call
+range.ConsumeComponentValue() inside any of the State functions, because
+that function requires a block-start at the beginning of the range,
+and that block-start was already consumed from the range before we
+entered the State function.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+In order to make it possible to use ConsumeComponentValue/Block
+where appropriate, this CL instead moves the responsibility of
+always advancing to the State functions. A DCHECK is added to ensure
+that we either always advance the range, or change to a new state.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:mac-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I777149a6f9a9f018889289105620bf4b39d59af2">I777149a6f9a9f018889289105620bf4b39d59af2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3234340">https://chromium-review.googlesource.com/c/chromium/src/+/3234340</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#933451}
+Bug: 962417
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I97bc8c54a8b519e29bf722f50c01193d9c9e2110">I97bc8c54a8b519e29bf722f50c01193d9c9e2110</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3226146">https://chromium-review.googlesource.com/c/chromium/src/+/3226146</a>
+Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+Reviewed-by: Kevin Babbitt &lt;kbabbitt@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#933458}
 </pre>
 
 </body>
