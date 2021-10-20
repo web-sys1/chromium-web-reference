@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/933229/"> 933229</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/97144c42cecf0bb03ea517dde85c51dc07d2dbd9">97144c42cecf0bb03ea517dde85c51dc07d2dbd9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/933266/"> 933266</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4136a0496664207b4a68d32c48cae8990a2bd65d">4136a0496664207b4a68d32c48cae8990a2bd65d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/933266/">933266</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   97144c42cecf0bb03ea517dde85c51dc07d2dbd9
+   4136a0496664207b4a68d32c48cae8990a2bd65d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/97144c42cecf0bb03ea517dde85c51dc07d2dbd9">
+    <a href="/chromium/src/+log/4136a0496664207b4a68d32c48cae8990a2bd65d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/97144c42cecf0bb03ea517dde85c51dc07d2dbd9.tar.gz">
+    <a href="/chromium/src/+archive/4136a0496664207b4a68d32c48cae8990a2bd65d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Muhammad Hasan Khan &lt;mhasank@chromium.org&gt;
+   Lukasz Anforowicz &lt;lukasza@chromium.org&gt;
   </td>
   <td>
-   Tue Oct 19 23:37:16 2021
+   Wed Oct 20 00:56:21 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Oct 19 23:37:16 2021
+   Wed Oct 20 00:56:21 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/97144c42cecf0bb03ea517dde85c51dc07d2dbd9/">
-    9d3bc59e34f07eb2e45227574d301e03826a3a56
+   <a href="/chromium/src/+/4136a0496664207b4a68d32c48cae8990a2bd65d/">
+    022f98b1b149ecadfb33ba1db58b4ccb733964e4
    </a>
   </td>
  </tr>
@@ -166,34 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/97144c42cecf0bb03ea517dde85c51dc07d2dbd9%5E">
-    97cf973afa06f56de4782e45cd643e039f271282
+   <a href="/chromium/src/+/4136a0496664207b4a68d32c48cae8990a2bd65d%5E">
+    6a980f79f45985026cc3e250d87620e026f66ef4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/97144c42cecf0bb03ea517dde85c51dc07d2dbd9%5E%21/">
+    <a href="/chromium/src/+/4136a0496664207b4a68d32c48cae8990a2bd65d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">arc: Extend expiry of ARC metrics
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reuse data_decoder::DecodeImage in extensions::ImageSanitizer.
 
-These metrics are used to investigate stability problems in ARC hence extending the expiry.
+Instead of making a direct mojo call (and manually handling mojo errors)
+extensions::ImageSanitizer can call the data_decoder::DecodeImage from
+//services/data_decoder/public/cpp.  This helps with:
+1) code hygiene (depending only on the public C++ API, ignoring mojo as
+   an implementation detail)
+2) covering extensions::ImageSanitizer usage with data decoder UMAs
+   added in <a href="https://crrev.com/c/3116444">https://crrev.com/c/3116444</a> (and skipped before this CL,
+   when going directly through mojo).
 
-BUG=1260966
-BUG=1260967
-BUG=1260968
-BUG=1260969
-TEST=None
+Reusing data_decoder::DecodeImage requires giving
+extensions::ImageSanitizer an ability to ask its user for a pointer to a
+DataDecoder object.  The CL provides this via a new
+ImageSanitizer::Client::GetDataDecoder virtual method.  The CL also
+hoists 2 old callbacks (SanitizationDoneCallback and
+ImageDecodedCallback) into the Client interface - this helps to simplify
+the code a little bit (and a single interface seems cleaner than 3
+callbacks).
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifec65e35682aa262a874fe228852f1a1dbef298e">Ifec65e35682aa262a874fe228852f1a1dbef298e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3229855">https://chromium-review.googlesource.com/c/chromium/src/+/3229855</a>
-Auto-Submit: Muhammad Hasan Khan &lt;mhasank@chromium.org&gt;
-Reviewed-by: Mark Pearson &lt;mpearson@chromium.org&gt;
-Commit-Queue: Muhammad Hasan Khan &lt;mhasank@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#933229}
+Bug: 1069271
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7f78120768358dc328fa87e0218b2da251091cf6">I7f78120768358dc328fa87e0218b2da251091cf6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3139705">https://chromium-review.googlesource.com/c/chromium/src/+/3139705</a>
+Reviewed-by: Istiaque Ahmed &lt;lazyboy@chromium.org&gt;
+Commit-Queue: Łukasz Anforowicz &lt;lukasza@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#933266}
 </pre>
 
 </body>
