@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/933458/"> 933458</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6aceb2dfdcdce3702facde596676727d458782de">6aceb2dfdcdce3702facde596676727d458782de</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/933474/"> 933474</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/23d9595d3acb91e85c79602e87da70bf3c95bd10">23d9595d3acb91e85c79602e87da70bf3c95bd10</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/933449/">933449</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f155acb5ff9d12b4a57d369f3aeeea53bcdff14b">f155acb5ff9d12b4a57d369f3aeeea53bcdff14b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/933466/">933466</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4f8393e464c1bc10c0cd08f48707bfeb2d678f5d">4f8393e464c1bc10c0cd08f48707bfeb2d678f5d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6aceb2dfdcdce3702facde596676727d458782de
+   23d9595d3acb91e85c79602e87da70bf3c95bd10
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6aceb2dfdcdce3702facde596676727d458782de">
+    <a href="/chromium/src/+log/23d9595d3acb91e85c79602e87da70bf3c95bd10">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6aceb2dfdcdce3702facde596676727d458782de.tar.gz">
+    <a href="/chromium/src/+archive/23d9595d3acb91e85c79602e87da70bf3c95bd10.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+   David Roger &lt;droger@chromium.org&gt;
   </td>
   <td>
-   Wed Oct 20 14:39:39 2021
+   Wed Oct 20 15:33:29 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Oct 20 14:39:39 2021
+   Wed Oct 20 15:33:29 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6aceb2dfdcdce3702facde596676727d458782de/">
-    a309350e66cd5d5f44619e77e45594500f2c2786
+   <a href="/chromium/src/+/23d9595d3acb91e85c79602e87da70bf3c95bd10/">
+    dcd454c8fab8c17ca5b4dd6591f15fca9599c7c3
    </a>
   </td>
  </tr>
@@ -166,47 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6aceb2dfdcdce3702facde596676727d458782de%5E">
-    8fb4c62bc915a396786f6ae9657be9304b2131cc
+   <a href="/chromium/src/+/23d9595d3acb91e85c79602e87da70bf3c95bd10%5E">
+    a01b7e3985dfd1bee5bcab702e86bdb01a443b22
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6aceb2dfdcdce3702facde596676727d458782de%5E%21/">
+    <a href="/chromium/src/+/23d9595d3acb91e85c79602e87da70bf3c95bd10%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[mq-4] Let the State functions consume tokens
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[signin] Extend OAuth2Login.MergeSession* histograms
 
-Currently, tokens are processed like this:
+These histograms are still needed, in particular because there are
+planned changes on the server endpoint. The histograms will help us
+check that the changes are working as intended.
 
- - MediaQueryParser::ParseImpl goes through the range and calls
-   ProcessToken until the range is empty.
- - ProcessToken Consumes the token (except with
-   state=kReadFeatureValue), and passes the already-consumed token
-   to the handler function.
-
-This mostly ensures that we're always advancing the range, which is
-good, but it makes it hard to make good use of the current set of
-parsing utilities. For example, we can not call
-range.ConsumeComponentValue() inside any of the State functions, because
-that function requires a block-start at the beginning of the range,
-and that block-start was already consumed from the range before we
-entered the State function.
-
-In order to make it possible to use ConsumeComponentValue/Block
-where appropriate, this CL instead moves the responsibility of
-always advancing to the State functions. A DCHECK is added to ensure
-that we either always advance the range, or change to a new state.
-
-Bug: 962417
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I97bc8c54a8b519e29bf722f50c01193d9c9e2110">I97bc8c54a8b519e29bf722f50c01193d9c9e2110</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3226146">https://chromium-review.googlesource.com/c/chromium/src/+/3226146</a>
-Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Reviewed-by: Kevin Babbitt &lt;kbabbitt@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#933458}
+Fixed: 1261111
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia7b13d3edc234348cc64e4a05a22e0c61d4e75d0">Ia7b13d3edc234348cc64e4a05a22e0c61d4e75d0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3233040">https://chromium-review.googlesource.com/c/chromium/src/+/3233040</a>
+Reviewed-by: Robert Kaplow &lt;rkaplow@chromium.org&gt;
+Commit-Queue: David Roger &lt;droger@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#933474}
 </pre>
 
 </body>
