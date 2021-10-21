@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/934031/"> 934031</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/56118287fa30280c1b841c45252fcef385b24d7d">56118287fa30280c1b841c45252fcef385b24d7d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/934071/"> 934071</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/556e29bb88c831400f039b9d76931bc3f308ff12">556e29bb88c831400f039b9d76931bc3f308ff12</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/934023/">934023</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   56118287fa30280c1b841c45252fcef385b24d7d
+   556e29bb88c831400f039b9d76931bc3f308ff12
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/56118287fa30280c1b841c45252fcef385b24d7d">
+    <a href="/chromium/src/+log/556e29bb88c831400f039b9d76931bc3f308ff12">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/56118287fa30280c1b841c45252fcef385b24d7d.tar.gz">
+    <a href="/chromium/src/+archive/556e29bb88c831400f039b9d76931bc3f308ff12.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Owen Wiggins &lt;owx@chromium.org&gt;
+   Dominique Fauteux-Chapleau &lt;domfc@chromium.org&gt;
   </td>
   <td>
-   Thu Oct 21 21:05:24 2021
+   Thu Oct 21 22:42:04 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Oct 21 21:05:24 2021
+   Thu Oct 21 22:42:04 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/56118287fa30280c1b841c45252fcef385b24d7d/">
-    6fef4efeae6ebac453e27864aca62f019ff25c6f
+   <a href="/chromium/src/+/556e29bb88c831400f039b9d76931bc3f308ff12/">
+    149a1f9dcfc1c9238ae3ab1f9ce031763ad2d115
    </a>
   </td>
  </tr>
@@ -166,43 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/56118287fa30280c1b841c45252fcef385b24d7d%5E">
-    bc95cd2085740227611fc06716d31759adc6400e
+   <a href="/chromium/src/+/556e29bb88c831400f039b9d76931bc3f308ff12%5E">
+    23c7e535ddbddd58fb60fa8b74db68571adfd8c5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/56118287fa30280c1b841c45252fcef385b24d7d%5E%21/">
+    <a href="/chromium/src/+/556e29bb88c831400f039b9d76931bc3f308ff12%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Close Message Center Bubble asynchronously in destructor.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix SavePackageDeepScanningBrowserTest flaky tests on Win7
 
-The Message Center and Quick Settings UI are peers owned by the Unified
-System Tray. Previously, when all notifications in the Message Center
-were removed, the Message Center would be in an unusual state - it would
-be hidden, but still active and focused. When the Esc accelerator is
-processed by the focus manager of the Unified System Tray, it would free
-the Message Center Bubble and close the widget synchronously from the
-destructor, causing NativeWidgetAura to fail when the Window properties
-are accessed after it has been freed from the heap.
+The issue was that SavePackage does extra renaming logic when the final
+path doesn't have ".htm" as an extension (like in SavePageBrowserTests).
+This creates a race condition with the final renaming step on Win7, so
+this is fixed by simply changing the main file destination's extension.
+As an extra measure to ensure the test executes as expected, assertions
+on the final file's contents have been added.
 
-This fix changes the Message Center Bubble destructor to asynchronously
-close its widget. This retains the Widget after the
-NativeWidgetAura::Hide() call in NativeWidgetAura::Close(), preventing
-the window_ pointer from becoming invalid. The remaining logic for
-next/previous focusable already handles this state correctly -it won't
-focus the Message Center with Tab or Shift+Tab.
+Passing test runs for Win7 x86-32:
+<a href="https://chromium-swarm.appspot.com/task?id=56bd52d07c626a10">https://chromium-swarm.appspot.com/task?id=56bd52d07c626a10</a>
+<a href="https://chromium-swarm.appspot.com/task?id=56bd63898e8cb510">https://chromium-swarm.appspot.com/task?id=56bd63898e8cb510</a>
 
-Bug: 1251351
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I924c222c4bbfe08ea7a3e620531cee92d70596b3">I924c222c4bbfe08ea7a3e620531cee92d70596b3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3207232">https://chromium-review.googlesource.com/c/chromium/src/+/3207232</a>
-Commit-Queue: Owen Wiggins &lt;owx@chromium.org&gt;
-Reviewed-by: Ahmed Mehfooz &lt;amehfooz@chromium.org&gt;
-Reviewed-by: Alex Newcomer &lt;newcomer@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#934031}
+Bug: 1258150
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I85912b73763d11bf0d5016bd9c6306d591d2ede7">I85912b73763d11bf0d5016bd9c6306d591d2ede7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3237750">https://chromium-review.googlesource.com/c/chromium/src/+/3237750</a>
+Auto-Submit: Dominique Fauteux-Chapleau &lt;domfc@chromium.org&gt;
+Commit-Queue: Daniel Rubery &lt;drubery@chromium.org&gt;
+Reviewed-by: Daniel Rubery &lt;drubery@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#934071}
 </pre>
 
 </body>
