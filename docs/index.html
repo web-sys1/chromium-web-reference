@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/934007/"> 934007</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/87f3e4512f27b6b814c956360f5d867d7cb614a2">87f3e4512f27b6b814c956360f5d867d7cb614a2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/934031/"> 934031</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/56118287fa30280c1b841c45252fcef385b24d7d">56118287fa30280c1b841c45252fcef385b24d7d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/933992/">933992</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   87f3e4512f27b6b814c956360f5d867d7cb614a2
+   56118287fa30280c1b841c45252fcef385b24d7d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/87f3e4512f27b6b814c956360f5d867d7cb614a2">
+    <a href="/chromium/src/+log/56118287fa30280c1b841c45252fcef385b24d7d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/87f3e4512f27b6b814c956360f5d867d7cb614a2.tar.gz">
+    <a href="/chromium/src/+archive/56118287fa30280c1b841c45252fcef385b24d7d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Owen Wiggins &lt;owx@chromium.org&gt;
   </td>
   <td>
-   Thu Oct 21 20:22:04 2021
+   Thu Oct 21 21:05:24 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Oct 21 20:22:04 2021
+   Thu Oct 21 21:05:24 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/87f3e4512f27b6b814c956360f5d867d7cb614a2/">
-    d4e4870c9ed27505016c2f7349c9841dc6e2706c
+   <a href="/chromium/src/+/56118287fa30280c1b841c45252fcef385b24d7d/">
+    6fef4efeae6ebac453e27864aca62f019ff25c6f
    </a>
   </td>
  </tr>
@@ -166,50 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/87f3e4512f27b6b814c956360f5d867d7cb614a2%5E">
-    e7a46999fcb9517d223f6b13f543abbbda1c2ee9
+   <a href="/chromium/src/+/56118287fa30280c1b841c45252fcef385b24d7d%5E">
+    bc95cd2085740227611fc06716d31759adc6400e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/87f3e4512f27b6b814c956360f5d867d7cb614a2%5E%21/">
+    <a href="/chromium/src/+/56118287fa30280c1b841c45252fcef385b24d7d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Skia from 83d71bd12cce to 2d1207acb959 (3 revisions)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Close Message Center Bubble asynchronously in destructor.
 
-<a href="https://skia.googlesource.com/skia.git/+log/83d71bd12cce..2d1207acb959">https://skia.googlesource.com/skia.git/+log/83d71bd12cce..2d1207acb959</a>
+The Message Center and Quick Settings UI are peers owned by the Unified
+System Tray. Previously, when all notifications in the Message Center
+were removed, the Message Center would be in an unusual state - it would
+be hidden, but still active and focused. When the Esc accelerator is
+processed by the focus manager of the Unified System Tray, it would free
+the Message Center Bubble and close the widget synchronously from the
+destructor, causing NativeWidgetAura to fail when the Window properties
+are accessed after it has been freed from the heap.
 
-2021-10-21 brianosman@google.com Remove the "in blend modes randomly fail for all zero vec" workaround
-2021-10-21 kjlubick@google.com [canvaskit] Remove deprecated MakeTypefaceFromData and RefDefault
-2021-10-21 kjlubick@google.com [canvaskit] Define requestAnimationFrame and other definition fixes.
+This fix changes the Message Center Bubble destructor to asynchronously
+close its widget. This retains the Widget after the
+NativeWidgetAura::Hide() call in NativeWidgetAura::Close(), preventing
+the window_ pointer from becoming invalid. The remaining logic for
+next/previous focusable already handles this state correctly -it won't
+focus the Message Center with Tab or Shift+Tab.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/skia-autoroll">https://autoroll.skia.org/r/skia-autoroll</a>
-Please CC jcgregorio@google.com on the revert to ensure that a human
-is aware of the problem.
-
-To file a bug in Skia: <a href="https://bugs.chromium.org/p/skia/issues/entry">https://bugs.chromium.org/p/skia/issues/entry</a>
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chromium.try:android_optional_gpu_tests_rel;luci.chromium.try:linux-blink-rel;luci.chromium.try:linux-chromeos-compile-dbg;luci.chromium.try:linux_optional_gpu_tests_rel;luci.chromium.try:mac_optional_gpu_tests_rel;luci.chromium.try:win_optional_gpu_tests_rel
-Cq-Do-Not-Cancel-Tryjobs: true
-Bug: None
-Tbr: jcgregorio@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2d9cf08a05084e137c1e8b33eb9880d79021d0b7">I2d9cf08a05084e137c1e8b33eb9880d79021d0b7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3236813">https://chromium-review.googlesource.com/c/chromium/src/+/3236813</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#934007}
+Bug: 1251351
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I924c222c4bbfe08ea7a3e620531cee92d70596b3">I924c222c4bbfe08ea7a3e620531cee92d70596b3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3207232">https://chromium-review.googlesource.com/c/chromium/src/+/3207232</a>
+Commit-Queue: Owen Wiggins &lt;owx@chromium.org&gt;
+Reviewed-by: Ahmed Mehfooz &lt;amehfooz@chromium.org&gt;
+Reviewed-by: Alex Newcomer &lt;newcomer@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#934031}
 </pre>
 
 </body>
