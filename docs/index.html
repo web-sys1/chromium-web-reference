@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/934145/"> 934145</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/22f770413debd417dbb756568178715ce870f497">22f770413debd417dbb756568178715ce870f497</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/934148/"> 934148</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/94f7364a028e3442c906bf2999503c43fbd4c9ef">94f7364a028e3442c906bf2999503c43fbd4c9ef</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/934143/">934143</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c5ab84b020d08f4debfbe52668d9f566e329f714">c5ab84b020d08f4debfbe52668d9f566e329f714</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/934146/">934146</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/70a04c0ceda944c3dd7b71f1066ba5a14cbdc109">70a04c0ceda944c3dd7b71f1066ba5a14cbdc109</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   22f770413debd417dbb756568178715ce870f497
+   94f7364a028e3442c906bf2999503c43fbd4c9ef
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/22f770413debd417dbb756568178715ce870f497">
+    <a href="/chromium/src/+log/94f7364a028e3442c906bf2999503c43fbd4c9ef">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/22f770413debd417dbb756568178715ce870f497.tar.gz">
+    <a href="/chromium/src/+archive/94f7364a028e3442c906bf2999503c43fbd4c9ef.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yao Xiao &lt;yaoxia@chromium.org&gt;
+   rajendrant &lt;rajendrant@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 22 03:47:20 2021
+   Fri Oct 22 04:42:58 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 22 03:47:20 2021
+   Fri Oct 22 04:42:58 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/22f770413debd417dbb756568178715ce870f497/">
-    ed9e3cbd2ee54da4eecbda665c4ac75822276be7
+   <a href="/chromium/src/+/94f7364a028e3442c906bf2999503c43fbd4c9ef/">
+    a247889c24b7430dd87a232de2b506eea2797794
    </a>
   </td>
  </tr>
@@ -166,57 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/22f770413debd417dbb756568178715ce870f497%5E">
-    9bd48debd2d8de63fba366bdc800c348121b375f
+   <a href="/chromium/src/+/94f7364a028e3442c906bf2999503c43fbd4c9ef%5E">
+    83e4f966649ba5c0f2c20bfec6adadb5f8ee3d19
    </a>
    <span>
     [
-    <a href="/chromium/src/+/22f770413debd417dbb756568178715ce870f497%5E%21/">
+    <a href="/chromium/src/+/94f7364a028e3442c906bf2999503c43fbd4c9ef%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[shared storage] Enable E2E execution of addModule and runOperation
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS] Delay active tabs hints fetching at startup
 
-Add browser side components that receives requests from the renderer
-(i.e. renderer --&gt; SharedStorageDocumentServiceImpl), and
-sends the request to the worklet environment (i.e.
-SharedStorageWorkletHost --&gt; SharedStorageWorkletServiceImpl). Each
-worklet will be using a dedicated renderer thread on the same renderer
-process that the worklet's owner document belongs to.
+At startup, hints are fetched immediately for the active tabs. This CL
+delays the fetch by a configurable random duration.
 
-A SharedStorageWorkletHost's lifetime is now bound to the document
-lifetime, and it lives inside a SharedStorageWorkletHostManager which
-lives inside the StoragePartition. The reason for having the "manager"
-layer is: for a upcoming change, we will make the worklet to outlive the
-document i.e. no longer bound to the document lifetime, so this
-structure is more future-proof.
-
-For mojom::SharedStorageDocumentService, implement the addModule and
-runOperation method. For mojom::SharedStorageWorkletServiceClient,
-implement its ConsoleLog method; the rest of the methods are
-implemented by always responding with a "not implemented" error.
-
-Tests are done by running operations and expecting the console.log
-messages.
-
-Design doc
-<a href="https://docs.google.com/document/d/12rKsG284H0wlErSKQEZ07TAldR1QCTfRE4MQhUOCQWs/edit?resourcekey=0-J_IiEZQwhD6OHPZNzpNcNA#heading=h.171ugkq9vact">https://docs.google.com/document/d/12rKsG284H0wlErSKQEZ07TAldR1QCTfRE4MQhUOCQWs/edit?resourcekey=0-J_IiEZQwhD6OHPZNzpNcNA#heading=h.171ugkq9vact</a>
-
-applicable.
-
-Bug: 1218540
-Binary-Size: Size increase is unavoidable. Not much optimization
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I381f8869d94f766495d1a094f4b03c7cbec7df41">I381f8869d94f766495d1a094f4b03c7cbec7df41</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3102525">https://chromium-review.googlesource.com/c/chromium/src/+/3102525</a>
-Commit-Queue: Yao Xiao &lt;yaoxia@chromium.org&gt;
-Reviewed-by: Cammie Smith Barnes &lt;cammie@chromium.org&gt;
-Reviewed-by: Dominic Farolino &lt;dom@chromium.org&gt;
-Reviewed-by: Nasko Oskov &lt;nasko@chromium.org&gt;
-Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#934145}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I59c82f650884e1dc78a603f1e077ac38cb1b2470">I59c82f650884e1dc78a603f1e077ac38cb1b2470</a>
+Bug: 1262392
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3238029">https://chromium-review.googlesource.com/c/chromium/src/+/3238029</a>
+Commit-Queue: rajendrant &lt;rajendrant@chromium.org&gt;
+Reviewed-by: Sophie Chang &lt;sophiechang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#934148}
 </pre>
 
 </body>
