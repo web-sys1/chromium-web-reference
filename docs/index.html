@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/934211/"> 934211</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/103a8b98ec60b6c203d42f334ee68093f924c73e">103a8b98ec60b6c203d42f334ee68093f924c73e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/934217/"> 934217</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ad7718f78afcc9e022ff2e106b830c77dd3c7485">ad7718f78afcc9e022ff2e106b830c77dd3c7485</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/934215/">934215</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   103a8b98ec60b6c203d42f334ee68093f924c73e
+   ad7718f78afcc9e022ff2e106b830c77dd3c7485
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/103a8b98ec60b6c203d42f334ee68093f924c73e">
+    <a href="/chromium/src/+log/ad7718f78afcc9e022ff2e106b830c77dd3c7485">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/103a8b98ec60b6c203d42f334ee68093f924c73e.tar.gz">
+    <a href="/chromium/src/+archive/ad7718f78afcc9e022ff2e106b830c77dd3c7485.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Chen-Yu Tsai &lt;wenst@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 22 17:02:21 2021
+   Fri Oct 22 18:35:38 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 22 17:02:21 2021
+   Fri Oct 22 18:35:38 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/103a8b98ec60b6c203d42f334ee68093f924c73e/">
-    e6ca8fbf2cba8972666494aea8ba36827d9940cb
+   <a href="/chromium/src/+/ad7718f78afcc9e022ff2e106b830c77dd3c7485/">
+    302d898304dda4176d6b1a2345c76acbb9435068
    </a>
   </td>
  </tr>
@@ -166,43 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/103a8b98ec60b6c203d42f334ee68093f924c73e%5E">
-    941cc96fdca89094a8ee391d39dbce0eee1e0c3d
+   <a href="/chromium/src/+/ad7718f78afcc9e022ff2e106b830c77dd3c7485%5E">
+    e98d127f2d72495d515e2944e7f1ddddd30f41fc
    </a>
    <span>
     [
-    <a href="/chromium/src/+/103a8b98ec60b6c203d42f334ee68093f924c73e%5E%21/">
+    <a href="/chromium/src/+/ad7718f78afcc9e022ff2e106b830c77dd3c7485%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Win64 PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media/gpu/v4l2vd: Reallocate OUTPUT buffers if needed on resolution change
 
-Roll Chrome Win64 PGO profile from chrome-win64-main-1634903553-c7ed7ce3a9a5611715157f3f9f67464bd793047b.profdata to chrome-win64-main-1634913966-9a87d126520a68a63b5902a37c55d001c2b69671.profdata
+Some V4L2 stateless decoder kernel drivers override the buffer size we
+request. This likely results in a tiny buffer size due to the initial
+minimal frame size. Attempting to use the same buffers after a dynamic
+resolution change would fail if the next coded frame does not fit in
+the old buffer.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-win64-chromium">https://autoroll.skia.org/r/pgo-win64-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+To fix this, after the new resolution is applied, check if the returned
+buffer size in `sizeimage` is larger than the buffers we currently hold.
+If so, return the old buffers and request new ones.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+BUG=b:202919860
+TEST=Run vda_tests with test-25fps.h264 on Kevin -kernelnext without
+     crrev.com/c/3211697
+     (also need to manually swap /dev/media-dec[01] for now)
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+R=frkoenig, mcasas
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:win64-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I10ffb972ca021a253c4dcf2d10bf90f76777ff1a">I10ffb972ca021a253c4dcf2d10bf90f76777ff1a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3238826">https://chromium-review.googlesource.com/c/chromium/src/+/3238826</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#934211}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic68e5c33f1d0f60a61128e2bffa0d0c6f7f701d8">Ic68e5c33f1d0f60a61128e2bffa0d0c6f7f701d8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3220949">https://chromium-review.googlesource.com/c/chromium/src/+/3220949</a>
+Auto-Submit: Chen-Yu Tsai &lt;wenst@chromium.org&gt;
+Commit-Queue: Miguel Casas &lt;mcasas@chromium.org&gt;
+Reviewed-by: Miguel Casas &lt;mcasas@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#934217}
 </pre>
 
 </body>
