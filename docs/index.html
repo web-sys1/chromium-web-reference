@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/934368/"> 934368</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d8d429cfbe85b4111684863f15f86ff4a49530f6">d8d429cfbe85b4111684863f15f86ff4a49530f6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/934371/"> 934371</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3c296110b1b3c241eae62bd29fe7eb1fe642d4b9">3c296110b1b3c241eae62bd29fe7eb1fe642d4b9</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/934368/">934368</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d8d429cfbe85b4111684863f15f86ff4a49530f6">d8d429cfbe85b4111684863f15f86ff4a49530f6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/934371/">934371</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3c296110b1b3c241eae62bd29fe7eb1fe642d4b9">3c296110b1b3c241eae62bd29fe7eb1fe642d4b9</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d8d429cfbe85b4111684863f15f86ff4a49530f6
+   3c296110b1b3c241eae62bd29fe7eb1fe642d4b9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d8d429cfbe85b4111684863f15f86ff4a49530f6">
+    <a href="/chromium/src/+log/3c296110b1b3c241eae62bd29fe7eb1fe642d4b9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d8d429cfbe85b4111684863f15f86ff4a49530f6.tar.gz">
+    <a href="/chromium/src/+archive/3c296110b1b3c241eae62bd29fe7eb1fe642d4b9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chromium WPT Sync &lt;wpt-autoroller@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Nicholas Hollingum &lt;hollingum@google.com&gt;
   </td>
   <td>
-   Sun Oct 24 21:38:58 2021
+   Sun Oct 24 22:44:56 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Oct 24 21:38:58 2021
+   Sun Oct 24 22:44:56 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d8d429cfbe85b4111684863f15f86ff4a49530f6/">
-    838e071b417c9140cb03b422f540e8912cd0cfa8
+   <a href="/chromium/src/+/3c296110b1b3c241eae62bd29fe7eb1fe642d4b9/">
+    855866611d5fd1fee3186ac90395aa09978815e8
    </a>
   </td>
  </tr>
@@ -166,42 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d8d429cfbe85b4111684863f15f86ff4a49530f6%5E">
-    4236fc9bcb6343d30f857b7a58a4e2b06747ed69
+   <a href="/chromium/src/+/3c296110b1b3c241eae62bd29fe7eb1fe642d4b9%5E">
+    aafccfe6acef730d6b752a8c8ebfb59b39d43631
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d8d429cfbe85b4111684863f15f86ff4a49530f6%5E%21/">
+    <a href="/chromium/src/+/3c296110b1b3c241eae62bd29fe7eb1fe642d4b9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Import wpt@108957aa4bad8ec2ff415eabf182040463cabf65
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">borealis: Move blocking dev-mode check to an async method.
 
-Using wpt-import in Chromium b480c8ebe9eda2e41c6784e8f58072662f27f770.
+The check "is you device in dev mode", which we use to prevent
+verified-mode devices from accidentally using external disks on
+borealis, requires blocking IO but was being performed in a nonblocking
+context.
 
-Note to sheriffs: This CL imports external tests and adds
-expectations for those tests; if this CL is large and causes
-a few new failures, please fix the failures by adding new
-lines to TestExpectations rather than reverting. See:
-<a href="https://chromium.googlesource.com/chromium/src/+/main/docs/testing/web_platform_tests.md">https://chromium.googlesource.com/chromium/src/+/main/docs/testing/web_platform_tests.md</a>
+We refactor the code to call the method asynchronously in a MayBlock()
+task environment, with the result handed back to the nonblocking thread.
 
-Directory owners for changes in this CL:
-jsbell@chromium.org:
-  external/wpt/IndexedDB
-
-NOAUTOREVERT=true
-R=rubber-stamper@appspot.gserviceaccount.com
-
-No-Export: true
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I42382afd019acb8f50afaf86c0f5fcb541c9b23d">I42382afd019acb8f50afaf86c0f5fcb541c9b23d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3239823">https://chromium-review.googlesource.com/c/chromium/src/+/3239823</a>
-Auto-Submit: WPT Autoroller &lt;wpt-autoroller@chops-service-accounts.iam.gserviceaccount.com&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#934368}
+Bug: b/203728416
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I45c72ee5245f6ad932e23ebb95d1233e3db45a26">I45c72ee5245f6ad932e23ebb95d1233e3db45a26</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3235949">https://chromium-review.googlesource.com/c/chromium/src/+/3235949</a>
+Commit-Queue: Nic Hollingum &lt;hollingum@google.com&gt;
+Reviewed-by: Daniel Ng &lt;danielng@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#934371}
 </pre>
 
 </body>
