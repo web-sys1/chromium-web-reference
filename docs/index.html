@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/934371/"> 934371</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3c296110b1b3c241eae62bd29fe7eb1fe642d4b9">3c296110b1b3c241eae62bd29fe7eb1fe642d4b9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/934374/"> 934374</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3e0d2bbeef15f645d64230df6d397b810f47287b">3e0d2bbeef15f645d64230df6d397b810f47287b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/934371/">934371</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3c296110b1b3c241eae62bd29fe7eb1fe642d4b9">3c296110b1b3c241eae62bd29fe7eb1fe642d4b9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/934374/">934374</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3e0d2bbeef15f645d64230df6d397b810f47287b">3e0d2bbeef15f645d64230df6d397b810f47287b</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3c296110b1b3c241eae62bd29fe7eb1fe642d4b9
+   3e0d2bbeef15f645d64230df6d397b810f47287b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3c296110b1b3c241eae62bd29fe7eb1fe642d4b9">
+    <a href="/chromium/src/+log/3e0d2bbeef15f645d64230df6d397b810f47287b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3c296110b1b3c241eae62bd29fe7eb1fe642d4b9.tar.gz">
+    <a href="/chromium/src/+archive/3e0d2bbeef15f645d64230df6d397b810f47287b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nicholas Hollingum &lt;hollingum@google.com&gt;
+   Jérémie Boulic &lt;jboulic@chromium.org&gt;
   </td>
   <td>
-   Sun Oct 24 22:44:56 2021
+   Sun Oct 24 23:18:29 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Oct 24 22:44:56 2021
+   Sun Oct 24 23:18:29 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3c296110b1b3c241eae62bd29fe7eb1fe642d4b9/">
-    855866611d5fd1fee3186ac90395aa09978815e8
+   <a href="/chromium/src/+/3e0d2bbeef15f645d64230df6d397b810f47287b/">
+    eef5a19bd28778d222cad5967f585b0497d1f2a4
    </a>
   </td>
  </tr>
@@ -166,34 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3c296110b1b3c241eae62bd29fe7eb1fe642d4b9%5E">
-    aafccfe6acef730d6b752a8c8ebfb59b39d43631
+   <a href="/chromium/src/+/3e0d2bbeef15f645d64230df6d397b810f47287b%5E">
+    0fe6814bc09f2eff9931189dbf9f25af4456ee8c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3c296110b1b3c241eae62bd29fe7eb1fe642d4b9%5E%21/">
+    <a href="/chromium/src/+/3e0d2bbeef15f645d64230df6d397b810f47287b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">borealis: Move blocking dev-mode check to an async method.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Storage management] Use Spaced service for total and free disk space
 
-The check "is you device in dev mode", which we use to prevent
-verified-mode devices from accidentally using external disks on
-borealis, requires blocking IO but was being performed in a nonblocking
-context.
+Use the new Spaced DBus method GetRootDeviceSize that returns the size
+of the disk instead of the size of the current partition.
 
-We refactor the code to call the method asynchronously in a MayBlock()
-task environment, with the result handed back to the nonblocking thread.
+Use GetTotalDiskSpaceBlocking (statvfs) when the Spaced method above
+fails (e.g. when the Fake client is used), and for guest profiles where
+disk spaces are not relevant (in-memory temporary filesystem).
 
-Bug: b/203728416
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I45c72ee5245f6ad932e23ebb95d1233e3db45a26">I45c72ee5245f6ad932e23ebb95d1233e3db45a26</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3235949">https://chromium-review.googlesource.com/c/chromium/src/+/3235949</a>
-Commit-Queue: Nic Hollingum &lt;hollingum@google.com&gt;
-Reviewed-by: Daniel Ng &lt;danielng@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#934371}
+Stop rounding the total disk space to the next power of 2.
+
+Refactoring: the observer StorageHandler::OnSizeCalculated is now
+responsible for updating the map of items sizes
+(storage_items_total_bytes_) and marking the correct item as calculated
+(calculation_state_). It then calls dedicated functions to update
+the UI (UpdateSizeStat, UpdateStorageItem, UpdateSystemSize).
+
+Test: unit_tests --gtest_filter=StorageHandlerTest.*
+Bug: b:173086361, chromium:1262859
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0ca5f6490bef44616ed5f743b07f010fb44c758d">I0ca5f6490bef44616ed5f743b07f010fb44c758d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3216578">https://chromium-review.googlesource.com/c/chromium/src/+/3216578</a>
+Commit-Queue: Jeremie Boulic &lt;jboulic@chromium.org&gt;
+Reviewed-by: Jimmy Gong &lt;jimmyxgong@chromium.org&gt;
+Reviewed-by: Jon Mann &lt;jonmann@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#934374}
 </pre>
 
 </body>
