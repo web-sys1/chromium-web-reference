@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/935324/"> 935324</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f5b44bec8c02b599870979f07d23bf2e0c395bef">f5b44bec8c02b599870979f07d23bf2e0c395bef</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/935333/"> 935333</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f06d042b5412ac6654e62c62a602468fa3646ecc">f06d042b5412ac6654e62c62a602468fa3646ecc</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/935327/">935327</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f5b44bec8c02b599870979f07d23bf2e0c395bef
+   f06d042b5412ac6654e62c62a602468fa3646ecc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f5b44bec8c02b599870979f07d23bf2e0c395bef">
+    <a href="/chromium/src/+log/f06d042b5412ac6654e62c62a602468fa3646ecc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f5b44bec8c02b599870979f07d23bf2e0c395bef.tar.gz">
+    <a href="/chromium/src/+archive/f06d042b5412ac6654e62c62a602468fa3646ecc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alex Khamutov &lt;khamutov@google.com&gt;
+   Hayato Ito &lt;hayato@chromium.org&gt;
   </td>
   <td>
-   Wed Oct 27 07:11:16 2021
+   Wed Oct 27 07:56:56 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Oct 27 07:11:16 2021
+   Wed Oct 27 07:56:56 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f5b44bec8c02b599870979f07d23bf2e0c395bef/">
-    b014f5193efdf1fcf50199a84e0030b0013213a0
+   <a href="/chromium/src/+/f06d042b5412ac6654e62c62a602468fa3646ecc/">
+    d0a6e242011d27b645d6897627dab8ab968111cb
    </a>
   </td>
  </tr>
@@ -166,33 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f5b44bec8c02b599870979f07d23bf2e0c395bef%5E">
-    8fd09999d4c6c723ca21319f8319339c363b3cee
+   <a href="/chromium/src/+/f06d042b5412ac6654e62c62a602468fa3646ecc%5E">
+    5ddea3ca5b8b62d067d23d59a0d7d24c39ae8953
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f5b44bec8c02b599870979f07d23bf2e0c395bef%5E%21/">
+    <a href="/chromium/src/+/f06d042b5412ac6654e62c62a602468fa3646ecc%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix waiting for server-side predictions if password form was updated
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">&lt;script type=webbundle&gt;: Resolve a relative URL on the bundle's URL
 
-PasswordFormManager waited only for server-side predictions from
-the initial form fetch and didn't wait for subsequent form updates.
+The explainer PR is: <a href="https://github.com/WICG/webpackage/pull/700">https://github.com/WICG/webpackage/pull/700</a>
 
-Each form update cancels the previous waiting task and start a new one.
+One of the gaps between the Subresource Loading with WebBundles and
+Bundle Preloading proposals is "how to resolve a relative URL of
+resources". The former is using document's base URL, and the latter is
+using the bundle's URL. We have to align.
 
-Bug: 1253355
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0d6e55b27e2e757b8ab63fb2ca92555e3c0d0754">I0d6e55b27e2e757b8ab63fb2ca92555e3c0d0754</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3245330">https://chromium-review.googlesource.com/c/chromium/src/+/3245330</a>
-Commit-Queue: Alex Khamutov &lt;khamutov@google.com&gt;
-Auto-Submit: Alex Khamutov &lt;khamutov@google.com&gt;
-Reviewed-by: Maria Kazinova &lt;kazinova@google.com&gt;
-Reviewed-by: Vasilii Sukhanov &lt;vasilii@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#935324}
+At the era of &lt;link&gt;-based API, using a document's base URL might make
+sense because `resources` are specified in the link element's
+attribute.
+
+Now we use &lt;script&gt;-based APIs, and `resources` is specified in JSON, so
+we no longer have any strong reason to use a document's base URL.
+
+See the spec discussion for details:
+<a href="https://github.com/WICG/webpackage/issues/699#issuecomment-952472275">https://github.com/WICG/webpackage/issues/699#issuecomment-952472275</a>
+
+Bug: 1263807
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic71f095589daa42db2d4649e2cf77212616b2f25">Ic71f095589daa42db2d4649e2cf77212616b2f25</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3244822">https://chromium-review.googlesource.com/c/chromium/src/+/3244822</a>
+Reviewed-by: Kunihiko Sakamoto &lt;ksakamoto@chromium.org&gt;
+Commit-Queue: Hayato Ito &lt;hayato@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#935333}
 </pre>
 
 </body>
