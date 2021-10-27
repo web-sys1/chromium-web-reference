@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/935414/"> 935414</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c47dbb526d9ce5c99ee85dfc165736068ea99944">c47dbb526d9ce5c99ee85dfc165736068ea99944</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/935432/"> 935432</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ba222816ee66526b572f5a78dfc948c8b3af27be">ba222816ee66526b572f5a78dfc948c8b3af27be</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/935395/">935395</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/77abc07296bf3c9bd8947a4b66b41b63add1cef9">77abc07296bf3c9bd8947a4b66b41b63add1cef9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/935421/">935421</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1a6ba839bca5091dd8811742658cacd550799313">1a6ba839bca5091dd8811742658cacd550799313</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c47dbb526d9ce5c99ee85dfc165736068ea99944
+   ba222816ee66526b572f5a78dfc948c8b3af27be
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c47dbb526d9ce5c99ee85dfc165736068ea99944">
+    <a href="/chromium/src/+log/ba222816ee66526b572f5a78dfc948c8b3af27be">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c47dbb526d9ce5c99ee85dfc165736068ea99944.tar.gz">
+    <a href="/chromium/src/+archive/ba222816ee66526b572f5a78dfc948c8b3af27be.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Benoit Lize &lt;lizeb@chromium.org&gt;
   </td>
   <td>
-   Wed Oct 27 14:24:26 2021
+   Wed Oct 27 15:19:09 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Oct 27 14:24:26 2021
+   Wed Oct 27 15:19:09 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c47dbb526d9ce5c99ee85dfc165736068ea99944/">
-    9ba8f0c3c1c8e3df4cf099e2e59cc2b7b4500d58
+   <a href="/chromium/src/+/ba222816ee66526b572f5a78dfc948c8b3af27be/">
+    2b79beb32c19a68b8029c4ae5587d0d9365527b2
    </a>
   </td>
  </tr>
@@ -166,44 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c47dbb526d9ce5c99ee85dfc165736068ea99944%5E">
-    7f294b0459c55bd8d07f61e2c6065bd22a23b649
+   <a href="/chromium/src/+/ba222816ee66526b572f5a78dfc948c8b3af27be%5E">
+    ffeffbcb81bca19e49d99b79173765aaf9d0a790
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c47dbb526d9ce5c99ee85dfc165736068ea99944%5E%21/">
+    <a href="/chromium/src/+/ba222816ee66526b572f5a78dfc948c8b3af27be%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll RE2 from e90569de09a9 to 7424791d0865 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PartitionAlloc] Sort the SlotSpan freelists in PurgeMemory().
 
-<a href="https://chromium.googlesource.com/external/github.com/google/re2.git/+log/e90569de09a9..7424791d0865">https://chromium.googlesource.com/external/github.com/google/re2.git/+log/e90569de09a9..7424791d0865</a>
+To improve cache efficiency and possibly reduce fragmentation as well,
+slots to be allocated should be sorted. However this is currently not
+the case, as we prefer a Last In First Out (LIFO) ordering, for better
+cache locality (since a recently freed allocation is likely still hot in
+cache).
 
-2021-10-27 junyer@google.com Fix another latent bug in Regexp::Walker&lt;T&gt;::Reset().
+These two types of cache locality are not contradictory: allocated
+memory from the central allocator should be as contiguous as possible,
+and preferably sorted in ascending order (so that newly-allocated memory
+looks like a contiguous array), while reused memory should prefer the
+most recently used memory. So we want:
+- contiguous allocations from the central allocator
+- LIFO ordering in the thread cache.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/re2-chromium">https://autoroll.skia.org/r/re2-chromium</a>
-Please CC thakis@chromium.org,junyer@chromium.org on the revert to ensure that a human
-is aware of the problem.
+This CL adds a way to sort freelists, but doing it infrequently enough
+to not undermine cache locality, hence it is done in PurgeMemory(). Note
+that this is not enough, as thread cache batch fill is still
+reversed. Also, the end of slot spans are not decommitted, contrary to
+what is done for larger bucket sizes (when individual allocations are at
+least one page long). This will be explored in forthcoming CLs.
 
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Tbr: thakis@chromium.org,junyer@chromium.org
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4637c6a6281a49af21a745d1ae1704f634fa4b91">I4637c6a6281a49af21a745d1ae1704f634fa4b91</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3247572">https://chromium-review.googlesource.com/c/chromium/src/+/3247572</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#935414}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icb93269b6e1eacbefecfd736b7f97bada883c45a">Icb93269b6e1eacbefecfd736b7f97bada883c45a</a>
+Bug: 998048
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3172645">https://chromium-review.googlesource.com/c/chromium/src/+/3172645</a>
+Reviewed-by: Bartek Nowierski &lt;bartekn@chromium.org&gt;
+Commit-Queue: Benoit L &lt;lizeb@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#935432}
 </pre>
 
 </body>
