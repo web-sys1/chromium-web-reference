@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/935694/"> 935694</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/98637cd80f8c15f373e25a19e33714fa437f2ac6">98637cd80f8c15f373e25a19e33714fa437f2ac6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/935702/"> 935702</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/90e42ef4d86de322b89f8677024dab0a5034c316">90e42ef4d86de322b89f8677024dab0a5034c316</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/935678/">935678</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/aea5e426d5f942fac3be92854d11afac00697482">aea5e426d5f942fac3be92854d11afac00697482</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/935694/">935694</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/98637cd80f8c15f373e25a19e33714fa437f2ac6">98637cd80f8c15f373e25a19e33714fa437f2ac6</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   98637cd80f8c15f373e25a19e33714fa437f2ac6
+   90e42ef4d86de322b89f8677024dab0a5034c316
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/98637cd80f8c15f373e25a19e33714fa437f2ac6">
+    <a href="/chromium/src/+log/90e42ef4d86de322b89f8677024dab0a5034c316">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/98637cd80f8c15f373e25a19e33714fa437f2ac6.tar.gz">
+    <a href="/chromium/src/+archive/90e42ef4d86de322b89f8677024dab0a5034c316.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Brian Sheedy &lt;bsheedy@chromium.org&gt;
+   Jinsuk Kim &lt;jinsukkim@chromium.org&gt;
   </td>
   <td>
-   Thu Oct 28 00:54:01 2021
+   Thu Oct 28 01:30:23 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Oct 28 00:54:01 2021
+   Thu Oct 28 01:30:23 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/98637cd80f8c15f373e25a19e33714fa437f2ac6/">
-    bc1b871e07eb6b01ec46b19f517eb84349a165e0
+   <a href="/chromium/src/+/90e42ef4d86de322b89f8677024dab0a5034c316/">
+    83704e23385fba6b7e763b86e248827fb0b3adb5
    </a>
   </td>
  </tr>
@@ -166,32 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/98637cd80f8c15f373e25a19e33714fa437f2ac6%5E">
-    db3c4f57c5624d6ec1b644036527644dfca8710e
+   <a href="/chromium/src/+/90e42ef4d86de322b89f8677024dab0a5034c316%5E">
+    5e8f081812cff4f7d4b4f4563ae8451a9a7eb881
    </a>
    <span>
     [
-    <a href="/chromium/src/+/98637cd80f8c15f373e25a19e33714fa437f2ac6%5E%21/">
+    <a href="/chromium/src/+/90e42ef4d86de322b89f8677024dab0a5034c316%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove Nexus 6 expectations
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Omnibox: Do not use chrome://blank in tests
 
-Removes GPU expectations for Nexus 6 devices since the devices are no
-longer tested.
+chrome://blank/ is not a resolvable URL, and it ends up with an error
+page. This makes the CallbackHelper.waitForCallback always time out,
+and rely on whether or not TabObserver.onLoadStopped was called to
+proceed or fail. This leads to longer test time, and makes it more
+prone to failure in case onLoadStopped was not invoked in time.
 
-Also drive-by fixes an issue where new tags were only added to a single
-expectation file instead of the management script.
+This CL deletes chrome://blank (this is used in tests only) and
+replaces it with chrome://version which is loaded always fine.
 
-Bug: 1264163
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icab3270abb9ee9afa3768f215fe64b70b4ee3cef">Icab3270abb9ee9afa3768f215fe64b70b4ee3cef</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3248273">https://chromium-review.googlesource.com/c/chromium/src/+/3248273</a>
-Reviewed-by: Kenneth Russell &lt;kbr@chromium.org&gt;
-Commit-Queue: Brian Sheedy &lt;bsheedy@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#935694}
+Another URL that suffers from the same problem as chrome://blank is
+chrome://about which redirects to chrome://chrome-urls. The redirection
+keeps TabObserver.onPageLoadFinished from detecting the loading
+completion, and causes timeout as well. Replaced this with
+chrome://gpu that does not involve redirection in a disabled flaky
+test (LocationBarTest#testOmniboxSearchEngineLogo_siteToSite)
+to avoid potential failure due to timeout.
+
+Bug: 1237419
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1f2d83bf001d74aa7bbe5954b12df99a676abe6a">I1f2d83bf001d74aa7bbe5954b12df99a676abe6a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3235728">https://chromium-review.googlesource.com/c/chromium/src/+/3235728</a>
+Reviewed-by: Theresa  &lt;twellington@chromium.org&gt;
+Reviewed-by: Ted Choc &lt;tedchoc@chromium.org&gt;
+Commit-Queue: Jinsuk Kim &lt;jinsukkim@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#935702}
 </pre>
 
 </body>
