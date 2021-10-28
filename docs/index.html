@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/936098/"> 936098</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1f80ae75142985949080a778b8964398d98bb8c7">1f80ae75142985949080a778b8964398d98bb8c7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/936125/"> 936125</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a6601b2cf2bb7c0a0ffa3c795a0dbc730ef81d1a">a6601b2cf2bb7c0a0ffa3c795a0dbc730ef81d1a</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/936109/">936109</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1f80ae75142985949080a778b8964398d98bb8c7
+   a6601b2cf2bb7c0a0ffa3c795a0dbc730ef81d1a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1f80ae75142985949080a778b8964398d98bb8c7">
+    <a href="/chromium/src/+log/a6601b2cf2bb7c0a0ffa3c795a0dbc730ef81d1a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1f80ae75142985949080a778b8964398d98bb8c7.tar.gz">
+    <a href="/chromium/src/+archive/a6601b2cf2bb7c0a0ffa3c795a0dbc730ef81d1a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yue Li &lt;updowndota@google.com&gt;
+   Alan Screen &lt;awscreen@chromium.org&gt;
   </td>
   <td>
-   Thu Oct 28 21:17:13 2021
+   Thu Oct 28 22:04:50 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Oct 28 21:17:13 2021
+   Thu Oct 28 22:04:50 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1f80ae75142985949080a778b8964398d98bb8c7/">
-    f3082b3f566c6be8058c35f07595a084d75cba1f
+   <a href="/chromium/src/+/a6601b2cf2bb7c0a0ffa3c795a0dbc730ef81d1a/">
+    3a49522ab0b29d4287d178eba8adb129742617ca
    </a>
   </td>
  </tr>
@@ -166,33 +166,78 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1f80ae75142985949080a778b8964398d98bb8c7%5E">
-    af65c0d70bbdc01bf50636cad615d6bb40b6186e
+   <a href="/chromium/src/+/a6601b2cf2bb7c0a0ffa3c795a0dbc730ef81d1a%5E">
+    b91ae55530943cc4c51f30f90a63ce77c65808dd
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1f80ae75142985949080a778b8964398d98bb8c7%5E%21/">
+    <a href="/chromium/src/+/a6601b2cf2bb7c0a0ffa3c795a0dbc730ef81d1a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Assistant Cleanup: Refactor AssistantWebView
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Fetch: Plumb request initiator through passthrough service workers."
 
-The AssistantWebView is used by Ash to work around dependency
-restrictions.
-This change rename the class to AshWebView, detach with the Assistant
-to expose the class to other ash features.
+This reverts commit da0a6501cf321579bd46a27ff9fba1bb8ea910bb.
 
-Bug: b/198811694
-Test: Run existing tests
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7dba283247f3d62ca979b49a38922ba94ffd78d0">I7dba283247f3d62ca979b49a38922ba94ffd78d0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3247881">https://chromium-review.googlesource.com/c/chromium/src/+/3247881</a>
-Reviewed-by: Meilin Wang &lt;meilinw@chromium.org&gt;
-Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
-Commit-Queue: Yue Li &lt;updowndota@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#936098}
+Reason for revert: Failure on many bots with the following error message:
+The service worker navigation preload request was cancelled before 'preloadResponse' settled. If you intend to use 'preloadResponse', use waitUntil() or respondWith() to wait for the promise to settle.", source:  (0)
+
+Original change's description:
+&gt; Fetch: Plumb request initiator through passthrough service workers.
+&gt;
+&gt; This CL contains essentially two changes:
+&gt;
+&gt; 1. The request initiator origin is plumbed through service workers
+&gt;    that do `fetch(evt.request)`.  In addition to plumbing, this
+&gt;    requires changes to how we validate navigation requests in the
+&gt;    CorsURLLoaderFactory.
+&gt; 2. Tracks the original destination of a request passed through a
+&gt;    service worker.  This is then used in the network service to force
+&gt;    SameSite=Lax cookies to treat the request as a main frame navigation
+&gt;    where appropriate.
+&gt;
+&gt; For more detailed information about these changes please see the
+&gt; internal design doc at:
+&gt;
+&gt; <a href="https://docs.google.com/document/d/1KZscujuV7bCFEnzJW-0DaCPU-I40RJimQKoCcI0umTQ/edit?usp=sharing">https://docs.google.com/document/d/1KZscujuV7bCFEnzJW-0DaCPU-I40RJimQKoCcI0umTQ/edit?usp=sharing</a>
+&gt;
+&gt; In addition, there is some discussion of these features in the following
+&gt; spec issues:
+&gt;
+&gt; <a href="https://github.com/whatwg/fetch/issues/1321">https://github.com/whatwg/fetch/issues/1321</a>
+&gt; <a href="https://github.com/whatwg/fetch/issues/1327">https://github.com/whatwg/fetch/issues/1327</a>
+&gt;
+&gt; The test includes WPT tests that verify navigation headers and SameSite
+&gt; cookies.  Note, chrome has a couple expected failures in the SameSite
+&gt; cookie tests because of the "lax-allowing-unsafe" intervention that is
+&gt; currently enabled.  See:
+&gt;
+&gt; <a href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/web_tests/TestExpectations;l=4635;drc=e8133cbf2469adb99c6610483ab78bcfb8cc4c76">https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/web_tests/TestExpectations;l=4635;drc=e8133cbf2469adb99c6610483ab78bcfb8cc4c76</a>
+&gt;
+&gt; Bug: 1115847,1241188
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7e236fa20aeabb705aef40fcf8d5c36da6d2798c">I7e236fa20aeabb705aef40fcf8d5c36da6d2798c</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3115917">https://chromium-review.googlesource.com/c/chromium/src/+/3115917</a>
+&gt; Reviewed-by: Matt Menke &lt;mmenke@chromium.org&gt;
+&gt; Reviewed-by: Yutaka Hirano &lt;yhirano@chromium.org&gt;
+&gt; Reviewed-by: Nasko Oskov &lt;nasko@chromium.org&gt;
+&gt; Reviewed-by: Łukasz Anforowicz &lt;lukasza@chromium.org&gt;
+&gt; Commit-Queue: Ben Kelly &lt;wanderview@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#936029}
+
+Bug: 1115847,1241188
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3044a6d20de172b4a8ab7e39a9f26191580003fa">I3044a6d20de172b4a8ab7e39a9f26191580003fa</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3251692">https://chromium-review.googlesource.com/c/chromium/src/+/3251692</a>
+Auto-Submit: Alan Screen &lt;awscreen@chromium.org&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Commit-Queue: Alan Screen &lt;awscreen@chromium.org&gt;
+Owners-Override: Alan Screen &lt;awscreen@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#936125}
 </pre>
 
 </body>
