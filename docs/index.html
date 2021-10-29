@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/936543/"> 936543</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f8e5c42753d8b2dc8b91b2336e2a54918a9e5815">f8e5c42753d8b2dc8b91b2336e2a54918a9e5815</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/936566/"> 936566</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/69171ea7843f8746233daaea95ea4e63aedf6d51">69171ea7843f8746233daaea95ea4e63aedf6d51</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/936484/">936484</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f8e5c42753d8b2dc8b91b2336e2a54918a9e5815
+   69171ea7843f8746233daaea95ea4e63aedf6d51
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f8e5c42753d8b2dc8b91b2336e2a54918a9e5815">
+    <a href="/chromium/src/+log/69171ea7843f8746233daaea95ea4e63aedf6d51">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f8e5c42753d8b2dc8b91b2336e2a54918a9e5815.tar.gz">
+    <a href="/chromium/src/+archive/69171ea7843f8746233daaea95ea4e63aedf6d51.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ben Becker &lt;benbecker@chromium.org&gt;
+   Andres Calderon Jaramillo &lt;andrescj@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 29 20:43:05 2021
+   Fri Oct 29 21:24:22 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 29 20:43:05 2021
+   Fri Oct 29 21:24:22 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f8e5c42753d8b2dc8b91b2336e2a54918a9e5815/">
-    a331418d454f07f5b035772358b3d015422803b8
+   <a href="/chromium/src/+/69171ea7843f8746233daaea95ea4e63aedf6d51/">
+    c3dfc9f4ce1b0e5f2a1173babfba028404eda9e9
    </a>
   </td>
  </tr>
@@ -166,31 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f8e5c42753d8b2dc8b91b2336e2a54918a9e5815%5E">
-    a9ea39e36b87185e9878efb73cb5daf539db0803
+   <a href="/chromium/src/+/69171ea7843f8746233daaea95ea4e63aedf6d51%5E">
+    6cb34c4c4505eb3a920a6348c21043330ac7f5dc
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f8e5c42753d8b2dc8b91b2336e2a54918a9e5815%5E%21/">
+    <a href="/chromium/src/+/69171ea7843f8746233daaea95ea4e63aedf6d51%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Overview Item View: Fix Header Opacity Animation To Disable and Enable
-Close Button
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Don't enforce VaapiWrapper seq. affinity in VaVDA.
 
-This CL fixes the OverviewItemView::SetHeaderVisiblility() function so
-that it disables the close button when the button is invisible and then
-enables the close button when the button is visible.
+The VaapiVideoDecodeAccelerator is a legacy class that is known to use
+at least one of its VaapiWrappers from multiple threads. This violates
+the restriction introduced by CL:2793005. Unfortunately, refactoring
+this class to use the VaapiWrapper on a single sequence is non-trivial.
 
-Bug: 1250752
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5069edc1a5fd5176beea05965646795aed3f7147">I5069edc1a5fd5176beea05965646795aed3f7147</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3246262">https://chromium-review.googlesource.com/c/chromium/src/+/3246262</a>
-Commit-Queue: Ben Becker &lt;benbecker@chromium.org&gt;
-Reviewed-by: Sammie Quon &lt;sammiequon@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#936543}
+Thus, to avoid making major changes to a class that's on its way out, we
+allow it to create VaapiWrapper instances that don't enforce sequence
+affinity.
+
+Bug: b:204394724, b:183515581
+Test: tast run ${IP} video.Play.h264_hw_alt on volteer
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4fcfe0a9608a61652c109f6bb16ab169d4b8e513">I4fcfe0a9608a61652c109f6bb16ab169d4b8e513</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3252771">https://chromium-review.googlesource.com/c/chromium/src/+/3252771</a>
+Reviewed-by: Jao-ke Chin-Lee &lt;jchinlee@chromium.org&gt;
+Commit-Queue: Andres Calderon Jaramillo &lt;andrescj@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#936566}
 </pre>
 
 </body>
