@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/936483/"> 936483</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7db7797e38c988ba09343b8b9b5cab274b766013">7db7797e38c988ba09343b8b9b5cab274b766013</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/936508/"> 936508</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c78974d88672e68a7c3bc625c79929647a5080b7">c78974d88672e68a7c3bc625c79929647a5080b7</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/936456/">936456</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7db7797e38c988ba09343b8b9b5cab274b766013
+   c78974d88672e68a7c3bc625c79929647a5080b7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7db7797e38c988ba09343b8b9b5cab274b766013">
+    <a href="/chromium/src/+log/c78974d88672e68a7c3bc625c79929647a5080b7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7db7797e38c988ba09343b8b9b5cab274b766013.tar.gz">
+    <a href="/chromium/src/+archive/c78974d88672e68a7c3bc625c79929647a5080b7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ambre Williams &lt;ambre@google.com&gt;
+   Nate Fischer &lt;ntfschr@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 29 18:32:47 2021
+   Fri Oct 29 19:16:58 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 29 18:32:47 2021
+   Fri Oct 29 19:16:58 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7db7797e38c988ba09343b8b9b5cab274b766013/">
-    d69150c09ba83750ef5fee5fb4138589c662ced8
+   <a href="/chromium/src/+/c78974d88672e68a7c3bc625c79929647a5080b7/">
+    7d62429bef18065ef11dae7e21b54d9848744652
    </a>
   </td>
  </tr>
@@ -166,33 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7db7797e38c988ba09343b8b9b5cab274b766013%5E">
-    e3f14be7eeb2967e4fce1031f3bc58d7c25c39a0
+   <a href="/chromium/src/+/c78974d88672e68a7c3bc625c79929647a5080b7%5E">
+    ce7c71f6dbbf2f6849c715d75f7b80c8b54a489e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7db7797e38c988ba09343b8b9b5cab274b766013%5E%21/">
+    <a href="/chromium/src/+/c78974d88672e68a7c3bc625c79929647a5080b7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[fuchsia] Support raw VMOs in mem_buffer_util
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">AW SafeMode: disable SafeMode if prefs are missing
 
-//base/fuchsia/mem_buffer_util.h provides function to convert from/to
-the fuchsia.mem.Buffer type used to wrap potentially large values in
-FIDL messages.
-The type fuchsia.mem.Buffer is deprecated now that VMOs can indicate the
-size of their contents (<a href="https://fxbug.dev/85452">https://fxbug.dev/85452</a>). This change adds
-similar functions to convert from and to VMOs.
+This ensures SafeMode will auto-disable itself if we're ever in either
+of the following conditions when a client queries SafeMode state:
 
-Test: added unit tests for mem_buffer_util
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I84db3c62cb9a7fc735d6a34249cb0469d41bf7a1">I84db3c62cb9a7fc735d6a34249cb0469d41bf7a1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3253303">https://chromium-review.googlesource.com/c/chromium/src/+/3253303</a>
-Reviewed-by: Benjamin Lerman &lt;qsr@chromium.org&gt;
-Commit-Queue: Ambre Williams &lt;ambre@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#936483}
+1. The timestamp pref is missing. This case should already be working
+   because the timestamp defaults to Jan 1st, 1970 which should be
+   expired on nearly every device. This just adds a test to verify this
+   behavior in case the implementation changes in the future.
+2. The actions list pref is missing (implemented and tested).
+
+Bug: 1264115
+Test: run_webview_instrumentation_test_apk -f SafeModeTest.*
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I55d670e1cc813b27d50683385e9568adfe65974d">I55d670e1cc813b27d50683385e9568adfe65974d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3249231">https://chromium-review.googlesource.com/c/chromium/src/+/3249231</a>
+Reviewed-by: Richard Coles &lt;torne@chromium.org&gt;
+Commit-Queue: Nate Fischer &lt;ntfschr@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#936508}
 </pre>
 
 </body>
