@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/936946/"> 936946</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/348a5dceeff05ffa839a99693f1289e8fbe942f7">348a5dceeff05ffa839a99693f1289e8fbe942f7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/936995/"> 936995</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/29dd2c7f7ffe8500b970dd0535b4405e31617ddc">29dd2c7f7ffe8500b970dd0535b4405e31617ddc</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/936935/">936935</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/34db343296aa9c0686559a0432a169d711ecb389">34db343296aa9c0686559a0432a169d711ecb389</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/936979/">936979</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4f95b302f521a2474bebf4e1e9d8337c1449bafe">4f95b302f521a2474bebf4e1e9d8337c1449bafe</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   348a5dceeff05ffa839a99693f1289e8fbe942f7
+   29dd2c7f7ffe8500b970dd0535b4405e31617ddc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/348a5dceeff05ffa839a99693f1289e8fbe942f7">
+    <a href="/chromium/src/+log/29dd2c7f7ffe8500b970dd0535b4405e31617ddc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/348a5dceeff05ffa839a99693f1289e8fbe942f7.tar.gz">
+    <a href="/chromium/src/+archive/29dd2c7f7ffe8500b970dd0535b4405e31617ddc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   codingtosh &lt;codingtosh@gmail.com&gt;
+   Eric Sum &lt;esum@google.com&gt;
   </td>
   <td>
-   Mon Nov 01 17:54:20 2021
+   Mon Nov 01 19:40:01 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Nov 01 17:54:20 2021
+   Mon Nov 01 19:40:01 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/348a5dceeff05ffa839a99693f1289e8fbe942f7/">
-    df299a697ee4e5dd528482abb1fa0750ed202331
+   <a href="/chromium/src/+/29dd2c7f7ffe8500b970dd0535b4405e31617ddc/">
+    f777c6ba9a5239c77ba5514b5f1296d894d35010
    </a>
   </td>
  </tr>
@@ -166,32 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/348a5dceeff05ffa839a99693f1289e8fbe942f7%5E">
-    55c7c49617ca6bbc7d291e867ac4e4cead8bc38b
+   <a href="/chromium/src/+/29dd2c7f7ffe8500b970dd0535b4405e31617ddc%5E">
+    09a74c800687c381d10251e54b2e7b54649d72b9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/348a5dceeff05ffa839a99693f1289e8fbe942f7%5E%21/">
+    <a href="/chromium/src/+/29dd2c7f7ffe8500b970dd0535b4405e31617ddc%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[AW][Dev-UI][Components-UI]Enable On-Demand Update by default
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add internal helper class for deserializing PaintOps.
 
-This CL also improves positioning and size of the On-Demand switch
+Issues with the current state:
+* Code duplication for initialization and finalization steps when
+  deserializing.
+* Since placement new is used, you need to manually call the destructor
+  in fast return conditions. It is easy to forget to do this, and I
+  actually did myself when modifying the SkottieOp (hence prompting this
+  CL).
+* It's inconsistent. PaintOp::DestroyThis() checks if the object is
+  trivially destructible and skips the destructor call if so
+  (supposedly for performance reasons). Whereas PaintOp::Deserialize()
+  methods have been blindly calling the destructor. It's now all
+  routed through DestroyThis().
 
-Test:
-1. Manual logging network's requests to installsource=ondemand
-2. run_android_webview_unittests -f AwComponentUpdateServiceTest.TestOnDemandUpdateRequest
+I figured we may as well address this before putting up the pending
+SkottieOp CL that does deserialization.
 
-Bug: 1250837
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6d63a0313822318d8df23f6c1bd0eb023bd76d5c">I6d63a0313822318d8df23f6c1bd0eb023bd76d5c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3255005">https://chromium-review.googlesource.com/c/chromium/src/+/3255005</a>
-Reviewed-by: Hazem Ashmawy &lt;hazems@chromium.org&gt;
-Commit-Queue: Ashutosh &lt;codingtosh@gmail.com&gt;
-Cr-Commit-Position: refs/heads/main@{#936946}
+Bug: b:203584064
+Test: cc_unittests
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id4b68135b3c7a0222a498ee540b175151b5b71fa">Id4b68135b3c7a0222a498ee540b175151b5b71fa</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3251654">https://chromium-review.googlesource.com/c/chromium/src/+/3251654</a>
+Reviewed-by: vmpstr &lt;vmpstr@chromium.org&gt;
+Reviewed-by: Florin Malita &lt;fmalita@chromium.org&gt;
+Commit-Queue: Eric Sum &lt;esum@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#936995}
 </pre>
 
 </body>
