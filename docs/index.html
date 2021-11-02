@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/937153/"> 937153</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/802cb7f04d1a3efebd403ae4a3e5701a473b12e6">802cb7f04d1a3efebd403ae4a3e5701a473b12e6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/937172/"> 937172</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/236399073b3ab534fb6bcaf5d2b81c707afea094">236399073b3ab534fb6bcaf5d2b81c707afea094</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/937146/">937146</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   802cb7f04d1a3efebd403ae4a3e5701a473b12e6
+   236399073b3ab534fb6bcaf5d2b81c707afea094
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/802cb7f04d1a3efebd403ae4a3e5701a473b12e6">
+    <a href="/chromium/src/+log/236399073b3ab534fb6bcaf5d2b81c707afea094">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/802cb7f04d1a3efebd403ae4a3e5701a473b12e6.tar.gz">
+    <a href="/chromium/src/+archive/236399073b3ab534fb6bcaf5d2b81c707afea094.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Oksana Zhuravlova &lt;oksamyt@chromium.org&gt;
+   Meilin Wang &lt;meilinw@google.com&gt;
   </td>
   <td>
-   Tue Nov 02 01:08:49 2021
+   Tue Nov 02 02:04:37 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Nov 02 01:08:49 2021
+   Tue Nov 02 02:04:37 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/802cb7f04d1a3efebd403ae4a3e5701a473b12e6/">
-    243f68699fada723b0a0adc5deca9f1a051aee28
+   <a href="/chromium/src/+/236399073b3ab534fb6bcaf5d2b81c707afea094/">
+    df9e432dc0847a2e2ca22c26c25eb0ec6bee6580
    </a>
   </td>
  </tr>
@@ -166,32 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/802cb7f04d1a3efebd403ae4a3e5701a473b12e6%5E">
-    d48b893bbbbd190d468f448eb8802f719d2bb381
+   <a href="/chromium/src/+/236399073b3ab534fb6bcaf5d2b81c707afea094%5E">
+    e34a85be15582641ae9c957b6555f90d3a21c109
    </a>
    <span>
     [
-    <a href="/chromium/src/+/802cb7f04d1a3efebd403ae4a3e5701a473b12e6%5E%21/">
+    <a href="/chromium/src/+/236399073b3ab534fb6bcaf5d2b81c707afea094%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[aw][power] Remove some power mode votes from SyncCompProxy
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[LibassistantV2] Wire up service boot up status for v2.
 
-This change removes Animation votes from DemandDrawHW/Sw in
-SynchronousCompositorProxy since they override any possible
-SmallAnimation votes that could come later from
-SynchronousLayerTreeFrameSink's methods.
+Previously we had a CL (crrev.com/c/3091726) wiring up the service ready
+signal with |ServiceController|, the component responsible for managing
+the lifecycle of the Libassistant. This CL works on the boot up signal
+and makes sure it works for both v1 and v2 (as we will be using
+different service readiness signals in v2).
 
-Bug: 1166695
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I516ba4b79e139247f9175547b961f71bbfdbc27e">I516ba4b79e139247f9175547b961f71bbfdbc27e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3248353">https://chromium-review.googlesource.com/c/chromium/src/+/3248353</a>
-Reviewed-by: Eric Seckler &lt;eseckler@chromium.org&gt;
-Reviewed-by: Stefan Zager &lt;szager@chromium.org&gt;
-Commit-Queue: Oksana Zhuravlova &lt;oksamyt@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#937153}
+This CL also refactors |ServiceController| to be a
+|ServiceStatusObserver| itself, so it can be notified directly from the
+|ServiceStatusProvider|. Previously the design was to have
+|AssistantClientImpl| in the middle to convey the message, which turned
+out to be unnecessary.
+
+Test: unittested.
+Bug: b/189973142
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1c079abffe58ae992e8c257f091af22e10f9e3bd">I1c079abffe58ae992e8c257f091af22e10f9e3bd</a>
+Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3248277">https://chromium-review.googlesource.com/c/chromium/src/+/3248277</a>
+Commit-Queue: Meilin Wang &lt;meilinw@chromium.org&gt;
+Reviewed-by: Tao Wu &lt;wutao@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#937172}
 </pre>
 
 </body>
