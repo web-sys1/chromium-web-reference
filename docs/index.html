@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/937305/"> 937305</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/678daaf6544d26b00ede69d9f0b5ffa3a017417f">678daaf6544d26b00ede69d9f0b5ffa3a017417f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/937323/"> 937323</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4412205951bd62e8a529abd249b3002c24916dcc">4412205951bd62e8a529abd249b3002c24916dcc</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/937284/">937284</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7e3529e16195c6a241b14b22ff19b9a86fd52741">7e3529e16195c6a241b14b22ff19b9a86fd52741</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/937314/">937314</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e21b54ca69f34ef3ef82aa066002769ccf587e3f">e21b54ca69f34ef3ef82aa066002769ccf587e3f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   678daaf6544d26b00ede69d9f0b5ffa3a017417f
+   4412205951bd62e8a529abd249b3002c24916dcc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/678daaf6544d26b00ede69d9f0b5ffa3a017417f">
+    <a href="/chromium/src/+log/4412205951bd62e8a529abd249b3002c24916dcc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/678daaf6544d26b00ede69d9f0b5ffa3a017417f.tar.gz">
+    <a href="/chromium/src/+archive/4412205951bd62e8a529abd249b3002c24916dcc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Tseng &lt;dtseng@google.com&gt;
+   Maksim Ivanov &lt;emaxx@chromium.org&gt;
   </td>
   <td>
-   Tue Nov 02 13:33:55 2021
+   Tue Nov 02 14:14:48 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Nov 02 13:33:55 2021
+   Tue Nov 02 14:14:48 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/678daaf6544d26b00ede69d9f0b5ffa3a017417f/">
-    e6fb59098909143b3ab38fd0a3684aeabaf69994
+   <a href="/chromium/src/+/4412205951bd62e8a529abd249b3002c24916dcc/">
+    70f6b6913617275be27c3745e68243a725b48d86
    </a>
   </td>
  </tr>
@@ -166,44 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/678daaf6544d26b00ede69d9f0b5ffa3a017417f%5E">
-    9acaed067337e0f2fe7d65b11578fe9a22c28611
+   <a href="/chromium/src/+/4412205951bd62e8a529abd249b3002c24916dcc%5E">
+    51acc7e9d2c4859fb859d91560991fdebbc5d9e9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/678daaf6544d26b00ede69d9f0b5ffa3a017417f%5E%21/">
+    <a href="/chromium/src/+/4412205951bd62e8a529abd249b3002c24916dcc%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ChromeVox: prefer live region output in speech
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fuzz onc::Normalizer
 
-In ordinary tree update processing, ChromeVox emits live regions after
-other events. This was partly because ChromeVox would flush some speech,
-e.g. from focus events, which would cause live regions to be
-interrupted.
+Add a fuzzer for the ONC normalizer class, exercising it with "random"
+network configuration JSON inputs.
 
-Fix this by auditing all output callsites and modify them to use
-QueueMode.QUEUE or QueueMode.CATEGORY_FLUSH if a live region might be
-expected before. Category flush speech will not interrupt previous
-speech if it isn't in the same category i.e. live region vs navigation
-categories.
-
-Note that QueueMode.QUEUE is the default used by the Output module
-(i.e. used if no queue mode is specified). This is fine in most cases
-because ChromeVox "forces" a category flush queue mode when a user
-invokes a key, does a gesture, or presses a braille key.
-
-Fixed: 1220814
-Test: cq and existing coverage
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ica85ce6641ab5eaf3b0b885a2bf2b6fb5ee34ff3">Ica85ce6641ab5eaf3b0b885a2bf2b6fb5ee34ff3</a>
-AX-Relnotes: ChromeVox will now prefer a live region announcement if it happens at the same time as some other events e.g. focus.
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3253887">https://chromium-review.googlesource.com/c/chromium/src/+/3253887</a>
-Commit-Queue: David Tseng &lt;dtseng@chromium.org&gt;
-Reviewed-by: Akihiro Ota &lt;akihiroota@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#937305}
+Bug: 811690
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1f2098050651373d6151bf5c7a286dabd32ca7b1">I1f2098050651373d6151bf5c7a286dabd32ca7b1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3250738">https://chromium-review.googlesource.com/c/chromium/src/+/3250738</a>
+Commit-Queue: Maksim Ivanov &lt;emaxx@chromium.org&gt;
+Reviewed-by: Azeem Arshad &lt;azeemarshad@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#937323}
 </pre>
 
 </body>
