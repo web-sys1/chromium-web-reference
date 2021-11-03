@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/937689/"> 937689</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8059cd83593ba0a26bfd8d6dbfc0e3306e936358">8059cd83593ba0a26bfd8d6dbfc0e3306e936358</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/937697/"> 937697</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d03dcddea728dc9d3cbee5f1e1698b79aa5c6c4e">d03dcddea728dc9d3cbee5f1e1698b79aa5c6c4e</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/937671/">937671</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8059cd83593ba0a26bfd8d6dbfc0e3306e936358
+   d03dcddea728dc9d3cbee5f1e1698b79aa5c6c4e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8059cd83593ba0a26bfd8d6dbfc0e3306e936358">
+    <a href="/chromium/src/+log/d03dcddea728dc9d3cbee5f1e1698b79aa5c6c4e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8059cd83593ba0a26bfd8d6dbfc0e3306e936358.tar.gz">
+    <a href="/chromium/src/+archive/d03dcddea728dc9d3cbee5f1e1698b79aa5c6c4e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chrome-release-bot &lt;chrome-release-bot@chromium.org&gt;
+   Dominick Ng &lt;dominickn@chromium.org&gt;
   </td>
   <td>
-   Wed Nov 03 03:09:28 2021
+   Wed Nov 03 03:52:34 2021
   </td>
  </tr>
  <tr>
@@ -145,10 +145,10 @@ body{
    committer
   </th>
   <td>
-   Chrome Release Bot (LUCI) &lt;chrome-official-brancher@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 03 03:09:28 2021
+   Wed Nov 03 03:52:34 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8059cd83593ba0a26bfd8d6dbfc0e3306e936358/">
-    b9d882f181b39e4b9e800c2af1831ef2dbe21cab
+   <a href="/chromium/src/+/d03dcddea728dc9d3cbee5f1e1698b79aa5c6c4e/">
+    2c567df31fa74def24597e02740a441f54c494d6
    </a>
   </td>
  </tr>
@@ -166,28 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8059cd83593ba0a26bfd8d6dbfc0e3306e936358%5E">
-    ffaaa078fce9121a882c3fff16537eac778f5dba
+   <a href="/chromium/src/+/d03dcddea728dc9d3cbee5f1e1698b79aa5c6c4e%5E">
+    606cde4b5b25254f566a71d82115324fa19c7c50
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8059cd83593ba0a26bfd8d6dbfc0e3306e936358%5E%21/">
+    <a href="/chromium/src/+/d03dcddea728dc9d3cbee5f1e1698b79aa5c6c4e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Updating trunk VERSION from 4690.0 to 4691.0
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Deflake InstallableManagerBrowserTest, take 2.
 
-# This is an automated release commit.
-# Do not revert without consulting chrome-pmo@google.com.
-NOAUTOREVERT=true
+The tests in question appear to trigger an error of "no matching service
+worker" when they flake. The flakes started a day after
+<a href="https://crrev.com/c/3182724">https://crrev.com/c/3182724</a> landed, which appears to make registering a
+service worker take longer. Previously, it seems that the test was
+executing and beating the service worker registration; it now seems like
+this is no longer reliably the case.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaf9fa03350c40a1e8c0abe2d87ce8758297c61eb">Iaf9fa03350c40a1e8c0abe2d87ce8758297c61eb</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3258545">https://chromium-review.googlesource.com/c/chromium/src/+/3258545</a>
-Bot-Commit: Chrome Release Bot (LUCI) &lt;chrome-official-brancher@chops-service-accounts.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#937689}
+This CL attempts to deflake the tests by forcing them to wait for a
+service worker registration to complete. The tests probably should have
+been doing this from the start.
+
+This CL also partially reverts <a href="https://crrev.com/c/3251816">https://crrev.com/c/3251816</a> to put a test
+back to the way it was. That CL was a prior attempt to deflake the test
+by changing the test itself to cover less, but this fix should be more
+comprehensive and allow the test to return to its prior coverage. The
+new operator&lt;&lt; method introduced in that CL is left alone as that was
+useful in debugging this flake on the bots.
+
+Bug: 1256938
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib9be3f2699b62e04f3494a1a2abefc2a0fd8658a">Ib9be3f2699b62e04f3494a1a2abefc2a0fd8658a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3256632">https://chromium-review.googlesource.com/c/chromium/src/+/3256632</a>
+Commit-Queue: Dominick Ng &lt;dominickn@chromium.org&gt;
+Reviewed-by: Alan Cutter &lt;alancutter@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#937697}
 </pre>
 
 </body>
