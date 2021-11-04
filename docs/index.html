@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/938360/"> 938360</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c3c4fa4188c9b24e66bef50b22e6ed7fb0990064">c3c4fa4188c9b24e66bef50b22e6ed7fb0990064</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/938385/"> 938385</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b0b13313f4829bbe600ff037e8b7811c8fe3b730">b0b13313f4829bbe600ff037e8b7811c8fe3b730</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/938292/">938292</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/aff9649d739c931438bfab49eb5d5618e0c3d13a">aff9649d739c931438bfab49eb5d5618e0c3d13a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/938321/">938321</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/65877b395ecb3cc3e906b63a36753879bdae00be">65877b395ecb3cc3e906b63a36753879bdae00be</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c3c4fa4188c9b24e66bef50b22e6ed7fb0990064
+   b0b13313f4829bbe600ff037e8b7811c8fe3b730
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c3c4fa4188c9b24e66bef50b22e6ed7fb0990064">
+    <a href="/chromium/src/+log/b0b13313f4829bbe600ff037e8b7811c8fe3b730">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c3c4fa4188c9b24e66bef50b22e6ed7fb0990064.tar.gz">
+    <a href="/chromium/src/+archive/b0b13313f4829bbe600ff037e8b7811c8fe3b730.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Daniel Hosseinian &lt;dhoss@chromium.org&gt;
+   Bo Liu &lt;boliu@chromium.org&gt;
   </td>
   <td>
-   Thu Nov 04 18:08:48 2021
+   Thu Nov 04 18:54:35 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Nov 04 18:08:48 2021
+   Thu Nov 04 18:54:35 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c3c4fa4188c9b24e66bef50b22e6ed7fb0990064/">
-    d50e347b5156d987c7ff67a77df362db9a2116e6
+   <a href="/chromium/src/+/b0b13313f4829bbe600ff037e8b7811c8fe3b730/">
+    35b8c04b809b4b30d1cc7b6a87059e131ef69da4
    </a>
   </td>
  </tr>
@@ -166,32 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c3c4fa4188c9b24e66bef50b22e6ed7fb0990064%5E">
-    68299f89688433ae02790c810815cb84b60461e5
+   <a href="/chromium/src/+/b0b13313f4829bbe600ff037e8b7811c8fe3b730%5E">
+    7f84c664930c3b81524f58fb6cbc382cffe2c8ac
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c3c4fa4188c9b24e66bef50b22e6ed7fb0990064%5E%21/">
+    <a href="/chromium/src/+/b0b13313f4829bbe600ff037e8b7811c8fe3b730%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[unseasoned-pdf] Forward arrow keys from the plugin to the extension
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use WritePixels to draw canvas hibernation image
 
-Left/right arrow keys are handleable in the extension frame, so do not
-filter them in the plugin frame.
+The canvas hibernation image is only drawn once and is cached. This can
+lead to an apparent memory leak (not a real one) when there is no memory
+pressure because the cache limit is quite high.
 
-Also, change key handing code to never handle a directional arrow key
-event if a form field is focused.
+WritePixels already writes bitmap image without caching, and OOPR-Canvas
+already uses it. This just updates non-OOPR to use WritePixels as well
+which both simplifies code and reduces memory.
 
-Bug: 1263583
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I020c1fb4d7ce2629a0fa9ec29b5cd6b196e4d199">I020c1fb4d7ce2629a0fa9ec29b5cd6b196e4d199</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3260404">https://chromium-review.googlesource.com/c/chromium/src/+/3260404</a>
-Commit-Queue: Daniel Hosseinian &lt;dhoss@chromium.org&gt;
-Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#938360}
+Bug: 1266153
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I570491f15f9fcde4a9fcb1f9e380ad8dd96f7e23">I570491f15f9fcde4a9fcb1f9e380ad8dd96f7e23</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3259294">https://chromium-review.googlesource.com/c/chromium/src/+/3259294</a>
+Reviewed-by: Khushal &lt;khushalsagar@chromium.org&gt;
+Reviewed-by: vmpstr &lt;vmpstr@chromium.org&gt;
+Commit-Queue: Bo &lt;boliu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#938385}
 </pre>
 
 </body>
