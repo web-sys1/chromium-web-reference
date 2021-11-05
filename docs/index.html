@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/938879/"> 938879</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/34015bacdb0845a226035749e1077c499419970f">34015bacdb0845a226035749e1077c499419970f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/938899/"> 938899</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7c23080b75ee3575c3323d059838c1c9bc4d92f6">7c23080b75ee3575c3323d059838c1c9bc4d92f6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/938857/">938857</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   34015bacdb0845a226035749e1077c499419970f
+   7c23080b75ee3575c3323d059838c1c9bc4d92f6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/34015bacdb0845a226035749e1077c499419970f">
+    <a href="/chromium/src/+log/7c23080b75ee3575c3323d059838c1c9bc4d92f6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/34015bacdb0845a226035749e1077c499419970f.tar.gz">
+    <a href="/chromium/src/+archive/7c23080b75ee3575c3323d059838c1c9bc4d92f6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+   Benoit Lize &lt;lizeb@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 05 18:55:20 2021
+   Fri Nov 05 19:40:14 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Nov 05 18:55:20 2021
+   Fri Nov 05 19:40:14 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/34015bacdb0845a226035749e1077c499419970f/">
-    f6fe79f728acaad63f6d6598b471091a35cf0839
+   <a href="/chromium/src/+/7c23080b75ee3575c3323d059838c1c9bc4d92f6/">
+    a02e712177bab73f4c3a18c0f1cbec518ca56a2e
    </a>
   </td>
  </tr>
@@ -166,49 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/34015bacdb0845a226035749e1077c499419970f%5E">
-    48f5612fd911ce80a0c25a0c0816406daff7fe02
+   <a href="/chromium/src/+/7c23080b75ee3575c3323d059838c1c9bc4d92f6%5E">
+    9eeed3564bd93caa0c7cdac55b6620f966cb5dc5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/34015bacdb0845a226035749e1077c499419970f%5E%21/">
+    <a href="/chromium/src/+/7c23080b75ee3575c3323d059838c1c9bc4d92f6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[mq-4] Treat a final state of kReadRestrictor as an error
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PartitionAlloc] Always decommit empty spans when commit fails.
 
-We currently explicitly call ProcessToken() on an empty range to
-make it possible for handler functions to check for range.AtEnd()
-and take some action based on that. This call has one of three
-possible effects:
+Since the alternative is crashing, decommit empty slot spans on all
+platforms rather than crashing.
 
- 1) kDone -&gt; kDone (i.e. no effect).
- 2) kReadRestrictor -&gt; kSkipUntilComma
- 3) kSkipUntilComma -&gt; kReadRestrictor + AddMediaQuery
+Rather than doing it only on Windows (where commit charge crashes are
+quite frequent), do it on all platforms, as suggested by haraken@ in
+<a href="https://chromium-review.googlesource.com/c/chromium/src/+/3241288.">https://chromium-review.googlesource.com/c/chromium/src/+/3241288.</a>
 
-In case (2), this means that we add "not all" at the call-site after
-ProcessToken(empty) has finished. This happens when there's a valid
-query followed by a single final comma, e.g. "(color),".
-
-In case (3), we add "not all" *during* SkipUntilComma, and then
-prevent an additional erroneous "not all" from being added
-by checking CurrentMediaQueryChanged(). This happens when there's
-an invalid query followed by a single final comma, e.g. "invalid,".
-
-If we instead remove ProcessToken(empty), then for case (2)
-we can just handle kReadRestrictor identically to kSkipUntilComma,
-and for case (3) the fact that we remain kSkipUntilComma will produce
-the "not all" we previously produced inside the handler.
-
-Bug: 962417
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I75e1b41560a235e4c03877c0fec83a5f7a19810c">I75e1b41560a235e4c03877c0fec83a5f7a19810c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3253389">https://chromium-review.googlesource.com/c/chromium/src/+/3253389</a>
-Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Reviewed-by: Kevin Babbitt &lt;kbabbitt@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#938879}
+Bug: 998048
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iac51d711bcd3fa28e3ce9801e6f1d80ef69f221f">Iac51d711bcd3fa28e3ce9801e6f1d80ef69f221f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3259873">https://chromium-review.googlesource.com/c/chromium/src/+/3259873</a>
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Commit-Queue: Benoit L &lt;lizeb@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#938899}
 </pre>
 
 </body>
