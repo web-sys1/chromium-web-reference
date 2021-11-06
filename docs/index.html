@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/939100/"> 939100</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d351611699cac7521f51ccbd9d31232fc6de4954">d351611699cac7521f51ccbd9d31232fc6de4954</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/939103/"> 939103</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d019b7b496cfa33b55e40ada7b4ddce1fc07ab2f">d019b7b496cfa33b55e40ada7b4ddce1fc07ab2f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/939100/">939100</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d351611699cac7521f51ccbd9d31232fc6de4954">d351611699cac7521f51ccbd9d31232fc6de4954</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/939101/">939101</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/db434028cfd818a59e2fb7442c8410b99ca7a824">db434028cfd818a59e2fb7442c8410b99ca7a824</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d351611699cac7521f51ccbd9d31232fc6de4954
+   d019b7b496cfa33b55e40ada7b4ddce1fc07ab2f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d351611699cac7521f51ccbd9d31232fc6de4954">
+    <a href="/chromium/src/+log/d019b7b496cfa33b55e40ada7b4ddce1fc07ab2f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d351611699cac7521f51ccbd9d31232fc6de4954.tar.gz">
+    <a href="/chromium/src/+archive/d019b7b496cfa33b55e40ada7b4ddce1fc07ab2f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Tseng &lt;dtseng@google.com&gt;
+   Adam Rice &lt;ricea@chromium.org&gt;
   </td>
   <td>
-   Sat Nov 06 15:34:43 2021
+   Sat Nov 06 16:41:42 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Nov 06 15:34:43 2021
+   Sat Nov 06 16:41:42 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d351611699cac7521f51ccbd9d31232fc6de4954/">
-    ab2a67086131567e25b25177abb65a9d35416303
+   <a href="/chromium/src/+/d019b7b496cfa33b55e40ada7b4ddce1fc07ab2f/">
+    e8da98b6a56f36c2be93f4739402a9f27d709a40
    </a>
   </td>
  </tr>
@@ -166,27 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d351611699cac7521f51ccbd9d31232fc6de4954%5E">
-    b200f0c6e9a4f9a61efe6ee143320e1112dc168e
+   <a href="/chromium/src/+/d019b7b496cfa33b55e40ada7b4ddce1fc07ab2f%5E">
+    7d0da5da333c3ee2697a507af80011a4ef9de3a1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d351611699cac7521f51ccbd9d31232fc6de4954%5E%21/">
+    <a href="/chromium/src/+/d019b7b496cfa33b55e40ada7b4ddce1fc07ab2f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make AXActionHandlerRegistry a NoDestructor
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">WebTransport throttling correct pending handshake
 
-R=nektar@chromium.org
+There was a flaw in WebTransportConnectorImpl that a handshake wasn't
+counted as pending immediately after checking whether it could proceed.
+This could lead to a potentially large number of handshakes accumulating
+during extension checks, which would proceed without regard to the
+limit.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5db1e5501991d1b3b305951a79461512b241d470">I5db1e5501991d1b3b305951a79461512b241d470</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3257101">https://chromium-review.googlesource.com/c/chromium/src/+/3257101</a>
-Commit-Queue: David Tseng &lt;dtseng@chromium.org&gt;
-Reviewed-by: Nektarios Paisios &lt;nektar@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#939100}
+Start counting a handshake as started before the extension checks start
+so that the limit is always respected.
+
+Rename WebTransportThrottleContext::OnCreateWebTransport() to
+StartThrottling() to reflect its function.
+
+BUG=1172046
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I84c047008539ed34c583ca811c53b825cd891b6d">I84c047008539ed34c583ca811c53b825cd891b6d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3261955">https://chromium-review.googlesource.com/c/chromium/src/+/3261955</a>
+Commit-Queue: Adam Rice &lt;ricea@chromium.org&gt;
+Reviewed-by: Yutaka Hirano &lt;yhirano@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#939103}
 </pre>
 
 </body>
