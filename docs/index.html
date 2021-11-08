@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/939433/"> 939433</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c6b348741c893ea951b99c7310792d4fb98e7dae">c6b348741c893ea951b99c7310792d4fb98e7dae</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/939452/"> 939452</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3fd876d6bdb2e65b76c34652809d0a75502ac74f">3fd876d6bdb2e65b76c34652809d0a75502ac74f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/939442/">939442</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c6b348741c893ea951b99c7310792d4fb98e7dae
+   3fd876d6bdb2e65b76c34652809d0a75502ac74f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c6b348741c893ea951b99c7310792d4fb98e7dae">
+    <a href="/chromium/src/+log/3fd876d6bdb2e65b76c34652809d0a75502ac74f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c6b348741c893ea951b99c7310792d4fb98e7dae.tar.gz">
+    <a href="/chromium/src/+archive/3fd876d6bdb2e65b76c34652809d0a75502ac74f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Marc Treib &lt;treib@chromium.org&gt;
+   Chad Versace &lt;chadversary@chromium.org&gt;
   </td>
   <td>
-   Mon Nov 08 18:11:23 2021
+   Mon Nov 08 18:55:53 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Nov 08 18:11:23 2021
+   Mon Nov 08 18:55:53 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c6b348741c893ea951b99c7310792d4fb98e7dae/">
-    939b864b3998942f3c5bcdfc746a87ffa644f8b5
+   <a href="/chromium/src/+/3fd876d6bdb2e65b76c34652809d0a75502ac74f/">
+    73f536447e174e11192ad016e03a90cb1b2a0f3d
    </a>
   </td>
  </tr>
@@ -166,33 +166,50 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c6b348741c893ea951b99c7310792d4fb98e7dae%5E">
-    d0059557c49aa404bdc1d85ba7f4c68e687fa4f4
+   <a href="/chromium/src/+/3fd876d6bdb2e65b76c34652809d0a75502ac74f%5E">
+    fa1f3ad2e66deacd1749a638f0f90cbe74fd21e8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c6b348741c893ea951b99c7310792d4fb98e7dae%5E%21/">
+    <a href="/chromium/src/+/3fd876d6bdb2e65b76c34652809d0a75502ac74f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PasswordScriptsFetcher: Pass Version into constructor
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ozone: Ignore modifiers for video buffers
 
-During the lifetime of PasswordScriptsFetcher[Impl], the Chrome version
-(of course) remains constant. So there is no need to pass the version
-into each request.
-This CL instead queries the version once, in the factory, and passes it
-into PasswordScriptsFetcher on construction. This way, users don't have
-to pass it in anymore.
+This hopefully fixes a bug on Intel devices with Gen11 GPU (chipset
+Jasper Lake). If a display modeset occurs when playing a video on an
+external display, sometimes the video becomes a solid color.
 
-Bug: 1264320
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icfae49768aaefdf0a4f36575de6c9e55bba77356">Icfae49768aaefdf0a4f36575de6c9e55bba77356</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3268069">https://chromium-review.googlesource.com/c/chromium/src/+/3268069</a>
-Reviewed-by: Vasilii Sukhanov &lt;vasilii@chromium.org&gt;
-Commit-Queue: Marc Treib &lt;treib@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#939433}
+We suspect that disabling RBC (renderbuffer compression) for video
+buffers will fix it.
+
+GBM provides two buffer allocation functions:
+
+    - gbm_bo_create(), whose params include gbm_bo_use_flags but no
+      modifiers. GBM will choose the best modifier for the use flags.
+      For video usage, GBM will exclude RBC modifiers.
+
+    - gbm_bo_create_with_modifiers(), whose params include a list of
+      modifiers but no use flags. GBM will choose the most preferred
+      modifier from the list. GBM correctly prefers RBC modifiers over
+      non-RBC modifiers.
+
+DrmThread::CreateBuffer may call either allocation function. When it
+calls gbm_bo_create_with_modifiers(), it provides all modifiers
+supported for the format on the display, which includes RBC modifiers.
+Therefore, we must redirect CreateBuffer to use gbm_bo_create() for
+video buffers.
+
+Bug: b/197804801
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie41eaddcedaa1271fdc68ff825edacd117b3463a">Ie41eaddcedaa1271fdc68ff825edacd117b3463a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3266014">https://chromium-review.googlesource.com/c/chromium/src/+/3266014</a>
+Commit-Queue: Chad Versace &lt;chadversary@chromium.org&gt;
+Reviewed-by: Miguel Casas &lt;mcasas@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#939452}
 </pre>
 
 </body>
