@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/939218/"> 939218</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b1f25ddfa56108d4962931bdc1ec7e22687d8fd4">b1f25ddfa56108d4962931bdc1ec7e22687d8fd4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/939220/"> 939220</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8f4083e7df93c6ce26b1cb2cc4df3eb32a3ca874">8f4083e7df93c6ce26b1cb2cc4df3eb32a3ca874</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/939219/">939219</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b1f25ddfa56108d4962931bdc1ec7e22687d8fd4
+   8f4083e7df93c6ce26b1cb2cc4df3eb32a3ca874
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b1f25ddfa56108d4962931bdc1ec7e22687d8fd4">
+    <a href="/chromium/src/+log/8f4083e7df93c6ce26b1cb2cc4df3eb32a3ca874">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b1f25ddfa56108d4962931bdc1ec7e22687d8fd4.tar.gz">
+    <a href="/chromium/src/+archive/8f4083e7df93c6ce26b1cb2cc4df3eb32a3ca874.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ben Reich &lt;benreich@chromium.org&gt;
+   Mitch McDermott &lt;mcdermottm@google.com&gt;
   </td>
   <td>
-   Mon Nov 08 03:10:29 2021
+   Mon Nov 08 03:46:39 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Nov 08 03:10:29 2021
+   Mon Nov 08 03:46:39 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b1f25ddfa56108d4962931bdc1ec7e22687d8fd4/">
-    8fd47b8faeb4b3189f87a1dce28563608bb4ee24
+   <a href="/chromium/src/+/8f4083e7df93c6ce26b1cb2cc4df3eb32a3ca874/">
+    72011662fcd2181d442e8484a47de2850d93942d
    </a>
   </td>
  </tr>
@@ -166,50 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b1f25ddfa56108d4962931bdc1ec7e22687d8fd4%5E">
-    09f393b50f65193a07b3381bcb7b7bdc8cd0d9b6
+   <a href="/chromium/src/+/8f4083e7df93c6ce26b1cb2cc4df3eb32a3ca874%5E">
+    f7480d758412220e80d9ce51eabce103baecf512
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b1f25ddfa56108d4962931bdc1ec7e22687d8fd4%5E%21/">
+    <a href="/chromium/src/+/8f4083e7df93c6ce26b1cb2cc4df3eb32a3ca874%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[FilesDarkMode] Make visual signals panel dark mode compliant
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update MediaApp sort ordering from Z-first to A-first.
 
-The visual signals panel is a multi use UI surface in Files app that
-displays progress of file transfers and eventual status. The following
-patch updates all the colors where possible, a few notable changes that
-are a little outside just color change:
+We originally chose z-first so that the app emulated a "swipe right to
+go to previously taken image" UX, mirroring a camera roll. However,
+from numerous feedback reports we've learnt that this is confusing.
+Especially given that users often sort by name and many photos and
+song titles encode an implied lexicographic order e.g.
+"PHOTO_DCIM_00001.jpeg", "01 - Song Title by Someone".
 
-  - Remove the hardcoded color for the success and failure icons in
-    icon.html, these are now set by the introduction of a new CSS rule.
-  - The dismiss button previously had a box-shadow and border, the new
-    spec defines no border and no box-shadow so have removed both of
-    these.
-  - Removed the .xf-success and .xf-failure classes, these are no longer
-    being used anywhere so remove them and the comment as it was causing
-    syntax errors.
-  - Fix a presubmit warning about not closing single tags with the svg
-    circle and path.
+This issue is extremely obvious for the audio play queue view, where
+we have a track number that conflicts with our current reverse
+lexicographic ordering.
 
-The changes here are also trying to isolate the changes to Files app
-without updating the global webui components. So where changes are
-non-obvious for why they are done, I have left an inline comment.
+This CL instead updates the ordering to A-first to fix and aide the
+aforementioned issues.
 
-Demo (Panel, Success and Error): <a href="http://shortn/_mIlRPgBJmI">http://shortn/_mIlRPgBJmI</a>
-Demo (Progress indicator): <a href="http://shortn/_hpqINKwajA">http://shortn/_hpqINKwajA</a>
-
-Bug: 1212807
-Test: Visually inspect on chromeos-on-linux
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1d2a8bfc7ef177b0ca4886df6771540e6400dd0e">I1d2a8bfc7ef177b0ca4886df6771540e6400dd0e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3263145">https://chromium-review.googlesource.com/c/chromium/src/+/3263145</a>
-Reviewed-by: Alex Danilo &lt;adanilo@chromium.org&gt;
-Commit-Queue: Ben Reich &lt;benreich@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#939218}
+Bug: b/166210455
+Fixed: b/205229704
+Cq-Include-Trybots: luci.chrome.try:chromeos-betty-pi-arc-chrome;luci.chrome.try:linux-chromeos-chrome
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5b525176ccc7ee4a1a51a43389ca9e15d4f2666e">I5b525176ccc7ee4a1a51a43389ca9e15d4f2666e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3267667">https://chromium-review.googlesource.com/c/chromium/src/+/3267667</a>
+Commit-Queue: Mitchell McDermott &lt;mcdermottm@google.com&gt;
+Reviewed-by: Trent Apted &lt;tapted@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#939220}
 </pre>
 
 </body>
