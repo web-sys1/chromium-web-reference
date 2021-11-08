@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/939508/"> 939508</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/200085570e2d0119dafa080cf6827121688eafa0">200085570e2d0119dafa080cf6827121688eafa0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/939567/"> 939567</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8de1b5dbc6a1bddf69e5e9233d5070f7f2c9c6de">8de1b5dbc6a1bddf69e5e9233d5070f7f2c9c6de</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/939494/">939494</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b400a7a65e12af188742e34f0d8b973a25ec0f48">b400a7a65e12af188742e34f0d8b973a25ec0f48</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/939527/">939527</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/21275ed657a266fe6177778d59747e9b50ef115c">21275ed657a266fe6177778d59747e9b50ef115c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   200085570e2d0119dafa080cf6827121688eafa0
+   8de1b5dbc6a1bddf69e5e9233d5070f7f2c9c6de
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/200085570e2d0119dafa080cf6827121688eafa0">
+    <a href="/chromium/src/+log/8de1b5dbc6a1bddf69e5e9233d5070f7f2c9c6de">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/200085570e2d0119dafa080cf6827121688eafa0.tar.gz">
+    <a href="/chromium/src/+archive/8de1b5dbc6a1bddf69e5e9233d5070f7f2c9c6de.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Hailey Wang &lt;haileywang@google.com&gt;
+   James Cook &lt;jamescook@chromium.org&gt;
   </td>
   <td>
-   Mon Nov 08 20:53:54 2021
+   Mon Nov 08 22:59:40 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Nov 08 20:53:54 2021
+   Mon Nov 08 22:59:40 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/200085570e2d0119dafa080cf6827121688eafa0/">
-    35876b62f85e17ac34d3b24a6c4517748ed614e4
+   <a href="/chromium/src/+/8de1b5dbc6a1bddf69e5e9233d5070f7f2c9c6de/">
+    5faf20c45990c961cb1fbae0e7e90f8c383c3098
    </a>
   </td>
  </tr>
@@ -166,30 +166,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/200085570e2d0119dafa080cf6827121688eafa0%5E">
-    edea6cf7c16777caed46c4a938c4719dbe17ac50
+   <a href="/chromium/src/+/8de1b5dbc6a1bddf69e5e9233d5070f7f2c9c6de%5E">
+    1423fe66c7b1429decc98392530bdc9a07e7cc63
    </a>
    <span>
     [
-    <a href="/chromium/src/+/200085570e2d0119dafa080cf6827121688eafa0%5E%21/">
+    <a href="/chromium/src/+/8de1b5dbc6a1bddf69e5e9233d5070f7f2c9c6de%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Snooze IPH] Update padding
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ash: Add hide animation to bubble launcher
 
-Reduced snooze IPH padding from 16dp to 12dp.
+The hide animation is a opacity fade-out and bounds shrink. Keep the
+views::Widget alive until the end of the animation, then CloseNow().
+This means the launcher is considered "showing" until the hide
+animation completes, so attempts to Show() during the animation will
+be blocked.
 
-Move the padding from the container to the text element.
+As an optimization, hide the scroll view gradient mask before the
+animation. On kevin, official branded release build, this improves
+smoothness from 47 to 65, P=0.01 for a difference. 65 is not great,
+but the animation looks OK in practice. I think there might be a
+single jank, and the animation is so short (100ms = 6 frames) that
+any dropped frame really hurts the number.
 
-Bug: 1264648
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie4b58134c5aa0b7bb3198e36551088bd40225a5f">Ie4b58134c5aa0b7bb3198e36551088bd40225a5f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3260908">https://chromium-review.googlesource.com/c/chromium/src/+/3260908</a>
-Reviewed-by: David Trainor &lt;dtrainor@chromium.org&gt;
-Commit-Queue: Hailey Wang &lt;haileywang@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#939508}
+Eliminate ScopedScrollViewGradientDisabler in favor of creating and
+deleting the entire ScrollViewGradientHelper class. This simplifies
+removing the gradient mask during hide. All the views that can
+naturally own a Disabler are deleted at the end of the animation.
+With this approach we don't have to worry about a Disabler going out
+of scope and re-creating the mask layer.
+
+Bug: 1264178
+Test: added to ash_unittests
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icca0cecfead48e7897c496548f39fa309632ada3">Icca0cecfead48e7897c496548f39fa309632ada3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3260773">https://chromium-review.googlesource.com/c/chromium/src/+/3260773</a>
+Commit-Queue: James Cook &lt;jamescook@chromium.org&gt;
+Reviewed-by: Toni Barzic &lt;tbarzic@chromium.org&gt;
+Reviewed-by: Tony Yeoman &lt;tby@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#939567}
 </pre>
 
 </body>
