@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/939853/"> 939853</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/612f6bd1507fd82f906a1ec3440c1c0340e2af9f">612f6bd1507fd82f906a1ec3440c1c0340e2af9f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/939868/"> 939868</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/84da4493884a6b78c02fdcf0e33daeee50c4e9a2">84da4493884a6b78c02fdcf0e33daeee50c4e9a2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/939841/">939841</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e4cebf485ee40a13db71215a63a881646b26ee40">e4cebf485ee40a13db71215a63a881646b26ee40</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/939863/">939863</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e85af9d5e400c02f9532ee6aceb602dba883ff15">e85af9d5e400c02f9532ee6aceb602dba883ff15</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   612f6bd1507fd82f906a1ec3440c1c0340e2af9f
+   84da4493884a6b78c02fdcf0e33daeee50c4e9a2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/612f6bd1507fd82f906a1ec3440c1c0340e2af9f">
+    <a href="/chromium/src/+log/84da4493884a6b78c02fdcf0e33daeee50c4e9a2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/612f6bd1507fd82f906a1ec3440c1c0340e2af9f.tar.gz">
+    <a href="/chromium/src/+archive/84da4493884a6b78c02fdcf0e33daeee50c4e9a2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Maksim Ivanov &lt;emaxx@chromium.org&gt;
+   Gang Wu &lt;gangwu@chromium.org&gt;
   </td>
   <td>
-   Tue Nov 09 15:57:34 2021
+   Tue Nov 09 16:42:39 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Nov 09 15:57:34 2021
+   Tue Nov 09 16:42:39 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/612f6bd1507fd82f906a1ec3440c1c0340e2af9f/">
-    81705e4e5a6d8829bf73b14ded8fa1a144193b15
+   <a href="/chromium/src/+/84da4493884a6b78c02fdcf0e33daeee50c4e9a2/">
+    c0e0c44d8e189b04dc2915a48d6af8fcfb8597bb
    </a>
   </td>
  </tr>
@@ -166,35 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/612f6bd1507fd82f906a1ec3440c1c0340e2af9f%5E">
-    c8f353c84747ad5fbfd67872d7d0c2067154fa6b
+   <a href="/chromium/src/+/84da4493884a6b78c02fdcf0e33daeee50c4e9a2%5E">
+    801e82200429b33c1fbccad8e31311c91b584410
    </a>
    <span>
     [
-    <a href="/chromium/src/+/612f6bd1507fd82f906a1ec3440c1c0340e2af9f%5E%21/">
+    <a href="/chromium/src/+/84da4493884a6b78c02fdcf0e33daeee50c4e9a2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix syntax error and bulletproof cert prov tests
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Omnibox] Clipboard can set and detect URL mime type
 
-Fix a syntax error in the certificateProvider API tests, and make
-similar errors fail the test in the future.
+On Android S, the system clipboard can tell apps what type of data is in
+the clipboard. But Android do not recognize the scheme "chrome://", so
+when a URL start with "chrome://" in the system clipboard, Android S
+will tell Chrome that it contents text.
 
-Apparently, by default errors occurring in API event handlers or
-callbacks are ignored (only logged). To transform them into actual test
-failures, we're using a combination of chrome.test.setExceptionHandler()
-with window.addEventListener('error').
+To make Chrome know if "Chrome://" is in the clipboard, this CL needs to
+update 2 things:
+1. ClipboardRecentContent can recognize scheme "Chrome://".
+2. Clipboard.java will set mime type to URL when copy a URL to the
+   clipboard. And also check the mime type when checking the content
+   type of the clipboard.
 
-Bug: 1232459
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I072a81f759ecdb2fbc3c9ae54918887f55d55354">I072a81f759ecdb2fbc3c9ae54918887f55d55354</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3262897">https://chromium-review.googlesource.com/c/chromium/src/+/3262897</a>
-Reviewed-by: Istiaque Ahmed &lt;lazyboy@chromium.org&gt;
-Reviewed-by: Fabian Sommer &lt;fabiansommer@chromium.org&gt;
-Commit-Queue: Maksim Ivanov &lt;emaxx@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#939853}
+Bug: 1244104
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iad517d9760caaf1f1faa9f5049dc164381ce44cb">Iad517d9760caaf1f1faa9f5049dc164381ce44cb</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3215826">https://chromium-review.googlesource.com/c/chromium/src/+/3215826</a>
+Reviewed-by: Ted Choc &lt;tedchoc@chromium.org&gt;
+Reviewed-by: Tomasz Wiszkowski &lt;ender@google.com&gt;
+Reviewed-by: Olivier Robin &lt;olivierrobin@chromium.org&gt;
+Commit-Queue: Gang Wu &lt;gangwu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#939868}
 </pre>
 
 </body>
