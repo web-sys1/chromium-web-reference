@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/941315/"> 941315</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d322d7c8dcea9d0e17f328bc05d036a2dd7d359d">d322d7c8dcea9d0e17f328bc05d036a2dd7d359d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/941335/"> 941335</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7c47ce7c551e8d3bf972ecf2b5f47f996e79c76c">7c47ce7c551e8d3bf972ecf2b5f47f996e79c76c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/941315/">941315</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d322d7c8dcea9d0e17f328bc05d036a2dd7d359d">d322d7c8dcea9d0e17f328bc05d036a2dd7d359d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/941351/">941351</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/137258b7424be17368e402f2f6c81bcc75f4ab77">137258b7424be17368e402f2f6c81bcc75f4ab77</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d322d7c8dcea9d0e17f328bc05d036a2dd7d359d
+   7c47ce7c551e8d3bf972ecf2b5f47f996e79c76c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d322d7c8dcea9d0e17f328bc05d036a2dd7d359d">
+    <a href="/chromium/src/+log/7c47ce7c551e8d3bf972ecf2b5f47f996e79c76c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d322d7c8dcea9d0e17f328bc05d036a2dd7d359d.tar.gz">
+    <a href="/chromium/src/+archive/7c47ce7c551e8d3bf972ecf2b5f47f996e79c76c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alexei Svitkine &lt;asvitkine@chromium.org&gt;
+   W. James MacLean &lt;wjmaclean@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 12 20:49:43 2021
+   Fri Nov 12 21:42:01 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Nov 12 20:49:43 2021
+   Fri Nov 12 21:42:01 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d322d7c8dcea9d0e17f328bc05d036a2dd7d359d/">
-    d4e1f1e329b790402b3f1faadf1f68ec22c4604c
+   <a href="/chromium/src/+/7c47ce7c551e8d3bf972ecf2b5f47f996e79c76c/">
+    f96cc41963cd73248b386112380b56185487ec9f
    </a>
   </td>
  </tr>
@@ -166,37 +166,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d322d7c8dcea9d0e17f328bc05d036a2dd7d359d%5E">
-    a555229ab2fd159a1135d5b24772155cab2aa7e1
+   <a href="/chromium/src/+/7c47ce7c551e8d3bf972ecf2b5f47f996e79c76c%5E">
+    53feebf989625ec12793d0d8deff3ea7e7e47844
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d322d7c8dcea9d0e17f328bc05d036a2dd7d359d%5E%21/">
+    <a href="/chromium/src/+/7c47ce7c551e8d3bf972ecf2b5f47f996e79c76c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update callsites to use WIN_-prefixed base::File flags.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Implement OAC Process Count Overhead Metric.
 
-The flags have been renamed to make it clear that they only
-apply to Windows (see associated bug).
+This CL introduces a "process count overhead" metric, based on an
+estimate of how many additional processes are needed for
+OriginAgentCluster (OAC). It's an estimate since we can't control for
+all variables, like the coalescing of SiteInstances from multiple
+BrowsingInstances in a single RenderProcess, or the effects of all
+possible configurations of the SiteInfo parameters.
 
-If you're reviewing this CL, please verify your code's usage
-of the flag to ensure that the behavior is as intended. Thanks!
+The estimate is based on counting the total number of HTTPS
+SiteInstances (OAC is only used for HTTPS) by seeing how many unique
+SiteInfos they generate in each BrowsingInstance, then converting each
+SiteInfo to its non-OAC equivalent and counting again, and comparing
+the two counts. The difference is the overhead estimate. This value
+should only be reported for users with cross-process OAC enabled.
 
-This CL was uploaded by git cl split.
+Basically, this is a best effort approach because knowing the exact
+process count requires too much knowledge of process creation history.
+It ignores process sharing, which is usually (but not always) an upper
+bound on the actual overhead.
 
-R=waffles@chromium.org
-
-Bug: 1244149
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4d196f8889b50839676790c01f7e42eb17789e0d">I4d196f8889b50839676790c01f7e42eb17789e0d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3279223">https://chromium-review.googlesource.com/c/chromium/src/+/3279223</a>
-Auto-Submit: Alexei Svitkine &lt;asvitkine@chromium.org&gt;
-Reviewed-by: Joshua Pawlicki &lt;waffles@chromium.org&gt;
-Commit-Queue: Joshua Pawlicki &lt;waffles@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#941315}
+Bug: 1171269
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I31781bc8dedcb7c4849776d82aacb2890f255142">I31781bc8dedcb7c4849776d82aacb2890f255142</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3182871">https://chromium-review.googlesource.com/c/chromium/src/+/3182871</a>
+Reviewed-by: Charlie Reis &lt;creis@chromium.org&gt;
+Reviewed-by: Caitlin Fischer &lt;caitlinfischer@google.com&gt;
+Reviewed-by: Tom Sepez &lt;tsepez@chromium.org&gt;
+Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Commit-Queue: W. James MacLean &lt;wjmaclean@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#941335}
 </pre>
 
 </body>
