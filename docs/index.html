@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/941242/"> 941242</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6b63bc9f5088c06485e7d960fb9454f76627305a">6b63bc9f5088c06485e7d960fb9454f76627305a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/941263/"> 941263</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/90927fd2fd314d9c3d24dc647ef5d28d93b9beb1">90927fd2fd314d9c3d24dc647ef5d28d93b9beb1</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/941237/">941237</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6b63bc9f5088c06485e7d960fb9454f76627305a
+   90927fd2fd314d9c3d24dc647ef5d28d93b9beb1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6b63bc9f5088c06485e7d960fb9454f76627305a">
+    <a href="/chromium/src/+log/90927fd2fd314d9c3d24dc647ef5d28d93b9beb1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6b63bc9f5088c06485e7d960fb9454f76627305a.tar.gz">
+    <a href="/chromium/src/+archive/90927fd2fd314d9c3d24dc647ef5d28d93b9beb1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Weizhong Xia &lt;weizhong@google.com&gt;
+   bttk &lt;bttk@google.com&gt;
   </td>
   <td>
-   Fri Nov 12 18:56:22 2021
+   Fri Nov 12 19:38:27 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Nov 12 18:56:22 2021
+   Fri Nov 12 19:38:27 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6b63bc9f5088c06485e7d960fb9454f76627305a/">
-    018139ad85f108862c7a8f0829aa05579e140ddf
+   <a href="/chromium/src/+/90927fd2fd314d9c3d24dc647ef5d28d93b9beb1/">
+    291c9cecc05f66f0a9f2d26a2bcef4292ed20d3d
    </a>
   </td>
  </tr>
@@ -166,29 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6b63bc9f5088c06485e7d960fb9454f76627305a%5E">
-    eb1eaa25835f8ee1ee822647fb2a201d498dc506
+   <a href="/chromium/src/+/90927fd2fd314d9c3d24dc647ef5d28d93b9beb1%5E">
+    fdfae229fdf699c060c46f5b84ddd2e7ceed8d0f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6b63bc9f5088c06485e7d960fb9454f76627305a%5E%21/">
+    <a href="/chromium/src/+/90927fd2fd314d9c3d24dc647ef5d28d93b9beb1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Wpt-importer: Fetch results from result db
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Read Later] Android should fetch larger favicons
 
-Fetch results from ResultDB, and create test expectations based on that.
-When there are retries for a test, all the results will be used.
+When fetching favicons from Google, Chrome on Android always requested
+24dip. The 'dip' in the name of kDipForServerRequests created a false
+sense that the requested size would scale with the display density.
 
-Bug: 1196713
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7f250c67c08ac541e22ca382bf559b26833330cb">I7f250c67c08ac541e22ca382bf559b26833330cb</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3229976">https://chromium-review.googlesource.com/c/chromium/src/+/3229976</a>
-Commit-Queue: Weizhong Xia &lt;weizhong@google.com&gt;
-Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#941242}
+Contents of ResourceBundle::InitSharedInstance suggest that the dip-&gt;px
+scaling factor on Android is always 1x and has nothing to do with the
+unit 'dp' used in Android.
+
+Feature LargeFaviconFromGoogle now makes it possible to set the
+requested icon size to 128px, which is equivalent to a 32dp drawable on
+a xxxhdpi display. In future the Android UI code could set the desired
+favicon size at runtime.
+
+Also, adding a DCHECK verifying that requests sent to the favicon
+service are supported size values.
+
+Bug: 1261876
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie9aa821b448106f9d220dbcb8d529f6a756a01a9">Ie9aa821b448106f9d220dbcb8d529f6a756a01a9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3268795">https://chromium-review.googlesource.com/c/chromium/src/+/3268795</a>
+Reviewed-by: Mikel Astiz &lt;mastiz@chromium.org&gt;
+Reviewed-by: Peter Kotwicz &lt;pkotwicz@chromium.org&gt;
+Reviewed-by: Filip Gorski &lt;fgorski@chromium.org&gt;
+Reviewed-by: Moe Ahmadi &lt;mahmadi@chromium.org&gt;
+Reviewed-by: Brandon Wylie &lt;wylieb@chromium.org&gt;
+Commit-Queue: bttk &lt;bttk@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#941263}
 </pre>
 
 </body>
