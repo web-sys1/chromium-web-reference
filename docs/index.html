@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/942272/"> 942272</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/826702f79e4cfc88e62736c37dc34bb1b622adba">826702f79e4cfc88e62736c37dc34bb1b622adba</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/942285/"> 942285</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d39d0677cb961f6b1496499442a476a66c84ce4d">d39d0677cb961f6b1496499442a476a66c84ce4d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/942273/">942273</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   826702f79e4cfc88e62736c37dc34bb1b622adba
+   d39d0677cb961f6b1496499442a476a66c84ce4d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/826702f79e4cfc88e62736c37dc34bb1b622adba">
+    <a href="/chromium/src/+log/d39d0677cb961f6b1496499442a476a66c84ce4d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/826702f79e4cfc88e62736c37dc34bb1b622adba.tar.gz">
+    <a href="/chromium/src/+archive/d39d0677cb961f6b1496499442a476a66c84ce4d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   tom &lt;tluk@chromium.org&gt;
+   Eric Orth &lt;ericorth@chromium.org&gt;
   </td>
   <td>
-   Tue Nov 16 20:31:23 2021
+   Tue Nov 16 21:17:58 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Nov 16 20:31:23 2021
+   Tue Nov 16 21:17:58 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/826702f79e4cfc88e62736c37dc34bb1b622adba/">
-    b88e5dadc39fa04d6863a87c8e8400fcb5f8ebaf
+   <a href="/chromium/src/+/d39d0677cb961f6b1496499442a476a66c84ce4d/">
+    ecd6d4654b872ee8f3be61014d49c12a8ffc64e8
    </a>
   </td>
  </tr>
@@ -166,61 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/826702f79e4cfc88e62736c37dc34bb1b622adba%5E">
-    40959c9175c93bdbf68b4a9bad5148360a1c26d3
+   <a href="/chromium/src/+/d39d0677cb961f6b1496499442a476a66c84ce4d%5E">
+    a69425513c8d11ad04ba53b8548cefde5a15a877
    </a>
    <span>
     [
-    <a href="/chromium/src/+/826702f79e4cfc88e62736c37dc34bb1b622adba%5E%21/">
+    <a href="/chromium/src/+/d39d0677cb961f6b1496499442a476a66c84ce4d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove FocusWindow() from DesktopNativeWidgetAura::InitNativeWidget()
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Create comprehensive connection endpoint results type
 
-Currently DesktopNativeWidgetAura::InitNativeWidget() will
-unconditionally focus the newly created window in InitNativeWidget
-irrespective of the Widget::InitParams::ShowState.
+Will be the new type for HostResolver connection
+(A/AAAA/UNSPECIFIED/HTTPS) requests.
 
-For minimized and inactive show states this would result in the newly
-created window incorrectly being assigned focus and activation.
+For now, just wired up as an alternative result type in HostResolver,
+and only constructed as a conversion from AddressList results.  In
+subsequent CLs, will fully wire up to receive full data from HTTPS
+records and begin work to fully deprecate/remove the AddressList
+results.
 
-Calling FocusWindow() on the window created in InitNativeWidget()
-should not be necessary as clients are expected to call
-Widget::Show() (or Widget::ShowInactive()) which will will apply
-activation / focus appropriately based on the show state.
+Lots of converting tests in HostResolverManager*Test to validate the
+new result type alongside all validations of AddressList results.
 
-This CL also addresses several downstream breakages as a result of
-this change. Previously DNWA::HandleActivationChanged() would call
-NativeWidgetDelegate::OnNativeWidgetActivationChanged() as the first
-call in the method.
-
-However at this point the FocusController has not been updated with
-the new active window. As a result, code that responds to the call
-to OnNativeWidgetActivationChanged() would see an inconsistent
-FocusController, leading to potentially incorrect behavior.
-
-This CL splits OnNativeWidgetActivationChanged() into two methods, one
-for the check that determines if the activation change should be
-handled and the other that propagates the activation change
-notification to delegates.
-
-The latter has been moved to the end of DNWA::HandleActivationChanged()
-to ensure the FocusController has been appropriately updated first.
-
-This CL also updates the test expectations for the PIP browsertest.
-It seems that these expectations were set to work around the
-DesktopNativeWidgetAura incorrectly setting window activation on
-desktop aura platforms (See <a href="https://crrev.com/c/1363204">https://crrev.com/c/1363204</a>).
-
-Bug: 1253925
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7167dfb799393b6c4d4658c0c2b048ac27fb3f58">I7167dfb799393b6c4d4658c0c2b048ac27fb3f58</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3267394">https://chromium-review.googlesource.com/c/chromium/src/+/3267394</a>
-Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Commit-Queue: Thomas Lukaszewicz &lt;tluk@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#942272}
+Bug: 1264933
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iadbd60bba4468f149282abceeabc2d1761d62adc">Iadbd60bba4468f149282abceeabc2d1761d62adc</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3253885">https://chromium-review.googlesource.com/c/chromium/src/+/3253885</a>
+Reviewed-by: David Benjamin &lt;davidben@chromium.org&gt;
+Commit-Queue: Eric Orth &lt;ericorth@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#942285}
 </pre>
 
 </body>
