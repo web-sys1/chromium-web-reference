@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/941942/"> 941942</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6121141641e62a8437ea0e484e1d086aadef47f5">6121141641e62a8437ea0e484e1d086aadef47f5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/941976/"> 941976</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/431980519c022f90b8d58804eb06fa6805c53696">431980519c022f90b8d58804eb06fa6805c53696</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/941920/">941920</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6121141641e62a8437ea0e484e1d086aadef47f5
+   431980519c022f90b8d58804eb06fa6805c53696
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6121141641e62a8437ea0e484e1d086aadef47f5">
+    <a href="/chromium/src/+log/431980519c022f90b8d58804eb06fa6805c53696">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6121141641e62a8437ea0e484e1d086aadef47f5.tar.gz">
+    <a href="/chromium/src/+archive/431980519c022f90b8d58804eb06fa6805c53696.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Brian Sheedy &lt;bsheedy@chromium.org&gt;
+   Nancy Wang &lt;nancylingwang@chromium.org&gt;
   </td>
   <td>
-   Tue Nov 16 00:47:52 2021
+   Tue Nov 16 01:29:56 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Nov 16 00:47:52 2021
+   Tue Nov 16 01:29:56 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6121141641e62a8437ea0e484e1d086aadef47f5/">
-    af0953972d2f7b1f21f659f8bbb881c339c23fa8
+   <a href="/chromium/src/+/431980519c022f90b8d58804eb06fa6805c53696/">
+    99f9c20e978198befecc7d0ae95a60cb6bd430f5
    </a>
   </td>
  </tr>
@@ -166,31 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6121141641e62a8437ea0e484e1d086aadef47f5%5E">
-    68a9e5e38bb2fa6e16d6d543f26c1b66b039ec32
+   <a href="/chromium/src/+/431980519c022f90b8d58804eb06fa6805c53696%5E">
+    af18f1120d6383aad4427cb175eba1233fbf08ea
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6121141641e62a8437ea0e484e1d086aadef47f5%5E%21/">
+    <a href="/chromium/src/+/431980519c022f90b8d58804eb06fa6805c53696%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">GPU Flake Finder: Support Thresholds
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Modify GetIconKey to use the non-mojom App struct.
 
-Adds support to the GPU flake finder for specifying thresholds and
-automatically generating expectations based off those instead of
-requiring the user to manually handle each one.
+Modify IconLoader::GetIconKey to return a null icon key as the default
+implementation, then the GetIconKey implementation in other test code
+can be removed.
 
-Bug: 1192733
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0180ee6a7b67bc6b8d2f8e637eb109107fe6fddd">I0180ee6a7b67bc6b8d2f8e637eb109107fe6fddd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3230382">https://chromium-review.googlesource.com/c/chromium/src/+/3230382</a>
-Auto-Submit: Brian Sheedy &lt;bsheedy@chromium.org&gt;
-Reviewed-by: Yuly Novikov &lt;ynovikov@chromium.org&gt;
-Commit-Queue: Brian Sheedy &lt;bsheedy@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#941942}
+Modify ExtensionAppsBase::OnExtensionLoaded to call CreateApp to create
+the non-mojom App struct, because during the init phase, only
+OnExtensionLoaded is called to add Chrome apps to the non mojom App
+struct to AppRegistryCache, so we need to build the whole App struct,
+including the icon key to load icon.
+
+Modify NoteTakingHelperTest to set the user for the second profile to
+prevent creating the arc app pref, which may cause crash during the
+shut down phase due to the default app added asynchronously after
+shutting down.
+
+Bug: 1253250
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib02d4632a89f17f9116b4f6b149bb4fc800ce610">Ib02d4632a89f17f9116b4f6b149bb4fc800ce610</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3272113">https://chromium-review.googlesource.com/c/chromium/src/+/3272113</a>
+Commit-Queue: Nancy Wang &lt;nancylingwang@chromium.org&gt;
+Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
+Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#941976}
 </pre>
 
 </body>
