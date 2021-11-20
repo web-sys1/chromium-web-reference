@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/943707/"> 943707</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f42c51c8ca04cb192cf2a54e9888db6cabc041ee">f42c51c8ca04cb192cf2a54e9888db6cabc041ee</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/943754/"> 943754</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c39613d437f02931cf4242bbc92f4fb09cd720ba">c39613d437f02931cf4242bbc92f4fb09cd720ba</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/943700/">943700</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/498d89459a07d2e829893e85fc7d1ccca388bbb1">498d89459a07d2e829893e85fc7d1ccca388bbb1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/943736/">943736</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4d765bef34484752bcdec5b249506c04d16575f5">4d765bef34484752bcdec5b249506c04d16575f5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f42c51c8ca04cb192cf2a54e9888db6cabc041ee
+   c39613d437f02931cf4242bbc92f4fb09cd720ba
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f42c51c8ca04cb192cf2a54e9888db6cabc041ee">
+    <a href="/chromium/src/+log/c39613d437f02931cf4242bbc92f4fb09cd720ba">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f42c51c8ca04cb192cf2a54e9888db6cabc041ee.tar.gz">
+    <a href="/chromium/src/+archive/c39613d437f02931cf4242bbc92f4fb09cd720ba.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Gabriel Charette &lt;gab@chromium.org&gt;
+   Addison Luh &lt;aluh@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 19 22:54:41 2021
+   Sat Nov 20 00:19:12 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Nov 19 22:54:41 2021
+   Sat Nov 20 00:19:12 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f42c51c8ca04cb192cf2a54e9888db6cabc041ee/">
-    e37b638afdb38e2711d520ecab572c7904da51cd
+   <a href="/chromium/src/+/c39613d437f02931cf4242bbc92f4fb09cd720ba/">
+    14c925ed97e9a442e4f20a8f418af4b960c9adb8
    </a>
   </td>
  </tr>
@@ -166,46 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f42c51c8ca04cb192cf2a54e9888db6cabc041ee%5E">
-    475753900d344820f7c5d47094e4137e9e73e7b0
+   <a href="/chromium/src/+/c39613d437f02931cf4242bbc92f4fb09cd720ba%5E">
+    1567d5b4d64fa4a6dfa67b4a7d48a93320456a68
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f42c51c8ca04cb192cf2a54e9888db6cabc041ee%5E%21/">
+    <a href="/chromium/src/+/c39613d437f02931cf4242bbc92f4fb09cd720ba%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[base] BrowserTaskEnvironment should destroy ThreadPoolInstance before SequenceManagerImpl
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix PNG file names for courgette docs.
 
-This is critical for <a href="https://crrev.com/c/3282499">https://crrev.com/c/3282499</a> where ThreadPool
-worker threads can invoke SequenceManagerImpl* and having
-~BrowserTaskEnvironment() destroy sequence_manager_ ahead of
-DestroyThreadPool() (~TaskEnvironment) was causing a data race:
-crbug.com/1270221.
+Seems this has been broken since 2013:
+<a href="https://source.chromium.org/chromium/chromium/src/+/fd0a76f109c0fa3f9dd973ee6921957501f317e5">https://source.chromium.org/chromium/chromium/src/+/fd0a76f109c0fa3f9dd973ee6921957501f317e5</a>
 
-ASAN called out a leak in DeviceService with this change because it
-relied on ThreadPool still being alive during ~DeviceService which
-posts DeleteSoon to clean additional state. ~DeviceService being
-triggered from cleaning SequenceLocalStorage on ~SequenceManagerImpl,
-that assumption breaks with this CL.
-The fix is to DeleteSoon manually when DeleteSoon fails (ThreadPool
-is already shutdown).
-This could be problematic with SequenceChecker checks in the deleted
-state but there isn't currently any. The long-term solution is to
-allow SequenceChecker checks to pass on the main thread after the
-associated sequence is shutdown.
-
-Bug: 1263149, 1148010
-Fixed: 1270221
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3224094ee7fac46ece359a4018dd06733f42b588">I3224094ee7fac46ece359a4018dd06733f42b588</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3283743">https://chromium-review.googlesource.com/c/chromium/src/+/3283743</a>
-Commit-Queue: Gabriel Charette &lt;gab@chromium.org&gt;
-Reviewed-by: Reilly Grant &lt;reillyg@chromium.org&gt;
-Reviewed-by: François Doray &lt;fdoray@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#943707}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia9cd3421ee1679dd21cf4d6e2ad725b0b6234093">Ia9cd3421ee1679dd21cf4d6e2ad725b0b6234093</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3292449">https://chromium-review.googlesource.com/c/chromium/src/+/3292449</a>
+Commit-Queue: Addison Luh &lt;aluh@chromium.org&gt;
+Commit-Queue: Will Harris &lt;wfh@chromium.org&gt;
+Auto-Submit: Addison Luh &lt;aluh@chromium.org&gt;
+Reviewed-by: Will Harris &lt;wfh@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#943754}
 </pre>
 
 </body>
