@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/944368/"> 944368</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4468f42c9aca6e526725cbba38b277ce14213b5e">4468f42c9aca6e526725cbba38b277ce14213b5e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/944376/"> 944376</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3da1a655ea70e4dd22afa85e507aeb36e99ddd91">3da1a655ea70e4dd22afa85e507aeb36e99ddd91</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/944376/">944376</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4468f42c9aca6e526725cbba38b277ce14213b5e
+   3da1a655ea70e4dd22afa85e507aeb36e99ddd91
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4468f42c9aca6e526725cbba38b277ce14213b5e">
+    <a href="/chromium/src/+log/3da1a655ea70e4dd22afa85e507aeb36e99ddd91">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4468f42c9aca6e526725cbba38b277ce14213b5e.tar.gz">
+    <a href="/chromium/src/+archive/3da1a655ea70e4dd22afa85e507aeb36e99ddd91.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Wanming Lin &lt;wanming.lin@intel.com&gt;
+   Byungwoo Lee &lt;blee@igalia.com&gt;
   </td>
   <td>
-   Tue Nov 23 03:00:37 2021
+   Tue Nov 23 03:43:32 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Nov 23 03:00:37 2021
+   Tue Nov 23 03:43:32 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4468f42c9aca6e526725cbba38b277ce14213b5e/">
-    b5cded5cf3045086b347803b02bfa026a0b0d65d
+   <a href="/chromium/src/+/3da1a655ea70e4dd22afa85e507aeb36e99ddd91/">
+    a635b1aaa7e4d41aaf244bdf58af43ad444b7fd2
    </a>
   </td>
  </tr>
@@ -166,33 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4468f42c9aca6e526725cbba38b277ce14213b5e%5E">
-    6641986a6b853bbab0a8665299d948b57335ba22
+   <a href="/chromium/src/+/3da1a655ea70e4dd22afa85e507aeb36e99ddd91%5E">
+    45761a1c2f373b56dde82dc3f76b5e21e9ee9fed
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4468f42c9aca6e526725cbba38b277ce14213b5e%5E%21/">
+    <a href="/chromium/src/+/3da1a655ea70e4dd22afa85e507aeb36e99ddd91%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fixed additional failure web tests with real setTimeout 0
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add filtering condition for irrelevant mutation
 
-Currently setTimeout(..., 0) is clamped up to 1ms while which is
-not supposed to be in the spec. This CL is intended to fix the tests
-that become flaky with
+To prevent unnecessary ancestor style invalidation triggered by
+irrelevant mutations, this CL added a filtering condition by collecting
+values from ':has()' argument selector.
 
-<a href="https://chromium-review.googlesource.com/c/chromium/src/+/3243793/">https://chromium-review.googlesource.com/c/chromium/src/+/3243793/</a>
+These are the values to be collected by each type of selector.
+ - Class selectors : class name
+ - Id selectors : id value
+ - Attribute selectors : attribute name
+ - Type selectors : tag name
 
-Bug: 402694
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibe66bbca3ae1cf3c1f9e4a1e225bf0d162146e79">Ibe66bbca3ae1cf3c1f9e4a1e225bf0d162146e79</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3291405">https://chromium-review.googlesource.com/c/chromium/src/+/3291405</a>
-Reviewed-by: Sami Kyöstilä &lt;skyostil@chromium.org&gt;
-Reviewed-by: Philip Jägenstedt &lt;foolip@chromium.org&gt;
-Commit-Queue: Wanming Lin &lt;wanming.lin@intel.com&gt;
-Cr-Commit-Position: refs/heads/main@{#944368}
+The collected values are stored in a HashSet by type.
+
+When there is a mutation on an element marked as AncestorsAffectedByHas,
+StyleEngine will match the mutation with the HashSet to determine
+whether the mutation is related to the ':has()' state change or not.
+
+The StyleEngine will invalidate the ancestors affected by ':has()' only
+if the mutation matches any of the value in the HashSet.
+
+Bug: 669058
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If85b048c12da5d071afe51b2512217f34756a5a4">If85b048c12da5d071afe51b2512217f34756a5a4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3295212">https://chromium-review.googlesource.com/c/chromium/src/+/3295212</a>
+Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
+Commit-Queue: Byungwoo Lee &lt;blee@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#944376}
 </pre>
 
 </body>
