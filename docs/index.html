@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/944376/"> 944376</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3da1a655ea70e4dd22afa85e507aeb36e99ddd91">3da1a655ea70e4dd22afa85e507aeb36e99ddd91</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/944379/"> 944379</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8de0ee1ed01cd1444d45263207a7a9c8b4d4463c">8de0ee1ed01cd1444d45263207a7a9c8b4d4463c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/944376/">944376</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3da1a655ea70e4dd22afa85e507aeb36e99ddd91">3da1a655ea70e4dd22afa85e507aeb36e99ddd91</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/944380/">944380</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/416d6ab8db6bd84fb77820ca3a4b220e309cc1c9">416d6ab8db6bd84fb77820ca3a4b220e309cc1c9</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3da1a655ea70e4dd22afa85e507aeb36e99ddd91
+   8de0ee1ed01cd1444d45263207a7a9c8b4d4463c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3da1a655ea70e4dd22afa85e507aeb36e99ddd91">
+    <a href="/chromium/src/+log/8de0ee1ed01cd1444d45263207a7a9c8b4d4463c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3da1a655ea70e4dd22afa85e507aeb36e99ddd91.tar.gz">
+    <a href="/chromium/src/+archive/8de0ee1ed01cd1444d45263207a7a9c8b4d4463c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Byungwoo Lee &lt;blee@igalia.com&gt;
+   Daniel Cheng &lt;dcheng@chromium.org&gt;
   </td>
   <td>
-   Tue Nov 23 03:43:32 2021
+   Tue Nov 23 04:21:53 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Nov 23 03:43:32 2021
+   Tue Nov 23 04:21:53 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3da1a655ea70e4dd22afa85e507aeb36e99ddd91/">
-    a635b1aaa7e4d41aaf244bdf58af43ad444b7fd2
+   <a href="/chromium/src/+/8de0ee1ed01cd1444d45263207a7a9c8b4d4463c/">
+    d4c161ea45ff6502069743e154ddd99b9476ca6a
    </a>
   </td>
  </tr>
@@ -166,45 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3da1a655ea70e4dd22afa85e507aeb36e99ddd91%5E">
-    45761a1c2f373b56dde82dc3f76b5e21e9ee9fed
+   <a href="/chromium/src/+/8de0ee1ed01cd1444d45263207a7a9c8b4d4463c%5E">
+    ec3532203dd162ad783e3318119cf9d5bd8e3633
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3da1a655ea70e4dd22afa85e507aeb36e99ddd91%5E%21/">
+    <a href="/chromium/src/+/8de0ee1ed01cd1444d45263207a7a9c8b4d4463c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add filtering condition for irrelevant mutation
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Hide methods inherited from GURL::Replacement's base class.
 
-To prevent unnecessary ancestor style invalidation triggered by
-irrelevant mutations, this CL added a filtering condition by collecting
-values from ':has()' argument selector.
+These methods are generally a bit more awkward to use than the helpers
+exposed by GURL::Replacement itself. Hide them to encourage callers to
+use the easier-to-use versions instead.
 
-These are the values to be collected by each type of selector.
- - Class selectors : class name
- - Id selectors : id value
- - Attribute selectors : attribute name
- - Type selectors : tag name
-
-The collected values are stored in a HashSet by type.
-
-When there is a mutation on an element marked as AncestorsAffectedByHas,
-StyleEngine will match the mutation with the HashSet to determine
-whether the mutation is related to the ':has()' state change or not.
-
-The StyleEngine will invalidate the ancestors affected by ':has()' only
-if the mutation matches any of the value in the HashSet.
-
-Bug: 669058
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If85b048c12da5d071afe51b2512217f34756a5a4">If85b048c12da5d071afe51b2512217f34756a5a4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3295212">https://chromium-review.googlesource.com/c/chromium/src/+/3295212</a>
-Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Commit-Queue: Byungwoo Lee &lt;blee@igalia.com&gt;
-Cr-Commit-Position: refs/heads/main@{#944376}
+Bug: 1271865
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I592743c067edef3b90707c075ae20662099d0f8b">I592743c067edef3b90707c075ae20662099d0f8b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3292948">https://chromium-review.googlesource.com/c/chromium/src/+/3292948</a>
+Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Mike West &lt;mkwst@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#944379}
 </pre>
 
 </body>
