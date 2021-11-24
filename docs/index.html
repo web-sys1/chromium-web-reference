@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/944899/"> 944899</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d649ab13f8df93a3de7d14da33918b716f33d4a6">d649ab13f8df93a3de7d14da33918b716f33d4a6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/944904/"> 944904</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7ed81c98d486d913e2f43f24e8eae767664caa87">7ed81c98d486d913e2f43f24e8eae767664caa87</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/944880/">944880</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/474bad8e061cbe2fa5ebebc6ec3054db20e0d382">474bad8e061cbe2fa5ebebc6ec3054db20e0d382</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/944901/">944901</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6e37fdbf8cb1c05efce5d9cde7f87142c2fa2a9e">6e37fdbf8cb1c05efce5d9cde7f87142c2fa2a9e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d649ab13f8df93a3de7d14da33918b716f33d4a6
+   7ed81c98d486d913e2f43f24e8eae767664caa87
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d649ab13f8df93a3de7d14da33918b716f33d4a6">
+    <a href="/chromium/src/+log/7ed81c98d486d913e2f43f24e8eae767664caa87">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d649ab13f8df93a3de7d14da33918b716f33d4a6.tar.gz">
+    <a href="/chromium/src/+archive/7ed81c98d486d913e2f43f24e8eae767664caa87.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Colin Blundell &lt;blundell@chromium.org&gt;
+   Jacek Siuda &lt;jsiuda@google.com&gt;
   </td>
   <td>
-   Wed Nov 24 10:04:04 2021
+   Wed Nov 24 10:39:44 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 24 10:04:04 2021
+   Wed Nov 24 10:39:44 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d649ab13f8df93a3de7d14da33918b716f33d4a6/">
-    d7e76ec4d7cc4b762ad9c33a9198d7d6ddac4a4d
+   <a href="/chromium/src/+/7ed81c98d486d913e2f43f24e8eae767664caa87/">
+    1dbf1aa13885a82d46bf8faeada9d16995e2c169
    </a>
   </td>
  </tr>
@@ -166,41 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d649ab13f8df93a3de7d14da33918b716f33d4a6%5E">
-    d64f365499acc015d2a1538900c31b35ecb3df0f
+   <a href="/chromium/src/+/7ed81c98d486d913e2f43f24e8eae767664caa87%5E">
+    b6da05b8a1c430c725226eee00a71e97cfaeac2a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d649ab13f8df93a3de7d14da33918b716f33d4a6%5E%21/">
+    <a href="/chromium/src/+/7ed81c98d486d913e2f43f24e8eae767664caa87%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[StartupTabPreloader] Track reason for preload decision
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">wifi: MAC Address Randomization for connection
 
-StartupTabPreloader performs a preload at startup only 20-30% of the
-time. This CL adds a histogram breaking down the reason for its decision
-on whether to perform a preload or not.
+This is the first part of MAR (MAC Address Randomization) feature.
+When enabled by experimental flag, the default randomization
+policy will be set for each new WiFi service, basing on its ONC Source.
+For now, only None or Unknown sources result in (persistently) randomized
+MAC addresses, all managed networks are left with hardware address.
 
-As part of this change we slightly reorder the checks in
-StartupTabPreloader#shouldLoadTab(): we move the check for whether the
-intent specifies opening an incognito tab to before the check for
-whether IntentHandler thinks that the intent should be ignored. The
-reason is that IntentHandler specifies such intents should be ignored
-when coming from non-Chrome apps, so having the more specific check
-first allows us to capture this case separately in metrics. This change
-will have no impact on production behavior, as the call to
-IntentUtils.safeGetBooleanExtra() has no side-effects.
+The policy then is sent to shill, but only for newly configured networks.
+This behavior is similar to the current implementation in Android.
+To reset the policy (e.g. after the flag is toggled), a particular
+network must be forgotten and reconfigured.
 
-Bug: 1258621
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4fabdc1bcff13db9cf5f35a7782dbbfba50d76f6">I4fabdc1bcff13db9cf5f35a7782dbbfba50d76f6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3296291">https://chromium-review.googlesource.com/c/chromium/src/+/3296291</a>
-Commit-Queue: Colin Blundell &lt;blundell@chromium.org&gt;
-Reviewed-by: Hao Dong &lt;spdonghao@chromium.org&gt;
-Reviewed-by: Yaron Friedman &lt;yfriedman@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#944899}
+Add flag for enabling connected MAC address randomization.
+Set MAC Address randomization policy basing on the flag and ONC source.
+
+Bug: 181234131
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I06c2e8920dfba4261ab5974a244b517fe8d35659">I06c2e8920dfba4261ab5974a244b517fe8d35659</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2912777">https://chromium-review.googlesource.com/c/chromium/src/+/2912777</a>
+Commit-Queue: Jacek Siuda &lt;jsiuda@google.com&gt;
+Reviewed-by: Steven Bennetts &lt;stevenjb@chromium.org&gt;
+Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#944904}
 </pre>
 
 </body>
