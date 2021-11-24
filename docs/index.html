@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/944827/"> 944827</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3b43d4e2d0262ba41fba629f90cbb566854861ae">3b43d4e2d0262ba41fba629f90cbb566854861ae</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/944843/"> 944843</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/77cb452cd341dca5642dc2cb8e18013d50e46b56">77cb452cd341dca5642dc2cb8e18013d50e46b56</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/944835/">944835</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3b43d4e2d0262ba41fba629f90cbb566854861ae
+   77cb452cd341dca5642dc2cb8e18013d50e46b56
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3b43d4e2d0262ba41fba629f90cbb566854861ae">
+    <a href="/chromium/src/+log/77cb452cd341dca5642dc2cb8e18013d50e46b56">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3b43d4e2d0262ba41fba629f90cbb566854861ae.tar.gz">
+    <a href="/chromium/src/+archive/77cb452cd341dca5642dc2cb8e18013d50e46b56.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chrome Release Bot (LUCI) &lt;chrome-official-brancher@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Alex Keng &lt;shihken@microsoft.com&gt;
   </td>
   <td>
-   Wed Nov 24 04:02:22 2021
+   Wed Nov 24 05:25:32 2021
   </td>
  </tr>
  <tr>
@@ -145,10 +145,10 @@ body{
    committer
   </th>
   <td>
-   Chrome Release Bot (LUCI) &lt;chrome-official-brancher@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 24 04:02:22 2021
+   Wed Nov 24 05:25:32 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3b43d4e2d0262ba41fba629f90cbb566854861ae/">
-    33f389d61dfc603a8e6b97f47f0d83fdf6ee2584
+   <a href="/chromium/src/+/77cb452cd341dca5642dc2cb8e18013d50e46b56/">
+    ed9d8b22227cc2ca72d55d5e231ae305c5a51e8e
    </a>
   </td>
  </tr>
@@ -166,28 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3b43d4e2d0262ba41fba629f90cbb566854861ae%5E">
-    b40b82eecfd37b772d1597bf206061a51533815c
+   <a href="/chromium/src/+/77cb452cd341dca5642dc2cb8e18013d50e46b56%5E">
+    6e438869aab686322cd2af5562af067c5dfcddf9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3b43d4e2d0262ba41fba629f90cbb566854861ae%5E%21/">
+    <a href="/chromium/src/+/77cb452cd341dca5642dc2cb8e18013d50e46b56%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Updating trunk VERSION from 4726.0 to 4727.0
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">EditContext: allow EditContext to connect to isolated elements
 
-* This is an automated release commit.
-* Do not revert without consulting chrome-pmo@google.com.
-NOAUTOREVERT=true
+Per offline discussion during the TPAC week, the EditContext should be
+allowed to connect to elements that are not in the tree, so it's easier
+for the authors to prepare the tree. This CL changes the logic
+accordingly (in Element::setEditContext, don't return if the element
+is not in the tree, and in Element::RemovedFrom, don't reset
+EditContext), and update the associated tests.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic62f48bcf1bc2f9d3b35d0a7905aa1c85ef52581">Ic62f48bcf1bc2f9d3b35d0a7905aa1c85ef52581</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3298353">https://chromium-review.googlesource.com/c/chromium/src/+/3298353</a>
-Bot-Commit: Chrome Release Bot (LUCI) &lt;chrome-official-brancher@chops-service-accounts.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#944827}
+Note with this change, if an element has an associated EditContext, it
+will be kept alive after removed from the tree. The authors are
+responsible for the life time of both EditContext and the element.
+Once the EditContext goes out of the scope, both EditContext and the
+element will be GC'ed by Oilpan (as discussed in the comment
+of CL#3180103 [1]
+
+[1] <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3180103/comments/79c68113_2918cb3d">https://chromium-review.googlesource.com/c/chromium/src/+/3180103/comments/79c68113_2918cb3d</a>
+
+
+Bug: 999184
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaa0a5d79b0e5f1d1a3df3568f1e45820173ef803">Iaa0a5d79b0e5f1d1a3df3568f1e45820173ef803</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3297169">https://chromium-review.googlesource.com/c/chromium/src/+/3297169</a>
+Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
+Commit-Queue: Alex Keng &lt;shihken@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#944843}
 </pre>
 
 </body>
