@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/944918/"> 944918</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d08adbbe3c479b90496f4bafe9740d76d4cd1df0">d08adbbe3c479b90496f4bafe9740d76d4cd1df0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/944928/"> 944928</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/524f4cb303e92141012551b9f589fad8cfd82a06">524f4cb303e92141012551b9f589fad8cfd82a06</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/944917/">944917</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7792b070f30b9ed95b9e6e5b9597434dbf0cc652">7792b070f30b9ed95b9e6e5b9597434dbf0cc652</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/944930/">944930</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7f8311c4a76f0aa48d1574d1bd2b39edeaa52188">7f8311c4a76f0aa48d1574d1bd2b39edeaa52188</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d08adbbe3c479b90496f4bafe9740d76d4cd1df0
+   524f4cb303e92141012551b9f589fad8cfd82a06
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d08adbbe3c479b90496f4bafe9740d76d4cd1df0">
+    <a href="/chromium/src/+log/524f4cb303e92141012551b9f589fad8cfd82a06">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d08adbbe3c479b90496f4bafe9740d76d4cd1df0.tar.gz">
+    <a href="/chromium/src/+archive/524f4cb303e92141012551b9f589fad8cfd82a06.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nancy Wang &lt;nancylingwang@chromium.org&gt;
+   Max Ihlenfeldt &lt;mihlenfeldt@igalia.com&gt;
   </td>
   <td>
-   Wed Nov 24 11:54:05 2021
+   Wed Nov 24 12:37:37 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 24 11:54:05 2021
+   Wed Nov 24 12:37:37 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d08adbbe3c479b90496f4bafe9740d76d4cd1df0/">
-    f83ffd3df9648a9ec307016bb16bfd4bb33aef08
+   <a href="/chromium/src/+/524f4cb303e92141012551b9f589fad8cfd82a06/">
+    5a08dcb3c5cdfeb264fc6c9b0ac30944b161be95
    </a>
   </td>
  </tr>
@@ -166,31 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d08adbbe3c479b90496f4bafe9740d76d4cd1df0%5E">
-    7792b070f30b9ed95b9e6e5b9597434dbf0cc652
+   <a href="/chromium/src/+/524f4cb303e92141012551b9f589fad8cfd82a06%5E">
+    37ba675f4421866da5599c8d94cdafe0e1bfec9f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d08adbbe3c479b90496f4bafe9740d76d4cd1df0%5E%21/">
+    <a href="/chromium/src/+/524f4cb303e92141012551b9f589fad8cfd82a06%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Replace GetState to get state for window.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">SoftwareOutputSurface: set resize_based_on_root_surface capability
 
-Remove the interface GetState from the instance key, and add a new
-interface GetState from window for the ash side standalone window and
-the ash Chrome tab windows.
+This CL adds a new SupportsOverridePlatformSize() method to
+SoftwareOutputDevice and SurfaceOzoneCanvas. Its return value is used by
+SoftwareOutputSurface to set its resize_based_on_root_surface
+capability. All default implementations return false, except for
+WaylandCanvasSurface's override, which returns true. This approach is
+taken from viz::OutputPresenterGL and gl::GlSurface.
 
-BUG=1251501
+This change prevents RootCompositorFrameSinkImpl::Resize() from updating
+the window size without updating the scale factor on Ozone/Wayland. Else
+the following order of function calls can happen in viz::Display:
+Resize() -&gt; DrawFrame() -&gt; SetLocalSurfaceId(). The Resize() call leads
+to DrawFrame() using the new window size, but the scale factor is only
+updated in SetLocalSurfaceId(). The next DrawFrame() call notices the
+changed scale factor, but the lower layers ignore Resize() calls with
+only a changed scale factor. Thus the scale factor may not be set
+correctly, e.g. when opening a new window.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If43b4deefb6f149c22cf5bc566af0b504068361a">If43b4deefb6f149c22cf5bc566af0b504068361a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3298631">https://chromium-review.googlesource.com/c/chromium/src/+/3298631</a>
-Commit-Queue: Nancy Wang &lt;nancylingwang@chromium.org&gt;
-Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#944918}
+Bug: 1272478
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I044f2c4c188011128f48f073aa225b919286ce45">I044f2c4c188011128f48f073aa225b919286ce45</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3295395">https://chromium-review.googlesource.com/c/chromium/src/+/3295395</a>
+Commit-Queue: Max Ihlenfeldt &lt;mihlenfeldt@igalia.com&gt;
+Reviewed-by: ccameron &lt;ccameron@chromium.org&gt;
+Reviewed-by: Robert Kroeger &lt;rjkroege@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#944928}
 </pre>
 
 </body>
