@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/945027/"> 945027</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8aee68ac6bba3774a0c1a5f427de1f59d2ce305d">8aee68ac6bba3774a0c1a5f427de1f59d2ce305d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/945042/"> 945042</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e9ed54aeb127e8a4f59b5c908dc482fcb5dbeef8">e9ed54aeb127e8a4f59b5c908dc482fcb5dbeef8</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/945044/">945044</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8aee68ac6bba3774a0c1a5f427de1f59d2ce305d
+   e9ed54aeb127e8a4f59b5c908dc482fcb5dbeef8
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8aee68ac6bba3774a0c1a5f427de1f59d2ce305d">
+    <a href="/chromium/src/+log/e9ed54aeb127e8a4f59b5c908dc482fcb5dbeef8">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8aee68ac6bba3774a0c1a5f427de1f59d2ce305d.tar.gz">
+    <a href="/chromium/src/+archive/e9ed54aeb127e8a4f59b5c908dc482fcb5dbeef8.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tanmoy Mollik &lt;triploblastic@chromium.org&gt;
+   Alan Screen &lt;awscreen@chromium.org&gt;
   </td>
   <td>
-   Wed Nov 24 17:51:28 2021
+   Wed Nov 24 18:22:46 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 24 17:51:28 2021
+   Wed Nov 24 18:22:46 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8aee68ac6bba3774a0c1a5f427de1f59d2ce305d/">
-    90b4c733300e5115a974809a3b8b2fd8db4327e9
+   <a href="/chromium/src/+/e9ed54aeb127e8a4f59b5c908dc482fcb5dbeef8/">
+    b9cc787ef4367a67ce3f5b3d29ee470e87eb7ff3
    </a>
   </td>
  </tr>
@@ -166,32 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8aee68ac6bba3774a0c1a5f427de1f59d2ce305d%5E">
-    5c3107431f7326a569c6f04079bdb6c169fdaa40
+   <a href="/chromium/src/+/e9ed54aeb127e8a4f59b5c908dc482fcb5dbeef8%5E">
+    c890e69d8102d2cf481de2cc75a0ea94b0415965
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8aee68ac6bba3774a0c1a5f427de1f59d2ce305d%5E%21/">
+    <a href="/chromium/src/+/e9ed54aeb127e8a4f59b5c908dc482fcb5dbeef8%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Fre] Add ToSDialogBehavior policy support in signin FRE
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Defer system calls in PrintingContext for OOP printing
 
-This cl adds support for the TosDialogBehavior policy in signin FRE
-page. When the policy is fetched and available the FRE screen is
-dismissed after 1 second of delay. UMA crash data collection is disabled
-as well if this policy is available.
+The PrintingContext class contains a mix of application state
+information and calls to OS system APIs.  The application state
+information needs to remain tracked in the browser process.  When
+out-of-process printing is enabled then the system calls need to be
+made over in the Print Backend service.
 
-Bug: 1250625
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6f7c1230da88e58c5cbf41384812034a38bc1163">I6f7c1230da88e58c5cbf41384812034a38bc1163</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3269106">https://chromium-review.googlesource.com/c/chromium/src/+/3269106</a>
-Commit-Queue: Tanmoy Mollik &lt;triploblastic@chromium.org&gt;
-Reviewed-by: Boris Sazonov &lt;bsazonov@chromium.org&gt;
-Reviewed-by: Sky Malice &lt;skym@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#945027}
+Introduce a PrintingContext control member for indicating if system
+calls should be skipped.  When set this would be applicable for
+PrintingContext objects in the browser when OOPPD is enabled, so that
+only the needed application state information is maintained.  When not
+set then it would be applicable for legacy in-browser printing or for
+a PrintingContext operating in the Print Backend process, when making
+OS system calls are appropriate to happen.
+
+Bug: 809738
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icb42e1659ac1615fbba4779cd572b9e4058810ca">Icb42e1659ac1615fbba4779cd572b9e4058810ca</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3179530">https://chromium-review.googlesource.com/c/chromium/src/+/3179530</a>
+Reviewed-by: Raymes Khoury &lt;raymes@chromium.org&gt;
+Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
+Commit-Queue: Alan Screen &lt;awscreen@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#945042}
 </pre>
 
 </body>
