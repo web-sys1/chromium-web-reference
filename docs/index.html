@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/945739/"> 945739</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/33e74bcb4486c1950254759be8e59f8eef9e8a8f">33e74bcb4486c1950254759be8e59f8eef9e8a8f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/945740/"> 945740</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b231a93eb1cb78ec5f5f079b238ee56d693808c9">b231a93eb1cb78ec5f5f079b238ee56d693808c9</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/945739/">945739</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   33e74bcb4486c1950254759be8e59f8eef9e8a8f
+   b231a93eb1cb78ec5f5f079b238ee56d693808c9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/33e74bcb4486c1950254759be8e59f8eef9e8a8f">
+    <a href="/chromium/src/+log/b231a93eb1cb78ec5f5f079b238ee56d693808c9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/33e74bcb4486c1950254759be8e59f8eef9e8a8f.tar.gz">
+    <a href="/chromium/src/+archive/b231a93eb1cb78ec5f5f079b238ee56d693808c9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sebastien Marchand &lt;sebmarchand@google.com&gt;
+   Keishi Hattori &lt;keishi@chromium.org&gt;
   </td>
   <td>
-   Sat Nov 27 20:58:57 2021
+   Sun Nov 28 00:19:16 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Nov 27 20:58:57 2021
+   Sun Nov 28 00:19:16 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/33e74bcb4486c1950254759be8e59f8eef9e8a8f/">
-    498d2a3812d1c9604daf62a65a743221f219bc29
+   <a href="/chromium/src/+/b231a93eb1cb78ec5f5f079b238ee56d693808c9/">
+    be3143ad4c664d9dd8249c892f061ceee55765a7
    </a>
   </td>
  </tr>
@@ -166,46 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/33e74bcb4486c1950254759be8e59f8eef9e8a8f%5E">
-    f3fab6bd644f0c4181a68308a8d5bf242809c023
+   <a href="/chromium/src/+/b231a93eb1cb78ec5f5f079b238ee56d693808c9%5E">
+    33e74bcb4486c1950254759be8e59f8eef9e8a8f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/33e74bcb4486c1950254759be8e59f8eef9e8a8f%5E%21/">
+    <a href="/chromium/src/+/b231a93eb1cb78ec5f5f079b238ee56d693808c9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix static_cast in raw_ptr.h to avoid failures with BRP + CFI
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Temporarily enable use_backup_ref_ptr during MiraclePtr BigRewrite tree closure
 
-Casting U* to T* isn't necessarily valid, because they might be
-comparable due to having the same base class but be different
-derived classes.
+DO NOT REVERT (unless absolutely necessary)! Report build breaks to keishi@(APAC)/glazunov@(EMEA)/sebmarchand@(NA) as soon as you see them.
 
-See
-<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/Linux%20CFI/21460/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/Linux%20CFI/21460/overview</a>
-There's an invalid cast that causes the following error:
+Temporarily enable use_backup_ref_ptr during MiraclePtr BigRewrite tree closure to check for test failures.
+This CL should be reverted before reopening the tree.
 
-../../base/memory/raw_ptr.h:593:38: runtime error: control flow
-integrity check for type 'cc::PictureLayer' failed during
-base-to-derived cast (vtable address 0x564c1fa3bdc8)
-0x564c1fa3bdc8: note: vtable is of type 'cc::SolidColorLayer'
-
-
-See the unittest for an example of the problem.
-
-No-Tree-Checks: true
 Bug: 1272324
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifd2e4d84c191c4e5fa8c7fbdcbd6571261bd0949">Ifd2e4d84c191c4e5fa8c7fbdcbd6571261bd0949</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3304485">https://chromium-review.googlesource.com/c/chromium/src/+/3304485</a>
-Commit-Queue: Sébastien Marchand &lt;sebmarchand@chromium.org&gt;
-Commit-Queue: Sergei Glazunov &lt;glazunov@google.com&gt;
-Owners-Override: Sergei Glazunov &lt;glazunov@chromium.org&gt;
-Reviewed-by: Sergei Glazunov &lt;glazunov@google.com&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#945739}
+Binary-Size: Increase of around 500kb was approved for MiraclePtr
+Include-Ci-Only-Tests: true
+No-Tree-Checks: true
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I86dd45d7de2f6c58356edcd85624a9d9cbed206d">I86dd45d7de2f6c58356edcd85624a9d9cbed206d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3295825">https://chromium-review.googlesource.com/c/chromium/src/+/3295825</a>
+Commit-Queue: Keishi Hattori &lt;keishi@chromium.org&gt;
+Reviewed-by: Bartek Nowierski &lt;bartekn@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#945740}
 </pre>
 
 </body>
