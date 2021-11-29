@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/946140/"> 946140</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/833a36e2b2a2ace091ed9798e7f061fb8918aa8a">833a36e2b2a2ace091ed9798e7f061fb8918aa8a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/946170/"> 946170</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2274cfc02f2088e0059dabff9dd5deedc8791468">2274cfc02f2088e0059dabff9dd5deedc8791468</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/946135/">946135</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   833a36e2b2a2ace091ed9798e7f061fb8918aa8a
+   2274cfc02f2088e0059dabff9dd5deedc8791468
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/833a36e2b2a2ace091ed9798e7f061fb8918aa8a">
+    <a href="/chromium/src/+log/2274cfc02f2088e0059dabff9dd5deedc8791468">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/833a36e2b2a2ace091ed9798e7f061fb8918aa8a.tar.gz">
+    <a href="/chromium/src/+archive/2274cfc02f2088e0059dabff9dd5deedc8791468.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Tiago Vignatti &lt;tvignatti@igalia.com&gt;
   </td>
   <td>
-   Mon Nov 29 21:19:40 2021
+   Mon Nov 29 22:05:05 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Nov 29 21:19:40 2021
+   Mon Nov 29 22:05:05 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/833a36e2b2a2ace091ed9798e7f061fb8918aa8a/">
-    50d622712bc13d2b2e817bf98a3157446501ba6c
+   <a href="/chromium/src/+/2274cfc02f2088e0059dabff9dd5deedc8791468/">
+    02d593d8155d70f1193f7b7e6f1f0727ade76115
    </a>
   </td>
  </tr>
@@ -166,47 +166,54 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/833a36e2b2a2ace091ed9798e7f061fb8918aa8a%5E">
-    77cc85a124b70d8b10705e3221cce607e7963756
+   <a href="/chromium/src/+/2274cfc02f2088e0059dabff9dd5deedc8791468%5E">
+    59395b571ae25ce09a4cdc325505a61aef9fc960
    </a>
    <span>
     [
-    <a href="/chromium/src/+/833a36e2b2a2ace091ed9798e7f061fb8918aa8a%5E%21/">
+    <a href="/chromium/src/+/2274cfc02f2088e0059dabff9dd5deedc8791468%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll ANGLE from f893c61bf89f to 00d0b79fdae0 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ozone/wayland: Add flag to use wayland thread with normal priority
 
-<a href="https://chromium.googlesource.com/angle/angle.git/+log/f893c61bf89f..00d0b79fdae0">https://chromium.googlesource.com/angle/angle.git/+log/f893c61bf89f..00d0b79fdae0</a>
+In ChromeOS, the current priority settings for Lacros processes right
+now are misleading because only the Wayland event watcher thread
+("wayland-fd") is running with high display priority. The ash-chrome
+situation is different, with the following all set to use display
+priority:
 
-2021-11-29 m.maiya@samsung.com Bug fix in BitSetArray iterator
+- browser UI and IO threads (enabled by BrowserUseDisplayThreadPriority
+finch flag)
+- GPU main, viz compositor and IO threads (enabled by
+GpuUseDisplayThreadPriority)
+- renderer compositor &amp; IO threads (enabled by
+BlinkCompositorUseDisplayThreadPriority)
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/angle-chromium-autoroll">https://autoroll.skia.org/r/angle-chromium-autoroll</a>
-Please CC ynovikov@google.com on the revert to ensure that a human
-is aware of the problem.
+It doesn't make sense to simply match-up Lacros settings with ash-chrome
+(see crrev.com/c/3243266) because these systems are different by nature.
+For example, critical user journey tests on Google Docs shows that
+setting wayland-fd thread to normal priority improves page loading time
+in Lacros (benchmarked locally). So with a better understanding of CPU
+scheduling and boost mechanisms, our desire next is to come up with an
+efficient overall solution for threads priorities in Lacros.
 
-To file a bug in ANGLE: <a href="https://bugs.chromium.org/p/angleproject/issues/entry">https://bugs.chromium.org/p/angleproject/issues/entry</a>
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+Therefore, in order to test the effects of changing threads priorities
+in Lacros, this CL adds the ability to use wayland-fd with normal
+priority by passing the --use-wayland-normal-thread-priority flag.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+BUG=1262133
+TEST=tast run $device lacros.DocsCUJ (modified to use the newly flag)
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chromium.try:android_optional_gpu_tests_rel;luci.chromium.try:linux_optional_gpu_tests_rel;luci.chromium.try:mac_optional_gpu_tests_rel;luci.chromium.try:win_optional_gpu_tests_rel;luci.chromium.try:linux-swangle-try-x64;luci.chromium.try:win-swangle-try-x86
-Bug: None
-Tbr: ynovikov@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I048de7b25862fe7efc5677c86a6680f761ef9f8e">I048de7b25862fe7efc5677c86a6680f761ef9f8e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3307599">https://chromium-review.googlesource.com/c/chromium/src/+/3307599</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#946140}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I113b60151b43e0ab112606a594bde2e7fdb97e84">I113b60151b43e0ab112606a594bde2e7fdb97e84</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3304121">https://chromium-review.googlesource.com/c/chromium/src/+/3304121</a>
+Commit-Queue: Tiago Vignatti &lt;tvignatti@igalia.com&gt;
+Reviewed-by: Robert Kroeger &lt;rjkroege@chromium.org&gt;
+Reviewed-by: Maksim Sisov &lt;msisov@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#946170}
 </pre>
 
 </body>
