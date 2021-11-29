@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/945824/"> 945824</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e42fdef3c68e84faafaa7d65cf890f93a43a5d21">e42fdef3c68e84faafaa7d65cf890f93a43a5d21</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/945834/"> 945834</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/131d9643c86948f6da39adf6a826c0e9c9b0afec">131d9643c86948f6da39adf6a826c0e9c9b0afec</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/945830/">945830</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e42fdef3c68e84faafaa7d65cf890f93a43a5d21
+   131d9643c86948f6da39adf6a826c0e9c9b0afec
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e42fdef3c68e84faafaa7d65cf890f93a43a5d21">
+    <a href="/chromium/src/+log/131d9643c86948f6da39adf6a826c0e9c9b0afec">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e42fdef3c68e84faafaa7d65cf890f93a43a5d21.tar.gz">
+    <a href="/chromium/src/+archive/131d9643c86948f6da39adf6a826c0e9c9b0afec.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Curtis McMullan &lt;curtismcmullan@chromium.org&gt;
+   tby &lt;tby@chromium.org&gt;
   </td>
   <td>
-   Mon Nov 29 00:52:57 2021
+   Mon Nov 29 02:13:46 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Nov 29 00:52:57 2021
+   Mon Nov 29 02:13:46 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e42fdef3c68e84faafaa7d65cf890f93a43a5d21/">
-    8cb44d3ebdfb1c27b5229e07ddb987cc17912e66
+   <a href="/chromium/src/+/131d9643c86948f6da39adf6a826c0e9c9b0afec/">
+    6c1028a72a2d2ec2e48915b2ddafc4050460a469
    </a>
   </td>
  </tr>
@@ -166,31 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e42fdef3c68e84faafaa7d65cf890f93a43a5d21%5E">
-    fe805e5824fb5774a068d0da29e7bc9dcba7168f
+   <a href="/chromium/src/+/131d9643c86948f6da39adf6a826c0e9c9b0afec%5E">
+    4dd6afda174d364f5e0b67a17c4e532b0c8d52d6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e42fdef3c68e84faafaa7d65cf890f93a43a5d21%5E%21/">
+    <a href="/chromium/src/+/131d9643c86948f6da39adf6a826c0e9c9b0afec%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">lp: add language pack state metric
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Categorical search] Ranker API and organization improvements
 
-Add metric to record the state of the requested handwriting language
-pack. This is recorded from the VK when a user navigates to a
-handwriting input which is powered by language packs.
+Right now we have a Rank method on Rankers, but we really need two
+things: a method to rank results, and a method to rank categories. These
+should be able to operate in two modes:
+1. Immutably returning a vector of scores for results
+2. Mutably changing the score values on result or category objects
 
-Bug: 1231905
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6b2e3ef10e77463ccd971efb1d22e00701eb7b6f">I6b2e3ef10e77463ccd971efb1d22e00701eb7b6f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3298292">https://chromium-review.googlesource.com/c/chromium/src/+/3298292</a>
-Commit-Queue: Curtis McMullan &lt;curtismcmullan@chromium.org&gt;
-Reviewed-by: Claudio M &lt;claudiomagni@chromium.org&gt;
-Reviewed-by: Darren Shen &lt;shend@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#945824}
+These are respectively used in these use-cases:
+1. A ranker composed of other rankers (eg. a mixture of experts) wants
+   to query the ranking of its constituents.
+2. That same ranker then needs to decide and set a score for a result.
+
+It might might make sense to split these into two separate interfaces
+in future, but I don't think there's a good reason to yet.
+
+Unrelatedly, I've moved some files around in this CL to make clear the
+distinction between rankers, ie. things implementing the Ranker
+interface, and the data structures/algorithms that back them. The
+latter has been moved to search/util/, our very own //base.
+
+Bug: 1199207
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I04ce12217401cbc580d943033e039b789b57a30c">I04ce12217401cbc580d943033e039b789b57a30c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3296866">https://chromium-review.googlesource.com/c/chromium/src/+/3296866</a>
+Commit-Queue: Tony Yeoman &lt;tby@chromium.org&gt;
+Reviewed-by: Amanda Deacon &lt;amandadeacon@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#945834}
 </pre>
 
 </body>
