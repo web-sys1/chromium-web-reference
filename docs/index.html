@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/946170/"> 946170</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2274cfc02f2088e0059dabff9dd5deedc8791468">2274cfc02f2088e0059dabff9dd5deedc8791468</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/946207/"> 946207</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e3d6b44a3d9ca7346e907540acd995e097a91d28">e3d6b44a3d9ca7346e907540acd995e097a91d28</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/946179/">946179</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/138565b51956b552065fffe5a8ac1e4919303d3c">138565b51956b552065fffe5a8ac1e4919303d3c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/946202/">946202</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0e3de80b1bb55ed72fe14d1f8f8872d877731b7f">0e3de80b1bb55ed72fe14d1f8f8872d877731b7f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2274cfc02f2088e0059dabff9dd5deedc8791468
+   e3d6b44a3d9ca7346e907540acd995e097a91d28
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2274cfc02f2088e0059dabff9dd5deedc8791468">
+    <a href="/chromium/src/+log/e3d6b44a3d9ca7346e907540acd995e097a91d28">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2274cfc02f2088e0059dabff9dd5deedc8791468.tar.gz">
+    <a href="/chromium/src/+archive/e3d6b44a3d9ca7346e907540acd995e097a91d28.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tiago Vignatti &lt;tvignatti@igalia.com&gt;
+   Victor Gomes &lt;victorgomes@chromium.org&gt;
   </td>
   <td>
-   Mon Nov 29 22:05:05 2021
+   Mon Nov 29 23:29:38 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Nov 29 22:05:05 2021
+   Mon Nov 29 23:29:38 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2274cfc02f2088e0059dabff9dd5deedc8791468/">
-    02d593d8155d70f1193f7b7e6f1f0727ade76115
+   <a href="/chromium/src/+/e3d6b44a3d9ca7346e907540acd995e097a91d28/">
+    6cf7597f3d1dde78d408fee3107e8b1a99d98d97
    </a>
   </td>
  </tr>
@@ -166,54 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2274cfc02f2088e0059dabff9dd5deedc8791468%5E">
-    59395b571ae25ce09a4cdc325505a61aef9fc960
+   <a href="/chromium/src/+/e3d6b44a3d9ca7346e907540acd995e097a91d28%5E">
+    8be7cd99f11509820e7bff35498057d6c5813f04
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2274cfc02f2088e0059dabff9dd5deedc8791468%5E%21/">
+    <a href="/chromium/src/+/e3d6b44a3d9ca7346e907540acd995e097a91d28%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ozone/wayland: Add flag to use wayland thread with normal priority
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[unittests] Use multi threaded environment in data_decoder unittest
 
-In ChromeOS, the current priority settings for Lacros processes right
-now are misleading because only the Wayland event watcher thread
-("wayland-fd") is running with high display priority. The ash-chrome
-situation is different, with the following all set to use display
-priority:
+We cannot initialize V8 correctly in a SingleThreadedTaskEnvironment,
+since GC, the optimizing compiler and the new baseline compiler might
+run concurrently.
 
-- browser UI and IO threads (enabled by BrowserUseDisplayThreadPriority
-finch flag)
-- GPU main, viz compositor and IO threads (enabled by
-GpuUseDisplayThreadPriority)
-- renderer compositor &amp; IO threads (enabled by
-BlinkCompositorUseDisplayThreadPriority)
-
-It doesn't make sense to simply match-up Lacros settings with ash-chrome
-(see crrev.com/c/3243266) because these systems are different by nature.
-For example, critical user journey tests on Google Docs shows that
-setting wayland-fd thread to normal priority improves page loading time
-in Lacros (benchmarked locally). So with a better understanding of CPU
-scheduling and boost mechanisms, our desire next is to come up with an
-efficient overall solution for threads priorities in Lacros.
-
-Therefore, in order to test the effects of changing threads priorities
-in Lacros, this CL adds the ability to use wayland-fd with normal
-priority by passing the --use-wayland-normal-thread-priority flag.
-
-BUG=1262133
-TEST=tast run $device lacros.DocsCUJ (modified to use the newly flag)
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I113b60151b43e0ab112606a594bde2e7fdb97e84">I113b60151b43e0ab112606a594bde2e7fdb97e84</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3304121">https://chromium-review.googlesource.com/c/chromium/src/+/3304121</a>
-Commit-Queue: Tiago Vignatti &lt;tvignatti@igalia.com&gt;
-Reviewed-by: Robert Kroeger &lt;rjkroege@chromium.org&gt;
-Reviewed-by: Maksim Sisov &lt;msisov@igalia.com&gt;
-Cr-Commit-Position: refs/heads/main@{#946170}
+Bug: v8:12429, v8:12054
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I873d8b7c3a142f1b72b80686dec4faf665b7a3a0">I873d8b7c3a142f1b72b80686dec4faf665b7a3a0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3303511">https://chromium-review.googlesource.com/c/chromium/src/+/3303511</a>
+Auto-Submit: Victor Gomes &lt;victorgomes@chromium.org&gt;
+Commit-Queue: Robert Sesek &lt;rsesek@chromium.org&gt;
+Reviewed-by: Robert Sesek &lt;rsesek@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#946207}
 </pre>
 
 </body>
