@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/946344/"> 946344</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9c7403ab21ff5908490f90db756145a9474ca028">9c7403ab21ff5908490f90db756145a9474ca028</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/946352/"> 946352</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6362119582d94543d33388baaea472768e526809">6362119582d94543d33388baaea472768e526809</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/946344/">946344</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9c7403ab21ff5908490f90db756145a9474ca028">9c7403ab21ff5908490f90db756145a9474ca028</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/946353/">946353</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/22fe54831db2ac7de60dab6de92cb7e5ae095c12">22fe54831db2ac7de60dab6de92cb7e5ae095c12</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9c7403ab21ff5908490f90db756145a9474ca028
+   6362119582d94543d33388baaea472768e526809
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9c7403ab21ff5908490f90db756145a9474ca028">
+    <a href="/chromium/src/+log/6362119582d94543d33388baaea472768e526809">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9c7403ab21ff5908490f90db756145a9474ca028.tar.gz">
+    <a href="/chromium/src/+archive/6362119582d94543d33388baaea472768e526809.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Frank Liberato &lt;liberato@chromium.org&gt;
+   Sergiy Belozorov &lt;sergiyb@chromium.org&gt;
   </td>
   <td>
-   Tue Nov 30 06:23:17 2021
+   Tue Nov 30 07:22:15 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Nov 30 06:23:17 2021
+   Tue Nov 30 07:22:15 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9c7403ab21ff5908490f90db756145a9474ca028/">
-    ee3e609f6a052ea5916acef64b95e2d110a3d182
+   <a href="/chromium/src/+/6362119582d94543d33388baaea472768e526809/">
+    286aa70944e8648cc1a98a93c1cd7ace21a62f7c
    </a>
   </td>
  </tr>
@@ -166,41 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9c7403ab21ff5908490f90db756145a9474ca028%5E">
-    afd3c658f932029bb4953b1e2498a500799c6d7f
+   <a href="/chromium/src/+/6362119582d94543d33388baaea472768e526809%5E">
+    e0f699cb747b2258296444a7eaa33950b4858330
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9c7403ab21ff5908490f90db756145a9474ca028%5E%21/">
+    <a href="/chromium/src/+/6362119582d94543d33388baaea472768e526809%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Regularize DecoderAdapter and DecoderStreamAdapter profile support
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Correctly choose device or account domain name for update notifications
 
-Rather than doing special work for DecoderStreamAdapter to determine
-if a video config is supported, just do exactly what DecoderAdapter
-would.  While DecoderStream should ask the decoder factory instead
-of asking the GPU factories, it is expected that the DecoderFactory
-doesn't actually add anything, especially if Chrome SW decoders are
-turned off for RTC.
+There are two policies that can trigger update notifications:
+ - RelaunchNotification account/user policy
+ - DeviceMinimumVersion device policy
 
-To be safe, enforce it.
+When RelaunchNotification user policy triggers notifications, we should use account domain manager, which ensures that if the logged-in user is managed by a different domain, we use that domain. For unmanaged accounts, which may have this policy configured via other mechanisms (extension, flags, etc.), we fall back to using a generic message without domain name (IDS_UPDATE_NOTIFICATION_MESSAGE_LEARN_MORE).
 
-Also, make DecoderStreamAdapter early-return against whatever the
-gpu factory says is an unsupported config, rather than hopping
-through init.  This might have some unexpected consequences, if
-a client believes that it has hw support because of it, only to
-have the hw decoder fall back to software asynchronously.
+When DeviceMinimumVersion device policy is set, the user policy RelaunchNotification is ignored and overridden to kRequired. This CL implements logic that ensures that we display device domain in this case.
 
-Bug: b/207764946
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I182dc19e6a624fa0b14b50d6152675dead08ff03">I182dc19e6a624fa0b14b50d6152675dead08ff03</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3305493">https://chromium-review.googlesource.com/c/chromium/src/+/3305493</a>
-Commit-Queue: Frank Liberato &lt;liberato@chromium.org&gt;
-Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#946344}
+R=newcomer
+
+Bug: 1242311
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I34dc6e64fa1285f5c65c80cdde5ed588339a9ab0">I34dc6e64fa1285f5c65c80cdde5ed588339a9ab0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3279401">https://chromium-review.googlesource.com/c/chromium/src/+/3279401</a>
+Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+Reviewed-by: Alex Newcomer &lt;newcomer@chromium.org&gt;
+Reviewed-by: Dana Fried &lt;dfried@chromium.org&gt;
+Commit-Queue: Sergiy Belozorov &lt;sergiyb@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#946352}
 </pre>
 
 </body>
