@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/946787/"> 946787</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ec8e4e53a9d1a26180f5bf5f2901063608eb6936">ec8e4e53a9d1a26180f5bf5f2901063608eb6936</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/946798/"> 946798</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ea46200dbe1178350830ac5b912b00594db11221">ea46200dbe1178350830ac5b912b00594db11221</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/946790/">946790</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7837c43b3b5dc2268072fa68e56bf6da8379e56b">7837c43b3b5dc2268072fa68e56bf6da8379e56b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/946801/">946801</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4b067159651cf466d2c29ad54298d945bf548ed1">4b067159651cf466d2c29ad54298d945bf548ed1</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ec8e4e53a9d1a26180f5bf5f2901063608eb6936
+   ea46200dbe1178350830ac5b912b00594db11221
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ec8e4e53a9d1a26180f5bf5f2901063608eb6936">
+    <a href="/chromium/src/+log/ea46200dbe1178350830ac5b912b00594db11221">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ec8e4e53a9d1a26180f5bf5f2901063608eb6936.tar.gz">
+    <a href="/chromium/src/+archive/ea46200dbe1178350830ac5b912b00594db11221.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Gordon Seto &lt;gordonseto@google.com&gt;
+   Sammie Quon &lt;sammiequon@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 01 00:33:23 2021
+   Wed Dec 01 01:10:59 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 01 00:33:23 2021
+   Wed Dec 01 01:10:59 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ec8e4e53a9d1a26180f5bf5f2901063608eb6936/">
-    f16e5fd77315e8c263b3b3a6bbedb7b7825e69b7
+   <a href="/chromium/src/+/ea46200dbe1178350830ac5b912b00594db11221/">
+    953ea8fdb066e2a357a538fedadcabf0ef84bfcc
    </a>
   </td>
  </tr>
@@ -166,45 +166,52 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ec8e4e53a9d1a26180f5bf5f2901063608eb6936%5E">
-    a51a177a0af3226f5be5fbcdac379a567b68e53a
+   <a href="/chromium/src/+/ea46200dbe1178350830ac5b912b00594db11221%5E">
+    d55b90e976f6af36b90094c609152edee60a052e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ec8e4e53a9d1a26180f5bf5f2901063608eb6936%5E%21/">
+    <a href="/chromium/src/+/ea46200dbe1178350830ac5b912b00594db11221%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CrOS Bluetooth] Fix AdapterStateController rapid enable toggling.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "desk_templates: Add browsertest for browsers using native UI."
 
-Fix issue in AdapterStateController where if Bluetooth is enabled,
-then rapidly disabled, Bluetooth will re-enable itself. This is because
-when BluetoothAdapter::SetPowered() finishes and its success callback
-is fired, momentarily, the value it returns in
-BluetoothAdapter::IsPowered() is still the old value. Therefore, when
-AdapterStateController attempts to perform the next queued state change
-(disable) once the success callback finishes, it believes the adapter
-is already disabled because SetPowered() returns false, and performs
-no action, leaving the adapter in its current state (enabled). The UI
-updates to reflect the still-enabled-state, giving the impression that
-Bluetooth has re-enabled.
+This is a reland of 22cbef27a6cdaa4333b2589056b93c5d6ec62390
 
-This CL updates AdapterStateController to not attempt to perform the
-next queued state change when the success callback is fired, instead
-waiting until AdapterPoweredChanged() is called to ensure the adapter
-is in the correct state before performing the next state change.
+Failed due to the one second temporary wait (until Daniel's change
+lands) was not enough on slower debug builds. Adds an additional wait
+for the desk change animation in the reland.
 
-Bug: 1010321
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0cdd871d5452730838f1e74b13de39ef663efc32">I0cdd871d5452730838f1e74b13de39ef663efc32</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3309686">https://chromium-review.googlesource.com/c/chromium/src/+/3309686</a>
-Commit-Queue: Gordon Seto &lt;gordonseto@google.com&gt;
-Commit-Queue: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
-Auto-Submit: Gordon Seto &lt;gordonseto@google.com&gt;
-Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#946787}
+Original change's description:
+&gt; desk_templates: Add browsertest for browsers using native UI.
+&gt;
+&gt; This is a port of DesksTemplatesClientTest.LaunchTemplateWithBrowserWindow.
+&gt; Keep the old one for now as the extension still exists.
+&gt;
+&gt; Also fixes an issue, where GetURLs was always returning vectors of the
+&gt; right size but empty contents. When creating the browser, we need to
+&gt; wait until the navigation to the URLs is complete, and when relauching
+&gt; a browser, we need to check the visible URL as the non active tabs
+&gt; aren't visited.
+&gt;
+&gt; Test: browser_tests DesksTemplatesClientTest.NativeUILaunchBrowser
+&gt; Bug: 1273532, 1273632
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I04be5df2beab022c7f869bacdff37963e01ee142">I04be5df2beab022c7f869bacdff37963e01ee142</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3300505">https://chromium-review.googlesource.com/c/chromium/src/+/3300505</a>
+&gt; Reviewed-by: Richard Chui &lt;richui@chromium.org&gt;
+&gt; Commit-Queue: Sammie Quon &lt;sammiequon@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#946167}
+
+Bug: 1273532, 1273632
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I03137e0482458dd13e5d8e8c854c38b37af5118f">I03137e0482458dd13e5d8e8c854c38b37af5118f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3309757">https://chromium-review.googlesource.com/c/chromium/src/+/3309757</a>
+Commit-Queue: Sammie Quon &lt;sammiequon@chromium.org&gt;
+Reviewed-by: Richard Chui &lt;richui@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#946798}
 </pre>
 
 </body>
