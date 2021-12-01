@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/947000/"> 947000</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b238a9796c657c4fc0020245a04e6840602fec7a">b238a9796c657c4fc0020245a04e6840602fec7a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/947012/"> 947012</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b4683c18373aa9c3228f2d15abb6eef7eb673567">b4683c18373aa9c3228f2d15abb6eef7eb673567</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/946993/">946993</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3b34af5bb7736c13c4734402f064583a773e1a55">3b34af5bb7736c13c4734402f064583a773e1a55</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/947010/">947010</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fbf1f79cf78f47e817e40889eabe49995e70addc">fbf1f79cf78f47e817e40889eabe49995e70addc</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b238a9796c657c4fc0020245a04e6840602fec7a
+   b4683c18373aa9c3228f2d15abb6eef7eb673567
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b238a9796c657c4fc0020245a04e6840602fec7a">
+    <a href="/chromium/src/+log/b4683c18373aa9c3228f2d15abb6eef7eb673567">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b238a9796c657c4fc0020245a04e6840602fec7a.tar.gz">
+    <a href="/chromium/src/+archive/b4683c18373aa9c3228f2d15abb6eef7eb673567.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Adrian Taylor &lt;adetaylor@chromium.org&gt;
+   Miriam Zimmerman &lt;mutexlox@google.com&gt;
   </td>
   <td>
-   Wed Dec 01 15:02:23 2021
+   Wed Dec 01 15:44:33 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 01 15:02:23 2021
+   Wed Dec 01 15:44:33 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b238a9796c657c4fc0020245a04e6840602fec7a/">
-    022e05363401bd2e30d2b3ea1686b4963f5e1071
+   <a href="/chromium/src/+/b4683c18373aa9c3228f2d15abb6eef7eb673567/">
+    1951872ed1f200042c0cbeff9cb5fe5b8abb564b
    </a>
   </td>
  </tr>
@@ -166,44 +166,57 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b238a9796c657c4fc0020245a04e6840602fec7a%5E">
-    9776367595450ef7d4b91a5a49e7e0183ad28db4
+   <a href="/chromium/src/+/b4683c18373aa9c3228f2d15abb6eef7eb673567%5E">
+    807b721600d0b9f844ed94e2300b96436a45714e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b238a9796c657c4fc0020245a04e6840602fec7a%5E%21/">
+    <a href="/chromium/src/+/b4683c18373aa9c3228f2d15abb6eef7eb673567%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[rust] Cargo crate build script emulation improvements.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "base: Feature: check for disallowed prefixes."
 
-This improves our emulation of cargo in three ways which have proven to
-be necessary when attempting to build bindgen with gn:
+This is a reland of 39acd95ec27dacb146f82d324a94a4c36da4e332
+The change was speculatively reverted in
+<a href="https://chromium-review.googlesource.com/c/chromium/src/+/3309124">https://chromium-review.googlesource.com/c/chromium/src/+/3309124</a>
+but <a href="https://crbug.com/1275502">https://crbug.com/1275502</a> still happens, e.g. in
+<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/Linux%20TSan%20Tests/71534/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/Linux%20TSan%20Tests/71534/overview</a>
 
-1) Better error handling. If the build script fails, the whole build
-should (obviously) fail.
-2) Run the build script within the directory of the build script itself.
-This is documented cargo behavior and some scripts rely on it.
-This is also passed to the script as CARGO_MANIFEST_DIR, which we also
-now pass.
-3) Properly rebase the OUT_DIR; previously it was a source-relative path
-which was incomprehensible to the build script because it started with
-//.
+Original change's description:
+&gt; base: Feature: check for disallowed prefixes.
+&gt;
+&gt; Creators of a base::Feature object can insert `CONSTINIT` at the
+&gt; call site to ensure compile-time initialization (and skip this check at
+&gt; runtime). In a future CL, we may attempt to apply this change across the
+&gt; codebase.
+&gt;
+&gt; Also, clean up two base::Features that incorrectly failed to define a
+&gt; default value.
+&gt;
+&gt; BUG=chromium:1263068
+&gt; TEST=unit tests
+&gt;
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ice6134d4e1c057353c8f5099d121e23bc04fcb1c">Ice6134d4e1c057353c8f5099d121e23bc04fcb1c</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3297126">https://chromium-review.googlesource.com/c/chromium/src/+/3297126</a>
+&gt; Reviewed-by: Alexei Svitkine &lt;asvitkine@chromium.org&gt;
+&gt; Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+&gt; Reviewed-by: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+&gt; Commit-Queue: Miriam Zimmerman &lt;mutexlox@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#946696}
 
-This also solves conflicts in the case that a single BUILD.gn has
-more than one cargo_crate(..) template present. For example, bindgen
-builds both a library and an executable. In this case, their flags
-output filename would conflict prior to this change.
-
-Bug: 1272780
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic9bfbb1c32425f3c7e87e47e3c2e94cf590adac0">Ic9bfbb1c32425f3c7e87e47e3c2e94cf590adac0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3297137">https://chromium-review.googlesource.com/c/chromium/src/+/3297137</a>
-Reviewed-by: danakj &lt;danakj@chromium.org&gt;
-Commit-Queue: Adrian Taylor &lt;adetaylor@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#947000}
+Bug: chromium:1263068
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iadf15b780329cf4442c583ce042b60ef14c9f3d0">Iadf15b780329cf4442c583ce042b60ef14c9f3d0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3310638">https://chromium-review.googlesource.com/c/chromium/src/+/3310638</a>
+Owners-Override: Pavol Marko &lt;pmarko@chromium.org&gt;
+Auto-Submit: Pavol Marko &lt;pmarko@chromium.org&gt;
+Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Reviewed-by: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#947012}
 </pre>
 
 </body>
