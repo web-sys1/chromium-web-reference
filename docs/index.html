@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/947937/"> 947937</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/745a3893aeac027ca3b4468c4760d6ff3d0abdfa">745a3893aeac027ca3b4468c4760d6ff3d0abdfa</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/947953/"> 947953</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/28c0a7455d7d58ad69e4112a8ee0950c66327b29">28c0a7455d7d58ad69e4112a8ee0950c66327b29</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/947937/">947937</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/745a3893aeac027ca3b4468c4760d6ff3d0abdfa">745a3893aeac027ca3b4468c4760d6ff3d0abdfa</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/947944/">947944</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/66c0a874bb47c91e7587164eee030c88d6213e28">66c0a874bb47c91e7587164eee030c88d6213e28</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   745a3893aeac027ca3b4468c4760d6ff3d0abdfa
+   28c0a7455d7d58ad69e4112a8ee0950c66327b29
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/745a3893aeac027ca3b4468c4760d6ff3d0abdfa">
+    <a href="/chromium/src/+log/28c0a7455d7d58ad69e4112a8ee0950c66327b29">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/745a3893aeac027ca3b4468c4760d6ff3d0abdfa.tar.gz">
+    <a href="/chromium/src/+archive/28c0a7455d7d58ad69e4112a8ee0950c66327b29.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Joel Hockey &lt;joelhockey@chromium.org&gt;
+   Maksim Sisov &lt;msisov@igalia.com&gt;
   </td>
   <td>
-   Fri Dec 03 09:46:59 2021
+   Fri Dec 03 11:08:08 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 03 09:46:59 2021
+   Fri Dec 03 11:08:08 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/745a3893aeac027ca3b4468c4760d6ff3d0abdfa/">
-    8cedfdedd058b83568b9f7d67a0aa47fbea05d9c
+   <a href="/chromium/src/+/28c0a7455d7d58ad69e4112a8ee0950c66327b29/">
+    a4a7a5a351ee9d280c1f1c5db360db53406d994a
    </a>
   </td>
  </tr>
@@ -166,47 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/745a3893aeac027ca3b4468c4760d6ff3d0abdfa%5E">
-    01f87385c556d868e8c5ba125921a2b27867f5bb
+   <a href="/chromium/src/+/28c0a7455d7d58ad69e4112a8ee0950c66327b29%5E">
+    31da0173d9689f1c19d1d2d6a66e852c882e5e84
    </a>
    <span>
     [
-    <a href="/chromium/src/+/745a3893aeac027ca3b4468c4760d6ff3d0abdfa%5E%21/">
+    <a href="/chromium/src/+/28c0a7455d7d58ad69e4112a8ee0950c66327b29%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Exclude OS_WIN .url shortcuts from DataTransfer.files
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ozone/wayland: send the entire rounded clip bounds
 
-In windows, calls to OSExchangeData::SetURL() create both a URL, and
-a FILE which is a *.url shortcut:
+The mask filter for rounded corners must be applied to
+the entire layer instead of a single quad. Thus, its
+size and position in Chromium compositor looks like
+quad1.size + quad2.size and the position of the
+mask starts with the position of the quad nearest to 0,0.
 
- [InternetShortcut]
- URL=...
+Thus, send an entire rounded corners bounds to Wayland
+compositor so that it can apply the rounded corners bounds
+later when quads are composited together.
 
-This files is useful when doing a drag-drop of a link from the browser
-to Windows Explorer, but when dropping in the browser, users do not
-expect to have this file.
-
-crrev.com/c/3146940 allows images dragged from a renderer to also be
-dropped into a renderer. The change makes a call to GetFileContents()
-and uses it to populate DataTransfer.files without realizing that
-OSExchangeData may contain the *.url shortcut file.
-
-The fix is for OSExchangeDataProviderWin which is creating this file
-in SetURL() / SetFileContents() to mark that GetFileContents() should
-return empty when it holds a URL shortcut by adding an empty item
-with key "chromium/x-ignore-file-contents".
-
-Bug: 1274395
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I257d54f7ad649760eb9303792617bbb9380aac6e">I257d54f7ad649760eb9303792617bbb9380aac6e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3307154">https://chromium-review.googlesource.com/c/chromium/src/+/3307154</a>
-Commit-Queue: Joel Hockey &lt;joelhockey@chromium.org&gt;
-Auto-Submit: Joel Hockey &lt;joelhockey@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#947937}
+Bug: 1263496
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I056dbff371531907b33244e8b75d13094f902fb7">I056dbff371531907b33244e8b75d13094f902fb7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3282590">https://chromium-review.googlesource.com/c/chromium/src/+/3282590</a>
+Commit-Queue: Maksim Sisov &lt;msisov@igalia.com&gt;
+Reviewed-by: Kramer Ge &lt;fangzhoug@chromium.org&gt;
+Reviewed-by: Tom Sepez &lt;tsepez@chromium.org&gt;
+Reviewed-by: Peter McNeeley &lt;petermcneeley@google.com&gt;
+Reviewed-by: Robert Kroeger &lt;rjkroege@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#947953}
 </pre>
 
 </body>
