@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/947989/"> 947989</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/657785ed88d4dc4e67b1156ee5f1d26f26621b60">657785ed88d4dc4e67b1156ee5f1d26f26621b60</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/947997/"> 947997</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8e46e3b259b27efd97f42e15e63ef84c5d36dd95">8e46e3b259b27efd97f42e15e63ef84c5d36dd95</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/947996/">947996</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   657785ed88d4dc4e67b1156ee5f1d26f26621b60
+   8e46e3b259b27efd97f42e15e63ef84c5d36dd95
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/657785ed88d4dc4e67b1156ee5f1d26f26621b60">
+    <a href="/chromium/src/+log/8e46e3b259b27efd97f42e15e63ef84c5d36dd95">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/657785ed88d4dc4e67b1156ee5f1d26f26621b60.tar.gz">
+    <a href="/chromium/src/+archive/8e46e3b259b27efd97f42e15e63ef84c5d36dd95.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Hirthanan Subenderan &lt;hirthanan@google.com&gt;
+   Joe Downing &lt;joedow@google.com&gt;
   </td>
   <td>
-   Fri Dec 03 14:26:09 2021
+   Fri Dec 03 14:57:47 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 03 14:26:09 2021
+   Fri Dec 03 14:57:47 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/657785ed88d4dc4e67b1156ee5f1d26f26621b60/">
-    fc78a541894fc6067a07755a9880f3bbd1df5aa9
+   <a href="/chromium/src/+/8e46e3b259b27efd97f42e15e63ef84c5d36dd95/">
+    6edd843b4cb0c3567497a5c5c28335f45c8fedb7
    </a>
   </td>
  </tr>
@@ -166,32 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/657785ed88d4dc4e67b1156ee5f1d26f26621b60%5E">
-    74168dbec3df2348b704e02482b7ec7131c9f111
+   <a href="/chromium/src/+/8e46e3b259b27efd97f42e15e63ef84c5d36dd95%5E">
+    0f3ebb2ff901bf46a4cf729f22fe2cd2b09e4884
    </a>
    <span>
     [
-    <a href="/chromium/src/+/657785ed88d4dc4e67b1156ee5f1d26f26621b60%5E%21/">
+    <a href="/chromium/src/+/8e46e3b259b27efd97f42e15e63ef84c5d36dd95%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Implement PSM protocol requests (Oprf, Query, Import).
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update CRD security key forwarding to use Mojo interfaces
 
-Connect state machine transitions via network requests to PSM endpoints.
-Update local state in order to cache PSM ID membership results. This is
-important to avoid unnecessary network calls, which are very expensive.
+This CL removes the deprecated IPC MACROs for security forwarding and
+replaces them with well defined Mojo interfaces.  For this flow,
+the CRD host exposes an IPC channel which a separate binary
+(remote_security_key) connects to when the local SSH_AGENT needs to
+send a request to the remote SK.
 
-BUG=chromium:1204630, chromium:1262201
+One notable change is that the IPC server no longer sends 'ready' or
+'invalid session' messages to the IPC client.  This seemed overly
+complicated since we can rely on the IPC connected event to indicate'
+when the channel is ready and the server can close the channel to
+signal that there was an invalid state (wrong session for instance).
+The client doesn't need to know why the connection is invalid so
+this seemed like a reasonable change.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifa39821742427db6ce5594ac7ab62a088cb7a5d8">Ifa39821742427db6ce5594ac7ab62a088cb7a5d8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3204376">https://chromium-review.googlesource.com/c/chromium/src/+/3204376</a>
-Commit-Queue: Hirthanan Subenderan &lt;hirthanan@google.com&gt;
-Reviewed-by: Erik Chen &lt;erikchen@chromium.org&gt;
-Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#947989}
+Bug: b:178114059
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0df5a0b4b4d86f0c14846a15e9535fa6b659b3a1">I0df5a0b4b4d86f0c14846a15e9535fa6b659b3a1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3278485">https://chromium-review.googlesource.com/c/chromium/src/+/3278485</a>
+Commit-Queue: Joe Downing &lt;joedow@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Yuwei Huang &lt;yuweih@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#947997}
 </pre>
 
 </body>
