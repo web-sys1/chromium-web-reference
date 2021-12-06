@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/948450/"> 948450</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7d87e8e51171d5df9907f467db436cc934fcf740">7d87e8e51171d5df9907f467db436cc934fcf740</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/948456/"> 948456</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f4d2db7a3519d4cd21dcd6e4bf6fc529b25eb8e1">f4d2db7a3519d4cd21dcd6e4bf6fc529b25eb8e1</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/948454/">948454</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/772e59ffe9adf005acc330a1f2ff309bceb16731">772e59ffe9adf005acc330a1f2ff309bceb16731</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/948459/">948459</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0464d6f3e2709e2c1118da6385022648d954ee5d">0464d6f3e2709e2c1118da6385022648d954ee5d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7d87e8e51171d5df9907f467db436cc934fcf740
+   f4d2db7a3519d4cd21dcd6e4bf6fc529b25eb8e1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7d87e8e51171d5df9907f467db436cc934fcf740">
+    <a href="/chromium/src/+log/f4d2db7a3519d4cd21dcd6e4bf6fc529b25eb8e1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7d87e8e51171d5df9907f467db436cc934fcf740.tar.gz">
+    <a href="/chromium/src/+archive/f4d2db7a3519d4cd21dcd6e4bf6fc529b25eb8e1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Trent Apted &lt;tapted@chromium.org&gt;
+   Titouan Rigoudy &lt;titouan@chromium.org&gt;
   </td>
   <td>
-   Mon Dec 06 05:23:27 2021
+   Mon Dec 06 06:24:49 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Dec 06 05:23:27 2021
+   Mon Dec 06 06:24:49 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7d87e8e51171d5df9907f467db436cc934fcf740/">
-    7836e20edcb11b9333fa85b9a5dd2f2bff3da597
+   <a href="/chromium/src/+/f4d2db7a3519d4cd21dcd6e4bf6fc529b25eb8e1/">
+    0f15babfab79f1858474b18d5375dd7753e817ea
    </a>
   </td>
  </tr>
@@ -166,37 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7d87e8e51171d5df9907f467db436cc934fcf740%5E">
-    2259fe055934dafcec42f23c3bdccec0aa3ce859
+   <a href="/chromium/src/+/f4d2db7a3519d4cd21dcd6e4bf6fc529b25eb8e1%5E">
+    6648124ae777fc437905bf9b87fb54aefb35a7c2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7d87e8e51171d5df9907f467db436cc934fcf740%5E%21/">
+    <a href="/chromium/src/+/f4d2db7a3519d4cd21dcd6e4bf6fc529b25eb8e1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">chrome://media-app: Ignore the "-1" invalid token when showing an open file picker.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Private Network Access] Record better metrics on preflight errors.
 
-When an exception is thrown loading the "focus" file on launch,
-launch.js "poisons" the FileList with a file with a "-1" token. This
-ensures the list is not empty (so a "load" occurs), and ensures that
-later file operations on the "error" token are rejected.
+- Move recording of error metrics from preflight_controller.cc to
+  CorsURLLoader, where all errors can be observed centrally.
+- Record warning metrics in the same places as the warnings are reported
+  to DevTools' observer.
+- Define histogram names in a central place: the warnings histogram name
+  is shared between preflight_controller.cc and cors_url_loader.cc, and
+  the errors histogram name is so closely related it makes sense to
+  define it in the same place.
 
-However, one operation -- opening a new file -- should still be allowed.
-This is getting rejected since adding the `startIn` parameter to open
-file pickers at a suggested initial folder location, based on the
-currently loaded file.
-
-Fixed: b/209342852
-Test: MediaAppUIBrowserTest.OpenFilesWithFilePickerIPC
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2debee7e9ec5ce78f755709479028ae9fca2f9a5">I2debee7e9ec5ce78f755709479028ae9fca2f9a5</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3313234">https://chromium-review.googlesource.com/c/chromium/src/+/3313234</a>
-Commit-Queue: Trent Apted &lt;tapted@chromium.org&gt;
-Reviewed-by: Mitch McDermott &lt;mcdermottm@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#948450}
+Fixed: chromium:1275138
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3ebed2f849665477e149c39683b0167adc1316cd">I3ebed2f849665477e149c39683b0167adc1316cd</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3306443">https://chromium-review.googlesource.com/c/chromium/src/+/3306443</a>
+Commit-Queue: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Auto-Submit: Titouan Rigoudy &lt;titouan@chromium.org&gt;
+Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#948456}
 </pre>
 
 </body>
