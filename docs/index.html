@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/948982/"> 948982</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/26c4857b6035265e3eb074a052794fbfd9f7415c">26c4857b6035265e3eb074a052794fbfd9f7415c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/948997/"> 948997</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/83b8a457cdd2eb095cba76d1cda4f8fb30898e77">83b8a457cdd2eb095cba76d1cda4f8fb30898e77</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/948984/">948984</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8d9e1292a65ed6a80aeb35966b346fd36776d6b9">8d9e1292a65ed6a80aeb35966b346fd36776d6b9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/949014/">949014</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c42cfa53a73056127991bda507723460c1b0a03d">c42cfa53a73056127991bda507723460c1b0a03d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   26c4857b6035265e3eb074a052794fbfd9f7415c
+   83b8a457cdd2eb095cba76d1cda4f8fb30898e77
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/26c4857b6035265e3eb074a052794fbfd9f7415c">
+    <a href="/chromium/src/+log/83b8a457cdd2eb095cba76d1cda4f8fb30898e77">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/26c4857b6035265e3eb074a052794fbfd9f7415c.tar.gz">
+    <a href="/chromium/src/+archive/83b8a457cdd2eb095cba76d1cda4f8fb30898e77.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nan Lin &lt;linnan@chromium.org&gt;
+   Simon Pelchat &lt;spelchat@chromium.org&gt;
   </td>
   <td>
-   Tue Dec 07 15:11:13 2021
+   Tue Dec 07 15:49:39 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Dec 07 15:11:13 2021
+   Tue Dec 07 15:49:39 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/26c4857b6035265e3eb074a052794fbfd9f7415c/">
-    aa704cca73de2d7040fe7ce1451fb92f1c8d717e
+   <a href="/chromium/src/+/83b8a457cdd2eb095cba76d1cda4f8fb30898e77/">
+    24f3b8630b1f31f11b3263c5643950c92b7e51fd
    </a>
   </td>
  </tr>
@@ -166,32 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/26c4857b6035265e3eb074a052794fbfd9f7415c%5E">
-    d367b81acce2424b2f3121ad2cd161b8b077c734
+   <a href="/chromium/src/+/83b8a457cdd2eb095cba76d1cda4f8fb30898e77%5E">
+    19cb3a01899eea480ee27f674e8dbbdb6293bc31
    </a>
    <span>
     [
-    <a href="/chromium/src/+/26c4857b6035265e3eb074a052794fbfd9f7415c%5E%21/">
+    <a href="/chromium/src/+/83b8a457cdd2eb095cba76d1cda4f8fb30898e77%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fenced Frames: Enforce opt-in via S-L-M for nested iframes as well
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rework canary checks for the Chrome prefetching proxy.
 
-This CL implements the enforced opt-in via supports-loading-mode for
-nested iframes inside a fenced frame. The "Sec-Fetch-Dest" header value
-will be "fencedframe" for the nested iframes as well to signal to the
-servers that they need to opt-in in order to load.
+1) Remove code for deprecated HTTP filter probing. Only DNS and TLS
+   filter probing is still supported.
+2) Make canary checks do a simple DNS resolution, instead of an HTTP
+   GET request.
+3) Make canary checks as soon as we send a non-decoy P4 request to make
+   sure the check is cached by the time we try to use the request.
+4) Remove AvailabilityProber class and replace it with
+   PrefetchProxyCanaryChecker. The former class was more general and
+   supported other clients (like the HTTP filter probe and the Previews
+   probe). It however had high complexity due to unnecessary features
+   for the new DNS checks. Since the new DNS checks are quick and low
+   overhead, there is no need to cache state so aggressively (storing in
+   prefs) or to monitor device changes to make checks before they're
+   required. We can simply run the check if necessary at the time we
+   send the prefetch.
 
-Bug: 1276425
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5cc59806701e63b21d217e320ca349f615d47c76">I5cc59806701e63b21d217e320ca349f615d47c76</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3313886">https://chromium-review.googlesource.com/c/chromium/src/+/3313886</a>
-Reviewed-by: Shivani Sharma &lt;shivanisha@chromium.org&gt;
-Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
-Commit-Queue: Nan Lin &lt;linnan@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#948982}
+Bug: 1135778
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie949e51562cbb7a25226ff5b870fbfaf22c8673d">Ie949e51562cbb7a25226ff5b870fbfaf22c8673d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3266544">https://chromium-review.googlesource.com/c/chromium/src/+/3266544</a>
+Reviewed-by: Marc Treib &lt;treib@chromium.org&gt;
+Reviewed-by: Christian Dullweber &lt;dullweber@chromium.org&gt;
+Reviewed-by: Tarun Bansal &lt;tbansal@chromium.org&gt;
+Reviewed-by: Robert Ogden &lt;robertogden@chromium.org&gt;
+Reviewed-by: Max Curran &lt;curranmax@chromium.org&gt;
+Commit-Queue: Simon Pelchat &lt;spelchat@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#948997}
 </pre>
 
 </body>
