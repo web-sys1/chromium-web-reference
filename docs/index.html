@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/949271/"> 949271</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ec7fdcdb9462b603ea88abac304002e5785ca9ca">ec7fdcdb9462b603ea88abac304002e5785ca9ca</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/949297/"> 949297</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9b13dac9b2fe1dd4b7995524640ddae36cd77933">9b13dac9b2fe1dd4b7995524640ddae36cd77933</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/949222/">949222</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4a561720f1da0e2082b9eaa532c8bc041c68c3c2">4a561720f1da0e2082b9eaa532c8bc041c68c3c2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/949272/">949272</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2c63db7ef6a10e2958e4847908ec9b2fd03e8ab2">2c63db7ef6a10e2958e4847908ec9b2fd03e8ab2</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ec7fdcdb9462b603ea88abac304002e5785ca9ca
+   9b13dac9b2fe1dd4b7995524640ddae36cd77933
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ec7fdcdb9462b603ea88abac304002e5785ca9ca">
+    <a href="/chromium/src/+log/9b13dac9b2fe1dd4b7995524640ddae36cd77933">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ec7fdcdb9462b603ea88abac304002e5785ca9ca.tar.gz">
+    <a href="/chromium/src/+archive/9b13dac9b2fe1dd4b7995524640ddae36cd77933.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kenichi Ishibashi &lt;bashi@chromium.org&gt;
+   Ana Salazar &lt;anasalazar@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 08 00:32:20 2021
+   Wed Dec 08 01:21:42 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 08 00:32:20 2021
+   Wed Dec 08 01:21:42 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ec7fdcdb9462b603ea88abac304002e5785ca9ca/">
-    d487e36098f7580289cd54350a9bda671914f38b
+   <a href="/chromium/src/+/9b13dac9b2fe1dd4b7995524640ddae36cd77933/">
+    4ff8999c7a621b8730a1dd182adefa507f48d5cb
    </a>
   </td>
  </tr>
@@ -166,32 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ec7fdcdb9462b603ea88abac304002e5785ca9ca%5E">
-    1a20eb65090d2eef9c7e43a44a33ce221232cf06
+   <a href="/chromium/src/+/9b13dac9b2fe1dd4b7995524640ddae36cd77933%5E">
+    938d60bd9794948aaaaa07f113b9b57df8b707cd
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ec7fdcdb9462b603ea88abac304002e5785ca9ca%5E%21/">
+    <a href="/chromium/src/+/9b13dac9b2fe1dd4b7995524640ddae36cd77933%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move network::RadioMonitorAndroid into //net
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Adjust folder icon and animation for RTL
 
-This CL moves radio state tracking logic from //services/network to
-//net so that we can use the logic in //net. Network service related
-histogram recordings are kept in //services/network.
+To generate a folder icon within the apps grid, FolderImage class
+uses the top icons that will show as a preview for the folder.
+These are the 4 first icons on the folder, and are laid out in a grid in
+the order in which they appear.
+When using an RTL configuration, FolderImage::GetTopIconsBounds does not
+take into consideration that apps are displayed in a reverse order. As a
+result, the preview looks the same in RTL as well as in LTR.
+This CL swaps the calculated bounds for the left and right icon when the
+UI is in RLT configuration.
 
-No behavior change. Existing unittests should cover the change.
+This CL also uses mirrored coordinates for the open/close folder
+animation. FolderImage::GetTopIconsBounds is used to know the starting
+bounds and TopIconAnimation::GetFirstPageItemViewsBounds fetches the
+ending position of the animation. Both methods need to use mirrored
+coordinates when RTL is configured.
 
-Bug: 1232623
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0c2cbdc910c7b70ce2005d69bb06272d7d73a745">I0c2cbdc910c7b70ce2005d69bb06272d7d73a745</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3319807">https://chromium-review.googlesource.com/c/chromium/src/+/3319807</a>
-Reviewed-by: Yutaka Hirano &lt;yhirano@chromium.org&gt;
-Commit-Queue: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#949271}
+Bug: 1276261
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I34e7a449249e9e65207fb36f08a49e2d8d56494c">I34e7a449249e9e65207fb36f08a49e2d8d56494c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3322070">https://chromium-review.googlesource.com/c/chromium/src/+/3322070</a>
+Reviewed-by: Toni Barzic &lt;tbarzic@chromium.org&gt;
+Commit-Queue: Ana Salazar &lt;anasalazar@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#949297}
 </pre>
 
 </body>
