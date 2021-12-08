@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/949433/"> 949433</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e7b7f84a76919521b864e474bb7846c7d470ea88">e7b7f84a76919521b864e474bb7846c7d470ea88</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/949443/"> 949443</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/095b21810546787d42cd496c9840f19ed775cef8">095b21810546787d42cd496c9840f19ed775cef8</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/949437/">949437</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e7b7f84a76919521b864e474bb7846c7d470ea88
+   095b21810546787d42cd496c9840f19ed775cef8
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e7b7f84a76919521b864e474bb7846c7d470ea88">
+    <a href="/chromium/src/+log/095b21810546787d42cd496c9840f19ed775cef8">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e7b7f84a76919521b864e474bb7846c7d470ea88.tar.gz">
+    <a href="/chromium/src/+archive/095b21810546787d42cd496c9840f19ed775cef8.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Benoit Lize &lt;lizeb@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 08 08:42:56 2021
+   Wed Dec 08 09:22:25 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 08 08:42:56 2021
+   Wed Dec 08 09:22:25 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e7b7f84a76919521b864e474bb7846c7d470ea88/">
-    8774a047c9752c44845ff6fdd64fa82d990021e4
+   <a href="/chromium/src/+/095b21810546787d42cd496c9840f19ed775cef8/">
+    7eac39c5462e2839aea3008a5ca71e0191e01aa7
    </a>
   </td>
  </tr>
@@ -166,43 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e7b7f84a76919521b864e474bb7846c7d470ea88%5E">
-    8869007d15a3526c23896fd1d03ee2cc73406bce
+   <a href="/chromium/src/+/095b21810546787d42cd496c9840f19ed775cef8%5E">
+    0b9e78604dcd291cac74113938335a6e23754ad9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e7b7f84a76919521b864e474bb7846c7d470ea88%5E%21/">
+    <a href="/chromium/src/+/095b21810546787d42cd496c9840f19ed775cef8%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Win32 PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PartitionAlloc] Don't double-check pointer ownership in free() on mac.
 
-Roll Chrome Win32 PGO profile from chrome-win32-main-1638921351-c9309ab8978fef04a6ca58e962ea206bf9604996.profdata to chrome-win32-main-1638943101-b07a4b7633ea48f17e03818723e23748e9ea70a0.profdata
+On Apple OSes, free() in libsystem_malloc.dylib first queries the size,
+then calls free(). But the shim layer checks that the pointer is owned
+as well, leading to checking twice (once for the size query, once in the
+shim's free()). This is wasteful, so don't do it.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-win32-chromium">https://autoroll.skia.org/r/pgo-win32-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+Note that this is unlikely to be too visible on base_perftests, since
+they run without the thread cache, hiding a lot of this overhead.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:win-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7772bd2cb1cc543487fbc07466f90701a5f47019">I7772bd2cb1cc543487fbc07466f90701a5f47019</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3322458">https://chromium-review.googlesource.com/c/chromium/src/+/3322458</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#949433}
+Bug: 998048
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7f6a3b1329024d57afbaf64d87c8be064209deec">I7f6a3b1329024d57afbaf64d87c8be064209deec</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3320262">https://chromium-review.googlesource.com/c/chromium/src/+/3320262</a>
+Reviewed-by: Yuki Shiino &lt;yukishiino@chromium.org&gt;
+Commit-Queue: Benoit Lize &lt;lizeb@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#949443}
 </pre>
 
 </body>
