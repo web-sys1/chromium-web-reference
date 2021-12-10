@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/950488/"> 950488</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/799a0cafdc09318dba66da7d7d52256d4ddb3b87">799a0cafdc09318dba66da7d7d52256d4ddb3b87</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/950502/"> 950502</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/35be6215ec8f09e50176f36753c68f26c63d1885">35be6215ec8f09e50176f36753c68f26c63d1885</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/950468/">950468</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   799a0cafdc09318dba66da7d7d52256d4ddb3b87
+   35be6215ec8f09e50176f36753c68f26c63d1885
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/799a0cafdc09318dba66da7d7d52256d4ddb3b87">
+    <a href="/chromium/src/+log/35be6215ec8f09e50176f36753c68f26c63d1885">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/799a0cafdc09318dba66da7d7d52256d4ddb3b87.tar.gz">
+    <a href="/chromium/src/+archive/35be6215ec8f09e50176f36753c68f26c63d1885.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sreeja Kamishetty &lt;sreejakshetty@chromium.org&gt;
+   Matthew Denton &lt;mpdenton@chromium.org&gt;
   </td>
   <td>
-   Fri Dec 10 10:43:02 2021
+   Fri Dec 10 12:13:37 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 10 10:43:02 2021
+   Fri Dec 10 12:13:37 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/799a0cafdc09318dba66da7d7d52256d4ddb3b87/">
-    909872af33bca84b9ad6a11dc35a40d538685700
+   <a href="/chromium/src/+/35be6215ec8f09e50176f36753c68f26c63d1885/">
+    63098ea109d93d36302a34e20b149507202deb68
    </a>
   </td>
  </tr>
@@ -166,56 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/799a0cafdc09318dba66da7d7d52256d4ddb3b87%5E">
-    89b5bb56f567cf9d3bcaf4d8d343c9dd18a757c7
+   <a href="/chromium/src/+/35be6215ec8f09e50176f36753c68f26c63d1885%5E">
+    96f38d8cd7d64659eb5b1bea5251774ea432b1be
    </a>
    <span>
     [
-    <a href="/chromium/src/+/799a0cafdc09318dba66da7d7d52256d4ddb3b87%5E%21/">
+    <a href="/chromium/src/+/35be6215ec8f09e50176f36753c68f26c63d1885%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[content] Fix timing of WebContentsObserver::PrimaryPageChanged
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Linux OSCrypt: Add GetRawEncryptionKey() and SetRawEncryptionKey()
 
-Problem:
-We have noticed that all states of navigation, i.e., related to
-NavigationRequest, NavigationController, aren't updated when we
-dispatch PrimaryPageChanged notification for non-same-document
-navigations, which changes the Page in the FrameTree. This causes
-an inconsistent behavior with the observers which expect to see
-an updated state inside WebContentObserver::PrimaryPageChanged
-similar to WebContentObserver::DidFinishNavigation presuming
-navigation commit.
+See the attached bug for details on why this CL adds these functions.
 
-The current order of events:
-1) Dispatch PrimaryPageChanged (inside RenderFrameHostImpl::DidNavigate).
-2) Update NavigationRequest/ NavigationController states
-(NavigationController::RendererDidNavigate).
-3) Dispatch DidFinishNavigation (Inside ~NavigationRequest).
+Adding these functions requires us to cache the crypto::SymmetricKeys
+themselves rather than the passwords used to derive the SymmetricKeys.
+This should be slightly more performant anyway as we don't need to
+re-derive the SymmetricKeys every time we want to encrypt or decrypt.
 
-Solution:
-To fix this, we modify the timing of dispatching PrimaryPageChanged
-callback for non-same-document navigations. We introduce a new
-method RenderFrameHostImpl::NotifyPageChanged(FrameTreeNode*
-frame_tree_node) to enable us to dispatch NotifyPageChanged once the
-navigation related states are updated.
+This CL adds the function to os_crypt_posix.cc as well to avoid the
+unnecessary #if blocks everywhere, even though os_crypt_posix.cc
+only uses a hardcoded password.
 
-Updated order of events:
-1) Update all states on RenderFrameHost/ NavigationRequest
-(Inside Navigator::DidNavigate).
-2) Dispatch NotifyPageChanged.
-3) Dispatch DidFinishNavigation (Reset NavigationRequest)
+This CL modifies the test-only functions as well to make testing a
+little more clearly.
 
-Bug: 1259699
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I21109523d4000af2586ac4a9d79624f258e743ca">I21109523d4000af2586ac4a9d79624f258e743ca</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3221288">https://chromium-review.googlesource.com/c/chromium/src/+/3221288</a>
-Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
-Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
-Commit-Queue: Sreeja Kamishetty &lt;sreejakshetty@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#950488}
+Finally, this CL stops compiling os_crypt_linux.cc for lacros, and
+starts compiling os_crypt_posix.cc like it did for older chromeos
+ash. Encryption doesn't work and isn't necessary on Chrome OS so
+there's no need for lacros to compile it.
+
+Bug: 1277463
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib8e13c589a290ab0c08170aff936420fed99d033">Ib8e13c589a290ab0c08170aff936420fed99d033</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3319715">https://chromium-review.googlesource.com/c/chromium/src/+/3319715</a>
+Reviewed-by: Erik Chen &lt;erikchen@chromium.org&gt;
+Reviewed-by: Sami Kyöstilä &lt;skyostil@chromium.org&gt;
+Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Reviewed-by: Christos Froussios &lt;cfroussios@chromium.org&gt;
+Reviewed-by: Colin Blundell &lt;blundell@chromium.org&gt;
+Commit-Queue: Matthew Denton &lt;mpdenton@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#950502}
 </pre>
 
 </body>
