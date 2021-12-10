@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/950483/"> 950483</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1406ae0a8a6f2ae55d4bb8dcd5d44b3ba40e60e7">1406ae0a8a6f2ae55d4bb8dcd5d44b3ba40e60e7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/950488/"> 950488</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/799a0cafdc09318dba66da7d7d52256d4ddb3b87">799a0cafdc09318dba66da7d7d52256d4ddb3b87</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/950468/">950468</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1406ae0a8a6f2ae55d4bb8dcd5d44b3ba40e60e7
+   799a0cafdc09318dba66da7d7d52256d4ddb3b87
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1406ae0a8a6f2ae55d4bb8dcd5d44b3ba40e60e7">
+    <a href="/chromium/src/+log/799a0cafdc09318dba66da7d7d52256d4ddb3b87">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1406ae0a8a6f2ae55d4bb8dcd5d44b3ba40e60e7.tar.gz">
+    <a href="/chromium/src/+archive/799a0cafdc09318dba66da7d7d52256d4ddb3b87.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   dpapad &lt;dpapad@chromium.org&gt;
+   Sreeja Kamishetty &lt;sreejakshetty@chromium.org&gt;
   </td>
   <td>
-   Fri Dec 10 10:05:25 2021
+   Fri Dec 10 10:43:02 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 10 10:05:25 2021
+   Fri Dec 10 10:43:02 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1406ae0a8a6f2ae55d4bb8dcd5d44b3ba40e60e7/">
-    058e3363eb049161c86e37e271418388c680778e
+   <a href="/chromium/src/+/799a0cafdc09318dba66da7d7d52256d4ddb3b87/">
+    909872af33bca84b9ad6a11dc35a40d538685700
    </a>
   </td>
  </tr>
@@ -166,29 +166,56 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1406ae0a8a6f2ae55d4bb8dcd5d44b3ba40e60e7%5E">
-    eba44463f117868b358061f47de455f08798a089
+   <a href="/chromium/src/+/799a0cafdc09318dba66da7d7d52256d4ddb3b87%5E">
+    89b5bb56f567cf9d3bcaf4d8d343c9dd18a757c7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1406ae0a8a6f2ae55d4bb8dcd5d44b3ba40e60e7%5E%21/">
+    <a href="/chromium/src/+/799a0cafdc09318dba66da7d7d52256d4ddb3b87%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Settings: Consolidate all html_to_js() invocations to one.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[content] Fix timing of WebContentsObserver::PrimaryPageChanged
 
-This is in preparation of refactoring c/b/r/settings/BUILD.gn such that
-the same files don't need to be listed multiple times.
+Problem:
+We have noticed that all states of navigation, i.e., related to
+NavigationRequest, NavigationController, aren't updated when we
+dispatch PrimaryPageChanged notification for non-same-document
+navigations, which changes the Page in the FrameTree. This causes
+an inconsistent behavior with the observers which expect to see
+an updated state inside WebContentObserver::PrimaryPageChanged
+similar to WebContentObserver::DidFinishNavigation presuming
+navigation commit.
 
-Bug: 1234307
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idecd472a92899af59043cb2a036bbb5832df0c49">Idecd472a92899af59043cb2a036bbb5832df0c49</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3327563">https://chromium-review.googlesource.com/c/chromium/src/+/3327563</a>
-Reviewed-by: Rebekah Potter &lt;rbpotter@chromium.org&gt;
-Commit-Queue: Demetrios Papadopoulos &lt;dpapad@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#950483}
+The current order of events:
+1) Dispatch PrimaryPageChanged (inside RenderFrameHostImpl::DidNavigate).
+2) Update NavigationRequest/ NavigationController states
+(NavigationController::RendererDidNavigate).
+3) Dispatch DidFinishNavigation (Inside ~NavigationRequest).
+
+Solution:
+To fix this, we modify the timing of dispatching PrimaryPageChanged
+callback for non-same-document navigations. We introduce a new
+method RenderFrameHostImpl::NotifyPageChanged(FrameTreeNode*
+frame_tree_node) to enable us to dispatch NotifyPageChanged once the
+navigation related states are updated.
+
+Updated order of events:
+1) Update all states on RenderFrameHost/ NavigationRequest
+(Inside Navigator::DidNavigate).
+2) Dispatch NotifyPageChanged.
+3) Dispatch DidFinishNavigation (Reset NavigationRequest)
+
+Bug: 1259699
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I21109523d4000af2586ac4a9d79624f258e743ca">I21109523d4000af2586ac4a9d79624f258e743ca</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3221288">https://chromium-review.googlesource.com/c/chromium/src/+/3221288</a>
+Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
+Commit-Queue: Sreeja Kamishetty &lt;sreejakshetty@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#950488}
 </pre>
 
 </body>
