@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/950695/"> 950695</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/281667d695907fdece7fd624f1c8dd68c52591ab">281667d695907fdece7fd624f1c8dd68c52591ab</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/950708/"> 950708</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e116688ae342d0adbb4461250d2d7141ee58931e">e116688ae342d0adbb4461250d2d7141ee58931e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/950686/">950686</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b390ad18ddea803366122190e9651bcaedee2c20">b390ad18ddea803366122190e9651bcaedee2c20</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/950701/">950701</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6b93095d2625ac9578ea3738c88c756f28e09627">6b93095d2625ac9578ea3738c88c756f28e09627</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   281667d695907fdece7fd624f1c8dd68c52591ab
+   e116688ae342d0adbb4461250d2d7141ee58931e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/281667d695907fdece7fd624f1c8dd68c52591ab">
+    <a href="/chromium/src/+log/e116688ae342d0adbb4461250d2d7141ee58931e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/281667d695907fdece7fd624f1c8dd68c52591ab.tar.gz">
+    <a href="/chromium/src/+archive/e116688ae342d0adbb4461250d2d7141ee58931e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Ionel Popescu &lt;iopopesc@microsoft.com&gt;
   </td>
   <td>
-   Fri Dec 10 23:31:03 2021
+   Sat Dec 11 00:09:44 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 10 23:31:03 2021
+   Sat Dec 11 00:09:44 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/281667d695907fdece7fd624f1c8dd68c52591ab/">
-    2af302537a112905848aa3616158836bb6ef8fac
+   <a href="/chromium/src/+/e116688ae342d0adbb4461250d2d7141ee58931e/">
+    9183d0daea0ca003fa2e62e128894184a90326d4
    </a>
   </td>
  </tr>
@@ -166,43 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/281667d695907fdece7fd624f1c8dd68c52591ab%5E">
-    597cfaf11cbc7c0182bace7a66651f542b54fe79
+   <a href="/chromium/src/+/e116688ae342d0adbb4461250d2d7141ee58931e%5E">
+    07f02e7cce81b425618d5da4cc8ae8bb3143b49e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/281667d695907fdece7fd624f1c8dd68c52591ab%5E%21/">
+    <a href="/chromium/src/+/e116688ae342d0adbb4461250d2d7141ee58931e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update V8 to version 9.9.1.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[SelectMenu] Correctly update document for SelectMenu mutation observer.
 
-Summary of changes available at:
-<a href="https://chromium.googlesource.com/v8/v8/+log/c143d95b..8a05d7ad">https://chromium.googlesource.com/v8/v8/+log/c143d95b..8a05d7ad</a>
+Prior to this CL, we were using SynchronousMutationObserver::DidMoveTreeToNewDocument
+to update the document for the SelectMenu mutation observer.
 
-Please follow these instructions for assigning/CC'ing issues:
-<a href="https://v8.dev/docs/triage-issues">https://v8.dev/docs/triage-issues</a>
+This behavior is not correct, since DidMoveTreeToNewDocument is called
+from HeapObserverSet::ForEachObserver[1] that doesn't allow adding or
+removing observers while iterating.
 
-Please close rolling in case of a roll revert:
-<a href="https://v8-roll.appspot.com/">https://v8-roll.appspot.com/</a>
-This only works with a Google account.
+This CL fixes the issue by using instead Element::DidMoveToNewDocument
+to set the new document for the SelectMenu mutation observer.
 
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:linux-blink-rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:linux_optional_gpu_tests_rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:mac_optional_gpu_tests_rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:win_optional_gpu_tests_rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:android_optional_gpu_tests_rel
+[1]: <a href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/platform/heap_observer_set.h;l=65;">https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/platform/heap_observer_set.h;l=65;</a>
 
-R=hablich@chromium.org,vahl@chromium.org,v8-waterfall-sheriff@grotations.appspotmail.com
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I67496474f2952c4b0a9997f49a45bf5caea8f9be">I67496474f2952c4b0a9997f49a45bf5caea8f9be</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3330332">https://chromium-review.googlesource.com/c/chromium/src/+/3330332</a>
-Bot-Commit: v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
-Commit-Queue: v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#950695}
+Bug: 1277534, 1276592
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3f69485c62ed32955d68801440e441d55029016b">I3f69485c62ed32955d68801440e441d55029016b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3328906">https://chromium-review.googlesource.com/c/chromium/src/+/3328906</a>
+Reviewed-by: Dan Clark &lt;daniec@microsoft.com&gt;
+Reviewed-by: Mason Freed &lt;masonf@chromium.org&gt;
+Commit-Queue: Ionel Popescu &lt;iopopesc@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#950708}
 </pre>
 
 </body>
