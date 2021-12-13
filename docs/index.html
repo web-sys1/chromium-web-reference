@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/950901/"> 950901</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9ee553aa45fd9fa4c84f3a81c2341322f768be98">9ee553aa45fd9fa4c84f3a81c2341322f768be98</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/950907/"> 950907</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9b160cff907e1c024d762bd19031a63146c7d414">9b160cff907e1c024d762bd19031a63146c7d414</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/950898/">950898</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/265c820bb4ac37f2bf8a7af876484f0dd2738244">265c820bb4ac37f2bf8a7af876484f0dd2738244</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/950908/">950908</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fa2d44523c5a205fb8c224a381dca70e8b6282fc">fa2d44523c5a205fb8c224a381dca70e8b6282fc</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9ee553aa45fd9fa4c84f3a81c2341322f768be98
+   9b160cff907e1c024d762bd19031a63146c7d414
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9ee553aa45fd9fa4c84f3a81c2341322f768be98">
+    <a href="/chromium/src/+log/9b160cff907e1c024d762bd19031a63146c7d414">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9ee553aa45fd9fa4c84f3a81c2341322f768be98.tar.gz">
+    <a href="/chromium/src/+archive/9b160cff907e1c024d762bd19031a63146c7d414.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ali Beyad &lt;abeyad@chromium.org&gt;
+   James Cook &lt;jamescook@chromium.org&gt;
   </td>
   <td>
-   Mon Dec 13 01:03:32 2021
+   Mon Dec 13 01:45:41 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Dec 13 01:03:32 2021
+   Mon Dec 13 01:45:41 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9ee553aa45fd9fa4c84f3a81c2341322f768be98/">
-    6c4058e5f50c50cdbc78c5b8f0f4ae73d08fae1a
+   <a href="/chromium/src/+/9b160cff907e1c024d762bd19031a63146c7d414/">
+    1746e6f176a2cd3fa47b44833fea3d8734e654f4
    </a>
   </td>
  </tr>
@@ -166,34 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9ee553aa45fd9fa4c84f3a81c2341322f768be98%5E">
-    4945ff780053ca3c067954a2381c45dfb4c2602a
+   <a href="/chromium/src/+/9b160cff907e1c024d762bd19031a63146c7d414%5E">
+    880004210d4725e554bc992c122a13691659d2f2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9ee553aa45fd9fa4c84f3a81c2341322f768be98%5E%21/">
+    <a href="/chromium/src/+/9b160cff907e1c024d762bd19031a63146c7d414%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove static definitions in UA utils that change with function input
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix ash-chrome headers being included in non-IS_CHROMEOS_ASH builds
 
-In crrev.com/c/3251184, a function parameter was introduced to
-optionally add grease to the brand version list.  However, we were
-storing the result in a static variable, so all subsequent function
-calls would return a brand list using whatever the first call to the
-function passed in for enable_updated_grease_by_policy.
+The recent raw_ptr&lt;&gt; rewrite revealed that a few chromeos-only headers
+are being compiled on non-chromeos platforms. (The rewrite was only
+supposed to affect Windows and Android targets, but a few ChromeOS
+files got included.)
 
-This CL fixes the problem by removing the static const for the variable
-definitions.
+Fix some includes in  unit test files and add a few strategic
+static_assert()s to ensure these headers are only compiled into
+ash-chrome.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I25a2e87de6f8dab270c93985ee4ecd54cbaf0f2c">I25a2e87de6f8dab270c93985ee4ecd54cbaf0f2c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3330333">https://chromium-review.googlesource.com/c/chromium/src/+/3330333</a>
-Reviewed-by: Mike Taylor &lt;miketaylr@chromium.org&gt;
-Commit-Queue: Ali Beyad &lt;abeyad@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#950901}
+Bug: none
+Test: compiles
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id8b943b52becafb6d7481a5b6f8e9e59941c8a2c">Id8b943b52becafb6d7481a5b6f8e9e59941c8a2c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3333737">https://chromium-review.googlesource.com/c/chromium/src/+/3333737</a>
+Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
+Commit-Queue: James Cook &lt;jamescook@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#950907}
 </pre>
 
 </body>
