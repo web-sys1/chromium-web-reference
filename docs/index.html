@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951230/"> 951230</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f8abd58cdcf95488ccc6c2f15d24a4e3621d00e9">f8abd58cdcf95488ccc6c2f15d24a4e3621d00e9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951243/"> 951243</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3862152e61250e5eb84e7fcca3e3c4d9486b4dba">3862152e61250e5eb84e7fcca3e3c4d9486b4dba</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951232/">951232</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/04fd51644ec73bd9305f077a9de592387f4b6a54">04fd51644ec73bd9305f077a9de592387f4b6a54</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951255/">951255</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e1d44907402e651c13bc148e27757e72dd1f32b5">e1d44907402e651c13bc148e27757e72dd1f32b5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f8abd58cdcf95488ccc6c2f15d24a4e3621d00e9
+   3862152e61250e5eb84e7fcca3e3c4d9486b4dba
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f8abd58cdcf95488ccc6c2f15d24a4e3621d00e9">
+    <a href="/chromium/src/+log/3862152e61250e5eb84e7fcca3e3c4d9486b4dba">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f8abd58cdcf95488ccc6c2f15d24a4e3621d00e9.tar.gz">
+    <a href="/chromium/src/+archive/3862152e61250e5eb84e7fcca3e3c4d9486b4dba.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anastasiia N &lt;anastasiian@google.com&gt;
+   Dylan Cutler &lt;dylancutler@google.com&gt;
   </td>
   <td>
-   Mon Dec 13 22:40:25 2021
+   Mon Dec 13 23:22:03 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Dec 13 22:40:25 2021
+   Mon Dec 13 23:22:03 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f8abd58cdcf95488ccc6c2f15d24a4e3621d00e9/">
-    e9b939475b8a4ec3ad7dbba5c9bb553b4758173f
+   <a href="/chromium/src/+/3862152e61250e5eb84e7fcca3e3c4d9486b4dba/">
+    743f7efeb70eac7f1def730e725181c93fcd63a0
    </a>
   </td>
  </tr>
@@ -166,34 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f8abd58cdcf95488ccc6c2f15d24a4e3621d00e9%5E">
-    f81ca326f62770e75b1a4fab800ac992717c36d5
+   <a href="/chromium/src/+/3862152e61250e5eb84e7fcca3e3c4d9486b4dba%5E">
+    55c053cf41d614497a203e9d90810744486fd2c0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f8abd58cdcf95488ccc6c2f15d24a4e3621d00e9%5E%21/">
+    <a href="/chromium/src/+/3862152e61250e5eb84e7fcca3e3c4d9486b4dba%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update initialization in AccountAppsAvailability
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add UMA metrics for partitioned cookies usage
 
-`InitAccountsAvailableInArcPref()` doesn't need to use
-`InitializationState::kInProgress` because it completes synchronously,
-never calls itself, and is always called on the same thread.
+Summary of metrics added:
+- Cookie.PartitionCount: number of distinct partitioned cookie jars
+- Cookie.PartitionedCookieCount: number of cookies in all partitioned
+  cookie jars
+- Cookie.PartitionedCookiesInRequest: if partitioned cookies are
+  included in requests
+- Cookie.PartitionedCookiesInRequestCount: number of partitioned cookies
+  in requests that have at least 1 partitioned cookie
+- Net.RestrictedCookieManager.PartitionedCookiesInScript: if partitioned
+  cookies are accessed from a script
+- Net.RestrictedCookieManager.PartitionedCookiesInScriptCount: the number
+  of partitioned cookies a script accesses at one time
+- Net.RestrictedCookieManager.SetPartitionedCookie: if a cookie created
+  by a script is partitioned
 
-Add DCHECK_CALLED_ON_VALID_SEQUENCE to make sure that initialization and
-all other methods are actually called on the same thread.
-
-Bug: 1260909
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0e968cb81b71942c605c7d79c9d88b83945e3e50">I0e968cb81b71942c605c7d79c9d88b83945e3e50</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3327203">https://chromium-review.googlesource.com/c/chromium/src/+/3327203</a>
-Reviewed-by: David Roger &lt;droger@chromium.org&gt;
-Reviewed-by: Kush Sinha &lt;sinhak@chromium.org&gt;
-Commit-Queue: Anastasiia N &lt;anastasiian@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#951230}
+Bug: 1225444
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0231bbd486ee57354c9a83cb12122fc5bec40db7">I0231bbd486ee57354c9a83cb12122fc5bec40db7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3318375">https://chromium-review.googlesource.com/c/chromium/src/+/3318375</a>
+Reviewed-by: David Schinazi &lt;dschinazi@chromium.org&gt;
+Reviewed-by: Tom Sepez &lt;tsepez@chromium.org&gt;
+Reviewed-by: Steven Bingler &lt;bingler@chromium.org&gt;
+Commit-Queue: Dylan Cutler &lt;dylancutler@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#951243}
 </pre>
 
 </body>
