@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951417/"> 951417</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e5754bb865c82280cf65d25ba19911c26af6ee71">e5754bb865c82280cf65d25ba19911c26af6ee71</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951428/"> 951428</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/dd4c3ddadbb9869f59cee201a38e9ca3b9154f4d">dd4c3ddadbb9869f59cee201a38e9ca3b9154f4d</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951419/">951419</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/16bdb40f6eee3a8371255afa4f8badd17f915eb4">16bdb40f6eee3a8371255afa4f8badd17f915eb4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951430/">951430</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2d55c0988523ee223d2cf772d1003c9f6c068407">2d55c0988523ee223d2cf772d1003c9f6c068407</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e5754bb865c82280cf65d25ba19911c26af6ee71
+   dd4c3ddadbb9869f59cee201a38e9ca3b9154f4d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e5754bb865c82280cf65d25ba19911c26af6ee71">
+    <a href="/chromium/src/+log/dd4c3ddadbb9869f59cee201a38e9ca3b9154f4d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e5754bb865c82280cf65d25ba19911c26af6ee71.tar.gz">
+    <a href="/chromium/src/+archive/dd4c3ddadbb9869f59cee201a38e9ca3b9154f4d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Amanda Deacon &lt;amandadeacon@chromium.org&gt;
+   Alexander Dunaev &lt;adunaev@igalia.com&gt;
   </td>
   <td>
-   Tue Dec 14 09:03:26 2021
+   Tue Dec 14 09:54:52 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Dec 14 09:03:26 2021
+   Tue Dec 14 09:54:52 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e5754bb865c82280cf65d25ba19911c26af6ee71/">
-    cb1a63e4af50420229c476d4acc744b5c28dd556
+   <a href="/chromium/src/+/dd4c3ddadbb9869f59cee201a38e9ca3b9154f4d/">
+    20c9ca1d8d2caf14be6eccf113550b929e2530e5
    </a>
   </td>
  </tr>
@@ -166,42 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e5754bb865c82280cf65d25ba19911c26af6ee71%5E">
-    5b2b0c243970e5f9f242c6909a819822652d6f49
+   <a href="/chromium/src/+/dd4c3ddadbb9869f59cee201a38e9ca3b9154f4d%5E">
+    d5684ab99411bd973c4c5fcb400070c4094dd57d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e5754bb865c82280cf65d25ba19911c26af6ee71%5E%21/">
+    <a href="/chromium/src/+/dd4c3ddadbb9869f59cee201a38e9ca3b9154f4d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Launcher pop-in] Add skeleton class of BurnInRanker.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[linux/wayland] Fixed terminate caused by binding to wrong version.
 
-This CL adds a skeleton class for a new BurnInRanker. Follow ups will
-add method implementations.
+The Ozone/Wayland implementation had a few places where the Wayland
+objects were bound without proper checking for their versions.  That was
+part of the technical debt not addressed before, and ended up causing
+the issue explained in the linked crbug: the compositor terminates the
+client that binds to the protocol that it does not actually support.
 
-Once implemented, this will be a lightweight ranker at the end of the
-ranking stack. It will be responsible for two main tasks:
+This patch fixes the issue by adding the necessary checks in all places
+where they were missing.  Also a convenience macro for validating the
+version is proposed.
 
-(1) Enforcing a "burn-in" period of some fixed number of milliseconds,
-during which results are collected from providers but are not published
-to the front-end. The purpose of this is to prevent the rapid and
-jittery updating of the result list at the beginning of display.
-
-(2) Tracking results as belonging to either the pre-burn-in period or
-the post-burn-in period. Post-burn-in results will have special
-handling (e.g. append-only within a category), with exact details TBD.
-
-Test: builds
-Bug: 1279686
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7c170ee3791256a1f3d7f0a20493e5ecf775cddf">I7c170ee3791256a1f3d7f0a20493e5ecf775cddf</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3336923">https://chromium-review.googlesource.com/c/chromium/src/+/3336923</a>
-Reviewed-by: Rachel Wong &lt;wrong@chromium.org&gt;
-Commit-Queue: Amanda Deacon &lt;amandadeacon@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#951417}
+Bug: 1279574
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I74efa97f64b480bed47372d8d559593ae84eeb18">I74efa97f64b480bed47372d8d559593ae84eeb18</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3337037">https://chromium-review.googlesource.com/c/chromium/src/+/3337037</a>
+Reviewed-by: Maksim Sisov &lt;msisov@igalia.com&gt;
+Commit-Queue: Alexander Dunaev &lt;adunaev@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#951428}
 </pre>
 
 </body>
