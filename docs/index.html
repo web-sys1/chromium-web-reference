@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951710/"> 951710</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/61ec65342db11143d9ec4232587c95c1f075d562">61ec65342db11143d9ec4232587c95c1f075d562</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951739/"> 951739</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1b75c44db59a2942b155a07f2ca13026d2b7aed2">1b75c44db59a2942b155a07f2ca13026d2b7aed2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951721/">951721</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9d0ca76783befbdc50cc3599ae37e2344761d9c1">9d0ca76783befbdc50cc3599ae37e2344761d9c1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951755/">951755</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7bf66426124a524d6a24cd650f6b8cf913c4a704">7bf66426124a524d6a24cd650f6b8cf913c4a704</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   61ec65342db11143d9ec4232587c95c1f075d562
+   1b75c44db59a2942b155a07f2ca13026d2b7aed2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/61ec65342db11143d9ec4232587c95c1f075d562">
+    <a href="/chromium/src/+log/1b75c44db59a2942b155a07f2ca13026d2b7aed2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/61ec65342db11143d9ec4232587c95c1f075d562.tar.gz">
+    <a href="/chromium/src/+archive/1b75c44db59a2942b155a07f2ca13026d2b7aed2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jonathan Ross &lt;jonross@chromium.org&gt;
+   David Benjamin &lt;davidben@chromium.org&gt;
   </td>
   <td>
-   Tue Dec 14 23:01:40 2021
+   Wed Dec 15 00:29:17 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Dec 14 23:01:40 2021
+   Wed Dec 15 00:29:17 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/61ec65342db11143d9ec4232587c95c1f075d562/">
-    c027e07d3acb4e497a4018ff6951b22d44da656c
+   <a href="/chromium/src/+/1b75c44db59a2942b155a07f2ca13026d2b7aed2/">
+    e9e708e1a5e93b20443d7540c35b925afb2e1394
    </a>
   </td>
  </tr>
@@ -166,52 +166,54 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/61ec65342db11143d9ec4232587c95c1f075d562%5E">
-    9a8d3bbcaf0bd71e21a0c87cfa03013533cd252e
+   <a href="/chromium/src/+/1b75c44db59a2942b155a07f2ca13026d2b7aed2%5E">
+    e40fa0ae1f6ff3f87362d4590d85b3010dee57f7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/61ec65342db11143d9ec4232587c95c1f075d562%5E%21/">
+    <a href="/chromium/src/+/1b75c44db59a2942b155a07f2ca13026d2b7aed2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Evict Fallback Surface During Failed Commit
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove HttpProxyClientSocket mocking
 
-RenderFrameHostManager::CommitPending can re-use an existing
-RenderViewHostImpl, which can have a Fallback Surface from previous
-navigations. When swapping it is possible that the current
-RenderWidgetHostView* was deleted, such as for a Renderer crash. This
-leaves us with no current Surface to take as a new Fallback Surface.
+Mock HttpProxyClientSockets are only used in proxy error handling tests,
+introduced in issue #826570, to account for the tests not testing the
+expected code. The error used to be injected in the TCP connection to
+the proxy, where almost everything is mapped to
+ERR_PROXY_CONNECTION_FAILED.
 
-It is possible for CommitPending to be for invalid target, effectively
-failing. RenderFrameHostManager::CommitPendingIfNecessary can also
-cancel on-going navigations.
+It was switched to being injected in a mock
+HttpProxyClientSocket::Connect. But that ossifies implementation details
+of how we happen to model parts of HTTP proxies. (E.g. that non-tunnel
+requests use an HttpProxyClientSocket.) It also then fails to test other
+mapping effects, for instance that ERR_CONNECTION_CLOSED is very hard to
+reach in HTTP/1.1 proxy.
 
-Previously RenderWidgetHostView* would set a timeout at the start of
-navigation, so that if navigation fails we could clear any Fallback
-Surface. However when the above occurs there is no navigation, but we
-have the Fallback Surface from a previous navigation.
+Moreover, the mock didn't actually help with the original issue. The
+error mapping lives in HttpProxyConnectJob, which wasn't mocked out. The
+actual test fix was moving the error from TCP setup to the tunnel setup.
+This CL switches the test to do that without mocks.
 
-This change updates RenderFrameHostManager::CommitPending to notify its
-Delegate of this impending inability to swap Fallback Surfaces.
-RenderWidgetHostView* will then clear the previous Fallback Surfaces.
+In doing so, it turns out ERR_CONNECTION_CLOSED is all but unreachable.
+I've removed it for now, but we should probably either remove
+ERR_CONNECTION_CLOSED from the list or add its subtypes.
 
-TEST= content_browsertests
-  NoCompositingRenderWidgetHostViewBrowserTest.NoFallbackIfSwapFailedBeforeNavigation
-      content_unittests
-  All/RenderFrameHostManagerTestWithSiteIsolation.TwoTabsOneNavigatesAndCrashesThenNavigatesBack/{0,1}
-  *CrossOriginOpenerPolicyBrowserTest.CoopPageCrashIntoNonCoop*
+This deletes a lot of code and lets us rework the HttpProxyConnectJob /
+HttpProxyClientSocket split without affecting as many tests or callers.
 
-Bug: 1258363, 1072817
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id545767366843ab607db925e0e4815668a4f7ab2">Id545767366843ab607db925e0e4815668a4f7ab2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3307264">https://chromium-review.googlesource.com/c/chromium/src/+/3307264</a>
-Reviewed-by: Bo Liu &lt;boliu@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Commit-Queue: Jonathan Ross &lt;jonross@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#951710}
+Bug: 1277656
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0b92fd703670af13c191ce04b24d49c33285d917">I0b92fd703670af13c191ce04b24d49c33285d917</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3318084">https://chromium-review.googlesource.com/c/chromium/src/+/3318084</a>
+Reviewed-by: Yutaka Hirano &lt;yhirano@chromium.org&gt;
+Reviewed-by: Matt Menke &lt;mmenke@chromium.org&gt;
+Reviewed-by: Reilly Grant &lt;reillyg@chromium.org&gt;
+Reviewed-by: Mark Foltz &lt;mfoltz@chromium.org&gt;
+Commit-Queue: David Benjamin &lt;davidben@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#951739}
 </pre>
 
 </body>
