@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951902/"> 951902</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a1f2c6eb56b07c38f48ca4565bc229d07d3d329f">a1f2c6eb56b07c38f48ca4565bc229d07d3d329f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951910/"> 951910</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3152fa8f3db9a821639e3f7f885b2693c8516acd">3152fa8f3db9a821639e3f7f885b2693c8516acd</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951893/">951893</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a1f2c6eb56b07c38f48ca4565bc229d07d3d329f
+   3152fa8f3db9a821639e3f7f885b2693c8516acd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a1f2c6eb56b07c38f48ca4565bc229d07d3d329f">
+    <a href="/chromium/src/+log/3152fa8f3db9a821639e3f7f885b2693c8516acd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a1f2c6eb56b07c38f48ca4565bc229d07d3d329f.tar.gz">
+    <a href="/chromium/src/+archive/3152fa8f3db9a821639e3f7f885b2693c8516acd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mirko Bonadei &lt;mbonadei@chromium.org&gt;
+   Vitaly Rebrov &lt;vitreb@yandex-team.ru&gt;
   </td>
   <td>
-   Wed Dec 15 12:05:03 2021
+   Wed Dec 15 12:55:41 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 15 12:05:03 2021
+   Wed Dec 15 12:55:41 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a1f2c6eb56b07c38f48ca4565bc229d07d3d329f/">
-    8e43475ee5cbd061b13d438584a417bf38d07f05
+   <a href="/chromium/src/+/3152fa8f3db9a821639e3f7f885b2693c8516acd/">
+    c506cce70148e8595ebe5a31a82ac92b2c34468d
    </a>
   </td>
  </tr>
@@ -166,31 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a1f2c6eb56b07c38f48ca4565bc229d07d3d329f%5E">
-    a884462e6c4142a1232c0253f07a9531a923650b
+   <a href="/chromium/src/+/3152fa8f3db9a821639e3f7f885b2693c8516acd%5E">
+    381c8cf7695a1237be853d93c61d13ccadfbc1e7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a1f2c6eb56b07c38f48ca4565bc229d07d3d329f%5E%21/">
+    <a href="/chromium/src/+/3152fa8f3db9a821639e3f7f885b2693c8516acd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll abseil_revision 9336be04a2..1065514ef3
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fixed task runner issue in PerfettoPlatform in services_unittests
 
-Change Log:
-<a href="https://chromium.googlesource.com/external/github.com/abseil/abseil-cpp/+log/9336be04a2..1065514ef3">https://chromium.googlesource.com/external/github.com/abseil/abseil-cpp/+log/9336be04a2..1065514ef3</a>
-Full diff:
-<a href="https://chromium.googlesource.com/external/github.com/abseil/abseil-cpp/+/9336be04a2..1065514ef3">https://chromium.googlesource.com/external/github.com/abseil/abseil-cpp/+/9336be04a2..1065514ef3</a>
+Normally PerfettoPlatform should be initialized with singleton task
+runner which will be valid in different test suites which run in the same
+process. Usually this achived by using base::test::TracingEnvironment.
+TracingConsumerTest.* tests does not use this utility class. This leads
+to the problem if this tests run before any other test sutes which uses
+PerfettoPlatform. TracingConsumerTest.* initiliazes PerfettoPlatform
+with task runner which does not outlive current test. This leads to the
+problem with TracingMuxerImpl. It uses PerfettoPlatform task runner for
+shutdown. Because task runner is invalid TracingMuxerImpl cannot
+shutdown correctly and hangs on conditional variable.
+This problem does not reproduce if test with TracingEnvironment runs
+first. But if TracingConsumerTest is first then services_unittests
+hangs in the end.
 
-Bug: None
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib32981a1f8775319d102530494d800fa5b65e9c0">Ib32981a1f8775319d102530494d800fa5b65e9c0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3341051">https://chromium-review.googlesource.com/c/chromium/src/+/3341051</a>
-Reviewed-by: Danil Chapovalov &lt;danilchap@chromium.org&gt;
-Commit-Queue: Mirko Bonadei &lt;mbonadei@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#951902}
+To reproduce run:
+services_unittests \
+--gtest_filter=TracingConsumerTest.EnableAndDisableTracing:\
+PerfettoIntegrationTest.ClientEnabledAndDisabled
+
+I think this can be fixed by subclassing TracingConsumerTest from
+TracingUnitTest but I'm not familiar with this test suit to make such
+extensive change.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie74767307d62dec2c02b3718c290b622d132927c">Ie74767307d62dec2c02b3718c290b622d132927c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3311071">https://chromium-review.googlesource.com/c/chromium/src/+/3311071</a>
+Reviewed-by: Eric Seckler &lt;eseckler@chromium.org&gt;
+Reviewed-by: Sami Kyöstilä &lt;skyostil@chromium.org&gt;
+Commit-Queue: Alexander Yashkin &lt;a-v-y@yandex-team.ru&gt;
+Cr-Commit-Position: refs/heads/main@{#951910}
 </pre>
 
 </body>
