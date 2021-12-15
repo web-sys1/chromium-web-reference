@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951841/"> 951841</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/150200b5612e39d69e97164c63ae5e0866402be4">150200b5612e39d69e97164c63ae5e0866402be4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951850/"> 951850</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/738c40ca363b5a5bcbca67ffd1a147e2d4016e8e">738c40ca363b5a5bcbca67ffd1a147e2d4016e8e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951847/">951847</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ec10337579143ebf44d5ccede96bafd77bd18f91">ec10337579143ebf44d5ccede96bafd77bd18f91</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951853/">951853</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e772d72f15b5fa445a739f443d774fcb355d6374">e772d72f15b5fa445a739f443d774fcb355d6374</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   150200b5612e39d69e97164c63ae5e0866402be4
+   738c40ca363b5a5bcbca67ffd1a147e2d4016e8e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/150200b5612e39d69e97164c63ae5e0866402be4">
+    <a href="/chromium/src/+log/738c40ca363b5a5bcbca67ffd1a147e2d4016e8e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/150200b5612e39d69e97164c63ae5e0866402be4.tar.gz">
+    <a href="/chromium/src/+archive/738c40ca363b5a5bcbca67ffd1a147e2d4016e8e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chromium WPT Sync &lt;wpt-autoroller@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Bao-Duy Tran &lt;tranbaoduy@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 15 06:55:39 2021
+   Wed Dec 15 07:32:58 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 15 06:55:39 2021
+   Wed Dec 15 07:32:58 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/150200b5612e39d69e97164c63ae5e0866402be4/">
-    76ba58bc00bc29a3b302db9162b1faf687dc7342
+   <a href="/chromium/src/+/738c40ca363b5a5bcbca67ffd1a147e2d4016e8e/">
+    6182d6e8bf98c87029a78fe92936435c48cc72a7
    </a>
   </td>
  </tr>
@@ -166,47 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/150200b5612e39d69e97164c63ae5e0866402be4%5E">
-    42790473d206402be5e8935a19e7a028e51c93b6
+   <a href="/chromium/src/+/738c40ca363b5a5bcbca67ffd1a147e2d4016e8e%5E">
+    ec8cbebeae65ec45ac0bc2c1df10153d372ef379
    </a>
    <span>
     [
-    <a href="/chromium/src/+/150200b5612e39d69e97164c63ae5e0866402be4%5E%21/">
+    <a href="/chromium/src/+/738c40ca363b5a5bcbca67ffd1a147e2d4016e8e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Import wpt@b8c0410ed53a15dcaa6792a13f47584505d4b833
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Dismantle IMEBridge::Initialize() and related lifecycle requirement.
 
-Using wpt-import in Chromium 59edb308ff9b8b64599a969b7f0910b408b13fe6.
-With Chromium commits locally applied on WPT:
-6ed69eb40e "Migrate cookie-test.js's httpRedirectCookieTest to test_driver.delete_all_cookies"
-7cd9af914b "Always assume that non-auto 'columns' might create a multicol."
+IMEBridge is a stateful global. It can be made into a true global
+singleton first (before being replaced with dependency injection)
+because currently it's only ever reset upon shutdown of Chrome-Ash,
+and instantiation is required to happen before use.
 
+Static Get() can just ensure the singleton's availability before
+returning, instead of a separate Initialize() for instantiation and
+imposing "must call Initialize() before Get()" requirement on clients.
 
-Note to sheriffs: This CL imports external tests and adds
-expectations for those tests; if this CL is large and causes
-a few new failures, please fix the failures by adding new
-lines to TestExpectations rather than reverting. See:
-<a href="https://chromium.googlesource.com/chromium/src/+/main/docs/testing/web_platform_tests.md">https://chromium.googlesource.com/chromium/src/+/main/docs/testing/web_platform_tests.md</a>
+There's a slight runtime change whereby the instantiation now takes
+place at whatever that's the first Get(), instead of upon Initialize().
+However, this is negligible and shouldn't constitute any observable
+impact, given IMEBridge is a tiny plain-old-data object.
 
-Directory owners for changes in this CL:
-cbiesinger@chromium.org:
-  external/wpt/css/css-flexbox
-  external/wpt/css/css-sizing
-drott@chromium.org:
-  external/wpt/css/css-text-decor
+__delete_it__
 
-NOAUTOREVERT=true
-
-No-Export: true
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I502de7a2ed420b9ec11757be9051464e7ea737fc">I502de7a2ed420b9ec11757be9051464e7ea737fc</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3338980">https://chromium-review.googlesource.com/c/chromium/src/+/3338980</a>
-Reviewed-by: Weizhong Xia &lt;weizhong@google.com&gt;
-Commit-Queue: Weizhong Xia &lt;weizhong@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#951841}
+Bug: 1279743
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I39d83772dab874edab3457f5ab14ac8c0d302c84">I39d83772dab874edab3457f5ab14ac8c0d302c84</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3319864">https://chromium-review.googlesource.com/c/chromium/src/+/3319864</a>
+Reviewed-by: James Cook &lt;jamescook@chromium.org&gt;
+Reviewed-by: Darren Shen &lt;shend@chromium.org&gt;
+Reviewed-by: My Nguyen &lt;myy@chromium.org&gt;
+Reviewed-by: Yuichiro Hanada &lt;yhanada@chromium.org&gt;
+Commit-Queue: Bao-Duy Tran &lt;tranbaoduy@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#951850}
 </pre>
 
 </body>
