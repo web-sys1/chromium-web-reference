@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951850/"> 951850</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/738c40ca363b5a5bcbca67ffd1a147e2d4016e8e">738c40ca363b5a5bcbca67ffd1a147e2d4016e8e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951856/"> 951856</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0276eba8727fc646e16b3a5f079d5ca56b03fd32">0276eba8727fc646e16b3a5f079d5ca56b03fd32</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951853/">951853</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e772d72f15b5fa445a739f443d774fcb355d6374">e772d72f15b5fa445a739f443d774fcb355d6374</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951857/">951857</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fd041bd289c023c7b07befdc3b9315620e833037">fd041bd289c023c7b07befdc3b9315620e833037</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   738c40ca363b5a5bcbca67ffd1a147e2d4016e8e
+   0276eba8727fc646e16b3a5f079d5ca56b03fd32
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/738c40ca363b5a5bcbca67ffd1a147e2d4016e8e">
+    <a href="/chromium/src/+log/0276eba8727fc646e16b3a5f079d5ca56b03fd32">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/738c40ca363b5a5bcbca67ffd1a147e2d4016e8e.tar.gz">
+    <a href="/chromium/src/+archive/0276eba8727fc646e16b3a5f079d5ca56b03fd32.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Bao-Duy Tran &lt;tranbaoduy@chromium.org&gt;
+   dpapad &lt;dpapad@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 15 07:32:58 2021
+   Wed Dec 15 08:07:22 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 15 07:32:58 2021
+   Wed Dec 15 08:07:22 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/738c40ca363b5a5bcbca67ffd1a147e2d4016e8e/">
-    6182d6e8bf98c87029a78fe92936435c48cc72a7
+   <a href="/chromium/src/+/0276eba8727fc646e16b3a5f079d5ca56b03fd32/">
+    3a3ae3334df8af8a0912d26f0414be8012b4235b
    </a>
   </td>
  </tr>
@@ -166,45 +166,26 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/738c40ca363b5a5bcbca67ffd1a147e2d4016e8e%5E">
-    ec8cbebeae65ec45ac0bc2c1df10153d372ef379
+   <a href="/chromium/src/+/0276eba8727fc646e16b3a5f079d5ca56b03fd32%5E">
+    2ecff107598cffe5364c88505ee298dc77298b19
    </a>
    <span>
     [
-    <a href="/chromium/src/+/738c40ca363b5a5bcbca67ffd1a147e2d4016e8e%5E%21/">
+    <a href="/chromium/src/+/0276eba8727fc646e16b3a5f079d5ca56b03fd32%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Dismantle IMEBridge::Initialize() and related lifecycle requirement.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">CrOS: Migrate chrome://sys-internals to JS modules.
 
-IMEBridge is a stateful global. It can be made into a true global
-singleton first (before being replaced with dependency injection)
-because currently it's only ever reset upon shutdown of Chrome-Ash,
-and instantiation is required to happen before use.
-
-Static Get() can just ensure the singleton's availability before
-returning, instead of a separate Initialize() for instantiation and
-imposing "must call Initialize() before Get()" requirement on clients.
-
-There's a slight runtime change whereby the instantiation now takes
-place at whatever that's the first Get(), instead of upon Initialize().
-However, this is negligible and shouldn't constitute any observable
-impact, given IMEBridge is a tiny plain-old-data object.
-
-__delete_it__
-
-Bug: 1279743
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I39d83772dab874edab3457f5ab14ac8c0d302c84">I39d83772dab874edab3457f5ab14ac8c0d302c84</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3319864">https://chromium-review.googlesource.com/c/chromium/src/+/3319864</a>
-Reviewed-by: James Cook &lt;jamescook@chromium.org&gt;
-Reviewed-by: Darren Shen &lt;shend@chromium.org&gt;
-Reviewed-by: My Nguyen &lt;myy@chromium.org&gt;
-Reviewed-by: Yuichiro Hanada &lt;yhanada@chromium.org&gt;
-Commit-Queue: Bao-Duy Tran &lt;tranbaoduy@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#951850}
+Bug: 1173575
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib93264e69d8fe898f69c363466bb63538f1e1e92">Ib93264e69d8fe898f69c363466bb63538f1e1e92</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3334988">https://chromium-review.googlesource.com/c/chromium/src/+/3334988</a>
+Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
+Commit-Queue: Demetrios Papadopoulos &lt;dpapad@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#951856}
 </pre>
 
 </body>
