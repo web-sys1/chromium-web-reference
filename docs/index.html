@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951762/"> 951762</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/84a7b92694b3697c74be7beb7b442419da0cf6b2">84a7b92694b3697c74be7beb7b442419da0cf6b2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951799/"> 951799</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3f64b4dbb730801eed39a8ccb5c26ddbf9942474">3f64b4dbb730801eed39a8ccb5c26ddbf9942474</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951782/">951782</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   84a7b92694b3697c74be7beb7b442419da0cf6b2
+   3f64b4dbb730801eed39a8ccb5c26ddbf9942474
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/84a7b92694b3697c74be7beb7b442419da0cf6b2">
+    <a href="/chromium/src/+log/3f64b4dbb730801eed39a8ccb5c26ddbf9942474">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/84a7b92694b3697c74be7beb7b442419da0cf6b2.tar.gz">
+    <a href="/chromium/src/+archive/3f64b4dbb730801eed39a8ccb5c26ddbf9942474.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Joanmarie Diggs &lt;jdiggs@igalia.com&gt;
+   Joshua Peraza &lt;jperaza@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 15 01:09:55 2021
+   Wed Dec 15 03:03:38 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 15 01:09:55 2021
+   Wed Dec 15 03:03:38 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/84a7b92694b3697c74be7beb7b442419da0cf6b2/">
-    1eb7f196bdc15247b1f2fa0db179951770e6795e
+   <a href="/chromium/src/+/3f64b4dbb730801eed39a8ccb5c26ddbf9942474/">
+    9e841cb3de0d8b73315426d2f17006f70aeb86e2
    </a>
   </td>
  </tr>
@@ -166,38 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/84a7b92694b3697c74be7beb7b442419da0cf6b2%5E">
-    731871b2d2efe2ae460313ccd723a89f6c67c029
+   <a href="/chromium/src/+/3f64b4dbb730801eed39a8ccb5c26ddbf9942474%5E">
+    6b7765d0d9bfc22bd8c367393af6c065a56568ee
    </a>
    <span>
     [
-    <a href="/chromium/src/+/84a7b92694b3697c74be7beb7b442419da0cf6b2%5E%21/">
+    <a href="/chromium/src/+/3f64b4dbb730801eed39a8ccb5c26ddbf9942474%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fire accessible MENU_POPUP_START when menu is created on the fly
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">headless,linux: migrate from breakpad to crashpad
 
-AXEventGenerator::OnIgnoredChanged fires MENU_POPUP_START in addition
-to SUBTREE_CREATED for the ARIA menu role. That does not cover the case
-where the menu subtree did not already exist in the DOM, but was created
-on the fly.
+When enabled, Breakpad would produce dumps but only upload them for
+official builds if no CHROME_HEADLESS environment variable existed.
 
-Fire the missing event in AXEventGenerator::OnNodeCreated, which
-should also handle the case where the new menu has ancestor elements
-also being added to the DOM.
+Crashpad maintains this behavior by overriding
+HeadlessCrashReporterClient::IsRunningUnattended(), and
+GetCollectStatsConsent(). GetCollectStatsConsent() is implied true by
+--enable-crash-reporter passed to headless_shell, or --headless passed
+to chrome. Crashpad will internally also only enable upload for
+official, google-branded builds.
 
-AX-Relnotes: Assistive technologies are now notified when an ARIA
-menu is created on the fly.
+Removes use of kDisableBreakpad which previously would disable
+Breakpad/Linux or Crashpad/Mac, but not Crashpad/Windows. It is
+duplicative of --disable-crash-reporter. This patch also causes
+--disable-crash-reporter to function for mac, but still not windows.
 
-Bug: 1254875
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie384c19eab0f808bbc4637d0b87764514d76e0a7">Ie384c19eab0f808bbc4637d0b87764514d76e0a7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3310922">https://chromium-review.googlesource.com/c/chromium/src/+/3310922</a>
-Reviewed-by: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
-Commit-Queue: Joanmarie Diggs &lt;jdiggs@igalia.com&gt;
-Cr-Commit-Position: refs/heads/main@{#951762}
+Bug: 1176772
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I651ae30e3c90ec90652743b92c55c63c84b53fbc">I651ae30e3c90ec90652743b92c55c63c84b53fbc</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2893222">https://chromium-review.googlesource.com/c/chromium/src/+/2893222</a>
+Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
+Commit-Queue: Joshua Peraza &lt;jperaza@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#951799}
 </pre>
 
 </body>
