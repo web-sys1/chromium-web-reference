@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951799/"> 951799</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3f64b4dbb730801eed39a8ccb5c26ddbf9942474">3f64b4dbb730801eed39a8ccb5c26ddbf9942474</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951803/"> 951803</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/718f73492051bccb52cdb936d1b8541ed5f78806">718f73492051bccb52cdb936d1b8541ed5f78806</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951782/">951782</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/27a04d792e3df9a9bf6a56446dccc9c843cb2f9a">27a04d792e3df9a9bf6a56446dccc9c843cb2f9a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951794/">951794</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/db55304461138a5cada74d696688ac9d859abd0b">db55304461138a5cada74d696688ac9d859abd0b</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3f64b4dbb730801eed39a8ccb5c26ddbf9942474
+   718f73492051bccb52cdb936d1b8541ed5f78806
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3f64b4dbb730801eed39a8ccb5c26ddbf9942474">
+    <a href="/chromium/src/+log/718f73492051bccb52cdb936d1b8541ed5f78806">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3f64b4dbb730801eed39a8ccb5c26ddbf9942474.tar.gz">
+    <a href="/chromium/src/+archive/718f73492051bccb52cdb936d1b8541ed5f78806.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Joshua Peraza &lt;jperaza@chromium.org&gt;
+   Claudio DeSouza &lt;cdesouza@igalia.com&gt;
   </td>
   <td>
-   Wed Dec 15 03:03:38 2021
+   Wed Dec 15 03:38:29 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 15 03:03:38 2021
+   Wed Dec 15 03:38:29 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3f64b4dbb730801eed39a8ccb5c26ddbf9942474/">
-    9e841cb3de0d8b73315426d2f17006f70aeb86e2
+   <a href="/chromium/src/+/718f73492051bccb52cdb936d1b8541ed5f78806/">
+    daeca6035206ecb8aa9d31cd2e61f2ebc7ffb4fc
    </a>
   </td>
  </tr>
@@ -166,41 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3f64b4dbb730801eed39a8ccb5c26ddbf9942474%5E">
-    6b7765d0d9bfc22bd8c367393af6c065a56568ee
+   <a href="/chromium/src/+/718f73492051bccb52cdb936d1b8541ed5f78806%5E">
+    a5590715f74dc92538a67acd015afb0e37ca8ac0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3f64b4dbb730801eed39a8ccb5c26ddbf9942474%5E%21/">
+    <a href="/chromium/src/+/718f73492051bccb52cdb936d1b8541ed5f78806%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">headless,linux: migrate from breakpad to crashpad
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[MPArch] Fix FederatedAuthNavigationThrottle handling of fenced frames
 
-When enabled, Breakpad would produce dumps but only upload them for
-official builds if no CHROME_HEADLESS environment variable existed.
+This CL corrects the factory function for
+FederatedAuthNavigationThrottle to make sure we handle fenced frames in
+the same way we are handling iframes.
 
-Crashpad maintains this behavior by overriding
-HeadlessCrashReporterClient::IsRunningUnattended(), and
-GetCollectStatsConsent(). GetCollectStatsConsent() is implied true by
---enable-crash-reporter passed to headless_shell, or --headless passed
-to chrome. Crashpad will internally also only enable upload for
-official, google-branded builds.
-
-Removes use of kDisableBreakpad which previously would disable
-Breakpad/Linux or Crashpad/Mac, but not Crashpad/Windows. It is
-duplicative of --disable-crash-reporter. This patch also causes
---disable-crash-reporter to function for mac, but still not windows.
-
-Bug: 1176772
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I651ae30e3c90ec90652743b92c55c63c84b53fbc">I651ae30e3c90ec90652743b92c55c63c84b53fbc</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2893222">https://chromium-review.googlesource.com/c/chromium/src/+/2893222</a>
-Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
-Commit-Queue: Joshua Peraza &lt;jperaza@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#951799}
+Bug: 1276449
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I302d46ad06a0744cd533468a2d716d9797cf5c8b">I302d46ad06a0744cd533468a2d716d9797cf5c8b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3318296">https://chromium-review.googlesource.com/c/chromium/src/+/3318296</a>
+Reviewed-by: Ken Buchanan &lt;kenrb@chromium.org&gt;
+Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Reviewed-by: Adithya Srinivasan &lt;adithyas@chromium.org&gt;
+Commit-Queue: Claudio DeSouza &lt;cdesouza@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#951803}
 </pre>
 
 </body>
