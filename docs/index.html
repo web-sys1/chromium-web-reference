@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951692/"> 951692</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/83a4b7d4e436f463209384b975b21872acc5920f">83a4b7d4e436f463209384b975b21872acc5920f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/951710/"> 951710</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/61ec65342db11143d9ec4232587c95c1f075d562">61ec65342db11143d9ec4232587c95c1f075d562</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951705/">951705</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/22d6c88ae7f304cfbb7de56c848d5465b87214e0">22d6c88ae7f304cfbb7de56c848d5465b87214e0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/951721/">951721</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9d0ca76783befbdc50cc3599ae37e2344761d9c1">9d0ca76783befbdc50cc3599ae37e2344761d9c1</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   83a4b7d4e436f463209384b975b21872acc5920f
+   61ec65342db11143d9ec4232587c95c1f075d562
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/83a4b7d4e436f463209384b975b21872acc5920f">
+    <a href="/chromium/src/+log/61ec65342db11143d9ec4232587c95c1f075d562">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/83a4b7d4e436f463209384b975b21872acc5920f.tar.gz">
+    <a href="/chromium/src/+archive/61ec65342db11143d9ec4232587c95c1f075d562.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   rajendrant &lt;rajendrant@chromium.org&gt;
+   Jonathan Ross &lt;jonross@chromium.org&gt;
   </td>
   <td>
-   Tue Dec 14 22:25:41 2021
+   Tue Dec 14 23:01:40 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Dec 14 22:25:41 2021
+   Tue Dec 14 23:01:40 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/83a4b7d4e436f463209384b975b21872acc5920f/">
-    6c13e3fec3384ed2f16035d341cd66bb527f5104
+   <a href="/chromium/src/+/61ec65342db11143d9ec4232587c95c1f075d562/">
+    c027e07d3acb4e497a4018ff6951b22d44da656c
    </a>
   </td>
  </tr>
@@ -166,26 +166,52 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/83a4b7d4e436f463209384b975b21872acc5920f%5E">
-    2d3725b13c97f7d608837711496a3e40095dc10d
+   <a href="/chromium/src/+/61ec65342db11143d9ec4232587c95c1f075d562%5E">
+    9a8d3bbcaf0bd71e21a0c87cfa03013533cd252e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/83a4b7d4e436f463209384b975b21872acc5920f%5E%21/">
+    <a href="/chromium/src/+/61ec65342db11143d9ec4232587c95c1f075d562%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Extend login detection metrics
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Evict Fallback Surface During Failed Commit
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia2321236f4a691c39b537ea47abd7ae5343eadf1">Ia2321236f4a691c39b537ea47abd7ae5343eadf1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3328917">https://chromium-review.googlesource.com/c/chromium/src/+/3328917</a>
-Reviewed-by: Tarun Bansal &lt;tbansal@chromium.org&gt;
-Reviewed-by: Jesse Doherty &lt;jwd@chromium.org&gt;
-Commit-Queue: Raj T &lt;rajendrant@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#951692}
+RenderFrameHostManager::CommitPending can re-use an existing
+RenderViewHostImpl, which can have a Fallback Surface from previous
+navigations. When swapping it is possible that the current
+RenderWidgetHostView* was deleted, such as for a Renderer crash. This
+leaves us with no current Surface to take as a new Fallback Surface.
+
+It is possible for CommitPending to be for invalid target, effectively
+failing. RenderFrameHostManager::CommitPendingIfNecessary can also
+cancel on-going navigations.
+
+Previously RenderWidgetHostView* would set a timeout at the start of
+navigation, so that if navigation fails we could clear any Fallback
+Surface. However when the above occurs there is no navigation, but we
+have the Fallback Surface from a previous navigation.
+
+This change updates RenderFrameHostManager::CommitPending to notify its
+Delegate of this impending inability to swap Fallback Surfaces.
+RenderWidgetHostView* will then clear the previous Fallback Surfaces.
+
+TEST= content_browsertests
+  NoCompositingRenderWidgetHostViewBrowserTest.NoFallbackIfSwapFailedBeforeNavigation
+      content_unittests
+  All/RenderFrameHostManagerTestWithSiteIsolation.TwoTabsOneNavigatesAndCrashesThenNavigatesBack/{0,1}
+  *CrossOriginOpenerPolicyBrowserTest.CoopPageCrashIntoNonCoop*
+
+Bug: 1258363, 1072817
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id545767366843ab607db925e0e4815668a4f7ab2">Id545767366843ab607db925e0e4815668a4f7ab2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3307264">https://chromium-review.googlesource.com/c/chromium/src/+/3307264</a>
+Reviewed-by: Bo Liu &lt;boliu@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Commit-Queue: Jonathan Ross &lt;jonross@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#951710}
 </pre>
 
 </body>
