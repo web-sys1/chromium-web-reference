@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/952525/"> 952525</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ddd1d552d4b95648f7035ed10bf4d43e246bfbd1">ddd1d552d4b95648f7035ed10bf4d43e246bfbd1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/952543/"> 952543</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8d10a3074f2edf3a75f0754113ec486fac21d6e3">8d10a3074f2edf3a75f0754113ec486fac21d6e3</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/952512/">952512</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/17b0623bb7a3ee16bf7b9118ccad631be5316114">17b0623bb7a3ee16bf7b9118ccad631be5316114</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/952532/">952532</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f22ef6b7809adc4c66ad98905e082cc236595b65">f22ef6b7809adc4c66ad98905e082cc236595b65</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ddd1d552d4b95648f7035ed10bf4d43e246bfbd1
+   8d10a3074f2edf3a75f0754113ec486fac21d6e3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ddd1d552d4b95648f7035ed10bf4d43e246bfbd1">
+    <a href="/chromium/src/+log/8d10a3074f2edf3a75f0754113ec486fac21d6e3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ddd1d552d4b95648f7035ed10bf4d43e246bfbd1.tar.gz">
+    <a href="/chromium/src/+archive/8d10a3074f2edf3a75f0754113ec486fac21d6e3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Moe Ahmadi &lt;mahmadi@chromium.org&gt;
+   Lukasz Anforowicz &lt;lukasza@chromium.org&gt;
   </td>
   <td>
-   Thu Dec 16 21:37:52 2021
+   Thu Dec 16 22:21:15 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Dec 16 21:37:52 2021
+   Thu Dec 16 22:21:15 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ddd1d552d4b95648f7035ed10bf4d43e246bfbd1/">
-    3480d1c85692a7145aed44ffe32315617e16d440
+   <a href="/chromium/src/+/8d10a3074f2edf3a75f0754113ec486fac21d6e3/">
+    e2d44e647db6765a6f66b34e03edaba45cfa8b84
    </a>
   </td>
  </tr>
@@ -166,37 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ddd1d552d4b95648f7035ed10bf4d43e246bfbd1%5E">
-    ab36d8cd955936a533a64a279d0efe5c40dc1a1f
+   <a href="/chromium/src/+/8d10a3074f2edf3a75f0754113ec486fac21d6e3%5E">
+    1caf15cebaa9196319793a2638719369b78cc152
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ddd1d552d4b95648f7035ed10bf4d43e246bfbd1%5E%21/">
+    <a href="/chromium/src/+/8d10a3074f2edf3a75f0754113ec486fac21d6e3%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ZPS] Records HTTP cache validity metric for zero-suggest responses
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use abstract interfaces in CORB unit tests.
 
-Adds a new feature param for omnibox::kZeroSuggestPrefetching
-used to place users in counterfactual groups. Counterfactual
-groups issue a follow-up non-cacheable request if the response
-is loaded from the HTTP cache. The new response is compared
-against the original cached response to determine HTTP cache
-validity which is recorded as a new entry for the following
-histograms:
+This CL tweaks the ResponseAnalyzerTest::RunAnalyzerOnScenario method,
+so that it takes an abstract ResponseAnalyzer interface as input
+(instead of taking a concrete CorbResponseAnalyzer before this CL).
+This CL helps with adding ORB test coverage in follow-up CLs.
 
-Omnibox.ZeroSuggestRequests.Prefetch
-Omnibox.ZeroSuggestRequests.NonPrefetch
+This CL removes CorbResponseAnalyzer::canonical_mime_type accessor.
+Note that the canonical MIME type is already covered by the following
+tests:
+- The CrossOriginReadBlockingTest.GetCanonicalMimeType unit test
+  in //services/network/public/cpp/corb/corb_impl_unittest.cc
+- UMA-based coverage via
+    - The ResponseAnalyzerTest.ResponseBlocking unit test in
+      //services/network/public/cpp/corb/corb_impl_unittest.cc
+    - The InspectHistograms helper function used by the browser tests
+      from //content/.../cross_site_document_blocking_browsertest.cc
 
-Bug: 1262373
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1e106e2fb4cd89ac545d6ad6fb2e0ee605662a49">I1e106e2fb4cd89ac545d6ad6fb2e0ee605662a49</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3343634">https://chromium-review.googlesource.com/c/chromium/src/+/3343634</a>
-Reviewed-by: Justin Donnelly &lt;jdonnelly@chromium.org&gt;
-Commit-Queue: Mohamad Ahmadi &lt;mahmadi@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#952525}
+Bug: 1178928
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2c0bbeb7bb6258318d852e07a28c1550b7bf89dc">I2c0bbeb7bb6258318d852e07a28c1550b7bf89dc</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3334957">https://chromium-review.googlesource.com/c/chromium/src/+/3334957</a>
+Reviewed-by: Charles Reis &lt;creis@chromium.org&gt;
+Commit-Queue: Łukasz Anforowicz &lt;lukasza@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#952543}
 </pre>
 
 </body>
