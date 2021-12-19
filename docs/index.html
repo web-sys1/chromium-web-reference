@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/952783/"> 952783</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/68c787e909b8ebf9e64233f52ccbe50975bc1d2c">68c787e909b8ebf9e64233f52ccbe50975bc1d2c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/952785/"> 952785</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/473e82743f0ee4a4dc6294f841577e272b2a1864">473e82743f0ee4a4dc6294f841577e272b2a1864</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/952780/">952780</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ed18bd8c39e174cd651e271bfc6b060ca7e25cc8">ed18bd8c39e174cd651e271bfc6b060ca7e25cc8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/952784/">952784</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cdafc5868b71f7704feab50979919f42f0e9e597">cdafc5868b71f7704feab50979919f42f0e9e597</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   68c787e909b8ebf9e64233f52ccbe50975bc1d2c
+   473e82743f0ee4a4dc6294f841577e272b2a1864
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/68c787e909b8ebf9e64233f52ccbe50975bc1d2c">
+    <a href="/chromium/src/+log/473e82743f0ee4a4dc6294f841577e272b2a1864">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/68c787e909b8ebf9e64233f52ccbe50975bc1d2c.tar.gz">
+    <a href="/chromium/src/+archive/473e82743f0ee4a4dc6294f841577e272b2a1864.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mikel Astiz &lt;mastiz@chromium.org&gt;
+   Internal Frameworks Autoroller &lt;bling-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Dec 19 08:46:49 2021
+   Sun Dec 19 09:24:09 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Dec 19 08:46:49 2021
+   Sun Dec 19 09:24:09 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/68c787e909b8ebf9e64233f52ccbe50975bc1d2c/">
-    f4c3f8849131b20df04b2dabcd2e3f4e094d20f1
+   <a href="/chromium/src/+/473e82743f0ee4a4dc6294f841577e272b2a1864/">
+    695755c30a307cef834cdcfd61c8585d37875b5e
    </a>
   </td>
  </tr>
@@ -166,46 +166,25 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/68c787e909b8ebf9e64233f52ccbe50975bc1d2c%5E">
-    c0099fff03eca016aeece013d7aab1317a81f1d9
+   <a href="/chromium/src/+/473e82743f0ee4a4dc6294f841577e272b2a1864%5E">
+    cdafc5868b71f7704feab50979919f42f0e9e597
    </a>
    <span>
     [
-    <a href="/chromium/src/+/68c787e909b8ebf9e64233f52ccbe50975bc1d2c%5E%21/">
+    <a href="/chromium/src/+/473e82743f0ee4a4dc6294f841577e272b2a1864%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[sync] Leverage bookmark parent GUID for initial sync
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Frameworks roll] Roll to 417219198 piper revision
 
-BookmarkModelMerger implements the initial sync procedure, where the
-local bookmark tree needs to be reconciled with a remote equivalent,
-needed primarily when the user enables sync for the first time.
-
-Just like <a href="https://crrev.com/c/3327034">https://crrev.com/c/3327034</a> did recently for incremental sync
-updates, this patch does the analogous for initial sync: it migrates
-BookmarkModelMerger to stop relying on |SyncEntity.parent_id| and
-instead constructs the remote tree based on the more modern
-|BookmarkSpecifics.parent_guid|.
-
-Again, the resulting behavioral difference should be negligible,
-because the new field should be available even for legacy data, as per
-logic introduced in <a href="https://crrev.com/c/3326621.">https://crrev.com/c/3326621.</a>
-
-One minor behavior difference is about UMA, which no longer can detect,
-without additional complexity, a rare edge case among corruption states:
-bookmark nodes that hang directly from the root node (parent of
-permanent folders), without involving a permanent folder. Hence, this
-UMA bucket is marked as deprecated, since it is no longer recorded.
-
-Bug: 1274122
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4b0d6be7e8e3703e17555aa96bd7aab42e1824dd">I4b0d6be7e8e3703e17555aa96bd7aab42e1824dd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3332722">https://chromium-review.googlesource.com/c/chromium/src/+/3332722</a>
-Reviewed-by: Rushan Suleymanov &lt;rushans@google.com&gt;
-Commit-Queue: Mikel Astiz &lt;mastiz@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#952783}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic4abf01e0aa8195ecb4f1e5e799d5f6de91b4ca4">Ic4abf01e0aa8195ecb4f1e5e799d5f6de91b4ca4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3348345">https://chromium-review.googlesource.com/c/chromium/src/+/3348345</a>
+Commit-Queue: Internal Frameworks Autoroller &lt;bling-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+Bot-Commit: Internal Frameworks Autoroller &lt;bling-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#952785}
 </pre>
 
 </body>
