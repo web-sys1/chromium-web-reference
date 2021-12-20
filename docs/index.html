@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/952864/"> 952864</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a5117de6242fd788be41b712a2934efd6af8c7ab">a5117de6242fd788be41b712a2934efd6af8c7ab</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/952867/"> 952867</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/13d176abd974a4c5f02226979691fd3ee9e6dc28">13d176abd974a4c5f02226979691fd3ee9e6dc28</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/952860/">952860</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a5117de6242fd788be41b712a2934efd6af8c7ab
+   13d176abd974a4c5f02226979691fd3ee9e6dc28
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a5117de6242fd788be41b712a2934efd6af8c7ab">
+    <a href="/chromium/src/+log/13d176abd974a4c5f02226979691fd3ee9e6dc28">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a5117de6242fd788be41b712a2934efd6af8c7ab.tar.gz">
+    <a href="/chromium/src/+archive/13d176abd974a4c5f02226979691fd3ee9e6dc28.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Minoru Chikamune &lt;chikamune@chromium.org&gt;
+   Kuo Jen Wei &lt;inker@google.com&gt;
   </td>
   <td>
-   Mon Dec 20 08:59:47 2021
+   Mon Dec 20 09:25:58 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Dec 20 08:59:47 2021
+   Mon Dec 20 09:25:58 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a5117de6242fd788be41b712a2934efd6af8c7ab/">
-    ffd51134469c6249df95e2609f3247ebb416856e
+   <a href="/chromium/src/+/13d176abd974a4c5f02226979691fd3ee9e6dc28/">
+    fcb71c63f43da936e2198442285c51c0baacd80f
    </a>
   </td>
  </tr>
@@ -166,74 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a5117de6242fd788be41b712a2934efd6af8c7ab%5E">
-    09f91f2d0df63db1e26e933e94f867e43506004d
+   <a href="/chromium/src/+/13d176abd974a4c5f02226979691fd3ee9e6dc28%5E">
+    c9414ab521b99be4cf951988c6fb4751b50e3948
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a5117de6242fd788be41b712a2934efd6af8c7ab%5E%21/">
+    <a href="/chromium/src/+/13d176abd974a4c5f02226979691fd3ee9e6dc28%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor DevToolsClient to get the result with base::Value&amp;
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">CCA: Use photo treatment for continuous video snapshot
 
-This CL updates following two existing functions so that we can get
-the result with base::Value&amp; instead of
-std::unique_ptr&lt;base::DictionaryValue&gt;*.
+For photo taking, we only allow previous photo to finish then can take
+next photo, while for video snapshotting, we will queue all user
+triggered snapshot request and execute all of them one by one. This CL
+consolidate these two behavior to ensure next user triggered snapshot
+can only happen when previous one complete.
 
- - SendCommandAndGetResult()
- - SendCommandAndGetResultWithTimeout()
-
-```
-[before]
-  virtual Status SendCommandAndGetResult(
-      const std::string&amp; method,
-      const base::DictionaryValue&amp; params,
-      std::unique_ptr&lt;base::DictionaryValue&gt;* result) = 0;
-
-  virtual Status SendCommandAndGetResultWithTimeout(
-      const std::string&amp; method,
-      const base::DictionaryValue&amp; params,
-      const Timeout* timeout,
-      std::unique_ptr&lt;base::DictionaryValue&gt;* result) = 0;
-
-[after]
-  virtual Status SendCommandAndGetResult(
-      const std::string&amp; method,
-      const base::DictionaryValue&amp; params,
-      base::Value* result) = 0;
-
-  virtual Status SendCommandAndGetResultWithTimeout(
-      const std::string&amp; method,
-      const base::DictionaryValue&amp; params,
-      const Timeout* timeout,
-      base::Value* result) = 0;
-```
-
-This CL also updates ChromeImpl as follows.
-
-```
-[before]
-  Status ParseWindow(std::unique_ptr&lt;base::DictionaryValue&gt; params,
-                     Window* window);
-  Status ParseWindowBounds(std::unique_ptr&lt;base::DictionaryValue&gt; params,
-                           Window* window);
-
-[after]
-  Status ParseWindow(const base::Value&amp; params, Window* window);
-  Status ParseWindowBounds(const base::Value&amp; params, Window* window);
-```
-
-Bug: 1187061
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I07535253cc407a1588e28b36fff339ffc9b5825a">I07535253cc407a1588e28b36fff339ffc9b5825a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3329055">https://chromium-review.googlesource.com/c/chromium/src/+/3329055</a>
-Reviewed-by: Dominic Battré &lt;battre@chromium.org&gt;
-Reviewed-by: Mathias Bynens &lt;mathias@chromium.org&gt;
-Commit-Queue: Minoru Chikamune &lt;chikamune@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#952864}
+Bug: b:209726472
+Test: tast run &lt;DUT&gt; camera.CCAUIRecordVideo
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic22ca37e6054fdd90c41a2cd45ae3ff1eb5319d5">Ic22ca37e6054fdd90c41a2cd45ae3ff1eb5319d5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3344470">https://chromium-review.googlesource.com/c/chromium/src/+/3344470</a>
+Reviewed-by: Wei Lee &lt;wtlee@chromium.org&gt;
+Commit-Queue: Inker Kuo &lt;inker@chromium.org&gt;
+Auto-Submit: Inker Kuo &lt;inker@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#952867}
 </pre>
 
 </body>
