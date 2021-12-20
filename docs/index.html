@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/952986/"> 952986</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0dd0335405e978d6c04a111531029b282abe2e7">f0dd0335405e978d6c04a111531029b282abe2e7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/952998/"> 952998</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/81982abcc5dc050c6bfa52f8059d545cbc620898">81982abcc5dc050c6bfa52f8059d545cbc620898</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/952973/">952973</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/360725d516211f1a49308a1f1c378f45bdfab30c">360725d516211f1a49308a1f1c378f45bdfab30c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/952984/">952984</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0421fd7a72ccc7aac28d49d1b21c47a54b0ff403">0421fd7a72ccc7aac28d49d1b21c47a54b0ff403</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f0dd0335405e978d6c04a111531029b282abe2e7
+   81982abcc5dc050c6bfa52f8059d545cbc620898
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f0dd0335405e978d6c04a111531029b282abe2e7">
+    <a href="/chromium/src/+log/81982abcc5dc050c6bfa52f8059d545cbc620898">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f0dd0335405e978d6c04a111531029b282abe2e7.tar.gz">
+    <a href="/chromium/src/+archive/81982abcc5dc050c6bfa52f8059d545cbc620898.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Addison Luh &lt;aluh@chromium.org&gt;
+   Nate Fischer &lt;ntfschr@google.com&gt;
   </td>
   <td>
-   Mon Dec 20 19:24:30 2021
+   Mon Dec 20 20:14:20 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Dec 20 19:24:30 2021
+   Mon Dec 20 20:14:20 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f0dd0335405e978d6c04a111531029b282abe2e7/">
-    51b83537c046ce987b83d0a70f55b964a4d15703
+   <a href="/chromium/src/+/81982abcc5dc050c6bfa52f8059d545cbc620898/">
+    88be64a8a2df039c4d60e6183424d83ef8384fcb
    </a>
   </td>
  </tr>
@@ -166,59 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f0dd0335405e978d6c04a111531029b282abe2e7%5E">
-    fc4db7c9493ebbd4ec09d1a78f630cca5a9c8dda
+   <a href="/chromium/src/+/81982abcc5dc050c6bfa52f8059d545cbc620898%5E">
+    f64f23b09bdb88b02241c538ec9c82847e549fdf
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f0dd0335405e978d6c04a111531029b282abe2e7%5E%21/">
+    <a href="/chromium/src/+/81982abcc5dc050c6bfa52f8059d545cbc620898%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix memory leak in HatsNotificationControllerTest.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">AW UMA: split kAllWebViewsHandled into two cases
 
-There's a circular dependency between the HatsNotificationController and
-its Notification, where the controller holds a unique_ptr to the
-Notification, and the notification holds a scoped_refptr to the
-controller (as a notification delegate).
+This changes the Android.WebView.OnRenderProcessGoneResult histogram to
+split kAllWebViewsHandled into two cases, depending on whether the
+renderer death was because of a "crash" or a "kill" (OOM/update). We
+currently make the distinction if the renderer death is not handled by
+the app, however we didn't make a distinction when the death is handled
+by the app.
 
-Code where controller creates and owns a Notification:
-<a href="https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/ash/hats/hats_notification_controller.cc;l=244;drc=e5a38eddbdf45d7563a00d019debd11b803af1bb">https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/ash/hats/hats_notification_controller.cc;l=244;drc=e5a38eddbdf45d7563a00d019debd11b803af1bb</a>
+This extra info should help investigate a strange result we saw in the
+data (see <a href="https://crbug.com/1272940#c1">https://crbug.com/1272940#c1</a>).
 
-Code where Notification holds a scoped_refptr to the controller:
-<a href="https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/ash/hats/hats_notification_controller.cc;l=252;drc=e5a38eddbdf45d7563a00d019debd11b803af1bb">https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/ash/hats/hats_notification_controller.cc;l=252;drc=e5a38eddbdf45d7563a00d019debd11b803af1bb</a>
-
-This circular dependency is only broken when the notification is removed
-and destroyed, which happens when a user dismisses the notification.
-However, in the unittest, the notification was dismissed incorrectly, so
-the circular dependency remains, leaving the controller orphaned.
-
-The fix is to dismiss the notification properly.
-
-Repro:
-1) Set up lsan build: <a href="https://www.chromium.org/developers/testing/leaksanitizer/">https://www.chromium.org/developers/testing/leaksanitizer/</a>
-2) Build and run `unit_tests` and filter for HatsNotificationControllerTest:
-
-$ autoninja -C out/lsan unit_tests &amp;&amp; ASAN_OPTIONS="detect_leaks=1 symbolize=1 external_symbolizer_path=$PWD/third_party/llvm-build/Release+Asserts/bin/llvm-symbolizer detect_odr_violation=0" out/lsan/unit_tests --gtest_filter="HatsNotificationControllerTest.*"
-
-
-This change also includes some correctness fixes:
-* When move-contructing a StubNotificationDisplayService, also move the
-notification.
-* Fix StubNotificationDisplayService::FindNotification to not make an
-unnecessary string copy.
-
-Bug: 1280811
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ied26118b1ec9c213bbd94f04c2ea9c55dcdca30a">Ied26118b1ec9c213bbd94f04c2ea9c55dcdca30a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3346007">https://chromium-review.googlesource.com/c/chromium/src/+/3346007</a>
-Auto-Submit: Addison Luh &lt;aluh@chromium.org&gt;
-Reviewed-by: Miriam Zimmerman &lt;mutexlox@chromium.org&gt;
-Reviewed-by: Justin DeWitt &lt;dewittj@chromium.org&gt;
-Commit-Queue: Justin DeWitt &lt;dewittj@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#952986}
+Bug: 1272940
+Test: None
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibbc4641a6b1a8ac87d4bfa593c560624adc8eb84">Ibbc4641a6b1a8ac87d4bfa593c560624adc8eb84</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3344206">https://chromium-review.googlesource.com/c/chromium/src/+/3344206</a>
+Reviewed-by: Richard Coles &lt;torne@chromium.org&gt;
+Auto-Submit: Nate Fischer &lt;ntfschr@chromium.org&gt;
+Reviewed-by: Michael Thiessen &lt;mthiesse@chromium.org&gt;
+Commit-Queue: Michael Thiessen &lt;mthiesse@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#952998}
 </pre>
 
 </body>
