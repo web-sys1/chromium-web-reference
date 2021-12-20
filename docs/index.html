@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/952975/"> 952975</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4b6f8c5cffc51296206c081670b49adc5bd1109a">4b6f8c5cffc51296206c081670b49adc5bd1109a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/952986/"> 952986</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0dd0335405e978d6c04a111531029b282abe2e7">f0dd0335405e978d6c04a111531029b282abe2e7</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/952973/">952973</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4b6f8c5cffc51296206c081670b49adc5bd1109a
+   f0dd0335405e978d6c04a111531029b282abe2e7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4b6f8c5cffc51296206c081670b49adc5bd1109a">
+    <a href="/chromium/src/+log/f0dd0335405e978d6c04a111531029b282abe2e7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4b6f8c5cffc51296206c081670b49adc5bd1109a.tar.gz">
+    <a href="/chromium/src/+archive/f0dd0335405e978d6c04a111531029b282abe2e7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Stephen Roettger &lt;sroettger@google.com&gt;
+   Addison Luh &lt;aluh@chromium.org&gt;
   </td>
   <td>
-   Mon Dec 20 18:46:48 2021
+   Mon Dec 20 19:24:30 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Dec 20 18:46:48 2021
+   Mon Dec 20 19:24:30 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4b6f8c5cffc51296206c081670b49adc5bd1109a/">
-    faa9c12c8c8e14abbbbb5793d5455d1b109188ed
+   <a href="/chromium/src/+/f0dd0335405e978d6c04a111531029b282abe2e7/">
+    51b83537c046ce987b83d0a70f55b964a4d15703
    </a>
   </td>
  </tr>
@@ -166,25 +166,59 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4b6f8c5cffc51296206c081670b49adc5bd1109a%5E">
-    9c2fffb74d340c03a82e0c5ea02bc53c946c0e82
+   <a href="/chromium/src/+/f0dd0335405e978d6c04a111531029b282abe2e7%5E">
+    fc4db7c9493ebbd4ec09d1a78f630cca5a9c8dda
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4b6f8c5cffc51296206c081670b49adc5bd1109a%5E%21/">
+    <a href="/chromium/src/+/f0dd0335405e978d6c04a111531029b282abe2e7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Limit more which events can be cloned
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix memory leak in HatsNotificationControllerTest.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If320e2a71356565af86f705afcd719e27cf647b3">If320e2a71356565af86f705afcd719e27cf647b3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3290717">https://chromium-review.googlesource.com/c/chromium/src/+/3290717</a>
-Reviewed-by: Ken Rockot &lt;rockot@google.com&gt;
-Commit-Queue: Stephen Röttger &lt;sroettger@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#952975}
+There's a circular dependency between the HatsNotificationController and
+its Notification, where the controller holds a unique_ptr to the
+Notification, and the notification holds a scoped_refptr to the
+controller (as a notification delegate).
+
+Code where controller creates and owns a Notification:
+<a href="https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/ash/hats/hats_notification_controller.cc;l=244;drc=e5a38eddbdf45d7563a00d019debd11b803af1bb">https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/ash/hats/hats_notification_controller.cc;l=244;drc=e5a38eddbdf45d7563a00d019debd11b803af1bb</a>
+
+Code where Notification holds a scoped_refptr to the controller:
+<a href="https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/ash/hats/hats_notification_controller.cc;l=252;drc=e5a38eddbdf45d7563a00d019debd11b803af1bb">https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/ash/hats/hats_notification_controller.cc;l=252;drc=e5a38eddbdf45d7563a00d019debd11b803af1bb</a>
+
+This circular dependency is only broken when the notification is removed
+and destroyed, which happens when a user dismisses the notification.
+However, in the unittest, the notification was dismissed incorrectly, so
+the circular dependency remains, leaving the controller orphaned.
+
+The fix is to dismiss the notification properly.
+
+Repro:
+1) Set up lsan build: <a href="https://www.chromium.org/developers/testing/leaksanitizer/">https://www.chromium.org/developers/testing/leaksanitizer/</a>
+2) Build and run `unit_tests` and filter for HatsNotificationControllerTest:
+
+$ autoninja -C out/lsan unit_tests &amp;&amp; ASAN_OPTIONS="detect_leaks=1 symbolize=1 external_symbolizer_path=$PWD/third_party/llvm-build/Release+Asserts/bin/llvm-symbolizer detect_odr_violation=0" out/lsan/unit_tests --gtest_filter="HatsNotificationControllerTest.*"
+
+
+This change also includes some correctness fixes:
+* When move-contructing a StubNotificationDisplayService, also move the
+notification.
+* Fix StubNotificationDisplayService::FindNotification to not make an
+unnecessary string copy.
+
+Bug: 1280811
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ied26118b1ec9c213bbd94f04c2ea9c55dcdca30a">Ied26118b1ec9c213bbd94f04c2ea9c55dcdca30a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3346007">https://chromium-review.googlesource.com/c/chromium/src/+/3346007</a>
+Auto-Submit: Addison Luh &lt;aluh@chromium.org&gt;
+Reviewed-by: Miriam Zimmerman &lt;mutexlox@chromium.org&gt;
+Reviewed-by: Justin DeWitt &lt;dewittj@chromium.org&gt;
+Commit-Queue: Justin DeWitt &lt;dewittj@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#952986}
 </pre>
 
 </body>
