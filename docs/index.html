@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/953049/"> 953049</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2491863a9c2df39db5a7e9eedc518ec161e02804">2491863a9c2df39db5a7e9eedc518ec161e02804</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/953061/"> 953061</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/49586f5d55c8dde5ce3466aa44ca3e698b0bfa10">49586f5d55c8dde5ce3466aa44ca3e698b0bfa10</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/952984/">952984</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0421fd7a72ccc7aac28d49d1b21c47a54b0ff403">0421fd7a72ccc7aac28d49d1b21c47a54b0ff403</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/953020/">953020</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/df39f9d1febc94b3d93e2e5466e6702a3a5284de">df39f9d1febc94b3d93e2e5466e6702a3a5284de</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2491863a9c2df39db5a7e9eedc518ec161e02804
+   49586f5d55c8dde5ce3466aa44ca3e698b0bfa10
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2491863a9c2df39db5a7e9eedc518ec161e02804">
+    <a href="/chromium/src/+log/49586f5d55c8dde5ce3466aa44ca3e698b0bfa10">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2491863a9c2df39db5a7e9eedc518ec161e02804.tar.gz">
+    <a href="/chromium/src/+archive/49586f5d55c8dde5ce3466aa44ca3e698b0bfa10.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jeffrey Young &lt;cowmoo@google.com&gt;
+   Shu Yang &lt;shuyng@google.com&gt;
   </td>
   <td>
-   Mon Dec 20 22:21:25 2021
+   Mon Dec 20 23:34:45 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Dec 20 22:21:25 2021
+   Mon Dec 20 23:34:45 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2491863a9c2df39db5a7e9eedc518ec161e02804/">
-    ae6023bc97a1eaa2f0c6a61f15e96daada99237b
+   <a href="/chromium/src/+/49586f5d55c8dde5ce3466aa44ca3e698b0bfa10/">
+    9b1b2b58a6df14e3505e90fc4f84bef3d3cb66d5
    </a>
   </td>
  </tr>
@@ -166,41 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2491863a9c2df39db5a7e9eedc518ec161e02804%5E">
-    9058abb007687460f1637b1d58680774c2586453
+   <a href="/chromium/src/+/49586f5d55c8dde5ce3466aa44ca3e698b0bfa10%5E">
+    19d2ca5bdb0ef5fccb2d25ca5bc2be4f49aa11e8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2491863a9c2df39db5a7e9eedc518ec161e02804%5E%21/">
+    <a href="/chromium/src/+/49586f5d55c8dde5ce3466aa44ca3e698b0bfa10%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">personalization: preview mode a11y timing issue
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add more logs around tab state restoration
 
-While in fullscreen preview mode, ignore updates to currentSelected
-wallpaper; the received attribution is for the old (non-preview)
-wallpaper. This will cause the app to remain in a "loading" state
-underneath the fullscreen preview. Then exit fullscreen first and
-confirm or cancel preview second. Upon confirming or canceling, another
-onWallpaperChanged call is received, ending the "loading" state and
-displaying the correct wallpaper in the app. This makes the timing
-consistent between local and online images, and causes a11y text
-announcing current wallpaper to be read out consistently.
+Add more logs to help investigate crbug.com/1280482.
+Plan to revert before M98 launch.
 
-BUG=none
-TEST=turn on CVox and tablet mode, set local and online wallpapers.
-"Currently set" text is only read out for the new wallpaper.
-TEST=browser_tests --gtest_filter="*PersonalizationAppComponent*"
-
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I11d410bf791817d67c22b221a1dcc094a2d8a5a7">I11d410bf791817d67c22b221a1dcc094a2d8a5a7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3343926">https://chromium-review.googlesource.com/c/chromium/src/+/3343926</a>
-Reviewed-by: Xiaohui Chen &lt;xiaohuic@chromium.org&gt;
-Commit-Queue: Jeffrey Young &lt;cowmoo@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#953049}
+Bug: 1280482
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I574ba113dd6046cdec8a0125c78ce24b918127a9">I574ba113dd6046cdec8a0125c78ce24b918127a9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3348064">https://chromium-review.googlesource.com/c/chromium/src/+/3348064</a>
+Reviewed-by: Theresa Sullivan &lt;twellington@chromium.org&gt;
+Commit-Queue: Shu Yang &lt;shuyng@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#953061}
 </pre>
 
 </body>
