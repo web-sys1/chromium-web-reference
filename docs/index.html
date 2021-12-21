@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/953117/"> 953117</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1f268144154f319bb868bcd594cc0db51e247401">1f268144154f319bb868bcd594cc0db51e247401</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/953136/"> 953136</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b2998a047683f42926b8ebc59a3f5c77c734c2dc">b2998a047683f42926b8ebc59a3f5c77c734c2dc</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/953102/">953102</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/693e13e8784c860b91881262d0081bf34b40c4f3">693e13e8784c860b91881262d0081bf34b40c4f3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/953108/">953108</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7c82825d7b540c5b0d457e7f0ede4875737fd928">7c82825d7b540c5b0d457e7f0ede4875737fd928</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1f268144154f319bb868bcd594cc0db51e247401
+   b2998a047683f42926b8ebc59a3f5c77c734c2dc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1f268144154f319bb868bcd594cc0db51e247401">
+    <a href="/chromium/src/+log/b2998a047683f42926b8ebc59a3f5c77c734c2dc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1f268144154f319bb868bcd594cc0db51e247401.tar.gz">
+    <a href="/chromium/src/+archive/b2998a047683f42926b8ebc59a3f5c77c734c2dc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nancy Wang &lt;nancylingwang@chromium.org&gt;
+   Morten Stenshorne &lt;mstensho@chromium.org&gt;
   </td>
   <td>
-   Tue Dec 21 06:44:17 2021
+   Tue Dec 21 08:00:20 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Dec 21 06:44:17 2021
+   Tue Dec 21 08:00:20 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1f268144154f319bb868bcd594cc0db51e247401/">
-    b3d7487ae19b2bec53b907e3baa7f219db700dbc
+   <a href="/chromium/src/+/b2998a047683f42926b8ebc59a3f5c77c734c2dc/">
+    e170033afbaaa5eadd1bb3ef52edc10e827db2b0
    </a>
   </td>
  </tr>
@@ -166,36 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1f268144154f319bb868bcd594cc0db51e247401%5E">
-    3e1ac410fc74ed5d9de312a90b37b1a837c00c6d
+   <a href="/chromium/src/+/b2998a047683f42926b8ebc59a3f5c77c734c2dc%5E">
+    a9affa3a721bd89166618e9978d58be5da51c17e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1f268144154f319bb868bcd594cc0db51e247401%5E%21/">
+    <a href="/chromium/src/+/b2998a047683f42926b8ebc59a3f5c77c734c2dc%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add AppPlatformInputMetrics to record the input events.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Pre-paint: Handle missing tree builder context correctly.
 
-DD: go/apps-input-event-metrics
+The tree builder is ever only missing if DCHECKs are disabled, which
+explains why this bug wasn't reproducible with DHCECKs enabled.
 
-This CL adds the class AppPlatformInputMetrics to record the input
-event for app windows, to prepare for the app input event metrics done
-by CL:3338231.
+In this mode, we'd never increment inner_fragmentainer_idx, which would
+cause us to discard all existing FragmentData entries, so that we'd have
+more NGPhysicalBoxFragment objects than FragmentData objects, and
+LayoutBox::FragmentDataFromPhysicalFragment() would crash.
 
-Tests are added by CL:3348788.
+Structure the code in such a way that we'll hopefully not make a similar
+mistake again.
 
-BUG=1261675
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1eaeca2f0526f21e0235fef8d3db287e8ea5d172">I1eaeca2f0526f21e0235fef8d3db287e8ea5d172</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3348787">https://chromium-review.googlesource.com/c/chromium/src/+/3348787</a>
-Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
-Reviewed-by: James Cook &lt;jamescook@chromium.org&gt;
-Commit-Queue: Nancy Wang &lt;nancylingwang@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#953117}
+Bug: 1278652
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3ec35eb81b330f5a40f9b2469218eaecff7dc586">I3ec35eb81b330f5a40f9b2469218eaecff7dc586</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3344750">https://chromium-review.googlesource.com/c/chromium/src/+/3344750</a>
+Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Commit-Queue: Morten Stenshorne &lt;mstensho@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#953136}
 </pre>
 
 </body>
