@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/954690/"> 954690</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/90800fc75c9def0cd009ca9863e727acd0b2dc3b">90800fc75c9def0cd009ca9863e727acd0b2dc3b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/954693/"> 954693</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/251dbba289e948eba0ffb77e271098c27a40e2ea">251dbba289e948eba0ffb77e271098c27a40e2ea</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/954686/">954686</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   90800fc75c9def0cd009ca9863e727acd0b2dc3b
+   251dbba289e948eba0ffb77e271098c27a40e2ea
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/90800fc75c9def0cd009ca9863e727acd0b2dc3b">
+    <a href="/chromium/src/+log/251dbba289e948eba0ffb77e271098c27a40e2ea">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/90800fc75c9def0cd009ca9863e727acd0b2dc3b.tar.gz">
+    <a href="/chromium/src/+archive/251dbba289e948eba0ffb77e271098c27a40e2ea.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   S. Ganesh &lt;ganesh@chromium.org&gt;
+   Reilly Grant &lt;reillyg@chromium.org&gt;
   </td>
   <td>
-   Fri Dec 31 02:37:33 2021
+   Fri Dec 31 03:08:16 2021
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 31 02:37:33 2021
+   Fri Dec 31 03:08:16 2021
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/90800fc75c9def0cd009ca9863e727acd0b2dc3b/">
-    7e9292885a5fa7e32fb7aa6a89b337d39129096e
+   <a href="/chromium/src/+/251dbba289e948eba0ffb77e271098c27a40e2ea/">
+    8121ce891dff09e807248afcfe14eb509b0cbc2e
    </a>
   </td>
  </tr>
@@ -166,31 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/90800fc75c9def0cd009ca9863e727acd0b2dc3b%5E">
-    29466d9ca28a3621f90963e49d0a3dd59361b8a6
+   <a href="/chromium/src/+/251dbba289e948eba0ffb77e271098c27a40e2ea%5E">
+    f193639e2c288a3aadc62577d177a9a699ce0038
    </a>
    <span>
     [
-    <a href="/chromium/src/+/90800fc75c9def0cd009ca9863e727acd0b2dc3b%5E%21/">
+    <a href="/chromium/src/+/251dbba289e948eba0ffb77e271098c27a40e2ea%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use a secure directory for unpacking in System Setup
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">usb: Ensure isochronous packet count is not overwritten
 
-For the parent directory of the temp directory, %ProgramFiles% (a
-directory that only admins can write to by default) is used if the
-process is running with Admin privileges.
+When initializing a new Transfer the internal usbdevfs_urb struct is
+zeroed out however the custom new operator which allocates space for
+the usbdevfs_iso_packet_desc array has already initialized the
+number_of_packets field.
 
-Bug: 1283503
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibb472dcfbd53a99a90c836570cd4e236ca21ad78">Ibb472dcfbd53a99a90c836570cd4e236ca21ad78</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3362334">https://chromium-review.googlesource.com/c/chromium/src/+/3362334</a>
-Commit-Queue: S. Ganesh &lt;ganesh@chromium.org&gt;
-Auto-Submit: S. Ganesh &lt;ganesh@chromium.org&gt;
-Reviewed-by: Sorin Jianu &lt;sorin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#954690}
+This change moves zeroing the struct to the custom new operator so
+that it happens before setting this field.
+
+Fixed: b:210845721
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7e14d9071c68e926cd429d7575fbbdd067a4bd3a">I7e14d9071c68e926cd429d7575fbbdd067a4bd3a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3343630">https://chromium-review.googlesource.com/c/chromium/src/+/3343630</a>
+Auto-Submit: Reilly Grant &lt;reillyg@chromium.org&gt;
+Reviewed-by: Matt Reynolds &lt;mattreynolds@chromium.org&gt;
+Commit-Queue: Reilly Grant &lt;reillyg@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#954693}
 </pre>
 
 </body>
