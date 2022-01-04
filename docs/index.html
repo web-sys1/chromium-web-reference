@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/955343/"> 955343</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/12dbb17baeb9838f50f2781549ed8ecbd25b48de">12dbb17baeb9838f50f2781549ed8ecbd25b48de</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/955411/"> 955411</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d9801bfcbf0c19baf382d14022b61c74d615d3a2">d9801bfcbf0c19baf382d14022b61c74d615d3a2</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/955398/">955398</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   12dbb17baeb9838f50f2781549ed8ecbd25b48de
+   d9801bfcbf0c19baf382d14022b61c74d615d3a2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/12dbb17baeb9838f50f2781549ed8ecbd25b48de">
+    <a href="/chromium/src/+log/d9801bfcbf0c19baf382d14022b61c74d615d3a2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/12dbb17baeb9838f50f2781549ed8ecbd25b48de.tar.gz">
+    <a href="/chromium/src/+archive/d9801bfcbf0c19baf382d14022b61c74d615d3a2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ben Wagner &lt;bungeman@chromium.org&gt;
+   manukh &lt;manukh@chromium.org&gt;
   </td>
   <td>
-   Tue Jan 04 21:09:08 2022
+   Tue Jan 04 22:43:58 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 04 21:09:08 2022
+   Tue Jan 04 22:43:58 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/12dbb17baeb9838f50f2781549ed8ecbd25b48de/">
-    e20c7799a8a4acc52df7626466708be767a41fac
+   <a href="/chromium/src/+/d9801bfcbf0c19baf382d14022b61c74d615d3a2/">
+    1c1e48cb0be5a6575af3820754c0a197aff9a439
    </a>
   </td>
  </tr>
@@ -166,32 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/12dbb17baeb9838f50f2781549ed8ecbd25b48de%5E">
-    bc37c41faa9d6ade7d9f5b6de714671ed3313721
+   <a href="/chromium/src/+/d9801bfcbf0c19baf382d14022b61c74d615d3a2%5E">
+    8ac42caac329554ed3995340357752078fa55182
    </a>
    <span>
     [
-    <a href="/chromium/src/+/12dbb17baeb9838f50f2781549ed8ecbd25b48de%5E%21/">
+    <a href="/chromium/src/+/d9801bfcbf0c19baf382d14022b61c74d615d3a2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Have png_codec use tryAllocPixels to handle oom.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[omnibox] [shortcuts] Aggregate shortcuts by destination URL.
 
-DecodeInfoCallback collects the png info and also attempts to allocate
-space for the resulting image. This allocation may fail on Windows.
-Instead of calling allocN32Pixels call tryAllocN32Pixels and handle any
-error by calling png_error to abort loading the png. This allows the png
-to simply not load instead of crashing the process.
+Currently, when multiple shortcuts match the user input and share the
+same stripped destination URL, they are scored independently, the
+highest scored shortcut is suggested (assuming provider limit capacity),
+and the rest discarded.
 
-Bug: chromium:1155746
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icc077bd4fb23992f7c3716130b09fa9c47135dd9">Icc077bd4fb23992f7c3716130b09fa9c47135dd9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3365824">https://chromium-review.googlesource.com/c/chromium/src/+/3365824</a>
-Reviewed-by: Leon Scroggins &lt;scroggo@google.com&gt;
-Commit-Queue: Ben Wagner &lt;bungeman@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#955343}
+This CL adds a feature &amp; flag to group input-matching shortcuts by their
+stripped destination URL, then score them in aggregate.
+
+E.g., given the input 'wi', and 3 matching shortcuts: 1) 'wilson',
+wikipedia.org/wilson,  2 visits, last visit 1 day ago 2) 'wiki',
+wikipedia.org/wilson,  5 visits, last visit 10 days ago 3) 'wins',
+wikipedia.org/winston, 7 visits, last visit 1 day ago
+
+With the feature, the provider would score the 1st 2 shortcuts as 1
+shortcut (with typed fraction `2/min(6,4)`, visit count `2+5`, and last
+visit `min(1,10)`, and the resulting match would have the same score as
+the match for the 3rd shortcut which has the same scoring factors .5, 7,
+and 1.
+
+Bug: 341532, 252032
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I694ef0d5bb865e159d6953a985e390624e9c4ad5">I694ef0d5bb865e159d6953a985e390624e9c4ad5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3352191">https://chromium-review.googlesource.com/c/chromium/src/+/3352191</a>
+Reviewed-by: Angela Yoeurng &lt;yoangela@chromium.org&gt;
+Commit-Queue: manuk hovanesian &lt;manukh@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#955411}
 </pre>
 
 </body>
