@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/956192/"> 956192</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5ead3b4d1a11343ca8d4227ff10256561c40e217">5ead3b4d1a11343ca8d4227ff10256561c40e217</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/956204/"> 956204</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/13308cb640f9950ac58fef9c4de1e70379f19f96">13308cb640f9950ac58fef9c4de1e70379f19f96</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/956173/">956173</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e034a3594aa6618a4ec0309a9946c8cb585547bc">e034a3594aa6618a4ec0309a9946c8cb585547bc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/956200/">956200</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b4136ebebfdc56c2bcdc36331ff299e7cbbc40d7">b4136ebebfdc56c2bcdc36331ff299e7cbbc40d7</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5ead3b4d1a11343ca8d4227ff10256561c40e217
+   13308cb640f9950ac58fef9c4de1e70379f19f96
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5ead3b4d1a11343ca8d4227ff10256561c40e217">
+    <a href="/chromium/src/+log/13308cb640f9950ac58fef9c4de1e70379f19f96">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5ead3b4d1a11343ca8d4227ff10256561c40e217.tar.gz">
+    <a href="/chromium/src/+archive/13308cb640f9950ac58fef9c4de1e70379f19f96.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Bo Liu &lt;boliu@chromium.org&gt;
+   Sharon Yang &lt;yangsharon@chromium.org&gt;
   </td>
   <td>
-   Thu Jan 06 18:50:29 2022
+   Thu Jan 06 19:31:23 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 06 18:50:29 2022
+   Thu Jan 06 19:31:23 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5ead3b4d1a11343ca8d4227ff10256561c40e217/">
-    c190e2c084564dfbeb61f140c32b6e7349d295c7
+   <a href="/chromium/src/+/13308cb640f9950ac58fef9c4de1e70379f19f96/">
+    2c0c725dc85518b2913f3d835c1ef582e2841469
    </a>
   </td>
  </tr>
@@ -166,49 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5ead3b4d1a11343ca8d4227ff10256561c40e217%5E">
-    49f0908078c761376e580be3c302acfad33e5cff
+   <a href="/chromium/src/+/13308cb640f9950ac58fef9c4de1e70379f19f96%5E">
+    9ef00265af365a061bae2c68d6d88e403516ae4b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5ead3b4d1a11343ca8d4227ff10256561c40e217%5E%21/">
+    <a href="/chromium/src/+/13308cb640f9950ac58fef9c4de1e70379f19f96%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">android: Use configuration for display size on S
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[first run] Remove WebContents::GetURL calls in //chrome first run
 
-Adapted from
-<a href="https://chromium-review.googlesource.com/c/chromium/src/+/3206114">https://chromium-review.googlesource.com/c/chromium/src/+/3206114</a>
-by ctzsm@
+WebContents::GetURL is deprecated. Replace it with
+WebContents::GetLastCommittedURL
 
-This is originally driven by the deprecation of Display#getRealSize and
-Display#getRealMetrics but should also be fixing a few issues as well,
-bug may introduce potential issues as well.
-
-Changes on S+:
-Use ComponentCallbacks#onConfigurationChanged on a window Context to
-listen to "window" configuration changes (in addition to
-onDisplayChanged).
-Use size from WindowMetrics#getMaximumWindowMetrics for display size,
-and Resources#getDisplayMetrics to get DisplayMetrics. The latter fixes
-crbug.com/1251681.
-The rest of the info is still computed from Display obtained from
-Context#getDisplay, which hopefully is consistent with the info above.
-
-Potential problems:
-It's not clear all the information obtained from separate sources are
-consistent, though simple testing on a Pixel 6 shows they are.
-
-Bug: 1241562, 1251681
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iae052121dba202c9bb0ebf0c44d3d9695e8fc31b">Iae052121dba202c9bb0ebf0c44d3d9695e8fc31b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3364829">https://chromium-review.googlesource.com/c/chromium/src/+/3364829</a>
-Reviewed-by: Richard Coles &lt;torne@chromium.org&gt;
-Reviewed-by: Shimi Zhang &lt;ctzsm@chromium.org&gt;
-Commit-Queue: Bo Liu &lt;boliu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#956192}
+Bug: 237908
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I79418738840dc422c6b296c87d67d8a807c5ed15">I79418738840dc422c6b296c87d67d8a807c5ed15</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3360065">https://chromium-review.googlesource.com/c/chromium/src/+/3360065</a>
+Reviewed-by: Carlos Pizano &lt;cpu@chromium.org&gt;
+Commit-Queue: Sharon Yang &lt;yangsharon@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#956204}
 </pre>
 
 </body>
