@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/955980/"> 955980</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7d2a747b63a9f9e9fadae3db0ba6f8d4b66701c7">7d2a747b63a9f9e9fadae3db0ba6f8d4b66701c7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/955995/"> 955995</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/74d601536f8c5634689de867864f6a47a9e56f55">74d601536f8c5634689de867864f6a47a9e56f55</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/955973/">955973</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7f60db3be00db3bee80daf2411703649d36f278c">7f60db3be00db3bee80daf2411703649d36f278c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/955995/">955995</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/74d601536f8c5634689de867864f6a47a9e56f55">74d601536f8c5634689de867864f6a47a9e56f55</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7d2a747b63a9f9e9fadae3db0ba6f8d4b66701c7
+   74d601536f8c5634689de867864f6a47a9e56f55
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7d2a747b63a9f9e9fadae3db0ba6f8d4b66701c7">
+    <a href="/chromium/src/+log/74d601536f8c5634689de867864f6a47a9e56f55">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7d2a747b63a9f9e9fadae3db0ba6f8d4b66701c7.tar.gz">
+    <a href="/chromium/src/+archive/74d601536f8c5634689de867864f6a47a9e56f55.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tommy Li &lt;tommycli@chromium.org&gt;
+   Tomasz Wiszkowski &lt;ender@google.com&gt;
   </td>
   <td>
-   Thu Jan 06 01:03:21 2022
+   Thu Jan 06 01:43:39 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 06 01:03:21 2022
+   Thu Jan 06 01:43:39 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7d2a747b63a9f9e9fadae3db0ba6f8d4b66701c7/">
-    b166af8aecd7298257deba431c07f391722c23a1
+   <a href="/chromium/src/+/74d601536f8c5634689de867864f6a47a9e56f55/">
+    08178495f97fd3a4c4fd0787f8b20183b9eaa513
    </a>
   </td>
  </tr>
@@ -166,37 +166,50 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7d2a747b63a9f9e9fadae3db0ba6f8d4b66701c7%5E">
-    25a0b2fbf2cd46fcd1ccd8a31a403e8f3aeba257
+   <a href="/chromium/src/+/74d601536f8c5634689de867864f6a47a9e56f55%5E">
+    0be8295250939b47ab5773363051d39e83c99212
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7d2a747b63a9f9e9fadae3db0ba6f8d4b66701c7%5E%21/">
+    <a href="/chromium/src/+/74d601536f8c5634689de867864f6a47a9e56f55%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[memories] Simplify omnibox keyword matching to only do exact matches.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prevent Omnibox Suggestions from revealing internal pages.
 
-This CL makes the omnibox keyword matching only accept exact matches.
-It no longer uses the QueryParser component, but instead just directly
-compares keywords (including multi-word keywords) against exactly what
-the user entered.
+This cosmetic change helps us address a number of bizarre issues with
+the omnibox.
 
-In other words: It no longer splits tokens, either in the cluster
-keywords nor in the user input.
+For internal pages, where we don't explicitly show the page's URL in
+the Omnibox (eg. chrome://downloads, chrome://newtab etc) we still
+attempted to present the verbatim match (ie. focusing the omnibox
+shows the top suggestion matching the page's URL).
 
-This is meant to both simplify the code, as well as reduce the amount
-of overtriggering observed on the omnibox action chip for Journeys.
+This is a bit bizarre behavior ("there's nothing in the omnibox, yet
+the autocomplete thinks otherwise") that also caused us to see some
+assertion errors. Pushing no URL would match the Omnibox content, but
+such suggestion would be non-interactable.
 
-Bug: 1271743
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iefac9e4a1fddd1ae25f46aa91fe860d849ec86cd">Iefac9e4a1fddd1ae25f46aa91fe860d849ec86cd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3359852">https://chromium-review.googlesource.com/c/chromium/src/+/3359852</a>
-Reviewed-by: Sophie Chang &lt;sophiechang@chromium.org&gt;
-Commit-Queue: Tommy Li &lt;tommycli@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#955980}
+The solution presented here re-uses existing LocationBarModel's
+approach that takes an informed decision to either push processed URL
+or an empty one over to the Omnibox. The piece of logic making the
+distinction has been isolated to a dedicated method that can now be
+shared between both LocationBarModel and BasicSuggestionProcessor,
+making the omnibox and autocomplete offer the same content.
+
+Offered suggestions are interactable.
+
+Bug: 1251811
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I48bf580db2fdd87d26342461ed947d669251aec1">I48bf580db2fdd87d26342461ed947d669251aec1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3272011">https://chromium-review.googlesource.com/c/chromium/src/+/3272011</a>
+Reviewed-by: Filip Gorski &lt;fgorski@chromium.org&gt;
+Reviewed-by: Tommy Li &lt;tommycli@chromium.org&gt;
+Commit-Queue: Tomasz Wiszkowski &lt;ender@google.com&gt;
+Auto-Submit: Tomasz Wiszkowski &lt;ender@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#955995}
 </pre>
 
 </body>
