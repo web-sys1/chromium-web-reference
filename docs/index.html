@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/955995/"> 955995</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/74d601536f8c5634689de867864f6a47a9e56f55">74d601536f8c5634689de867864f6a47a9e56f55</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/956017/"> 956017</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/42805c456599baf1c3959fc9b5121aab7c16ad4a">42805c456599baf1c3959fc9b5121aab7c16ad4a</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/955995/">955995</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/74d601536f8c5634689de867864f6a47a9e56f55">74d601536f8c5634689de867864f6a47a9e56f55</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/956001/">956001</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b8b29692c0f825557214eb55be81955825b31618">b8b29692c0f825557214eb55be81955825b31618</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   74d601536f8c5634689de867864f6a47a9e56f55
+   42805c456599baf1c3959fc9b5121aab7c16ad4a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/74d601536f8c5634689de867864f6a47a9e56f55">
+    <a href="/chromium/src/+log/42805c456599baf1c3959fc9b5121aab7c16ad4a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/74d601536f8c5634689de867864f6a47a9e56f55.tar.gz">
+    <a href="/chromium/src/+archive/42805c456599baf1c3959fc9b5121aab7c16ad4a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tomasz Wiszkowski &lt;ender@google.com&gt;
+   Ashley Prasad &lt;ashleydp@google.com&gt;
   </td>
   <td>
-   Thu Jan 06 01:43:39 2022
+   Thu Jan 06 03:02:14 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 06 01:43:39 2022
+   Thu Jan 06 03:02:14 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/74d601536f8c5634689de867864f6a47a9e56f55/">
-    08178495f97fd3a4c4fd0787f8b20183b9eaa513
+   <a href="/chromium/src/+/42805c456599baf1c3959fc9b5121aab7c16ad4a/">
+    07439c38b3cbec6b20f2fabc8dd82b29ceff7768
    </a>
   </td>
  </tr>
@@ -166,50 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/74d601536f8c5634689de867864f6a47a9e56f55%5E">
-    0be8295250939b47ab5773363051d39e83c99212
+   <a href="/chromium/src/+/42805c456599baf1c3959fc9b5121aab7c16ad4a%5E">
+    476e1371a4d08f42f719c470ee3f0008f556d704
    </a>
    <span>
     [
-    <a href="/chromium/src/+/74d601536f8c5634689de867864f6a47a9e56f55%5E%21/">
+    <a href="/chromium/src/+/42805c456599baf1c3959fc9b5121aab7c16ad4a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prevent Omnibox Suggestions from revealing internal pages.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">diagnostics: conditionally disable save button
 
-This cosmetic change helps us address a number of bizarre issues with
-the omnibox.
+- Disables save session button after press until response from
+  backend processed.
+- Ensures text and icon color reflect disabled state.
+- Tests save session disable state.
 
-For internal pages, where we don't explicitly show the page's URL in
-the Omnibox (eg. chrome://downloads, chrome://newtab etc) we still
-attempted to present the verbatim match (ie. focusing the omnibox
-shows the top suggestion matching the page's URL).
-
-This is a bit bizarre behavior ("there's nothing in the omnibox, yet
-the autocomplete thinks otherwise") that also caused us to see some
-assertion errors. Pushing no URL would match the Omnibox content, but
-such suggestion would be non-interactable.
-
-The solution presented here re-uses existing LocationBarModel's
-approach that takes an informed decision to either push processed URL
-or an empty one over to the Omnibox. The piece of logic making the
-distinction has been isolated to a dedicated method that can now be
-shared between both LocationBarModel and BasicSuggestionProcessor,
-making the omnibox and autocomplete offer the same content.
-
-Offered suggestions are interactable.
-
-Bug: 1251811
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I48bf580db2fdd87d26342461ed947d669251aec1">I48bf580db2fdd87d26342461ed947d669251aec1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3272011">https://chromium-review.googlesource.com/c/chromium/src/+/3272011</a>
-Reviewed-by: Filip Gorski &lt;fgorski@chromium.org&gt;
-Reviewed-by: Tommy Li &lt;tommycli@chromium.org&gt;
-Commit-Queue: Tomasz Wiszkowski &lt;ender@google.com&gt;
-Auto-Submit: Tomasz Wiszkowski &lt;ender@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#955995}
+Bug: 1274230
+Test: browser_tests --gtest_filter=DiagnosticsApp*
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I34872ff74aa6de44a0cc6c2d3d881e1070f227fa">I34872ff74aa6de44a0cc6c2d3d881e1070f227fa</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3346109">https://chromium-review.googlesource.com/c/chromium/src/+/3346109</a>
+Reviewed-by: Jimmy Gong &lt;jimmyxgong@chromium.org&gt;
+Commit-Queue: Ashley Prasad &lt;ashleydp@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#956017}
 </pre>
 
 </body>
