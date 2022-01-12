@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/958315/"> 958315</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5fa9a62528d7b0791497999568fd4a9720013a23">5fa9a62528d7b0791497999568fd4a9720013a23</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/958333/"> 958333</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bb7b6dd9432c52c78fa3a87687be3943df8e31fe">bb7b6dd9432c52c78fa3a87687be3943df8e31fe</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/958277/">958277</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5fa9a62528d7b0791497999568fd4a9720013a23
+   bb7b6dd9432c52c78fa3a87687be3943df8e31fe
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5fa9a62528d7b0791497999568fd4a9720013a23">
+    <a href="/chromium/src/+log/bb7b6dd9432c52c78fa3a87687be3943df8e31fe">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5fa9a62528d7b0791497999568fd4a9720013a23.tar.gz">
+    <a href="/chromium/src/+archive/bb7b6dd9432c52c78fa3a87687be3943df8e31fe.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Black &lt;dmblack@google.com&gt;
+   Nick Diego Yamane &lt;nickdiego@igalia.com&gt;
   </td>
   <td>
-   Wed Jan 12 22:22:39 2022
+   Wed Jan 12 23:04:50 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jan 12 22:22:39 2022
+   Wed Jan 12 23:04:50 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5fa9a62528d7b0791497999568fd4a9720013a23/">
-    a7dd94e173a4f61bfd53fb75ed0b6d0ea4f8a556
+   <a href="/chromium/src/+/bb7b6dd9432c52c78fa3a87687be3943df8e31fe/">
+    816fadabe92f304da687f0fd3b54de8659d48174
    </a>
   </td>
  </tr>
@@ -166,33 +166,52 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5fa9a62528d7b0791497999568fd4a9720013a23%5E">
-    cbbe4e0ceaa0a3be98760bff5af9125fee3d0b63
+   <a href="/chromium/src/+/bb7b6dd9432c52c78fa3a87687be3943df8e31fe%5E">
+    4a7169728f60ca2b96b7ea605cac494f277cd0bd
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5fa9a62528d7b0791497999568fd4a9720013a23%5E%21/">
+    <a href="/chromium/src/+/bb7b6dd9432c52c78fa3a87687be3943df8e31fe%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Implement `HoldingSpaceProgressIconAnimation`'s animatable properties.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">wayland: fix pickled data exchange in drag-and-drop sessions
 
-The `HoldingSpaceProgressIconAnimation` animates:
+Recently, in crrev.com/c/3330489, in order to fix a crash, the Pickle
+reconstruction at exo::DragDropOperation was (incorrectly!) modified,
+causing regressions in other DnD use cases that rely on "custom data"
+exchange, more specifically Chrome's WebUI tab drag-and-drop, see
+crbug.com/1284996 for more details.
 
-* scale of the progress indicator's inner ring stroke width
-* scale of the progress indicator's inner icon y-translation
+After re-analyzing it, it turns out that the root issue is at client
+side, ie: ozone/wayland. Basically, when the offered data map contains
+both string and custom data representations, the string byte array was
+wrongly sent for custom data mime type, which leads to unhandled edge
+cases in base::Pickle construction at Exo side.
 
-Demo: <a href="http://shortn/_NYPZWH6DGH">http://shortn/_NYPZWH6DGH</a>
+This CL fixes it by:
 
-Bug: 1280377
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iea663151d49eaa280f4343e9bc7360f5ce19a901">Iea663151d49eaa280f4343e9bc7360f5ce19a901</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3384236">https://chromium-review.googlesource.com/c/chromium/src/+/3384236</a>
-Reviewed-by: Toni Barzic &lt;tbarzic@chromium.org&gt;
-Commit-Queue: David Black &lt;dmblack@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#958315}
+1. Applying the right priority when extracting data to transfer in
+   response to wl_data_source.send event.
+2. Reverting exo::DragDropOperation changes in crrev.com/c/3330489. The
+   original impl was actually correct.
+
+Additionally, a unit test is added to prevent future similar regressions
+in Wayland's OSExchangeDataProvide impl.
+
+R=oshima, tonikitoo@igalia.com
+
+Bug: 1284996, 1271311
+Test: Covered by ozone_unittests.
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idee83f00b028a7b5b024a269f0b3b2a3aba47069">Idee83f00b028a7b5b024a269f0b3b2a3aba47069</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3379541">https://chromium-review.googlesource.com/c/chromium/src/+/3379541</a>
+Reviewed-by: Antonio Gomes &lt;tonikitoo@igalia.com&gt;
+Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
+Commit-Queue: Nick Yamane &lt;nickdiego@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#958333}
 </pre>
 
 </body>
