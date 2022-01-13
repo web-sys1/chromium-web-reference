@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/958333/"> 958333</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bb7b6dd9432c52c78fa3a87687be3943df8e31fe">bb7b6dd9432c52c78fa3a87687be3943df8e31fe</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/958348/"> 958348</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/596acaf708c07082d5930428a22a5cb684e2821b">596acaf708c07082d5930428a22a5cb684e2821b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/958277/">958277</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   bb7b6dd9432c52c78fa3a87687be3943df8e31fe
+   596acaf708c07082d5930428a22a5cb684e2821b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/bb7b6dd9432c52c78fa3a87687be3943df8e31fe">
+    <a href="/chromium/src/+log/596acaf708c07082d5930428a22a5cb684e2821b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/bb7b6dd9432c52c78fa3a87687be3943df8e31fe.tar.gz">
+    <a href="/chromium/src/+archive/596acaf708c07082d5930428a22a5cb684e2821b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nick Diego Yamane &lt;nickdiego@igalia.com&gt;
+   Amanda Deacon &lt;amandadeacon@chromium.org&gt;
   </td>
   <td>
-   Wed Jan 12 23:04:50 2022
+   Wed Jan 12 23:42:25 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jan 12 23:04:50 2022
+   Wed Jan 12 23:42:25 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/bb7b6dd9432c52c78fa3a87687be3943df8e31fe/">
-    816fadabe92f304da687f0fd3b54de8659d48174
+   <a href="/chromium/src/+/596acaf708c07082d5930428a22a5cb684e2821b/">
+    1fdcc32cfc2964e697c94b11ec64cc9af4e884da
    </a>
   </td>
  </tr>
@@ -166,52 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/bb7b6dd9432c52c78fa3a87687be3943df8e31fe%5E">
-    4a7169728f60ca2b96b7ea605cac494f277cd0bd
+   <a href="/chromium/src/+/596acaf708c07082d5930428a22a5cb684e2821b%5E">
+    e79976306774886f82b44d977633615c81248201
    </a>
    <span>
     [
-    <a href="/chromium/src/+/bb7b6dd9432c52c78fa3a87687be3943df8e31fe%5E%21/">
+    <a href="/chromium/src/+/596acaf708c07082d5930428a22a5cb684e2821b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">wayland: fix pickled data exchange in drag-and-drop sessions
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Launcher pop-in] Sort post-burn-in categories by arrival order.
 
-Recently, in crrev.com/c/3330489, in order to fix a crash, the Pickle
-reconstruction at exo::DragDropOperation was (incorrectly!) modified,
-causing regressions in other DnD use cases that rely on "custom data"
-exchange, more specifically Chrome's WebUI tab drag-and-drop, see
-crbug.com/1284996 for more details.
+A previous CL introduced tracking of the burn-in iteration number for
+categories. This CL introduces a method of sorting the categories prior
+to publication.
 
-After re-analyzing it, it turns out that the root issue is at client
-side, ie: ozone/wayland. Basically, when the offered data map contains
-both string and custom data representations, the string byte array was
-wrongly sent for custom data mime type, which leads to unhandled edge
-cases in base::Pickle construction at Exo side.
+For categories which first appear during the post-burn-in period, sort
+according to burn-in iteration number (i.e. arrival order), and then
+sort by score. Pre-burn-in category sorting is unchanged.
 
-This CL fixes it by:
-
-1. Applying the right priority when extracting data to transfer in
-   response to wl_data_source.send event.
-2. Reverting exo::DragDropOperation changes in crrev.com/c/3330489. The
-   original impl was actually correct.
-
-Additionally, a unit test is added to prevent future similar regressions
-in Wayland's OSExchangeDataProvide impl.
-
-R=oshima, tonikitoo@igalia.com
-
-Bug: 1284996, 1271311
-Test: Covered by ozone_unittests.
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idee83f00b028a7b5b024a269f0b3b2a3aba47069">Idee83f00b028a7b5b024a269f0b3b2a3aba47069</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3379541">https://chromium-review.googlesource.com/c/chromium/src/+/3379541</a>
-Reviewed-by: Antonio Gomes &lt;tonikitoo@igalia.com&gt;
-Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Commit-Queue: Nick Yamane &lt;nickdiego@igalia.com&gt;
-Cr-Commit-Position: refs/heads/main@{#958333}
+Test: unit tests
+Bug: 1279686
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I43fa9dc203ecf706a5316123e12295a0b1a8df3f">I43fa9dc203ecf706a5316123e12295a0b1a8df3f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3380107">https://chromium-review.googlesource.com/c/chromium/src/+/3380107</a>
+Reviewed-by: Tony Yeoman &lt;tby@chromium.org&gt;
+Commit-Queue: Amanda Deacon &lt;amandadeacon@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#958348}
 </pre>
 
 </body>
