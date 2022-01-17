@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/960109/"> 960109</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/01c1810ab798320adb5240f2b142d64f9dfbdae9">01c1810ab798320adb5240f2b142d64f9dfbdae9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/960137/"> 960137</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f660fa270aaf2351870ab0a3d7e427b6bf174dfb">f660fa270aaf2351870ab0a3d7e427b6bf174dfb</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/960106/">960106</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e248b8a6f46f003418aef224fca14242405c4d89">e248b8a6f46f003418aef224fca14242405c4d89</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/960127/">960127</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c6707f6151198d9fcbff2f3ba226eacc726e8d74">c6707f6151198d9fcbff2f3ba226eacc726e8d74</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   01c1810ab798320adb5240f2b142d64f9dfbdae9
+   f660fa270aaf2351870ab0a3d7e427b6bf174dfb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/01c1810ab798320adb5240f2b142d64f9dfbdae9">
+    <a href="/chromium/src/+log/f660fa270aaf2351870ab0a3d7e427b6bf174dfb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/01c1810ab798320adb5240f2b142d64f9dfbdae9.tar.gz">
+    <a href="/chromium/src/+archive/f660fa270aaf2351870ab0a3d7e427b6bf174dfb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Fergal Daly &lt;fergal@chromium.org&gt;
+   Alex Turner &lt;alexmt@chromium.org&gt;
   </td>
   <td>
-   Mon Jan 17 16:45:23 2022
+   Mon Jan 17 18:01:06 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jan 17 16:45:23 2022
+   Mon Jan 17 18:01:06 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/01c1810ab798320adb5240f2b142d64f9dfbdae9/">
-    6aeb44d9d6bc49744d69ace6b197c9ade016694f
+   <a href="/chromium/src/+/f660fa270aaf2351870ab0a3d7e427b6bf174dfb/">
+    c7b620a59fc4f9d05eba11d3c8e19e9a4a94033b
    </a>
   </td>
  </tr>
@@ -166,48 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/01c1810ab798320adb5240f2b142d64f9dfbdae9%5E">
-    0c91b159a68d9637b9491a57eefe821c6491da58
+   <a href="/chromium/src/+/f660fa270aaf2351870ab0a3d7e427b6bf174dfb%5E">
+    30f86acefc96f685eec88ad48f68789a81d103e8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/01c1810ab798320adb5240f2b142d64f9dfbdae9%5E%21/">
+    <a href="/chromium/src/+/f660fa270aaf2351870ab0a3d7e427b6bf174dfb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Check the return value of AddTabAtIndex(ToBrowser) in tests.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Modernize {Dictionary,List}PrefUpdate in /chrome/browser/ash/account_manager
 
-Final goal is to mark WaitForStopLoading as WARN_IF_UNUSED.
-
-This adds ASSERT_TRUE/FALSE to all calls such that tests continue to
-pass (except in non-void functions which must use EXPECT instead).
-
-This CL is a split of <a href="https://crrev.com/c/2852829.">https://crrev.com/c/2852829.</a>
-It covers /chrome/browser/resource_coordinator
-
-I'm splitting into many to avoid one rollback undoing the whole thing
-as some of these may turn out to be flaky.
-
-There are 37 CLs covering 161 call-sites in total, I cannot
-investigate why individual cases are unexpectedly TRUE/FALSE. Unless
-you think it indicates a bug in the test infrastructure, please
-approve and investigate the unexpected cases of your directory in
-follow-on bugs/CLs.
+This cl replaces instances of DictionaryPrefUpdateDeprecated, which
+wraps the deprecated base::DictionaryValue, with DictionaryPrefUpdate,
+which wraps base::Value. This cl also does the equivalent for
+ListPrefUpdateDeprecated. A range of other base::Value modernization
+changes are made to allow these replacements and as drive-by fixes.
+This cl handles the directory /chrome/browser/ash/account_manager
 
 This CL was uploaded by git cl split.
 
-R=chrisha@chromium.org
+R=sinhak@chromium.org
 
-Bug: 1014186,425335
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7b0483fde3b5cdd929a77f34cb801425a2f82216">I7b0483fde3b5cdd929a77f34cb801425a2f82216</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3394389">https://chromium-review.googlesource.com/c/chromium/src/+/3394389</a>
-Auto-Submit: Fergal Daly &lt;fergal@chromium.org&gt;
-Reviewed-by: Chris Hamilton &lt;chrisha@chromium.org&gt;
-Commit-Queue: Chris Hamilton &lt;chrisha@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#960109}
+Bug: 1285745
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I406b10d09b9033f34ef27200eae7d42c43d17dfe">I406b10d09b9033f34ef27200eae7d42c43d17dfe</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3384508">https://chromium-review.googlesource.com/c/chromium/src/+/3384508</a>
+Auto-Submit: Alex Turner &lt;alexmt@chromium.org&gt;
+Reviewed-by: Kush Sinha &lt;sinhak@chromium.org&gt;
+Commit-Queue: Kush Sinha &lt;sinhak@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#960137}
 </pre>
 
 </body>
