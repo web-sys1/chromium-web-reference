@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/960083/"> 960083</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/07fd4211343f69ed1f33ac7871ee3aeca55e2f82">07fd4211343f69ed1f33ac7871ee3aeca55e2f82</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/960109/"> 960109</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/01c1810ab798320adb5240f2b142d64f9dfbdae9">01c1810ab798320adb5240f2b142d64f9dfbdae9</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/960106/">960106</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   07fd4211343f69ed1f33ac7871ee3aeca55e2f82
+   01c1810ab798320adb5240f2b142d64f9dfbdae9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/07fd4211343f69ed1f33ac7871ee3aeca55e2f82">
+    <a href="/chromium/src/+log/01c1810ab798320adb5240f2b142d64f9dfbdae9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/07fd4211343f69ed1f33ac7871ee3aeca55e2f82.tar.gz">
+    <a href="/chromium/src/+archive/01c1810ab798320adb5240f2b142d64f9dfbdae9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Lucas Radaelli &lt;lucasradaelli@google.com&gt;
+   Fergal Daly &lt;fergal@chromium.org&gt;
   </td>
   <td>
-   Mon Jan 17 16:04:44 2022
+   Mon Jan 17 16:45:23 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jan 17 16:04:44 2022
+   Mon Jan 17 16:45:23 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/07fd4211343f69ed1f33ac7871ee3aeca55e2f82/">
-    6e7e002df6af1b94c64f1d0463a19e574b7074f7
+   <a href="/chromium/src/+/01c1810ab798320adb5240f2b142d64f9dfbdae9/">
+    6aeb44d9d6bc49744d69ace6b197c9ade016694f
    </a>
   </td>
  </tr>
@@ -166,34 +166,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/07fd4211343f69ed1f33ac7871ee3aeca55e2f82%5E">
-    ce6286b7c5cfe4b8c15b31144a5e4538f6cbbdb9
+   <a href="/chromium/src/+/01c1810ab798320adb5240f2b142d64f9dfbdae9%5E">
+    0c91b159a68d9637b9491a57eefe821c6491da58
    </a>
    <span>
     [
-    <a href="/chromium/src/+/07fd4211343f69ed1f33ac7871ee3aeca55e2f82%5E%21/">
+    <a href="/chromium/src/+/01c1810ab798320adb5240f2b142d64f9dfbdae9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[fuchsia][a11y] Disables semantic provider tests.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Check the return value of AddTabAtIndex(ToBrowser) in tests.
 
-Note: this code is not in production and is part of a refactor that is
-not launched.
+Final goal is to mark WaitForStopLoading as WARN_IF_UNUSED.
 
-This change disables the tests of the semantic provider class while we
-figure out why they are failing in some specific bots.
+This adds ASSERT_TRUE/FALSE to all calls such that tests continue to
+pass (except in non-void functions which must use EXPECT instead).
 
-Bug: 1286005
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic5390a03065a49641559c43801ae416a11cfcd8b">Ic5390a03065a49641559c43801ae416a11cfcd8b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3383640">https://chromium-review.googlesource.com/c/chromium/src/+/3383640</a>
-Auto-Submit: Lucas Radaelli &lt;lucasradaelli@google.com&gt;
-Reviewed-by: Wez &lt;wez@chromium.org&gt;
-Reviewed-by: David Tseng &lt;dtseng@chromium.org&gt;
-Commit-Queue: Wez &lt;wez@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#960083}
+This CL is a split of <a href="https://crrev.com/c/2852829.">https://crrev.com/c/2852829.</a>
+It covers /chrome/browser/resource_coordinator
+
+I'm splitting into many to avoid one rollback undoing the whole thing
+as some of these may turn out to be flaky.
+
+There are 37 CLs covering 161 call-sites in total, I cannot
+investigate why individual cases are unexpectedly TRUE/FALSE. Unless
+you think it indicates a bug in the test infrastructure, please
+approve and investigate the unexpected cases of your directory in
+follow-on bugs/CLs.
+
+This CL was uploaded by git cl split.
+
+R=chrisha@chromium.org
+
+Bug: 1014186,425335
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7b0483fde3b5cdd929a77f34cb801425a2f82216">I7b0483fde3b5cdd929a77f34cb801425a2f82216</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3394389">https://chromium-review.googlesource.com/c/chromium/src/+/3394389</a>
+Auto-Submit: Fergal Daly &lt;fergal@chromium.org&gt;
+Reviewed-by: Chris Hamilton &lt;chrisha@chromium.org&gt;
+Commit-Queue: Chris Hamilton &lt;chrisha@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#960109}
 </pre>
 
 </body>
