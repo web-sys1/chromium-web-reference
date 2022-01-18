@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/960246/"> 960246</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2a14cc51c3f34229dabb6fb561ad6041624da579">2a14cc51c3f34229dabb6fb561ad6041624da579</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/960240/"> 960240</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f297a8036cf64487c32ca4d79f0323bc473a45cd">f297a8036cf64487c32ca4d79f0323bc473a45cd</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/960243/">960243</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2a14cc51c3f34229dabb6fb561ad6041624da579
+   f297a8036cf64487c32ca4d79f0323bc473a45cd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2a14cc51c3f34229dabb6fb561ad6041624da579">
+    <a href="/chromium/src/+log/f297a8036cf64487c32ca4d79f0323bc473a45cd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2a14cc51c3f34229dabb6fb561ad6041624da579.tar.gz">
+    <a href="/chromium/src/+archive/f297a8036cf64487c32ca4d79f0323bc473a45cd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kent Tamura &lt;tkent@chromium.org&gt;
+   Rakina Zata Amni &lt;rakina@chromium.org&gt;
   </td>
   <td>
-   Tue Jan 18 04:32:23 2022
+   Tue Jan 18 03:53:43 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 18 04:32:23 2022
+   Tue Jan 18 03:53:43 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2a14cc51c3f34229dabb6fb561ad6041624da579/">
-    234167c6c7ad34c9490d3b522e20ea5f980d4025
+   <a href="/chromium/src/+/f297a8036cf64487c32ca4d79f0323bc473a45cd/">
+    59aca5a4a9d2565b0618073489f7e90d5558fe82
    </a>
   </td>
  </tr>
@@ -166,32 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2a14cc51c3f34229dabb6fb561ad6041624da579%5E">
-    abf5d2ddcd31878c352ae05cfdcbb8b04eac0cba
+   <a href="/chromium/src/+/f297a8036cf64487c32ca4d79f0323bc473a45cd%5E">
+    505d61d022f192f8b5fcdcd2b92c189a33306a9b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2a14cc51c3f34229dabb6fb561ad6041624da579%5E%21/">
+    <a href="/chromium/src/+/f297a8036cf64487c32ca4d79f0323bc473a45cd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Forms: Fix inappropriate usage of SECURITY_DCHECK()
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prevent browser-initiated reloads to initial empty document
 
-Applying ToTextControl() against an HTMLInputElement with non-text types
-should not trigger SECURITY_DCHECK because it won't cause bad-cast.
+We made history navigations to initial NavigationEntry impossible in
+crrev.com/c/3386503 in order to preserve previous navigation behavior.
+We missed the browser-reload case, which this CL covers.
 
-This CL has no production behavior changes.
+With this CL, trying to do a browser-initiated reload while on the
+initial NavigationEntry will not result in a navigation, except if it's
+the NavigationEntry for the synchronous about:blank. This preserves the
+behavior for browser-initiated reloads before the introduction of
+initial NavigationEntries:
+- The initial empty document has no NavigationEntry, so
+  browser-initiated reloads, which checks for NavigationEntry
+  existence, can't happen
+- The synchronously committed about:blank has a NavigationEntry, so
+  browser-initiated reloads can happen.
+This CL adds a way to explicitly track and differentiated whether an
+initial NavigationEntry is for the synchronous about:blank commit or
+not.
 
-Bug: 1286773
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6719f9d9128cae8783a5dd29d701e4be36b79c33">I6719f9d9128cae8783a5dd29d701e4be36b79c33</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3394070">https://chromium-review.googlesource.com/c/chromium/src/+/3394070</a>
-Auto-Submit: Kent Tamura &lt;tkent@chromium.org&gt;
-Reviewed-by: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Commit-Queue: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#960246}
+Note that this CL does not affect renderer-initiated reloads, which has
+always been possible even when there is no NavigationEntry, as it is
+first handled in the renderer and goes through the BeginNavigation path
+without ever checking NavigationEntry existence.
+
+Bug: 1277414
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie62756aa1eac1f9614224535397bedc4808511f4">Ie62756aa1eac1f9614224535397bedc4808511f4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3394284">https://chromium-review.googlesource.com/c/chromium/src/+/3394284</a>
+Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
+Commit-Queue: Rakina Zata Amni &lt;rakina@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#960240}
 </pre>
 
 </body>
