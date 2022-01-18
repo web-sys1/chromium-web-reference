@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/960233/"> 960233</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ab1bdaa0d886062a6b94cd46ecde3daac1b79d2f">ab1bdaa0d886062a6b94cd46ecde3daac1b79d2f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/960240/"> 960240</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f297a8036cf64487c32ca4d79f0323bc473a45cd">f297a8036cf64487c32ca4d79f0323bc473a45cd</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/960216/">960216</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/41f1fc27a985eb66b1081ddd22e9035222cea4a1">41f1fc27a985eb66b1081ddd22e9035222cea4a1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/960243/">960243</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/82d3650b042c2d88809bd86d68824c727421ae11">82d3650b042c2d88809bd86d68824c727421ae11</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ab1bdaa0d886062a6b94cd46ecde3daac1b79d2f
+   f297a8036cf64487c32ca4d79f0323bc473a45cd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ab1bdaa0d886062a6b94cd46ecde3daac1b79d2f">
+    <a href="/chromium/src/+log/f297a8036cf64487c32ca4d79f0323bc473a45cd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ab1bdaa0d886062a6b94cd46ecde3daac1b79d2f.tar.gz">
+    <a href="/chromium/src/+archive/f297a8036cf64487c32ca4d79f0323bc473a45cd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   tby &lt;tby@chromium.org&gt;
+   Rakina Zata Amni &lt;rakina@chromium.org&gt;
   </td>
   <td>
-   Tue Jan 18 02:36:33 2022
+   Tue Jan 18 03:53:43 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 18 02:36:33 2022
+   Tue Jan 18 03:53:43 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ab1bdaa0d886062a6b94cd46ecde3daac1b79d2f/">
-    7c85c2daa256a3f6c62eaec5909f64c9813b33bd
+   <a href="/chromium/src/+/f297a8036cf64487c32ca4d79f0323bc473a45cd/">
+    59aca5a4a9d2565b0618073489f7e90d5558fe82
    </a>
   </td>
  </tr>
@@ -166,37 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ab1bdaa0d886062a6b94cd46ecde3daac1b79d2f%5E">
-    bb57b6ea1105389449af5e49a35fe8291d724a66
+   <a href="/chromium/src/+/f297a8036cf64487c32ca4d79f0323bc473a45cd%5E">
+    505d61d022f192f8b5fcdcd2b92c189a33306a9b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ab1bdaa0d886062a6b94cd46ecde3daac1b79d2f%5E%21/">
+    <a href="/chromium/src/+/f297a8036cf64487c32ca4d79f0323bc473a45cd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Categorical search] Tweak the FTRL optimizer interface
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prevent browser-initiated reloads to initial empty document
 
-This removes the interface for members of the ensemble and replaces it
-with a vector of vectors of scores passed in to FtrlOptimizer::Score.
-The intention is for the top-level result or category ranker to then
-own the FtrlOptimizer _and_ each ensemble member, allowing the ensemble
-members to be passed more information about search results or
-categories if needed.
+We made history navigations to initial NavigationEntry impossible in
+crrev.com/c/3386503 in order to preserve previous navigation behavior.
+We missed the browser-reload case, which this CL covers.
 
-I've also changed the ctor to take a PersistentProto rather than a
-base::FilePath, in line with the approach for other data structures
-in util/.
+With this CL, trying to do a browser-initiated reload while on the
+initial NavigationEntry will not result in a navigation, except if it's
+the NavigationEntry for the synchronous about:blank. This preserves the
+behavior for browser-initiated reloads before the introduction of
+initial NavigationEntries:
+- The initial empty document has no NavigationEntry, so
+  browser-initiated reloads, which checks for NavigationEntry
+  existence, can't happen
+- The synchronously committed about:blank has a NavigationEntry, so
+  browser-initiated reloads can happen.
+This CL adds a way to explicitly track and differentiated whether an
+initial NavigationEntry is for the synchronous about:blank commit or
+not.
 
-Bug: 1199206
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id5ab71a592a4a408b6026d0d0b36cedd30666bad">Id5ab71a592a4a408b6026d0d0b36cedd30666bad</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3393197">https://chromium-review.googlesource.com/c/chromium/src/+/3393197</a>
-Reviewed-by: Rachel Wong &lt;wrong@chromium.org&gt;
-Commit-Queue: Tony Yeoman &lt;tby@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#960233}
+Note that this CL does not affect renderer-initiated reloads, which has
+always been possible even when there is no NavigationEntry, as it is
+first handled in the renderer and goes through the BeginNavigation path
+without ever checking NavigationEntry existence.
+
+Bug: 1277414
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie62756aa1eac1f9614224535397bedc4808511f4">Ie62756aa1eac1f9614224535397bedc4808511f4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3394284">https://chromium-review.googlesource.com/c/chromium/src/+/3394284</a>
+Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
+Commit-Queue: Rakina Zata Amni &lt;rakina@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#960240}
 </pre>
 
 </body>
