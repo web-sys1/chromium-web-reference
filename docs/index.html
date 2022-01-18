@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/960297/"> 960297</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5e325cb074a23fb0708eb63eb9827d4dbcadeb6e">5e325cb074a23fb0708eb63eb9827d4dbcadeb6e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/960303/"> 960303</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/213e0c54eaba4053b7fa7a91384d510e19f3bb28">213e0c54eaba4053b7fa7a91384d510e19f3bb28</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/960298/">960298</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/29f526f9c0eeef04d6c671b199258c5d63292c93">29f526f9c0eeef04d6c671b199258c5d63292c93</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/960308/">960308</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9323287a3d585631ed3145e611c961dfbf5789d7">9323287a3d585631ed3145e611c961dfbf5789d7</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5e325cb074a23fb0708eb63eb9827d4dbcadeb6e
+   213e0c54eaba4053b7fa7a91384d510e19f3bb28
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5e325cb074a23fb0708eb63eb9827d4dbcadeb6e">
+    <a href="/chromium/src/+log/213e0c54eaba4053b7fa7a91384d510e19f3bb28">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5e325cb074a23fb0708eb63eb9827d4dbcadeb6e.tar.gz">
+    <a href="/chromium/src/+archive/213e0c54eaba4053b7fa7a91384d510e19f3bb28.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   dpapad &lt;dpapad@chromium.org&gt;
+   Tony Herre &lt;toprice@chromium.org&gt;
   </td>
   <td>
-   Tue Jan 18 09:05:26 2022
+   Tue Jan 18 09:43:49 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 18 09:05:26 2022
+   Tue Jan 18 09:43:49 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5e325cb074a23fb0708eb63eb9827d4dbcadeb6e/">
-    000210d2d57614c93367c7d21848690906f77d15
+   <a href="/chromium/src/+/213e0c54eaba4053b7fa7a91384d510e19f3bb28/">
+    72de71edbe605f7893741415ae47f7bcb659f4a5
    </a>
   </td>
  </tr>
@@ -166,58 +166,61 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5e325cb074a23fb0708eb63eb9827d4dbcadeb6e%5E">
-    eaa90e8e4db9fd629011c959ea412c7138523c04
+   <a href="/chromium/src/+/213e0c54eaba4053b7fa7a91384d510e19f3bb28%5E">
+    2a79619a60bd19dc18002cfeb9de5099b7054615
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5e325cb074a23fb0708eb63eb9827d4dbcadeb6e%5E%21/">
+    <a href="/chromium/src/+/213e0c54eaba4053b7fa7a91384d510e19f3bb28%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Mojo JS modules: Generate absolute import URLs for certain cases
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "Reland "Take the playout AudioDevice from a MediaStreamTrack's creation frame""
 
-This CL undoes a previous change to mojom_js_generator.py from r955225,
-and applies a more appropriate fix instead, to address the following two
-issues.
+This is a reland of c10f7b216fe47ef7cb21c8b218fab676c752014b
 
-a) An incorrect assumption was made that any Mojo JS module that is not
-   served under chrome://resources/mojo/ can be referenced by a relative
-   URL. This is not the case for Mojo JS modules residing under
-   chrome://resources/cr_components/. This is what r955225 addressed,
-   but in a different way.
+Delta to previous reland:
+- Fix leak by only storing a weak reference from RemoteMediaStreamTrackAdapter to the ExecutionContext
+- Also driveby to only forward declare web_local_frame in media_stream_component.h per comment on previous cl
 
-b) When a Mojo JS file in chrome://resources/cr_components/ referred
-   to a file in chrome://resources/mojo/ a relative path would be
-   produced. Relative paths between JS modules that belong to different
-   ts_library() targets are problematic as TS compiler can't resolve
-   them correctly. This was an unforseen side-effect of r955225, and
-   partially contributed to the transient build errors at
-   <a href="https://crbug.com/1286288.">https://crbug.com/1286288.</a>
 
-With this change an absolute path is produced, which can be correctly
-resolved by TS compiler via the use of path mappings.
+Original change's description:
+&gt; Reland "Take the playout AudioDevice from a MediaStreamTrack's creation frame"
+&gt;
+&gt; This is a reland of 6a17272bc28c96460f3b055e10d6990e5bd3f836
+&gt;
+&gt; Delta: Fix crash at the end of WPTs by checking the LocalDOMWindow's LocalFrame is not null before accessing it. When the frame is destroyed this is set to null.
+&gt;
+&gt; Original change's description:
+&gt; &gt; Take the playout AudioDevice from a MediaStreamTrack's creation frame
+&gt; &gt;
+&gt; &gt; When playing a Remote Audio MediaStreamTrack (one received over a PeerConnection), use the WebRtcAudioDeviceImpl instance associated with the frame where the track was created.
+&gt; &gt;
+&gt; &gt; This fixes an issue where audio is not played if the track is attached to a media element inside a (same origin) iframe.
+&gt; &gt;
+&gt; &gt; Bug: 1239207
+&gt; &gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib97e43913fce75982b5e3f3b2c54a9d9a9a815a8">Ib97e43913fce75982b5e3f3b2c54a9d9a9a815a8</a>
+&gt; &gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3386796">https://chromium-review.googlesource.com/c/chromium/src/+/3386796</a>
+&gt; &gt; Reviewed-by: Henrik Boström &lt;hbos@chromium.org&gt;
+&gt; &gt; Commit-Queue: Tony Herre &lt;toprice@chromium.org&gt;
+&gt; &gt; Cr-Commit-Position: refs/heads/main@{#959107}
+&gt;
+&gt; Bug: 1239207
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie572d38c3d2a06498cb52280bcd8e5efc9e3c755">Ie572d38c3d2a06498cb52280bcd8e5efc9e3c755</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3394627">https://chromium-review.googlesource.com/c/chromium/src/+/3394627</a>
+&gt; Reviewed-by: Henrik Boström &lt;hbos@chromium.org&gt;
+&gt; Commit-Queue: Tony Herre &lt;toprice@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#960125}
 
-Verify (a) is fixed as follows:
-1) Build chrome/browser/ui/webui/new_tab_page_third_party:mojo_bindings_js__generator
-2) Observe that the generated file at gen/mojom-webui/chrome/browser/ui/webui/new_tab_page_third_party/new_tab_page_third_party.mojom-webui.js
-   imports chrome://resources/cr_components/most_visited/most_visited.mojom-webui.js (at line 12)
-
-Verify (b) is fixed as follows:
-3) Build ui/webui/resources/cr_components/most_visited:mojom_js__generator
-4) Observe that the generated file at gen/mojom-webui/ui/webui/resources/cr_components/most_visited/most_visited.mojom-webui.js
-   imports 'chrome://resources/mojo/mojo/public/mojom/base/text_direction.mojom-webui.js (at line 12)
-
-Bug: 1286395
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If63aab6d6ea93e2ff204eaa7114b4ee209280919">If63aab6d6ea93e2ff204eaa7114b4ee209280919</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3383604">https://chromium-review.googlesource.com/c/chromium/src/+/3383604</a>
-Auto-Submit: Demetrios Papadopoulos &lt;dpapad@chromium.org&gt;
-Reviewed-by: Ken Rockot &lt;rockot@google.com&gt;
-Commit-Queue: Demetrios Papadopoulos &lt;dpapad@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#960297}
+Bug: 1239207
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icf2e6b1ce1e40de9cc6cc84631dfc34e90525ec1">Icf2e6b1ce1e40de9cc6cc84631dfc34e90525ec1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3395841">https://chromium-review.googlesource.com/c/chromium/src/+/3395841</a>
+Reviewed-by: Harald Alvestrand &lt;hta@chromium.org&gt;
+Commit-Queue: Tony Herre &lt;toprice@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#960303}
 </pre>
 
 </body>
