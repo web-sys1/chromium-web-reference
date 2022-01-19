@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/961080/"> 961080</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2ccda68ca90f51491547ddc6c6ce14c10b30c141">2ccda68ca90f51491547ddc6c6ce14c10b30c141</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/961114/"> 961114</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4449be2bf8c219d8b0f0ddcb0f7f1a9877cf16b4">4449be2bf8c219d8b0f0ddcb0f7f1a9877cf16b4</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/961080/">961080</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2ccda68ca90f51491547ddc6c6ce14c10b30c141
+   4449be2bf8c219d8b0f0ddcb0f7f1a9877cf16b4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2ccda68ca90f51491547ddc6c6ce14c10b30c141">
+    <a href="/chromium/src/+log/4449be2bf8c219d8b0f0ddcb0f7f1a9877cf16b4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2ccda68ca90f51491547ddc6c6ce14c10b30c141.tar.gz">
+    <a href="/chromium/src/+archive/4449be2bf8c219d8b0f0ddcb0f7f1a9877cf16b4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Fergal Daly &lt;fergal@chromium.org&gt;
+   Joshua Peraza &lt;jperaza@chromium.org&gt;
   </td>
   <td>
-   Wed Jan 19 19:47:38 2022
+   Wed Jan 19 20:32:44 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jan 19 19:47:38 2022
+   Wed Jan 19 20:32:44 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2ccda68ca90f51491547ddc6c6ce14c10b30c141/">
-    4977fce2be5fca4e70540a4bc9ebf9f5e50dc117
+   <a href="/chromium/src/+/4449be2bf8c219d8b0f0ddcb0f7f1a9877cf16b4/">
+    460a47fa83607b7ebb336c7e394c6a87a3bbf0c1
    </a>
   </td>
  </tr>
@@ -166,48 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2ccda68ca90f51491547ddc6c6ce14c10b30c141%5E">
-    e195bc4f6818d6b27e9d4ceca1470fbc2f2dcfa0
+   <a href="/chromium/src/+/4449be2bf8c219d8b0f0ddcb0f7f1a9877cf16b4%5E">
+    3628b5472cb5c81dc53e3cc6a7dcf258fb5d7fa0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2ccda68ca90f51491547ddc6c6ce14c10b30c141%5E%21/">
+    <a href="/chromium/src/+/4449be2bf8c219d8b0f0ddcb0f7f1a9877cf16b4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Check the return value of AddTabAtIndex(ToBrowser) in tests.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">headless,linux: init crash reporter in zygote
 
-Final goal is to mark WaitForLoadStop as WARN_IF_UNUSED.
+options are not built in the zygote process, so use
+--crashpad-handler-pid as an indicator that crash-reporting is enabled.
 
-This adds ASSERT_TRUE/FALSE to all calls such that tests continue to
-pass (except in non-void functions which must use EXPECT instead).
+Functional changes are:
+- Crash keys should capture command line switches for zygote spawned
+  processes.
+- A HeadlessCrashReporterClient is set for the zygote, which is
+  necessary for querying headless crash reporting options (needed by
+  follow-up CL).
 
-This CL is a split of <a href="https://crrev.com/c/2852829.">https://crrev.com/c/2852829.</a>
-It covers /chrome/browser/ui/cocoa
-
-I'm splitting into many to avoid one rollback undoing the whole thing
-as some of these may turn out to be flaky.
-
-There are 37 CLs covering 161 call-sites in total, I cannot
-investigate why individual cases are unexpectedly TRUE/FALSE. Unless
-you think it indicates a bug in the test infrastructure, please
-approve and investigate the unexpected cases of your directory in
-follow-on bugs/CLs.
-
-This CL was uploaded by git cl split.
-
-R=rsesek@chromium.org
-
-Bug: 1014186,425335
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I64f777ce60be2ba601504c1b845f762acc882a8a">I64f777ce60be2ba601504c1b845f762acc882a8a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3394077">https://chromium-review.googlesource.com/c/chromium/src/+/3394077</a>
-Auto-Submit: Fergal Daly &lt;fergal@chromium.org&gt;
-Reviewed-by: Robert Sesek &lt;rsesek@chromium.org&gt;
-Commit-Queue: Robert Sesek &lt;rsesek@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#961080}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I44681983deaf59adfb8991d4d8ec1e918712b16a">I44681983deaf59adfb8991d4d8ec1e918712b16a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3389769">https://chromium-review.googlesource.com/c/chromium/src/+/3389769</a>
+Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
+Commit-Queue: Joshua Peraza &lt;jperaza@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#961114}
 </pre>
 
 </body>
