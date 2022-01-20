@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/961390/"> 961390</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3a7fda23de74e6c6244766f6b640d4459bc6c9c4">3a7fda23de74e6c6244766f6b640d4459bc6c9c4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/961392/"> 961392</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ed678196f26c0e520bbbdb6d3377704dd2659ccd">ed678196f26c0e520bbbdb6d3377704dd2659ccd</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/961378/">961378</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8a8d24ab9c59a0e12088183ade3a40c94d753d45">8a8d24ab9c59a0e12088183ade3a40c94d753d45</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/961391/">961391</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/02be3c82b4b81d6e56c8a26af3806d57bf83f243">02be3c82b4b81d6e56c8a26af3806d57bf83f243</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3a7fda23de74e6c6244766f6b640d4459bc6c9c4
+   ed678196f26c0e520bbbdb6d3377704dd2659ccd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3a7fda23de74e6c6244766f6b640d4459bc6c9c4">
+    <a href="/chromium/src/+log/ed678196f26c0e520bbbdb6d3377704dd2659ccd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3a7fda23de74e6c6244766f6b640d4459bc6c9c4.tar.gz">
+    <a href="/chromium/src/+archive/ed678196f26c0e520bbbdb6d3377704dd2659ccd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+   Benoit Lize &lt;lizeb@chromium.org&gt;
   </td>
   <td>
-   Thu Jan 20 10:07:44 2022
+   Thu Jan 20 10:14:54 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 20 10:07:44 2022
+   Thu Jan 20 10:14:54 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3a7fda23de74e6c6244766f6b640d4459bc6c9c4/">
-    35e8a53e564d78a28a406afd8217ebf90e27543a
+   <a href="/chromium/src/+/ed678196f26c0e520bbbdb6d3377704dd2659ccd/">
+    e0cd15ae5936c79ce1bb82e75705dafb101ffb0c
    </a>
   </td>
  </tr>
@@ -166,45 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3a7fda23de74e6c6244766f6b640d4459bc6c9c4%5E">
-    00604ca8ed6d669fb6cb3ae8bacd6028d5ef10ac
+   <a href="/chromium/src/+/ed678196f26c0e520bbbdb6d3377704dd2659ccd%5E">
+    02be3c82b4b81d6e56c8a26af3806d57bf83f243
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3a7fda23de74e6c6244766f6b640d4459bc6c9c4%5E%21/">
+    <a href="/chromium/src/+/ed678196f26c0e520bbbdb6d3377704dd2659ccd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[@container] Resolve logical units against element's writing-mode
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[base] Don't use fwrite() to log to stderr
 
-Previously the unit 'qi' (for example) would resolve against the
-nearest inline-axis container. However, according to a recent
-resolution [1] writing-mode sensitive units resolve to a physical
-axis based on the target element's writing mode.
+On Windows, we see crashes where fwrite() to stderr calls malloc()
+internally (from the CRT), and then crashes due to OOM. To prevent that
+from happening, switch to write() directly for these calls.
 
-This simplifies the container-relative unit resolution a bit, since
-can always use PhysicalAxes when searching for the correct container.
+It's unclear when fwrite() would allocate, but on other platforms it may
+happen the first time a given FD is written to using buffered IO.
 
-Being able to resolve logical units in CSSToLengthConversionData also
-prepares for implementation of the new viewport units [2], which
-include a number of new logical variants as well. (They also resolve
-to physical in the same way).
+See linked bugs for example stack traces.
 
-This CL should only affect code behind the CSSContainerRelativeUnits
-runtime flag (status:test).
-
-[1] <a href="https://github.com/w3c/csswg-drafts/issues/6873">https://github.com/w3c/csswg-drafts/issues/6873</a>
-[2] <a href="https://crbug.com/1093055">https://crbug.com/1093055</a>
-
-Bug: 1223030, 1093055
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I548a613609b46a38262d5de48e294dab1131853b">I548a613609b46a38262d5de48e294dab1131853b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3387159">https://chromium-review.googlesource.com/c/chromium/src/+/3387159</a>
-Reviewed-by: Xiaocheng Hu &lt;xiaochengh@chromium.org&gt;
-Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#961390}
+Bug: 1238276
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I22c8d8980279a2d2aa7b820fb3a0403e5c6c7e4e">I22c8d8980279a2d2aa7b820fb3a0403e5c6c7e4e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3397842">https://chromium-review.googlesource.com/c/chromium/src/+/3397842</a>
+Reviewed-by: Francois Pierre Doray &lt;fdoray@chromium.org&gt;
+Commit-Queue: Benoit Lize &lt;lizeb@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#961392}
 </pre>
 
 </body>
