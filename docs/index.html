@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/961334/"> 961334</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ddf2555327d88f7a42ca9f40f2e5d296c1ff9600">ddf2555327d88f7a42ca9f40f2e5d296c1ff9600</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/961341/"> 961341</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/010f919f101748abe5646df624c82e8f2a141363">010f919f101748abe5646df624c82e8f2a141363</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/961333/">961333</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ddf2555327d88f7a42ca9f40f2e5d296c1ff9600
+   010f919f101748abe5646df624c82e8f2a141363
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ddf2555327d88f7a42ca9f40f2e5d296c1ff9600">
+    <a href="/chromium/src/+log/010f919f101748abe5646df624c82e8f2a141363">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ddf2555327d88f7a42ca9f40f2e5d296c1ff9600.tar.gz">
+    <a href="/chromium/src/+archive/010f919f101748abe5646df624c82e8f2a141363.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Asami Doi &lt;asamidoi@chromium.org&gt;
+   Yoav Weiss &lt;yoavweiss@chromium.org&gt;
   </td>
   <td>
-   Thu Jan 20 05:56:06 2022
+   Thu Jan 20 06:47:46 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 20 05:56:06 2022
+   Thu Jan 20 06:47:46 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ddf2555327d88f7a42ca9f40f2e5d296c1ff9600/">
-    d364e9ca27e5703c9ef39a777dcb242c57768ba9
+   <a href="/chromium/src/+/010f919f101748abe5646df624c82e8f2a141363/">
+    1b39871bcc16dbed065175d8855dc63caee26e82
    </a>
   </td>
  </tr>
@@ -166,46 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ddf2555327d88f7a42ca9f40f2e5d296c1ff9600%5E">
-    0b993e91bc63becfcaa89af074fc9b9ac31ec408
+   <a href="/chromium/src/+/010f919f101748abe5646df624c82e8f2a141363%5E">
+    c82f13f18ac6a98027b2c3089baf2e48e9b7f291
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ddf2555327d88f7a42ca9f40f2e5d296c1ff9600%5E%21/">
+    <a href="/chromium/src/+/010f919f101748abe5646df624c82e8f2a141363%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PlzDedicatedWorker: fix crash in DevTools with Worklet
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Report post-mouseover LCP as an LCP type
 
-This CL fixes the crash in DevTools when Worklet is used by adding
-ContextType enum and use it in
-DevToolsRendererChannel::ChildWorkerCreated().
+It seems like we have an issue with zoom widgets triggered by a
+mouseover event over a previous &lt;img&gt;-based LCP image.
+Such widgets are loading larger-than-current-LCP images, and since
+moving the mouse doesn't count as an interaction, those LCP are
+counted.
+That goes against the goal of LCP to be a stable metric that doesn't
+change based on user actions.
 
-Previously, I assumed DevToolsRendererChannel::ChildWorkerCreated()
-is used only for dedicated workers but it is actually used for worklets
-too. When PlzDedicatedWorker is enabled, WorkerDevToolsAgentHost is
-created in the browser process and the agent host is re-used in
-DevToolsRendererChannel::ChildWorkerCreated().
-However, for worklets, a new agent host should be created in
-DevToolsRendererChannel. When PlzDedicatedWorker is enabled and the site
-uses a worklet, `agent_host` is null and it makes the site crash.
+At the same time, it's not currently clear what the impact of this is on
+CrUX results. This CL will enable us to get a better understanding of
+when this scenario happens, and what is its impact when it does.
 
-This CL adds a new enum to DevToolsRendererChannel, `context_type`, to
-tell DevToolsRendererChannel::ChildWorkerCreated() is called from
-dedicated workers or worklets. When it's called from worklets, a new
-agent host is always created.
-
-Bug: 1287448
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I424e479676ff7a26f78fde47870c11cf3a3586ec">I424e479676ff7a26f78fde47870c11cf3a3586ec</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3396764">https://chromium-review.googlesource.com/c/chromium/src/+/3396764</a>
-Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
-Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
-Reviewed-by: Nasko Oskov &lt;nasko@chromium.org&gt;
-Commit-Queue: Asami Doi &lt;asamidoi@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#961334}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic761efa9e010cd27dc6fa17565cdd7b102013f16">Ic761efa9e010cd27dc6fa17565cdd7b102013f16</a>
+Bug: 1288027
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3395315">https://chromium-review.googlesource.com/c/chromium/src/+/3395315</a>
+Reviewed-by: Nicolás Peña &lt;npm@chromium.org&gt;
+Commit-Queue: Yoav Weiss &lt;yoavweiss@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#961341}
 </pre>
 
 </body>
