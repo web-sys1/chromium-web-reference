@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/961655/"> 961655</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/20cfe33618f8589ce70921f062ae1be6e873dc31">20cfe33618f8589ce70921f062ae1be6e873dc31</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/961656/"> 961656</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/007241ce2e6c8e5a7b306cc36c730cd07cd38825">007241ce2e6c8e5a7b306cc36c730cd07cd38825</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/961567/">961567</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   20cfe33618f8589ce70921f062ae1be6e873dc31
+   007241ce2e6c8e5a7b306cc36c730cd07cd38825
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/20cfe33618f8589ce70921f062ae1be6e873dc31">
+    <a href="/chromium/src/+log/007241ce2e6c8e5a7b306cc36c730cd07cd38825">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/20cfe33618f8589ce70921f062ae1be6e873dc31.tar.gz">
+    <a href="/chromium/src/+archive/007241ce2e6c8e5a7b306cc36c730cd07cd38825.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Fergus Dall &lt;sidereal@google.com&gt;
+   Melissa Zhang &lt;melzhang@chromium.org&gt;
   </td>
   <td>
-   Thu Jan 20 22:19:07 2022
+   Thu Jan 20 23:32:51 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 20 22:19:07 2022
+   Thu Jan 20 23:32:51 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/20cfe33618f8589ce70921f062ae1be6e873dc31/">
-    9619654f45f9c67db96f913739d67192b61076b0
+   <a href="/chromium/src/+/007241ce2e6c8e5a7b306cc36c730cd07cd38825/">
+    d6be9e9cd0dff435c07c568c6fba426a1fe2ee7d
    </a>
   </td>
  </tr>
@@ -166,30 +166,53 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/20cfe33618f8589ce70921f062ae1be6e873dc31%5E">
-    ea2790b29f29dc87185dc38ff593cd0434284487
+   <a href="/chromium/src/+/007241ce2e6c8e5a7b306cc36c730cd07cd38825%5E">
+    20cfe33618f8589ce70921f062ae1be6e873dc31
    </a>
    <span>
     [
-    <a href="/chromium/src/+/20cfe33618f8589ce70921f062ae1be6e873dc31%5E%21/">
+    <a href="/chromium/src/+/007241ce2e6c8e5a7b306cc36c730cd07cd38825%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">exo: Prefer PNG to BMP when copying images
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Add ProtectedSequenceSynchronizer to control data access during commit"
 
-We previously preferred BMP images on the theory that they would be
-fast to decode, but some (most? all?) applications strip the alpha
-channel when converting images, where PNG preserves it.
+This reverts commit 721d557655fb107d056af93be2095bbc2f899b84.
 
-Bug: 1183085
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4de134c0be9343dc4985fd85aed39fe75bbe1b40">I4de134c0be9343dc4985fd85aed39fe75bbe1b40</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3403507">https://chromium-review.googlesource.com/c/chromium/src/+/3403507</a>
-Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Commit-Queue: Fergus Dall &lt;sidereal@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#961655}
+Reason for revert: Suspected to cause compile error: <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/Win%20Builder/133017/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/Win%20Builder/133017/overview</a>
+
+Original change's description:
+&gt; Add ProtectedSequenceSynchronizer to control data access during commit
+&gt;
+&gt; ProtectedSequence(Readable|Writable)can be used to wrap member variables
+&gt; of main thread data types that are accessed on the impl thread during
+&gt; commit. This patch adds the implementation of these wrapper classes,
+&gt; and uses them to wrap two fields of cc::Layer as a demonstration.
+&gt;
+&gt; Bug: chromium:1255972
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I63e7daa4b1656c4d14e8a366dee54dc06272b84b">I63e7daa4b1656c4d14e8a366dee54dc06272b84b</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3367327">https://chromium-review.googlesource.com/c/chromium/src/+/3367327</a>
+&gt; Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+&gt; Reviewed-by: Robert Flack &lt;flackr@chromium.org&gt;
+&gt; Commit-Queue: Stefan Zager &lt;szager@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#961651}
+
+Bug: chromium:1255972
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7bb54fae773ba83f92201073145f91f6312d8751">I7bb54fae773ba83f92201073145f91f6312d8751</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3403765">https://chromium-review.googlesource.com/c/chromium/src/+/3403765</a>
+Reviewed-by: Melissa Zhang &lt;melzhang@chromium.org&gt;
+Owners-Override: Melissa Zhang &lt;melzhang@chromium.org&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Auto-Submit: Melissa Zhang &lt;melzhang@chromium.org&gt;
+Reviewed-by: Stefan Zager &lt;szager@chromium.org&gt;
+Commit-Queue: K. Moon &lt;kmoon@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#961656}
 </pre>
 
 </body>
