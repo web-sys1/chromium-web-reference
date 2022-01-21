@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/961832/"> 961832</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4e5a3e2bbf63e67cf8321d41929b7b6147271355">4e5a3e2bbf63e67cf8321d41929b7b6147271355</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/961840/"> 961840</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fe99aab8bbe16aa71eac3de40f23db5cb94f1fc0">fe99aab8bbe16aa71eac3de40f23db5cb94f1fc0</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/961835/">961835</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4789936c501c5f48097379aefdcc68820db7fb30">4789936c501c5f48097379aefdcc68820db7fb30</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/961844/">961844</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5ad4b7b13e6cb127242e847787bb9b32ff403910">5ad4b7b13e6cb127242e847787bb9b32ff403910</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4e5a3e2bbf63e67cf8321d41929b7b6147271355
+   fe99aab8bbe16aa71eac3de40f23db5cb94f1fc0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4e5a3e2bbf63e67cf8321d41929b7b6147271355">
+    <a href="/chromium/src/+log/fe99aab8bbe16aa71eac3de40f23db5cb94f1fc0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4e5a3e2bbf63e67cf8321d41929b7b6147271355.tar.gz">
+    <a href="/chromium/src/+archive/fe99aab8bbe16aa71eac3de40f23db5cb94f1fc0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
+   Christian Flach &lt;cmfcmf@chromium.org&gt;
   </td>
   <td>
-   Fri Jan 21 08:44:44 2022
+   Fri Jan 21 09:26:45 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jan 21 08:44:44 2022
+   Fri Jan 21 09:26:45 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4e5a3e2bbf63e67cf8321d41929b7b6147271355/">
-    449493a97f06f7633fce8dc3314dd56eb21bb58f
+   <a href="/chromium/src/+/fe99aab8bbe16aa71eac3de40f23db5cb94f1fc0/">
+    2e7027a5fd456c4f4c2c040766be61f043c2c3d1
    </a>
   </td>
  </tr>
@@ -166,42 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4e5a3e2bbf63e67cf8321d41929b7b6147271355%5E">
-    6336a4db8c8e2d4321407f97921e7f389e94d455
+   <a href="/chromium/src/+/fe99aab8bbe16aa71eac3de40f23db5cb94f1fc0%5E">
+    4d835a838256da3467ead1563f2baa21267b5364
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4e5a3e2bbf63e67cf8321d41929b7b6147271355%5E%21/">
+    <a href="/chromium/src/+/fe99aab8bbe16aa71eac3de40f23db5cb94f1fc0%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll src-internal from bb22aea3a716 to 31491d45b70b (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">When navigating to web bundles, defer errors until navigation finishes
 
-<a href="https://chrome-internal.googlesource.com/chrome/src-internal.git/+log/bb22aea3a716..31491d45b70b">https://chrome-internal.googlesource.com/chrome/src-internal.git/+log/bb22aea3a716..31491d45b70b</a>
+When navigating to a web bundle, and the web bundle is invalid, we show
+an ERR_INVALID_WEB_BUNDLE page to the user. We also log additional
+debug information that is helpful for developers to the console. By
+default, Dev Tools clears all console messages on navigations, and only
+preserves them if the 'Preserve Log' option is enabled. This causes our
+log messages to disappear when the navigation finishes (with an error).
+Thus, we use `AddDeferredConsoleMessage` if a `navigation_request` is
+currently in progress, so that the the console messages are logged to
+the console only after the navigation is finished and developers can see
+the detailed error messages.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://skia-autoroll.corp.goog/r/src-internal-chromium-autoroll">https://skia-autoroll.corp.goog/r/src-internal-chromium-autoroll</a>
-Please CC melzhang@google.com on the revert to ensure that a human
-is aware of the problem.
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Bug: None
-Tbr: melzhang@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I21612323fad512327a34b56ae492a5a1ea3972ae">I21612323fad512327a34b56ae492a5a1ea3972ae</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3406405">https://chromium-review.googlesource.com/c/chromium/src/+/3406405</a>
-Commit-Queue: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#961832}
+Bug: 1068481
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9c12b1b337d747baeceec9c1e47da03ad70029dc">I9c12b1b337d747baeceec9c1e47da03ad70029dc</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3397976">https://chromium-review.googlesource.com/c/chromium/src/+/3397976</a>
+Reviewed-by: Kunihiko Sakamoto &lt;ksakamoto@chromium.org&gt;
+Commit-Queue: Christian Flach &lt;cmfcmf@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#961840}
 </pre>
 
 </body>
