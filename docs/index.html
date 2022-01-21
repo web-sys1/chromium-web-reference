@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/961812/"> 961812</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6c4d280e2f319cc6634372f07d8fca586247529c">6c4d280e2f319cc6634372f07d8fca586247529c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/961818/"> 961818</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/37f856365d7f22fa137b5b99765b339501150f53">37f856365d7f22fa137b5b99765b339501150f53</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/961812/">961812</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6c4d280e2f319cc6634372f07d8fca586247529c">6c4d280e2f319cc6634372f07d8fca586247529c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/961811/">961811</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ce2b896acbf528dbc012c2216a1d94ee3e7d3825">ce2b896acbf528dbc012c2216a1d94ee3e7d3825</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6c4d280e2f319cc6634372f07d8fca586247529c
+   37f856365d7f22fa137b5b99765b339501150f53
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6c4d280e2f319cc6634372f07d8fca586247529c">
+    <a href="/chromium/src/+log/37f856365d7f22fa137b5b99765b339501150f53">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6c4d280e2f319cc6634372f07d8fca586247529c.tar.gz">
+    <a href="/chromium/src/+archive/37f856365d7f22fa137b5b99765b339501150f53.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Austin Tankiang &lt;austinct@chromium.org&gt;
+   Patrick Monette &lt;pmonette@chromium.org&gt;
   </td>
   <td>
-   Fri Jan 21 07:34:01 2022
+   Fri Jan 21 07:38:55 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jan 21 07:34:01 2022
+   Fri Jan 21 07:38:55 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6c4d280e2f319cc6634372f07d8fca586247529c/">
-    44e163ae0842bb17dc074d2ea7c63fdf8176da67
+   <a href="/chromium/src/+/37f856365d7f22fa137b5b99765b339501150f53/">
+    15353b70cd8daad188edf36aae440a7a220eebed
    </a>
   </td>
  </tr>
@@ -166,26 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6c4d280e2f319cc6634372f07d8fca586247529c%5E">
-    ce2b896acbf528dbc012c2216a1d94ee3e7d3825
+   <a href="/chromium/src/+/37f856365d7f22fa137b5b99765b339501150f53%5E">
+    8fe37754278fea86b4061bd55c8bd45f7b3029f7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6c4d280e2f319cc6634372f07d8fca586247529c%5E%21/">
+    <a href="/chromium/src/+/37f856365d7f22fa137b5b99765b339501150f53%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add IsComplete() method to I/O task progress status
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix usage of PostCancelableDelayedTask in PSIMemoryMetrics
 
-Bug: b/214460568
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I282a6861cb61b6a2eb22b428b538502f2ad08eae">I282a6861cb61b6a2eb22b428b538502f2ad08eae</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3406240">https://chromium-review.googlesource.com/c/chromium/src/+/3406240</a>
-Reviewed-by: Luciano Pacheco &lt;lucmult@chromium.org&gt;
-Commit-Queue: Austin Tankiang &lt;austinct@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#961812}
+PostCancelableDelayedTask() must be called from the sequence where
+the task is posted. Currently, it can either be called from Start(),
+which runs on the main thread, or as a continuation in
+CollectEventsAndReschedule(), which runs on the background sequence.
+
+To fix this, Start() now posts ScheduleCollector() to the background
+sequence. A sequence checker was added to ensure that |last_timer_| is
+always used on the right sequence.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibc679bd25b785692ad831ddc5bfdb9578d279431">Ibc679bd25b785692ad831ddc5bfdb9578d279431</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3400119">https://chromium-review.googlesource.com/c/chromium/src/+/3400119</a>
+Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
+Commit-Queue: Patrick Monette &lt;pmonette@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#961818}
 </pre>
 
 </body>
