@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/962378/"> 962378</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6c99f80b11d455073968f11c7a0a0e9165403dfe">6c99f80b11d455073968f11c7a0a0e9165403dfe</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/962385/"> 962385</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/292e491fdb1c28e12cf31c749d84e956d7356525">292e491fdb1c28e12cf31c749d84e956d7356525</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/962382/">962382</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f4acf5871ffb3428775547472a13610f9b279b18">f4acf5871ffb3428775547472a13610f9b279b18</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/962386/">962386</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1e58a476568bb11cc600ea982f2de6dae997c465">1e58a476568bb11cc600ea982f2de6dae997c465</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6c99f80b11d455073968f11c7a0a0e9165403dfe
+   292e491fdb1c28e12cf31c749d84e956d7356525
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6c99f80b11d455073968f11c7a0a0e9165403dfe">
+    <a href="/chromium/src/+log/292e491fdb1c28e12cf31c749d84e956d7356525">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6c99f80b11d455073968f11c7a0a0e9165403dfe.tar.gz">
+    <a href="/chromium/src/+archive/292e491fdb1c28e12cf31c749d84e956d7356525.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   tby &lt;tby@chromium.org&gt;
+   Nanami Mikiya &lt;nmikiya@google.com&gt;
   </td>
   <td>
-   Mon Jan 24 05:23:09 2022
+   Mon Jan 24 06:37:05 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jan 24 05:23:09 2022
+   Mon Jan 24 06:37:05 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6c99f80b11d455073968f11c7a0a0e9165403dfe/">
-    2f8f97250c8bab2208e35c5b2ec4a23a571558ca
+   <a href="/chromium/src/+/292e491fdb1c28e12cf31c749d84e956d7356525/">
+    c043d6d3c4cfc30a0179841735db4d8fca6ed77e
    </a>
   </td>
  </tr>
@@ -166,36 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6c99f80b11d455073968f11c7a0a0e9165403dfe%5E">
-    94d67ad684ad41e13895de1d986762bcf0fc1c07
+   <a href="/chromium/src/+/292e491fdb1c28e12cf31c749d84e956d7356525%5E">
+    6cd04a329d050caf9c09581d4257692f209314b1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6c99f80b11d455073968f11c7a0a0e9165403dfe%5E%21/">
+    <a href="/chromium/src/+/292e491fdb1c28e12cf31c749d84e956d7356525%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Structured metrics] Check consent before saving platform2 metrics
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Enable the read buffer size switching in WebSocket
 
-When recording metrics from platform2 ('external metrics'), two consent
-checks happen:
+Read buffer size switching algorithm was added to the code and protected
+by a feature which was disabled by default. This CL aims to set this
+algorithm default.
 
-1. Before writing the metrics to disk in platform2.
-2. Before upload in chromium.
+The changes in this CL include:
+- Remove some base::Features and base::FeatureParams and make the size
+switching default
+- Add a class to manage the read buffer size
+- Add tests for the size switching
+- Modify WebSocketBasicStreamSocketChunkedReadTest.OneMegFrame, which is
+affected by the change of the initial read buffer size.
 
-We are intending to remove check 1 for RMA metrics because it cannot be
-verified at the time of upload. To compensate, this CL adds a third
-check when metrics are read from disk in chromium.
-
-Bug: 1290206
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4721bb447f2f829956de28541f3f1445f715a1a2">I4721bb447f2f829956de28541f3f1445f715a1a2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3411254">https://chromium-review.googlesource.com/c/chromium/src/+/3411254</a>
-Reviewed-by: Amanda Deacon &lt;amandadeacon@chromium.org&gt;
-Commit-Queue: Tony Yeoman &lt;tby@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#962378}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5faf6c910fe52d0fa40b6ec06c11845d9203b9d5">I5faf6c910fe52d0fa40b6ec06c11845d9203b9d5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3393306">https://chromium-review.googlesource.com/c/chromium/src/+/3393306</a>
+Reviewed-by: Yutaka Hirano &lt;yhirano@chromium.org&gt;
+Reviewed-by: Adam Rice &lt;ricea@chromium.org&gt;
+Commit-Queue: Nanami Mikiya &lt;nmikiya@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#962385}
 </pre>
 
 </body>
