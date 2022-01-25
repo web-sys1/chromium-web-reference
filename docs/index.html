@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/962786/"> 962786</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9e6a810cda8ffe6fc1e9d76c8edee7a137bc9457">9e6a810cda8ffe6fc1e9d76c8edee7a137bc9457</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/962800/"> 962800</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9edcefd0c2590ae1bcb71118b1378c0ad54f143f">9edcefd0c2590ae1bcb71118b1378c0ad54f143f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/962759/">962759</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/398d675cbee000841501c91c439aa9fb04560012">398d675cbee000841501c91c439aa9fb04560012</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/962795/">962795</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/769424beca1206977d2b03641c3bc7ac76108fa5">769424beca1206977d2b03641c3bc7ac76108fa5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9e6a810cda8ffe6fc1e9d76c8edee7a137bc9457
+   9edcefd0c2590ae1bcb71118b1378c0ad54f143f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9e6a810cda8ffe6fc1e9d76c8edee7a137bc9457">
+    <a href="/chromium/src/+log/9edcefd0c2590ae1bcb71118b1378c0ad54f143f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9e6a810cda8ffe6fc1e9d76c8edee7a137bc9457.tar.gz">
+    <a href="/chromium/src/+archive/9edcefd0c2590ae1bcb71118b1378c0ad54f143f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Lingqi Chi &lt;lingqi@chromium.org&gt;
+   yjliu &lt;yjliu@chromium.org&gt;
   </td>
   <td>
-   Tue Jan 25 01:20:11 2022
+   Tue Jan 25 02:00:33 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 25 01:20:11 2022
+   Tue Jan 25 02:00:33 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9e6a810cda8ffe6fc1e9d76c8edee7a137bc9457/">
-    6cf4b11f6f16e974848d450fc396c9998243c970
+   <a href="/chromium/src/+/9edcefd0c2590ae1bcb71118b1378c0ad54f143f/">
+    e769dd607b3d13a9c2e5d8cabde4812065b814e4
    </a>
   </td>
  </tr>
@@ -166,33 +166,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9e6a810cda8ffe6fc1e9d76c8edee7a137bc9457%5E">
-    4130d81c4a90d62e5670384f26b0576e90b36bdb
+   <a href="/chromium/src/+/9edcefd0c2590ae1bcb71118b1378c0ad54f143f%5E">
+    c4fce84cd9df330bedad6c28adc16738b8ee8a97
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9e6a810cda8ffe6fc1e9d76c8edee7a137bc9457%5E%21/">
+    <a href="/chromium/src/+/9edcefd0c2590ae1bcb71118b1378c0ad54f143f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prerender: Update prerender2-related comments in omnibox
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[lacros] server side implementation for frame throttling.
 
-This CL is a follow-up of <a href="https://chromium-review.googlesource.com/#/q/Ia64d06fb86bef53a2daacf60f70edb96a4a7fcec">Ia64d06fb86bef53a2daacf60f70edb96a4a7fcec</a>. It
-updates some comments added in that commit, including:
-- Explain the newly added parameter of should_prerender for
-  OmniboxClient::OnResultChanged.
-- Revise the comment explaing when to trigger prerender in
-  ChromeOmniboxClient::OnResultChanged.
+This CL adds a window property (ash::kFrameRateThrottleKey).
+ash::FrameThrottlingController sets the property to true/false to notify
+of throttle/unthrottle of a window. exo::ShellSurfaceBase, as an
+aura::WindowObserer, observes the property change with
+OnWindowPropertyChanged(). Upon receiving such a property change event,
+exo::ShellSurfaceBase instructs the root surface (exo::Surface) to
+throttle/unthrottle. In turn, the AuraSurface, as an observer of the
+root surface, issues a wayland zaura event to the client (lacros).
 
-Bug: 1278634
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id4f2d3d316796771ff07e51f9a49e2da1e7e8d98">Id4f2d3d316796771ff07e51f9a49e2da1e7e8d98</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3411108">https://chromium-review.googlesource.com/c/chromium/src/+/3411108</a>
-Reviewed-by: Justin Donnelly &lt;jdonnelly@chromium.org&gt;
-Commit-Queue: Lingqi Chi &lt;lingqi@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#962786}
+To properly throttle a lacros window, there are two pieces:
+1. Lacros's viz needs to reduce the BeginFrame rate (defaults to 20fps
+currently). This has been done in the client side work CL (through
+aura::HostFrameRateThrottler to issue an IPC call to viz). This CL
+plumbs to the client through zaura surface interfaces.
+
+2. Ash's viz needs to match the BeginFrame rate on the same frame sink
+of the lacros surface being throttled. This will also fix the metrics
+error, otherwise Ash's viz would be wrongly expecting the same surface
+to submit at full rate and consider the client to has missed
+submissions.
+
+Bug: 1218872
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3717bcebae3410506cc7d09138d6c9fb78c2b771">I3717bcebae3410506cc7d09138d6c9fb78c2b771</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3388757">https://chromium-review.googlesource.com/c/chromium/src/+/3388757</a>
+Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
+Commit-Queue: Jun Liu &lt;yjliu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#962800}
 </pre>
 
 </body>
