@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/963363/"> 963363</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a2da26673f611ea0b7915996ee107af87e01c29f">a2da26673f611ea0b7915996ee107af87e01c29f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/963374/"> 963374</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3ecff0b7a784898019b430da90562d117e1c5e66">3ecff0b7a784898019b430da90562d117e1c5e66</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/963355/">963355</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/948246cddcd96ae550987436fd0d3b5ef53eec3b">948246cddcd96ae550987436fd0d3b5ef53eec3b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/963371/">963371</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8813d98802c59c00b158ec348c956ec9d4ce3656">8813d98802c59c00b158ec348c956ec9d4ce3656</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a2da26673f611ea0b7915996ee107af87e01c29f
+   3ecff0b7a784898019b430da90562d117e1c5e66
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a2da26673f611ea0b7915996ee107af87e01c29f">
+    <a href="/chromium/src/+log/3ecff0b7a784898019b430da90562d117e1c5e66">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a2da26673f611ea0b7915996ee107af87e01c29f.tar.gz">
+    <a href="/chromium/src/+archive/3ecff0b7a784898019b430da90562d117e1c5e66.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+   Pi-Hsun Shih &lt;pihsun@chromium.org&gt;
   </td>
   <td>
-   Wed Jan 26 03:05:23 2022
+   Wed Jan 26 03:43:03 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jan 26 03:05:23 2022
+   Wed Jan 26 03:43:03 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a2da26673f611ea0b7915996ee107af87e01c29f/">
-    7bd15fd0adb4ba38da0b5477c7e2e3aed0d6f86a
+   <a href="/chromium/src/+/3ecff0b7a784898019b430da90562d117e1c5e66/">
+    ab27f7ca0fac4a4e91e1499ed88e693322ab1d2a
    </a>
   </td>
  </tr>
@@ -166,50 +166,27 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a2da26673f611ea0b7915996ee107af87e01c29f%5E">
-    5f0bb5cf2cf8cd99e6637e162eedad3ce7e0ee19
+   <a href="/chromium/src/+/3ecff0b7a784898019b430da90562d117e1c5e66%5E">
+    c246f3d90d05cb981ec8e9b53cb4b9fb90710dcf
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a2da26673f611ea0b7915996ee107af87e01c29f%5E%21/">
+    <a href="/chromium/src/+/3ecff0b7a784898019b430da90562d117e1c5e66%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Extensions] Introduce a renderer SharedL10nMap
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">CCA: Fix all errors in tooltip.ts with strict mode
 
-Introduce SharedL10nMap on the renderer side. This is a thread-safe
-shared map for extension messages that can be used to get a localized
-message from i18n.getMessage() or the ExtensionLocalizationPeer.
-
-This class is thread-safe - it uses a lock to guard access to the
-underlying map whenever reading or modifying it. As such, no method
-directly returns the map or a reference to a value; instead, the map
-handles these operations (such as substitution) internally.
-
-While a lock here seems alarming, in practice it's not as bad as it
-seems: the vast majority of the time, there will only be one thread
-accessing the map at a given moment (and it doesn't have to wait). The
-situation in which this doesn't hold is if a single extension has both
-a DOM-based context (like tab or popup) and an active service worker
-that each want to access the map at the same instant. This can happen,
-but should be rare enough that the lock isn't commonly a performance
-bottleneck.
-
-This CL introduces the SharedL10nMap and wires it up for use with
-i18n.getMessage() and the ExtensionLocalizationPeer, but does *not*
-enable i18n.getMessage() for service workers (and, as such, this CL
-should have limited functional behavior change). Service worker
-support will be added in a follow-up.
-
-Bug: 1268098
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I11b86d638a5f1588c7aa722bf602b474b7caca68">I11b86d638a5f1588c7aa722bf602b474b7caca68</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3408573">https://chromium-review.googlesource.com/c/chromium/src/+/3408573</a>
-Reviewed-by: David Bertoni &lt;dbertoni@chromium.org&gt;
-Commit-Queue: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#963363}
+Bug: b:172340451
+Test: tsc compiles for the file with strict: true compiler options set
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8e8185846977f01974f39d7db93e33dfb123104f">I8e8185846977f01974f39d7db93e33dfb123104f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3357006">https://chromium-review.googlesource.com/c/chromium/src/+/3357006</a>
+Reviewed-by: Shik Chen &lt;shik@chromium.org&gt;
+Commit-Queue: Pi-Hsun Shih &lt;pihsun@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#963374}
 </pre>
 
 </body>
