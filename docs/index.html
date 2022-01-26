@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/963723/"> 963723</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8745ca634e6e1c4e89f9855062ad9e0ad2a097d8">8745ca634e6e1c4e89f9855062ad9e0ad2a097d8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/963704/"> 963704</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/aaf851234a576b844c0b5a30fe218edb93b00569">aaf851234a576b844c0b5a30fe218edb93b00569</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/963638/">963638</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a408632c0a4786cd8e72a4e3847fd56e64240db6">a408632c0a4786cd8e72a4e3847fd56e64240db6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/963684/">963684</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1ab9ed8510b88980a65c1221e7a0347924126e42">1ab9ed8510b88980a65c1221e7a0347924126e42</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8745ca634e6e1c4e89f9855062ad9e0ad2a097d8
+   aaf851234a576b844c0b5a30fe218edb93b00569
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8745ca634e6e1c4e89f9855062ad9e0ad2a097d8">
+    <a href="/chromium/src/+log/aaf851234a576b844c0b5a30fe218edb93b00569">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8745ca634e6e1c4e89f9855062ad9e0ad2a097d8.tar.gz">
+    <a href="/chromium/src/+archive/aaf851234a576b844c0b5a30fe218edb93b00569.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Avi Drissman &lt;avi@chromium.org&gt;
+   Benjamin M. Schwartz &lt;bemasc@chromium.org&gt;
   </td>
   <td>
-   Wed Jan 26 21:52:55 2022
+   Wed Jan 26 21:13:03 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jan 26 21:52:55 2022
+   Wed Jan 26 21:13:03 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8745ca634e6e1c4e89f9855062ad9e0ad2a097d8/">
-    37d7f5b8711de59efb462a570a098a7b7781de50
+   <a href="/chromium/src/+/aaf851234a576b844c0b5a30fe218edb93b00569/">
+    63b076d9a4e7029141587616dab15c44f788afd1
    </a>
   </td>
  </tr>
@@ -166,34 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8745ca634e6e1c4e89f9855062ad9e0ad2a097d8%5E">
-    b70bf7d7e84f6077e158b42b9ef191795e6d2da1
+   <a href="/chromium/src/+/aaf851234a576b844c0b5a30fe218edb93b00569%5E">
+    15377a5822b660054b2d6082ea626425d75b44c8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8745ca634e6e1c4e89f9855062ad9e0ad2a097d8%5E%21/">
+    <a href="/chromium/src/+/aaf851234a576b844c0b5a30fe218edb93b00569%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Clean up uses of (void)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move DoH template group parsing to a new class
 
-This migrates uses of (void) to [[maybe_unused]] or std::ignore as
-appropriate.
+Currently, the string representation of a DoH configuration is a
+whitespace-separated list of URI templates.  The knowledge of this
+string format is distributed between net/ and chrome/browser/net.  This
+makes the format difficult to evolve.  To enable a richer syntax for
+the configuration string, this CL collects all string-handling into a
+new class, DnsOverHttpsConfig, which represents a list of URI templates.
 
-This CL was uploaded by git cl split.
+This is the first in a series of CLs related to this reorganization.
+Followup CLs will replace all `vector&lt;DnsOverHttpsServerConfig&gt;` with
+`DnsOverHttpsConfig`, simplifying the browser's concept model.
 
-R=rbpotter@chromium.org
+BUG=1200908
 
-Bug: 1289456
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie0578ef5b89c0f8314433c72e9c8b627d1068182">Ie0578ef5b89c0f8314433c72e9c8b627d1068182</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3417580">https://chromium-review.googlesource.com/c/chromium/src/+/3417580</a>
-Auto-Submit: Avi Drissman &lt;avi@chromium.org&gt;
-Reviewed-by: Rebekah Potter &lt;rbpotter@chromium.org&gt;
-Commit-Queue: Rebekah Potter &lt;rbpotter@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#963723}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I512d824b38d46d403083d90959ee202cef76ab60">I512d824b38d46d403083d90959ee202cef76ab60</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3381747">https://chromium-review.googlesource.com/c/chromium/src/+/3381747</a>
+Reviewed-by: Eric Orth &lt;ericorth@chromium.org&gt;
+Auto-Submit: Ben Schwartz &lt;bemasc@chromium.org&gt;
+Reviewed-by: Tommy Li &lt;tommycli@chromium.org&gt;
+Commit-Queue: Tommy Li &lt;tommycli@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#963704}
 </pre>
 
 </body>
