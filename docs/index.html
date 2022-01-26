@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/963350/"> 963350</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3b8bc03e67f222e974b72a8fe9283cd4ea5825f3">3b8bc03e67f222e974b72a8fe9283cd4ea5825f3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/963363/"> 963363</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a2da26673f611ea0b7915996ee107af87e01c29f">a2da26673f611ea0b7915996ee107af87e01c29f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/963355/">963355</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3b8bc03e67f222e974b72a8fe9283cd4ea5825f3
+   a2da26673f611ea0b7915996ee107af87e01c29f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3b8bc03e67f222e974b72a8fe9283cd4ea5825f3">
+    <a href="/chromium/src/+log/a2da26673f611ea0b7915996ee107af87e01c29f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3b8bc03e67f222e974b72a8fe9283cd4ea5825f3.tar.gz">
+    <a href="/chromium/src/+archive/a2da26673f611ea0b7915996ee107af87e01c29f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tom Burgin &lt;bur@chromium.org&gt;
+   Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
   </td>
   <td>
-   Wed Jan 26 02:27:03 2022
+   Wed Jan 26 03:05:23 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jan 26 02:27:03 2022
+   Wed Jan 26 03:05:23 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3b8bc03e67f222e974b72a8fe9283cd4ea5825f3/">
-    73096754fbf19532e82a5e70f29f43898acf5701
+   <a href="/chromium/src/+/a2da26673f611ea0b7915996ee107af87e01c29f/">
+    7bd15fd0adb4ba38da0b5477c7e2e3aed0d6f86a
    </a>
   </td>
  </tr>
@@ -166,30 +166,50 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3b8bc03e67f222e974b72a8fe9283cd4ea5825f3%5E">
-    cfc96a3bffa38985a54405b1bcb2c8d79718660f
+   <a href="/chromium/src/+/a2da26673f611ea0b7915996ee107af87e01c29f%5E">
+    5f0bb5cf2cf8cd99e6637e162eedad3ce7e0ee19
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3b8bc03e67f222e974b72a8fe9283cd4ea5825f3%5E%21/">
+    <a href="/chromium/src/+/a2da26673f611ea0b7915996ee107af87e01c29f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">color_picker: add an optional system colors button (1/2+)
-* This allows for a platform specific color picker to be implemented.
-* On macOS enabling the `SystemColorChooser` feature will make visible a button that launches the macOS native color picker.
-Bug: 1230817
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Extensions] Introduce a renderer SharedL10nMap
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2af5cb16450ff90a5e7154b42e321b85beec2b46">I2af5cb16450ff90a5e7154b42e321b85beec2b46</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3365820">https://chromium-review.googlesource.com/c/chromium/src/+/3365820</a>
-Reviewed-by: Mason Freed &lt;masonf@chromium.org&gt;
-Auto-Submit: Tom Burgin &lt;bur@chromium.org&gt;
-Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Commit-Queue: Kentaro Hara &lt;haraken@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#963350}
+Introduce SharedL10nMap on the renderer side. This is a thread-safe
+shared map for extension messages that can be used to get a localized
+message from i18n.getMessage() or the ExtensionLocalizationPeer.
+
+This class is thread-safe - it uses a lock to guard access to the
+underlying map whenever reading or modifying it. As such, no method
+directly returns the map or a reference to a value; instead, the map
+handles these operations (such as substitution) internally.
+
+While a lock here seems alarming, in practice it's not as bad as it
+seems: the vast majority of the time, there will only be one thread
+accessing the map at a given moment (and it doesn't have to wait). The
+situation in which this doesn't hold is if a single extension has both
+a DOM-based context (like tab or popup) and an active service worker
+that each want to access the map at the same instant. This can happen,
+but should be rare enough that the lock isn't commonly a performance
+bottleneck.
+
+This CL introduces the SharedL10nMap and wires it up for use with
+i18n.getMessage() and the ExtensionLocalizationPeer, but does *not*
+enable i18n.getMessage() for service workers (and, as such, this CL
+should have limited functional behavior change). Service worker
+support will be added in a follow-up.
+
+Bug: 1268098
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I11b86d638a5f1588c7aa722bf602b474b7caca68">I11b86d638a5f1588c7aa722bf602b474b7caca68</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3408573">https://chromium-review.googlesource.com/c/chromium/src/+/3408573</a>
+Reviewed-by: David Bertoni &lt;dbertoni@chromium.org&gt;
+Commit-Queue: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#963363}
 </pre>
 
 </body>
