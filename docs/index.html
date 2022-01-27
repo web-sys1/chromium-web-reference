@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/963908/"> 963908</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/733098ae2728a10e2f8166dc7ddab0c2fe22c87d">733098ae2728a10e2f8166dc7ddab0c2fe22c87d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/963914/"> 963914</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8a8d07fd7693648c308b6867c61542cf149729df">8a8d07fd7693648c308b6867c61542cf149729df</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/963891/">963891</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/302a422d10911fb9ab5ae3e33b5723ea58e1cb27">302a422d10911fb9ab5ae3e33b5723ea58e1cb27</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/963910/">963910</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/63c21a8ad8ac86333126d552adb8c2e6d949b101">63c21a8ad8ac86333126d552adb8c2e6d949b101</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   733098ae2728a10e2f8166dc7ddab0c2fe22c87d
+   8a8d07fd7693648c308b6867c61542cf149729df
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/733098ae2728a10e2f8166dc7ddab0c2fe22c87d">
+    <a href="/chromium/src/+log/8a8d07fd7693648c308b6867c61542cf149729df">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/733098ae2728a10e2f8166dc7ddab0c2fe22c87d.tar.gz">
+    <a href="/chromium/src/+archive/8a8d07fd7693648c308b6867c61542cf149729df.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Vigen Issahhanjan &lt;vigeni@google.com&gt;
+   David Maunder &lt;davidjm@chromium.org&gt;
   </td>
   <td>
-   Thu Jan 27 06:19:55 2022
+   Thu Jan 27 07:06:32 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 27 06:19:55 2022
+   Thu Jan 27 07:06:32 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/733098ae2728a10e2f8166dc7ddab0c2fe22c87d/">
-    f3ee26c286a99fd19ca6e78b548bf87cc3ef1a53
+   <a href="/chromium/src/+/8a8d07fd7693648c308b6867c61542cf149729df/">
+    cb1cfba5dcfbb2f4a90a3c2ff446e1b5829cd0fc
    </a>
   </td>
  </tr>
@@ -166,30 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/733098ae2728a10e2f8166dc7ddab0c2fe22c87d%5E">
-    01a0022df96f99c69326d944db725eae28fd92b5
+   <a href="/chromium/src/+/8a8d07fd7693648c308b6867c61542cf149729df%5E">
+    2418031de203ee03574992950afdf20b592b8560
    </a>
    <span>
     [
-    <a href="/chromium/src/+/733098ae2728a10e2f8166dc7ddab0c2fe22c87d%5E%21/">
+    <a href="/chromium/src/+/8a8d07fd7693648c308b6867c61542cf149729df%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[chromecast] Inner CastWebContents use the same URL rewrite manager as their parent.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fallback to TabState if FlatBuffer limit is 0
 
-This fixes duplicate URL rewrite rules manager when inner CastWebContents are created which resulted in a crash where two mojo clients were bound to the same remote.
+As we transition from TabState to FlatBuffer backed
+CriticalPersistedTabData we need to fallback to TabState
+in the event that the CriticalPersistedTabData file doesn't
+exist. This is typically signaled by the response from the
+file read being null, however, we're seeing in the wild that
+the response can be non-null and the limit is 0 in some
+scenarios. This CL accounts for that.
 
-Bug: 213947799
-Test: Cast Core on Linux
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1d25579227bb131cd424e2e0d772dc9f971ec389">I1d25579227bb131cd424e2e0d772dc9f971ec389</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3417782">https://chromium-review.googlesource.com/c/chromium/src/+/3417782</a>
-Reviewed-by: Junbo Ke &lt;juke@chromium.org&gt;
-Reviewed-by: Sean Topping &lt;seantopping@chromium.org&gt;
-Commit-Queue: Vigen Issahhanjan &lt;vigeni@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#963908}
+Bug: 1287632
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icd1b584a44965b2b8019a25e4aa2eaf6f5708cef">Icd1b584a44965b2b8019a25e4aa2eaf6f5708cef</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3415505">https://chromium-review.googlesource.com/c/chromium/src/+/3415505</a>
+Reviewed-by: Tommy Nyquist &lt;nyquist@chromium.org&gt;
+Commit-Queue: David Maunder &lt;davidjm@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#963914}
 </pre>
 
 </body>
