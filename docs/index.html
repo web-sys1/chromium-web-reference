@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/965615/"> 965615</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d56972666256ff86f7b52bf0c7da6a9843188003">d56972666256ff86f7b52bf0c7da6a9843188003</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/965639/"> 965639</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2029aa776ebb83d39f8b09f2a73081c897176126">2029aa776ebb83d39f8b09f2a73081c897176126</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/965606/">965606</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dbc5d174cc2d28329beae5df2fea34fc850e5aa3">dbc5d174cc2d28329beae5df2fea34fc850e5aa3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/965632/">965632</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cf5c8f0011afbbbecea40a9d0b6711cf9ed58fb2">cf5c8f0011afbbbecea40a9d0b6711cf9ed58fb2</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d56972666256ff86f7b52bf0c7da6a9843188003
+   2029aa776ebb83d39f8b09f2a73081c897176126
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d56972666256ff86f7b52bf0c7da6a9843188003">
+    <a href="/chromium/src/+log/2029aa776ebb83d39f8b09f2a73081c897176126">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d56972666256ff86f7b52bf0c7da6a9843188003.tar.gz">
+    <a href="/chromium/src/+archive/2029aa776ebb83d39f8b09f2a73081c897176126.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andrew Rayskiy &lt;greengrape@google.com&gt;
+   Jeroen Dhollander &lt;jeroendh@google.com&gt;
   </td>
   <td>
-   Tue Feb 01 10:46:22 2022
+   Tue Feb 01 12:13:13 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 01 10:46:22 2022
+   Tue Feb 01 12:13:13 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d56972666256ff86f7b52bf0c7da6a9843188003/">
-    da0b98de9a6ca7d6a5b058d06225b3e071bfb890
+   <a href="/chromium/src/+/2029aa776ebb83d39f8b09f2a73081c897176126/">
+    34b0e5b472a68e1c8fae59a91ae0badfdfac4fca
    </a>
   </td>
  </tr>
@@ -166,34 +166,53 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d56972666256ff86f7b52bf0c7da6a9843188003%5E">
-    327d1fcc3f28a1782e1621e7acc25de21a2955a7
+   <a href="/chromium/src/+/2029aa776ebb83d39f8b09f2a73081c897176126%5E">
+    70283995258387f4f94cc87b10fad3176721a868
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d56972666256ff86f7b52bf0c7da6a9843188003%5E%21/">
+    <a href="/chromium/src/+/2029aa776ebb83d39f8b09f2a73081c897176126%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Direct Sockets: Add ReadableStream for UDPSocket.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Support CRD multi monitor
 
-Add UDPReadableStreamWrapper which
-provides readable stream implementations for UDPSocket.
+This adds support for multiple monitors in AuraDesktopCapturer and
+DesktopDisplayInfoLoaderChromeOs.
+This functionality is all hidden between a new feature flag
+EnableMultiMonitorsInCrd.
 
-Streams API reference: <a href="https://streams.spec.whatwg.org/#readablestream">https://streams.spec.whatwg.org/#readablestream</a>
-UDP readable stream proposal (old): see §9.2.12
-<a href="https://www.w3.org/TR/tcp-udp-sockets/#widl-UDPSocket-readable">https://www.w3.org/TR/tcp-udp-sockets/#widl-UDPSocket-readable</a>
+With this it is possible to see the different displays in CRD (and
+switch to them), but the mouse input is still messed up in these
+scenarios:
+   - If your secondary display has a negative offset from the primary
+     display, so if the secondary display comes higher like this:
+                 +-----+
+         +-----+ |     |
+         | Prim| | sec |
+         +-----+ +-----+
+     In this case selecting the secondary monitor and then going back to
+     the primary monitor causes the mouse to have a wrong offset
+     (meaning the actual mouse position is lower than you think it is
+     through CRD).
+   - You select the secondary display (because the PointTransformer
+     class currently only supports the primary display).
 
-Bug: 1284560
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If870eb634b0446834855918f68a1ca6e9d6e6bd1">If870eb634b0446834855918f68a1ca6e9d6e6bd1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3386809">https://chromium-review.googlesource.com/c/chromium/src/+/3386809</a>
-Reviewed-by: Eric Willigers &lt;ericwilligers@chromium.org&gt;
-Reviewed-by: Yutaka Hirano &lt;yhirano@chromium.org&gt;
-Commit-Queue: Andrew Rayskiy &lt;greengrape@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#965615}
+These mouse issues will be fixed in a follow-up CL, which will not cause
+any issues as all these changes are hidden behind a feature flag.
+
+Bug: b/208369354
+Test: remote_unittests
+Test: manually deployed and tried this out.
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I83f171f665dea8aaa35285def792e1584105e962">I83f171f665dea8aaa35285def792e1584105e962</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3320266">https://chromium-review.googlesource.com/c/chromium/src/+/3320266</a>
+Reviewed-by: Lambros Lambrou &lt;lambroslambrou@chromium.org&gt;
+Reviewed-by: Joe Downing &lt;joedow@chromium.org&gt;
+Commit-Queue: Jeroen Dhollander &lt;jeroendh@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#965639}
 </pre>
 
 </body>
