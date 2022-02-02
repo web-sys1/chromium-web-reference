@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/966097/"> 966097</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c13228bf592c138fc9a3b814370acbb0dbbe4a07">c13228bf592c138fc9a3b814370acbb0dbbe4a07</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/966101/"> 966101</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/055fa6de74c93a686b85462ab0b46085787620c3">055fa6de74c93a686b85462ab0b46085787620c3</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/966079/">966079</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a53d1cdc5b0db3306641dc33eb5c9e919a2b50df">a53d1cdc5b0db3306641dc33eb5c9e919a2b50df</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/966100/">966100</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3cf02317749454cda3ee529a90d870bc7742c74a">3cf02317749454cda3ee529a90d870bc7742c74a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c13228bf592c138fc9a3b814370acbb0dbbe4a07
+   055fa6de74c93a686b85462ab0b46085787620c3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c13228bf592c138fc9a3b814370acbb0dbbe4a07">
+    <a href="/chromium/src/+log/055fa6de74c93a686b85462ab0b46085787620c3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c13228bf592c138fc9a3b814370acbb0dbbe4a07.tar.gz">
+    <a href="/chromium/src/+archive/055fa6de74c93a686b85462ab0b46085787620c3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ryo Ogawa &lt;negibokken@gmail.com&gt;
+   Yutaka Hirano &lt;yhirano@chromium.org&gt;
   </td>
   <td>
-   Wed Feb 02 08:28:22 2022
+   Wed Feb 02 09:08:44 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 02 08:28:22 2022
+   Wed Feb 02 09:08:44 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c13228bf592c138fc9a3b814370acbb0dbbe4a07/">
-    16303bdada0427c6a65207f8f0287859d8b984ce
+   <a href="/chromium/src/+/055fa6de74c93a686b85462ab0b46085787620c3/">
+    eeac53d221bc602d58d7b891f36b6b0edfce4fae
    </a>
   </td>
  </tr>
@@ -166,61 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c13228bf592c138fc9a3b814370acbb0dbbe4a07%5E">
-    1c698ce28f388bd765420edfc263f49aa6ba095b
+   <a href="/chromium/src/+/055fa6de74c93a686b85462ab0b46085787620c3%5E">
+    3cf02317749454cda3ee529a90d870bc7742c74a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c13228bf592c138fc9a3b814370acbb0dbbe4a07%5E%21/">
+    <a href="/chromium/src/+/055fa6de74c93a686b85462ab0b46085787620c3%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Fix wrong expectations for a test in wpt/cors"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[WebTransport] Fix crash on StreamVisitor::~StreamVisitor
 
-This reverts commit 8bb11414e09852b645122825d2eecdb2734db54a.
+...by not calling OnIncomingStreamClosed when the client is null.
 
-Revert this commit because the commit follows the wrong algorithm. The
-list of Access Control Expose Headers is set by extracting header values
-algorithm [1] rather than the algorithm to get parsing structured field
-value [2].  The algorithm [1] says follow HTTP ABNF to parse field
-values for Access Control Expose Headers. The ABNF of Access Control
-Expose Header is defined as follows in the Fetch Standard [3].
-
-```
-Access-Control-Expose-Headers = #field-name
-```
-
-The #rule is described in [4], it says the # is a rule for a list and
-the parsing algorithm should accept the empty list elements for
-compatibility with the legacy system.
-
-&gt; For compatibility with legacy list rules, a recipient MUST parse and
-&gt; ignore a reasonable number of empty list elements: enough to handle
-&gt; common mistakes by senders that merge values, but not so much that
-&gt; they could be used as a denial-of-service mechanism. In other words, a
-&gt; recipient MUST accept lists that satisfy the following syntax:
-&gt;
-&gt; #element =&gt; [ ( "," / element ) *( OWS "," [ OWS element ] ) ]
-&gt;
-&gt; 1#element =&gt; *( "," OWS ) element *( OWS "," [ OWS element ] )
-
-So the expected value is true and the parsing algorithm must accept and
-ignore the empty elements.
-
-[1] <a href="https://fetch.spec.whatwg.org/#concept-response-cors-exposed-header-name-list">https://fetch.spec.whatwg.org/#concept-response-cors-exposed-header-name-list</a>
-[2] <a href="https://fetch.spec.whatwg.org/#concept-header-list-get-structured-header">https://fetch.spec.whatwg.org/#concept-header-list-get-structured-header</a>
-[3] <a href="https://fetch.spec.whatwg.org/#http-new-header-syntax">https://fetch.spec.whatwg.org/#http-new-header-syntax</a>
-[4] <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-7">https://datatracker.ietf.org/doc/html/rfc7230#section-7</a>
-
-Bug: 978146
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icf2630e72dde920246f999ed6c987e25aeb482bc">Icf2630e72dde920246f999ed6c987e25aeb482bc</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3411091">https://chromium-review.googlesource.com/c/chromium/src/+/3411091</a>
-Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
-Commit-Queue: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#966097}
+Bug: 1292991
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4c683e7bab7df1593f7e1a9a930bc7ee63bc171f">I4c683e7bab7df1593f7e1a9a930bc7ee63bc171f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3428530">https://chromium-review.googlesource.com/c/chromium/src/+/3428530</a>
+Reviewed-by: Victor Vasiliev &lt;vasilvv@chromium.org&gt;
+Commit-Queue: Yutaka Hirano &lt;yhirano@chromium.org&gt;
+Auto-Submit: Yutaka Hirano &lt;yhirano@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#966101}
 </pre>
 
 </body>
