@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/966488/"> 966488</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6375c5356264efd8ccc433143fe65c61105ecf29">6375c5356264efd8ccc433143fe65c61105ecf29</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/966490/"> 966490</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f507c5362a3058955d21775ae039fbcbd8d69793">f507c5362a3058955d21775ae039fbcbd8d69793</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/966488/">966488</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6375c5356264efd8ccc433143fe65c61105ecf29">6375c5356264efd8ccc433143fe65c61105ecf29</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/966490/">966490</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f507c5362a3058955d21775ae039fbcbd8d69793">f507c5362a3058955d21775ae039fbcbd8d69793</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6375c5356264efd8ccc433143fe65c61105ecf29
+   f507c5362a3058955d21775ae039fbcbd8d69793
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6375c5356264efd8ccc433143fe65c61105ecf29">
+    <a href="/chromium/src/+log/f507c5362a3058955d21775ae039fbcbd8d69793">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6375c5356264efd8ccc433143fe65c61105ecf29.tar.gz">
+    <a href="/chromium/src/+archive/f507c5362a3058955d21775ae039fbcbd8d69793.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Austin Orion &lt;auorion@microsoft.com&gt;
   </td>
   <td>
-   Wed Feb 02 23:39:55 2022
+   Thu Feb 03 01:51:01 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 02 23:39:55 2022
+   Thu Feb 03 01:51:01 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6375c5356264efd8ccc433143fe65c61105ecf29/">
-    03e3f9ea0c7a8af02bd002cb47852352224a1c7a
+   <a href="/chromium/src/+/f507c5362a3058955d21775ae039fbcbd8d69793/">
+    7e155aeab1a56eedfd648aa6e757682531016922
    </a>
   </td>
  </tr>
@@ -166,46 +166,58 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6375c5356264efd8ccc433143fe65c61105ecf29%5E">
-    354945de1fb564ef04c07cf8bfedf434d2d81747
+   <a href="/chromium/src/+/f507c5362a3058955d21775ae039fbcbd8d69793%5E">
+    1e63217d7bc9e404459124a5f6c5d7312f9452de
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6375c5356264efd8ccc433143fe65c61105ecf29%5E%21/">
+    <a href="/chromium/src/+/f507c5362a3058955d21775ae039fbcbd8d69793%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll WebRTC from b3ec634f79a3 to e48361216494 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Avoid deadlock when enumerating current process windows for capture.
 
-<a href="https://webrtc.googlesource.com/src.git/+log/b3ec634f79a3..e48361216494">https://webrtc.googlesource.com/src.git/+log/b3ec634f79a3..e48361216494</a>
+Enumerating windows owned by the current process on Windows has some
+complications. The GetWindowText*() APIs may cause a deadlock because
+they send messages to the window's message loop, and if the message loop
+is waiting on the operation we will enter a deadlock.
 
-2022-02-02 chromium-webrtc-autoroll@webrtc-ci.iam.gserviceaccount.com Roll chromium_revision db72f1f3a8..1763d9c3bc (966175:966282)
+This happens occasionally in Chromium when a user closes the
+capture picker window. That sends a message to the main window which
+leads to the destruction of the NativeDesktopMediaList object. In its
+destructor it tries to stop a worker thread that is responsible for
+capturing the windows, but that worker thread is waiting on the main
+thread to respond to a WM_GETTEXT message with the window title. The
+thread can't join and thus we enter a deadlock.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/webrtc-chromium-autoroll">https://autoroll.skia.org/r/webrtc-chromium-autoroll</a>
-Please CC webrtc-chromium-sheriffs-robots@google.com on the revert to ensure that a human
-is aware of the problem.
+To avoid this issue I added a new DesktopCaptureOption to WebRTC that
+causes |GetSourceList()| to ignore windows owned by the current
+process. This prevents the worker thread from ever waiting on
+Chromium's main thread, preventing the deadlock scenario. This CL opts
+in to that new behavior by setting the
+enumerate_current_process_windows option to false.
 
-To file a bug in WebRTC: <a href="https://bugs.chromium.org/p/webrtc/issues/entry">https://bugs.chromium.org/p/webrtc/issues/entry</a>
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+This means we have to find all the windows owned by the current
+process and add them to the list ourselves, including their titles.
+We achieve this by storing the title as a member in
+DesktopWindowTreeHostWin, which is responsible for setting the
+window's title already. This way we can get the title without
+having to send a WM_GETTEXT message.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+Here is a link to the WebRTC CL that added the option:
+<a href="https://webrtc-review.googlesource.com/c/src/+/219380">https://webrtc-review.googlesource.com/c/src/+/219380</a>
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Bug: None
-Tbr: webrtc-chromium-sheriffs-robots@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifb59098f6e3a7d30e74b79b95f0287511c50506b">Ifb59098f6e3a7d30e74b79b95f0287511c50506b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3433813">https://chromium-review.googlesource.com/c/chromium/src/+/3433813</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#966488}
+Bug: 1152841
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I39d8cc2aa6c0a2c3e505e16c744ffdf16ba3d5c7">I39d8cc2aa6c0a2c3e505e16c744ffdf16ba3d5c7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2907415">https://chromium-review.googlesource.com/c/chromium/src/+/2907415</a>
+Reviewed-by: Camille Lamy &lt;clamy@chromium.org&gt;
+Reviewed-by: Robert Liao &lt;robliao@chromium.org&gt;
+Reviewed-by: Elad Alon &lt;eladalon@chromium.org&gt;
+Commit-Queue: Austin Orion &lt;auorion@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#966490}
 </pre>
 
 </body>
