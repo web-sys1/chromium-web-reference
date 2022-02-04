@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/967246/"> 967246</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/48f7b191fb6aee2bb94d3da3d19a42eaf978f17c">48f7b191fb6aee2bb94d3da3d19a42eaf978f17c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/967272/"> 967272</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9730c00f464dbd0cfb45731b3a01c9d43e947b0d">9730c00f464dbd0cfb45731b3a01c9d43e947b0d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/967209/">967209</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   48f7b191fb6aee2bb94d3da3d19a42eaf978f17c
+   9730c00f464dbd0cfb45731b3a01c9d43e947b0d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/48f7b191fb6aee2bb94d3da3d19a42eaf978f17c">
+    <a href="/chromium/src/+log/9730c00f464dbd0cfb45731b3a01c9d43e947b0d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/48f7b191fb6aee2bb94d3da3d19a42eaf978f17c.tar.gz">
+    <a href="/chromium/src/+archive/9730c00f464dbd0cfb45731b3a01c9d43e947b0d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+   Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
   </td>
   <td>
-   Fri Feb 04 15:03:00 2022
+   Fri Feb 04 16:10:43 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 04 15:03:00 2022
+   Fri Feb 04 16:10:43 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/48f7b191fb6aee2bb94d3da3d19a42eaf978f17c/">
-    947c86150ed92b4284fcfea9049f8366636bf793
+   <a href="/chromium/src/+/9730c00f464dbd0cfb45731b3a01c9d43e947b0d/">
+    c036edf74ba18c1a1658b0cadc956be29da520cd
    </a>
   </td>
  </tr>
@@ -166,39 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/48f7b191fb6aee2bb94d3da3d19a42eaf978f17c%5E">
-    e5cd6ff3b3fe746da5aefc2d6fb13b7ed0affa40
+   <a href="/chromium/src/+/9730c00f464dbd0cfb45731b3a01c9d43e947b0d%5E">
+    e2d3a40d914a971307c4a74ff5d4a705cbd788f2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/48f7b191fb6aee2bb94d3da3d19a42eaf978f17c%5E%21/">
+    <a href="/chromium/src/+/9730c00f464dbd0cfb45731b3a01c9d43e947b0d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ReadingList] Subclass KeyedService in ReadingListModel
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prevent test-only source ID from containing uninitialized memory
 
-ReadingListModel is almost a pure interface which means that
-it is easy to create a fake object for tests. However since
-it does not sub-class KeyedService, the factory cannot cast
-the KeyedService* to ReadingListModel. This means that it is
-not possible to set a testing factory that returns a fake
-object that does not sub-class ReadingListModelImpl.
+The MSAN issue that caused crrev.com/c/3438825 to be reverted was the
+result of SourceBuilder not explicitly initializing its source_id
+field, which is a StrongAlias whose underlying type is int64_t, which
+doesn't end up being initialized by StrongAlias's default constructor.
 
-Instead, change ReadingListModel to subclass KeyedService.
-This way, the factory can be changed to not depends on the
-created object to be a ReadingListModelImpl, allowing to
-instead install e.g. a FakeReadingListModel.
-
-Bug: none
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I266a70db5f5fa93f1c45e439c5ac080c37e8a6d2">I266a70db5f5fa93f1c45e439c5ac080c37e8a6d2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3440128">https://chromium-review.googlesource.com/c/chromium/src/+/3440128</a>
-Auto-Submit: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
-Reviewed-by: Olivier Robin &lt;olivierrobin@chromium.org&gt;
-Commit-Queue: Olivier Robin &lt;olivierrobin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#967246}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0d6781f019324803b1e14046dc465301dbae7683">I0d6781f019324803b1e14046dc465301dbae7683</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3440355">https://chromium-review.googlesource.com/c/chromium/src/+/3440355</a>
+Reviewed-by: Charlie Harrison &lt;csharrison@chromium.org&gt;
+Commit-Queue: Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#967272}
 </pre>
 
 </body>
