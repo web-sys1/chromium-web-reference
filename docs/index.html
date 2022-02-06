@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/967598/"> 967598</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4edd56543bb6faf69449ca6e6aa7320880b9445d">4edd56543bb6faf69449ca6e6aa7320880b9445d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/967605/"> 967605</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/42faab623d0a88aa3b01bbabf8ececd9348971a4">42faab623d0a88aa3b01bbabf8ececd9348971a4</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/967598/">967598</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4edd56543bb6faf69449ca6e6aa7320880b9445d
+   42faab623d0a88aa3b01bbabf8ececd9348971a4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4edd56543bb6faf69449ca6e6aa7320880b9445d">
+    <a href="/chromium/src/+log/42faab623d0a88aa3b01bbabf8ececd9348971a4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4edd56543bb6faf69449ca6e6aa7320880b9445d.tar.gz">
+    <a href="/chromium/src/+archive/42faab623d0a88aa3b01bbabf8ececd9348971a4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Benjamin Beaudry &lt;bebeaudr@microsoft.com&gt;
+   Internal Frameworks Autoroller &lt;bling-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Feb 05 06:59:47 2022
+   Sun Feb 06 03:35:23 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Feb 05 06:59:47 2022
+   Sun Feb 06 03:35:23 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4edd56543bb6faf69449ca6e6aa7320880b9445d/">
-    aab34123e81b89055f7e4c0c90a1860f59417d08
+   <a href="/chromium/src/+/42faab623d0a88aa3b01bbabf8ececd9348971a4/">
+    e85adf8ce5636d000a980f317835a48fe8c779eb
    </a>
   </td>
  </tr>
@@ -166,73 +166,25 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4edd56543bb6faf69449ca6e6aa7320880b9445d%5E">
-    f6fa5d069f29f9e59a5b1fae115cabaa8a75466f
+   <a href="/chromium/src/+/42faab623d0a88aa3b01bbabf8ececd9348971a4%5E">
+    fa2f3c7655440d69d612028a00dff5a69d716d4a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4edd56543bb6faf69449ca6e6aa7320880b9445d%5E%21/">
+    <a href="/chromium/src/+/42faab623d0a88aa3b01bbabf8ececd9348971a4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[VoiceOver] Fix increment/decrement actions not working on sliders
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Frameworks roll] Roll to 426634492 piper revision
 
-As part of the ax_mac_merge initiative, where folks from Google and
-Igalia are merging the BrowserAccessibilityCocoa (web content a11y) and
-AXPlatformNodeCocoa (browser views a11y) into one class, a bug with
-VoiceOver was exposed and seemingly broke the increment/decrement
-actions.
-
-The issue was caused by a selector now being exposed to VO for web
-content too: setAccessibilityValue. Whenever we successfully trigger
-an increment or decrement action, VO also calls setAccessibilityValue on
-the slider with a value of 5% of the slider's value range. This led to
-a strange behavior for the following reasons:
-
-  1. The increment/decrement action had already been performed and
-     successfully modified the value of the slider to what it should be.
-  2. setAccessibilityValue is called with a value that isn't the one
-     we'd expect after incrementing a range. It's a constant 5% of the
-     total range of the slider.
-  3. our implementation of setAccessibilityValue in AXPlatformNodeCocoa
-     feels a bit too simplistic. We ALWAYS perform an action, even when
-     the action data object doesn't have a value to pass. In this case,
-     the |value| received by parameter is a float wrapped in an NSValue.
-     We currently only parse range values wrapped in NSValue and
-     NSStrings[1]. This means that we performed an action kSetValue with
-     a null value.
-  4. When in Blink we receive that kSetValue action with a null value on
-     the slider element, the implementation dictate that we should set
-     the slider's value to half of its range - overriding the value set
-     by the increment/decrement action.
-
-In this CL, we fix this by disallowing this deprecated selector on
-sliders. See my comment in the code change for more info about why VO is
-doing that call with a constant value of 5% of the range.
-
-As said previously, this selector became exposed for web content as part
-of the ax mac merge work, in particular these two CLS:
-1. <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3081783">https://chromium-review.googlesource.com/c/chromium/src/+/3081783</a>
-2. <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3139681">https://chromium-review.googlesource.com/c/chromium/src/+/3139681</a>
-
-[1] I think it's potentially harmful that the selector
-    setAccessibilityValue always performs an action, regardless of
-    whether a value was set. Now that this selector is exposed to all of
-    web content through the ax_mac_merge work, more issues could arise
-    from that deprecated API. Filed <a href="https://crbug.com/1292689">https://crbug.com/1292689</a> to
-    discussed it further over there.
-
-
-AX-Relnotes: Fix VoiceOver increment and decrement actions on sliders.
-Bug: 1292660
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibb078f6bfd6b1fae07bdccfdfa145f984153402b">Ibb078f6bfd6b1fae07bdccfdfa145f984153402b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3423323">https://chromium-review.googlesource.com/c/chromium/src/+/3423323</a>
-Reviewed-by: Nektarios Paisios &lt;nektar@chromium.org&gt;
-Commit-Queue: Benjamin Beaudry &lt;benjamin.beaudry@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#967598}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1db1f80a191ec8c98702ab0644eab602c95a224b">I1db1f80a191ec8c98702ab0644eab602c95a224b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3441367">https://chromium-review.googlesource.com/c/chromium/src/+/3441367</a>
+Commit-Queue: Internal Frameworks Autoroller &lt;bling-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+Bot-Commit: Internal Frameworks Autoroller &lt;bling-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#967605}
 </pre>
 
 </body>
