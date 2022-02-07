@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/967953/"> 967953</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/54ecb17c8b59eaf314f3a3f24740848256d27d79">54ecb17c8b59eaf314f3a3f24740848256d27d79</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/967993/"> 967993</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ecdc736223cfabe49a67f02b61f72b696a839588">ecdc736223cfabe49a67f02b61f72b696a839588</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/967940/">967940</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   54ecb17c8b59eaf314f3a3f24740848256d27d79
+   ecdc736223cfabe49a67f02b61f72b696a839588
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/54ecb17c8b59eaf314f3a3f24740848256d27d79">
+    <a href="/chromium/src/+log/ecdc736223cfabe49a67f02b61f72b696a839588">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/54ecb17c8b59eaf314f3a3f24740848256d27d79.tar.gz">
+    <a href="/chromium/src/+archive/ecdc736223cfabe49a67f02b61f72b696a839588.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ahmed Fakhry &lt;afakhry@chromium.org&gt;
+   Xiaohan Wang &lt;xhwang@chromium.org&gt;
   </td>
   <td>
-   Mon Feb 07 20:21:30 2022
+   Mon Feb 07 21:29:28 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Feb 07 20:21:30 2022
+   Mon Feb 07 21:29:28 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/54ecb17c8b59eaf314f3a3f24740848256d27d79/">
-    f90d1b20949f2daa3453b71a88b9f8443fa15312
+   <a href="/chromium/src/+/ecdc736223cfabe49a67f02b61f72b696a839588/">
+    e3dacd53e5a9bdfcc0ff63fd96a0d87f1083b90a
    </a>
   </td>
  </tr>
@@ -166,32 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/54ecb17c8b59eaf314f3a3f24740848256d27d79%5E">
-    404c24eaf9fc6cf2db3d81596b23176ae1856085
+   <a href="/chromium/src/+/ecdc736223cfabe49a67f02b61f72b696a839588%5E">
+    f15c6ca031f7022529106307892e1cc92cb17601
    </a>
    <span>
     [
-    <a href="/chromium/src/+/54ecb17c8b59eaf314f3a3f24740848256d27d79%5E%21/">
+    <a href="/chromium/src/+/ecdc736223cfabe49a67f02b61f72b696a839588%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">capture_selfie_cam: Camera disconnection
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media: Make AddSupportedKeySystems() Async
 
-This CL adds the logic to handle the case when a selected camera
-gets disconnected. We give it a grace period so that it may
-reconnect again (which should help in the case of a flaky camera).
-After the grace period expires, the selected camera ID is cleared.
+Currently AddSupportedKeySystems() is a sync call, which requires a
+sync IPC at lower level. It also causes renderer hang in some cases due
+to slower system queries.
 
-Fixed: 1293615
-Test: Added new tests.
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I77cece84ef652d330eb91f9481aa07308546e44a">I77cece84ef652d330eb91f9481aa07308546e44a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3438027">https://chromium-review.googlesource.com/c/chromium/src/+/3438027</a>
-Reviewed-by: James Cook &lt;jamescook@chromium.org&gt;
-Commit-Queue: Ahmed Fakhry &lt;afakhry@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#967953}
+This CL makes AddSupportedKeySystems() an async operation to solve that.
+More detailed changes include:
+- Update WebEncryptedMediaClientImpl to make sure key systems are up to
+  date before calling into KeySystemConfigSelector.
+- Update KeySystems to update the key systems asynchronously, including
+  handling multiple queries and pending updates etc.
+- Update AddSupportedKeySystems() to be async along the stack.
+
+Also rename AddSupportedKeySystems() to GetSupportedKeySystems() since
+it's now async.
+
+The actual IPC call is still sync and will be updated in the next CL,
+since this CL is getting big.
+
+Bug: b/213941141
+Test: Updated unit tests
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id143ebd474a682858270524d5f44a16abba18ee6">Id143ebd474a682858270524d5f44a16abba18ee6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3430502">https://chromium-review.googlesource.com/c/chromium/src/+/3430502</a>
+Reviewed-by: Yuchen Liu &lt;yucliu@chromium.org&gt;
+Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Reviewed-by: John Rummell &lt;jrummell@chromium.org&gt;
+Reviewed-by: Bo Liu &lt;boliu@chromium.org&gt;
+Reviewed-by: Sergey Ulanov &lt;sergeyu@chromium.org&gt;
+Commit-Queue: Xiaohan Wang &lt;xhwang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#967993}
 </pre>
 
 </body>
