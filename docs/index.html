@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/967993/"> 967993</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ecdc736223cfabe49a67f02b61f72b696a839588">ecdc736223cfabe49a67f02b61f72b696a839588</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/968011/"> 968011</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/802bd44d5b970df1e46ebcc69428f79637f9e70c">802bd44d5b970df1e46ebcc69428f79637f9e70c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/967940/">967940</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/75d687dbf524939c98772ece2419f490e792d3e9">75d687dbf524939c98772ece2419f490e792d3e9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/967991/">967991</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bf500ce871c94f01b90be11cb7250187da2f95f4">bf500ce871c94f01b90be11cb7250187da2f95f4</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ecdc736223cfabe49a67f02b61f72b696a839588
+   802bd44d5b970df1e46ebcc69428f79637f9e70c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ecdc736223cfabe49a67f02b61f72b696a839588">
+    <a href="/chromium/src/+log/802bd44d5b970df1e46ebcc69428f79637f9e70c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ecdc736223cfabe49a67f02b61f72b696a839588.tar.gz">
+    <a href="/chromium/src/+archive/802bd44d5b970df1e46ebcc69428f79637f9e70c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xiaohan Wang &lt;xhwang@chromium.org&gt;
+   Austin Eng &lt;enga@chromium.org&gt;
   </td>
   <td>
-   Mon Feb 07 21:29:28 2022
+   Mon Feb 07 22:03:32 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Feb 07 21:29:28 2022
+   Mon Feb 07 22:03:32 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ecdc736223cfabe49a67f02b61f72b696a839588/">
-    e3dacd53e5a9bdfcc0ff63fd96a0d87f1083b90a
+   <a href="/chromium/src/+/802bd44d5b970df1e46ebcc69428f79637f9e70c/">
+    f2add10fad2314499a17307c2ff4efb4a329eb11
    </a>
   </td>
  </tr>
@@ -166,49 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ecdc736223cfabe49a67f02b61f72b696a839588%5E">
-    f15c6ca031f7022529106307892e1cc92cb17601
+   <a href="/chromium/src/+/802bd44d5b970df1e46ebcc69428f79637f9e70c%5E">
+    043803dd8c77264b290b204d0ac0379ad66b503a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ecdc736223cfabe49a67f02b61f72b696a839588%5E%21/">
+    <a href="/chromium/src/+/802bd44d5b970df1e46ebcc69428f79637f9e70c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media: Make AddSupportedKeySystems() Async
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">WebGPU: Load Vulkan from the module / bundle path
 
-Currently AddSupportedKeySystems() is a sync call, which requires a
-sync IPC at lower level. It also causes renderer hang in some cases due
-to slower system queries.
+On MacOS, Chrome loads shared libraries from the bundle path,
+and on other OSes, it loads them from the module path. Add
+these paths to Dawn's runtime search path for loading
+SwiftShader.
 
-This CL makes AddSupportedKeySystems() an async operation to solve that.
-More detailed changes include:
-- Update WebEncryptedMediaClientImpl to make sure key systems are up to
-  date before calling into KeySystemConfigSelector.
-- Update KeySystems to update the key systems asynchronously, including
-  handling multiple queries and pending updates etc.
-- Update AddSupportedKeySystems() to be async along the stack.
-
-Also rename AddSupportedKeySystems() to GetSupportedKeySystems() since
-it's now async.
-
-The actual IPC call is still sync and will be updated in the next CL,
-since this CL is getting big.
-
-Bug: b/213941141
-Test: Updated unit tests
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id143ebd474a682858270524d5f44a16abba18ee6">Id143ebd474a682858270524d5f44a16abba18ee6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3430502">https://chromium-review.googlesource.com/c/chromium/src/+/3430502</a>
-Reviewed-by: Yuchen Liu &lt;yucliu@chromium.org&gt;
-Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
-Reviewed-by: John Rummell &lt;jrummell@chromium.org&gt;
-Reviewed-by: Bo Liu &lt;boliu@chromium.org&gt;
-Reviewed-by: Sergey Ulanov &lt;sergeyu@chromium.org&gt;
-Commit-Queue: Xiaohan Wang &lt;xhwang@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#967993}
+Bug: 1266550
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib2d374509e31b172df3ec31f6a6280aae1a2eeea">Ib2d374509e31b172df3ec31f6a6280aae1a2eeea</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3430691">https://chromium-review.googlesource.com/c/chromium/src/+/3430691</a>
+Reviewed-by: Zhenyao Mo &lt;zmo@chromium.org&gt;
+Commit-Queue: Austin Eng &lt;enga@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#968011}
 </pre>
 
 </body>
