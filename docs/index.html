@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/968512/"> 968512</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/74b2a6a255ed224902b0ad83eae8fb9099170bb8">74b2a6a255ed224902b0ad83eae8fb9099170bb8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/968547/"> 968547</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f65e00fb798a079e40c153a0388f1ecb326a45bf">f65e00fb798a079e40c153a0388f1ecb326a45bf</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/968455/">968455</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   74b2a6a255ed224902b0ad83eae8fb9099170bb8
+   f65e00fb798a079e40c153a0388f1ecb326a45bf
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/74b2a6a255ed224902b0ad83eae8fb9099170bb8">
+    <a href="/chromium/src/+log/f65e00fb798a079e40c153a0388f1ecb326a45bf">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/74b2a6a255ed224902b0ad83eae8fb9099170bb8.tar.gz">
+    <a href="/chromium/src/+archive/f65e00fb798a079e40c153a0388f1ecb326a45bf.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andrew Xu &lt;andrewxu@chromium.org&gt;
+   Tina Wang &lt;tinazwang@google.com&gt;
   </td>
   <td>
-   Tue Feb 08 20:10:14 2022
+   Tue Feb 08 21:19:49 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 08 20:10:14 2022
+   Tue Feb 08 21:19:49 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/74b2a6a255ed224902b0ad83eae8fb9099170bb8/">
-    bcb82c536ae8562fb83fc9a1517a0d1b2eb4465d
+   <a href="/chromium/src/+/f65e00fb798a079e40c153a0388f1ecb326a45bf/">
+    4eb9612d0edd8853d664b22f9d2e2dcedc35057c
    </a>
   </td>
  </tr>
@@ -166,51 +166,28 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/74b2a6a255ed224902b0ad83eae8fb9099170bb8%5E">
-    6b06b2cdef8c9a619415ec2dc3966dc5f36276a0
+   <a href="/chromium/src/+/f65e00fb798a079e40c153a0388f1ecb326a45bf%5E">
+    e6a3664a3c5b01b84c93cd226004a6bf49340845
    </a>
    <span>
     [
-    <a href="/chromium/src/+/74b2a6a255ed224902b0ad83eae8fb9099170bb8%5E%21/">
+    <a href="/chromium/src/+/f65e00fb798a079e40c153a0388f1ecb326a45bf%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[View] AnimationAbortHandle handles layer destruction
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[WebChannels] Don't show "Follow" menu option in incognito mode
 
-Currently, AnimationAbortHandle does not handle the case that the
-tracked layers could be destroyed. Note that the layers tracked by
-AnimationAbortHandle could be destroyed in two manners:
+As described in PRD, following feed is not available in incognito mode.
 
-(1) The layer is destroyed before ~AnimationAbortHandle() is called
-(2) The layer is destroyed during ~AnimationAbortHandle() when
-aborting layer animations
-
-As a result, the user of AnimationAbortHandle could cause crashes, just
-as the attached issue demonstrates.
-
-This CL fixes this issue by:
-
-(1) Making AnimationAbortHandle an observer of the tracked layers.
-(2) When the observed layer is destroyed, add the layer to an exclusive
-set called `destroyed_layers_`.
-(3) In ~AnimationAbortHandle(), do not access the layer points included
-by `destroyed_layers_`.
-
-Note that the animation end/abort callback may destroy multiple layers.
-It is why an additional set is used to track the destroyed layers
-instead of removing the deleted layers from the existing set. Otherwise,
-iterating the existing set during ~AnimationAbortHandle() could be risky
-
-Bug: 1294100
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I096edb46f394129ae502fe39dfc617824c5df106">I096edb46f394129ae502fe39dfc617824c5df106</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3445083">https://chromium-review.googlesource.com/c/chromium/src/+/3445083</a>
-Reviewed-by: Allen Bauer &lt;kylixrd@chromium.org&gt;
-Reviewed-by: Keren Zhu &lt;kerenzhu@chromium.org&gt;
-Commit-Queue: Andrew Xu &lt;andrewxu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#968512}
+Bug: 1264872
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If115490496e1a85958c45c11cc81af22b16eee94">If115490496e1a85958c45c11cc81af22b16eee94</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3445090">https://chromium-review.googlesource.com/c/chromium/src/+/3445090</a>
+Reviewed-by: Sergio Collazos &lt;sczs@chromium.org&gt;
+Commit-Queue: Tina Wang &lt;tinazwang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#968547}
 </pre>
 
 </body>
