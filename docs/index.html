@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/968460/"> 968460</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/28aa39e01a1800dc493926c04a560e2db196f9d7">28aa39e01a1800dc493926c04a560e2db196f9d7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/968512/"> 968512</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/74b2a6a255ed224902b0ad83eae8fb9099170bb8">74b2a6a255ed224902b0ad83eae8fb9099170bb8</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/968368/">968368</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   28aa39e01a1800dc493926c04a560e2db196f9d7
+   74b2a6a255ed224902b0ad83eae8fb9099170bb8
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/28aa39e01a1800dc493926c04a560e2db196f9d7">
+    <a href="/chromium/src/+log/74b2a6a255ed224902b0ad83eae8fb9099170bb8">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/28aa39e01a1800dc493926c04a560e2db196f9d7.tar.gz">
+    <a href="/chromium/src/+archive/74b2a6a255ed224902b0ad83eae8fb9099170bb8.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Azeem Arshad &lt;azeemarshad@chromium.org&gt;
+   Andrew Xu &lt;andrewxu@chromium.org&gt;
   </td>
   <td>
-   Tue Feb 08 19:00:08 2022
+   Tue Feb 08 20:10:14 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 08 19:00:08 2022
+   Tue Feb 08 20:10:14 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/28aa39e01a1800dc493926c04a560e2db196f9d7/">
-    0a322e8fefb43708cf3db5d0393ec46f876ac58a
+   <a href="/chromium/src/+/74b2a6a255ed224902b0ad83eae8fb9099170bb8/">
+    bcb82c536ae8562fb83fc9a1517a0d1b2eb4465d
    </a>
   </td>
  </tr>
@@ -166,30 +166,51 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/28aa39e01a1800dc493926c04a560e2db196f9d7%5E">
-    f6e1ad64ae6fdc358b217dd7682f1d8b960a0124
+   <a href="/chromium/src/+/74b2a6a255ed224902b0ad83eae8fb9099170bb8%5E">
+    6b06b2cdef8c9a619415ec2dc3966dc5f36276a0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/28aa39e01a1800dc493926c04a560e2db196f9d7%5E%21/">
+    <a href="/chromium/src/+/74b2a6a255ed224902b0ad83eae8fb9099170bb8%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CrOS Cellular] Hide add cellular button when restricted by policy
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[View] AnimationAbortHandle handles layer destruction
 
-This CL modifies MobileSectionHeaderView so that the add cellular
-button is not displayed when allow_only_policy_cellular_networks
-policy is enabled.
+Currently, AnimationAbortHandle does not handle the case that the
+tracked layers could be destroyed. Note that the layers tracked by
+AnimationAbortHandle could be destroyed in two manners:
 
-Fixed: b/217845190
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ieaa2649b184dc6220f4119ceabdb24ea381610ce">Ieaa2649b184dc6220f4119ceabdb24ea381610ce</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3441378">https://chromium-review.googlesource.com/c/chromium/src/+/3441378</a>
-Reviewed-by: Chad Duffin &lt;chadduffin@chromium.org&gt;
-Commit-Queue: Azeem Arshad &lt;azeemarshad@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#968460}
+(1) The layer is destroyed before ~AnimationAbortHandle() is called
+(2) The layer is destroyed during ~AnimationAbortHandle() when
+aborting layer animations
+
+As a result, the user of AnimationAbortHandle could cause crashes, just
+as the attached issue demonstrates.
+
+This CL fixes this issue by:
+
+(1) Making AnimationAbortHandle an observer of the tracked layers.
+(2) When the observed layer is destroyed, add the layer to an exclusive
+set called `destroyed_layers_`.
+(3) In ~AnimationAbortHandle(), do not access the layer points included
+by `destroyed_layers_`.
+
+Note that the animation end/abort callback may destroy multiple layers.
+It is why an additional set is used to track the destroyed layers
+instead of removing the deleted layers from the existing set. Otherwise,
+iterating the existing set during ~AnimationAbortHandle() could be risky
+
+Bug: 1294100
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I096edb46f394129ae502fe39dfc617824c5df106">I096edb46f394129ae502fe39dfc617824c5df106</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3445083">https://chromium-review.googlesource.com/c/chromium/src/+/3445083</a>
+Reviewed-by: Allen Bauer &lt;kylixrd@chromium.org&gt;
+Reviewed-by: Keren Zhu &lt;kerenzhu@chromium.org&gt;
+Commit-Queue: Andrew Xu &lt;andrewxu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#968512}
 </pre>
 
 </body>
