@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/968279/"> 968279</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5674f8b9229c1960cd563b5cd7d4023430b1ef9e">5674f8b9229c1960cd563b5cd7d4023430b1ef9e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/968287/"> 968287</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/60e47131b1713f1dca79d3b858578a3ad126614e">60e47131b1713f1dca79d3b858578a3ad126614e</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/968274/">968274</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5674f8b9229c1960cd563b5cd7d4023430b1ef9e
+   60e47131b1713f1dca79d3b858578a3ad126614e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5674f8b9229c1960cd563b5cd7d4023430b1ef9e">
+    <a href="/chromium/src/+log/60e47131b1713f1dca79d3b858578a3ad126614e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5674f8b9229c1960cd563b5cd7d4023430b1ef9e.tar.gz">
+    <a href="/chromium/src/+archive/60e47131b1713f1dca79d3b858578a3ad126614e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ewann &lt;ewannpv@google.com&gt;
+   Sreeja Kamishetty &lt;sreejakshetty@chromium.org&gt;
   </td>
   <td>
-   Tue Feb 08 12:19:55 2022
+   Tue Feb 08 12:51:53 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 08 12:19:55 2022
+   Tue Feb 08 12:51:53 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5674f8b9229c1960cd563b5cd7d4023430b1ef9e/">
-    0b00508aa65233974d530a75f13705a0a62a5543
+   <a href="/chromium/src/+/60e47131b1713f1dca79d3b858578a3ad126614e/">
+    716ba7dfa81f4d4ecf57364be899ba4e3c891dbd
    </a>
   </td>
  </tr>
@@ -166,30 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5674f8b9229c1960cd563b5cd7d4023430b1ef9e%5E">
-    704bc9935af50478a5ddc1e0dc351ed5c072d9fb
+   <a href="/chromium/src/+/60e47131b1713f1dca79d3b858578a3ad126614e%5E">
+    e8146addf7021b09ccb3573ee152a5105e86057b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5674f8b9229c1960cd563b5cd7d4023430b1ef9e%5E%21/">
+    <a href="/chromium/src/+/60e47131b1713f1dca79d3b858578a3ad126614e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS] Cancels downloads on prerender pages
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rename and Move RFHI::InsidePortal() to FrameTree::IsPortal()
 
-This CL Cancels downloads on prerender pages.
-When a prerendered page containing an automatic download is created,
-the download starts  before the page is opened.
+Current naming of RenderFrameHostImpl::InsidePortal() is confusing
+considering various cases like fenced frame embedded inside a portal.
+Also InsidePortal() API checks for IsPortal() value.
 
-Fixed: 1292567
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I67873f49832e91b7f6ec33d7ac460870f85848ad">I67873f49832e91b7f6ec33d7ac460870f85848ad</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3443348">https://chromium-review.googlesource.com/c/chromium/src/+/3443348</a>
-Reviewed-by: Mark Cogan &lt;marq@chromium.org&gt;
-Commit-Queue: Ewann Pellé &lt;ewannpv@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#968279}
+To avoid this confusion, we want to rename it back to IsPortal and
+looking at the usecases of InsidePortal, it would be more apt to have
+it inside FrameTree to avoid FTN -&gt; RFH usages.
+
+We also double check that a fenced frame when embedded inside a portal
+FrameTree::IsPortal() returns false.
+
+BUG=1294795,1179502
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I628659265cd1c5acba31386cc0ebe2d9b89b8157">I628659265cd1c5acba31386cc0ebe2d9b89b8157</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3424548">https://chromium-review.googlesource.com/c/chromium/src/+/3424548</a>
+Reviewed-by: Kevin McNee &lt;mcnee@chromium.org&gt;
+Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Commit-Queue: Sreeja Kamishetty &lt;sreejakshetty@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#968287}
 </pre>
 
 </body>
