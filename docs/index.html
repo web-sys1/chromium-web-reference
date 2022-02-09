@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/968991/"> 968991</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c3128ac5f61242d44a41cc5900cbd9234d749e1a">c3128ac5f61242d44a41cc5900cbd9234d749e1a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/969009/"> 969009</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/78bab6ca4a70fca34a4a90764885a2c9412d8328">78bab6ca4a70fca34a4a90764885a2c9412d8328</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/968961/">968961</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c3128ac5f61242d44a41cc5900cbd9234d749e1a
+   78bab6ca4a70fca34a4a90764885a2c9412d8328
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c3128ac5f61242d44a41cc5900cbd9234d749e1a">
+    <a href="/chromium/src/+log/78bab6ca4a70fca34a4a90764885a2c9412d8328">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c3128ac5f61242d44a41cc5900cbd9234d749e1a.tar.gz">
+    <a href="/chromium/src/+archive/78bab6ca4a70fca34a4a90764885a2c9412d8328.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Christopher Cameron &lt;ccameron@chromium.org&gt;
+   Eric Sum &lt;esum@google.com&gt;
   </td>
   <td>
-   Wed Feb 09 17:43:28 2022
+   Wed Feb 09 18:11:18 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 09 17:43:28 2022
+   Wed Feb 09 18:11:18 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c3128ac5f61242d44a41cc5900cbd9234d749e1a/">
-    0cfe00c8b3bb9a0e81b09bd1aecb2d4fb2913b4b
+   <a href="/chromium/src/+/78bab6ca4a70fca34a4a90764885a2c9412d8328/">
+    a9b3056e6d12ca272006cf72a7fac2e03978903d
    </a>
   </td>
  </tr>
@@ -166,30 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c3128ac5f61242d44a41cc5900cbd9234d749e1a%5E">
-    dab5c97d29236cfff6b69f8588e9e6d75811a88f
+   <a href="/chromium/src/+/78bab6ca4a70fca34a4a90764885a2c9412d8328%5E">
+    b5742dc7463449de536f3c883eb3f092b4a83bdf
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c3128ac5f61242d44a41cc5900cbd9234d749e1a%5E%21/">
+    <a href="/chromium/src/+/78bab6ca4a70fca34a4a90764885a2c9412d8328%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix color space in DesktopCaptureMacV2
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add method to translate animation within AnimatedImageView.
 
-This was specifying sRGB, not Rec709. As a consequence, when used
-in SkiaRenderer, we would fail to do YUV to RGB conversion (because for
-sRGB, the YUV to RGB matrix is the identity).
+The use case is for ChromeOS, where it was recommended to apply very
+tiny jitter (not user perceptible) to the whole animation to prevent
+any chance of screen burn. Translating the entire view does not work
+well in our case since the view is full-screen, and it leaves a black
+border where the view got translated by a few pixels. We can instead
+scale the animation a tiny bit larger and translate the canvas when
+rendering. This has the same effect, but does not move the view's
+entire content bounds.
 
-Bug: 1294284
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If7317fe5fdbb8be32aac0a5750aa409881a598c4">If7317fe5fdbb8be32aac0a5750aa409881a598c4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3449666">https://chromium-review.googlesource.com/c/chromium/src/+/3449666</a>
-Reviewed-by: Mark Foltz &lt;mfoltz@chromium.org&gt;
-Commit-Queue: ccameron chromium &lt;ccameron@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#968991}
+This CL adds a the method to AnimatedImageView to allow this to
+happen, and it will be used in the next CL.
+
+Bug: b:217271333
+
+Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I861fcc57d1e9c316fabb5e410cf20fc40599f034">I861fcc57d1e9c316fabb5e410cf20fc40599f034</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3449610">https://chromium-review.googlesource.com/c/chromium/src/+/3449610</a>
+Reviewed-by: Vladimir Levin &lt;vmpstr@chromium.org&gt;
+Reviewed-by: Allen Bauer &lt;kylixrd@chromium.org&gt;
+Commit-Queue: Eric Sum &lt;esum@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#969009}
 </pre>
 
 </body>
