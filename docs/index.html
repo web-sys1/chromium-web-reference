@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/968952/"> 968952</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/53caa83e254f03a5d0346ad9e2f5211ed65922a7">53caa83e254f03a5d0346ad9e2f5211ed65922a7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/968974/"> 968974</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8751450d6688997559ee89366e185ef8291c0eb7">8751450d6688997559ee89366e185ef8291c0eb7</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/968906/">968906</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   53caa83e254f03a5d0346ad9e2f5211ed65922a7
+   8751450d6688997559ee89366e185ef8291c0eb7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/53caa83e254f03a5d0346ad9e2f5211ed65922a7">
+    <a href="/chromium/src/+log/8751450d6688997559ee89366e185ef8291c0eb7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/53caa83e254f03a5d0346ad9e2f5211ed65922a7.tar.gz">
+    <a href="/chromium/src/+archive/8751450d6688997559ee89366e185ef8291c0eb7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Maksim Ivanov &lt;emaxx@chromium.org&gt;
+   Benjamin Lerman &lt;qsr@chromium.org&gt;
   </td>
   <td>
-   Wed Feb 09 16:33:25 2022
+   Wed Feb 09 17:11:15 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 09 16:33:25 2022
+   Wed Feb 09 17:11:15 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/53caa83e254f03a5d0346ad9e2f5211ed65922a7/">
-    120b8f1399dec6e64cdf2e160e1a4e4b14e19b81
+   <a href="/chromium/src/+/8751450d6688997559ee89366e185ef8291c0eb7/">
+    bb624e150441a9c634e904b8909a574d6df92544
    </a>
   </td>
  </tr>
@@ -166,41 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/53caa83e254f03a5d0346ad9e2f5211ed65922a7%5E">
-    1a0e89b0e001c5951abeb47e90c99f2233a49780
+   <a href="/chromium/src/+/8751450d6688997559ee89366e185ef8291c0eb7%5E">
+    4c74bc4e7330bd416be6dc10839803f883a0884f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/53caa83e254f03a5d0346ad9e2f5211ed65922a7%5E%21/">
+    <a href="/chromium/src/+/8751450d6688997559ee89366e185ef8291c0eb7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Finish security token SAML tests with closeView
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[fuchsia] Disconnect element.Controllers when last window closes
 
-Update the mixin used for security token SAML tests (a.k.a. smart card
-based login) to load the fake Gaia page that notifies Chrome with
-userInfo and closeView messages. This should speed up the browser tests
-by letting them not rely on the Gaia flow timeout.
+User of element::Manager expects the Controller to be closed when the
+element they started finishes. As chrome can starts new browser window
+independantly of the element API, there is no element/view mapping.
+Instead, as a workaround, this CL close all connected controller when
+the last window is closed.
 
-Part of the fix in this commit is to send the RelayState parameter from
-the fake SAML page to the fake Gaia via a POST request - previously we
-were doing it via GET, which neither was understood by fake Gaia nor
-corresponds to real-world SAML deployments.
+Bug: 1285106
 
-Also delete a useless line in the
-saml_api_login_auth_without_confirm.html test page.
-
-Bug: 1207833
-Test: cherry-pick crrev.com/c/3025668 and check SecurityTokenSamlTest.Basic still passes
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I82506ef794c655c8e2ebe61b2aa7bc38f1526acf">I82506ef794c655c8e2ebe61b2aa7bc38f1526acf</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3449252">https://chromium-review.googlesource.com/c/chromium/src/+/3449252</a>
-Auto-Submit: Maksim Ivanov &lt;emaxx@chromium.org&gt;
-Reviewed-by: Roman Sorokin &lt;rsorokin@chromium.org&gt;
-Commit-Queue: Maksim Ivanov &lt;emaxx@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#968952}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If83ce60f6dac5a9cf83edf71bedc59e7b2c6fa08">If83ce60f6dac5a9cf83edf71bedc59e7b2c6fa08</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3436167">https://chromium-review.googlesource.com/c/chromium/src/+/3436167</a>
+Reviewed-by: Wez &lt;wez@chromium.org&gt;
+Commit-Queue: Benjamin Lerman &lt;qsr@chromium.org&gt;
+Auto-Submit: Benjamin Lerman &lt;qsr@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#968974}
 </pre>
 
 </body>
