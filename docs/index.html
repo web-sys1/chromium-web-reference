@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/968922/"> 968922</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b4a830f56a4f4d033f88b7b649b0378c7e00ad1c">b4a830f56a4f4d033f88b7b649b0378c7e00ad1c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/968952/"> 968952</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/53caa83e254f03a5d0346ad9e2f5211ed65922a7">53caa83e254f03a5d0346ad9e2f5211ed65922a7</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/968906/">968906</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b4a830f56a4f4d033f88b7b649b0378c7e00ad1c
+   53caa83e254f03a5d0346ad9e2f5211ed65922a7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b4a830f56a4f4d033f88b7b649b0378c7e00ad1c">
+    <a href="/chromium/src/+log/53caa83e254f03a5d0346ad9e2f5211ed65922a7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b4a830f56a4f4d033f88b7b649b0378c7e00ad1c.tar.gz">
+    <a href="/chromium/src/+archive/53caa83e254f03a5d0346ad9e2f5211ed65922a7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Francois Pierre Doray &lt;fdoray@chromium.org&gt;
+   Maksim Ivanov &lt;emaxx@chromium.org&gt;
   </td>
   <td>
-   Wed Feb 09 15:24:33 2022
+   Wed Feb 09 16:33:25 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 09 15:24:33 2022
+   Wed Feb 09 16:33:25 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b4a830f56a4f4d033f88b7b649b0378c7e00ad1c/">
-    ee8db3cefad0ddd1b15a09e4fda63daaa93243dd
+   <a href="/chromium/src/+/53caa83e254f03a5d0346ad9e2f5211ed65922a7/">
+    120b8f1399dec6e64cdf2e160e1a4e4b14e19b81
    </a>
   </td>
  </tr>
@@ -166,60 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b4a830f56a4f4d033f88b7b649b0378c7e00ad1c%5E">
-    36558f6c21ee049b2274e232f41ff6485a7f9f5d
+   <a href="/chromium/src/+/53caa83e254f03a5d0346ad9e2f5211ed65922a7%5E">
+    1a0e89b0e001c5951abeb47e90c99f2233a49780
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b4a830f56a4f4d033f88b7b649b0378c7e00ad1c%5E%21/">
+    <a href="/chromium/src/+/53caa83e254f03a5d0346ad9e2f5211ed65922a7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[Private Network Access] Remove `addressSpace` from IDL."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Finish security token SAML tests with closeView
 
-This reverts commit 4f3c5a82c3fe14f9108b4fd758c812ab6f01f34c.
+Update the mixin used for security token SAML tests (a.k.a. smart card
+based login) to load the fake Gaia page that notifies Chrome with
+userInfo and closeView messages. This should speed up the browser tests
+by letting them not rely on the Gaia flow timeout.
 
-Reason for revert: compile failure
+Part of the fix in this commit is to send the RelayState parameter from
+the fake SAML page to the fake Gaia via a POST request - previously we
+were doing it via GET, which neither was understood by fake Gaia nor
+corresponds to real-world SAML deployments.
 
-[62150/91044] CXX obj/third_party/blink/renderer/bindings/core/v8/v8/v8_address_space.o
-FAILED: obj/third_party/blink/renderer/bindings/core/v8/v8/v8_address_space.o
-../../buildtools/reclient/rewrapper -cfg=../../buildtools/reclient_cfgs/chromium-browser-clang/rewra...(too long)
-clang++: error: no such file or directory: 'gen/third_party/blink/renderer/bindings/core/v8/v8_address_space.cc'
-clang++: error: no input files
+Also delete a useless line in the
+saml_api_login_auth_without_confirm.html test page.
 
-Original change's description:
-&gt; [Private Network Access] Remove `addressSpace` from IDL.
-&gt;
-&gt; This attribute has been removed from the specification for a long time:
-&gt; <a href="https://github.com/WICG/private-network-access/issues/21">https://github.com/WICG/private-network-access/issues/21</a>
-&gt;
-&gt; Also remove the old CORS-RFC1918 web tests exercising this attribute, as
-&gt; well as the virtual test suites running only these tests. One of these
-&gt; tests was flaky, so this CL also fixed crbug.com/1267552.
-&gt;
-&gt; Bug: chromium:1204028
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I47eb8c0d0eeac838ec9a584c8505459347baac6f">I47eb8c0d0eeac838ec9a584c8505459347baac6f</a>
-&gt; Fixed: chromium:1267552
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3442962">https://chromium-review.googlesource.com/c/chromium/src/+/3442962</a>
-&gt; Auto-Submit: Titouan Rigoudy &lt;titouan@chromium.org&gt;
-&gt; Reviewed-by: Mike West &lt;mkwst@chromium.org&gt;
-&gt; Reviewed-by: Stephen Chenney &lt;schenney@chromium.org&gt;
-&gt; Commit-Queue: Stephen Chenney &lt;schenney@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#968916}
-
-Bug: chromium:1204028
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5a7b1bd4696d7328a9de511ef62c0c3fdb83f3a3">I5a7b1bd4696d7328a9de511ef62c0c3fdb83f3a3</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3450190">https://chromium-review.googlesource.com/c/chromium/src/+/3450190</a>
-Owners-Override: Francois Pierre Doray &lt;fdoray@chromium.org&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: Francois Pierre Doray &lt;fdoray@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#968922}
+Bug: 1207833
+Test: cherry-pick crrev.com/c/3025668 and check SecurityTokenSamlTest.Basic still passes
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I82506ef794c655c8e2ebe61b2aa7bc38f1526acf">I82506ef794c655c8e2ebe61b2aa7bc38f1526acf</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3449252">https://chromium-review.googlesource.com/c/chromium/src/+/3449252</a>
+Auto-Submit: Maksim Ivanov &lt;emaxx@chromium.org&gt;
+Reviewed-by: Roman Sorokin &lt;rsorokin@chromium.org&gt;
+Commit-Queue: Maksim Ivanov &lt;emaxx@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#968952}
 </pre>
 
 </body>
