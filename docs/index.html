@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/968736/"> 968736</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3669a094cd212aa23cd349a2d1b4a33183069904">3669a094cd212aa23cd349a2d1b4a33183069904</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/968742/"> 968742</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2202b221c6a630c352cafb368ade9565ac63b00a">2202b221c6a630c352cafb368ade9565ac63b00a</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/968698/">968698</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3669a094cd212aa23cd349a2d1b4a33183069904
+   2202b221c6a630c352cafb368ade9565ac63b00a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3669a094cd212aa23cd349a2d1b4a33183069904">
+    <a href="/chromium/src/+log/2202b221c6a630c352cafb368ade9565ac63b00a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3669a094cd212aa23cd349a2d1b4a33183069904.tar.gz">
+    <a href="/chromium/src/+archive/2202b221c6a630c352cafb368ade9565ac63b00a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Lukasz Anforowicz &lt;lukasza@chromium.org&gt;
+   John Abd-El-Malek &lt;jam@chromium.org&gt;
   </td>
   <td>
-   Wed Feb 09 03:32:17 2022
+   Wed Feb 09 04:06:41 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 09 03:32:17 2022
+   Wed Feb 09 04:06:41 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3669a094cd212aa23cd349a2d1b4a33183069904/">
-    238a0cdcae12e2f7baefd48a3b7cc59a4d102687
+   <a href="/chromium/src/+/2202b221c6a630c352cafb368ade9565ac63b00a/">
+    b36f0548ebbf5e2546e4dbc2b950048bde2fe058
    </a>
   </td>
  </tr>
@@ -166,37 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3669a094cd212aa23cd349a2d1b4a33183069904%5E">
-    ba9b3dd83935d300bf2baa3dde5be12be9395e72
+   <a href="/chromium/src/+/2202b221c6a630c352cafb368ade9565ac63b00a%5E">
+    94864a78731f8b4c01578b43b4ac3d4f183312c7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3669a094cd212aa23cd349a2d1b4a33183069904%5E%21/">
+    <a href="/chromium/src/+/2202b221c6a630c352cafb368ade9565ac63b00a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove UMA metrics gathered in preparation for ORB implementation.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix flakiness in serving-constraints.html with CombineResponseBody.
 
-The removed metrics have given us a rough idea about the percentage of
-requests that ORB can block based on headers VS javascript sniffing.
-Since we now have the data we need, we can remove the associated
-telemetry code.
+The problem is that the test waits for a script load to fail (which comes over the URLLoaderClient mojo pipe) and expects that WebBundleHandle::OnWebBundleError which prints the console error is received. With CombineResponseBody, the empty body is received earlier which appears to be what completes the promise in the test. Fix this by adding a small delay like in subresource-loading.html.
 
-Summary of the old results can be found in
-<a href="https://docs.google.com/document/d/1LkF7a-_RXg0uQQdk86FQHq7CMW5pKozPDmmbnJJRhY8/edit#heading=h.6labqs212jfn">https://docs.google.com/document/d/1LkF7a-_RXg0uQQdk86FQHq7CMW5pKozPDmmbnJJRhY8/edit#heading=h.6labqs212jfn</a>
+Also since the test waits longer now, update the expectation with another message that comes.
 
-Bug: 1202846
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9c7d63111617dfc9362a0fdbd719defc0b6e7fba">I9c7d63111617dfc9362a0fdbd719defc0b6e7fba</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3352804">https://chromium-review.googlesource.com/c/chromium/src/+/3352804</a>
-Reviewed-by: Charles Reis &lt;creis@chromium.org&gt;
-Reviewed-by: Chris Thompson &lt;cthomp@chromium.org&gt;
-Auto-Submit: Łukasz Anforowicz &lt;lukasza@chromium.org&gt;
-Reviewed-by: Yutaka Hirano &lt;yhirano@chromium.org&gt;
-Commit-Queue: Yutaka Hirano &lt;yhirano@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#968736}
+Bug: 1295391
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I358b117348c2bcfa30f4e16f7ff0ce383210ec1d">I358b117348c2bcfa30f4e16f7ff0ce383210ec1d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3448084">https://chromium-review.googlesource.com/c/chromium/src/+/3448084</a>
+Reviewed-by: Hayato Ito &lt;hayato@chromium.org&gt;
+Commit-Queue: John Abd-El-Malek &lt;jam@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#968742}
 </pre>
 
 </body>
