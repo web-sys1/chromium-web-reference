@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/969344/"> 969344</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1639316ad2fa65479a0a1f263fb26c96ec88b14e">1639316ad2fa65479a0a1f263fb26c96ec88b14e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/969347/"> 969347</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/634bdadaad05a20e09ca36e438cab608eca2fed5">634bdadaad05a20e09ca36e438cab608eca2fed5</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/969336/">969336</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f1ecbb04500e18df36bcf9d06c2beb31a65cfbff">f1ecbb04500e18df36bcf9d06c2beb31a65cfbff</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/969347/">969347</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/634bdadaad05a20e09ca36e438cab608eca2fed5">634bdadaad05a20e09ca36e438cab608eca2fed5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1639316ad2fa65479a0a1f263fb26c96ec88b14e
+   634bdadaad05a20e09ca36e438cab608eca2fed5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1639316ad2fa65479a0a1f263fb26c96ec88b14e">
+    <a href="/chromium/src/+log/634bdadaad05a20e09ca36e438cab608eca2fed5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1639316ad2fa65479a0a1f263fb26c96ec88b14e.tar.gz">
+    <a href="/chromium/src/+archive/634bdadaad05a20e09ca36e438cab608eca2fed5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   xiangdong kong &lt;xiangdongkong@google.com&gt;
+   Yoshifumi Inoue &lt;yosin@chromium.org&gt;
   </td>
   <td>
-   Thu Feb 10 08:14:09 2022
+   Thu Feb 10 08:50:30 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Feb 10 08:14:09 2022
+   Thu Feb 10 08:50:30 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1639316ad2fa65479a0a1f263fb26c96ec88b14e/">
-    1c1bd939e81c8cca72a4ec005728a14f870e8fcf
+   <a href="/chromium/src/+/634bdadaad05a20e09ca36e438cab608eca2fed5/">
+    790409d28cf6cec1b7031b93cff322cf802d38f3
    </a>
   </td>
  </tr>
@@ -166,37 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1639316ad2fa65479a0a1f263fb26c96ec88b14e%5E">
-    870528604424d9ba8680ae3ea77668846ac7d059
+   <a href="/chromium/src/+/634bdadaad05a20e09ca36e438cab608eca2fed5%5E">
+    c11d0c6ac8976eb981c6f881020c4c639e4fa892
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1639316ad2fa65479a0a1f263fb26c96ec88b14e%5E%21/">
+    <a href="/chromium/src/+/634bdadaad05a20e09ca36e438cab608eca2fed5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">feedback: Clean up help content element from search page
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[block-in-inline] Make NGFragmentItem::BlockInInline() to return LayoutObject
 
-The feedback app displays help contents returned from online search.
-For security reason, the help contents are displayed in untrusted
-context inside an iframe.
+This patch changes |NGFragmentItem::BlockInInline()| to return
+|LayoutObject| instead of |LayoutBlock| because the first child of
+block-in-inline can be |LayoutImage|, to avoid invalid type cast
+|To&lt;LayoutBlock&gt;()|.
 
-- Remove the help content element from the search page. It has been
-  moved to the embedded iframe.
-- Fix the affected unit tests.
-- A followup Cl will add communication between chrome:// and
-  chrome-untrusted:// page.
+Example:
+# HTML Document
+  &lt;div&gt;&lt;span&gt;&lt;img style="display:block"&gt;&lt;/span&gt;&lt;/div&gt;
 
-Bug: b:185624798
-Test: browser_tests --gtest_filter="OSFeedbackBrowserTest.*"
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia4db470655280229724211ce491593bbd351edfb">Ia4db470655280229724211ce491593bbd351edfb</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3445404">https://chromium-review.googlesource.com/c/chromium/src/+/3445404</a>
-Reviewed-by: Gavin Williams &lt;gavinwill@chromium.org&gt;
-Commit-Queue: Xiangdong Kong &lt;xiangdongkong@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#969344}
+# Layout tree
+  LayoutNGBlockFlow P id="root"
+    +--LayoutInline SPAN
+     |  +--LayoutNGBlockFlow (anonymous)  # block-in-inline
+     |  |  +--LayoutImage IMG id="target" # first child of block-in-inline
+     +--LayoutText #text ""
+
+Bug: 1295087
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6c9c49727f925a72f677a04a87d2100fe9c35f65">I6c9c49727f925a72f677a04a87d2100fe9c35f65</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3449737">https://chromium-review.googlesource.com/c/chromium/src/+/3449737</a>
+Auto-Submit: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
+Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#969347}
 </pre>
 
 </body>
