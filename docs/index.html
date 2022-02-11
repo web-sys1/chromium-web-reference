@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/969905/"> 969905</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ccf739cd62d60b2206f78b2975fcd87e56d30b0e">ccf739cd62d60b2206f78b2975fcd87e56d30b0e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/969895/"> 969895</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/95c3d2a6edff10010a438aa7b34055f7545fcdf0">95c3d2a6edff10010a438aa7b34055f7545fcdf0</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/969877/">969877</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ccf739cd62d60b2206f78b2975fcd87e56d30b0e
+   95c3d2a6edff10010a438aa7b34055f7545fcdf0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ccf739cd62d60b2206f78b2975fcd87e56d30b0e">
+    <a href="/chromium/src/+log/95c3d2a6edff10010a438aa7b34055f7545fcdf0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ccf739cd62d60b2206f78b2975fcd87e56d30b0e.tar.gz">
+    <a href="/chromium/src/+archive/95c3d2a6edff10010a438aa7b34055f7545fcdf0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Henrik Boström &lt;hbos@chromium.org&gt;
+   Quentin Pubert &lt;qpubert@google.com&gt;
   </td>
   <td>
-   Fri Feb 11 12:18:02 2022
+   Fri Feb 11 11:31:56 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 11 12:18:02 2022
+   Fri Feb 11 11:31:56 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ccf739cd62d60b2206f78b2975fcd87e56d30b0e/">
-    5c6c8ddc8f496f8361a4df0f520b2475d1353bd0
+   <a href="/chromium/src/+/95c3d2a6edff10010a438aa7b34055f7545fcdf0/">
+    24d2bb55683365ff5997c7e63055a048fdd2648a
    </a>
   </td>
  </tr>
@@ -166,52 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ccf739cd62d60b2206f78b2975fcd87e56d30b0e%5E">
-    81e689c5bf0442a7f01bc9f13a053cfcf636a567
+   <a href="/chromium/src/+/95c3d2a6edff10010a438aa7b34055f7545fcdf0%5E">
+    bddd88c7257ddd82039ef471b964e00557f29f5e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ccf739cd62d60b2206f78b2975fcd87e56d30b0e%5E%21/">
+    <a href="/chromium/src/+/95c3d2a6edff10010a438aa7b34055f7545fcdf0%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[WebRTC] MetronomeSource not to cause Idle Wake Ups if there is no work.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS12 Deprecation]: Removed base::ios::IsMultiwindowSupported() API
 
-Prior to this CL, the MetronomeSource became active at 64 Hz as soon as
-it had any listeners, regardless if those listeners had any wakeup time
-set. This translates into an Idle Wake Up even when we don't have any
-work to do inside OnMetronomeTick().
+Since iOS 12 deprecation, all iOS versions support multiwindow.
+All build targets should have the multiwindow plist flag now. This CL
+removes base::ios::IsMultiwindowSupported and all code relying on it
+returning false.
 
-In this CL, MetronomeSource is updated only to schedule tasks on
-metronome ticks where we have work to do, i.e. where at least one
-listener has a wakeup time that is not in the future.
+It also removes PreviousSessionInfo.isMultiWindowEnabledSession property
+and set the MultiWindow flag in testing/gtest_ios/unittest-Info.plist to
+true.
 
-With this CL we only wake up if we needed to wake up anyway, which
-greatly decreases the risk of regressions when MetronomeSource is used.
-Most notably, we no longer pay any Idle Wake Up cost when we have
-inactive RTCPeerConnections (0 Hz added instead of 64 Hz). Repro:
-<a href="https://jsfiddle.net/henbos/m1x0pb6w/">https://jsfiddle.net/henbos/m1x0pb6w/</a>
-
-To achieve flexible scheduling of metronome ticks,
-PostCancelableDelayedTaskAt() is used instead of a RepeatingTimer.
-This also means that if there exists multiple MetronomeSources in
-multiple Chrome processes, these will all align with each other.
-
-With this CL, the threading model of MetronomeSource is simplified with
-all variables only being used on the metronome sequence so we can remove
-all locks, the only exception being the listener's "is_active_lock_".
-
-Bug: chromium:1295198, chromium:1296138
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib69772db35a517a4618f2921422c411330eb84f6">Ib69772db35a517a4618f2921422c411330eb84f6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3447229">https://chromium-review.googlesource.com/c/chromium/src/+/3447229</a>
-Reviewed-by: Evan Shrubsole &lt;eshr@google.com&gt;
-Reviewed-by: Mirko Bonadei &lt;mbonadei@chromium.org&gt;
-Reviewed-by: Etienne Pierre-Doray &lt;etiennep@chromium.org&gt;
-Commit-Queue: Henrik Boström &lt;hbos@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#969905}
+Bug: 1109280
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idf0c2bac83d4ed449a3522d96f26559f53425311">Idf0c2bac83d4ed449a3522d96f26559f53425311</a>
+Fixed: 1292940
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3436405">https://chromium-review.googlesource.com/c/chromium/src/+/3436405</a>
+Reviewed-by: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+Reviewed-by: Mohammad Refaat &lt;mrefaat@chromium.org&gt;
+Reviewed-by: Mike Dougherty &lt;michaeldo@chromium.org&gt;
+Reviewed-by: Mark Cogan &lt;marq@chromium.org&gt;
+Reviewed-by: Rohit Rao &lt;rohitrao@chromium.org&gt;
+Reviewed-by: Ben Pastene &lt;bpastene@chromium.org&gt;
+Commit-Queue: Quentin Pubert &lt;qpubert@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#969895}
 </pre>
 
 </body>
