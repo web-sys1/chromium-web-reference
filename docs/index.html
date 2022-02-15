@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/971066/"> 971066</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2367fdfa94092bcc6a2304595512ae7bca93ddcd">2367fdfa94092bcc6a2304595512ae7bca93ddcd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/971074/"> 971074</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f875565b3bbb7895d1f8ac3e7a252ab1611be58a">f875565b3bbb7895d1f8ac3e7a252ab1611be58a</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/971026/">971026</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2367fdfa94092bcc6a2304595512ae7bca93ddcd
+   f875565b3bbb7895d1f8ac3e7a252ab1611be58a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2367fdfa94092bcc6a2304595512ae7bca93ddcd">
+    <a href="/chromium/src/+log/f875565b3bbb7895d1f8ac3e7a252ab1611be58a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2367fdfa94092bcc6a2304595512ae7bca93ddcd.tar.gz">
+    <a href="/chromium/src/+archive/f875565b3bbb7895d1f8ac3e7a252ab1611be58a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yuta Hijikata &lt;ythjkt@google.com&gt;
+   Pi-Hsun Shih &lt;pihsun@chromium.org&gt;
   </td>
   <td>
-   Tue Feb 15 05:55:05 2022
+   Tue Feb 15 06:27:05 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 15 05:55:05 2022
+   Tue Feb 15 06:27:05 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2367fdfa94092bcc6a2304595512ae7bca93ddcd/">
-    e95bbe7d5bbaf24b76a38712025ef1edd2641185
+   <a href="/chromium/src/+/f875565b3bbb7895d1f8ac3e7a252ab1611be58a/">
+    6902851ecc484529c335f01855878b78dbc7c400
    </a>
   </td>
  </tr>
@@ -166,27 +166,70 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2367fdfa94092bcc6a2304595512ae7bca93ddcd%5E">
-    5c38d5a59a9e0bd04dfd7d3cd6b575fd639c8197
+   <a href="/chromium/src/+/f875565b3bbb7895d1f8ac3e7a252ab1611be58a%5E">
+    bc300d529bd016ac68afe535db57ff6424153cb3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2367fdfa94092bcc6a2304595512ae7bca93ddcd%5E%21/">
+    <a href="/chromium/src/+/f875565b3bbb7895d1f8ac3e7a252ab1611be58a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Ensure that there is enough disk space for move migration.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">WebUI: Update TypeScript compiler to 4.5.5
 
-Test: Manual tested the success case on local device.
-Bug: 1261730
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4ff476d301d00fc1c920826e8ecce2e057354921">I4ff476d301d00fc1c920826e8ecce2e057354921</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3458022">https://chromium-review.googlesource.com/c/chromium/src/+/3458022</a>
-Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
-Commit-Queue: Yuta Hijikata &lt;ythjkt@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#971066}
+There are several major issues when upgrading:
+
+* Generated file for mojo bindings contains reference to MojoHandle and
+  mojo.internal.MojomType. Add stub for those types to bindings.d.ts.
+
+* DOM types changes: Some DOM types that are not available on all
+  browsers are removed from TypeScript lib.d.ts, and some types are
+  added.
+  * Some redundant type definitions from
+    ash/webui/camera_app_ui/resources/js/externs/types.d.ts are removed.
+  * Other properties used are added to
+    //tools/typescript/definitions/pending.d.ts, and added to
+    definitions for gn that use those types.
+  * DataTransferItem.webkitGetAsEntry() type returns possibly null, so
+    null assertion is added.
+  * ariaLabel for HTMLElement is a string and never null|undefined in
+    TypeScript 4.5 type definitions. This is an issue for TypeScript
+    lib.dom.d.ts [1], since the spec says string|null. This can be fixed
+    by using the lib replacement available in TypeScript 4.5, and
+    reference to the @types/web instead of using the built-in ones,
+    which contains a newer lib.dom.d.ts that already fix this issue [2],
+    and will be done in a later CL.
+    For now, the conflicting definitions are removed.
+  * Several @types packages are updated to the latest version for the
+    DOM changes, this includes:
+    * @types/dom-mediacapture-record: 1.0.10 -&gt; 1.0.11
+    * @types/w3c-css-typed-object-model-level-1: 20180410.0.3 -&gt; 20180410.0.4
+    * @types/webrtc: 0.0.29 -&gt; 0.0.31
+
+* TypeScript produces class property directly [3] when targeting ESNext,
+  which is not supported by polymer-css-build. Fixed by targeting ES2021
+  instead.
+
+* chrome/browser/resources/settings/search_settings.ts has subclass
+  re-declare protected member as different types and cause compile
+  error. Fix by using declare as suggested by compiler.
+
+[1]: <a href="https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/1119">https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/1119</a>
+[2]: <a href="https://www.npmjs.com/package/@types/web">https://www.npmjs.com/package/@types/web</a>
+[3]: <a href="https://github.com/tc39/proposal-class-fields">https://github.com/tc39/proposal-class-fields</a>
+
+Bug: b:213292127, 1285794
+Test: compile chrome
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8e09dfc0ac9f8ba0679d2ea1eb2a2f36dba425e8">I8e09dfc0ac9f8ba0679d2ea1eb2a2f36dba425e8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3380108">https://chromium-review.googlesource.com/c/chromium/src/+/3380108</a>
+Reviewed-by: Shik Chen &lt;shik@chromium.org&gt;
+Reviewed-by: Demetrios Papadopoulos &lt;dpapad@chromium.org&gt;
+Commit-Queue: Pi-Hsun Shih &lt;pihsun@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#971074}
 </pre>
 
 </body>
