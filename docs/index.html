@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/971264/"> 971264</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c9328dfbdc97ced5405906e23bb7f58eb0a7ba3c">c9328dfbdc97ced5405906e23bb7f58eb0a7ba3c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/971292/"> 971292</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d02f975002dc84d8c69124e9f18943e35be3b54e">d02f975002dc84d8c69124e9f18943e35be3b54e</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/971250/">971250</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c9328dfbdc97ced5405906e23bb7f58eb0a7ba3c
+   d02f975002dc84d8c69124e9f18943e35be3b54e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c9328dfbdc97ced5405906e23bb7f58eb0a7ba3c">
+    <a href="/chromium/src/+log/d02f975002dc84d8c69124e9f18943e35be3b54e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c9328dfbdc97ced5405906e23bb7f58eb0a7ba3c.tar.gz">
+    <a href="/chromium/src/+archive/d02f975002dc84d8c69124e9f18943e35be3b54e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   danakj &lt;danakj@chromium.org&gt;
+   Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
   </td>
   <td>
-   Tue Feb 15 16:48:33 2022
+   Tue Feb 15 17:33:45 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 15 16:48:33 2022
+   Tue Feb 15 17:33:45 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c9328dfbdc97ced5405906e23bb7f58eb0a7ba3c/">
-    926b8c7c66b391cf66e79e7b03d2b71122c2b014
+   <a href="/chromium/src/+/d02f975002dc84d8c69124e9f18943e35be3b54e/">
+    66a6a15eb93c6f533602d4d7dc32e47e04148e71
    </a>
   </td>
  </tr>
@@ -166,54 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c9328dfbdc97ced5405906e23bb7f58eb0a7ba3c%5E">
-    8d5bc69146505785ce299c490e35e3f3ef19f69c
+   <a href="/chromium/src/+/d02f975002dc84d8c69124e9f18943e35be3b54e%5E">
+    3b4b829b4ed529c4cb1f296db59f3ba29454be5c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c9328dfbdc97ced5405906e23bb7f58eb0a7ba3c%5E%21/">
+    <a href="/chromium/src/+/d02f975002dc84d8c69124e9f18943e35be3b54e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Mark raw_ptr with gsl::Pointer.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[aspect-ratio] Use continued fraction algorithm for LayoutUnit conversion
 
-This provides compiler warnings when the raw_ptr holds a pointer to an
-object in a gsl::Owner (like unique_ptr) that is destroyed before it,
-in some cases. For instance:
+Previously we'd directly convert the float aspect-ratio to LayoutUnit.
+This wasn't correct as we'd potentially lose a lot of precision in the
+process.
 
-  raw_ptr&lt;int&gt; ptr = std::make_unique&lt;int&gt;(2).get();
+Instead of this use the continued fraction algorithm to find a precise
+representation.
 
-Without gsl::Pointer, this compiles without an issue, but with
-gsl::Pointer it generates a warning (error for us) that the ptr
-is holding a dangling reference.
+This mitigates the current problem, but likely isn't the best end
+scenario. We likely want to represent aspect-ratios as either a
+LayoutUnit ratio, or float ratio, depending on the source.
 
-The Owner and Pointer attributes are described here:
-<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1179r0.pdf">http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1179r0.pdf</a>
+(Specifically the LayoutUnit ratio is far better for the replaced
+element case, except for aspect-ratio only SVGs, a float ratio may be
+better for aspect-ratio only elements).
 
-Notably: Pointers follow copy semantics, and if there is a move from
-a Pointer we assume it does not change the source.
-
-This means the compile will warn incorrectly if raw_ptr is
-moved-from in a way that avoids dangling as the compiler will assume
-the moved-from raw_ptr still holds a dangling reference.
-
-There are no existing (incorrect) errors generated if we keep the move
-constructor/assignment, but there _is_ a binary size regression, and a
-perf regression, if we remove them. So this keeps them present accepting
-the possibility of incorrect errors for the chance to get errors on
-clear memory bugs with raw_ptr&lt;T&gt;.
-
-R=bartekn@chromium.org
-
-Bug: 1282468
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3dfb4288dd1574c71624329f9b7c40a0ac8afc0c">I3dfb4288dd1574c71624329f9b7c40a0ac8afc0c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3354814">https://chromium-review.googlesource.com/c/chromium/src/+/3354814</a>
-Reviewed-by: Bartek Nowierski &lt;bartekn@chromium.org&gt;
-Commit-Queue: danakj &lt;danakj@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#971264}
+Bug: 1296175
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1a1f62fdfdb27785eb076ccaa2d5a4e81566fd46">I1a1f62fdfdb27785eb076ccaa2d5a4e81566fd46</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3459264">https://chromium-review.googlesource.com/c/chromium/src/+/3459264</a>
+Reviewed-by: David Grogan &lt;dgrogan@chromium.org&gt;
+Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
+Commit-Queue: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#971292}
 </pre>
 
 </body>
