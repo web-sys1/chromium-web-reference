@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/971877/"> 971877</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d8975519bde3cdc907204f962e949a79b132eede">d8975519bde3cdc907204f962e949a79b132eede</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/971898/"> 971898</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d7068c6878b52c382b40e543e1b7be5afae45c96">d7068c6878b52c382b40e543e1b7be5afae45c96</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/971818/">971818</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d8975519bde3cdc907204f962e949a79b132eede
+   d7068c6878b52c382b40e543e1b7be5afae45c96
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d8975519bde3cdc907204f962e949a79b132eede">
+    <a href="/chromium/src/+log/d7068c6878b52c382b40e543e1b7be5afae45c96">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d8975519bde3cdc907204f962e949a79b132eede.tar.gz">
+    <a href="/chromium/src/+archive/d7068c6878b52c382b40e543e1b7be5afae45c96.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Dominik Röttsches &lt;drott@chromium.org&gt;
+   Jose Dapena Paz &lt;jdapena@igalia.com&gt;
   </td>
   <td>
-   Wed Feb 16 16:28:17 2022
+   Wed Feb 16 17:01:54 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 16 16:28:17 2022
+   Wed Feb 16 17:01:54 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d8975519bde3cdc907204f962e949a79b132eede/">
-    8b676db830c5083a695fb60705caadedfd7bc3bb
+   <a href="/chromium/src/+/d7068c6878b52c382b40e543e1b7be5afae45c96/">
+    ef42d634c444ab5601e04e800f67761e42786b28
    </a>
   </td>
  </tr>
@@ -166,40 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d8975519bde3cdc907204f962e949a79b132eede%5E">
-    9c2bb228a4dd617faa6f49c005db292bbd0db38a
+   <a href="/chromium/src/+/d7068c6878b52c382b40e543e1b7be5afae45c96%5E">
+    af4bf13dc889d577023f4ce0720ee10d1f18ef4e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d8975519bde3cdc907204f962e949a79b132eede%5E%21/">
+    <a href="/chromium/src/+/d7068c6878b52c382b40e543e1b7be5afae45c96%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Differentiate backend choice for variable COLRv0 fonts
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">GCC: DecodeTimestamp::InMilliseconds cannot be constexpr.
 
-For variable COLRv0 fonts, send them to DirectWrite if it supports
-COLRv0 and variations, otherwise choose the FreeType backend, as on Mac
-we do not have variations support for COLRv0 from CoreText, through the
-SkTypeface CoreText backend.
+Fix bug error in GCC because of using a non-constexpr inside a
+constexpr. As making TimeDelta::InMilliseconds makes the binary
+significantly bigger, this just removes constexpr for
+DecodeTimestamp::InMilliseconds.
 
-For now manually tested on Windows and Mac using
-<a href="https://v-fonts.com/fonts/gimme-constructo-variable">https://v-fonts.com/fonts/gimme-constructo-variable</a> as finding out which
-parts can be tested using layout tests or WPT needs more investigation
-due to GPU accelerated code path being involved in Skia.
+../../media/base/stream_parser_buffer.h:96:71: error: call to non-‘constexpr’ function ‘int64_t base::TimeDelta::InMilliseconds() const’
+   96 |   constexpr int64_t InMilliseconds() const { return ts_.InMilliseconds(); }
+      |                                                     ~~~~~~~~~~~~~~~~~~^~
 
-Bug: 1112051
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I66d7aa114f07dba1c449b99d52c0d760995b7c87">I66d7aa114f07dba1c449b99d52c0d760995b7c87</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3468636">https://chromium-review.googlesource.com/c/chromium/src/+/3468636</a>
-Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
-Commit-Queue: Dominik Röttsches &lt;drott@chromium.org&gt;
-Auto-Submit: Dominik Röttsches &lt;drott@chromium.org&gt;
-Reviewed-by: Ben Wagner &lt;bungeman@chromium.org&gt;
-Commit-Queue: Ben Wagner &lt;bungeman@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#971877}
+Bug: 819294
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6d0fb6de7d42c857863827a568059f860505944f">I6d0fb6de7d42c857863827a568059f860505944f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3453082">https://chromium-review.googlesource.com/c/chromium/src/+/3453082</a>
+Reviewed-by: Ted (Chromium) Meyer &lt;tmathmeyer@chromium.org&gt;
+Commit-Queue: José Dapena Paz &lt;jdapena@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#971898}
 </pre>
 
 </body>
