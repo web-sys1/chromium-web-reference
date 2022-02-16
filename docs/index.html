@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/971534/"> 971534</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3d900dbee2fa329e375ed79ea014fe3153c58ea9">3d900dbee2fa329e375ed79ea014fe3153c58ea9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/971555/"> 971555</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8e30c190d27be483ee38a04167d650ab8c883517">8e30c190d27be483ee38a04167d650ab8c883517</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/971488/">971488</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3d900dbee2fa329e375ed79ea014fe3153c58ea9
+   8e30c190d27be483ee38a04167d650ab8c883517
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3d900dbee2fa329e375ed79ea014fe3153c58ea9">
+    <a href="/chromium/src/+log/8e30c190d27be483ee38a04167d650ab8c883517">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3d900dbee2fa329e375ed79ea014fe3153c58ea9.tar.gz">
+    <a href="/chromium/src/+archive/8e30c190d27be483ee38a04167d650ab8c883517.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jie Jiang &lt;jiejiang@chromium.org&gt;
+   Matt Mueller &lt;mattm@chromium.org&gt;
   </td>
   <td>
-   Wed Feb 16 01:36:10 2022
+   Wed Feb 16 02:13:38 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 16 01:36:10 2022
+   Wed Feb 16 02:13:38 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3d900dbee2fa329e375ed79ea014fe3153c58ea9/">
-    21b7481900988ec7ece8f931c7b8e863f1f94d41
+   <a href="/chromium/src/+/8e30c190d27be483ee38a04167d650ab8c883517/">
+    d947e2bd5abdefc69820b88b6b876ec5e4242017
    </a>
   </td>
  </tr>
@@ -166,45 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3d900dbee2fa329e375ed79ea014fe3153c58ea9%5E">
-    2d87853400a5852ae1d4a3de4402b1897fe338d9
+   <a href="/chromium/src/+/8e30c190d27be483ee38a04167d650ab8c883517%5E">
+    1b4d52c408cb640c33cb00afe5ff7e7e2eb4ac9c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3d900dbee2fa329e375ed79ea014fe3153c58ea9%5E%21/">
+    <a href="/chromium/src/+/8e30c190d27be483ee38a04167d650ab8c883517%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CrOS Settings] Change VPN type should update certs list
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">net: Convert OID constants to use inline constexpr uint8_t [part 3]
 
-When configuration a VPN service, the dropdown lists for "Server CA
-certificate" and "User certificate" are supposed to be updated when the
-"Provider type" is changed, since different VPN types may have
-different requirements for the usage of certificates. For example,
-user cert is optional in OpenVPN, but mandatory in L2TP/IPsec-cert. This
-patch fixes this behavior, and adds tests to verify it.
+This part covers the OIDs from
+net/cert/internal/ocsp.h
+net/cert/internal/crl.cc
 
-The user-observable change in this patch is, before this patch, when
-there is no user certificate installed, for an L2TP/IPsec VPN, it will
-show "No user certificate" in the "User certificate" dropdown, and the
-service is connectable even if this option is selected, which is not
-correct. After this change, "None installed" will be shown instead, and
-the service will not be able to connect in this case.
+The x509_certificate_model used by the cert viewer has a large mapping
+of OIDs to strings which in the NSS implementation is a switch statement.
+Making our OID constants into inline constexprs will allow using a
+FixedFlatMap for the lookup table instead of a large series of if/else
+comparisons.
+(It may also allow for more optimized code generation in other
+locations that use the OIDs as well.)
 
-   ---gtest_filter=NetworkComponentsNetworkConfigTest*`
-   L2TP/IPsec are correct.
-
-Bug: b/214880538
-Test: `xvfb-run -s "-screen 0 1024x768x24" ./out/Default/browser_tests\
-Test: manually checked that the dropdown for certs in OpenVPN and
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If4bf30ec7b14da8298a777b333f818a35b7e7500">If4bf30ec7b14da8298a777b333f818a35b7e7500</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3450546">https://chromium-review.googlesource.com/c/chromium/src/+/3450546</a>
-Reviewed-by: Chad Duffin &lt;chadduffin@chromium.org&gt;
-Commit-Queue: Jie Jiang &lt;jiejiang@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#971534}
+Bug: 953425
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I98816e488240da2d50abb40177624162578e2b07">I98816e488240da2d50abb40177624162578e2b07</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3450142">https://chromium-review.googlesource.com/c/chromium/src/+/3450142</a>
+Reviewed-by: Hubert Chao &lt;hchao@chromium.org&gt;
+Commit-Queue: Matt Mueller &lt;mattm@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#971555}
 </pre>
 
 </body>
