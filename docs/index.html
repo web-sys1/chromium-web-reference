@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/971502/"> 971502</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bf46c161170a7e30328866a9cd8faad1021dfe6c">bf46c161170a7e30328866a9cd8faad1021dfe6c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/971534/"> 971534</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3d900dbee2fa329e375ed79ea014fe3153c58ea9">3d900dbee2fa329e375ed79ea014fe3153c58ea9</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/971488/">971488</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   bf46c161170a7e30328866a9cd8faad1021dfe6c
+   3d900dbee2fa329e375ed79ea014fe3153c58ea9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/bf46c161170a7e30328866a9cd8faad1021dfe6c">
+    <a href="/chromium/src/+log/3d900dbee2fa329e375ed79ea014fe3153c58ea9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/bf46c161170a7e30328866a9cd8faad1021dfe6c.tar.gz">
+    <a href="/chromium/src/+archive/3d900dbee2fa329e375ed79ea014fe3153c58ea9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yoichi Osato &lt;yoichio@chromium.org&gt;
+   Jie Jiang &lt;jiejiang@chromium.org&gt;
   </td>
   <td>
-   Wed Feb 16 01:03:25 2022
+   Wed Feb 16 01:36:10 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 16 01:03:25 2022
+   Wed Feb 16 01:36:10 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/bf46c161170a7e30328866a9cd8faad1021dfe6c/">
-    b6c6589ba2affd7659ccac8ef892a229d8f752c6
+   <a href="/chromium/src/+/3d900dbee2fa329e375ed79ea014fe3153c58ea9/">
+    21b7481900988ec7ece8f931c7b8e863f1f94d41
    </a>
   </td>
  </tr>
@@ -166,34 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/bf46c161170a7e30328866a9cd8faad1021dfe6c%5E">
-    65f72b54ec9d8c938928968bfcbcd4cb8befb713
+   <a href="/chromium/src/+/3d900dbee2fa329e375ed79ea014fe3153c58ea9%5E">
+    2d87853400a5852ae1d4a3de4402b1897fe338d9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/bf46c161170a7e30328866a9cd8faad1021dfe6c%5E%21/">
+    <a href="/chromium/src/+/3d900dbee2fa329e375ed79ea014fe3153c58ea9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Introduce SandboxedNQEBrowserTest
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CrOS Settings] Change VPN type should update certs list
 
-This CL adds a sandboxed test harness and a test to create a network
-service inside it.
-That's because in the original design doc [1], creating the service
-failed in a sandboxed process due to the network quality estimator
-components, in which some system calls are removed.
+When configuration a VPN service, the dropdown lists for "Server CA
+certificate" and "User certificate" are supposed to be updated when the
+"Provider type" is changed, since different VPN types may have
+different requirements for the usage of certificates. For example,
+user cert is optional in OpenVPN, but mandatory in L2TP/IPsec-cert. This
+patch fixes this behavior, and adds tests to verify it.
 
-I'm planning to add more tests for it.
+The user-observable change in this patch is, before this patch, when
+there is no user certificate installed, for an L2TP/IPsec VPN, it will
+show "No user certificate" in the "User certificate" dropdown, and the
+service is connectable even if this option is selected, which is not
+correct. After this change, "None installed" will be shown instead, and
+the service will not be able to connect in this case.
 
-Bug: 1297437
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia7f39ac33bf8800089bd175ce76feead36ca514f">Ia7f39ac33bf8800089bd175ce76feead36ca514f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3460888">https://chromium-review.googlesource.com/c/chromium/src/+/3460888</a>
-Reviewed-by: Yutaka Hirano &lt;yhirano@chromium.org&gt;
-Commit-Queue: Yoichi Osato &lt;yoichio@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#971502}
+   ---gtest_filter=NetworkComponentsNetworkConfigTest*`
+   L2TP/IPsec are correct.
+
+Bug: b/214880538
+Test: `xvfb-run -s "-screen 0 1024x768x24" ./out/Default/browser_tests\
+Test: manually checked that the dropdown for certs in OpenVPN and
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If4bf30ec7b14da8298a777b333f818a35b7e7500">If4bf30ec7b14da8298a777b333f818a35b7e7500</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3450546">https://chromium-review.googlesource.com/c/chromium/src/+/3450546</a>
+Reviewed-by: Chad Duffin &lt;chadduffin@chromium.org&gt;
+Commit-Queue: Jie Jiang &lt;jiejiang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#971534}
 </pre>
 
 </body>
