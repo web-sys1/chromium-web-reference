@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/972370/"> 972370</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/172d61198845300361a5cb99a6a77454f86218ef">172d61198845300361a5cb99a6a77454f86218ef</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/972381/"> 972381</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/594c16373fd29de5e27f366f02c95da0124cd414">594c16373fd29de5e27f366f02c95da0124cd414</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/972352/">972352</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   172d61198845300361a5cb99a6a77454f86218ef
+   594c16373fd29de5e27f366f02c95da0124cd414
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/172d61198845300361a5cb99a6a77454f86218ef">
+    <a href="/chromium/src/+log/594c16373fd29de5e27f366f02c95da0124cd414">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/172d61198845300361a5cb99a6a77454f86218ef.tar.gz">
+    <a href="/chromium/src/+archive/594c16373fd29de5e27f366f02c95da0124cd414.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Peter Birk Pakkenberg &lt;pbirk@google.com&gt;
+   Rushan Suleymanov &lt;rushans@google.com&gt;
   </td>
   <td>
-   Thu Feb 17 10:41:48 2022
+   Thu Feb 17 11:11:57 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Feb 17 10:41:48 2022
+   Thu Feb 17 11:11:57 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/172d61198845300361a5cb99a6a77454f86218ef/">
-    ef59e059da6f5078869cb5e8ac6284dbb069ef5b
+   <a href="/chromium/src/+/594c16373fd29de5e27f366f02c95da0124cd414/">
+    5c1550d582a47531799ae6ee1d1f12572db738ae
    </a>
   </td>
  </tr>
@@ -166,43 +166,55 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/172d61198845300361a5cb99a6a77454f86218ef%5E">
-    84859518f1cbcc5afd373e6f202889a1b1ad2dcb
+   <a href="/chromium/src/+/594c16373fd29de5e27f366f02c95da0124cd414%5E">
+    599fb69b833aebaecbb191f8982cab1601192961
    </a>
    <span>
     [
-    <a href="/chromium/src/+/172d61198845300361a5cb99a6a77454f86218ef%5E%21/">
+    <a href="/chromium/src/+/594c16373fd29de5e27f366f02c95da0124cd414%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Ensure ServiceWorkerSettings will be used when set
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[WPT][Prerender2] Fix restrictions.html timeout"
 
-Instantiate the io and background thread clients, as well as the
-AwServiceWorkerSettings in the constructor and send references to the
-native layer, to ensure that any settings set by the user on the
-AwServiceWorkerSettings object will be picked up by native code.
+This reverts commit a5453f64084c40b8cf88cfcc98e7c8ab07b4984f.
 
-Previously, the user had to set a ServiceWorkerClient before the binding
-to native code was performed, which meant that it was possible to set
-settings that would get ignored by the implementation.
+Reason for revert: due to failing test virtual/prerender/external/wpt/speculation-rules/prerender/restrictions.https.html on try bots.
 
-Adding lock around access to the ServiceWorkerClient, as it may be
-accessed from multiple threads at the same time.
+Original change's description:
+&gt; [WPT][Prerender2] Fix restrictions.html timeout
+&gt;
+&gt; Before this CL, the test could hang if getCurrentPosition returned error.
+&gt; This CL modifies the test to resolve the promise with the stringified
+&gt; error to avoid it from hanging.
+&gt;
+&gt; In addition, this CL also changes Geolocation::PageVisibilityChanged so
+&gt; that it would care about invisible-&gt;visible cases. Before this CL, the
+&gt; code path assumed visible-&gt;invisible case, where it only needed to
+&gt; shutdown the notifier updates, which didn't require
+&gt; UpdateGeolocationConnection calls with actual notifier pointers. This CL
+&gt; updates it to loop for all notifiers registered, so that it can setup
+&gt; the timers in invisible-&gt;visible case.
+&gt;
+&gt; Bug: 626703
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibd8ff599c8e2c51555ae3dbd8a55f4252813c405">Ibd8ff599c8e2c51555ae3dbd8a55f4252813c405</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3449477">https://chromium-review.googlesource.com/c/chromium/src/+/3449477</a>
+&gt; Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+&gt; Auto-Submit: Kouhei Ueno &lt;kouhei@chromium.org&gt;
+&gt; Reviewed-by: Matt Reynolds &lt;mattreynolds@chromium.org&gt;
+&gt; Commit-Queue: Matt Reynolds &lt;mattreynolds@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#972180}
 
-Adding test case to instrumentation test to verify that settings are
-being respected, even if no ServiceWorkerClient is being set.
-
-Bug: 979321
-Test: Ran webview_instrumentation_test_apk
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icd03092ca5133e62718f8d6a40a6a7a3fa3cc3cd">Icd03092ca5133e62718f8d6a40a6a7a3fa3cc3cd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3452063">https://chromium-review.googlesource.com/c/chromium/src/+/3452063</a>
-Auto-Submit: Peter Pakkenberg &lt;pbirk@chromium.org&gt;
-Reviewed-by: Nate Fischer &lt;ntfschr@chromium.org&gt;
-Commit-Queue: Peter Pakkenberg &lt;pbirk@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#972370}
+Bug: 626703, 1298335
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I56d006e8524d0a5e1afd25314adb16a9f543bda2">I56d006e8524d0a5e1afd25314adb16a9f543bda2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3468382">https://chromium-review.googlesource.com/c/chromium/src/+/3468382</a>
+Owners-Override: Rushan Suleymanov &lt;rushans@google.com&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Commit-Queue: Rushan Suleymanov &lt;rushans@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#972381}
 </pre>
 
 </body>
