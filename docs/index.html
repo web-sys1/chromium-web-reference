@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/972362/"> 972362</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9eba49754c9c2da66902f177b362bc677055f62c">9eba49754c9c2da66902f177b362bc677055f62c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/972370/"> 972370</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/172d61198845300361a5cb99a6a77454f86218ef">172d61198845300361a5cb99a6a77454f86218ef</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/972336/">972336</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ce4ef929d52d78ee3182c839166fa288c71b4268">ce4ef929d52d78ee3182c839166fa288c71b4268</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/972352/">972352</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b2b154d6a1ae9fe99f7d7e95f0039125ff6fae66">b2b154d6a1ae9fe99f7d7e95f0039125ff6fae66</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9eba49754c9c2da66902f177b362bc677055f62c
+   172d61198845300361a5cb99a6a77454f86218ef
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9eba49754c9c2da66902f177b362bc677055f62c">
+    <a href="/chromium/src/+log/172d61198845300361a5cb99a6a77454f86218ef">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9eba49754c9c2da66902f177b362bc677055f62c.tar.gz">
+    <a href="/chromium/src/+archive/172d61198845300361a5cb99a6a77454f86218ef.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chloe Pelling &lt;cpelling@google.com&gt;
+   Peter Birk Pakkenberg &lt;pbirk@google.com&gt;
   </td>
   <td>
-   Thu Feb 17 10:07:48 2022
+   Thu Feb 17 10:41:48 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Feb 17 10:07:48 2022
+   Thu Feb 17 10:41:48 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9eba49754c9c2da66902f177b362bc677055f62c/">
-    6c9ed4a42bf1cba12376d510b49003f4c4892601
+   <a href="/chromium/src/+/172d61198845300361a5cb99a6a77454f86218ef/">
+    ef59e059da6f5078869cb5e8ac6284dbb069ef5b
    </a>
   </td>
  </tr>
@@ -166,45 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9eba49754c9c2da66902f177b362bc677055f62c%5E">
-    334a1978a6a54c401d410ae759d9704c55c5fa75
+   <a href="/chromium/src/+/172d61198845300361a5cb99a6a77454f86218ef%5E">
+    84859518f1cbcc5afd373e6f202889a1b1ad2dcb
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9eba49754c9c2da66902f177b362bc677055f62c%5E%21/">
+    <a href="/chromium/src/+/172d61198845300361a5cb99a6a77454f86218ef%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">exo: Restrict pointer lock per-client. Add Overview prompt to Crostini.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Ensure ServiceWorkerSettings will be used when set
 
-* ARC++ continues to permit pointer lock regardless of flags.
-* Other clients must have kUseOverviewToExitPointerLock==true set as a
-  window property, as well as chrome://flags#exo-pointer-lock enabled.
-* Enable kUseOverviewToExitPointerLock for Crostini (and Bruschetta, as
-  it doesn't identify its windows separately).
+Instantiate the io and background thread clients, as well as the
+AwServiceWorkerSettings in the constructor and send references to the
+native layer, to ensure that any settings set by the user on the
+AwServiceWorkerSettings object will be picked up by native code.
 
-The "Press Overview" prompts are therefore displayed in Crostini and
-Bruschetta in addition to Borealis (when the Chrome flag is enabled).
+Previously, the user had to set a ServiceWorkerClient before the binding
+to native code was performed, which meant that it was possible to set
+settings that would get ignored by the implementation.
 
-Further, we ensure that no Exo client is able to lock the pointer unless
-the "Press Overview" prompt is displayed. The only exceptions to this
-rule are ARC++ (through long-standing precedent) and Lacros (which uses
-a different mechanism to lock the pointer).
+Adding lock around access to the ServiceWorkerClient, as it may be
+accessed from multiple threads at the same time.
 
-See <a href="http://go/exo-pointer-lock-2022">http://go/exo-pointer-lock-2022</a> for the rationale and next steps.
+Adding test case to instrumentation test to verify that settings are
+being respected, even if no ServiceWorkerClient is being set.
 
-BUG=b:203622329
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I77cd78b632ad53f6ec5607bff2bfbd2045f89138">I77cd78b632ad53f6ec5607bff2bfbd2045f89138</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3469745">https://chromium-review.googlesource.com/c/chromium/src/+/3469745</a>
-Auto-Submit: Chloe Pelling &lt;cpelling@google.com&gt;
-Reviewed-by: Nancy Wang &lt;nancylingwang@chromium.org&gt;
-Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Commit-Queue: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#972362}
+Bug: 979321
+Test: Ran webview_instrumentation_test_apk
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icd03092ca5133e62718f8d6a40a6a7a3fa3cc3cd">Icd03092ca5133e62718f8d6a40a6a7a3fa3cc3cd</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3452063">https://chromium-review.googlesource.com/c/chromium/src/+/3452063</a>
+Auto-Submit: Peter Pakkenberg &lt;pbirk@chromium.org&gt;
+Reviewed-by: Nate Fischer &lt;ntfschr@chromium.org&gt;
+Commit-Queue: Peter Pakkenberg &lt;pbirk@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#972370}
 </pre>
 
 </body>
