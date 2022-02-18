@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/972753/"> 972753</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/209008b45060cdcdc49f50fd37d242ae2328d7be">209008b45060cdcdc49f50fd37d242ae2328d7be</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/972782/"> 972782</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/03d2c76cfc5f0295ee9e8e8468601025f48acb6f">03d2c76cfc5f0295ee9e8e8468601025f48acb6f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/972745/">972745</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   209008b45060cdcdc49f50fd37d242ae2328d7be
+   03d2c76cfc5f0295ee9e8e8468601025f48acb6f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/209008b45060cdcdc49f50fd37d242ae2328d7be">
+    <a href="/chromium/src/+log/03d2c76cfc5f0295ee9e8e8468601025f48acb6f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/209008b45060cdcdc49f50fd37d242ae2328d7be.tar.gz">
+    <a href="/chromium/src/+archive/03d2c76cfc5f0295ee9e8e8468601025f48acb6f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chris Lu &lt;thegreenfrog@chromium.org&gt;
+   Dylan Cutler &lt;dylancutler@google.com&gt;
   </td>
   <td>
-   Fri Feb 18 01:08:22 2022
+   Fri Feb 18 02:23:15 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 18 01:08:22 2022
+   Fri Feb 18 02:23:15 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/209008b45060cdcdc49f50fd37d242ae2328d7be/">
-    150374e7e86318f3a48cde6b72c6d993eeae7a91
+   <a href="/chromium/src/+/03d2c76cfc5f0295ee9e8e8468601025f48acb6f/">
+    26609b1e07b68aae8390338179ed11702c102515
    </a>
   </td>
  </tr>
@@ -166,26 +166,62 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/209008b45060cdcdc49f50fd37d242ae2328d7be%5E">
-    5c94ffabe2581a8f8c3bb78d788cd538dfbaca20
+   <a href="/chromium/src/+/03d2c76cfc5f0295ee9e8e8468601025f48acb6f%5E">
+    ee06654420b6f673f3cd21e0eacb2be4cc94cc42
    </a>
    <span>
     [
-    <a href="/chromium/src/+/209008b45060cdcdc49f50fd37d242ae2328d7be%5E%21/">
+    <a href="/chromium/src/+/03d2c76cfc5f0295ee9e8e8468601025f48acb6f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ios] Use RefreshFeedIfNeeded in NTPHomeMediator
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Implement PartitionedCookies HTTP Origin Trial
 
-Bug: 1293518
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I121f219040becf038bbe2f82488d21cfd1e44db1">I121f219040becf038bbe2f82488d21cfd1e44db1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3472811">https://chromium-review.googlesource.com/c/chromium/src/+/3472811</a>
-Reviewed-by: Sergio Collazos &lt;sczs@chromium.org&gt;
-Commit-Queue: Chris Lu &lt;thegreenfrog@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#972753}
+The Origin Trial for HTTP partitioned cookies will use a client hint,
+Sec-CH-Partitioned-Cookies to indicate to sites that they are opted
+into the Origin-Trial correctly.
+
+A site opts into the Origin Trial by sending the Origin-Trial header
+with a valid token and an Accept-CH: Sec-CH-Partitioned-Cookies header.
+
+If Chrome detects the site has successfully opted into the OT, on the
+next request it will send Sec-CH-Partitioned-Cookies: ?1 to indicate
+to the site it is in the OT.
+
+If Chrome detects the existence of partitioned cookies but it has not
+verified that the site is in the OT, it will send the
+Sec-CH-Partitioned-Cookies: ?0 header (added in the network service,
+because that is where cookies are stored).
+
+When a site opts-out of the OT, we convert their partitioned cookies
+to unpartitioned. This may cause some cookies with duplicate
+name/value/path's, so we coalesce duplicates using the following
+algorithm:
+
+1. If an unpartitioned cookie exists with a name/value/path, select
+   this cookie.
+
+2. Select the partitioned cookie with the most recent LastAccessDate.
+
+This algorithm is implemented in
+CookieManager::ConvertPartitionedCookiesToUnpartitioned.
+
+Partitioned cookies (aka CHIPS) design doc: <a href="https://docs.google.com/document/d/1EPHnfHpZHpV09vITXu8cEEIMt1DYiRN_pZfeBal8UQw/edit?usp=sharing">https://docs.google.com/document/d/1EPHnfHpZHpV09vITXu8cEEIMt1DYiRN_pZfeBal8UQw/edit?usp=sharing</a>
+
+Partitioned cookies (CHIPS) design doc: <a href="https://docs.google.com/document/d/1wL2lCXpaVOi0cWOn_ehfLFIZQxT3t0SH-ANnZYPEB0I/edit?usp=sharing">https://docs.google.com/document/d/1wL2lCXpaVOi0cWOn_ehfLFIZQxT3t0SH-ANnZYPEB0I/edit?usp=sharing</a>
+
+Bug: 1225444,1296161
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0eafaf6ba620eec5bee9166ba7fb3458836796f5">I0eafaf6ba620eec5bee9166ba7fb3458836796f5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3453430">https://chromium-review.googlesource.com/c/chromium/src/+/3453430</a>
+Reviewed-by: Ali Beyad &lt;abeyad@chromium.org&gt;
+Reviewed-by: Ken Buchanan &lt;kenrb@chromium.org&gt;
+Reviewed-by: Nate Chapin &lt;japhet@chromium.org&gt;
+Reviewed-by: Maks Orlovich &lt;morlovich@chromium.org&gt;
+Commit-Queue: Dylan Cutler &lt;dylancutler@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#972782}
 </pre>
 
 </body>
