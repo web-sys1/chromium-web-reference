@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/972923/"> 972923</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9854001760fe8263ed5ae40fa293b6a68466d4e7">9854001760fe8263ed5ae40fa293b6a68466d4e7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/972931/"> 972931</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3513c3deb50aef33d4f3261b38559a37d3f68d46">3513c3deb50aef33d4f3261b38559a37d3f68d46</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/972918/">972918</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0b029fe55679cf6ce0d4788f52d5484663fd558c">0b029fe55679cf6ce0d4788f52d5484663fd558c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/972930/">972930</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3ab8f0fee6a5651a318c9f7f9d98177f1c9a2c12">3ab8f0fee6a5651a318c9f7f9d98177f1c9a2c12</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9854001760fe8263ed5ae40fa293b6a68466d4e7
+   3513c3deb50aef33d4f3261b38559a37d3f68d46
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9854001760fe8263ed5ae40fa293b6a68466d4e7">
+    <a href="/chromium/src/+log/3513c3deb50aef33d4f3261b38559a37d3f68d46">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9854001760fe8263ed5ae40fa293b6a68466d4e7.tar.gz">
+    <a href="/chromium/src/+archive/3513c3deb50aef33d4f3261b38559a37d3f68d46.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alexander Hendrich &lt;hendrich@chromium.org&gt;
+   Steinar H. Gunderson &lt;sesse@chromium.org&gt;
   </td>
   <td>
-   Fri Feb 18 13:10:54 2022
+   Fri Feb 18 13:45:52 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 18 13:10:54 2022
+   Fri Feb 18 13:45:52 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9854001760fe8263ed5ae40fa293b6a68466d4e7/">
-    c0abf8bafc6e135d65df1aac93554dee0c308e73
+   <a href="/chromium/src/+/3513c3deb50aef33d4f3261b38559a37d3f68d46/">
+    32c87b58e8fb6694bea9c58ed1adea8dde51d1df
    </a>
   </td>
  </tr>
@@ -166,35 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9854001760fe8263ed5ae40fa293b6a68466d4e7%5E">
-    fd24a673e68eb8ac7923ea331b0d32d0e15cdcbb
+   <a href="/chromium/src/+/3513c3deb50aef33d4f3261b38559a37d3f68d46%5E">
+    3ab8f0fee6a5651a318c9f7f9d98177f1c9a2c12
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9854001760fe8263ed5ae40fa293b6a68466d4e7%5E%21/">
+    <a href="/chromium/src/+/3513c3deb50aef33d4f3261b38559a37d3f68d46%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Tentative fix mac10/11 failures on WebAppOfflineDarkModeTest
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make CSSToStyleMap::MapNinePieceImageRepeat accept non-pair values.
 
-In browser tests the test bodies are executed via RunTestOnMainThread(),
-which is called from SetUp(). Therefore, calling GTEST_SKIP() after
-calling SetUp() would not actually skip the tests.
+Properties such as border-image-repeat are ostensibly pairs
+of vertical/horizontal, but as a shorthand, the user can specify
+only one of the values. CSSToStyleMap::MapNinePieceImageRepeat() silently
+discards the request if the value given is not a pair, which is bad if
+we're trying to give in border-image-repeat's initial value (which is
+a CSSIdentifierValue, not a CSSValuePair, and thus needs expansion).
 
-Bug: 1298658, 1294586
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8a2ee8b47c6ef02e8d5e3ddfb40e1f4aef5a8662">I8a2ee8b47c6ef02e8d5e3ddfb40e1f4aef5a8662</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3474591">https://chromium-review.googlesource.com/c/chromium/src/+/3474591</a>
-Reviewed-by: Fabian Sommer &lt;fabiansommer@chromium.org&gt;
-Reviewed-by: Maksim Ivanov &lt;emaxx@chromium.org&gt;
-Commit-Queue: Alexander Hendrich &lt;hendrich@chromium.org&gt;
-Owners-Override: Alexander Hendrich &lt;hendrich@chromium.org&gt;
-Auto-Submit: Alexander Hendrich &lt;hendrich@chromium.org&gt;
-Reviewed-by: Eric Willigers &lt;ericwilligers@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#972923}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If939136a4fa365e75e9a27dc8ad859ad67471cd1">If939136a4fa365e75e9a27dc8ad859ad67471cd1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3468767">https://chromium-review.googlesource.com/c/chromium/src/+/3468767</a>
+Commit-Queue: Steinar H Gunderson &lt;sesse@chromium.org&gt;
+Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#972931}
 </pre>
 
 </body>
