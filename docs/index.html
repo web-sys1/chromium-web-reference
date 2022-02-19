@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973214/"> 973214</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/39aacc6b47e2151f49a0223c2fb7e447e407a728">39aacc6b47e2151f49a0223c2fb7e447e407a728</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973228/"> 973228</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a5cc62086d249f7fa991021baa9bb7c346ac39f2">a5cc62086d249f7fa991021baa9bb7c346ac39f2</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/973190/">973190</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   39aacc6b47e2151f49a0223c2fb7e447e407a728
+   a5cc62086d249f7fa991021baa9bb7c346ac39f2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/39aacc6b47e2151f49a0223c2fb7e447e407a728">
+    <a href="/chromium/src/+log/a5cc62086d249f7fa991021baa9bb7c346ac39f2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/39aacc6b47e2151f49a0223c2fb7e447e407a728.tar.gz">
+    <a href="/chromium/src/+archive/a5cc62086d249f7fa991021baa9bb7c346ac39f2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Scott Violet &lt;sky@chromium.org&gt;
+   Evan Stade &lt;estade@chromium.org&gt;
   </td>
   <td>
-   Sat Feb 19 01:32:42 2022
+   Sat Feb 19 02:07:23 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Feb 19 01:32:42 2022
+   Sat Feb 19 02:07:23 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/39aacc6b47e2151f49a0223c2fb7e447e407a728/">
-    1a9ff2b234c3087cceace951c28e8e8ea0dedc7d
+   <a href="/chromium/src/+/a5cc62086d249f7fa991021baa9bb7c346ac39f2/">
+    1f32eb79e4d639a222194ea3e5bcdc7527125a4b
    </a>
   </td>
  </tr>
@@ -166,29 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/39aacc6b47e2151f49a0223c2fb7e447e407a728%5E">
-    349bd2c5c277ab2cd515888a9278ad5d28745683
+   <a href="/chromium/src/+/a5cc62086d249f7fa991021baa9bb7c346ac39f2%5E">
+    544d39a8b8e72554b50c54cdadf035ff26dd3466
    </a>
    <span>
     [
-    <a href="/chromium/src/+/39aacc6b47e2151f49a0223c2fb7e447e407a728%5E%21/">
+    <a href="/chromium/src/+/a5cc62086d249f7fa991021baa9bb7c346ac39f2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">field-trial-testing-config: adds NetworkServiceUsesDisplayThreadPriority
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">dPWA: Web App Settings - hide page until data is available
 
-I'm ready to move this to beta.
+Initially hide the contents of the Web App Settings page, and only
+reveal it after the data for the app is available. This avoids
+flashes during layout:
 
-BUG=1289300
+* permissions items, which unhide their shadow root and cause the
+  layout to change (in the future, file handling controls will
+  behave this way as well)
+* other rows, which don't affect layout but show text and toggles
+  only after data is available
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1939c2909329e7b38d8ec4d0313f7b02ee3889fa">I1939c2909329e7b38d8ec4d0313f7b02ee3889fa</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3475605">https://chromium-review.googlesource.com/c/chromium/src/+/3475605</a>
-Reviewed-by: Clark DuVall &lt;cduvall@chromium.org&gt;
-Commit-Queue: Scott Violet &lt;sky@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#973214}
+This also allows us to remove code from Window Mode and Run On Os
+Login which hides the contents of the row until data is ready so
+as to avoid showing an animating toggle control. Since the whole
+page is hidden when data is unavailable, we don't need this code
+to be implemented on an individual item basis. In the future,
+should optional display be required, these elements should follow
+the precedent set by pin_to_shelf_item.js.
+
+Also fix a missing &lt;/div&gt; tag in app.html.
+
+Bug: none
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie3f36f35dba0c8be6ccea70d35da51631f86ec8a">Ie3f36f35dba0c8be6ccea70d35da51631f86ec8a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3462190">https://chromium-review.googlesource.com/c/chromium/src/+/3462190</a>
+Reviewed-by: Jeevan Shikaram &lt;jshikaram@chromium.org&gt;
+Auto-Submit: Evan Stade &lt;estade@chromium.org&gt;
+Commit-Queue: Phillis Tang &lt;phillis@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#973228}
 </pre>
 
 </body>
