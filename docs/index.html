@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973280/"> 973280</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/86f000102c46be4b08d1c85838db468d3dea53be">86f000102c46be4b08d1c85838db468d3dea53be</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973283/"> 973283</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6f058faf5bfb938e6cc4652127e275f36de4fa39">6f058faf5bfb938e6cc4652127e275f36de4fa39</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/973276/">973276</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   86f000102c46be4b08d1c85838db468d3dea53be
+   6f058faf5bfb938e6cc4652127e275f36de4fa39
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/86f000102c46be4b08d1c85838db468d3dea53be">
+    <a href="/chromium/src/+log/6f058faf5bfb938e6cc4652127e275f36de4fa39">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/86f000102c46be4b08d1c85838db468d3dea53be.tar.gz">
+    <a href="/chromium/src/+archive/6f058faf5bfb938e6cc4652127e275f36de4fa39.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ben Mason &lt;benmason@chromium.org&gt;
+   Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
   </td>
   <td>
-   Sat Feb 19 14:15:50 2022
+   Sat Feb 19 14:49:31 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Feb 19 14:15:50 2022
+   Sat Feb 19 14:49:31 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/86f000102c46be4b08d1c85838db468d3dea53be/">
-    b837204865795d139e0c500bd5e344ce54a7d8fc
+   <a href="/chromium/src/+/6f058faf5bfb938e6cc4652127e275f36de4fa39/">
+    ba473ff8f1a893bf5fa75f3bdbba330101cdbcc4
    </a>
   </td>
  </tr>
@@ -166,26 +166,53 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/86f000102c46be4b08d1c85838db468d3dea53be%5E">
-    a44d186ca1b38e34c7d4557975af676ba6924e39
+   <a href="/chromium/src/+/6f058faf5bfb938e6cc4652127e275f36de4fa39%5E">
+    3c91b730cdeabc23e9f48359e1ba0e0babd043be
    </a>
    <span>
     [
-    <a href="/chromium/src/+/86f000102c46be4b08d1c85838db468d3dea53be%5E%21/">
+    <a href="/chromium/src/+/6f058faf5bfb938e6cc4652127e275f36de4fa39%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Updating XTBs based on .GRDs from branch main
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fail gracefully in attribution simulation input parsing
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I162cef556ef5c034be824b262340f897cc1364b3">I162cef556ef5c034be824b262340f897cc1364b3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3473216">https://chromium-review.googlesource.com/c/chromium/src/+/3473216</a>
-Auto-Submit: Ben Mason &lt;benmason@chromium.org&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#973280}
+Instead of logging fatally on finding the first error, which includes
+Chromium source-line information that is unhelpful for most users, we
+parse all events and write any errors into an ostream. These error
+messages more helpfully contain the source or trigger index in the input
+JSON that contained the error.
+
+As a side benefit, it allows us to replace the death tests with normal
+unit tests, which run much more quickly, and will allow us to fuzz the
+simulator more easily.
+
+Example output before this CL:
+
+```
+[0217/120711.011363:FATAL:attribution_simulator_input_parser.cc(45)] key not found: source_time
+[...various stack addresses...]
+Aborted
+```
+
+Example output after this CL:
+
+```
+sources[0]: source_time must be an integer number of seconds since the Unix epoch
+sources[1]: source_type must be either "navigation" or "event"
+sources[1]: source_event_id must be a uint64 formatted as a base-10 string
+triggers[0]: trigger_data must be a uint64 formatted as a base-10 string
+```
+
+Bug: 1298483
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icc1ab51e98d5363eebb38971c0a2a04bb38ae113">Icc1ab51e98d5363eebb38971c0a2a04bb38ae113</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3470983">https://chromium-review.googlesource.com/c/chromium/src/+/3470983</a>
+Reviewed-by: Charlie Harrison &lt;csharrison@chromium.org&gt;
+Commit-Queue: Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#973283}
 </pre>
 
 </body>
