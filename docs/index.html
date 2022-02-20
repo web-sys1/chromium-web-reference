@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973333/"> 973333</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3cb47e309134fee88dd2fbbb546b011e6605023d">3cb47e309134fee88dd2fbbb546b011e6605023d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973336/"> 973336</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ed9d68e8cf16e63bcd4146dee21dd83a777ba020">ed9d68e8cf16e63bcd4146dee21dd83a777ba020</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/973333/">973333</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3cb47e309134fee88dd2fbbb546b011e6605023d
+   ed9d68e8cf16e63bcd4146dee21dd83a777ba020
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3cb47e309134fee88dd2fbbb546b011e6605023d">
+    <a href="/chromium/src/+log/ed9d68e8cf16e63bcd4146dee21dd83a777ba020">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3cb47e309134fee88dd2fbbb546b011e6605023d.tar.gz">
+    <a href="/chromium/src/+archive/ed9d68e8cf16e63bcd4146dee21dd83a777ba020.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Darren Shen &lt;shend@chromium.org&gt;
   </td>
   <td>
-   Sun Feb 20 05:32:41 2022
+   Sun Feb 20 07:06:41 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Feb 20 05:32:41 2022
+   Sun Feb 20 07:06:41 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3cb47e309134fee88dd2fbbb546b011e6605023d/">
-    84fa898abf3930f195ff8aff56366271f106c9c5
+   <a href="/chromium/src/+/ed9d68e8cf16e63bcd4146dee21dd83a777ba020/">
+    a679964feb8fbab1d0eebeeeb9387d8808411dc5
    </a>
   </td>
  </tr>
@@ -166,45 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3cb47e309134fee88dd2fbbb546b011e6605023d%5E">
-    478bee2b204aba3338c0e270d28375c7c581996b
+   <a href="/chromium/src/+/ed9d68e8cf16e63bcd4146dee21dd83a777ba020%5E">
+    513166417c10fbb6d6d24b30efa253181e0fd2d1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3cb47e309134fee88dd2fbbb546b011e6605023d%5E%21/">
+    <a href="/chromium/src/+/ed9d68e8cf16e63bcd4146dee21dd83a777ba020%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll DevTools Frontend from 6b034ef1e9b8 to 4b7981a01433 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ime: Make OnFocus settings parameter optional.
 
-<a href="https://chromium.googlesource.com/devtools/devtools-frontend.git/+log/6b034ef1e9b8..4b7981a01433">https://chromium.googlesource.com/devtools/devtools-frontend.git/+log/6b034ef1e9b8..4b7981a01433</a>
+In crrev/c/3418631, we added a new OnFocus Mojo method to repplace the
+old one. Unfortunately, the old OnFocus had an optional settings param
+but the new Mojo method has a mandatory settings param.
 
-2022-02-20 devtools-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com Update DevTools DEPS.
+In the case where we pass nullptr to the new OnFocus, the connection
+breaks and the user cannot type. Fortunately, we only pass nullptr
+for certain input methods that are behind a flag.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/devtools-frontend-chromium">https://autoroll.skia.org/r/devtools-frontend-chromium</a>
-Please CC devtools-waterfall-sheriff-onduty@grotations.appspotmail.com on the revert to ensure that a human
-is aware of the problem.
+To fix this, we will make the settings param optional. This will not
+break existing code that passes non-null settings to OnFocus. In the
+case where null is passed, this is still broken until we update the
+other side of the Mojo API (in a separate repo). But that's okay
+because it's behind a flag.
 
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+We did think about keeping the settings non-null. However, the
+settings param is meant to be an extensible union. According to
+crbug.com/1201949, extensible union params should be nullable anyway
+for backwards compatibility.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+BUG=b:209695253
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Bug: None
-Tbr: devtools-waterfall-sheriff-onduty@grotations.appspotmail.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I24b5987c575cdf417294496761394d29024ff626">I24b5987c575cdf417294496761394d29024ff626</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3476344">https://chromium-review.googlesource.com/c/chromium/src/+/3476344</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#973333}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I80f106449a368693c5c5d63bd855ed1a98e5616d">I80f106449a368693c5c5d63bd855ed1a98e5616d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3473803">https://chromium-review.googlesource.com/c/chromium/src/+/3473803</a>
+Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
+Reviewed-by: Curtis McMullan &lt;curtismcmullan@chromium.org&gt;
+Commit-Queue: Darren Shen &lt;shend@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#973336}
 </pre>
 
 </body>
