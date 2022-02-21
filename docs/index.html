@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973571/"> 973571</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/292a9c3ded50bc905b32eeca4e200592a5558867">292a9c3ded50bc905b32eeca4e200592a5558867</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973573/"> 973573</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9d8e89f7510c30f7cc9e1facb7a67bd2e7d63747">9d8e89f7510c30f7cc9e1facb7a67bd2e7d63747</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/973571/">973571</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/292a9c3ded50bc905b32eeca4e200592a5558867">292a9c3ded50bc905b32eeca4e200592a5558867</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/973559/">973559</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/12a57bd2c91246bdf7e970e1533a45c2a5818877">12a57bd2c91246bdf7e970e1533a45c2a5818877</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   292a9c3ded50bc905b32eeca4e200592a5558867
+   9d8e89f7510c30f7cc9e1facb7a67bd2e7d63747
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/292a9c3ded50bc905b32eeca4e200592a5558867">
+    <a href="/chromium/src/+log/9d8e89f7510c30f7cc9e1facb7a67bd2e7d63747">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/292a9c3ded50bc905b32eeca4e200592a5558867.tar.gz">
+    <a href="/chromium/src/+archive/9d8e89f7510c30f7cc9e1facb7a67bd2e7d63747.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   amraboelkher &lt;amraboelkher@chromium.org&gt;
+   Roman Sorokin &lt;rsorokin@chromium.org&gt;
   </td>
   <td>
-   Mon Feb 21 20:55:51 2022
+   Mon Feb 21 21:39:01 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Feb 21 20:55:51 2022
+   Mon Feb 21 21:39:01 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/292a9c3ded50bc905b32eeca4e200592a5558867/">
-    f2e8c2a8ac719bca32fcfd0769297162ef884ff5
+   <a href="/chromium/src/+/9d8e89f7510c30f7cc9e1facb7a67bd2e7d63747/">
+    187785d39c2b5b159c1d242fa29dc9ed3ed77a7a
    </a>
   </td>
  </tr>
@@ -166,46 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/292a9c3ded50bc905b32eeca4e200592a5558867%5E">
-    69258b18489a112a31a9344d6db6f70a306ec274
+   <a href="/chromium/src/+/9d8e89f7510c30f7cc9e1facb7a67bd2e7d63747%5E">
+    aed50d444271ffe18fe1f5054f2453a7526e5867
    </a>
    <span>
     [
-    <a href="/chromium/src/+/292a9c3ded50bc905b32eeca4e200592a5558867%5E%21/">
+    <a href="/chromium/src/+/9d8e89f7510c30f7cc9e1facb7a67bd2e7d63747%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PSM libs: p5. Removed unused functions
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update locale on the sync consent screen in case it is not set
 
-shell-encryption and private_membership leaked some configs
-which disable some default warnings.
+This should fix a rare race which causes CHECKs because UI strings and
+language string are not the same. See bug for details.
 
-In order to re-enable all these warnings for chrome/browser/*
-in this CL crrev.com/c/3303510, all warnings need to be fixed.
-
-This CL is fixing the unused function warnings by removing
-these functions to re-enable the warning.
-
-These are all the remaining listed unused functions.
-
-Some functions should not be removed, but should be guarded by
-the correct build flag to exist or not. These can be noticed
-when tracing out the callers which are only going to call
-these functions if a specific build flag is set (i.e. specific
-OS). These functions are:
-1) ShouldShowProfilePickerAtProcessLaunch
-2) GetProfilePickerStartupProfileInfo
-3) SharingHubDisabledByPolicy
-
-Bug: chromium:1212837, b:201763017
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib97750c8dab843cd286de6a445536fba97d25205">Ib97750c8dab843cd286de6a445536fba97d25205</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3473374">https://chromium-review.googlesource.com/c/chromium/src/+/3473374</a>
-Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
-Commit-Queue: Amr Aboelkher &lt;amraboelkher@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#973571}
+Bug: 1289095
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib79a3fdf15dd56cd9f36550c8f4dea69c147bb8d">Ib79a3fdf15dd56cd9f36550c8f4dea69c147bb8d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3473375">https://chromium-review.googlesource.com/c/chromium/src/+/3473375</a>
+Auto-Submit: Roman Sorokin &lt;rsorokin@chromium.org&gt;
+Reviewed-by: Denis Kuznetsov &lt;antrim@chromium.org&gt;
+Commit-Queue: Denis Kuznetsov &lt;antrim@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#973573}
 </pre>
 
 </body>
