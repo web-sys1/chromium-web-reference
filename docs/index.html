@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973879/"> 973879</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2dac2c3021fd1d0052ae2da4ab481d1a2842c7f6">2dac2c3021fd1d0052ae2da4ab481d1a2842c7f6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973911/"> 973911</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8677ec2ae98478f14a028ded86f7dddb9e857f98">8677ec2ae98478f14a028ded86f7dddb9e857f98</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/973808/">973808</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9c8bb6403718e10150c8569ef705aaef6f6fe9cd">9c8bb6403718e10150c8569ef705aaef6f6fe9cd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/973894/">973894</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/02d287313c224e80ce1a80ec86e8e9d1ef6dcb4e">02d287313c224e80ce1a80ec86e8e9d1ef6dcb4e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2dac2c3021fd1d0052ae2da4ab481d1a2842c7f6
+   8677ec2ae98478f14a028ded86f7dddb9e857f98
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2dac2c3021fd1d0052ae2da4ab481d1a2842c7f6">
+    <a href="/chromium/src/+log/8677ec2ae98478f14a028ded86f7dddb9e857f98">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2dac2c3021fd1d0052ae2da4ab481d1a2842c7f6.tar.gz">
+    <a href="/chromium/src/+archive/8677ec2ae98478f14a028ded86f7dddb9e857f98.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   mark a. foltz &lt;mfoltz@chromium.org&gt;
+   Eric Orth &lt;ericorth@chromium.org&gt;
   </td>
   <td>
-   Tue Feb 22 20:20:12 2022
+   Tue Feb 22 21:31:06 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 22 20:20:12 2022
+   Tue Feb 22 21:31:06 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2dac2c3021fd1d0052ae2da4ab481d1a2842c7f6/">
-    1d861670610bbe08142afbd95a817cc9d154cc53
+   <a href="/chromium/src/+/8677ec2ae98478f14a028ded86f7dddb9e857f98/">
+    0a54063212d0ee5cd4ba4dc96e58d2da30fb98a6
    </a>
   </td>
  </tr>
@@ -166,37 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2dac2c3021fd1d0052ae2da4ab481d1a2842c7f6%5E">
-    03fddef97092b885b8f6f5f4ea547fefddd174f0
+   <a href="/chromium/src/+/8677ec2ae98478f14a028ded86f7dddb9e857f98%5E">
+    653489809935d68e812dc203261d602812f88505
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2dac2c3021fd1d0052ae2da4ab481d1a2842c7f6%5E%21/">
+    <a href="/chromium/src/+/8677ec2ae98478f14a028ded86f7dddb9e857f98%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Media Router] Simplify media_router::MediaRouterBase.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Extract address results as HostResolverEndpointResult
 
-MediaRouterBase has accumulated a number of functions that are only used
-by one of its subclasses, MediaRouterMojoImpl.  This patch moves those
-functions, as well as the InternalMediaRoutesObserver, to
-MediaRouterMojoImpl, and removes a number of no-op implementations that
-are useless on Android.
+This should have the effect of making the new results type the one used
+internally to HostResolver.  Results will be cached as the new type and
+Any requests for AddressList results will be converted.
 
-The remaining functions are used by both MediaRouterMojoImpl and
-MediaRouterAndroid.
+Also, some slight modifications to the alias extraction in that no more
+attempt is made to sort the aliases into an order, and all alias names
+are validated/canonicalized at this point (instead of waiting to do it
+later on output from HostResolver).
 
-Bug: 1297324
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7e1edf2ce4c1c9982448e8e9dc3bd7bb39274177">I7e1edf2ce4c1c9982448e8e9dc3bd7bb39274177</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3475480">https://chromium-review.googlesource.com/c/chromium/src/+/3475480</a>
-Reviewed-by: Tommy Steimel &lt;steimel@chromium.org&gt;
-Reviewed-by: Takumi Fujimoto &lt;takumif@chromium.org&gt;
-Reviewed-by: Muyao Xu &lt;muyaoxu@google.com&gt;
-Commit-Queue: Mark Foltz &lt;mfoltz@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#973879}
+(Change only made for the built-in resolver.  System resolution still
+internally uses AddressList because of all the fun of sharing its
+interface with a bunch of mocking support.  Haven't decided yet what I
+want to do about all that.)
+
+Bug: 1264933
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0c900dab16b7595f20830237923dbdb4ad616250">I0c900dab16b7595f20830237923dbdb4ad616250</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3348233">https://chromium-review.googlesource.com/c/chromium/src/+/3348233</a>
+Reviewed-by: David Benjamin &lt;davidben@chromium.org&gt;
+Reviewed-by: Adam Rice &lt;ricea@chromium.org&gt;
+Commit-Queue: Eric Orth &lt;ericorth@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#973911}
 </pre>
 
 </body>
