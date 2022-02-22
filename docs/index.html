@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973911/"> 973911</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8677ec2ae98478f14a028ded86f7dddb9e857f98">8677ec2ae98478f14a028ded86f7dddb9e857f98</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973925/"> 973925</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/82acecc9b432bd11d119076e4df2fa7ac3ea1ae7">82acecc9b432bd11d119076e4df2fa7ac3ea1ae7</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/973894/">973894</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8677ec2ae98478f14a028ded86f7dddb9e857f98
+   82acecc9b432bd11d119076e4df2fa7ac3ea1ae7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8677ec2ae98478f14a028ded86f7dddb9e857f98">
+    <a href="/chromium/src/+log/82acecc9b432bd11d119076e4df2fa7ac3ea1ae7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8677ec2ae98478f14a028ded86f7dddb9e857f98.tar.gz">
+    <a href="/chromium/src/+archive/82acecc9b432bd11d119076e4df2fa7ac3ea1ae7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Eric Orth &lt;ericorth@chromium.org&gt;
+   Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
   </td>
   <td>
-   Tue Feb 22 21:31:06 2022
+   Tue Feb 22 22:02:37 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 22 21:31:06 2022
+   Tue Feb 22 22:02:37 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8677ec2ae98478f14a028ded86f7dddb9e857f98/">
-    0a54063212d0ee5cd4ba4dc96e58d2da30fb98a6
+   <a href="/chromium/src/+/82acecc9b432bd11d119076e4df2fa7ac3ea1ae7/">
+    a452bf32e4b76f9da14769d96e60daf43e7a02e1
    </a>
   </td>
  </tr>
@@ -166,41 +166,53 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8677ec2ae98478f14a028ded86f7dddb9e857f98%5E">
-    653489809935d68e812dc203261d602812f88505
+   <a href="/chromium/src/+/82acecc9b432bd11d119076e4df2fa7ac3ea1ae7%5E">
+    fcc50d8cd150681f0ee7020f38c14963f463c1ee
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8677ec2ae98478f14a028ded86f7dddb9e857f98%5E%21/">
+    <a href="/chromium/src/+/82acecc9b432bd11d119076e4df2fa7ac3ea1ae7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Extract address results as HostResolverEndpointResult
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Extensions] Support parsing multiple suggestions in the omnibox API
 
-This should have the effect of making the new results type the one used
-internally to HostResolver.  Results will be cached as the new type and
-Any requests for AddressList results will be converted.
+Extend out the browser-side suggestion parsing to support multiple
+suggestions being passed; this happens in the case of the
+sendSuggestions() method, which is used in the onInputChanged event to
+provide suggestions.
 
-Also, some slight modifications to the alias extraction in that no more
-attempt is made to sort the aliases into an order, and all alias names
-are validated/canonicalized at this point (instead of waiting to do it
-later on output from HostResolver).
+In order to facilitate this without needing to send each suggestion
+separately to the isolated XML parser, we synthesize the suggestions
+into a single XML document (we were already synthesizing a document out
+of a single suggestion).
 
-(Change only made for the built-in resolver.  System resolution still
-internally uses AddressList because of all the fun of sharing its
-interface with a bunch of mocking support.  Haven't decided yet what I
-want to do about all that.)
+Given a single suggestion "my suggestion", we will parse:
+&lt;fragment&gt;my suggestion&lt;/fragment&gt;
 
-Bug: 1264933
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0c900dab16b7595f20830237923dbdb4ad616250">I0c900dab16b7595f20830237923dbdb4ad616250</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3348233">https://chromium-review.googlesource.com/c/chromium/src/+/3348233</a>
-Reviewed-by: David Benjamin &lt;davidben@chromium.org&gt;
-Reviewed-by: Adam Rice &lt;ricea@chromium.org&gt;
-Commit-Queue: Eric Orth &lt;ericorth@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#973911}
+Given multiple suggestions, {"first suggestion", "second suggestion"},
+we will parse:
+&lt;fragment&gt;
+  &lt;internal-suggestion&gt;first suggestion&lt;/internal-suggestion&gt;
+  &lt;internal-suggestion&gt;second suggestion&lt;/internal-suggestion&gt;
+&lt;/fragment&gt;
+
+We then separate these suggestions back out when handling the parsed
+input.
+
+Add unit tests for the same. This CL does not yet hook this behavior to
+the sendSuggestions function (that will happen in a followup), and there
+should be no perceptible behavior change.
+
+Bug: 1186804
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I66a5279e715a10e36d1b3afc476384d4d218c07b">I66a5279e715a10e36d1b3afc476384d4d218c07b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3472891">https://chromium-review.googlesource.com/c/chromium/src/+/3472891</a>
+Reviewed-by: Tim &lt;tjudkins@chromium.org&gt;
+Commit-Queue: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#973925}
 </pre>
 
 </body>
