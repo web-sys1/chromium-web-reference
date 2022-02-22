@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973627/"> 973627</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/33742dd0ef8f54e82df7e47dd154558137697494">33742dd0ef8f54e82df7e47dd154558137697494</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973632/"> 973632</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/38f011c72e392258c2b20eb6ecc2bc1de4a9f409">38f011c72e392258c2b20eb6ecc2bc1de4a9f409</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/973627/">973627</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/33742dd0ef8f54e82df7e47dd154558137697494">33742dd0ef8f54e82df7e47dd154558137697494</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/973632/">973632</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/38f011c72e392258c2b20eb6ecc2bc1de4a9f409">38f011c72e392258c2b20eb6ecc2bc1de4a9f409</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   33742dd0ef8f54e82df7e47dd154558137697494
+   38f011c72e392258c2b20eb6ecc2bc1de4a9f409
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/33742dd0ef8f54e82df7e47dd154558137697494">
+    <a href="/chromium/src/+log/38f011c72e392258c2b20eb6ecc2bc1de4a9f409">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/33742dd0ef8f54e82df7e47dd154558137697494.tar.gz">
+    <a href="/chromium/src/+archive/38f011c72e392258c2b20eb6ecc2bc1de4a9f409.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+   Mohsen Izadi &lt;mohsen@chromium.org&gt;
   </td>
   <td>
-   Tue Feb 22 04:57:17 2022
+   Tue Feb 22 05:56:30 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 22 04:57:17 2022
+   Tue Feb 22 05:56:30 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/33742dd0ef8f54e82df7e47dd154558137697494/">
-    f8d137d57c9a68ac1719b2c0142d74ebda3549d6
+   <a href="/chromium/src/+/38f011c72e392258c2b20eb6ecc2bc1de4a9f409/">
+    f564a70341f87089d90b0c3fbcb3414f299bfa0e
    </a>
   </td>
  </tr>
@@ -166,48 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/33742dd0ef8f54e82df7e47dd154558137697494%5E">
-    fad04944770a6a3076b067b6e27684b8b801668c
+   <a href="/chromium/src/+/38f011c72e392258c2b20eb6ecc2bc1de4a9f409%5E">
+    da22d8a66a885a419376778e410482678bc9941d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/33742dd0ef8f54e82df7e47dd154558137697494%5E%21/">
+    <a href="/chromium/src/+/38f011c72e392258c2b20eb6ecc2bc1de4a9f409%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Ensure FontGlobalContext::Get() not to return nullptr
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use pre-submit timestamp in compositor latency breakdowns
 
-This patch changes |FontGlobalContext::Get()| to use
-|ThreadSpecific&lt;T&gt;::operator*()| instead of |IsSet()| to check whether
-thread-specific value |FontGlobalContext*| is populated or not.
+Currently, the timestamp used as the frame submit time to calculate
+breakdowns for compositor and event latency metrics is from a time after
+the frame is submitted from the renderer; so it is possible that the
+frame arrives in Viz before this time, leading to a negative
+SubmitToReceiveCompositorFrame Viz breakdown. This CL uses timestamp of
+just before submitting the frame to avoid this issue.
 
-
-Before this patch, |FontGlobalContext::TryGet()| is called before
-|Get()|, |FontGlobalContext*| isn't populated.
-
-Background:
-The crash is caused by following scenario:
-  1. ... no call of FontGlobalContext::Get() ...
-  2. FontGlobalContext::TryGet() -&gt; allocate TLS slot with nullptr
-  3. FontGlobalContext::Get() -&gt; returns content in TLS
-
-|ThreadSpecific&lt;T&gt;::IsSet()| returns true when TLS is allocated and
-initialized. When T is a pointer, slot is initialized with nullptr.
-
-|ThreadSpecific&lt;T&gt;::operator*()| returns reference to slot address and
-allocate slot with |new (slot_address) T()| if slot isn't allocated.
-
-Bug: 1298891
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If05abe33142ade81c2c4263f91e8399aeef9df2a">If05abe33142ade81c2c4263f91e8399aeef9df2a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3478937">https://chromium-review.googlesource.com/c/chromium/src/+/3478937</a>
-Commit-Queue: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Auto-Submit: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#973627}
+Bug: 1295726
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iae074616d2153b76a026241cdbfe49bc3d94d74e">Iae074616d2153b76a026241cdbfe49bc3d94d74e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3433125">https://chromium-review.googlesource.com/c/chromium/src/+/3433125</a>
+Reviewed-by: Behdad Bakhshinategh &lt;behdadb@chromium.org&gt;
+Commit-Queue: Mohsen Izadi &lt;mohsen@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#973632}
 </pre>
 
 </body>
