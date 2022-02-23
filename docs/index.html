@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973925/"> 973925</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/82acecc9b432bd11d119076e4df2fa7ac3ea1ae7">82acecc9b432bd11d119076e4df2fa7ac3ea1ae7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/973970/"> 973970</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bb616d5b10d46255ad42f850615a3c0cfd990fbb">bb616d5b10d46255ad42f850615a3c0cfd990fbb</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/973921/">973921</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   82acecc9b432bd11d119076e4df2fa7ac3ea1ae7
+   bb616d5b10d46255ad42f850615a3c0cfd990fbb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/82acecc9b432bd11d119076e4df2fa7ac3ea1ae7">
+    <a href="/chromium/src/+log/bb616d5b10d46255ad42f850615a3c0cfd990fbb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/82acecc9b432bd11d119076e4df2fa7ac3ea1ae7.tar.gz">
+    <a href="/chromium/src/+archive/bb616d5b10d46255ad42f850615a3c0cfd990fbb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+   Sophie Chang &lt;sophiechang@chromium.org&gt;
   </td>
   <td>
-   Tue Feb 22 22:02:37 2022
+   Tue Feb 22 23:39:54 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 22 22:02:37 2022
+   Tue Feb 22 23:39:54 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/82acecc9b432bd11d119076e4df2fa7ac3ea1ae7/">
-    a452bf32e4b76f9da14769d96e60daf43e7a02e1
+   <a href="/chromium/src/+/bb616d5b10d46255ad42f850615a3c0cfd990fbb/">
+    e0b1f6dda93bbe7ac54dbd9bd99e90ee0c8cc118
    </a>
   </td>
  </tr>
@@ -166,53 +166,27 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/82acecc9b432bd11d119076e4df2fa7ac3ea1ae7%5E">
-    fcc50d8cd150681f0ee7020f38c14963f463c1ee
+   <a href="/chromium/src/+/bb616d5b10d46255ad42f850615a3c0cfd990fbb%5E">
+    e80cccc3bf54229ace79b8760d75ebc9f79fc037
    </a>
    <span>
     [
-    <a href="/chromium/src/+/82acecc9b432bd11d119076e4df2fa7ac3ea1ae7%5E%21/">
+    <a href="/chromium/src/+/bb616d5b10d46255ad42f850615a3c0cfd990fbb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Extensions] Support parsing multiple suggestions in the omnibox API
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move SupportedModelEngineVersion histogram to ensure it gets recorded for integration tests
 
-Extend out the browser-side suggestion parsing to support multiple
-suggestions being passed; this happens in the case of the
-sendSuggestions() method, which is used in the onInputChanged event to
-provide suggestions.
-
-In order to facilitate this without needing to send each suggestion
-separately to the isolated XML parser, we synthesize the suggestions
-into a single XML document (we were already synthesizing a document out
-of a single suggestion).
-
-Given a single suggestion "my suggestion", we will parse:
-&lt;fragment&gt;my suggestion&lt;/fragment&gt;
-
-Given multiple suggestions, {"first suggestion", "second suggestion"},
-we will parse:
-&lt;fragment&gt;
-  &lt;internal-suggestion&gt;first suggestion&lt;/internal-suggestion&gt;
-  &lt;internal-suggestion&gt;second suggestion&lt;/internal-suggestion&gt;
-&lt;/fragment&gt;
-
-We then separate these suggestions back out when handling the parsed
-input.
-
-Add unit tests for the same. This CL does not yet hook this behavior to
-the sendSuggestions function (that will happen in a followup), and there
-should be no perceptible behavior change.
-
-Bug: 1186804
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I66a5279e715a10e36d1b3afc476384d4d218c07b">I66a5279e715a10e36d1b3afc476384d4d218c07b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3472891">https://chromium-review.googlesource.com/c/chromium/src/+/3472891</a>
-Reviewed-by: Tim &lt;tjudkins@chromium.org&gt;
-Commit-Queue: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#973925}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I566773f6f0098dbb79febf19fb830066acca5ea8">I566773f6f0098dbb79febf19fb830066acca5ea8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3481857">https://chromium-review.googlesource.com/c/chromium/src/+/3481857</a>
+Commit-Queue: Sophie Chang &lt;sophiechang@chromium.org&gt;
+Auto-Submit: Sophie Chang &lt;sophiechang@chromium.org&gt;
+Reviewed-by: Robert Ogden &lt;robertogden@chromium.org&gt;
+Commit-Queue: Robert Ogden &lt;robertogden@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#973970}
 </pre>
 
 </body>
