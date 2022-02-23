@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/974009/"> 974009</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/caa25a92cde5e79b4c2c55ee54daadbf42ee6eb2">caa25a92cde5e79b4c2c55ee54daadbf42ee6eb2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/974015/"> 974015</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9541008f8153209014e0be29583d66f80d0a1796">9541008f8153209014e0be29583d66f80d0a1796</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/973996/">973996</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   caa25a92cde5e79b4c2c55ee54daadbf42ee6eb2
+   9541008f8153209014e0be29583d66f80d0a1796
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/caa25a92cde5e79b4c2c55ee54daadbf42ee6eb2">
+    <a href="/chromium/src/+log/9541008f8153209014e0be29583d66f80d0a1796">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/caa25a92cde5e79b4c2c55ee54daadbf42ee6eb2.tar.gz">
+    <a href="/chromium/src/+archive/9541008f8153209014e0be29583d66f80d0a1796.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Gyuyoung Kim &lt;gyuyoung@igalia.com&gt;
+   Mohammad Refaat &lt;mrefaat@google.com&gt;
   </td>
   <td>
-   Wed Feb 23 01:25:11 2022
+   Wed Feb 23 02:01:02 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 23 01:25:11 2022
+   Wed Feb 23 02:01:02 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/caa25a92cde5e79b4c2c55ee54daadbf42ee6eb2/">
-    8ee1463f74cfd9be7ff22a69027b833dbb602b8c
+   <a href="/chromium/src/+/9541008f8153209014e0be29583d66f80d0a1796/">
+    6915233e0610b891b48c90e265d586a0e5974289
    </a>
   </td>
  </tr>
@@ -166,37 +166,57 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/caa25a92cde5e79b4c2c55ee54daadbf42ee6eb2%5E">
-    b124b8c915c96398d53487dac3d3c3c62530e040
+   <a href="/chromium/src/+/9541008f8153209014e0be29583d66f80d0a1796%5E">
+    c415e972fa4afd284e6c398aa6ea3a19da961128
    </a>
    <span>
     [
-    <a href="/chromium/src/+/caa25a92cde5e79b4c2c55ee54daadbf42ee6eb2%5E%21/">
+    <a href="/chromium/src/+/9541008f8153209014e0be29583d66f80d0a1796%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">MPArch: FencedFrame doesn't close an interstitial page
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add suggested actions section to the normal tabs page of Tabgrid search
 
-crrev.com/c/3002471 has blocked closing the interstitial page
-for prerendering. And the CL can work for FencedFrame as well.
-So, this CL adds a test to ensure FencedFrame doesn't close
-the interstitial page.
+1- Created "SuggestedActionsGridCell" as a new cell type to be used in
+the gridViewController and will be added under a separate new section
+"SuggestedActionsSection" in the end of the grid view.
+2- Created "SuggestedActionsViewController" as ChromeTableViewController
+which will contains the suggested actions items.
+3- GridViewController will create and own an instance of
+SuggestedActionsViewController and will implement its delegate. It will
+also provide its tableView to the SuggestedActionsGridCell upon its
+creation.
+4- SuggestedActionsGridCell contains a tableView of all the suggested
+actions. That table view is rendered as a subview of the cell and its
+boundaries matches the cell boundaries.
+5- "SuggestedActionsDelegate" is added to handle the actions, is called
+by The gridViewController, and implemented by the TabGridViewController.
+6- Updated the TabGridViewControllerDelegate with two methods to handle
+suggested actions, and added their implementation to the
+TabGridCoordinator.
+7- Added a gridCommand (implemented by TabGridMediator) to fetch the
+history search results count, to be used inside the history cell in the
+suggestedActionsViewController.
+8- Added some unittests for the newly created view controller. Tests for
+the UI will done on a following CL as an EG test.
+9- The whole change is guarded by a new feature flag which will be
+enabled by default "TabsSearchRegularResultsSuggestedActions" and
+requires that TabsSearch flag to be enabled as well.
 
-Additionally, this CL introduces
-security_interstitial_tab_helper_test_util.h/cc files in order
-to share some test utils on the unit test and the browser test.
+screenshots:(Another change will be needed to add a header to the
+results)
+<a href="https://screenshot.googleplex.com/3iEswCBGwcxZvdi.png">https://screenshot.googleplex.com/3iEswCBGwcxZvdi.png</a>
+<a href="https://screenshot.googleplex.com/3n4MK9WVwFb5Wsv.png">https://screenshot.googleplex.com/3n4MK9WVwFb5Wsv.png</a>
 
-Bug: 1225210
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If25238d528e97056d89522e589b7e840f5e60d8e">If25238d528e97056d89522e589b7e840f5e60d8e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3463405">https://chromium-review.googlesource.com/c/chromium/src/+/3463405</a>
-Reviewed-by: Adithya Srinivasan &lt;adithyas@chromium.org&gt;
-Reviewed-by: Daniel Rubery &lt;drubery@chromium.org&gt;
-Reviewed-by: Daniel Libby &lt;dlibby@microsoft.com&gt;
-Commit-Queue: Gyuyoung Kim &lt;gyuyoung@igalia.com&gt;
-Cr-Commit-Position: refs/heads/main@{#974009}
+Bug: 1290663
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I067fb808ea25bbfedf50572b16c7f37f687b6895">I067fb808ea25bbfedf50572b16c7f37f687b6895</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3476714">https://chromium-review.googlesource.com/c/chromium/src/+/3476714</a>
+Reviewed-by: Mike Dougherty &lt;michaeldo@chromium.org&gt;
+Commit-Queue: Mohammad Refaat &lt;mrefaat@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#974015}
 </pre>
 
 </body>
