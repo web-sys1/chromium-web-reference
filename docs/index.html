@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/974608/"> 974608</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ca4d4b2d60e16c7f01fe3fad9e5e74a1ba716499">ca4d4b2d60e16c7f01fe3fad9e5e74a1ba716499</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/974615/"> 974615</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bd50ac5ae8465dcb0d3b90463f8b9c3f41d6853c">bd50ac5ae8465dcb0d3b90463f8b9c3f41d6853c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/974588/">974588</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3cf5d1db084c2d381bbe48a4f9d702c9887ad047">3cf5d1db084c2d381bbe48a4f9d702c9887ad047</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/974603/">974603</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cfdafb970be758cc144c8a9fe9a0df711bc15d17">cfdafb970be758cc144c8a9fe9a0df711bc15d17</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ca4d4b2d60e16c7f01fe3fad9e5e74a1ba716499
+   bd50ac5ae8465dcb0d3b90463f8b9c3f41d6853c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ca4d4b2d60e16c7f01fe3fad9e5e74a1ba716499">
+    <a href="/chromium/src/+log/bd50ac5ae8465dcb0d3b90463f8b9c3f41d6853c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ca4d4b2d60e16c7f01fe3fad9e5e74a1ba716499.tar.gz">
+    <a href="/chromium/src/+archive/bd50ac5ae8465dcb0d3b90463f8b9c3f41d6853c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Daniel Cheng &lt;dcheng@chromium.org&gt;
+   Robert Liao &lt;robliao@chromium.org&gt;
   </td>
   <td>
-   Thu Feb 24 13:07:01 2022
+   Thu Feb 24 13:41:16 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Feb 24 13:07:01 2022
+   Thu Feb 24 13:41:16 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ca4d4b2d60e16c7f01fe3fad9e5e74a1ba716499/">
-    c1465751e84598d0bec0d853d3b9124aadcf171a
+   <a href="/chromium/src/+/bd50ac5ae8465dcb0d3b90463f8b9c3f41d6853c/">
+    35cf61b52394b0b43e93277bdcbad82a416357e9
    </a>
   </td>
  </tr>
@@ -166,35 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ca4d4b2d60e16c7f01fe3fad9e5e74a1ba716499%5E">
-    5d8d5e637144bc26a3878babcb8ba35dbb294baa
+   <a href="/chromium/src/+/bd50ac5ae8465dcb0d3b90463f8b9c3f41d6853c%5E">
+    bc9d049c0d3dd06ebd30060a872fba50abb89fe6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ca4d4b2d60e16c7f01fe3fad9e5e74a1ba716499%5E%21/">
+    <a href="/chromium/src/+/bd50ac5ae8465dcb0d3b90463f8b9c3f41d6853c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Replace url::Replacements&lt;T&gt; with GURL::Replacements in /chrome/browser.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Partially Revert "Revise Windows App Icons"
 
-When clearing URL components, the two interfaces are exactly identical.
-When replacing a URL component, GURL::Replacements has a simpler
-interface.
+This is a partial revert of 85d74a4f9b7e4bf535cec0e5270460c7ceaa7722.
 
-This CL was uploaded by git cl split.
+The issue is that while "transparent" is a permitted background color
+visual elements [1], it doesn't appear to be permitted for classic
+apps.
 
-R=vasilii@chromium.org
+The observed behavior will be as follows:
+Win 8       - Directly uses the background color
+              Will go back to the previous gray
+Win 10 1511 - Does not appear to use tiles for classic apps
+              Visual Elements is ignored
+Win 10 21H2 - Appears to ignore the background color
+              and uses the transparent PNG.
 
-Bug: 1271865
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie75e6cf7feb7aadc2cd4569ee2102945f6ec8577">Ie75e6cf7feb7aadc2cd4569ee2102945f6ec8577</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3487267">https://chromium-review.googlesource.com/c/chromium/src/+/3487267</a>
-Auto-Submit: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Reviewed-by: Vasilii Sukhanov &lt;vasilii@chromium.org&gt;
-Commit-Queue: Vasilii Sukhanov &lt;vasilii@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#974608}
+[1] <a href="https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/appxmanifestschema/element-visualelements">https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/appxmanifestschema/element-visualelements</a>
+
+Fixed: 1300273
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If16f721e45a5b2ffd16ddfb161e8ae6fe17d9bd6">If16f721e45a5b2ffd16ddfb161e8ae6fe17d9bd6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3485421">https://chromium-review.googlesource.com/c/chromium/src/+/3485421</a>
+Auto-Submit: Robert Liao &lt;robliao@chromium.org&gt;
+Reviewed-by: Greg Thompson &lt;grt@chromium.org&gt;
+Commit-Queue: Greg Thompson &lt;grt@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#974615}
 </pre>
 
 </body>
