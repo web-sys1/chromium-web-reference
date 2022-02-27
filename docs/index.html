@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/975578/"> 975578</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6c2d11de4a39654c4c52011b6cc91e3039ad5d84">6c2d11de4a39654c4c52011b6cc91e3039ad5d84</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/975579/"> 975579</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/128f8a8d53bf7169ec640a9516ab5761ac84853e">128f8a8d53bf7169ec640a9516ab5761ac84853e</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/975577/">975577</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6c2d11de4a39654c4c52011b6cc91e3039ad5d84
+   128f8a8d53bf7169ec640a9516ab5761ac84853e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6c2d11de4a39654c4c52011b6cc91e3039ad5d84">
+    <a href="/chromium/src/+log/128f8a8d53bf7169ec640a9516ab5761ac84853e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6c2d11de4a39654c4c52011b6cc91e3039ad5d84.tar.gz">
+    <a href="/chromium/src/+archive/128f8a8d53bf7169ec640a9516ab5761ac84853e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
+   Koji Ishii &lt;kojii@chromium.org&gt;
   </td>
   <td>
-   Sun Feb 27 17:53:00 2022
+   Sun Feb 27 18:16:30 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Feb 27 17:53:00 2022
+   Sun Feb 27 18:16:30 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6c2d11de4a39654c4c52011b6cc91e3039ad5d84/">
-    e5c351d1542dde5e8229132623c92cedfabbc494
+   <a href="/chromium/src/+/128f8a8d53bf7169ec640a9516ab5761ac84853e/">
+    c12ca7402eac6eb54413a435818dbf19387f19c4
    </a>
   </td>
  </tr>
@@ -166,42 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6c2d11de4a39654c4c52011b6cc91e3039ad5d84%5E">
-    bce0672d0c07f318821a17811e3fd6c4faa93cc8
+   <a href="/chromium/src/+/128f8a8d53bf7169ec640a9516ab5761ac84853e%5E">
+    6c2d11de4a39654c4c52011b6cc91e3039ad5d84
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6c2d11de4a39654c4c52011b6cc91e3039ad5d84%5E%21/">
+    <a href="/chromium/src/+/128f8a8d53bf7169ec640a9516ab5761ac84853e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll src-internal from f84c7b2e1f44 to 9baae93eacd6 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[block-in-inline] Fix hit-testing when inline box is not culled
 
-<a href="https://chrome-internal.googlesource.com/chrome/src-internal.git/+log/f84c7b2e1f44..9baae93eacd6">https://chrome-internal.googlesource.com/chrome/src-internal.git/+log/f84c7b2e1f44..9baae93eacd6</a>
+This patch fixes hit-testing block-in-inline when the inline
+box is not culled. This issue was originally reported at
+crbug.com/1300205, but also affects crrev.com/c/3486321 for
+crbug.com/1301136.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://skia-autoroll.corp.goog/r/src-internal-chromium-autoroll">https://skia-autoroll.corp.goog/r/src-internal-chromium-autoroll</a>
-Please CC  on the revert to ensure that a human
-is aware of the problem.
+Two logic changes are included:
+1. Hit-testing should ignore opaque inline boxes. The
+   |IsOpaque| flag was added in r908729 crrev.com/c/3066831
+   because inline boxes that wraps block-in-inline are not
+   visible to layout and paint except some paint effects.
+2. r925189 crrev.com/c/3181220 hit-tests block-backgrounds
+   while in the foreground phase. This resulted ignoring
+   floats, because floats are between foreground and block
+   background. <a href="https://drafts.csswg.org/css2/#painting-order">https://drafts.csswg.org/css2/#painting-order</a>
+   This patch reverts the change.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+Note that the change 1 does not apply to list-based hit-
+testing. This is needed for:
+  external/wpt/shadow-dom/DocumentOrShadowRoot-prototype-elementFromPoint.html
+when the inline with block children is not culled (crrev.com/c/3486321).
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Bug: None
-Tbr: 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic11883e87fcaf6c3aa32ea128946d7bca52fe646">Ic11883e87fcaf6c3aa32ea128946d7bca52fe646</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3493353">https://chromium-review.googlesource.com/c/chromium/src/+/3493353</a>
-Commit-Queue: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#975578}
+Bug: 1300205, 1301136
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie94df6092fe7d50599ab4f985233cf0dfa968efd">Ie94df6092fe7d50599ab4f985233cf0dfa968efd</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3489020">https://chromium-review.googlesource.com/c/chromium/src/+/3489020</a>
+Reviewed-by: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
+Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#975579}
 </pre>
 
 </body>
