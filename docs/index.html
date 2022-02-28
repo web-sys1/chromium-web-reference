@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/975697/"> 975697</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ca3e4efa57a4148ad7c503ec0e274c1832675fe3">ca3e4efa57a4148ad7c503ec0e274c1832675fe3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/975711/"> 975711</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/eff99a59634a9d051f0ca491b684c5d8047e5010">eff99a59634a9d051f0ca491b684c5d8047e5010</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/975696/">975696</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6c04ff12ba3a8633705464a7147c30c94c2dfc04">6c04ff12ba3a8633705464a7147c30c94c2dfc04</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/975702/">975702</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1fd5fd3aea607fab322181da73d43386c1d1bf57">1fd5fd3aea607fab322181da73d43386c1d1bf57</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ca3e4efa57a4148ad7c503ec0e274c1832675fe3
+   eff99a59634a9d051f0ca491b684c5d8047e5010
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ca3e4efa57a4148ad7c503ec0e274c1832675fe3">
+    <a href="/chromium/src/+log/eff99a59634a9d051f0ca491b684c5d8047e5010">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ca3e4efa57a4148ad7c503ec0e274c1832675fe3.tar.gz">
+    <a href="/chromium/src/+archive/eff99a59634a9d051f0ca491b684c5d8047e5010.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   dpapad &lt;dpapad@chromium.org&gt;
+   Clemens Arbesser &lt;arbesser@google.com&gt;
   </td>
   <td>
-   Mon Feb 28 09:11:34 2022
+   Mon Feb 28 10:46:34 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Feb 28 09:11:34 2022
+   Mon Feb 28 10:46:34 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ca3e4efa57a4148ad7c503ec0e274c1832675fe3/">
-    1baa650884d9e7c38dfcff316ffd9869ef3b6280
+   <a href="/chromium/src/+/eff99a59634a9d051f0ca491b684c5d8047e5010/">
+    a9a8256f7aa3a980bf8e253306374f307c0fc80e
    </a>
   </td>
  </tr>
@@ -166,33 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ca3e4efa57a4148ad7c503ec0e274c1832675fe3%5E">
-    6c04ff12ba3a8633705464a7147c30c94c2dfc04
+   <a href="/chromium/src/+/eff99a59634a9d051f0ca491b684c5d8047e5010%5E">
+    13bef0ffec93ce83fa1bf4f6a67d054de6fb9887
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ca3e4efa57a4148ad7c503ec0e274c1832675fe3%5E%21/">
+    <a href="/chromium/src/+/eff99a59634a9d051f0ca491b684c5d8047e5010%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">WebUI: Enable eqeqeq ESLint check for all chrome/browser/resources/
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor ScriptExecutor::CurrentActionData
 
-Except chrome/browser/resources/chromeos/ which still has a lot of
-violations.
+ActionData is now owned by each action individually. Script executors
+may access and write to this data, but no longer own it.
 
-Also reomving redundant eqeqeq rule declarations under
-chome/test/data/webui/* subfolders, since the eqeqeq rule is already
-enabled in chrome/test/data/webui/.eslintrc.js.
+This should make this slightly more sane, but more importantly, this is
+necessary for a follow-up where we want to add support for nested
+actions. The current way of using ActionData would require using some
+kind of stack, and it would ripple quite far. By making actions own
+their data, the script executor can be ambivalent about the existence
+of nested actions.
 
-Bug: 720034
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie8dd109fb7c4845797f97228e282c7c2acb50658">Ie8dd109fb7c4845797f97228e282c7c2acb50658</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3484269">https://chromium-review.googlesource.com/c/chromium/src/+/3484269</a>
-Reviewed-by: John Lee &lt;johntlee@chromium.org&gt;
-Commit-Queue: Demetrios Papadopoulos &lt;dpapad@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#975697}
+Bug: b/201970915
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic63df16abd1f763576592ea01d381620b34c8897">Ic63df16abd1f763576592ea01d381620b34c8897</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3469454">https://chromium-review.googlesource.com/c/chromium/src/+/3469454</a>
+Reviewed-by: Stephane Zermatten &lt;szermatt@chromium.org&gt;
+Reviewed-by: Luca Hunkeler &lt;hluca@google.com&gt;
+Commit-Queue: Clemens Arbesser &lt;arbesser@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#975711}
 </pre>
 
 </body>
