@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/976167/"> 976167</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f8689253d4c26e8b750cc59e2f2c47b560b7368c">f8689253d4c26e8b750cc59e2f2c47b560b7368c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/976177/"> 976177</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a0857a0393e7b77f519798185b1d832e4f781945">a0857a0393e7b77f519798185b1d832e4f781945</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/976164/">976164</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f8689253d4c26e8b750cc59e2f2c47b560b7368c
+   a0857a0393e7b77f519798185b1d832e4f781945
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f8689253d4c26e8b750cc59e2f2c47b560b7368c">
+    <a href="/chromium/src/+log/a0857a0393e7b77f519798185b1d832e4f781945">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f8689253d4c26e8b750cc59e2f2c47b560b7368c.tar.gz">
+    <a href="/chromium/src/+archive/a0857a0393e7b77f519798185b1d832e4f781945.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Pi-Hsun Shih &lt;pihsun@chromium.org&gt;
+   Yuki Yamada &lt;yukiy@chromium.org&gt;
   </td>
   <td>
-   Tue Mar 01 10:19:33 2022
+   Tue Mar 01 10:55:34 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 01 10:19:33 2022
+   Tue Mar 01 10:55:34 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f8689253d4c26e8b750cc59e2f2c47b560b7368c/">
-    b71544ebe60353906458f064ad9e6634026d17d3
+   <a href="/chromium/src/+/a0857a0393e7b77f519798185b1d832e4f781945/">
+    08183eeeffaf33f6c8abfc6c7e418083767ea785
    </a>
   </td>
  </tr>
@@ -166,31 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f8689253d4c26e8b750cc59e2f2c47b560b7368c%5E">
-    6b3cc15a594f0b270abf1e739fea0b5988085c05
+   <a href="/chromium/src/+/a0857a0393e7b77f519798185b1d832e4f781945%5E">
+    76e0a4f476c6de7d87f550a1c60efa1fe71c828a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f8689253d4c26e8b750cc59e2f2c47b560b7368c%5E%21/">
+    <a href="/chromium/src/+/a0857a0393e7b77f519798185b1d832e4f781945%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">CCA: Add custom ESLint rule to check for redundant type parameter.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Type conversion: 2-1. Add prevent_unsafe_narrowing to default_compiler_configs
 
-Add a custom rule that checks for pattern of `const bla: A&lt;...&gt; = new
-A(...);`, which can be better rewrite to `const bla = new A&lt;...&gt;(...);`,
-as suggested by go/tsstyle#type-inference.
+This change is for “Enable Warnings for Implicit Conversions” project.
 
-Bug: b:211723843
-Test: cca.py lint
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I82ca28031abb9d140e030c8bd9b396574a985eed">I82ca28031abb9d140e030c8bd9b396574a985eed</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3379899">https://chromium-review.googlesource.com/c/chromium/src/+/3379899</a>
-Reviewed-by: Shik Chen &lt;shik@chromium.org&gt;
-Commit-Queue: Pi-Hsun Shih &lt;pihsun@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#976167}
+There are four steps to complete the project. Step 1. and step 3. are
+required to split the change for step 2. into several CLs.
+1. Disable prevent_unsafe_narrowing config
+2. Add prevent_unsafe_narrowing to default_compiler_configs and remove
+   the config (`configs -= ...`) only where it is necessary
+3. Enable prevent_unsafe_narrowing config again
+4. Remove each `configs -= ...` added in step 2. and fix warnings
+
+This is the first CL for step 2, which adds prevent_unsafe_narrowing to
+default_compiler_configs and `configs -= ...` to some templates.
+It is safe to merge this change with all the CQ bots green because there
+should be some error when `configs -= ...` is added in a wrong place.
+
+See the public one-pager for more details of this project:
+go/enable-warnings-for-implicit-conversions (<a href="https://docs.google.com/document/d/1CTbQ-5cQjnjU8aCOtLiA7G6P0i5C6HpSDNlSNq6nl5E/edit?usp=sharing">https://docs.google.com/document/d/1CTbQ-5cQjnjU8aCOtLiA7G6P0i5C6HpSDNlSNq6nl5E/edit?usp=sharing</a>)
+
+Bug: 1292951
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I841517691b31d0d8e54965268a177c46e0ff7f49">I841517691b31d0d8e54965268a177c46e0ff7f49</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3488757">https://chromium-review.googlesource.com/c/chromium/src/+/3488757</a>
+Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
+Reviewed-by: danakj &lt;danakj@chromium.org&gt;
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Reviewed-by: Ken Rockot &lt;rockot@google.com&gt;
+Reviewed-by: Derek Schuff &lt;dschuff@chromium.org&gt;
+Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
+Commit-Queue: Yuki Yamada &lt;yukiy@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#976177}
 </pre>
 
 </body>
