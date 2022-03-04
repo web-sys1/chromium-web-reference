@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/977529/"> 977529</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b6e38123599226a5db37ecc6d72e087973439ae8">b6e38123599226a5db37ecc6d72e087973439ae8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/977537/"> 977537</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/323f6e3ffe1d6109e75671882d1b40f951e138a2">323f6e3ffe1d6109e75671882d1b40f951e138a2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/977515/">977515</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/527be9398ecdc72ab98940ad19e894fa914370cb">527be9398ecdc72ab98940ad19e894fa914370cb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/977533/">977533</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/39d49a1f9073e97e4fa7f6f921de97b1bea2eacf">39d49a1f9073e97e4fa7f6f921de97b1bea2eacf</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b6e38123599226a5db37ecc6d72e087973439ae8
+   323f6e3ffe1d6109e75671882d1b40f951e138a2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b6e38123599226a5db37ecc6d72e087973439ae8">
+    <a href="/chromium/src/+log/323f6e3ffe1d6109e75671882d1b40f951e138a2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b6e38123599226a5db37ecc6d72e087973439ae8.tar.gz">
+    <a href="/chromium/src/+archive/323f6e3ffe1d6109e75671882d1b40f951e138a2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alan Screen &lt;awscreen@chromium.org&gt;
+   Jose Dapena Paz &lt;jdapena@igalia.com&gt;
   </td>
   <td>
-   Fri Mar 04 06:59:59 2022
+   Fri Mar 04 07:35:39 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 04 06:59:59 2022
+   Fri Mar 04 07:35:39 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b6e38123599226a5db37ecc6d72e087973439ae8/">
-    a2c56bceeb053d4eaf373062dd964742d5ba0484
+   <a href="/chromium/src/+/323f6e3ffe1d6109e75671882d1b40f951e138a2/">
+    75aad6408a29e11c17eb8a9f5dc26a79104130a4
    </a>
   </td>
  </tr>
@@ -166,47 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b6e38123599226a5db37ecc6d72e087973439ae8%5E">
-    21ea0b6cee6c27eca8a35d8a21e547903f72e999
+   <a href="/chromium/src/+/323f6e3ffe1d6109e75671882d1b40f951e138a2%5E">
+    f67ee9e52b4cb2a84a2b81c9d601dc24fab60ed8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b6e38123599226a5db37ecc6d72e087973439ae8%5E%21/">
+    <a href="/chromium/src/+/323f6e3ffe1d6109e75671882d1b40f951e138a2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Skip sandboxing PrintBackendService for known exceptions
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix wayland clipboard tests resource creation
 
-For some printer drivers it can be known ahead of time that sandboxing
-of the Print Backend Service should be avoided.
+Most of the wayland clipboard unit tests are crashing because of
+an error in the way the interface struct was created. They were
+declared as a local variables of the methods using them. So, once
+a call was done through the interface struct, it was already freed.
 
-Making use of this knowledge rather than relying upon getting an
-access-denied error can be important in some cases.  For example, when
-trying to start printing of a document on Windows, if it will require
-the display of a system dialog to select the file to save to (e.g.,
-print to port FILE:) then the call will hang instead of returning an
-error.
-
-Introduce a call to determine if a driver for a client type should
-automatically avoid being sandboxed.  This is a workaround for the
-hanging issue.  This approach might be improved upon if a Windows low
-privilege AppContainer (LPAC) can be made to enable the UI to be
-displayed, but that is still a work in progress.
-
-TESTED=On Windows print to a driver that saves to file, such as the
-`Microsoft Print to PDF`.  This enables the `File Print Output As`
-dialog to be displayed instead of the Print Backend Service process
-hanging.
-
-Bug: 809738, 1243873
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I102a38c311f012c743cd94c3c81a319d14161ed9">I102a38c311f012c743cd94c3c81a319d14161ed9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3313488">https://chromium-review.googlesource.com/c/chromium/src/+/3313488</a>
-Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
-Commit-Queue: Alan Screen &lt;awscreen@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#977529}
+Bug: 1302685
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7e86cfee7efbc0a188a4c1c9f614df02997e5ec2">I7e86cfee7efbc0a188a4c1c9f614df02997e5ec2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3499619">https://chromium-review.googlesource.com/c/chromium/src/+/3499619</a>
+Reviewed-by: Maksim Sisov &lt;msisov@igalia.com&gt;
+Commit-Queue: José Dapena Paz &lt;jdapena@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#977537}
 </pre>
 
 </body>
