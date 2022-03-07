@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/978464/"> 978464</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8914d70a0bc964237db78cabb5ec583e7af4301c">8914d70a0bc964237db78cabb5ec583e7af4301c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/978485/"> 978485</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb2c10850fd8a191089205f55a1aa387e901a8c5">fb2c10850fd8a191089205f55a1aa387e901a8c5</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/978442/">978442</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8914d70a0bc964237db78cabb5ec583e7af4301c
+   fb2c10850fd8a191089205f55a1aa387e901a8c5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8914d70a0bc964237db78cabb5ec583e7af4301c">
+    <a href="/chromium/src/+log/fb2c10850fd8a191089205f55a1aa387e901a8c5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8914d70a0bc964237db78cabb5ec583e7af4301c.tar.gz">
+    <a href="/chromium/src/+archive/fb2c10850fd8a191089205f55a1aa387e901a8c5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jason Thai &lt;jasontt@chromium.org&gt;
+   Dana Fried &lt;dfried@chromium.org&gt;
   </td>
   <td>
-   Mon Mar 07 22:06:31 2022
+   Mon Mar 07 22:39:33 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Mar 07 22:06:31 2022
+   Mon Mar 07 22:39:33 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8914d70a0bc964237db78cabb5ec583e7af4301c/">
-    1f6eb73a84d0c5a23d6b921cb0be1437c817c1f5
+   <a href="/chromium/src/+/fb2c10850fd8a191089205f55a1aa387e901a8c5/">
+    b2ee3a7548709dbcadfc36bad53524175adbf77a
    </a>
   </td>
  </tr>
@@ -166,33 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8914d70a0bc964237db78cabb5ec583e7af4301c%5E">
-    f9f0bc33fcc7dd2d3f2c3377d31956d5c3a12144
+   <a href="/chromium/src/+/fb2c10850fd8a191089205f55a1aa387e901a8c5%5E">
+    f6b909523136e8fa12d42fecc25f9c139d0fb903
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8914d70a0bc964237db78cabb5ec583e7af4301c%5E%21/">
+    <a href="/chromium/src/+/fb2c10850fd8a191089205f55a1aa387e901a8c5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">personalization: disable selection when ambient mode is disabled.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Positioning of default button handled by platform-specific code.
 
-Don't allow users to select topic sources or weather unit if
-ambient mode is not enabled.
+The current utility that provides the value for whether a platform
+prefers leading or trailing default buttons is in views, but was needed
+in code that was not dependent on Views. We initially solved the problem
+by creating a virtual function in FeaturePromoControllerCommon that was
+implemented by BrowserFeaturePromoController (which is Views-dependent).
 
-BUG=b/221336516
-TEST=Manually
+This CL pushes the decision of where to place default buttons down into
+platform specific implementations of HelpBubbleFactory. This means that
+the HelpBubbleParams::buttons field no longer guarantees ordering of
+buttons; however, we do guarantee the order of non-default buttons will
+not change.
 
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I22b712bbf63b386da878f19ae3b9ebb01ca159f4">I22b712bbf63b386da878f19ae3b9ebb01ca159f4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3501074">https://chromium-review.googlesource.com/c/chromium/src/+/3501074</a>
-Reviewed-by: Tao Wu &lt;wutao@chromium.org&gt;
-Reviewed-by: Jeffrey Young &lt;cowmoo@chromium.org&gt;
-Commit-Queue: Jason Thai &lt;jasontt@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#978464}
+We add logic to HelpBubbleView to ensure that there is only one default
+button and that it is correctly placed, and then add tests to verify
+that the non-default button order is not shuffled on each platform.
+
+Finally, we simplify some of the test logic to use the new
+InteractionTestUtil* classes instead of sending events directly to
+Views.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iff9eed6da8f36e12d34c1d55e56a5cf87117cce6">Iff9eed6da8f36e12d34c1d55e56a5cf87117cce6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3504098">https://chromium-review.googlesource.com/c/chromium/src/+/3504098</a>
+Reviewed-by: David Pennington &lt;dpenning@chromium.org&gt;
+Commit-Queue: Dana Fried &lt;dfried@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#978485}
 </pre>
 
 </body>
