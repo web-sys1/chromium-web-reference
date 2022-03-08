@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/978485/"> 978485</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb2c10850fd8a191089205f55a1aa387e901a8c5">fb2c10850fd8a191089205f55a1aa387e901a8c5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/978510/"> 978510</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/891a60535031b26bd7be6040361de3189e8d8fb2">891a60535031b26bd7be6040361de3189e8d8fb2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/978442/">978442</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5119ccfc6c45082023cc50528ad3bb9577c4ba03">5119ccfc6c45082023cc50528ad3bb9577c4ba03</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/978493/">978493</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b1a6262027f681c3a74d671412f142b11bccb5e8">b1a6262027f681c3a74d671412f142b11bccb5e8</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   fb2c10850fd8a191089205f55a1aa387e901a8c5
+   891a60535031b26bd7be6040361de3189e8d8fb2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/fb2c10850fd8a191089205f55a1aa387e901a8c5">
+    <a href="/chromium/src/+log/891a60535031b26bd7be6040361de3189e8d8fb2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/fb2c10850fd8a191089205f55a1aa387e901a8c5.tar.gz">
+    <a href="/chromium/src/+archive/891a60535031b26bd7be6040361de3189e8d8fb2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Dana Fried &lt;dfried@chromium.org&gt;
+   Christopher Cameron &lt;ccameron@chromium.org&gt;
   </td>
   <td>
-   Mon Mar 07 22:39:33 2022
+   Mon Mar 07 23:44:08 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Mar 07 22:39:33 2022
+   Mon Mar 07 23:44:08 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/fb2c10850fd8a191089205f55a1aa387e901a8c5/">
-    b2ee3a7548709dbcadfc36bad53524175adbf77a
+   <a href="/chromium/src/+/891a60535031b26bd7be6040361de3189e8d8fb2/">
+    5473acbca50ab25646e8c97f2f063d9743afefe3
    </a>
   </td>
  </tr>
@@ -166,45 +166,26 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/fb2c10850fd8a191089205f55a1aa387e901a8c5%5E">
-    f6b909523136e8fa12d42fecc25f9c139d0fb903
+   <a href="/chromium/src/+/891a60535031b26bd7be6040361de3189e8d8fb2%5E">
+    6e2bb69d5b81cf2655e7f80e7bd9e9514b29399b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/fb2c10850fd8a191089205f55a1aa387e901a8c5%5E%21/">
+    <a href="/chromium/src/+/891a60535031b26bd7be6040361de3189e8d8fb2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Positioning of default button handled by platform-specific code.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix uninitialized read in ReadTargetColorParams
 
-The current utility that provides the value for whether a platform
-prefers leading or trailing default buttons is in views, but was needed
-in code that was not dependent on Views. We initially solved the problem
-by creating a virtual function in FeaturePromoControllerCommon that was
-implemented by BrowserFeaturePromoController (which is Views-dependent).
-
-This CL pushes the decision of where to place default buttons down into
-platform specific implementations of HelpBubbleFactory. This means that
-the HelpBubbleParams::buttons field no longer guarantees ordering of
-buttons; however, we do guarantee the order of non-default buttons will
-not change.
-
-We add logic to HelpBubbleView to ensure that there is only one default
-button and that it is correctly placed, and then add tests to verify
-that the non-default button order is not shuffled on each platform.
-
-Finally, we simplify some of the test logic to use the new
-InteractionTestUtil* classes instead of sending events directly to
-Views.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iff9eed6da8f36e12d34c1d55e56a5cf87117cce6">Iff9eed6da8f36e12d34c1d55e56a5cf87117cce6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3504098">https://chromium-review.googlesource.com/c/chromium/src/+/3504098</a>
-Reviewed-by: David Pennington &lt;dpenning@chromium.org&gt;
-Commit-Queue: Dana Fried &lt;dfried@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#978485}
+Bug: 1302321
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I01a29b7b1d4968e82ec812d1be134686a103a801">I01a29b7b1d4968e82ec812d1be134686a103a801</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3508213">https://chromium-review.googlesource.com/c/chromium/src/+/3508213</a>
+Reviewed-by: Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
+Commit-Queue: ccameron chromium &lt;ccameron@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#978510}
 </pre>
 
 </body>
