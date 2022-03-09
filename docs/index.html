@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979087/"> 979087</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8c94a2f56ef62ef2f5b46065ea57bc4bffb0866e">8c94a2f56ef62ef2f5b46065ea57bc4bffb0866e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979090/"> 979090</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/167ca64398568235a79f82bfb177f2a3694f2495">167ca64398568235a79f82bfb177f2a3694f2495</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/979077/">979077</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8c94a2f56ef62ef2f5b46065ea57bc4bffb0866e
+   167ca64398568235a79f82bfb177f2a3694f2495
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8c94a2f56ef62ef2f5b46065ea57bc4bffb0866e">
+    <a href="/chromium/src/+log/167ca64398568235a79f82bfb177f2a3694f2495">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8c94a2f56ef62ef2f5b46065ea57bc4bffb0866e.tar.gz">
+    <a href="/chromium/src/+archive/167ca64398568235a79f82bfb177f2a3694f2495.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Tsuyoshi Horo &lt;horo@chromium.org&gt;
   </td>
   <td>
-   Wed Mar 09 04:47:35 2022
+   Wed Mar 09 05:16:39 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 09 04:47:35 2022
+   Wed Mar 09 05:16:39 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8c94a2f56ef62ef2f5b46065ea57bc4bffb0866e/">
-    6ca93e829308ea68b68bb9155bc5a4296d0dc52f
+   <a href="/chromium/src/+/167ca64398568235a79f82bfb177f2a3694f2495/">
+    383679aa6b0dc706b00c250872e1d5bee8c81d37
    </a>
   </td>
  </tr>
@@ -166,42 +166,59 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8c94a2f56ef62ef2f5b46065ea57bc4bffb0866e%5E">
-    8ddd9dbec4eb82776004ed838f60106750366829
+   <a href="/chromium/src/+/167ca64398568235a79f82bfb177f2a3694f2495%5E">
+    a4748157e8a0ef1ba3301651d59fb83f3e8a3ea1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8c94a2f56ef62ef2f5b46065ea57bc4bffb0866e%5E%21/">
+    <a href="/chromium/src/+/167ca64398568235a79f82bfb177f2a3694f2495%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Perfetto Trace Processor Mac from 504b4099476a to 36ea3cdde2ae
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">MPArch Fenced Frame: Measure navigation start time in renderer process
 
-<a href="https://android.googlesource.com/platform/external/perfetto.git/+log/504b4099476a..36ea3cdde2ae">https://android.googlesource.com/platform/external/perfetto.git/+log/504b4099476a..36ea3cdde2ae</a>
+Currently, the navigation start timings of Shadow DOM fenced frame and
+MPArch fenced frame are differently measured.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/perfetto-trace-processor-mac-chromium">https://autoroll.skia.org/r/perfetto-trace-processor-mac-chromium</a>
-Please CC perfetto-bugs@google.com on the revert to ensure that a human
-is aware of the problem.
+When a new fenced frame is inserted to a page, the navigation start time
+of Shadow DOM fenced frame is measured when the fenced frame is inserted
+to the document in the renderer process. This is the same as a normal
+iframe.
 
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+But the navigation start time of MPArch fenced frame is not measured in
+the renderer process. The navigation start is measured in the browser
+process when it receives the FencedFrameOwnerHost::Navigate IPC message.
+  FencedFrame::Navigate()
+    =&gt; Navigator::NavigateFromFrameProxy()
+      =&gt; NavigationControllerImpl::NavigateFromFrameProxy()
+        =&gt; CreateNavigationRequestFromLoadParams()
+          =&gt; navigation_start = base::TimeTicks::Now();
+To fix this issue, this CL introduces navigation_start_time argument in
+FencedFrameOwnerHost::Navigate IPC. And use it in CommonNavigationParam.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+And also when AvoidUnnecessaryBeforeUnloadCheck feature is not enabled,
+the start time is overridden by the time of before_unload_end_time
+which is measured in blink::LocalFrameMojoHandler::BeforeUnload().
+This is because the browser process unnecessarily sends BeforeUnload
+IPC message to the renderer process for legacy reasons
+(crbug.com/365039).
+To fix this issue, this CL adds "!IsFencedFrameRoot()" check for the
+run_beforeunload_for_legacy_frame flag in
+RenderFrameHostImpl::CheckOrDispatchBeforeUnloadForSubtree().
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
 
-Tbr: perfetto-bugs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I96a3ad7e1488bf40ad1498610b0e48b865e1e814">I96a3ad7e1488bf40ad1498610b0e48b865e1e814</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3512010">https://chromium-review.googlesource.com/c/chromium/src/+/3512010</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#979087}
+Bug: 1263341
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie2382ec5b030f8e9b4cc76003b6ad8c6305ae11f">Ie2382ec5b030f8e9b4cc76003b6ad8c6305ae11f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3244673">https://chromium-review.googlesource.com/c/chromium/src/+/3244673</a>
+Reviewed-by: Dominic Farolino &lt;dom@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
+Commit-Queue: Tsuyoshi Horo &lt;horo@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#979090}
 </pre>
 
 </body>
