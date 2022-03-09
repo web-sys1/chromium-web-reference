@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979096/"> 979096</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/56824b94b9757d295888e8f506ea343755f30f4f">56824b94b9757d295888e8f506ea343755f30f4f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979098/"> 979098</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/596154d38bbb485e9024a6c4cf32e76770000f0b">596154d38bbb485e9024a6c4cf32e76770000f0b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/979077/">979077</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/deeec9a7a96a062e6e571e19e42a10bc2d13e810">deeec9a7a96a062e6e571e19e42a10bc2d13e810</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/979095/">979095</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/19e2b31cf8299fd2e715eda7d5c3e86de4dc1227">19e2b31cf8299fd2e715eda7d5c3e86de4dc1227</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   56824b94b9757d295888e8f506ea343755f30f4f
+   596154d38bbb485e9024a6c4cf32e76770000f0b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/56824b94b9757d295888e8f506ea343755f30f4f">
+    <a href="/chromium/src/+log/596154d38bbb485e9024a6c4cf32e76770000f0b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/56824b94b9757d295888e8f506ea343755f30f4f.tar.gz">
+    <a href="/chromium/src/+archive/596154d38bbb485e9024a6c4cf32e76770000f0b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Stephen White &lt;senorblanco@chromium.org&gt;
+   Tsuyoshi Horo &lt;horo@chromium.org&gt;
   </td>
   <td>
-   Wed Mar 09 05:39:20 2022
+   Wed Mar 09 06:07:32 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 09 05:39:20 2022
+   Wed Mar 09 06:07:32 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/56824b94b9757d295888e8f506ea343755f30f4f/">
-    1ae48a8fc8214fb26f82873739b19c4d1aa88013
+   <a href="/chromium/src/+/596154d38bbb485e9024a6c4cf32e76770000f0b/">
+    bd2c8974630a981c4661c312c3313b9f418f914e
    </a>
   </td>
  </tr>
@@ -166,39 +166,92 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/56824b94b9757d295888e8f506ea343755f30f4f%5E">
-    19e2b31cf8299fd2e715eda7d5c3e86de4dc1227
+   <a href="/chromium/src/+/596154d38bbb485e9024a6c4cf32e76770000f0b%5E">
+    55e8a22bb3ef00b9aa462b5991528b3502fb0d14
    </a>
    <span>
     [
-    <a href="/chromium/src/+/56824b94b9757d295888e8f506ea343755f30f4f%5E%21/">
+    <a href="/chromium/src/+/596154d38bbb485e9024a6c4cf32e76770000f0b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix WebGPU/Compat prototype.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "Support ChromeOS external protocol dialog for Fenced Frame navigations"
 
-The GL texture in SharedImageBackingD3D is now created lazily, so do so
-on the Compat path by calling ProduceGLTexturePassthrough() and passing
-the result to SharedImageRepresentationDawnEGLImage for ownership.
-(This is similar to how SharedImageRepresentationSkiaGL works.)
+This is a reland of commit 56fb5f726ca08146a3bd0095c3e65537d82b776b
 
-This also allows SharedImageRepresentationDawnEGLImage to extract the
-EGLImage from it in a platform-independent manner, once
-GLImage::GetEGLImage() had been made virtual.
+The original CL was reverted (crrev.com/c/3508452) because it caused
+the test failures of UrlOverridingTest.
 
-Finally, the EGLImage path in Dawn does not like having the chained
-texture descriptor that the D3D12 path prefers, so move the Compat call
-above the creation of said chain.
+The original CL had a bug that the argument order of
+ExternalProtocolHandler::RunExternalProtocolDialog() was wrong for
+Android. |is_in_fenced_frame_tree| should be added after
+|has_user_gesture|. But, the order was swapped incorrectly. So
+|has_user_gesture| flag is always false for non-fenced frame
+navigations.
 
-Bug: 1303168, 1303602
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8a07a972a43909ca8cadb62bec1a8ee9e05da130">I8a07a972a43909ca8cadb62bec1a8ee9e05da130</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3508454">https://chromium-review.googlesource.com/c/chromium/src/+/3508454</a>
-Reviewed-by: Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
-Commit-Queue: Stephen White &lt;senorblanco@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#979096}
+This CL fixes the argument order.
+
+Bug: 1303626
+
+Original change's description:
+&gt; Support ChromeOS external protocol dialog for Fenced Frame navigations
+&gt;
+&gt; Currently ChromeOS Chrome doesn’t support external protocol links (eg:
+&gt; tel:, intent://, market://) in fenced frames. This is because we use
+&gt; AUTO_SUBFRAME PageTransition for all navigations in fenced frames
+&gt; (crbug.com/1264936), and apps::ShouldIgnoreNavigation() check in
+&gt; arc::RunArcExternalProtocolDialog() returns false for such navigations.
+&gt;
+&gt; External protocol links are very important in Fenced Frame’s ads use
+&gt; cases. So this CL makes them work by passing |is_in_fenced_frame_tree|
+&gt; flag from NavigationURLLoaderImpl::PrepareForNonInterceptedRequest() to
+&gt; apps::ShouldIgnoreNavigation().
+&gt;
+&gt;  NavigationURLLoaderImpl::PrepareForNonInterceptedRequest()
+&gt;   =&gt; ChromeContentBrowserClient::HandleExternalProtocol()
+&gt;    =&gt; LaunchURL()
+&gt;     =&gt; ExternalProtocolHandler::LaunchUrl()
+&gt;      =&gt; OnDefaultProtocolClientWorkerFinished()
+&gt;       =&gt; RunExternalProtocolDialogWithDelegate()
+&gt;        =&gt; ExternalProtocolHandler::RunExternalProtocolDialog()
+&gt;         =&gt; arc::RunArcExternalProtocolDialog()
+&gt;          =&gt; apps::ShouldIgnoreNavigation()
+&gt;
+&gt; And apps::ShouldIgnoreNavigation() will return false iff
+&gt; |has_user_gesture| is true when |is_in_fenced_frame_tree| is true.
+&gt;
+&gt; And also this CL do the followings:
+&gt; - Removes ShouldIgnoreNavigation()'s argument |allow_client_redirect|
+&gt;   which is always true after <a href="https://crrev.com/c/1924329.">https://crrev.com/c/1924329.</a>
+&gt; - Introduces NavigationHandle::IsInFencedFrameTree() to use in
+&gt;   IsNavigateFromLink() to call ShouldIgnoreNavigation().
+&gt;
+&gt; Bug: 1271414
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I398ff0b773cb3704bbe068c5dc3274196ec265b8">I398ff0b773cb3704bbe068c5dc3274196ec265b8</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3490516">https://chromium-review.googlesource.com/c/chromium/src/+/3490516</a>
+&gt; Reviewed-by: Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
+&gt; Reviewed-by: Dave Tapuska &lt;dtapuska@chromium.org&gt;
+&gt; Reviewed-by: Filip Gorski &lt;fgorski@chromium.org&gt;
+&gt; Reviewed-by: Richard Coles &lt;torne@chromium.org&gt;
+&gt; Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+&gt; Reviewed-by: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
+&gt; Commit-Queue: Tsuyoshi Horo &lt;horo@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#978226}
+
+Bug: 1271414
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia1506a69a62b6e7529c51f3526fb5af0721e1d51">Ia1506a69a62b6e7529c51f3526fb5af0721e1d51</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3506590">https://chromium-review.googlesource.com/c/chromium/src/+/3506590</a>
+Reviewed-by: Filip Gorski &lt;fgorski@chromium.org&gt;
+Reviewed-by: Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
+Reviewed-by: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
+Reviewed-by: Richard Coles &lt;torne@chromium.org&gt;
+Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Auto-Submit: Tsuyoshi Horo &lt;horo@chromium.org&gt;
+Commit-Queue: Tsuyoshi Horo &lt;horo@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#979098}
 </pre>
 
 </body>
