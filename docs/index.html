@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979090/"> 979090</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/167ca64398568235a79f82bfb177f2a3694f2495">167ca64398568235a79f82bfb177f2a3694f2495</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979096/"> 979096</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/56824b94b9757d295888e8f506ea343755f30f4f">56824b94b9757d295888e8f506ea343755f30f4f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/979077/">979077</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   167ca64398568235a79f82bfb177f2a3694f2495
+   56824b94b9757d295888e8f506ea343755f30f4f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/167ca64398568235a79f82bfb177f2a3694f2495">
+    <a href="/chromium/src/+log/56824b94b9757d295888e8f506ea343755f30f4f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/167ca64398568235a79f82bfb177f2a3694f2495.tar.gz">
+    <a href="/chromium/src/+archive/56824b94b9757d295888e8f506ea343755f30f4f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tsuyoshi Horo &lt;horo@chromium.org&gt;
+   Stephen White &lt;senorblanco@chromium.org&gt;
   </td>
   <td>
-   Wed Mar 09 05:16:39 2022
+   Wed Mar 09 05:39:20 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 09 05:16:39 2022
+   Wed Mar 09 05:39:20 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/167ca64398568235a79f82bfb177f2a3694f2495/">
-    383679aa6b0dc706b00c250872e1d5bee8c81d37
+   <a href="/chromium/src/+/56824b94b9757d295888e8f506ea343755f30f4f/">
+    1ae48a8fc8214fb26f82873739b19c4d1aa88013
    </a>
   </td>
  </tr>
@@ -166,59 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/167ca64398568235a79f82bfb177f2a3694f2495%5E">
-    a4748157e8a0ef1ba3301651d59fb83f3e8a3ea1
+   <a href="/chromium/src/+/56824b94b9757d295888e8f506ea343755f30f4f%5E">
+    19e2b31cf8299fd2e715eda7d5c3e86de4dc1227
    </a>
    <span>
     [
-    <a href="/chromium/src/+/167ca64398568235a79f82bfb177f2a3694f2495%5E%21/">
+    <a href="/chromium/src/+/56824b94b9757d295888e8f506ea343755f30f4f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">MPArch Fenced Frame: Measure navigation start time in renderer process
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix WebGPU/Compat prototype.
 
-Currently, the navigation start timings of Shadow DOM fenced frame and
-MPArch fenced frame are differently measured.
+The GL texture in SharedImageBackingD3D is now created lazily, so do so
+on the Compat path by calling ProduceGLTexturePassthrough() and passing
+the result to SharedImageRepresentationDawnEGLImage for ownership.
+(This is similar to how SharedImageRepresentationSkiaGL works.)
 
-When a new fenced frame is inserted to a page, the navigation start time
-of Shadow DOM fenced frame is measured when the fenced frame is inserted
-to the document in the renderer process. This is the same as a normal
-iframe.
+This also allows SharedImageRepresentationDawnEGLImage to extract the
+EGLImage from it in a platform-independent manner, once
+GLImage::GetEGLImage() had been made virtual.
 
-But the navigation start time of MPArch fenced frame is not measured in
-the renderer process. The navigation start is measured in the browser
-process when it receives the FencedFrameOwnerHost::Navigate IPC message.
-  FencedFrame::Navigate()
-    =&gt; Navigator::NavigateFromFrameProxy()
-      =&gt; NavigationControllerImpl::NavigateFromFrameProxy()
-        =&gt; CreateNavigationRequestFromLoadParams()
-          =&gt; navigation_start = base::TimeTicks::Now();
-To fix this issue, this CL introduces navigation_start_time argument in
-FencedFrameOwnerHost::Navigate IPC. And use it in CommonNavigationParam.
+Finally, the EGLImage path in Dawn does not like having the chained
+texture descriptor that the D3D12 path prefers, so move the Compat call
+above the creation of said chain.
 
-And also when AvoidUnnecessaryBeforeUnloadCheck feature is not enabled,
-the start time is overridden by the time of before_unload_end_time
-which is measured in blink::LocalFrameMojoHandler::BeforeUnload().
-This is because the browser process unnecessarily sends BeforeUnload
-IPC message to the renderer process for legacy reasons
-(crbug.com/365039).
-To fix this issue, this CL adds "!IsFencedFrameRoot()" check for the
-run_beforeunload_for_legacy_frame flag in
-RenderFrameHostImpl::CheckOrDispatchBeforeUnloadForSubtree().
-
-
-Bug: 1263341
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie2382ec5b030f8e9b4cc76003b6ad8c6305ae11f">Ie2382ec5b030f8e9b4cc76003b6ad8c6305ae11f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3244673">https://chromium-review.googlesource.com/c/chromium/src/+/3244673</a>
-Reviewed-by: Dominic Farolino &lt;dom@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
-Commit-Queue: Tsuyoshi Horo &lt;horo@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#979090}
+Bug: 1303168, 1303602
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8a07a972a43909ca8cadb62bec1a8ee9e05da130">I8a07a972a43909ca8cadb62bec1a8ee9e05da130</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3508454">https://chromium-review.googlesource.com/c/chromium/src/+/3508454</a>
+Reviewed-by: Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
+Commit-Queue: Stephen White &lt;senorblanco@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#979096}
 </pre>
 
 </body>
