@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979280/"> 979280</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/980332a3fb4461eab04e99ad9cbaa4474f7bc6e4">980332a3fb4461eab04e99ad9cbaa4474f7bc6e4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979275/"> 979275</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9b08f2b73b22eccb4ce5637b4110bfc598016269">9b08f2b73b22eccb4ce5637b4110bfc598016269</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/979263/">979263</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   980332a3fb4461eab04e99ad9cbaa4474f7bc6e4
+   9b08f2b73b22eccb4ce5637b4110bfc598016269
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/980332a3fb4461eab04e99ad9cbaa4474f7bc6e4">
+    <a href="/chromium/src/+log/9b08f2b73b22eccb4ce5637b4110bfc598016269">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/980332a3fb4461eab04e99ad9cbaa4474f7bc6e4.tar.gz">
+    <a href="/chromium/src/+archive/9b08f2b73b22eccb4ce5637b4110bfc598016269.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   danakj &lt;danakj@chromium.org&gt;
   </td>
   <td>
-   Wed Mar 09 16:58:25 2022
+   Wed Mar 09 16:36:29 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 09 16:58:25 2022
+   Wed Mar 09 16:36:29 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/980332a3fb4461eab04e99ad9cbaa4474f7bc6e4/">
-    0bf5f1aee02d946e59e5d437a339ecbc0f035d6a
+   <a href="/chromium/src/+/9b08f2b73b22eccb4ce5637b4110bfc598016269/">
+    b0314acefca48dd789186656b780d95f48ad6bb7
    </a>
   </td>
  </tr>
@@ -166,40 +166,80 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/980332a3fb4461eab04e99ad9cbaa4474f7bc6e4%5E">
-    d2efb0e0fac1eebf4a2dbc0f8c260433e116c273
+   <a href="/chromium/src/+/9b08f2b73b22eccb4ce5637b4110bfc598016269%5E">
+    bc52ccc47d3e89f0e41a4390fb1493a5520a8cdb
    </a>
    <span>
     [
-    <a href="/chromium/src/+/980332a3fb4461eab04e99ad9cbaa4474f7bc6e4%5E%21/">
+    <a href="/chromium/src/+/9b08f2b73b22eccb4ce5637b4110bfc598016269%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll ChromeOS Orderfiles from 100-4880.0-1646047924-benchmark-100.0.4896.25-r1 to 100-4896.13-1646652422-benchmark-100.0.4896.26-r1
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move tests for the base crate into base_unittests
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/cros-orderfile-chromium">https://autoroll.skia.org/r/cros-orderfile-chromium</a>
-Please CC c-compiler-chrome@google.com on the revert to ensure that a human
-is aware of the problem.
+This makes use of the #[gtest] macro to define Rust tests inside the
+base_unittests binary. The tests use the base crate's public API (which
+includes a ForTesting function).
 
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+This will enable the tests on the Rust FYI bots, as well as
+demonstrate a usage of cross-component Rust code in a component build.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+As there are now 2 crate roots in //base, one for prod and one for unit
+tests, we rename base/lib.rs to base/base.rs in order to make it more
+clear.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
+Any assert_eq!() macros are converted to the gtest-friendly expect_eq!()
+in order to not take down the whole test suite on a failure.
 
-Tbr: c-compiler-chrome@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib521bb3ff51065c935e81f3e9809c0d72d526bff">Ib521bb3ff51065c935e81f3e9809c0d72d526bff</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3513321">https://chromium-review.googlesource.com/c/chromium/src/+/3513321</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#979280}
+We make the base and base_unittests crate roots always exist (when
+enable_rust=true), and then conditionally enable the JSON parser and
+Values support when the build_rust_json_parser buildflag is enabled,
+with some TODOs around proper buildflag support. The Value support
+should move out of the JSON parser's buildflag later.
+
+And we avoid building the Rust part of base_unittests on IOS since
+the IOS test() templates do not support mixing in Rust with C++ yet.
+
+After this change, base_unittests includes (when rust is enabled):
+Note: Google Test filter = Rust*
+[==========] Running 7 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from RustValuesTest
+[ RUN      ] RustValuesTest.SetDict
+[       OK ] RustValuesTest.SetDict (0 ms)
+[ RUN      ] RustValuesTest.SetList
+[       OK ] RustValuesTest.SetList (0 ms)
+[ RUN      ] RustValuesTest.ReuseSlot
+[       OK ] RustValuesTest.ReuseSlot (0 ms)
+[ RUN      ] RustValuesTest.StartsNone
+[       OK ] RustValuesTest.StartsNone (0 ms)
+[ RUN      ] RustValuesTest.SetSimpleOptionalValues
+[       OK ] RustValuesTest.SetSimpleOptionalValues (0 ms)
+[ RUN      ] RustValuesTest.AllocDealloc
+[       OK ] RustValuesTest.AllocDealloc (0 ms)
+[----------] 6 tests from RustValuesTest (0 ms total)
+
+[----------] 1 test from RustJsonParserTest
+[ RUN      ] RustJsonParserTest.DecodeJson
+[       OK ] RustJsonParserTest.DecodeJson (0 ms)
+[----------] 1 test from RustJsonParserTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 2 test suites ran. (0 ms total)
+[  PASSED  ] 7 tests.
+
+R=adetaylor@chromium.org
+
+Bug: 1293979, 1296156, 1304253
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3c0b9c7724fac72e33aba635c4a7e96d9a76b0d4">I3c0b9c7724fac72e33aba635c4a7e96d9a76b0d4</a>
+Cq-Include-Trybots: luci.chromium.try:android-rust-arm-rel,linux-rust-x64-rel
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3509990">https://chromium-review.googlesource.com/c/chromium/src/+/3509990</a>
+Reviewed-by: Łukasz Anforowicz &lt;lukasza@chromium.org&gt;
+Commit-Queue: danakj &lt;danakj@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#979275}
 </pre>
 
 </body>
