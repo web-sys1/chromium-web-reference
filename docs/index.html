@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979464/"> 979464</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/106073c3b640038799822399ec19e81edb05b581">106073c3b640038799822399ec19e81edb05b581</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979503/"> 979503</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/13a27affd8b8ea70fcdf04af7807b851f74c033d">13a27affd8b8ea70fcdf04af7807b851f74c033d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/979458/">979458</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   106073c3b640038799822399ec19e81edb05b581
+   13a27affd8b8ea70fcdf04af7807b851f74c033d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/106073c3b640038799822399ec19e81edb05b581">
+    <a href="/chromium/src/+log/13a27affd8b8ea70fcdf04af7807b851f74c033d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/106073c3b640038799822399ec19e81edb05b581.tar.gz">
+    <a href="/chromium/src/+archive/13a27affd8b8ea70fcdf04af7807b851f74c033d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Russ Hamilton &lt;behamilton@google.com&gt;
+   Antonio Gomes &lt;tonikitoo@igalia.com&gt;
   </td>
   <td>
-   Wed Mar 09 22:42:32 2022
+   Wed Mar 09 23:49:11 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 09 22:42:32 2022
+   Wed Mar 09 23:49:11 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/106073c3b640038799822399ec19e81edb05b581/">
-    48e2242f35c78713c35769d2ada91b3b0f6d18d3
+   <a href="/chromium/src/+/13a27affd8b8ea70fcdf04af7807b851f74c033d/">
+    c1bca76f809cc9ca964e36a7fa79840ef6800572
    </a>
   </td>
  </tr>
@@ -166,28 +166,58 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/106073c3b640038799822399ec19e81edb05b581%5E">
-    893c28632eb2ac6510e2064c130c09624a79fdf5
+   <a href="/chromium/src/+/13a27affd8b8ea70fcdf04af7807b851f74c033d%5E">
+    862b1ea6fbe9362752b6afe31346bc700dc36b86
    </a>
    <span>
     [
-    <a href="/chromium/src/+/106073c3b640038799822399ec19e81edb05b581%5E%21/">
+    <a href="/chromium/src/+/13a27affd8b8ea70fcdf04af7807b851f74c033d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Attach Interest Group owner and name to URN mapping
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Wrong IDS_FOO used in BookmarkEditorView::GetMenuModel
 
-Bug: 1298625
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic9d9f0dd169b4528f4390b954d169f48371b6201">Ic9d9f0dd169b4528f4390b954d169f48371b6201</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3470483">https://chromium-review.googlesource.com/c/chromium/src/+/3470483</a>
-Reviewed-by: Caleb Raitto &lt;caraitto@chromium.org&gt;
-Reviewed-by: Nasko Oskov &lt;nasko@chromium.org&gt;
-Reviewed-by: Dominic Farolino &lt;dom@chromium.org&gt;
-Commit-Queue: Russ Hamilton &lt;behamilton@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#979464}
+This causes a DCHECK to be hit on Lacros, Ash/Chrome web browser and
+Chrome/Linux:
+
+&gt; DCHECK: [simple_menu_model.cc(93)] command_id != string_id (6976 vs. 6976)
+
+Basically, BookmarkEditorView::GetMenuModel() uses exactly the pattern
+that SimpleMenuModel::AddItemWithStringId() enforces not to.
+See:
+
+&gt; ui::SimpleMenuModel* BookmarkEditorView::GetMenuModel() {
+&gt;  if (!context_menu_model_.get()) {
+&gt;   context_menu_model_ = std::make_unique&lt;ui::SimpleMenuModel&gt;(this);
+&gt;   context_menu_model_-&gt;AddItemWithStringId(IDS_EDIT, IDS_EDIT);
+&gt;   context_menu_model_-&gt;AddItemWithStringId(IDS_DELETE, IDS_DELETE);
+&gt; (...)
+
+and
+
+&gt; void SimpleMenuModel::AddItemWithStringId(int command_id, int string_id) {
+&gt; // Prevent this dangerous pattern:
+&gt; //   model-&gt;AddItemWithStringId(IDS_FOO, IDS_FOO);
+&gt; // This conflates string IDs with command IDs, which are separate namespaces.
+&gt; // Sometimes this is an accident where this is meant:
+&gt; //   model-&gt;AddItemWithStringId(IDC_FOO, IDS_FOO);
+&gt; (...)
+&gt; DCHECK_NE(command_id, string_id);
+
+This CL fixes it by introducing new local IDC entries to the specific
+scenarios of bookmark editor menu items, and use them accordingly.
+
+BUG=1304316
+R=ellyjones@chromium.org, sky@chromium.org
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id4947baeaf3206005ecacb7ecfca42e0592f0a76">Id4947baeaf3206005ecacb7ecfca42e0592f0a76</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3513420">https://chromium-review.googlesource.com/c/chromium/src/+/3513420</a>
+Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+Commit-Queue: Antonio Gomes &lt;tonikitoo@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#979503}
 </pre>
 
 </body>
