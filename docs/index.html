@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979806/"> 979806</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/254d31968ece2b5bb58984ed2f79ae01d001c9d1">254d31968ece2b5bb58984ed2f79ae01d001c9d1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979824/"> 979824</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bd6e2cb7b2b9771a7625adaa6373578634147feb">bd6e2cb7b2b9771a7625adaa6373578634147feb</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/979777/">979777</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   254d31968ece2b5bb58984ed2f79ae01d001c9d1
+   bd6e2cb7b2b9771a7625adaa6373578634147feb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/254d31968ece2b5bb58984ed2f79ae01d001c9d1">
+    <a href="/chromium/src/+log/bd6e2cb7b2b9771a7625adaa6373578634147feb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/254d31968ece2b5bb58984ed2f79ae01d001c9d1.tar.gz">
+    <a href="/chromium/src/+archive/bd6e2cb7b2b9771a7625adaa6373578634147feb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Brandon Wylie &lt;wylieb@chromium.org&gt;
+   Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 10 16:38:21 2022
+   Thu Mar 10 17:15:14 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 10 16:38:21 2022
+   Thu Mar 10 17:15:14 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/254d31968ece2b5bb58984ed2f79ae01d001c9d1/">
-    c3b2b71ab4d43f0a79cfad5e08e10e66fbae5933
+   <a href="/chromium/src/+/bd6e2cb7b2b9771a7625adaa6373578634147feb/">
+    665d7fab3b362ef0ed3e0ffba7dd367c3fab6881
    </a>
   </td>
  </tr>
@@ -166,32 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/254d31968ece2b5bb58984ed2f79ae01d001c9d1%5E">
-    e827d58bd8cdc00690cfb80adeba277aef9050a2
+   <a href="/chromium/src/+/bd6e2cb7b2b9771a7625adaa6373578634147feb%5E">
+    485e02544fd386e957319148bc2ab9d79e7ce850
    </a>
    <span>
     [
-    <a href="/chromium/src/+/254d31968ece2b5bb58984ed2f79ae01d001c9d1%5E%21/">
+    <a href="/chromium/src/+/bd6e2cb7b2b9771a7625adaa6373578634147feb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove partnercustomizations AppHooks dep and modularize code
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Implement event-trigger-data matching during attribution
 
-* Remove AppHooks dependency for partnercustomizations.
-* Move partnercustomizations code to its own module.
-* Move test rules to the partnercustomizations module and setup BUILD.
-* Move tests to the partnercustomizations module.
+<a href="https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#optional-attribution-filters">https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#optional-attribution-filters</a>
 
-Bug: 1291657
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I68ddd6071ecb76ecc69ce9bd4007e88b89d70ba5">I68ddd6071ecb76ecc69ce9bd4007e88b89d70ba5</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3450864">https://chromium-review.googlesource.com/c/chromium/src/+/3450864</a>
-Reviewed-by: bttk - &lt;bttk@chromium.org&gt;
-Reviewed-by: Filip Gorski &lt;fgorski@chromium.org&gt;
-Commit-Queue: Brandon Wylie &lt;wylieb@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#979806}
+The trigger data, priority, and dedup key associated with the
+event-level report are determined by the first matching event trigger
+data entry. If none match, defaults of 0, 0, and null are used.
+
+Note that it is safe to remove
+AttributionTrigger::EventLevelResult::kNoMatchingEventTriggers and reuse
+its integer value because that enum has never been deployed and
+therefore no metric with that value has been recorded.
+
+Bug: 1295328, 1303284, 1275201
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibc39c27aa860b377238512de9c51b47bc32c49a8">Ibc39c27aa860b377238512de9c51b47bc32c49a8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3514854">https://chromium-review.googlesource.com/c/chromium/src/+/3514854</a>
+Reviewed-by: Robert Sesek &lt;rsesek@chromium.org&gt;
+Reviewed-by: Nan Lin &lt;linnan@chromium.org&gt;
+Reviewed-by: John Delaney &lt;johnidel@chromium.org&gt;
+Commit-Queue: Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#979824}
 </pre>
 
 </body>
