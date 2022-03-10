@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979503/"> 979503</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/13a27affd8b8ea70fcdf04af7807b851f74c033d">13a27affd8b8ea70fcdf04af7807b851f74c033d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979526/"> 979526</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6e2716408699193d8dd4511d75b9baa5fc05220e">6e2716408699193d8dd4511d75b9baa5fc05220e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/979458/">979458</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c0e1f5e9a8162943150e834f8edeb473d993bf9e">c0e1f5e9a8162943150e834f8edeb473d993bf9e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/979496/">979496</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/536b71b26a2689625ab23bf48a415c62301d0d4a">536b71b26a2689625ab23bf48a415c62301d0d4a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   13a27affd8b8ea70fcdf04af7807b851f74c033d
+   6e2716408699193d8dd4511d75b9baa5fc05220e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/13a27affd8b8ea70fcdf04af7807b851f74c033d">
+    <a href="/chromium/src/+log/6e2716408699193d8dd4511d75b9baa5fc05220e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/13a27affd8b8ea70fcdf04af7807b851f74c033d.tar.gz">
+    <a href="/chromium/src/+archive/6e2716408699193d8dd4511d75b9baa5fc05220e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Antonio Gomes &lt;tonikitoo@igalia.com&gt;
+   Alex Yang &lt;aycyang@google.com&gt;
   </td>
   <td>
-   Wed Mar 09 23:49:11 2022
+   Thu Mar 10 00:21:30 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 09 23:49:11 2022
+   Thu Mar 10 00:21:30 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/13a27affd8b8ea70fcdf04af7807b851f74c033d/">
-    c1bca76f809cc9ca964e36a7fa79840ef6800572
+   <a href="/chromium/src/+/6e2716408699193d8dd4511d75b9baa5fc05220e/">
+    d5f8a81eda7e1c5f765a07bf62d08cad67faf56a
    </a>
   </td>
  </tr>
@@ -166,58 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/13a27affd8b8ea70fcdf04af7807b851f74c033d%5E">
-    862b1ea6fbe9362752b6afe31346bc700dc36b86
+   <a href="/chromium/src/+/6e2716408699193d8dd4511d75b9baa5fc05220e%5E">
+    eb6de1138095023a33bd6fa6d64b17a19f3fb23e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/13a27affd8b8ea70fcdf04af7807b851f74c033d%5E%21/">
+    <a href="/chromium/src/+/6e2716408699193d8dd4511d75b9baa5fc05220e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Wrong IDS_FOO used in BookmarkEditorView::GetMenuModel
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Delete ToolbarButton subclass for new tab button
 
-This causes a DCHECK to be hit on Lacros, Ash/Chrome web browser and
-Chrome/Linux:
+WebUINewTabButton inherits from ToolbarButton to update the button
+color when the theme changes.
 
-&gt; DCHECK: [simple_menu_model.cc(93)] command_id != string_id (6976 vs. 6976)
+This subclassing is obviated by calling ToolbarButton::SetVectorIcon(),
+which already automatically updates the button color on theme change.
 
-Basically, BookmarkEditorView::GetMenuModel() uses exactly the pattern
-that SimpleMenuModel::AddItemWithStringId() enforces not to.
-See:
-
-&gt; ui::SimpleMenuModel* BookmarkEditorView::GetMenuModel() {
-&gt;  if (!context_menu_model_.get()) {
-&gt;   context_menu_model_ = std::make_unique&lt;ui::SimpleMenuModel&gt;(this);
-&gt;   context_menu_model_-&gt;AddItemWithStringId(IDS_EDIT, IDS_EDIT);
-&gt;   context_menu_model_-&gt;AddItemWithStringId(IDS_DELETE, IDS_DELETE);
-&gt; (...)
-
-and
-
-&gt; void SimpleMenuModel::AddItemWithStringId(int command_id, int string_id) {
-&gt; // Prevent this dangerous pattern:
-&gt; //   model-&gt;AddItemWithStringId(IDS_FOO, IDS_FOO);
-&gt; // This conflates string IDs with command IDs, which are separate namespaces.
-&gt; // Sometimes this is an accident where this is meant:
-&gt; //   model-&gt;AddItemWithStringId(IDC_FOO, IDS_FOO);
-&gt; (...)
-&gt; DCHECK_NE(command_id, string_id);
-
-This CL fixes it by introducing new local IDC entries to the specific
-scenarios of bookmark editor menu items, and use them accordingly.
-
-BUG=1304316
-R=ellyjones@chromium.org, sky@chromium.org
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id4947baeaf3206005ecacb7ecfca42e0592f0a76">Id4947baeaf3206005ecacb7ecfca42e0592f0a76</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3513420">https://chromium-review.googlesource.com/c/chromium/src/+/3513420</a>
-Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Commit-Queue: Antonio Gomes &lt;tonikitoo@igalia.com&gt;
-Cr-Commit-Position: refs/heads/main@{#979503}
+Bug: 1303906
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4600fe206d9682000978272cfd5d74d6c18b92f2">I4600fe206d9682000978272cfd5d74d6c18b92f2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3514200">https://chromium-review.googlesource.com/c/chromium/src/+/3514200</a>
+Reviewed-by: Yuheng Huang &lt;yuhengh@chromium.org&gt;
+Reviewed-by: Peter Kasting &lt;pkasting@chromium.org&gt;
+Commit-Queue: Alex Yang &lt;aycyang@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#979526}
 </pre>
 
 </body>
