@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979616/"> 979616</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4f5b563dbf6a72c792a1a4aa089b5b15d59cbf71">4f5b563dbf6a72c792a1a4aa089b5b15d59cbf71</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979633/"> 979633</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/074870130617e0d52d7ce001af82a3370b5e1ac2">074870130617e0d52d7ce001af82a3370b5e1ac2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/979564/">979564</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/63121fc449f305b83c0ed484946bcd71946344c1">63121fc449f305b83c0ed484946bcd71946344c1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/979599/">979599</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/79c1a0d73212f93a035558f7c14e3dbf5e56638c">79c1a0d73212f93a035558f7c14e3dbf5e56638c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4f5b563dbf6a72c792a1a4aa089b5b15d59cbf71
+   074870130617e0d52d7ce001af82a3370b5e1ac2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4f5b563dbf6a72c792a1a4aa089b5b15d59cbf71">
+    <a href="/chromium/src/+log/074870130617e0d52d7ce001af82a3370b5e1ac2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4f5b563dbf6a72c792a1a4aa089b5b15d59cbf71.tar.gz">
+    <a href="/chromium/src/+archive/074870130617e0d52d7ce001af82a3370b5e1ac2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tom Lukaszewicz &lt;tluk@chromium.org&gt;
+   Mark Mentovai &lt;mark@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 10 03:05:59 2022
+   Thu Mar 10 04:13:10 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 10 03:05:59 2022
+   Thu Mar 10 04:13:10 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4f5b563dbf6a72c792a1a4aa089b5b15d59cbf71/">
-    c2ace58df5a84b59d44255278e4b272602e79964
+   <a href="/chromium/src/+/074870130617e0d52d7ce001af82a3370b5e1ac2/">
+    c8d383fa68efa56bfb059406c3925710008d2620
    </a>
   </td>
  </tr>
@@ -166,30 +166,55 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4f5b563dbf6a72c792a1a4aa089b5b15d59cbf71%5E">
-    20c2868abedaa75a9f3d74b40382e677fa42f819
+   <a href="/chromium/src/+/074870130617e0d52d7ce001af82a3370b5e1ac2%5E">
+    5c6c4ecd18e910e497b9e5a4ee95d1eaede06085
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4f5b563dbf6a72c792a1a4aa089b5b15d59cbf71%5E%21/">
+    <a href="/chromium/src/+/074870130617e0d52d7ce001af82a3370b5e1ac2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[side search] Remove Google Search references from unit_tests
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">mac: Don’t codesign --sign with an explicit --requirement unless needed
 
-This CL updates unit_tests to leverage a generic testing
-configuration. This avoids tests implicitly relying on the Google
-Search configuration.
+Chromium builds, when cryptographically code signed with a proper
+identity, failed to allow PWA app_mode_loader shims to connect, because
+they were verifying the shims’ identities based on a requirement
+constructed from the framework’s designated requirement. That designated
+requirement was accidentally truncated because the default public
+signing configuration did not set an explicit requirement. As a result,
+the framework’s designated requirement was simply “identifier
+"org.chromium.Chromium.framework"” without any requirement binding a
+specific identity. app_mode_loader shim verification, enhanced by bug
+1281111, b52080a266b4cbb3a0f1477e1f147d987248f950,
+<a href="https://chromium-review.googlesource.com/c/3453293,">https://chromium-review.googlesource.com/c/3453293,</a> could not build a
+valid app_mode_loader requirement out of this incomplete requirement,
+and refused to let any shim connect.
 
-Bug: 1304513
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4406e0f2504d92bf55224b0f0bca1a91c380a405">I4406e0f2504d92bf55224b0f0bca1a91c380a405</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3511121">https://chromium-review.googlesource.com/c/chromium/src/+/3511121</a>
-Reviewed-by: Yuheng Huang &lt;yuhengh@chromium.org&gt;
-Commit-Queue: Thomas Lukaszewicz &lt;tluk@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#979616}
+Branded Chrome builds were not affected because they had always set
+explicit requirements on all objects.
+
+To resolve, model.CodeSignedProduct.requirements_string is updated to
+not attempt to form a requirement string when the input requirements and
+the config’s codesign_requirements_basic are both empty. When this
+occurs, the default requirements applied by codesign --sign will be
+used, which should be appropriate in all cases, including when signing
+with a Developer ID certificate. In that case, the requirement will bind
+objects signed with the correct identifier by a Developer ID Application
+certificate issued to the correct team ID, which is what we had expected
+was happening. There is no change where requirements are explicitly
+specified, as is the case for branded Chrome builds.
+
+Bug: 1303028
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ide3617de90ecc78f2f50e18f65756d73f26104ed">Ide3617de90ecc78f2f50e18f65756d73f26104ed</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3497891">https://chromium-review.googlesource.com/c/chromium/src/+/3497891</a>
+Reviewed-by: Robert Sesek &lt;rsesek@chromium.org&gt;
+Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
+Commit-Queue: Mark Mentovai &lt;mark@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#979633}
 </pre>
 
 </body>
