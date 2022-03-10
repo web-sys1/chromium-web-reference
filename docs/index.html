@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979526/"> 979526</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6e2716408699193d8dd4511d75b9baa5fc05220e">6e2716408699193d8dd4511d75b9baa5fc05220e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/979580/"> 979580</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/40b4ce11272d8768b86d35c852b09a1ea7be291d">40b4ce11272d8768b86d35c852b09a1ea7be291d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/979496/">979496</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6e2716408699193d8dd4511d75b9baa5fc05220e
+   40b4ce11272d8768b86d35c852b09a1ea7be291d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6e2716408699193d8dd4511d75b9baa5fc05220e">
+    <a href="/chromium/src/+log/40b4ce11272d8768b86d35c852b09a1ea7be291d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6e2716408699193d8dd4511d75b9baa5fc05220e.tar.gz">
+    <a href="/chromium/src/+archive/40b4ce11272d8768b86d35c852b09a1ea7be291d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alex Yang &lt;aycyang@google.com&gt;
+   Yuzu Saijo &lt;yuzus@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 10 00:21:30 2022
+   Thu Mar 10 01:59:26 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 10 00:21:30 2022
+   Thu Mar 10 01:59:26 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6e2716408699193d8dd4511d75b9baa5fc05220e/">
-    d5f8a81eda7e1c5f765a07bf62d08cad67faf56a
+   <a href="/chromium/src/+/40b4ce11272d8768b86d35c852b09a1ea7be291d/">
+    a4506631c6ec6d8a711053f6fd173e60ee6536ee
    </a>
   </td>
  </tr>
@@ -166,33 +166,63 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6e2716408699193d8dd4511d75b9baa5fc05220e%5E">
-    eb6de1138095023a33bd6fa6d64b17a19f3fb23e
+   <a href="/chromium/src/+/40b4ce11272d8768b86d35c852b09a1ea7be291d%5E">
+    e5fd10fb44b465a485255c7a2a7ed793c185b289
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6e2716408699193d8dd4511d75b9baa5fc05220e%5E%21/">
+    <a href="/chromium/src/+/40b4ce11272d8768b86d35c852b09a1ea7be291d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Delete ToolbarButton subclass for new tab button
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Do not fire children-changed on all anonymous block children"
 
-WebUINewTabButton inherits from ToolbarButton to update the button
-color when the theme changes.
+This reverts commit fc2923ef0922c6b4866aee7d5b14912da399b4bd.
 
-This subclassing is obviated by calling ToolbarButton::SetVectorIcon(),
-which already automatically updates the button color on theme change.
+Reason for revert: The test added is failing continuously:
+DumpAccessibilityTreeTest.AnonymousBlockManyChildrenChanged
 
-Bug: 1303906
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4600fe206d9682000978272cfd5d74d6c18b92f2">I4600fe206d9682000978272cfd5d74d6c18b92f2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3514200">https://chromium-review.googlesource.com/c/chromium/src/+/3514200</a>
-Reviewed-by: Yuheng Huang &lt;yuhengh@chromium.org&gt;
-Reviewed-by: Peter Kasting &lt;pkasting@chromium.org&gt;
-Commit-Queue: Alex Yang &lt;aycyang@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#979526}
+Bug: 1304405
+
+Original change's description:
+&gt; Do not fire children-changed on all anonymous block children
+&gt;
+&gt; When AXObjectCacheImpl::ChildrenChanged() is called on an anonymous
+&gt; block, both the anonymous block's parent and all of its children
+&gt; processed the child change. This can be non-performant. For instance,
+&gt; when an anonymous block level child is inserted into a parent that only
+&gt; has inline level children, layout block flow tries to make all the
+&gt; inline level children non-inline. To do this, it creates an anonymous
+&gt; block and moves the inline level children to the anonymous block
+&gt; one-by-one. For the every inline level child, AXObjectCache tries to
+&gt; call AXObjectCacheImpl::ChildrenChanged(AXObject*) for all children of
+&gt; the parent.
+&gt;
+&gt; This commit stops firing children-changed on all the children of the
+&gt; anonymous block, which no longer appears to be necessary given other
+&gt; changes in the accessibility code.
+&gt;
+&gt; AX-Relnotes: Significant performance improvement when elements are
+&gt; added or removed to anonymous blocks with many children.
+&gt;
+&gt; Bug: 1293714
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5f9668cae2d2b450bc7f32a31265d93c65bca893">I5f9668cae2d2b450bc7f32a31265d93c65bca893</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3488063">https://chromium-review.googlesource.com/c/chromium/src/+/3488063</a>
+&gt; Commit-Queue: Joanmarie Diggs &lt;jdiggs@igalia.com&gt;
+&gt; Reviewed-by: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
+&gt; Commit-Queue: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#978766}
+
+Bug: 1293714
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0e9752897687854bba89bc6aff6656e2f76c8bef">I0e9752897687854bba89bc6aff6656e2f76c8bef</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3514031">https://chromium-review.googlesource.com/c/chromium/src/+/3514031</a>
+Owners-Override: Yuzu Saijo &lt;yuzus@chromium.org&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Commit-Queue: Yuzu Saijo &lt;yuzus@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#979580}
 </pre>
 
 </body>
