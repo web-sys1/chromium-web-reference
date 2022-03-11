@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/980027/"> 980027</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ef476be3461a92cbdfdcc5cb06fb629cbc00a7cd">ef476be3461a92cbdfdcc5cb06fb629cbc00a7cd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/980066/"> 980066</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5934ffeb5d6ef8d6b58449a6cf144a32f58e638c">5934ffeb5d6ef8d6b58449a6cf144a32f58e638c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/979926/">979926</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/58d464a820542d5bc959fd9faaf80b78055f99f1">58d464a820542d5bc959fd9faaf80b78055f99f1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/980007/">980007</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b2d026233c9cecd1847adc8255cf156349ea135e">b2d026233c9cecd1847adc8255cf156349ea135e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ef476be3461a92cbdfdcc5cb06fb629cbc00a7cd
+   5934ffeb5d6ef8d6b58449a6cf144a32f58e638c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ef476be3461a92cbdfdcc5cb06fb629cbc00a7cd">
+    <a href="/chromium/src/+log/5934ffeb5d6ef8d6b58449a6cf144a32f58e638c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ef476be3461a92cbdfdcc5cb06fb629cbc00a7cd.tar.gz">
+    <a href="/chromium/src/+archive/5934ffeb5d6ef8d6b58449a6cf144a32f58e638c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Bertoni &lt;dbertoni@chromium.org&gt;
+   Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 10 23:49:51 2022
+   Fri Mar 11 00:54:14 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 10 23:49:51 2022
+   Fri Mar 11 00:54:14 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ef476be3461a92cbdfdcc5cb06fb629cbc00a7cd/">
-    c0a06e74aa60cc46aa637673193d65a2ef06c15f
+   <a href="/chromium/src/+/5934ffeb5d6ef8d6b58449a6cf144a32f58e638c/">
+    265191e90afd4e0f5fa89c104a5b9d3cdaaf46bb
    </a>
   </td>
  </tr>
@@ -166,37 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ef476be3461a92cbdfdcc5cb06fb629cbc00a7cd%5E">
-    7f35d5606d767dd2325f278ca4b382bcf0b54cc0
+   <a href="/chromium/src/+/5934ffeb5d6ef8d6b58449a6cf144a32f58e638c%5E">
+    c92ab0a8fe3735bca7b455154b605d52c2cacd40
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ef476be3461a92cbdfdcc5cb06fb629cbc00a7cd%5E%21/">
+    <a href="/chromium/src/+/5934ffeb5d6ef8d6b58449a6cf144a32f58e638c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CodeHealth] Remove uses of ListValue::Append() in /extensions/browser/api/web_request.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Handle attributionsrc trigger registration in data host manager
 
-This CL removes calls to this deprecated member function. When
-it's not too intrusive, this CL attempts to modernize the use
-of DictionaryValue and ListValue to base::Value::Dict and
-base::Value::List to avoid using Value::FromUniquePtrValue.
+This change propagates triggers registered via attributionsrc from
+the AttributionDataHostManagerImpl to the AttributionManagerImpl,
+effectively completing the pipeline for the new API surface.
 
-This CL was uploaded by git cl split.
+Since the AttributionTrigger class lacked a suite of test matchers,
+this CL also introduces a new way of using those: a single config
+struct per API type that contains a single matcher field per API type
+field. These matchers default to matching anything, but can be
+initialized via designated initializers with arbitrary matchers of the
+correct type. In future CLs, we will replace the existing MATCHER_P
+definitions in attribution_test_utils.h with analogous structures for
+CommonSourceInfo, StorableSource, StoredSource, and AttributionReport.
 
-R=battre@chromium.org
-
-Bug: 1187097
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib5ba972d8bd01382ac188cb3a18b8bc703f7a5d2">Ib5ba972d8bd01382ac188cb3a18b8bc703f7a5d2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3518136">https://chromium-review.googlesource.com/c/chromium/src/+/3518136</a>
-Commit-Queue: David Bertoni &lt;dbertoni@chromium.org&gt;
-Auto-Submit: David Bertoni &lt;dbertoni@chromium.org&gt;
-Reviewed-by: Dominic Battré &lt;battre@chromium.org&gt;
-Commit-Queue: Dominic Battré &lt;battre@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#980027}
+Bug: 1303284, 1275201, 1294271, 1295328
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9001fb3d33fae52900d08201e60f7a1b9dcdee23">I9001fb3d33fae52900d08201e60f7a1b9dcdee23</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3518045">https://chromium-review.googlesource.com/c/chromium/src/+/3518045</a>
+Reviewed-by: John Delaney &lt;johnidel@chromium.org&gt;
+Reviewed-by: Nan Lin &lt;linnan@chromium.org&gt;
+Commit-Queue: Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#980066}
 </pre>
 
 </body>
