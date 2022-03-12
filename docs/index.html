@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/980250/"> 980250</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/64a3628cecbd8051e42e12e777c1455d765d2e1f">64a3628cecbd8051e42e12e777c1455d765d2e1f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/980254/"> 980254</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ad1e8d2476e3745fc1c3f7b64e3e3f22e580715f">ad1e8d2476e3745fc1c3f7b64e3e3f22e580715f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/980246/">980246</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   64a3628cecbd8051e42e12e777c1455d765d2e1f
+   ad1e8d2476e3745fc1c3f7b64e3e3f22e580715f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/64a3628cecbd8051e42e12e777c1455d765d2e1f">
+    <a href="/chromium/src/+log/ad1e8d2476e3745fc1c3f7b64e3e3f22e580715f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/64a3628cecbd8051e42e12e777c1455d765d2e1f.tar.gz">
+    <a href="/chromium/src/+archive/ad1e8d2476e3745fc1c3f7b64e3e3f22e580715f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Antonio Gomes &lt;tonikitoo@igalia.com&gt;
   </td>
   <td>
-   Sat Mar 12 01:54:38 2022
+   Sat Mar 12 02:39:48 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Mar 12 01:54:38 2022
+   Sat Mar 12 02:39:48 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/64a3628cecbd8051e42e12e777c1455d765d2e1f/">
-    7dcd990912f41e762dd203eaf3098d27afb8c8d1
+   <a href="/chromium/src/+/ad1e8d2476e3745fc1c3f7b64e3e3f22e580715f/">
+    4550a9d958c51dc9e69e43c3473ce6620693f59e
    </a>
   </td>
  </tr>
@@ -166,43 +166,53 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/64a3628cecbd8051e42e12e777c1455d765d2e1f%5E">
-    3abe6bead6ad8e550ddefd6fbf1af2b922da7805
+   <a href="/chromium/src/+/ad1e8d2476e3745fc1c3f7b64e3e3f22e580715f%5E">
+    c006e9a24aaf82f0e31adeac5f112e9098781dd3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/64a3628cecbd8051e42e12e777c1455d765d2e1f%5E%21/">
+    <a href="/chromium/src/+/ad1e8d2476e3745fc1c3f7b64e3e3f22e580715f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Mac Arm PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[lacros] Crash when attaching/detaching tabs fast
 
-Roll Chrome Mac Arm PGO profile from chrome-mac-arm-main-1647021358-3b9a909377fb777551a9f75ad05e90748893e995.profdata to chrome-mac-arm-main-1647042788-ad02b9ede40c3a9c045031bc443368742db268f4.profdata
+During the tab attaching process, XDGSurfaceWrapperImpl::Configure()
+can be called and result in a WaylandToplevelWindow::Hide() calls,
+which actually deletes itself (see pseudo stacktrace below).
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-mac-arm-chromium">https://autoroll.skia.org/r/pgo-mac-arm-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+&gt; #2 0x7f369324c07e ui::WaylandToplevelWindow::Hide()
+&gt; #3 0x7f36936bfbfa views::DesktopWindowTreeHostPlatform::HideImpl()
+&gt; #4 0x7f3694691720 aura::WindowTreeHost::Hide()
+&gt; #5 0x7f36936be274 views::DesktopWindowTreeHostPlatform::Close()
+&gt; #6 0x7f3693690bcf views::Widget::CloseWithReason()
+&gt; #7 0x55ab161b4382 Browser::TabStripEmpty()
+&gt; #8 0x55ab1620e6d0 TabStripModel::SendDetachWebContentsNotifications()
+&gt; (...)
+&gt; #21 0x7f369324ef38 ui::WaylandWindow::SetBounds()
+&gt; #22 0x7f369325141c ui::WaylandWindow::ApplyPendingBounds()
+&gt; #23 0x7f369324bd47 ui::WaylandToplevelWindow::ApplyPendingBounds()
+&gt; #24 0x7f3693250f20 ui::WaylandWindow::ProcessPendingBoundsDip()
+&gt; #25 0x7f369324c932 ui::WaylandToplevelWindow::HandleSurfaceConfigure()
+&gt; #26 0x7f369325c263 ui::XDGSurfaceWrapperImpl::OnConfigure()
+&gt; #27 0x7f369325c110 ui::XDGSurfaceWrapperImpl::Configure()
+&gt; #28 0x7f36932739c5 ffi_call_unix64
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+To protect against such scenarios, which can hard crash both Lacros and
+Ash, this CL guards XDGSurfaceWrapperImpl with the WeakPtrFactory pattern,
+particularly within the context of XDGSurfaceWrapperImpl::OnConfigure().
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+BUG=1303425
+R=nickdiego@igalia.com
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:mac-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib5dd3da1069c4fa8a5e3d6a39d02e8c4e430c774">Ib5dd3da1069c4fa8a5e3d6a39d02e8c4e430c774</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3519313">https://chromium-review.googlesource.com/c/chromium/src/+/3519313</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#980250}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic84b3d5cf2ac11b30a82090f49c99a991e4dd243">Ic84b3d5cf2ac11b30a82090f49c99a991e4dd243</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3519638">https://chromium-review.googlesource.com/c/chromium/src/+/3519638</a>
+Reviewed-by: Nick Yamane &lt;nickdiego@igalia.com&gt;
+Commit-Queue: Antonio Gomes &lt;tonikitoo@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#980254}
 </pre>
 
 </body>
