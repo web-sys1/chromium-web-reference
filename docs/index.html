@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/980329/"> 980329</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ccea8f44b37c1680b2a88d23ac4dc0d5c0a71a9c">ccea8f44b37c1680b2a88d23ac4dc0d5c0a71a9c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/980330/"> 980330</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6de11461feaebda1d141314ddc2da641264c792f">6de11461feaebda1d141314ddc2da641264c792f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/980328/">980328</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ccea8f44b37c1680b2a88d23ac4dc0d5c0a71a9c
+   6de11461feaebda1d141314ddc2da641264c792f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ccea8f44b37c1680b2a88d23ac4dc0d5c0a71a9c">
+    <a href="/chromium/src/+log/6de11461feaebda1d141314ddc2da641264c792f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ccea8f44b37c1680b2a88d23ac4dc0d5c0a71a9c.tar.gz">
+    <a href="/chromium/src/+archive/6de11461feaebda1d141314ddc2da641264c792f.tar.gz">
      tgz
     </a>
     ]
@@ -137,7 +137,7 @@ body{
    Victor Costan &lt;pwnall@chromium.org&gt;
   </td>
   <td>
-   Sun Mar 13 06:40:39 2022
+   Sun Mar 13 06:47:19 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Mar 13 06:40:39 2022
+   Sun Mar 13 06:47:19 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ccea8f44b37c1680b2a88d23ac4dc0d5c0a71a9c/">
-    b27c45ba7b43c849d804d1869f012b09595e32af
+   <a href="/chromium/src/+/6de11461feaebda1d141314ddc2da641264c792f/">
+    6582a00c6f4c70d6b51c39616f361152dba2e243
    </a>
   </td>
  </tr>
@@ -166,35 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ccea8f44b37c1680b2a88d23ac4dc0d5c0a71a9c%5E">
-    af9ac807f36531848810ecb46f8647402cd511ae
+   <a href="/chromium/src/+/6de11461feaebda1d141314ddc2da641264c792f%5E">
+    ccea8f44b37c1680b2a88d23ac4dc0d5c0a71a9c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ccea8f44b37c1680b2a88d23ac4dc0d5c0a71a9c%5E%21/">
+    <a href="/chromium/src/+/6de11461feaebda1d141314ddc2da641264c792f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">sql: Clarify SQLite error vs result codes in sql::Statement.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">sql: Clean up Database::Open*() methods.
 
-This CL starts aligning our variable naming and comments to SQLite's
-terminology in <a href="https://www.sqlite.org/rescode.html">https://www.sqlite.org/rescode.html</a>
+This CL cleans up the following aspects of our sql::Database::Open*()
+method implementations.
 
-TL;DR: SQLite result codes include success values, like SQLITE_OK.
-SQLite error codes are a subset of result codes that signal failure. Our
-source code will be easier to read if it's clear around where we're
-dealing with result codes (all possible return values from a SQLite
-call), or only error codes.
+1. The interface between Open() / OpenInMemory() / OpenTemporary() and
+   OpenInternal() is cleaned up. The distinction between on-disk
+   persistent / in-memory / temporary is encoded in explicit mode flags,
+   not just in the database path. All mode flags are represented by an
+   enum class.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia83cba3e87814849c33ac0136cd237b81edbdc33">Ia83cba3e87814849c33ac0136cd237b81edbdc33</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3519191">https://chromium-review.googlesource.com/c/chromium/src/+/3519191</a>
+2. OpenTemporary() is restricted to the sql::Recovery code. Its
+   semantics are subtle, and not a good fit for Chrome features.
+
+3. All methods with arguments have their preconditions DCHECKed.
+
+4. Variable names and comments are aligned to SQLite's terminology in
+   <a href="https://www.sqlite.org/rescode.html.">https://www.sqlite.org/rescode.html.</a> TL;DR: SQLite result codes
+   include success values, like SQLITE_OK.  SQLite error codes are a
+   subset of result codes that signal failure.
+
+5. Minor errors in comments or diagnostic strings are fixed.
+
+This CL should not introduce any functional changes.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3f77c34d1650a020b5ae6f5ecf14bc1cb67ba53d">I3f77c34d1650a020b5ae6f5ecf14bc1cb67ba53d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3519233">https://chromium-review.googlesource.com/c/chromium/src/+/3519233</a>
 Auto-Submit: Victor Costan &lt;pwnall@chromium.org&gt;
 Reviewed-by: Ayu Ishii &lt;ayui@chromium.org&gt;
 Commit-Queue: Ayu Ishii &lt;ayui@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#980329}
+Cr-Commit-Position: refs/heads/main@{#980330}
 </pre>
 
 </body>
