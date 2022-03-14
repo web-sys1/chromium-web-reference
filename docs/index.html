@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/980710/"> 980710</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3a1d954046e903f1e6db49e1a4b0352ddecbdf99">3a1d954046e903f1e6db49e1a4b0352ddecbdf99</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/980733/"> 980733</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7bfdf9a2a45bc0570e11fb915d8fcf34f49b9265">7bfdf9a2a45bc0570e11fb915d8fcf34f49b9265</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/980682/">980682</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3a1d954046e903f1e6db49e1a4b0352ddecbdf99
+   7bfdf9a2a45bc0570e11fb915d8fcf34f49b9265
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3a1d954046e903f1e6db49e1a4b0352ddecbdf99">
+    <a href="/chromium/src/+log/7bfdf9a2a45bc0570e11fb915d8fcf34f49b9265">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3a1d954046e903f1e6db49e1a4b0352ddecbdf99.tar.gz">
+    <a href="/chromium/src/+archive/7bfdf9a2a45bc0570e11fb915d8fcf34f49b9265.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mike Wasserman &lt;msw@chromium.org&gt;
+   Sky Malice &lt;skym@chromium.org&gt;
   </td>
   <td>
-   Mon Mar 14 19:19:02 2022
+   Mon Mar 14 19:46:55 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Mar 14 19:19:02 2022
+   Mon Mar 14 19:46:55 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3a1d954046e903f1e6db49e1a4b0352ddecbdf99/">
-    dfce626f1df5f9aff81d3dbc5ecc264c2b009590
+   <a href="/chromium/src/+/7bfdf9a2a45bc0570e11fb915d8fcf34f49b9265/">
+    d8f2f3f72913972f860afb2beaf089143d9f7dca
    </a>
   </td>
  </tr>
@@ -166,153 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3a1d954046e903f1e6db49e1a4b0352ddecbdf99%5E">
-    859cb8e57181bc75c9de876085a02a18fb6fcf68
+   <a href="/chromium/src/+/7bfdf9a2a45bc0570e11fb915d8fcf34f49b9265%5E">
+    e3564d284ead767807a49015fb2bb8ac4a4cf95e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3a1d954046e903f1e6db49e1a4b0352ddecbdf99%5E%21/">
+    <a href="/chromium/src/+/7bfdf9a2a45bc0570e11fb915d8fcf34f49b9265%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Roll src/third_party/harfbuzz-ng/src/ 0acf466c4..965cf1d66 (292 commits)"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Migrate some #getColor() calls to go through Context.
 
-This reverts commit 5f507fc61390824c3bbd371204915f0bc1921e56.
+These are the trivial changes that are simply replacing a call from a
+Resources to a Context. No changes in member variables or params needed.
 
-Reason for revert: Build break: <a href="https://cr-buildbucket.appspot.com/build/8819695983933709377">https://cr-buildbucket.appspot.com/build/8819695983933709377</a> and <a href="https://cr-buildbucket.appspot.com/build/8819691066711564417">https://cr-buildbucket.appspot.com/build/8819691066711564417</a>
+As part of Dynamic Colors work, more and more colors are routing through
+?attrs. Often this is transitive through a @macro or color state list
+We have seen several bugs where this resolution fails, because the
+?attr information is not in the Resources, but instead through the
+Context/Theme. Now that we only support api_level 23+,
+Context#getColor() will always work.
 
-Original change's description:
-&gt; Roll src/third_party/harfbuzz-ng/src/ 0acf466c4..965cf1d66 (292 commits)
-&gt;
-&gt; <a href="https://chromium.googlesource.com/external/github.com/harfbuzz/harfbuzz.git/+log/0acf466c4414..965cf1d66589">https://chromium.googlesource.com/external/github.com/harfbuzz/harfbuzz.git/+log/0acf466c4414..965cf1d66589</a>
-&gt;
-&gt; $ git log 0acf466c4..965cf1d66 --date=short --no-merges --format='%ad %ae %s'
-&gt; 2022-03-14 drott Make load_num_glyphs_from_loca conditional on HB_NO_BORING_EXPANSION
-&gt; 2022-03-13 corbett.dav [USE] Treat visible viramas like dependent vowels
-&gt; 2022-03-11 khaled 4.0.1
-&gt; 2022-03-11 khaled [doc] Add experimental repacker API to private section
-&gt; 2022-02-02 qxliu [repacker] expose hb_subset_repack() API, hb_object_t and hb_link_t structs
-&gt; 2022-03-10 mclasen [layout] Fix handling of baseline variations
-&gt; 2022-03-02 corbett.dav Update IANA Language Subtag Registry to 2022-03-02
-&gt; 2022-03-06 corbett.dav [USE] Remove obsolete overrides
-&gt; 2022-03-06 corbett.dav [USE] Treat all gc=Cn as independent clusters
-&gt; 2022-03-06 corbett.dav [USE] Remove obsolete symbol/punctuation overrides
-&gt; 2022-03-05 corbett.dav [USE] Simplify `not_ccs_default_ignorable`
-&gt; 2022-03-04 corbett.dav [USE] Allow any non-numeric tail in symbol cluster
-&gt; 2022-03-04 corbett.dav [USE] Restore the category WJ
-&gt; 2022-03-06 florian [aat] Update OT to AAT mappings for hist and vrtr
-&gt; 2022-03-01 luzpaz Fixed various misc. typos
-&gt; 2022-03-02 khaled Minor [ci skip]
-&gt; 2022-03-01 khaled 4.0.0
-&gt; 2022-03-01 khaled [doc] Typo
-&gt; 2022-02-28 grieger [subset] Rename codepoint -&gt; unicode in subset plan api
-&gt; 2022-02-25 khaled [doc] Various fixes to newly added documentation
-&gt; 2022-02-21 james.hilliard1 [meson] handle multiple element ICU DEFS
-&gt; 2022-02-18 mclasen Add a missing file
-&gt; 2022-02-18 behdad [style] Move the negation into the constant
-&gt; 2022-02-18 mclasen [hb-style] Fix the sign of slant ratios
-&gt; 2022-02-18 mclasen [hb-style] Fix synthetic slant values
-&gt; 2022-02-18 behdad [buffer] Add HB_BUFFER_FLAG_PRODUCE_UNSAFE_TO_CONCAT
-&gt; 2022-02-18 behdad [util] Rename template typenames to avoid clashing with actual types
-&gt; 2022-02-17 grieger [subset] document return values.
-&gt; 2022-02-15 mclasen [ot-metrics] Synthesize missing metrics
-&gt; 2022-02-17 behdad Revert "hb-algs.hh: Fix build on Visual Studio 2015"
-&gt; 2022-02-17 fanchunwei BUILD.md: Mention that installing CMake is recommended for MSVC
-&gt; 2022-02-17 fanchunwei freetype2.wrap: Provide fallback for CMake dep as well
-&gt; 2022-02-17 fanchunwei meson: Clean up finding ICU-UC on Visual Studio
-&gt; 2022-02-17 fanchunwei meson: Cleanup finding FreeType on Visual Studio
-&gt; 2022-02-16 mclasen [ot-layout] Add central baselines
-&gt; 2022-02-13 mclasen [ot-layout] Synthesize missing baselines
-&gt; 2022-02-16 behdad [ot-layout] Remove commented-out prototypes
-&gt; 2022-02-13 behdad [ot-layout] Add +hb_ot_layout_get_horizontal_baseline_tag_for_script()
-&gt; 2022-02-16 khaled [autotools] Fix make distcheck
-&gt; 2022-02-15 mclasen Improve docs for hb_ot_layout_get_ligature_carets
-&gt; 2022-02-15 behdad [face] Use max numGlyphs of maxp and loca
-&gt; 2022-02-15 behdad [ot-face] Use core tables
-&gt; 2022-02-15 behdad [machinery] Add "core table" machinery
-&gt; 2022-02-15 behdad [config] Add HB_NO_BORING_EXPANSION
-&gt; 2022-02-15 behdad [test/shape] Internal rename
-&gt; 2022-02-15 behdad [ci] Rename configs-ci to configs-build
-&gt; 2022-02-15 behdad [test/api] Fix leaks
-&gt; 2022-02-15 behdad Fix build
-&gt; 2022-02-15 behdad [hmtx] Implement [boring-expansion] &gt;64k expansion
-&gt; 2022-02-14 behdad [test] Add test for current hmtx logic
-&gt; (...)
-&gt; 2022-01-18 behdad [vector] Add TODO Emplace?
-&gt; 2022-01-18 grieger [subset-cff] Convert subr_closures_t to constructor/destructor instead of init/fini.
-&gt; 2022-01-18 behdad [subset-cff] Remove another set of fini_deep
-&gt; 2022-01-18 behdad [subset-cff1] Remove a constructor/destructor pair
-&gt; 2022-01-18 behdad [subset-cff2] Drop an constructor/destructor pair
-&gt; 2022-01-18 behdad [str_buff_vec_t] Remove unused fini method
-&gt; 2022-01-18 behdad [bimap] Remove init/fini
-&gt; 2022-01-18 behdad [cff] Remove unneeded init/fini
-&gt; 2022-01-17 behdad [repacker] Replace fini_deep() with fini()
-&gt; 2022-01-16 behdad [vector] Adjust construction criteria
-&gt; 2022-01-15 behdad [vector] Move semantics in vector remove()
-&gt; 2022-01-15 behdad [vector] Destruct in pop()
-&gt; 2022-01-15 behdad [vector] Construct items when enlarging
-&gt; 2022-01-14 behdad [vector] Start adding destruction
-&gt; 2022-01-14 behdad [vector] Add XXX markers for remaining places that need work
-&gt; 2022-01-16 behdad Make hb_coerce static inline
-&gt; 2022-01-16 behdad Better try at previous commit
-&gt; 2022-01-16 behdad Try fix Mac build
-&gt; 2022-01-16 behdad [algs] Add default-construtor to hb_pair_t
-&gt; 2022-01-16 luzpaz Fix various typos
-&gt; 2022-01-15 behdad Fix previous commit
-&gt; 2022-01-15 behdad Further adjust setlocale
-&gt; 2022-01-13 behdad [vector] Move semantics when resizing
-&gt; 2022-01-15 behdad [meta] Include &lt;memory&gt;, for addressof
-&gt; 2022-01-13 behdad [meta] Remove unused hb_ref()
-&gt; 2022-01-14 grieger [map] Correct previous commit, if (...) was reversed.
-&gt; 2022-01-14 grieger [map] Fix bad memory access if hb_map.fini() was called twice.
-&gt; 2022-01-13 behdad [meta] Use std::addressof() instead of hb_addressof()
-&gt; 2022-01-13 behdad [meta] Remove hb_add_const
-&gt; 2022-01-13 behdad [meta] Use std::is_const instead of hb_is_const
-&gt; 2022-01-13 behdad [meta] Use std::is_reference instead of hb_is_reference
-&gt; 2022-01-13 behdad [meta] Replace hb_is_pointer with std::is_pointer
-&gt; 2022-01-13 behdad [map] Destruct objects
-&gt; 2022-01-13 jpakkane Convert fallback kwargs to [provide] entries.
-&gt; 2022-01-13 behdad [test-map] Add disabled tests with std::string
-&gt; 2022-01-13 behdad [map] Allow invalid items to be pointer to static object
-&gt; 2022-01-13 behdad [check-static-inits] Only check library object files
-&gt; 2022-01-13 behdad [algs] Add hb_coerce()
-&gt; 2022-01-13 behdad [map] Remove constexpr invalid items
-&gt; 2022-01-13 behdad [map] Construct objects
-&gt; 2022-01-13 mclasen Fix the docs build
-&gt; 2022-01-13 behdad [map] Massage some more
-&gt; 2022-01-13 behdad [algs] Fix hash chaining to std::hash()
-&gt; 2022-01-13 grieger [subset] fix fuzzer timeout if visisted_paint goes into error.
-&gt; 2022-01-13 mclasen docs: Add some details
-&gt; 2022-01-13 mclasen docs: Fix a typo
-&gt; 2022-01-13 behdad [git.mk] Update
-&gt; 2022-01-12 behdad Rename method
-&gt; 2022-01-12 behdad Rename variable
-&gt; 2022-01-12 behdad Preserve glyph props
-&gt;
-&gt; Created with:
-&gt;   roll-dep src/third_party/harfbuzz-ng/src
-&gt; R=​bashi@chromium.org,behdad@chromium.org,bungeman@chromium.org,drott@chromium.org,jshin@chromium.org,kojii@chromium.org
-&gt;
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I894f6224ec857a533de7a8c9e7286024f508682a">I894f6224ec857a533de7a8c9e7286024f508682a</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3521601">https://chromium-review.googlesource.com/c/chromium/src/+/3521601</a>
-&gt; Commit-Queue: Dominik Röttsches &lt;drott@chromium.org&gt;
-&gt; Auto-Submit: Dominik Röttsches &lt;drott@chromium.org&gt;
-&gt; Reviewed-by: Ben Wagner &lt;bungeman@chromium.org&gt;
-&gt; Commit-Queue: Ben Wagner &lt;bungeman@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#980603}
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9ae86460ae7fd7778fd46b84e6469587e30243a5">I9ae86460ae7fd7778fd46b84e6469587e30243a5</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3522551">https://chromium-review.googlesource.com/c/chromium/src/+/3522551</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Owners-Override: Mike Wasserman &lt;msw@google.com&gt;
-Commit-Queue: Mike Wasserman &lt;msw@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#980710}
+Bug: 1302803
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I52a945df4a55222c3a732cb28ac1d306355caf5e">I52a945df4a55222c3a732cb28ac1d306355caf5e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3502548">https://chromium-review.googlesource.com/c/chromium/src/+/3502548</a>
+Reviewed-by: Sinan Sahin &lt;sinansahin@google.com&gt;
+Reviewed-by: Fabio Tirelo &lt;ftirelo@chromium.org&gt;
+Reviewed-by: Theresa Sullivan &lt;twellington@chromium.org&gt;
+Reviewed-by: Sandro Maggi &lt;sandromaggi@google.com&gt;
+Commit-Queue: Sky Malice &lt;skym@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#980733}
 </pre>
 
 </body>
