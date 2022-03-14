@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/980518/"> 980518</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/09522ad920d470c079173b8a6fa5b228bf9756c6">09522ad920d470c079173b8a6fa5b228bf9756c6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/980521/"> 980521</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a39ec8827c089cbaf3f3e79550dd2714dc2d886e">a39ec8827c089cbaf3f3e79550dd2714dc2d886e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/980496/">980496</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6246a97ce067fc643c44c8eaebc4503e000517ac">6246a97ce067fc643c44c8eaebc4503e000517ac</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/980519/">980519</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/76dd26f3f36f4ef24e6f07ec247a7edbe5c64b8b">76dd26f3f36f4ef24e6f07ec247a7edbe5c64b8b</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   09522ad920d470c079173b8a6fa5b228bf9756c6
+   a39ec8827c089cbaf3f3e79550dd2714dc2d886e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/09522ad920d470c079173b8a6fa5b228bf9756c6">
+    <a href="/chromium/src/+log/a39ec8827c089cbaf3f3e79550dd2714dc2d886e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/09522ad920d470c079173b8a6fa5b228bf9756c6.tar.gz">
+    <a href="/chromium/src/+archive/a39ec8827c089cbaf3f3e79550dd2714dc2d886e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nico Weber &lt;thakis@chromium.org&gt;
+   Fabian Sommer &lt;fabiansommer@chromium.org&gt;
   </td>
   <td>
-   Mon Mar 14 12:07:44 2022
+   Mon Mar 14 12:38:45 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Mar 14 12:07:44 2022
+   Mon Mar 14 12:38:45 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/09522ad920d470c079173b8a6fa5b228bf9756c6/">
-    291b45b08de0cd9a33a5370f38e7c7be444ffdf6
+   <a href="/chromium/src/+/a39ec8827c089cbaf3f3e79550dd2714dc2d886e/">
+    a7f6265bce9a398504c4e292beffbcaa7d126564
    </a>
   </td>
  </tr>
@@ -166,39 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/09522ad920d470c079173b8a6fa5b228bf9756c6%5E">
-    044ea2464bd9f26173cb8cb95e2f6a93117e3068
+   <a href="/chromium/src/+/a39ec8827c089cbaf3f3e79550dd2714dc2d886e%5E">
+    2972f6de6a5f1323e19c213bb012c55424f6153a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/09522ad920d470c079173b8a6fa5b228bf9756c6%5E%21/">
+    <a href="/chromium/src/+/a39ec8827c089cbaf3f3e79550dd2714dc2d886e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make "libcxx_abi_unstable" not a gn arg
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Migrate GetDeviceType()
 
-This setting existed as a workaround for a bug that's since been fixed.
-Nothing should have to set this flag:
+Migrate all uses of GetDeviceType from ash/constants/devicetype.h to use
+the recently introduced GetDeviceType in chromeos/constants/devicetype.h
+instead.
 
-- If you want to build against system lib(std)c++ for some reason, you
-  really want to set `use_custom_libcxx = false`
+Remove GetDeviceType() from ash/constants/devicetype.{h,cc}
 
-- If you want to build against hermetic libc++, you always want this
-  for perf reasons I think.
+A "// nogncheck" is required in local_device_info_util_linux.cc because
+otherwise, gn would incorrectly detect a dependency cycle for lacros -
+this is because gn can not process the C preprocessor flags and does not
+realize that this include is ash-specific.
 
-If this _does_ break a use case of yours, please describe it on the
-review of this CL.
-
-Bug: none
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I94502f68f36d2b96a8c4fbef411870a28a578e4a">I94502f68f36d2b96a8c4fbef411870a28a578e4a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3520025">https://chromium-review.googlesource.com/c/chromium/src/+/3520025</a>
-Auto-Submit: Nico Weber &lt;thakis@chromium.org&gt;
-Reviewed-by: Hans Wennborg &lt;hans@chromium.org&gt;
-Commit-Queue: Hans Wennborg &lt;hans@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#980518}
+Bug: 1284585
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9ccebad88026fe42e69ba882896fac1996c6fa6b">I9ccebad88026fe42e69ba882896fac1996c6fa6b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3477140">https://chromium-review.googlesource.com/c/chromium/src/+/3477140</a>
+Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
+Reviewed-by: Jan Krčál &lt;jkrcal@chromium.org&gt;
+Commit-Queue: Fabian Sommer &lt;fabiansommer@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#980521}
 </pre>
 
 </body>
