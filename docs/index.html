@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/981353/"> 981353</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0632bad10c3ec533c0bc1bf020d0df158fd13f6b">0632bad10c3ec533c0bc1bf020d0df158fd13f6b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/981366/"> 981366</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cc859180c644841492131305c682f25202a0cd2d">cc859180c644841492131305c682f25202a0cd2d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/981298/">981298</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0632bad10c3ec533c0bc1bf020d0df158fd13f6b
+   cc859180c644841492131305c682f25202a0cd2d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0632bad10c3ec533c0bc1bf020d0df158fd13f6b">
+    <a href="/chromium/src/+log/cc859180c644841492131305c682f25202a0cd2d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0632bad10c3ec533c0bc1bf020d0df158fd13f6b.tar.gz">
+    <a href="/chromium/src/+archive/cc859180c644841492131305c682f25202a0cd2d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Michael Thiessen &lt;mthiesse@chromium.org&gt;
+   Vladimir Levin &lt;vmpstr@chromium.org&gt;
   </td>
   <td>
-   Tue Mar 15 22:23:20 2022
+   Tue Mar 15 22:58:45 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 15 22:23:20 2022
+   Tue Mar 15 22:58:45 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0632bad10c3ec533c0bc1bf020d0df158fd13f6b/">
-    44be8c641898b03208bd028a7536885ec5c8f560
+   <a href="/chromium/src/+/cc859180c644841492131305c682f25202a0cd2d/">
+    82e9022170acba9ee20ff894a7ddcf9869a841a7
    </a>
   </td>
  </tr>
@@ -166,36 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0632bad10c3ec533c0bc1bf020d0df158fd13f6b%5E">
-    959a79957020de6c922ccec240b7f887df253a0e
+   <a href="/chromium/src/+/cc859180c644841492131305c682f25202a0cd2d%5E">
+    6fda7c3c35dc7543dc8c3178e53612d41539b8c8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0632bad10c3ec533c0bc1bf020d0df158fd13f6b%5E%21/">
+    <a href="/chromium/src/+/cc859180c644841492131305c682f25202a0cd2d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Don't avoid disambiguation dialog in CCT/WebLayer if Chrome can't handle
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">SET: Handle empty divs for both old and new image contents.
 
-For external protocols, if we block the outgoing intent because it'll
-show the disambiguation dialog, we end up landing on a page that just
-says '"&lt;protocol&gt;" links are blocked'.
+The approach to handling the empty divs is somewhat different for
+new and old contents:
 
-Given the goal of blocking the intent chooser is to avoid showing the
-Chrome icon showing for navigations the CCT/WebLayer could handle, it
-should be fine to show the dialog for things that are explicitly
-supposed to leave the CCT/WebLayer (through the use of external
-protocols).
+For new contents, we use live snapshots so viz isn't aware that the
+render pass may be missing (and we'd like to retain the DCHECK on that
+side for debugging purposes). So, we let
+cc::DocumentTransitionContentLayerImpl know whether it's a live snapshot.
+If it is, and the referenced resource_id does not appear anywhere in the
+currently generated frame, then we simply append a transparent quad
+instead.
 
-Bug: 1305256
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icaf6b9e5058f35e89fb191e0e7b9b3b92ce67393">Icaf6b9e5058f35e89fb191e0e7b9b3b92ce67393</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3517311">https://chromium-review.googlesource.com/c/chromium/src/+/3517311</a>
-Reviewed-by: Yaron Friedman &lt;yfriedman@chromium.org&gt;
-Commit-Queue: Michael Thiessen &lt;mthiesse@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#981353}
+For old contents, we send the resource id with an invalid render pass to
+viz. When processing the save directive, we pull out these resource ids
+as "valid empty resources", and in the future check whether the resource
+id is known empty when we're replacing shared element quads.
+
+R=khushalsagar@chromium.org
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I00b9990957024b5c00445c36369c6b947a3b950d">I00b9990957024b5c00445c36369c6b947a3b950d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3519718">https://chromium-review.googlesource.com/c/chromium/src/+/3519718</a>
+Reviewed-by: Khushal Sagar &lt;khushalsagar@chromium.org&gt;
+Commit-Queue: Vladimir Levin &lt;vmpstr@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#981366}
 </pre>
 
 </body>
