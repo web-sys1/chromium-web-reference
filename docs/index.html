@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/981068/"> 981068</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a8b63fa677e08912327a8f27c5196d00f581f04b">a8b63fa677e08912327a8f27c5196d00f581f04b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/981078/"> 981078</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2f99d43b8ad481c35014367b301e53f70cd5bf81">2f99d43b8ad481c35014367b301e53f70cd5bf81</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/981062/">981062</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a8b63fa677e08912327a8f27c5196d00f581f04b
+   2f99d43b8ad481c35014367b301e53f70cd5bf81
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a8b63fa677e08912327a8f27c5196d00f581f04b">
+    <a href="/chromium/src/+log/2f99d43b8ad481c35014367b301e53f70cd5bf81">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a8b63fa677e08912327a8f27c5196d00f581f04b.tar.gz">
+    <a href="/chromium/src/+archive/2f99d43b8ad481c35014367b301e53f70cd5bf81.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   sauski &lt;sauski@google.com&gt;
+   Oriol Brufau &lt;obrufau@igalia.com&gt;
   </td>
   <td>
-   Tue Mar 15 12:34:55 2022
+   Tue Mar 15 13:13:26 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 15 12:34:55 2022
+   Tue Mar 15 13:13:26 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a8b63fa677e08912327a8f27c5196d00f581f04b/">
-    600523ed8e9fb2f695c6cb7b7fdce803df6a9905
+   <a href="/chromium/src/+/2f99d43b8ad481c35014367b301e53f70cd5bf81/">
+    456a28d5edde9cb1ec35e36be865595cb05ad367
    </a>
   </td>
  </tr>
@@ -166,34 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a8b63fa677e08912327a8f27c5196d00f581f04b%5E">
-    fc5a4950ea4a2c10879ae690ec91088decd540aa
+   <a href="/chromium/src/+/2f99d43b8ad481c35014367b301e53f70cd5bf81%5E">
+    f913f3a1f3b1507213b92dbc500c20e1f4527344
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a8b63fa677e08912327a8f27c5196d00f581f04b%5E%21/">
+    <a href="/chromium/src/+/2f99d43b8ad481c35014367b301e53f70cd5bf81%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Privacy Sandbox Settings: Do not show dialog for users who block 3PC
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[inert] Set user-select:text on modal dialogs and fullscreen elements
 
-CL adjusts the behavior of the GetRequiredDialogType() function to
-prevent users who block 3PC from receiving the dialog. This is sticky,
-and once a decision was made to not show the dialog, it will not be
-shown again.
+Modal dialogs and fullscreen elements mark all elements outside of them
+as inert. That makes them have a used value of "user-select: none".
 
-CL also adjusts some of the check ordering, so that changes in the
-profile do not retroactively change why a dialog was shown.
+But modal dialogs and fullscreen elements are not inert, so by default
+they got "user-select: auto". This resolves to "none" since the used
+value on the parent element is "none".
 
-Bug: 1286276
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib502ff4c5549f56113cac50f9458caf0e47bcec4">Ib502ff4c5549f56113cac50f9458caf0e47bcec4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3515978">https://chromium-review.googlesource.com/c/chromium/src/+/3515978</a>
-Reviewed-by: Sean Harrison &lt;harrisonsean@chromium.org&gt;
-Commit-Queue: Theodore Olsauskas-Warren &lt;sauski@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#981068}
+So modal dialogs and fullscreen elements were not selectable. This
+patch addresses the problem by setting "user-select: text" on UA origin.
+
+There is a somewhat similar precedent where the CSSWG resolved to set
+"visibility: visible" on modal dialogs:
+<a href="https://github.com/w3c/csswg-drafts/issues/6939#issuecomment-1016657928">https://github.com/w3c/csswg-drafts/issues/6939#issuecomment-1016657928</a>
+
+Bug: 1305797
+
+TEST=external/wpt/html/semantics/interactive-elements/the-dialog-element/modal-dialog-selection.html
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6fb00c25559dfefcf931be535ddf4128864c71ae">I6fb00c25559dfefcf931be535ddf4128864c71ae</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3521788">https://chromium-review.googlesource.com/c/chromium/src/+/3521788</a>
+Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
+Commit-Queue: Oriol Brufau &lt;obrufau@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#981078}
 </pre>
 
 </body>
