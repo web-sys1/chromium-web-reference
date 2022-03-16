@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/981511/"> 981511</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b77aedcb5121bff60a6f0d65070d060815076936">b77aedcb5121bff60a6f0d65070d060815076936</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/981516/"> 981516</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2ee1f35087f3b5769511c4146ec6d15f3be7658d">2ee1f35087f3b5769511c4146ec6d15f3be7658d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/981511/">981511</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b77aedcb5121bff60a6f0d65070d060815076936
+   2ee1f35087f3b5769511c4146ec6d15f3be7658d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b77aedcb5121bff60a6f0d65070d060815076936">
+    <a href="/chromium/src/+log/2ee1f35087f3b5769511c4146ec6d15f3be7658d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b77aedcb5121bff60a6f0d65070d060815076936.tar.gz">
+    <a href="/chromium/src/+archive/2ee1f35087f3b5769511c4146ec6d15f3be7658d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Delan Azabani &lt;dazabani@igalia.com&gt;
+   David Sanders &lt;dsanders11@ucsbalum.com&gt;
   </td>
   <td>
-   Wed Mar 16 06:43:20 2022
+   Wed Mar 16 07:21:19 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 16 06:43:20 2022
+   Wed Mar 16 07:21:19 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b77aedcb5121bff60a6f0d65070d060815076936/">
-    6565776b53b6cd21f281daa9899de760dedbc7d8
+   <a href="/chromium/src/+/2ee1f35087f3b5769511c4146ec6d15f3be7658d/">
+    b863c51811c46f0664f5c8d2a5e12f2bed13141e
    </a>
   </td>
  </tr>
@@ -166,61 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b77aedcb5121bff60a6f0d65070d060815076936%5E">
-    b90242620f14857bc18b9cdcffd6a64d107bf730
+   <a href="/chromium/src/+/2ee1f35087f3b5769511c4146ec6d15f3be7658d%5E">
+    7963f756d708a3eb109b0204a55c864f39e0ae46
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b77aedcb5121bff60a6f0d65070d060815076936%5E%21/">
+    <a href="/chromium/src/+/2ee1f35087f3b5769511c4146ec6d15f3be7658d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">CSS highlight painting: implement initial highlight overlay system
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove unused includes of render_process_host_impl.h
 
-Highlights have historically fallen into one of two categories:
-::selection, which was exposed to CSS and painted with great care, and
-markers, which were *not* exposed to CSS and painted rather naïvely.
+Also adds some includes which were getting brought in
+transitively, to fix the build.
 
-With ::target-text, ::{spelling,grammar}-error, and ::highlight, we
-need to generalise some of ::selection’s paint logic to ensure, among
-other things, that we never paint any piece of text proper (non-shadow
-text) more than once.
-
-This patch adds a HighlightOverlayPainting feature flag. When enabled,
-we stop painting those pseudos in NGHighlightPainter::Paint except for
-::selection drag image, and paint them in the new PaintOriginatingText
-+ PaintHighlighOverlays methods, which are analogous to ::selection’s
-PaintSuppressingTextProperWhereSelected + PaintSelectedText methods.
-
-These methods rely on new algorithms that preprocess the highlighted
-ranges into “layers”, “edges”, and “parts”, to determine which ranges
-we need to paint now and which ones need to be suppressed (lifted to
-a “higher” layer).
-
-Note that this impl is not complete! It lacks support for decorations
-and most of the subtle logic in the ::selection painting code and the
-old ComputeMarkersToPaint.
-
-Example test page and screenshot below. Notice how the backgrounds now
-obscure the originating shadow, the antialiasing artifacts are gone,
-and the highlighted text proper is no longer darkened by text in the
-originating style (black).
-
-• <a href="https://bucket.daz.cat/work/igalia/0/32.html">https://bucket.daz.cat/work/igalia/0/32.html</a>
-• <a href="https://bucket.daz.cat/164c466b6b4bded7.png">https://bucket.daz.cat/164c466b6b4bded7.png</a> (top is HighlightAPI and
-  CSSSpellingGrammarErrors only, bottom adds HighlightOverlayPainting)
-
-Bug: 1147859, 1179938
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icab783a2499fa824c105acd6dde739852963696c">Icab783a2499fa824c105acd6dde739852963696c</a>
-Cq-Do-Not-Cancel-Tryjobs: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3426940">https://chromium-review.googlesource.com/c/chromium/src/+/3426940</a>
-Reviewed-by: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Commit-Queue: Delan Azabani &lt;dazabani@igalia.com&gt;
-Cr-Commit-Position: refs/heads/main@{#981511}
+Bug: 242216
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9af67cc94ffb62dd4248109055f7bdc5db5dc346">I9af67cc94ffb62dd4248109055f7bdc5db5dc346</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3528193">https://chromium-review.googlesource.com/c/chromium/src/+/3528193</a>
+Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
+Commit-Queue: Lei Zhang &lt;thestig@chromium.org&gt;
+Owners-Override: Lei Zhang &lt;thestig@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#981516}
 </pre>
 
 </body>
