@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/981366/"> 981366</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cc859180c644841492131305c682f25202a0cd2d">cc859180c644841492131305c682f25202a0cd2d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/981449/"> 981449</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ee65059786f001c9ada4d37f62ce95cc1a97fc1f">ee65059786f001c9ada4d37f62ce95cc1a97fc1f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/981350/">981350</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ede213d889c99f56db992214601d488dce5eafa3">ede213d889c99f56db992214601d488dce5eafa3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/981390/">981390</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/13a6f384fcd05751d0e53e81b7bcffcc255215bf">13a6f384fcd05751d0e53e81b7bcffcc255215bf</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   cc859180c644841492131305c682f25202a0cd2d
+   ee65059786f001c9ada4d37f62ce95cc1a97fc1f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/cc859180c644841492131305c682f25202a0cd2d">
+    <a href="/chromium/src/+log/ee65059786f001c9ada4d37f62ce95cc1a97fc1f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/cc859180c644841492131305c682f25202a0cd2d.tar.gz">
+    <a href="/chromium/src/+archive/ee65059786f001c9ada4d37f62ce95cc1a97fc1f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Vladimir Levin &lt;vmpstr@chromium.org&gt;
+   Aishwarya Rajesh &lt;aishwaryarj@google.com&gt;
   </td>
   <td>
-   Tue Mar 15 22:58:45 2022
+   Wed Mar 16 01:13:24 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 15 22:58:45 2022
+   Wed Mar 16 01:13:24 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/cc859180c644841492131305c682f25202a0cd2d/">
-    82e9022170acba9ee20ff894a7ddcf9869a841a7
+   <a href="/chromium/src/+/ee65059786f001c9ada4d37f62ce95cc1a97fc1f/">
+    4eb9b3e039cbe1869181dfea6744e614227432e8
    </a>
   </td>
  </tr>
@@ -166,43 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/cc859180c644841492131305c682f25202a0cd2d%5E">
-    6fda7c3c35dc7543dc8c3178e53612d41539b8c8
+   <a href="/chromium/src/+/ee65059786f001c9ada4d37f62ce95cc1a97fc1f%5E">
+    d86c0ec0881bc29d66ed2695807f6b2433976d3a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/cc859180c644841492131305c682f25202a0cd2d%5E%21/">
+    <a href="/chromium/src/+/ee65059786f001c9ada4d37f62ce95cc1a97fc1f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">SET: Handle empty divs for both old and new image contents.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Messages] Optimize Save Card dialog layout and strings
 
-The approach to handling the empty divs is somewhat different for
-new and old contents:
+- Screenshots
+  - Before: <a href="https://screenshot.googleplex.com/BEtMektvZDaxXGX.png">https://screenshot.googleplex.com/BEtMektvZDaxXGX.png</a>
+  - After: <a href="https://screenshot.googleplex.com/PEnftbRsdzruicn.png">https://screenshot.googleplex.com/PEnftbRsdzruicn.png</a>
+- Add footer to modal dialog view, add tests for the same
+- Add feature flag param "save_card_dialog_v2_enabled" to control the display of the old/new dialog layout
 
-For new contents, we use live snapshots so viz isn't aware that the
-render pass may be missing (and we'd like to retain the DCHECK on that
-side for debugging purposes). So, we let
-cc::DocumentTransitionContentLayerImpl know whether it's a live snapshot.
-If it is, and the referenced resource_id does not appear anywhere in the
-currently generated frame, then we simply append a transparent quad
-instead.
-
-For old contents, we send the resource id with an invalid render pass to
-viz. When processing the save directive, we pull out these resource ids
-as "valid empty resources", and in the future check whether the resource
-id is known empty when we're replacing shared element quads.
-
-R=khushalsagar@chromium.org
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I00b9990957024b5c00445c36369c6b947a3b950d">I00b9990957024b5c00445c36369c6b947a3b950d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3519718">https://chromium-review.googlesource.com/c/chromium/src/+/3519718</a>
-Reviewed-by: Khushal Sagar &lt;khushalsagar@chromium.org&gt;
-Commit-Queue: Vladimir Levin &lt;vmpstr@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#981366}
+Bug: 1306294
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib9bc84215f704245144236651a32f473c2815b93">Ib9bc84215f704245144236651a32f473c2815b93</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3523277">https://chromium-review.googlesource.com/c/chromium/src/+/3523277</a>
+Reviewed-by: Theresa Sullivan &lt;twellington@chromium.org&gt;
+Reviewed-by: Lijin Shen &lt;lazzzis@google.com&gt;
+Reviewed-by: Jared Saul &lt;jsaul@google.com&gt;
+Commit-Queue: Aishwarya Rajesh &lt;aishwaryarj@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#981449}
 </pre>
 
 </body>
