@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/982276/"> 982276</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/829a351395e1ec9b6d3704d893b5b68ef15add43">829a351395e1ec9b6d3704d893b5b68ef15add43</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/982289/"> 982289</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/da1a8277833edd464f8aabe6aa0806abbce948b3">da1a8277833edd464f8aabe6aa0806abbce948b3</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/982258/">982258</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   829a351395e1ec9b6d3704d893b5b68ef15add43
+   da1a8277833edd464f8aabe6aa0806abbce948b3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/829a351395e1ec9b6d3704d893b5b68ef15add43">
+    <a href="/chromium/src/+log/da1a8277833edd464f8aabe6aa0806abbce948b3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/829a351395e1ec9b6d3704d893b5b68ef15add43.tar.gz">
+    <a href="/chromium/src/+archive/da1a8277833edd464f8aabe6aa0806abbce948b3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Phillis Tang &lt;phillis@chromium.org&gt;
+   Nico Weber &lt;thakis@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 17 17:55:47 2022
+   Thu Mar 17 18:32:00 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 17 17:55:47 2022
+   Thu Mar 17 18:32:00 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/829a351395e1ec9b6d3704d893b5b68ef15add43/">
-    ac2f2064905cb6ed1cfdf112cbc89a78dc006693
+   <a href="/chromium/src/+/da1a8277833edd464f8aabe6aa0806abbce948b3/">
+    eb3787e56b52a932da15678954baad23500c8b38
    </a>
   </td>
  </tr>
@@ -166,53 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/829a351395e1ec9b6d3704d893b5b68ef15add43%5E">
-    55961aa7559828907c5009854a564715e1be6fba
+   <a href="/chromium/src/+/da1a8277833edd464f8aabe6aa0806abbce948b3%5E">
+    06420319fde53ab8ad3000efc99e1db81bd87c63
    </a>
    <span>
     [
-    <a href="/chromium/src/+/829a351395e1ec9b6d3704d893b5b68ef15add43%5E%21/">
+    <a href="/chromium/src/+/da1a8277833edd464f8aabe6aa0806abbce948b3%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Split mac clang-format sha1 per architecture"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">win: Use lld-link's new /winsysroot: flag when using hermetic SDK
 
-This reverts commit e2e53118d94fc4fe9cd8408a03b4e877d807c229.
+Stop passing ${sys_lib_flags} to alink. alink doesn't understand
+/winsysroot:, and it also doesn't need to know about any library
+search directories to create static libraries anyways.
+(This change could land in an independent CL, but this one is
+fairly small even with this change included.)
 
-Reason for revert: caused compilation failure <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/mac-arm64-rel/21112/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/mac-arm64-rel/21112/overview</a>
+People who don't use the hermetic SDK will keep using the
+-libpath: flags, at least for now.
 
-Original change's description:
-&gt; Split mac clang-format sha1 per architecture
-&gt;
-&gt; In preparation for using clang-format binaries built in clang rolls
-&gt; which will result in per-arch clang-format executables, use different
-&gt; sha1 files per architecture.
-&gt;
-&gt; This updates the main chromium DEPS to use these, but many other
-&gt; subprojects' DEPS also need to be updated, which will happen in separate
-&gt; changes.
-&gt;
-&gt; Bug: 1286289
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If2ad03e30a84e3737f5e971332df0224f739264d">If2ad03e30a84e3737f5e971332df0224f739264d</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3529420">https://chromium-review.googlesource.com/c/chromium/src/+/3529420</a>
-&gt; Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
-&gt; Commit-Queue: Arthur Eubanks &lt;aeubanks@google.com&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#981824}
+As a workaround for crbug.com/1300005, also pass /machine: flags.
 
-Bug: 1286289
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifa1adf129e23ed4f55d4d53d8d0efe7d061b570b">Ifa1adf129e23ed4f55d4d53d8d0efe7d061b570b</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3533054">https://chromium-review.googlesource.com/c/chromium/src/+/3533054</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Reviewed-by: Guillaume Jenkins &lt;gujen@google.com&gt;
-Owners-Override: Phillis Tang &lt;phillis@chromium.org&gt;
-Commit-Queue: Phillis Tang &lt;phillis@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#982276}
+No intended behavior change.
+
+Bug: 1300005
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4c5addeaaf9c2f2c78b903a6698a142d137c1978">I4c5addeaaf9c2f2c78b903a6698a142d137c1978</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3529256">https://chromium-review.googlesource.com/c/chromium/src/+/3529256</a>
+Reviewed-by: Hans Wennborg &lt;hans@chromium.org&gt;
+Commit-Queue: Nico Weber &lt;thakis@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#982289}
 </pre>
 
 </body>
