@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/982054/"> 982054</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb765f7bae648c415562db6258cf0422561293ec">fb765f7bae648c415562db6258cf0422561293ec</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/982067/"> 982067</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a885cc320b6693999077d955ae80a18d48d7eae9">a885cc320b6693999077d955ae80a18d48d7eae9</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/982053/">982053</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   fb765f7bae648c415562db6258cf0422561293ec
+   a885cc320b6693999077d955ae80a18d48d7eae9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/fb765f7bae648c415562db6258cf0422561293ec">
+    <a href="/chromium/src/+log/a885cc320b6693999077d955ae80a18d48d7eae9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/fb765f7bae648c415562db6258cf0422561293ec.tar.gz">
+    <a href="/chromium/src/+archive/a885cc320b6693999077d955ae80a18d48d7eae9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jérémie Boulic &lt;jboulic@chromium.org&gt;
+   John Delaney &lt;johnidel@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 17 06:43:25 2022
+   Thu Mar 17 07:19:55 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 17 06:43:25 2022
+   Thu Mar 17 07:19:55 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/fb765f7bae648c415562db6258cf0422561293ec/">
-    00091079b79edc4c4e9f3774748784936e08518b
+   <a href="/chromium/src/+/a885cc320b6693999077d955ae80a18d48d7eae9/">
+    32f1b9863d223d4a3a280f2394eaaaf02ccefc17
    </a>
   </td>
  </tr>
@@ -166,32 +166,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/fb765f7bae648c415562db6258cf0422561293ec%5E">
-    4ac39669584a7fdc299ae09bdff846817bef293d
+   <a href="/chromium/src/+/a885cc320b6693999077d955ae80a18d48d7eae9%5E">
+    2ca32a189e58c668f9d7e04e074938bef06c9b5a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/fb765f7bae648c415562db6258cf0422561293ec%5E%21/">
+    <a href="/chromium/src/+/a885cc320b6693999077d955ae80a18d48d7eae9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Office] Add UMA for Office file handlers
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[attribution_reporting] Parse attributionsrc on &lt;a&gt; tags
 
-Add UMAs to track the file handlers used to open Office files.
+This change integrates attributionsrc parsing for &lt;a&gt; tags. When
+an anchor element with the attribute is clicked, it registers an
+impression using a similar mechanism to the img API.
 
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Test: browser_tests --gtest_filter=Office/*
-Bug: 1293251
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I95c85c176e7fd8298793cbcbaa568f5a2e093610">I95c85c176e7fd8298793cbcbaa568f5a2e093610</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3521701">https://chromium-review.googlesource.com/c/chromium/src/+/3521701</a>
-Reviewed-by: Peter Marshall &lt;petermarshall@chromium.org&gt;
-Reviewed-by: Luciano Pacheco &lt;lucmult@chromium.org&gt;
-Reviewed-by: Weilun Shi &lt;sweilun@chromium.org&gt;
-Commit-Queue: Jeremie Boulic &lt;jboulic@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#982054}
+See: <a href="https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#registering-attribution-sources">https://github.com/WICG/conversion-measurement-api/blob/main/EVENT.md#registering-attribution-sources</a>
+
+We add a new token type identifying an AttributionSrc client within the
+renderer. This token is routed on blink::Impression and alongside
+an AttributionDataHost so that the data host can be tied to a specific
+navigation in the browser process. This is required in order to
+only use browser process known origins.
+
+This is done rather than the alternative of routing pending_receivers
+directly on blink::Impression, which would require forcing every
+navigation struct / context menu params struct which embeds an impression
+to be move only. This also gives better flexibility for supporting
+view event fallbacks in the case of failed navigations.
+
+Bug: 1294286
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If1f2806a6d657488913f5570c8d07801a0cc5acb">If1f2806a6d657488913f5570c8d07801a0cc5acb</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3510534">https://chromium-review.googlesource.com/c/chromium/src/+/3510534</a>
+Reviewed-by: danakj &lt;danakj@chromium.org&gt;
+Reviewed-by: Jeremy Roman &lt;jbroman@chromium.org&gt;
+Reviewed-by: Nate Chapin &lt;japhet@chromium.org&gt;
+Reviewed-by: Nan Lin &lt;linnan@chromium.org&gt;
+Reviewed-by: Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
+Commit-Queue: John Delaney &lt;johnidel@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#982067}
 </pre>
 
 </body>
