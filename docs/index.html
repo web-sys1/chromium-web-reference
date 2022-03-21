@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/983231/"> 983231</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7bafef9c3d7a824a5ec90ca5973cb2145ab582a6">7bafef9c3d7a824a5ec90ca5973cb2145ab582a6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/983232/"> 983232</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/02b4e5d59cff3b2c1a00f20a5a48f78f068be8cd">02b4e5d59cff3b2c1a00f20a5a48f78f068be8cd</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/983231/">983231</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7bafef9c3d7a824a5ec90ca5973cb2145ab582a6
+   02b4e5d59cff3b2c1a00f20a5a48f78f068be8cd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7bafef9c3d7a824a5ec90ca5973cb2145ab582a6">
+    <a href="/chromium/src/+log/02b4e5d59cff3b2c1a00f20a5a48f78f068be8cd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7bafef9c3d7a824a5ec90ca5973cb2145ab582a6.tar.gz">
+    <a href="/chromium/src/+archive/02b4e5d59cff3b2c1a00f20a5a48f78f068be8cd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yoav Weiss &lt;yoavweiss@chromium.org&gt;
+   Rahul Arakeri &lt;arakeri@microsoft.com&gt;
   </td>
   <td>
-   Mon Mar 21 08:32:54 2022
+   Mon Mar 21 09:14:26 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Mar 21 08:32:54 2022
+   Mon Mar 21 09:14:26 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7bafef9c3d7a824a5ec90ca5973cb2145ab582a6/">
-    7ea51112d4730a09bf39f2dac6cf039b3d5f0031
+   <a href="/chromium/src/+/02b4e5d59cff3b2c1a00f20a5a48f78f068be8cd/">
+    683535d8b6132a48db87475ddc64174ff26cdf99
    </a>
   </td>
  </tr>
@@ -166,31 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7bafef9c3d7a824a5ec90ca5973cb2145ab582a6%5E">
-    98138e2c895aa4544707eefd8d32a6ccc46a4d48
+   <a href="/chromium/src/+/02b4e5d59cff3b2c1a00f20a5a48f78f068be8cd%5E">
+    7bafef9c3d7a824a5ec90ca5973cb2145ab582a6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7bafef9c3d7a824a5ec90ca5973cb2145ab582a6%5E%21/">
+    <a href="/chromium/src/+/02b4e5d59cff3b2c1a00f20a5a48f78f068be8cd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Trigger FCP when opacity is changed
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fixed elements without scrollable content shouldn't overscroll.
 
-We're seeing cases where FCP is not being properly reported when it's
-caused by an opacity change whose paint is optimized away using
-`will-change: opacity`. This CL fixes that by tying those FCP reports
-to our existing mechanism to report ignored LCP entries in those cases.
+Bug: When we don't have scrollable content, fixed elements will still
+move on overscroll.
 
-Bug: 1279548
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I71e8f8a1fb7f0f4df442c1c057bcf289b353226e">I71e8f8a1fb7f0f4df442c1c057bcf289b353226e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3536567">https://chromium-review.googlesource.com/c/chromium/src/+/3536567</a>
+Reason: When the content is not scrollable, direct_compositing_reasons
+in FragmentPaintPropertyTreeBuilder::UpdatePaintOffsetTranslationis for
+fixed elements is always false (even though fixed elements are layered).
+Due to this, scroll_translation_for_fixed will be null which in turn
+leads to the compositor TransformNode to not gets created for fixed
+elements in PropertyTreeManager::EnsureCompositorTransformNode. Without
+the cc TransformNode for fixed, we won't be able to apply the inverse
+scroll translation that was implemented in crrev.com/c/3493816. If we
+have scrollable content on the page, this issue doesn't exist since the
+scroll_translation_for_fixed is initialized and the TransformNode gets
+created.
+
+Fix: DirectReasonsForPaintPropertiesExceptScrolling should ensure that
+fixed elements are assigned a CompositingReason
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icc3dd3d9853f0e3d8a2eec68c7703ae246569aaa">Icc3dd3d9853f0e3d8a2eec68c7703ae246569aaa</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3537711">https://chromium-review.googlesource.com/c/chromium/src/+/3537711</a>
 Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
-Commit-Queue: Yoav Weiss &lt;yoavweiss@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#983231}
+Commit-Queue: Rahul Arakeri &lt;arakeri@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#983232}
 </pre>
 
 </body>
