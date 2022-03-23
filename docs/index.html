@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/984066/"> 984066</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6f31ac834acc00fff8bb62b7caaab769241d5293">6f31ac834acc00fff8bb62b7caaab769241d5293</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/984095/"> 984095</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a6c7025833bf974de2f0999f7a77ed54f568fa7b">a6c7025833bf974de2f0999f7a77ed54f568fa7b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/984038/">984038</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1a20bb347fa076c0362793b6ca79d7b10d5592fe">1a20bb347fa076c0362793b6ca79d7b10d5592fe</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/984080/">984080</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d123acb55eee1d6aeac142b5e75e477b03f9d233">d123acb55eee1d6aeac142b5e75e477b03f9d233</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6f31ac834acc00fff8bb62b7caaab769241d5293
+   a6c7025833bf974de2f0999f7a77ed54f568fa7b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6f31ac834acc00fff8bb62b7caaab769241d5293">
+    <a href="/chromium/src/+log/a6c7025833bf974de2f0999f7a77ed54f568fa7b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6f31ac834acc00fff8bb62b7caaab769241d5293.tar.gz">
+    <a href="/chromium/src/+archive/a6c7025833bf974de2f0999f7a77ed54f568fa7b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Vikas Soni &lt;vikassoni@chromium.org&gt;
+   wutao &lt;wutao@chromium.org&gt;
   </td>
   <td>
-   Tue Mar 22 22:46:32 2022
+   Tue Mar 22 23:52:16 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 22 22:46:32 2022
+   Tue Mar 22 23:52:16 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6f31ac834acc00fff8bb62b7caaab769241d5293/">
-    7872dd0b51b3feec62ae2de2a6b22bfe86b8bf7f
+   <a href="/chromium/src/+/a6c7025833bf974de2f0999f7a77ed54f568fa7b/">
+    f7d2a6f87882c3cc52656e1c137be3a99ab9a332
    </a>
   </td>
  </tr>
@@ -166,34 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6f31ac834acc00fff8bb62b7caaab769241d5293%5E">
-    d566d836991d12df85081253dfa30d971c643557
+   <a href="/chromium/src/+/a6c7025833bf974de2f0999f7a77ed54f568fa7b%5E">
+    74410536bb8df65621acef718456a04a870fbcc6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6f31ac834acc00fff8bb62b7caaab769241d5293%5E%21/">
+    <a href="/chromium/src/+/a6c7025833bf974de2f0999f7a77ed54f568fa7b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Dr-Dc] Add FrameInfoHelperHolder.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Libassistant-V2: Migrate assistant manager delegate
 
-1. Add FrameInfoHelperHolder to mimic the weakPtr behavior of
-FrameInfoHelperImpl::OnGpu. FrameInfoHelperHolder is
-RefCountedThreadSafe, and has a pointer to FrameInfoHelperImpl::OnGpu.
-FrameInfoHelperImpl::OnGpu owns the FrameInfoHelperHolder and sets the
-pointer to FrameInfoHelperImpl::OnGpu in its destructor.
+The V1 functions of AssistantManagerDelegate:
+1. OnConversationTurnStartedInternal
+2. OnNotificationRemoved
+3. OnCommunicationError
 
-2. Allow GetFrameInfoImpl() to be run from any thread.
+are implemented by using gRPC observers,
+1. GrpcServicesObserver&lt;OnConversationStateEventRequest&gt;
+     =&gt; ConversationStateEvent::OnTurnStarted
+2. GrpcServicesObserver&lt;OnDeviceStateEventRequest&gt;
+     =&gt; DeviceStateEvent::OnNotificationRemoved
+3. GrpcServicesObserver&lt;OnDeviceStateEventRequest&gt;
+     =&gt; DeviceStateEvent::OnCommunicationError
 
-Bug: 1306650
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I77a6ddde6a93c7b1e795b1768090ebcc9867b664">I77a6ddde6a93c7b1e795b1768090ebcc9867b664</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3527494">https://chromium-review.googlesource.com/c/chromium/src/+/3527494</a>
-Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
-Commit-Queue: vikas soni &lt;vikassoni@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#984066}
+Bug: b:196011844
+Test: modified chromeos_unittests
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I309907102e69bf28c344040e31b788246b6b442e">I309907102e69bf28c344040e31b788246b6b442e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3538451">https://chromium-review.googlesource.com/c/chromium/src/+/3538451</a>
+Reviewed-by: Xiaohui Chen &lt;xiaohuic@chromium.org&gt;
+Commit-Queue: Tao Wu &lt;wutao@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#984095}
 </pre>
 
 </body>
