@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/984362/"> 984362</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3dc54040101cad708b692df3b2f6827050c6d18a">3dc54040101cad708b692df3b2f6827050c6d18a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/984385/"> 984385</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/08ffa21521cd272fa508a9b3da72d7ffdfcf527c">08ffa21521cd272fa508a9b3da72d7ffdfcf527c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/984348/">984348</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3dc54040101cad708b692df3b2f6827050c6d18a
+   08ffa21521cd272fa508a9b3da72d7ffdfcf527c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3dc54040101cad708b692df3b2f6827050c6d18a">
+    <a href="/chromium/src/+log/08ffa21521cd272fa508a9b3da72d7ffdfcf527c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3dc54040101cad708b692df3b2f6827050c6d18a.tar.gz">
+    <a href="/chromium/src/+archive/08ffa21521cd272fa508a9b3da72d7ffdfcf527c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Aya ElAttar &lt;ayaelattar@chromium.org&gt;
+   Benoit Lize &lt;lizeb@chromium.org&gt;
   </td>
   <td>
-   Wed Mar 23 15:57:10 2022
+   Wed Mar 23 16:32:56 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 23 15:57:10 2022
+   Wed Mar 23 16:32:56 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3dc54040101cad708b692df3b2f6827050c6d18a/">
-    a008a0db0f130eae6b5521b1849589a510b15162
+   <a href="/chromium/src/+/08ffa21521cd272fa508a9b3da72d7ffdfcf527c/">
+    b946e20aec6017f6b150f66035578b63bf1f9ade
    </a>
   </td>
  </tr>
@@ -166,28 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3dc54040101cad708b692df3b2f6827050c6d18a%5E">
-    ed77ad80377775b7555ab6dffb79f72221aab2c4
+   <a href="/chromium/src/+/08ffa21521cd272fa508a9b3da72d7ffdfcf527c%5E">
+    29d4beefb1581990783bbf9a886f16dc199d94df
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3dc54040101cad708b692df3b2f6827050c6d18a%5E%21/">
+    <a href="/chromium/src/+/08ffa21521cd272fa508a9b3da72d7ffdfcf527c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">DLP: Remove MenuScrollButton::OnPerformDrop
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[base] Don't use sched_yield() on Apple OSes
 
-Removing OnPerformDrop as GetDropCallback is the one used now.
+sched_yield() can yield a thread for &gt;10ms on macOS, which is enough to
+cause visible stutter for instance. Switch to another system call to
+only yield for 1ms.
 
-Bug: 1272065
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iac1c4bc27dd93877f558591d978fc540bc9ccebf">Iac1c4bc27dd93877f558591d978fc540bc9ccebf</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3545657">https://chromium-review.googlesource.com/c/chromium/src/+/3545657</a>
-Reviewed-by: Elly Fong-Jones &lt;ellyjones@chromium.org&gt;
-Commit-Queue: Aya Elsayed &lt;ayaelattar@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#984362}
+This is based on an investigation of PartitionAlloc's spinning behavior
+on macOS, where its (now unused) spinlock was degrading performance on
+ARM64 machines. The new system call is modeled after a similar change
+done in WebKit, for the stated reasons (where it improved speedometer
+and jetstream performance, though WebKit's use of spinlocks is *much*
+more extensive than Chrome's),
+
+While in the neighborhood, add a warning that yielding a thread (and
+implementing a spinlock) is likely not the best approach for most use
+cases.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I597baa9604e1c61be141ec87e7a0b8742dc32fe2">I597baa9604e1c61be141ec87e7a0b8742dc32fe2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3545090">https://chromium-review.googlesource.com/c/chromium/src/+/3545090</a>
+Reviewed-by: Francois Pierre Doray &lt;fdoray@chromium.org&gt;
+Commit-Queue: Benoit Lize &lt;lizeb@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#984385}
 </pre>
 
 </body>
