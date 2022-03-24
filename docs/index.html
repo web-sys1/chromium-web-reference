@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/984848/"> 984848</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/68a3921ea87ad5dd9c6a7275af24d36bbacc01d8">68a3921ea87ad5dd9c6a7275af24d36bbacc01d8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/984892/"> 984892</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c999b4cc3a2ae170cdc398f09ebe6787fe22cdbb">c999b4cc3a2ae170cdc398f09ebe6787fe22cdbb</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/984797/">984797</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/445dc2d79fc43221b03f6306b7b1a32d1a29c5b8">445dc2d79fc43221b03f6306b7b1a32d1a29c5b8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/984818/">984818</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d498d62c24e386a89aceb66d0f06355843dd2714">d498d62c24e386a89aceb66d0f06355843dd2714</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   68a3921ea87ad5dd9c6a7275af24d36bbacc01d8
+   c999b4cc3a2ae170cdc398f09ebe6787fe22cdbb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/68a3921ea87ad5dd9c6a7275af24d36bbacc01d8">
+    <a href="/chromium/src/+log/c999b4cc3a2ae170cdc398f09ebe6787fe22cdbb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/68a3921ea87ad5dd9c6a7275af24d36bbacc01d8.tar.gz">
+    <a href="/chromium/src/+archive/c999b4cc3a2ae170cdc398f09ebe6787fe22cdbb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Marijn Kruisselbrink &lt;mek@chromium.org&gt;
+   Olga Sharonova &lt;olka@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 24 15:48:13 2022
+   Thu Mar 24 16:58:52 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 24 15:48:13 2022
+   Thu Mar 24 16:58:52 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/68a3921ea87ad5dd9c6a7275af24d36bbacc01d8/">
-    468e325fca308976dcfae15aaed7e406a3baf0c6
+   <a href="/chromium/src/+/c999b4cc3a2ae170cdc398f09ebe6787fe22cdbb/">
+    2ba10a83d50da747667c2efc5b02dfcdc76ba598
    </a>
   </td>
  </tr>
@@ -166,56 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/68a3921ea87ad5dd9c6a7275af24d36bbacc01d8%5E">
-    f30781d3540ad5d00688a843937816d2b8d49751
+   <a href="/chromium/src/+/c999b4cc3a2ae170cdc398f09ebe6787fe22cdbb%5E">
+    aa39dc77cc00f6094cb89235ae3789b8dbc6a59b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/68a3921ea87ad5dd9c6a7275af24d36bbacc01d8%5E%21/">
+    <a href="/chromium/src/+/c999b4cc3a2ae170cdc398f09ebe6787fe22cdbb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "[FileAPI] Move BlobUrlRegistry to the UI thread"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Constraint container for APM in the audio service
 
-This is a reland of commit b277bdd5bc7cd12c38daf6a1b1c40e61587b5c5d
+"local APM" (status quo) always provides 48K audio and there is no other option.
 
-The only difference to the original change is a slight tweak to the
-url-format.any.js web test, adding explicit revocation of most blob
-urls to the test. Without this apparently the simultaneous revocation
-of thousands of blob URLs on the UI thread somehow causes the leak
-detection bot to check for leaks before blink has managed to fully
-collect all garbage, while the same problem didn't exist when this
-work was done on the IO thread.
+"remote APM" version (APM in the audio process) can safely provide default
+platform sample rate only; the rest may be unsupported.
 
-Original change's description:
-&gt; [FileAPI] Move BlobUrlRegistry to the UI thread
-&gt;
-&gt; Moving BlobUrlRegistry to the UI thread has several benefits, one
-&gt; of which being that it makes it easier for the BlobUrlRegistry to
-&gt; be exposed directly to the renderer (rather than being retrieved
-&gt; via the BlobRegistry). As part of that effort we would like to
-&gt; use a navigation-associated interface associated with the
-&gt; corresponding RenderFrameHostImpl, but that appears to encounter
-&gt; a DCHECK in the Mojo code when the interface implementation lives
-&gt; on the IO thread.
-&gt;
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3bfd0385407c7ff261978b243ccdcf3dc4812352">I3bfd0385407c7ff261978b243ccdcf3dc4812352</a>
-&gt; Bug: 957249, 1261328
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2343608">https://chromium-review.googlesource.com/c/chromium/src/+/2343608</a>
-&gt; Reviewed-by: Austin Sullivan &lt;asully@chromium.org&gt;
-&gt; Commit-Queue: Marijn Kruisselbrink &lt;mek@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#984144}
-
-Bug: 957249, 1261328
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5d72239c8071f61c0238f5881a99c36987666ee0">I5d72239c8071f61c0238f5881a99c36987666ee0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3546245">https://chromium-review.googlesource.com/c/chromium/src/+/3546245</a>
-Auto-Submit: Marijn Kruisselbrink &lt;mek@chromium.org&gt;
-Reviewed-by: Austin Sullivan &lt;asully@chromium.org&gt;
-Commit-Queue: Austin Sullivan &lt;asully@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#984848}
+Bug: 1284652
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I73ca5c2a1c6e317723c5c9a89cec9746b85713b6">I73ca5c2a1c6e317723c5c9a89cec9746b85713b6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3536570">https://chromium-review.googlesource.com/c/chromium/src/+/3536570</a>
+Reviewed-by: Henrik Boström &lt;hbos@chromium.org&gt;
+Reviewed-by: Sam Zackrisson &lt;saza@chromium.org&gt;
+Commit-Queue: Olga Sharonova &lt;olka@chromium.org&gt;
+Reviewed-by: Armando Miraglia &lt;armax@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#984892}
 </pre>
 
 </body>
