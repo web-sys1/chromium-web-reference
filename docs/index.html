@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/985048/"> 985048</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/91289ceca5bd9b854772a03c84f43df809e25684">91289ceca5bd9b854772a03c84f43df809e25684</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/985061/"> 985061</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a5a022f475bbb6d58f5606bf51e76766f9bfa2a5">a5a022f475bbb6d58f5606bf51e76766f9bfa2a5</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/984981/">984981</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0a69e172cfdc9438d36884d9c1476ad869b526f">f0a69e172cfdc9438d36884d9c1476ad869b526f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/985060/">985060</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2e9140e644ddb85e2af25d9a81fec91fd4939e69">2e9140e644ddb85e2af25d9a81fec91fd4939e69</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   91289ceca5bd9b854772a03c84f43df809e25684
+   a5a022f475bbb6d58f5606bf51e76766f9bfa2a5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/91289ceca5bd9b854772a03c84f43df809e25684">
+    <a href="/chromium/src/+log/a5a022f475bbb6d58f5606bf51e76766f9bfa2a5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/91289ceca5bd9b854772a03c84f43df809e25684.tar.gz">
+    <a href="/chromium/src/+archive/a5a022f475bbb6d58f5606bf51e76766f9bfa2a5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Peng Huang &lt;penghuang@chromium.org&gt;
+   Wenyu Fu &lt;wenyufu@google.com&gt;
   </td>
   <td>
-   Thu Mar 24 22:40:27 2022
+   Thu Mar 24 23:08:37 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 24 22:40:27 2022
+   Thu Mar 24 23:08:37 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/91289ceca5bd9b854772a03c84f43df809e25684/">
-    1b130fded7b150b95cc11acca992a95fb5b227eb
+   <a href="/chromium/src/+/a5a022f475bbb6d58f5606bf51e76766f9bfa2a5/">
+    fbcab6cc40a18b7a6f1d35c4f1a053a4b3b26d59
    </a>
   </td>
  </tr>
@@ -166,49 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/91289ceca5bd9b854772a03c84f43df809e25684%5E">
-    a468e2502f751475f51720dfe3f0e1b87550a331
+   <a href="/chromium/src/+/a5a022f475bbb6d58f5606bf51e76766f9bfa2a5%5E">
+    2e9140e644ddb85e2af25d9a81fec91fd4939e69
    </a>
    <span>
     [
-    <a href="/chromium/src/+/91289ceca5bd9b854772a03c84f43df809e25684%5E%21/">
+    <a href="/chromium/src/+/a5a022f475bbb6d58f5606bf51e76766f9bfa2a5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">viz: Enable SkiaRenderer unconditionally on CrOS
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refresh ViewRectProvider for inset / mIncludePadding / view size changes
 
-SkiaRenderer is currently disabled on a small set of CrOS boards
-(MT8173, RK3399) that use the legacy video decoder. The legacy video
-decoder wraps video buffers in legacy mailboxes instead of
-SharedImages which SkiaRenderer cannot handle when processing for
-overlays.
+#refreshRectBounds is ignored when View#getLocationInWindow does not
+change. This isn't correct when inset and padding could change for the
+settings of ViewRectProvider, or the view changes its size.
 
-Now that SkiaRenderer is fully launched on the vast majority of CrOS
-devices, it's dangerous to leave these old devices on GLRenderer as
-GLRenderer no longer receives updates and lacks any automated test
-coverage (not to mention the performance benefits of SkiaRenderer).
-Furthermore, MT8173 and RK3399 have limited support for overlays in
-the first place.
-
-Thus, this CL makes the tradeoff between SkiaRenderer and overlays by
-disabling overlays on legacy video decoder boards and enabling
-SkiaRenderer unconditionally. It also moves the Disallow Direct
-Video Decoder flag to ui/ozone/. The flag was moved to viz purely for
-visibility [1], but now it is no longer needed there.
-
-[1] <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2518460">https://chromium-review.googlesource.com/c/chromium/src/+/2518460</a>
-
-Bug: b:192563524,b:159825227,1247756
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic599aa5acc2d2f5760f91f5fe6ea9c5e6a711649">Ic599aa5acc2d2f5760f91f5fe6ea9c5e6a711649</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3514562">https://chromium-review.googlesource.com/c/chromium/src/+/3514562</a>
-Reviewed-by: Miguel Casas-Sanchez &lt;mcasas@chromium.org&gt;
-Reviewed-by: Robert Kroeger &lt;rjkroege@chromium.org&gt;
-Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
-Commit-Queue: Peng Huang &lt;penghuang@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#985048}
+Bug: 1309716
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iad7f6da37467bbc969a665f5b88f762ea20ebf07">Iad7f6da37467bbc969a665f5b88f762ea20ebf07</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3546512">https://chromium-review.googlesource.com/c/chromium/src/+/3546512</a>
+Reviewed-by: Theresa Sullivan &lt;twellington@chromium.org&gt;
+Reviewed-by: Shu Yang &lt;shuyng@google.com&gt;
+Commit-Queue: Wenyu Fu &lt;wenyufu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#985061}
 </pre>
 
 </body>
