@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/985220/"> 985220</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b0b56b6311bec292f6a2c5d05cf4ddac9ad52783">b0b56b6311bec292f6a2c5d05cf4ddac9ad52783</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/985225/"> 985225</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/076ff7a1094df26a35bea9e71f4b16414137bd43">076ff7a1094df26a35bea9e71f4b16414137bd43</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/985209/">985209</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b0b56b6311bec292f6a2c5d05cf4ddac9ad52783
+   076ff7a1094df26a35bea9e71f4b16414137bd43
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b0b56b6311bec292f6a2c5d05cf4ddac9ad52783">
+    <a href="/chromium/src/+log/076ff7a1094df26a35bea9e71f4b16414137bd43">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b0b56b6311bec292f6a2c5d05cf4ddac9ad52783.tar.gz">
+    <a href="/chromium/src/+archive/076ff7a1094df26a35bea9e71f4b16414137bd43.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   David Benjamin &lt;davidben@chromium.org&gt;
   </td>
   <td>
-   Fri Mar 25 08:24:23 2022
+   Fri Mar 25 09:04:32 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 25 08:24:23 2022
+   Fri Mar 25 09:04:32 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b0b56b6311bec292f6a2c5d05cf4ddac9ad52783/">
-    978df9b8447ddb5e9295b2b3d68c403f31f6127b
+   <a href="/chromium/src/+/076ff7a1094df26a35bea9e71f4b16414137bd43/">
+    fd8004927c1ab6580611678ce7cc4191709a6908
    </a>
   </td>
  </tr>
@@ -166,48 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b0b56b6311bec292f6a2c5d05cf4ddac9ad52783%5E">
-    43d924a4d5782875274ad494f08c1763f735c47e
+   <a href="/chromium/src/+/076ff7a1094df26a35bea9e71f4b16414137bd43%5E">
+    002ae5a7d3de6c0df6abe80715c68eca2196c965
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b0b56b6311bec292f6a2c5d05cf4ddac9ad52783%5E%21/">
+    <a href="/chromium/src/+/076ff7a1094df26a35bea9e71f4b16414137bd43%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll AFDO from 101.0.4951.7_rc-r1-merged to 101.0.4951.10_rc-r1-merged
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Simplify WebSockets endpoint lock management
 
-This CL may cause a small binary size increase, roughly proportional
-to how long it's been since our last AFDO profile roll. For larger
-increases (around or exceeding 100KB), please file a bug against
-gbiv@chromium.org. Additional context: <a href="https://crbug.com/805539">https://crbug.com/805539</a>
+WebSocketTransportConnectSubJob needs some extra logic because there's a
+window of time between when we make a LockReleaser and when we create a
+lock. But WebSocketStreamSocket::Connect works just fine, so we can wrap
+it earlier.
 
-Please note that, despite rolling to chrome/android, this profile is
-used for both Linux and Android.
+As part of this, I've merged the STATE_OBTAIN_LOCK_COMPLETE and
+STATE_TRANSPORT_CONNECT states. This is a no-op, but it makes it more
+obvious that we immediately take ownership of the lock when we're handed
+it.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/afdo-chromium-autoroll">https://autoroll.skia.org/r/afdo-chromium-autoroll</a>
-Please CC gbiv@chromium.org on the revert to ensure that a human
-is aware of the problem.
+(Ideally LockEndpoint would just hand you a LockRelease, but alas
+//net's calling convention is bad at returning things that aren't int.
+Clearly we need to invent net::Promise!)
 
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Tbr: gbiv@chromium.org
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie696adc3dd5bed9bb8122a83c6ee00c7a7e22c8e">Ie696adc3dd5bed9bb8122a83c6ee00c7a7e22c8e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3552131">https://chromium-review.googlesource.com/c/chromium/src/+/3552131</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#985220}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5a67966c8bd9715a6863d0a14d9906d888e4af40">I5a67966c8bd9715a6863d0a14d9906d888e4af40</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3549756">https://chromium-review.googlesource.com/c/chromium/src/+/3549756</a>
+Auto-Submit: David Benjamin &lt;davidben@chromium.org&gt;
+Reviewed-by: Adam Rice &lt;ricea@chromium.org&gt;
+Commit-Queue: Adam Rice &lt;ricea@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#985225}
 </pre>
 
 </body>
