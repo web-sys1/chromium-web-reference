@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/985225/"> 985225</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/076ff7a1094df26a35bea9e71f4b16414137bd43">076ff7a1094df26a35bea9e71f4b16414137bd43</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/985236/"> 985236</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d555218b82e657437ba46f718f448162f9df32bf">d555218b82e657437ba46f718f448162f9df32bf</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/985209/">985209</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5d5e68d74488e1013ee9abde50272012abf141dc">5d5e68d74488e1013ee9abde50272012abf141dc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/985223/">985223</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/447838fd0aa6ecc0a761cb289f95c07801b7256b">447838fd0aa6ecc0a761cb289f95c07801b7256b</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   076ff7a1094df26a35bea9e71f4b16414137bd43
+   d555218b82e657437ba46f718f448162f9df32bf
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/076ff7a1094df26a35bea9e71f4b16414137bd43">
+    <a href="/chromium/src/+log/d555218b82e657437ba46f718f448162f9df32bf">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/076ff7a1094df26a35bea9e71f4b16414137bd43.tar.gz">
+    <a href="/chromium/src/+archive/d555218b82e657437ba46f718f448162f9df32bf.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Benjamin &lt;davidben@chromium.org&gt;
+   Nikolaos Papaspyrou &lt;nikolaos@chromium.org&gt;
   </td>
   <td>
-   Fri Mar 25 09:04:32 2022
+   Fri Mar 25 10:08:28 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 25 09:04:32 2022
+   Fri Mar 25 10:08:28 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/076ff7a1094df26a35bea9e71f4b16414137bd43/">
-    fd8004927c1ab6580611678ce7cc4191709a6908
+   <a href="/chromium/src/+/d555218b82e657437ba46f718f448162f9df32bf/">
+    d45fd80d5ad12d7d78204c85d5cbf489f37ae0c8
    </a>
   </td>
  </tr>
@@ -166,40 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/076ff7a1094df26a35bea9e71f4b16414137bd43%5E">
-    002ae5a7d3de6c0df6abe80715c68eca2196c965
+   <a href="/chromium/src/+/d555218b82e657437ba46f718f448162f9df32bf%5E">
+    78c0c29ce9a766e80df56bef1bac6c51e8d55d59
    </a>
    <span>
     [
-    <a href="/chromium/src/+/076ff7a1094df26a35bea9e71f4b16414137bd43%5E%21/">
+    <a href="/chromium/src/+/d555218b82e657437ba46f718f448162f9df32bf%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Simplify WebSockets endpoint lock management
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">heap: Add UMA histograms for incremental mark/sweep step events
 
-WebSocketTransportConnectSubJob needs some extra logic because there's a
-window of time between when we make a LockReleaser and when we create a
-lock. But WebSocketStreamSocket::Connect works just fine, so we can wrap
-it earlier.
+Report fine-grain incremental mark/sweep statistics to UMA histograms,
+following the new naming scheme. This CL introduces
+V8.GC.Event.MainThread.Full.Incremental.(Mark|Sweep) and the aggregate
+V8.GC.Event.MainThread.Full.Incremental.
 
-As part of this, I've merged the STATE_OBTAIN_LOCK_COMPLETE and
-STATE_TRANSPORT_CONNECT states. This is a no-op, but it makes it more
-obvious that we immediately take ownership of the lock when we're handed
-it.
+This CL goes together with:
+<a href="https://chromium-review.googlesource.com/c/v8/v8/+/3545070">https://chromium-review.googlesource.com/c/v8/v8/+/3545070</a>
 
-(Ideally LockEndpoint would just hand you a LockRelease, but alas
-//net's calling convention is bad at returning things that aren't int.
-Clearly we need to invent net::Promise!)
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5a67966c8bd9715a6863d0a14d9906d888e4af40">I5a67966c8bd9715a6863d0a14d9906d888e4af40</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3549756">https://chromium-review.googlesource.com/c/chromium/src/+/3549756</a>
-Auto-Submit: David Benjamin &lt;davidben@chromium.org&gt;
-Reviewed-by: Adam Rice &lt;ricea@chromium.org&gt;
-Commit-Queue: Adam Rice &lt;ricea@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#985225}
+Bug: 1154636
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifa9903e34ffbb1087387c10dae8d218cb8e1571e">Ifa9903e34ffbb1087387c10dae8d218cb8e1571e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3545451">https://chromium-review.googlesource.com/c/chromium/src/+/3545451</a>
+Reviewed-by: Michael Lippautz &lt;mlippautz@chromium.org&gt;
+Reviewed-by: Omer Katz &lt;omerkatz@chromium.org&gt;
+Commit-Queue: Nikolaos Papaspyrou &lt;nikolaos@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#985236}
 </pre>
 
 </body>
