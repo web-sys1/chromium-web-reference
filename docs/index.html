@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/985312/"> 985312</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/55b418c868a6959ce69a6205e38ecb74a0b27317">55b418c868a6959ce69a6205e38ecb74a0b27317</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/985320/"> 985320</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/937753253a099a23a5455cb63456960c841e37f5">937753253a099a23a5455cb63456960c841e37f5</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/985308/">985308</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   55b418c868a6959ce69a6205e38ecb74a0b27317
+   937753253a099a23a5455cb63456960c841e37f5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/55b418c868a6959ce69a6205e38ecb74a0b27317">
+    <a href="/chromium/src/+log/937753253a099a23a5455cb63456960c841e37f5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/55b418c868a6959ce69a6205e38ecb74a0b27317.tar.gz">
+    <a href="/chromium/src/+archive/937753253a099a23a5455cb63456960c841e37f5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Friedrich Horschig &lt;fhorschig@chromium.org&gt;
+   Tommy C. Li &lt;tommycli@chromium.org&gt;
   </td>
   <td>
-   Fri Mar 25 15:42:44 2022
+   Fri Mar 25 16:14:55 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 25 15:42:44 2022
+   Fri Mar 25 16:14:55 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/55b418c868a6959ce69a6205e38ecb74a0b27317/">
-    041be4c1adec57ac581c06d0573a9a045620e50b
+   <a href="/chromium/src/+/937753253a099a23a5455cb63456960c841e37f5/">
+    31a02cecdc0c9e12382b551451abc9a287ad47b4
    </a>
   </td>
  </tr>
@@ -166,56 +166,28 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/55b418c868a6959ce69a6205e38ecb74a0b27317%5E">
-    f2e651757e1a2fc98583fe5c5c6499674d4d54d3
+   <a href="/chromium/src/+/937753253a099a23a5455cb63456960c841e37f5%5E">
+    4875fded0843fbfba46983e1b66cff121aae50f5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/55b418c868a6959ce69a6205e38ecb74a0b27317%5E%21/">
+    <a href="/chromium/src/+/937753253a099a23a5455cb63456960c841e37f5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Android][UPM] Change main backend in proxy based on sync status
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[journeys] Remove the Alternate omnibox action strings from the binary
 
-With this change, the proxy redirects all requests to a backend that is
-considered the main backend. Since the main backend doesn't depend only
-on the feature anymore but also on the sync status, this can change
-multiple times during an active session.
+The Alternate strings were shown to be less understandable.
 
-Changing to the built-in backend is always safe. It is always available
-and does not need migration since it is kept up-to-date by sync.
-Orthogonally, local data may need to be mirrored to the built-in backend
-so that making this backend the primary sourcedoes not revert any
-changes to local-only data.
-
-Changing to the Android backend (i.e. a downstream implementation like
-GMS) behaves similar. Although it requires a migration, all syncable
-data is managed by sync and a request that would be faster than sync
-can be resolved as if the request came from a different device.
-Changes to local-only data can happen after that point. A conflict
-in changes to local data is extremely unlikely since that would mean
-that sync gets enabled while the user triggers an Add/Update to that
-data.
-
-
-The sync delegate should always be provided by the built-in backend
-while it keeps running in the background.
-Similarly, Initialization and Shutdown don't care about the primary
-backend and always need to be executed for each backend. Only which
-backend is responsible to forward remote changes should change by
-sync status. This will be done in a follow-up.
-(For now, the built-in backend can handle that event since sync
-will trigger the change indirectly.)
-
-Bug: 1303600, 1279341
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I97a227dc07359fa220ba30bc1f61aac593be345f">I97a227dc07359fa220ba30bc1f61aac593be345f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3549040">https://chromium-review.googlesource.com/c/chromium/src/+/3549040</a>
-Reviewed-by: Mohamed Amir Yosef &lt;mamir@chromium.org&gt;
-Commit-Queue: Friedrich Horschig &lt;fhorschig@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#985312}
+Bug: NONE
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8b7aab09e4f1275cb04e42e3b5c0016cca51580a">I8b7aab09e4f1275cb04e42e3b5c0016cca51580a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3550604">https://chromium-review.googlesource.com/c/chromium/src/+/3550604</a>
+Reviewed-by: manuk hovanesian &lt;manukh@chromium.org&gt;
+Commit-Queue: Tommy Li &lt;tommycli@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#985320}
 </pre>
 
 </body>
