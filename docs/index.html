@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/985529/"> 985529</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/21fe7051670696d10258276a7e986149ed1737ec">21fe7051670696d10258276a7e986149ed1737ec</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/985564/"> 985564</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/940ddcfaff7bca60f7df77e54735c4f808933bfa">940ddcfaff7bca60f7df77e54735c4f808933bfa</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/985493/">985493</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f11f6db89f1c528eecc1b80170a309d9b72bccc2">f11f6db89f1c528eecc1b80170a309d9b72bccc2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/985520/">985520</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/360bad60d41328afd6ca71decf9455f98050e27f">360bad60d41328afd6ca71decf9455f98050e27f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   21fe7051670696d10258276a7e986149ed1737ec
+   940ddcfaff7bca60f7df77e54735c4f808933bfa
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/21fe7051670696d10258276a7e986149ed1737ec">
+    <a href="/chromium/src/+log/940ddcfaff7bca60f7df77e54735c4f808933bfa">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/21fe7051670696d10258276a7e986149ed1737ec.tar.gz">
+    <a href="/chromium/src/+archive/940ddcfaff7bca60f7df77e54735c4f808933bfa.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mustafa Emre Acer &lt;meacer@chromium.org&gt;
+   Istiaque Ahmed &lt;lazyboy@chromium.org&gt;
   </td>
   <td>
-   Fri Mar 25 22:30:11 2022
+   Fri Mar 25 23:44:41 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 25 22:30:11 2022
+   Fri Mar 25 23:44:41 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/21fe7051670696d10258276a7e986149ed1737ec/">
-    9fde6c9c95c447ecaae5d701fa013d83aec68bf0
+   <a href="/chromium/src/+/940ddcfaff7bca60f7df77e54735c4f808933bfa/">
+    c8020a4d7a285f6dbe31e739470979a1295df0b0
    </a>
   </td>
  </tr>
@@ -166,49 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/21fe7051670696d10258276a7e986149ed1737ec%5E">
-    5cc0ab19703c2626e0af37dc117f2f43853bfc78
+   <a href="/chromium/src/+/940ddcfaff7bca60f7df77e54735c4f808933bfa%5E">
+    ab1b26af185a80a0e10c3c79f0343b680a030366
    </a>
    <span>
     [
-    <a href="/chromium/src/+/21fe7051670696d10258276a7e986149ed1737ec%5E%21/">
+    <a href="/chromium/src/+/940ddcfaff7bca60f7df77e54735c4f808933bfa%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Lookalikes: Connect multiple skeleton generation code to the checks"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Extensions] Fix inadvertent leakage of info through event listeners.
 
-This reverts commit ab3f18b8e048a248284bd63584314cb7df31792f.
+Different extension event implementations (e.g. tabs.onCreated) can
+tweak their listener params through Event::WillDispatchCallback
+callback. It does so by passing mutable Event* to
+WillDispatchCallback. This can lead to one extension's
+event listener inadvertently affecting a different extension's
+event listener, as the (modified) `Event*` is carried over to
+next/subsequent listeners.
 
-Reason for revert: <a href="https://crbug.com/1308125">https://crbug.com/1308125</a>
+This CL changes this by removing the mutable Event param from
+WillDispatchCallback, and exposes  "writable" `event_args_out`
+and `event_filtering_info_out` params to WillDispatchCallback. This
+is done so that interested parties can set those modified params
+to be used by dispatcher (EventRouter::DispatchExtensionMessage).
 
-Original change's description:
-&gt; Lookalikes: Connect multiple skeleton generation code to the checks
-&gt;
-&gt; This CL uses the supplemental string generation code to produce multiple
-&gt; skeletons for hostnames. The string generation is done before generating
-&gt; any skeletons to avoid losing "interesting" characters with multiple
-&gt; skeletons to ICU's skeleton generation code.
-&gt;
-&gt; This CL should increase our coverage of lookalike domains slightly and
-&gt; fix previously possible spoofs.
-&gt;
-&gt; Bug: 843352
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I27e3aa109af1d6b49f7bc0ae55266247e4c3cd22">I27e3aa109af1d6b49f7bc0ae55266247e4c3cd22</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3508234">https://chromium-review.googlesource.com/c/chromium/src/+/3508234</a>
-&gt; Reviewed-by: Joe DeBlasio &lt;jdeblasio@chromium.org&gt;
-&gt; Commit-Queue: Mustafa Emre Acer &lt;meacer@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#982977}
+Note that events funneled through LazyEventDispatcher is not
+currently susceptible to this problem as it copies Event-s before
+dispatching them.
 
-Bug: 843352
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7787d290bb24bedc1b905e0f55f315861384ece8">I7787d290bb24bedc1b905e0f55f315861384ece8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3553580">https://chromium-review.googlesource.com/c/chromium/src/+/3553580</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Reviewed-by: Dan McArdle &lt;dmcardle@chromium.org&gt;
-Commit-Queue: Mustafa Emre Acer &lt;meacer@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#985529}
+Bug: 1302959
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1fbb9b9b29ff2f05c620f2a64f875d83db472136">I1fbb9b9b29ff2f05c620f2a64f875d83db472136</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3531082">https://chromium-review.googlesource.com/c/chromium/src/+/3531082</a>
+Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Commit-Queue: Istiaque Ahmed &lt;lazyboy@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#985564}
 </pre>
 
 </body>
