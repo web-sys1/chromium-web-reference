@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/986697/"> 986697</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e2e042f4c34cff4555412fc4bba955cf963e4e39">e2e042f4c34cff4555412fc4bba955cf963e4e39</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/986727/"> 986727</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f5412cf98efb1c5f3437543c92010d21f814575c">f5412cf98efb1c5f3437543c92010d21f814575c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/986687/">986687</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/244032a1d5abb73377c30d1125785a04528e8173">244032a1d5abb73377c30d1125785a04528e8173</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/986720/">986720</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a7de7f5185fe11dc7e43b1b610e9c34041703bf9">a7de7f5185fe11dc7e43b1b610e9c34041703bf9</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e2e042f4c34cff4555412fc4bba955cf963e4e39
+   f5412cf98efb1c5f3437543c92010d21f814575c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e2e042f4c34cff4555412fc4bba955cf963e4e39">
+    <a href="/chromium/src/+log/f5412cf98efb1c5f3437543c92010d21f814575c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e2e042f4c34cff4555412fc4bba955cf963e4e39.tar.gz">
+    <a href="/chromium/src/+archive/f5412cf98efb1c5f3437543c92010d21f814575c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Victor Costan &lt;pwnall@chromium.org&gt;
+   Hui Yingst &lt;nigi@chromium.org&gt;
   </td>
   <td>
-   Tue Mar 29 21:11:34 2022
+   Tue Mar 29 22:17:28 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 29 21:11:34 2022
+   Tue Mar 29 22:17:28 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e2e042f4c34cff4555412fc4bba955cf963e4e39/">
-    d18eff1a026cfc9ab0fbfbb33a23c1354ad48d8a
+   <a href="/chromium/src/+/f5412cf98efb1c5f3437543c92010d21f814575c/">
+    e28e518c4cc77706369345d99086f38a5131209d
    </a>
   </td>
  </tr>
@@ -166,60 +166,27 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e2e042f4c34cff4555412fc4bba955cf963e4e39%5E">
-    2d023f9f249056a52dfa305aca6986f2bca86404
+   <a href="/chromium/src/+/f5412cf98efb1c5f3437543c92010d21f814575c%5E">
+    c33ae8cb0e1c613f8b22bd68016d699bd872a27d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e2e042f4c34cff4555412fc4bba955cf963e4e39%5E%21/">
+    <a href="/chromium/src/+/f5412cf98efb1c5f3437543c92010d21f814575c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">sql: Clean up MetaTable.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Sheriff] Disable flaky test MetricIntegrationTest.EventCounts.
 
-This CL performs the following cleanups on sql::MetaTable.
-
-* Replace all SELECT variants with PrepareGetStatement() and all INSERT
-  variants with PrepareSetStatement(). Asides from reducing code
-  duplication, this will reduce the number of prepared statements in the
-  database's cache.
-
-* Move Prepare{Get,Set}Statement() from private static methods to
-  functions in the implementation file's anonymous namespace.
-
-* Replace const char* arguments with base::StringPiece.
-
-* Replace pointers with references for out arguments. This change is
-  currently scoped to internal APIs, because changing external APIs
-  would require updates across the whole codebase.
-
-* Remove the SetValue() override that takes an int value. The C++
-  compiler's override selection will implicitly migrate callsites to the
-  SetValue() override that takes an int64_t.
-
-* Migrate the GetValue() implementation from ColumnInt() to
-  ColumnInt64().
-
-* Tighten SQL query syntax by removing unnecessary extra spaces.
-
-* Add DCHECKs documenting (and checking) preconditions.
-
-* IWYU fixes in both the header and the implementation file.
-
-This CL does not change the meta table's schema. While that is
-suboptimal, fixing it will require migration code, which would be best
-done in a separate CL.
-
-Bug: 1228463, 1299863
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1f8bfed7aa021470d5ae47cd94bfa0acc9f11ecf">I1f8bfed7aa021470d5ae47cd94bfa0acc9f11ecf</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3556693">https://chromium-review.googlesource.com/c/chromium/src/+/3556693</a>
-Auto-Submit: Victor Costan &lt;pwnall@chromium.org&gt;
-Reviewed-by: Austin Sullivan &lt;asully@chromium.org&gt;
-Commit-Queue: Austin Sullivan &lt;asully@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#986697}
+Bug: 1311383
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id80fa430d7431466b04dc266ee31647a0ee832fe">Id80fa430d7431466b04dc266ee31647a0ee832fe</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3557979">https://chromium-review.googlesource.com/c/chromium/src/+/3557979</a>
+Reviewed-by: Cammie Smith Barnes &lt;cammie@chromium.org&gt;
+Owners-Override: Cammie Smith Barnes &lt;cammie@chromium.org&gt;
+Commit-Queue: Nigi &lt;nigi@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#986727}
 </pre>
 
 </body>
