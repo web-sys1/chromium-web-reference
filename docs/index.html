@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/986679/"> 986679</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/36a4384113939b22c9a6802a58e2594bd2f8c75b">36a4384113939b22c9a6802a58e2594bd2f8c75b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/986697/"> 986697</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e2e042f4c34cff4555412fc4bba955cf963e4e39">e2e042f4c34cff4555412fc4bba955cf963e4e39</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/986687/">986687</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   36a4384113939b22c9a6802a58e2594bd2f8c75b
+   e2e042f4c34cff4555412fc4bba955cf963e4e39
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/36a4384113939b22c9a6802a58e2594bd2f8c75b">
+    <a href="/chromium/src/+log/e2e042f4c34cff4555412fc4bba955cf963e4e39">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/36a4384113939b22c9a6802a58e2594bd2f8c75b.tar.gz">
+    <a href="/chromium/src/+archive/e2e042f4c34cff4555412fc4bba955cf963e4e39.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Lei Zhang &lt;thestig@chromium.org&gt;
+   Victor Costan &lt;pwnall@chromium.org&gt;
   </td>
   <td>
-   Tue Mar 29 20:38:21 2022
+   Tue Mar 29 21:11:34 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 29 20:38:21 2022
+   Tue Mar 29 21:11:34 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/36a4384113939b22c9a6802a58e2594bd2f8c75b/">
-    6a104366066a5d4efb20f7680d67b4e402b396fd
+   <a href="/chromium/src/+/e2e042f4c34cff4555412fc4bba955cf963e4e39/">
+    d18eff1a026cfc9ab0fbfbb33a23c1354ad48d8a
    </a>
   </td>
  </tr>
@@ -166,32 +166,60 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/36a4384113939b22c9a6802a58e2594bd2f8c75b%5E">
-    76a5dbb0e04a9b90e3ee875cdb8bc7746f037a15
+   <a href="/chromium/src/+/e2e042f4c34cff4555412fc4bba955cf963e4e39%5E">
+    2d023f9f249056a52dfa305aca6986f2bca86404
    </a>
    <span>
     [
-    <a href="/chromium/src/+/36a4384113939b22c9a6802a58e2594bd2f8c75b%5E%21/">
+    <a href="/chromium/src/+/e2e042f4c34cff4555412fc4bba955cf963e4e39%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move PDF metrics code into a separate MetricsHandler class.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">sql: Clean up MetaTable.
 
-The PDF UMA metrics code is self-contained and can be its own class.
-Separate it out from the much larger PdfViewPluginBase class.
+This CL performs the following cleanups on sql::MetaTable.
 
-Along the way, instantiate MetricsHandler in PdfViewWebPlugin, as
-PdfViewPluginBase will merge into PdfViewWebPlugin.
+* Replace all SELECT variants with PrepareGetStatement() and all INSERT
+  variants with PrepareSetStatement(). Asides from reducing code
+  duplication, this will reduce the number of prepared statements in the
+  database's cache.
 
-Bug: 1302059
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I72fcf27f461ffaa71e03c8b61084a258711ee11b">I72fcf27f461ffaa71e03c8b61084a258711ee11b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3534391">https://chromium-review.googlesource.com/c/chromium/src/+/3534391</a>
-Reviewed-by: Nigi &lt;nigi@chromium.org&gt;
-Commit-Queue: Lei Zhang &lt;thestig@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#986679}
+* Move Prepare{Get,Set}Statement() from private static methods to
+  functions in the implementation file's anonymous namespace.
+
+* Replace const char* arguments with base::StringPiece.
+
+* Replace pointers with references for out arguments. This change is
+  currently scoped to internal APIs, because changing external APIs
+  would require updates across the whole codebase.
+
+* Remove the SetValue() override that takes an int value. The C++
+  compiler's override selection will implicitly migrate callsites to the
+  SetValue() override that takes an int64_t.
+
+* Migrate the GetValue() implementation from ColumnInt() to
+  ColumnInt64().
+
+* Tighten SQL query syntax by removing unnecessary extra spaces.
+
+* Add DCHECKs documenting (and checking) preconditions.
+
+* IWYU fixes in both the header and the implementation file.
+
+This CL does not change the meta table's schema. While that is
+suboptimal, fixing it will require migration code, which would be best
+done in a separate CL.
+
+Bug: 1228463, 1299863
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1f8bfed7aa021470d5ae47cd94bfa0acc9f11ecf">I1f8bfed7aa021470d5ae47cd94bfa0acc9f11ecf</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3556693">https://chromium-review.googlesource.com/c/chromium/src/+/3556693</a>
+Auto-Submit: Victor Costan &lt;pwnall@chromium.org&gt;
+Reviewed-by: Austin Sullivan &lt;asully@chromium.org&gt;
+Commit-Queue: Austin Sullivan &lt;asully@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#986697}
 </pre>
 
 </body>
