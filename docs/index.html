@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/986628/"> 986628</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3c2849b5e3e0e02ee8392415e35d9b83ae003de3">3c2849b5e3e0e02ee8392415e35d9b83ae003de3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/986641/"> 986641</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0ef7c174210e4fcaccc66d8234fa13d0d00e62a0">0ef7c174210e4fcaccc66d8234fa13d0d00e62a0</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/986579/">986579</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d0c56d67d73f5efaa9bcb555b376610f35c5b00a">d0c56d67d73f5efaa9bcb555b376610f35c5b00a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/986625/">986625</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/27cdf09556e75915dd99d68708fd10fbbeb8c1d0">27cdf09556e75915dd99d68708fd10fbbeb8c1d0</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3c2849b5e3e0e02ee8392415e35d9b83ae003de3
+   0ef7c174210e4fcaccc66d8234fa13d0d00e62a0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3c2849b5e3e0e02ee8392415e35d9b83ae003de3">
+    <a href="/chromium/src/+log/0ef7c174210e4fcaccc66d8234fa13d0d00e62a0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3c2849b5e3e0e02ee8392415e35d9b83ae003de3.tar.gz">
+    <a href="/chromium/src/+archive/0ef7c174210e4fcaccc66d8234fa13d0d00e62a0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alex Moshchuk &lt;alexmos@chromium.org&gt;
+   Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
   </td>
   <td>
-   Tue Mar 29 18:51:02 2022
+   Tue Mar 29 19:32:04 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 29 18:51:02 2022
+   Tue Mar 29 19:32:04 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3c2849b5e3e0e02ee8392415e35d9b83ae003de3/">
-    224971027f4d01e5d026c0d4de14822051714250
+   <a href="/chromium/src/+/0ef7c174210e4fcaccc66d8234fa13d0d00e62a0/">
+    05baea77a61553ba7167b6899c5cf1e8a571a359
    </a>
   </td>
  </tr>
@@ -166,29 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3c2849b5e3e0e02ee8392415e35d9b83ae003de3%5E">
-    b2f9c2ef114d7d78ce7e5d10e780d46e0cd71534
+   <a href="/chromium/src/+/0ef7c174210e4fcaccc66d8234fa13d0d00e62a0%5E">
+    cbab577c0ea849fa28de3e778b353c1dd5a14f33
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3c2849b5e3e0e02ee8392415e35d9b83ae003de3%5E%21/">
+    <a href="/chromium/src/+/0ef7c174210e4fcaccc66d8234fa13d0d00e62a0%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix expectations for tests involving isolated origin subframes in &lt;webview&gt;.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PageLoadMetrics: manage the PageLoadTracker per-page manner
 
-With site-isolated &lt;webview&gt;, isolated origin subframes in these tests
-now get their own dedicated process.
+This patch changes MetricswebContentsObserver to construct
+PageLoadTracker in per-page manner. `committed_load_` is now
+renamed to `primary_page_` as now we have multiple committed loads.
+Other committed loads for non-primary pages are stored in
+`active_pages_` instead. We clear inner page trackers when
+the primary page navigation happens.
 
-Bug: 1267977
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I21ef61c2cdd24b03f48da91abd45d01e27a973b9">I21ef61c2cdd24b03f48da91abd45d01e27a973b9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3556514">https://chromium-review.googlesource.com/c/chromium/src/+/3556514</a>
-Reviewed-by: James Maclean &lt;wjmaclean@chromium.org&gt;
-Commit-Queue: Alex Moshchuk &lt;alexmos@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#986628}
+This is the first step to support FencedFrames in the
+PageLoadMetrics as described in the design doc below.
+<a href="https://docs.google.com/document/d/1sxzBBR4MZXvLFelN8EygSq5F8hxiaw-JeoiJtFxSu_w/edit?usp=sharing">https://docs.google.com/document/d/1sxzBBR4MZXvLFelN8EygSq5F8hxiaw-JeoiJtFxSu_w/edit?usp=sharing</a>
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib04deca97cb07bc37eaa052e6227ca55776ddcef">Ib04deca97cb07bc37eaa052e6227ca55776ddcef</a>
+Bug: 1301880
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3527534">https://chromium-review.googlesource.com/c/chromium/src/+/3527534</a>
+Reviewed-by: Yoav Weiss &lt;yoavweiss@chromium.org&gt;
+Commit-Queue: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#986641}
 </pre>
 
 </body>
