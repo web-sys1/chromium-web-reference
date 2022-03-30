@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/986906/"> 986906</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/70c2805ed9409a0e27246ea419622d6e431f95af">70c2805ed9409a0e27246ea419622d6e431f95af</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/986910/"> 986910</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/443a84982b27396a4b37ccba278360e07a9076c5">443a84982b27396a4b37ccba278360e07a9076c5</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/986906/">986906</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   70c2805ed9409a0e27246ea419622d6e431f95af
+   443a84982b27396a4b37ccba278360e07a9076c5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/70c2805ed9409a0e27246ea419622d6e431f95af">
+    <a href="/chromium/src/+log/443a84982b27396a4b37ccba278360e07a9076c5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/70c2805ed9409a0e27246ea419622d6e431f95af.tar.gz">
+    <a href="/chromium/src/+archive/443a84982b27396a4b37ccba278360e07a9076c5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Fabrice de Gans &lt;fdegans@chromium.org&gt;
+   Stefano Duo &lt;stefanoduo@google.com&gt;
   </td>
   <td>
-   Wed Mar 30 09:08:25 2022
+   Wed Mar 30 09:45:14 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 30 09:08:25 2022
+   Wed Mar 30 09:45:14 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/70c2805ed9409a0e27246ea419622d6e431f95af/">
-    7cf055a3f946f8443d3c12c10f5d7a0cff80241a
+   <a href="/chromium/src/+/443a84982b27396a4b37ccba278360e07a9076c5/">
+    a5f5c7e56853cd0a54bc61aa48ddf2b55c880669
    </a>
   </td>
  </tr>
@@ -166,27 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/70c2805ed9409a0e27246ea419622d6e431f95af%5E">
-    f6c1b0c3d8f4855e965218a4adf66e5ff6f61e09
+   <a href="/chromium/src/+/443a84982b27396a4b37ccba278360e07a9076c5%5E">
+    1a7a37ae3b9cafe28270f24bed8ed0b1d2b4ae34
    </a>
    <span>
     [
-    <a href="/chromium/src/+/70c2805ed9409a0e27246ea419622d6e431f95af%5E%21/">
+    <a href="/chromium/src/+/443a84982b27396a4b37ccba278360e07a9076c5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[code-health] Migrate //build/fuchsia/PRESUBMIT.py to Python 3
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Multi-network Cronet: interface API plumbing
 
-Bug: 1207012
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6d473739a1f49d68b10f14704645eb2a9365aa34">I6d473739a1f49d68b10f14704645eb2a9365aa34</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3558397">https://chromium-review.googlesource.com/c/chromium/src/+/3558397</a>
-Auto-Submit: Fabrice de Gans &lt;fdegans@chromium.org&gt;
-Reviewed-by: Greg Thompson &lt;grt@chromium.org&gt;
-Commit-Queue: Greg Thompson &lt;grt@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#986906}
+This CL introduces the interface part of the multi-network
+Cronet API and bumps the interface API level. In short, all this does is
+expose a bindToNetwork API to:
+* ExperimentalBidirectionalStream.Builder
+* ExperimentalUrlRequest.Builder
+* ExperimentalCronetEngine
+
+This make it possible to set the Network parameter of implementation API
+changes introduced in <a href="https://crrev.com/c/3529068">https://crrev.com/c/3529068</a> and to add the
+@Override decorator to those methods.
+
+Tests are added to confirm that the underlying CronetContext is properly
+affected by calls to these new APIs. To achieve that CronetTestUtil has
+been extended to be able to query for network-bound contexts existence.
+
+Bug: 1284972
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibfd62994d90cfe097822a04ce68a017e2242f58b">Ibfd62994d90cfe097822a04ce68a017e2242f58b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3528479">https://chromium-review.googlesource.com/c/chromium/src/+/3528479</a>
+Reviewed-by: Richard Coles &lt;torne@chromium.org&gt;
+Commit-Queue: Stefano Duo &lt;stefanoduo@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#986910}
 </pre>
 
 </body>
