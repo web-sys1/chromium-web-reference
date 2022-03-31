@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/987670/"> 987670</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/032424a905ac1e0689ad629de2e5a0ddc0b046ee">032424a905ac1e0689ad629de2e5a0ddc0b046ee</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/987657/"> 987657</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9e4412b3bd85f325cf7255c4f0728f6484889397">9e4412b3bd85f325cf7255c4f0728f6484889397</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/987645/">987645</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   032424a905ac1e0689ad629de2e5a0ddc0b046ee
+   9e4412b3bd85f325cf7255c4f0728f6484889397
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/032424a905ac1e0689ad629de2e5a0ddc0b046ee">
+    <a href="/chromium/src/+log/9e4412b3bd85f325cf7255c4f0728f6484889397">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/032424a905ac1e0689ad629de2e5a0ddc0b046ee.tar.gz">
+    <a href="/chromium/src/+archive/9e4412b3bd85f325cf7255c4f0728f6484889397.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Lei Zhang &lt;thestig@chromium.org&gt;
+   Eric Sum &lt;esum@google.com&gt;
   </td>
   <td>
-   Thu Mar 31 22:27:15 2022
+   Thu Mar 31 21:54:33 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 31 22:27:15 2022
+   Thu Mar 31 21:54:33 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/032424a905ac1e0689ad629de2e5a0ddc0b046ee/">
-    8d1084acf2a93605e31a7d40ac656bf25ea8a932
+   <a href="/chromium/src/+/9e4412b3bd85f325cf7255c4f0728f6484889397/">
+    00cadbb70a5a8bb6d6564cfa35ef478b7db930c6
    </a>
   </td>
  </tr>
@@ -166,46 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/032424a905ac1e0689ad629de2e5a0ddc0b046ee%5E">
-    fa30f499af1de31ac8962ca7fc4b4001b37331ce
+   <a href="/chromium/src/+/9e4412b3bd85f325cf7255c4f0728f6484889397%5E">
+    fb920fb8de9a917bd4ef16997d01e8876e5f1e6a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/032424a905ac1e0689ad629de2e5a0ddc0b046ee%5E%21/">
+    <a href="/chromium/src/+/9e4412b3bd85f325cf7255c4f0728f6484889397%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Disable more flaky tast tests.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove redundant weather icon download.
 
-Disable various tast tests that have been reported as flaky:
+This is a minor point, but it seems that we're effectively fetching
+the weather in 2 spots:
+1) When we fetch new topics, the weather seems to also be returned
+   in the response.
+2) A dedicated weather fetch.
 
-arc.DragDrop.chrome_to_android
-arc.StartStop.vm
-dlp.DataLeakPreventionRulesListPrinting.ash_allowed
-dlp.DataLeakPreventionRulesListPrinting.ash_blocked
-inputs.VirtualKeyboardChangeInput.a11y
-inputs.VirtualKeyboardGlideTyping.clamshell_a11y_floating
-oobe.Smoke
-policy.AccessibilityPolicies.spoken_feedback
-policy.AccessibilityPolicies.virtual_keyboard
-policy.AutoOpenAllowedForURLs.lacros
-policy.CookiesBlockedForUrls
-policy.DefaultJavaScriptSetting
-policy.ShowHomeButton
-policy.ShowLogoutButtonInTray
+This means we're downloading the weather icon twice when the
+screensaver starts. Since the dedicated weather fetch is sufficient
+and we have a refresh timer that runs every 5 minutes, it seems that
+we can ignore the weather in 1)'s response so prevent an extra
+download. I noticed this because we're going to add more topic
+fetches in the future (a landscape one and portrait one), so that
+may add yet another unnessary weather icon download.
 
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If343c65bf5563101f01ab5b1f57c9f5b0f16c447">If343c65bf5563101f01ab5b1f57c9f5b0f16c447</a>
-Bug: 1307750,1309052,1309075,1309466,1309492,1311081,1312120,1312121
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3564784">https://chromium-review.googlesource.com/c/chromium/src/+/3564784</a>
-Commit-Queue: Lei Zhang &lt;thestig@chromium.org&gt;
-Auto-Submit: Lei Zhang &lt;thestig@chromium.org&gt;
-Reviewed-by: Owen Min &lt;zmin@chromium.org&gt;
-Commit-Queue: Owen Min &lt;zmin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#987670}
+Bug: b:225043577
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id6dfee4d3947303e67331338110bcaa32a6a14de">Id6dfee4d3947303e67331338110bcaa32a6a14de</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3564163">https://chromium-review.googlesource.com/c/chromium/src/+/3564163</a>
+Reviewed-by: Tao Wu &lt;wutao@chromium.org&gt;
+Reviewed-by: Xiaohui Chen &lt;xiaohuic@chromium.org&gt;
+Commit-Queue: Eric Sum &lt;esum@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#987657}
 </pre>
 
 </body>
