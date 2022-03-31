@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/987480/"> 987480</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/34efacb06ea3e3d224c809fb06e36ef6a14bc3fb">34efacb06ea3e3d224c809fb06e36ef6a14bc3fb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/987498/"> 987498</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0c047203115957d8152604214b86810e64b0e99f">0c047203115957d8152604214b86810e64b0e99f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/987456/">987456</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   34efacb06ea3e3d224c809fb06e36ef6a14bc3fb
+   0c047203115957d8152604214b86810e64b0e99f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/34efacb06ea3e3d224c809fb06e36ef6a14bc3fb">
+    <a href="/chromium/src/+log/0c047203115957d8152604214b86810e64b0e99f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/34efacb06ea3e3d224c809fb06e36ef6a14bc3fb.tar.gz">
+    <a href="/chromium/src/+archive/0c047203115957d8152604214b86810e64b0e99f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andrew Rayskiy &lt;greengrape@google.com&gt;
+   Alexander Dunaev &lt;adunaev@igalia.com&gt;
   </td>
   <td>
-   Thu Mar 31 16:00:47 2022
+   Thu Mar 31 16:43:38 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 31 16:00:47 2022
+   Thu Mar 31 16:43:38 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/34efacb06ea3e3d224c809fb06e36ef6a14bc3fb/">
-    e11f38fe4b400d9871207ed8d81f2a27c38bebf8
+   <a href="/chromium/src/+/0c047203115957d8152604214b86810e64b0e99f/">
+    3c66671ad6b75624ba14bdcb5846f68a0c999f7d
    </a>
   </td>
  </tr>
@@ -166,25 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/34efacb06ea3e3d224c809fb06e36ef6a14bc3fb%5E">
-    72795f5c606d96bbcc766a707bcf0fd89e1f41ce
+   <a href="/chromium/src/+/0c047203115957d8152604214b86810e64b0e99f%5E">
+    9235c38a7db520d4fb2c8c682bc81a8eee7edc04
    </a>
    <span>
     [
-    <a href="/chromium/src/+/34efacb06ea3e3d224c809fb06e36ef6a14bc3fb%5E%21/">
+    <a href="/chromium/src/+/0c047203115957d8152604214b86810e64b0e99f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reverse AsyncJsRunner logic: instead of storing unique_ptr&lt;Future&gt; and returning WeakPtr&lt;Future&gt; from RunScript(...) calls we now store base::OnceCallback&lt;...&gt; and return unique_ptr&lt;Future&gt;.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[lacros] Allowed the MRU list to be empty when finding the insertion...
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0c1a445ea6a60206ba640565a7245798658898b0">I0c1a445ea6a60206ba640565a7245798658898b0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3563022">https://chromium-review.googlesource.com/c/chromium/src/+/3563022</a>
-Reviewed-by: Jeroen Dhollander &lt;jeroendh@google.com&gt;
-Commit-Queue: Andrew Rayskiy &lt;greengrape@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#987480}
+...index.
+
+OverviewGrid::FindInsertionIndex() requires the list of MRU windows to
+be non-empty, and hits NONREACHED when that is not the case.  That is
+probably not correct because in certain circumstances (e. g., when
+creating a new desk and immediately adding some windows) it is empty.
+
+This patch fixes the issue by returning early if the list is empty.
+
+Bug: 1268741
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic09be68bc496aedc5e72a1a5b64468ecc9ef4fba">Ic09be68bc496aedc5e72a1a5b64468ecc9ef4fba</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3563338">https://chromium-review.googlesource.com/c/chromium/src/+/3563338</a>
+Reviewed-by: Sammie Quon &lt;sammiequon@chromium.org&gt;
+Commit-Queue: Alexander Dunaev &lt;adunaev@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#987498}
 </pre>
 
 </body>
