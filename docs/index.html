@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/987767/"> 987767</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e0fc428f6f56f34b48b20a3209e1a9bf9a0c9d4d">e0fc428f6f56f34b48b20a3209e1a9bf9a0c9d4d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/987782/"> 987782</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7f19f8eaf932aa7873d66dcd6d2415bbd70c5e14">7f19f8eaf932aa7873d66dcd6d2415bbd70c5e14</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/987761/">987761</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/437f9b0f860fcd8805b1ec52296feef84bcc8d72">437f9b0f860fcd8805b1ec52296feef84bcc8d72</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/987774/">987774</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bc8bd50f6fc705a6216ea00233a4500096339eef">bc8bd50f6fc705a6216ea00233a4500096339eef</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e0fc428f6f56f34b48b20a3209e1a9bf9a0c9d4d
+   7f19f8eaf932aa7873d66dcd6d2415bbd70c5e14
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e0fc428f6f56f34b48b20a3209e1a9bf9a0c9d4d">
+    <a href="/chromium/src/+log/7f19f8eaf932aa7873d66dcd6d2415bbd70c5e14">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e0fc428f6f56f34b48b20a3209e1a9bf9a0c9d4d.tar.gz">
+    <a href="/chromium/src/+archive/7f19f8eaf932aa7873d66dcd6d2415bbd70c5e14.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Michael Bai &lt;michaelbai@chromium.org&gt;
+   Howard Yang &lt;hcyang@google.com&gt;
   </td>
   <td>
-   Fri Apr 01 02:48:05 2022
+   Fri Apr 01 04:02:15 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 01 02:48:05 2022
+   Fri Apr 01 04:02:15 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e0fc428f6f56f34b48b20a3209e1a9bf9a0c9d4d/">
-    45ac88c6fb59abf984591df99b8f9a85b3271d89
+   <a href="/chromium/src/+/7f19f8eaf932aa7873d66dcd6d2415bbd70c5e14/">
+    08db9aacbd5803219f812c29777fb338c9792b33
    </a>
   </td>
  </tr>
@@ -166,33 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e0fc428f6f56f34b48b20a3209e1a9bf9a0c9d4d%5E">
-    d77bdcdf37c5154bc88eea70d2e2c0a73ce91be9
+   <a href="/chromium/src/+/7f19f8eaf932aa7873d66dcd6d2415bbd70c5e14%5E">
+    74358c77cdc9936a99c51a5303d1661dea0a2d57
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e0fc428f6f56f34b48b20a3209e1a9bf9a0c9d4d%5E%21/">
+    <a href="/chromium/src/+/7f19f8eaf932aa7873d66dcd6d2415bbd70c5e14%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use web_preferences_ for preferred_color_scheme
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">dbus: move :common to a separate package
 
-Previously preferred_color_scheme_ is used, but it doesn't work
-for Android, web_preferences_-&gt;preferred_color_scheme should actually
-be used since it is the way to tell the renderer the
-preferred_color_scheme.
+Currently lacros can directly pull in the dbus dependencies it needs by
+adding them into chromeos/lacros/dbus/BUILD.gn. But it doesn't want to
+pull in the whole //chromeos/dbus (and some packages can't be built in
+lacros currently). However, some dbus clients depend on
+//chromeos/dbus:common, like u2f_client, and as a result lacros can't
+directly pull it in as dependency because then the whole //chromeos/dbus
+would have to be built. Separate the :common component out as a separate
+package so that the dependency can be separated. Now lacros can use
+those dbus clients that need :common.
 
-Bug: 1310080
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I75472dc39f0299abb65065638f8827c6147b9708">I75472dc39f0299abb65065638f8827c6147b9708</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3564323">https://chromium-review.googlesource.com/c/chromium/src/+/3564323</a>
-Auto-Submit: Michael Bai &lt;michaelbai@chromium.org&gt;
-Reviewed-by: Bo Liu &lt;boliu@chromium.org&gt;
-Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
-Commit-Queue: Philip Rogers &lt;pdr@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#987767}
+Except moving the files and the portion of chromeos/dbus/BUILD.gn to the
+common directory, other changes are all search and replaces.
+
+Bug: 1269528
+Test: Build ash ok, build lacros ok
+Test: CQ
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3efbf103827d5e0062c61b85de8463ecf67c31c5">I3efbf103827d5e0062c61b85de8463ecf67c31c5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3555532">https://chromium-review.googlesource.com/c/chromium/src/+/3555532</a>
+Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
+Reviewed-by: Gabriel Marin &lt;gmx@chromium.org&gt;
+Commit-Queue: Howard Yang &lt;hcyang@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#987782}
 </pre>
 
 </body>
