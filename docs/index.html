@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/987809/"> 987809</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/83d0ac6b9161bb70961aedc352ee25be386b1a78">83d0ac6b9161bb70961aedc352ee25be386b1a78</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/987815/"> 987815</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8d5fc9388db29d91c2858d950fa013692283545c">8d5fc9388db29d91c2858d950fa013692283545c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/987786/">987786</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   83d0ac6b9161bb70961aedc352ee25be386b1a78
+   8d5fc9388db29d91c2858d950fa013692283545c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/83d0ac6b9161bb70961aedc352ee25be386b1a78">
+    <a href="/chromium/src/+log/8d5fc9388db29d91c2858d950fa013692283545c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/83d0ac6b9161bb70961aedc352ee25be386b1a78.tar.gz">
+    <a href="/chromium/src/+archive/8d5fc9388db29d91c2858d950fa013692283545c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Fergal Daly &lt;fergal@chromium.org&gt;
+   Timothy Loh &lt;timloh@chromium.org&gt;
   </td>
   <td>
-   Fri Apr 01 07:04:03 2022
+   Fri Apr 01 07:24:15 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 01 07:04:03 2022
+   Fri Apr 01 07:24:15 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/83d0ac6b9161bb70961aedc352ee25be386b1a78/">
-    a8bed953fdd4f0c723953900da639c0cd3d7c97b
+   <a href="/chromium/src/+/8d5fc9388db29d91c2858d950fa013692283545c/">
+    09d6fb1ad71bcd8e6716ff022bc91f8daed32329
    </a>
   </td>
  </tr>
@@ -166,30 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/83d0ac6b9161bb70961aedc352ee25be386b1a78%5E">
-    094e44db3824aa73509a64f87734e61f484be611
+   <a href="/chromium/src/+/8d5fc9388db29d91c2858d950fa013692283545c%5E">
+    eb0ac174079fb6cc14406d14cd21f2612fe6a36b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/83d0ac6b9161bb70961aedc352ee25be386b1a78%5E%21/">
+    <a href="/chromium/src/+/8d5fc9388db29d91c2858d950fa013692283545c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Correct feature name to BackForwardCacheDedicatedWorker.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Tidy up CrostiniRestarter abort flow and options for stopping early
 
-Also tweak a test to be skipped when this is enabled, the test assumes
-workers cannot be cached.
+We currently have start_vm_only and stop_after_lxd_available. The latter
+is somewhat buggy as it uses FinishRestart which means that any other
+pending restarters for that container wouldn't actually get run. The
+former uses Abort, which works correctly but the flow for it is
+pretty messy.
 
-Bug: 1146955
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1742361daf2db1bff47e5f3e061bf808f9950fba">I1742361daf2db1bff47e5f3e061bf808f9950fba</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3534401">https://chromium-review.googlesource.com/c/chromium/src/+/3534401</a>
-Reviewed-by: Darren Willis &lt;djw@chromium.org&gt;
-Commit-Queue: Fergal Daly &lt;fergal@chromium.org&gt;
-Auto-Submit: Fergal Daly &lt;fergal@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#987809}
+- The Abort flow now has less callback indirection. The callback given
+to AbortRestartCrostini is passed directly to the restarter instead of
+being wrapped. Move the logic in OnAbortRestartCrostini which starts
+the next restarter FinishRestart to make this work.
+- Use FinishRestart for start_vm_only instead of Abort. Also
+move this to after we check if starting the VM actually succeeded.
+- Add a test for stop_after_lxd_available and another simultaneous
+restarter as it should work now.
+- The RestarterTimeInState2 metric for aborted restarts is also fixed to
+correctly log the last state.
+
+Bug: b/227693911
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I93735f87e1474562e7c77abc43c41d8078f11216">I93735f87e1474562e7c77abc43c41d8078f11216</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3562799">https://chromium-review.googlesource.com/c/chromium/src/+/3562799</a>
+Reviewed-by: Joel Hockey &lt;joelhockey@chromium.org&gt;
+Commit-Queue: Timothy Loh &lt;timloh@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#987815}
 </pre>
 
 </body>
