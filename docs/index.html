@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/988986/"> 988986</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/07c063e697bcd8cab59f71dc62abc5bc9e5465bf">07c063e697bcd8cab59f71dc62abc5bc9e5465bf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/989021/"> 989021</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/80e84257f33410448214e1591c2a4b3d3f4a60e5">80e84257f33410448214e1591c2a4b3d3f4a60e5</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/988965/">988965</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   07c063e697bcd8cab59f71dc62abc5bc9e5465bf
+   80e84257f33410448214e1591c2a4b3d3f4a60e5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/07c063e697bcd8cab59f71dc62abc5bc9e5465bf">
+    <a href="/chromium/src/+log/80e84257f33410448214e1591c2a4b3d3f4a60e5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/07c063e697bcd8cab59f71dc62abc5bc9e5465bf.tar.gz">
+    <a href="/chromium/src/+archive/80e84257f33410448214e1591c2a4b3d3f4a60e5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Colin Blundell &lt;blundell@chromium.org&gt;
+   Peter Wen &lt;wnwen@chromium.org&gt;
   </td>
   <td>
-   Tue Apr 05 15:50:24 2022
+   Tue Apr 05 16:57:17 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 05 15:50:24 2022
+   Tue Apr 05 16:57:17 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/07c063e697bcd8cab59f71dc62abc5bc9e5465bf/">
-    121236c8ebad22eca835481e780c19fa9bcc7bcc
+   <a href="/chromium/src/+/80e84257f33410448214e1591c2a4b3d3f4a60e5/">
+    a63f7834f8e3b050bed301dd297a02249751e5f5
    </a>
   </td>
  </tr>
@@ -166,29 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/07c063e697bcd8cab59f71dc62abc5bc9e5465bf%5E">
-    403d9e988aee9a76b69c855ee9ae03fb31d5ca3a
+   <a href="/chromium/src/+/80e84257f33410448214e1591c2a4b3d3f4a60e5%5E">
+    f9c274a422efb09e5acbac76b5c77775dc321cdd
    </a>
    <span>
     [
-    <a href="/chromium/src/+/07c063e697bcd8cab59f71dc62abc5bc9e5465bf%5E%21/">
+    <a href="/chromium/src/+/80e84257f33410448214e1591c2a4b3d3f4a60e5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Android] Disable testRecordingOfFirstNavigationCommitPreForeground
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Android: Track target_cpu="x86" by default
 
-Test has recently started failing. Disabling it pending investigation.
+Builds are actually slightly faster with target_cpu="x86":
 
-Bug: 1313210
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id342e28f88401350509e5bfdd42493eb3cae0ecb">Id342e28f88401350509e5bfdd42493eb3cae0ecb</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3571822">https://chromium-review.googlesource.com/c/chromium/src/+/3571822</a>
-Commit-Queue: Colin Blundell &lt;blundell@chromium.org&gt;
-Reviewed-by: Alice Wang &lt;aliceywang@chromium.org&gt;
-Commit-Queue: Alice Wang &lt;aliceywang@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#988986}
+target_cpu="x86":
+base_java_sig: 129.7s
+default (arm):
+base_java_sig: 132.1s
+
+Since build and build+install are often benchmarks that are compared,
+they should use a common set of GN args. This means defaulting to
+target_cpu="x86" as a common baseline.
+
+Most devs are making extensive use of emulators due to the number of
+APIs that Chrome on Android supports, so it is more worthwhile to track
+and reduce this build time than the default target_cpu.
+
+Bug: 1306538
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6f715f09c5e9cff1151f4ed0230cc18f98a87fc7">I6f715f09c5e9cff1151f4ed0230cc18f98a87fc7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3572104">https://chromium-review.googlesource.com/c/chromium/src/+/3572104</a>
+Commit-Queue: Peter Wen &lt;wnwen@chromium.org&gt;
+Auto-Submit: Peter Wen &lt;wnwen@chromium.org&gt;
+Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Commit-Queue: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#989021}
 </pre>
 
 </body>
