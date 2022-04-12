@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/991461/"> 991461</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ca44f89fa5dc79c08886e0564b6ebbdeaecf7509">ca44f89fa5dc79c08886e0564b6ebbdeaecf7509</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/991484/"> 991484</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8187780264423afa3d8d48daa743819973b6ba1f">8187780264423afa3d8d48daa743819973b6ba1f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/991466/">991466</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f19b13953aa60c2e1c9fb896a5aebcc04bb1f2e5">f19b13953aa60c2e1c9fb896a5aebcc04bb1f2e5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/991481/">991481</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9634f562e432932e0fcc1e3c56d18ded8ef1eaad">9634f562e432932e0fcc1e3c56d18ded8ef1eaad</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ca44f89fa5dc79c08886e0564b6ebbdeaecf7509
+   8187780264423afa3d8d48daa743819973b6ba1f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ca44f89fa5dc79c08886e0564b6ebbdeaecf7509">
+    <a href="/chromium/src/+log/8187780264423afa3d8d48daa743819973b6ba1f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ca44f89fa5dc79c08886e0564b6ebbdeaecf7509.tar.gz">
+    <a href="/chromium/src/+archive/8187780264423afa3d8d48daa743819973b6ba1f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Friedrich Horschig &lt;fhorschig@chromium.org&gt;
+   Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
   </td>
   <td>
-   Tue Apr 12 11:19:05 2022
+   Tue Apr 12 12:55:06 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 12 11:19:05 2022
+   Tue Apr 12 12:55:06 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ca44f89fa5dc79c08886e0564b6ebbdeaecf7509/">
-    2b84c4ae7080273e53afd36a9c253c3c29fe2544
+   <a href="/chromium/src/+/8187780264423afa3d8d48daa743819973b6ba1f/">
+    11544ec622d7c0af405ff8f137d4358e6474b669
    </a>
   </td>
  </tr>
@@ -166,37 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ca44f89fa5dc79c08886e0564b6ebbdeaecf7509%5E">
-    9792a671709ad3e95caafa717aa9a2ab810fcf9d
+   <a href="/chromium/src/+/8187780264423afa3d8d48daa743819973b6ba1f%5E">
+    86d16b9f874812700c1388cd733d6cceb491a99b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ca44f89fa5dc79c08886e0564b6ebbdeaecf7509%5E%21/">
+    <a href="/chromium/src/+/8187780264423afa3d8d48daa743819973b6ba1f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Android][UPM] Fix DCHECK triggered by sync callback
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Show rejected attribution triggers in separate table in internals UI
 
-With <a href="https://crrev.com/c/3560442,">https://crrev.com/c/3560442,</a> the sync bridge tries to invoke a
-forwarding method on the proxy instead of the callback of the store
-directly.
-Because the proxy binds itself weakly to that forwarding method, the
-sequence checker will run into a DCHECK when the callback is called from
-an incorrect thread.
+This makes the actual behavior of the API clearer, as prior to this CL
+the internals UI made it appear that reports were actually generated,
+albeit dropped, in the presence of attribution failures. This CL makes
+it clearer by only showing reports that were ever stored or sent in
+the Reports table, including ones that were stored but later dropped
+in favor of higher-priority ones before being sent.
 
-Since the forwarding method doesn't need any information of the proxy
-(aside for a DCHECK), the simplest fix is to move forwarding method out
-of the proxy.
+This also makes it possible to indicate when a trigger did not result
+in a report due to no matching sources or no aggregatable histograms,
+and will enable us to indicate when a trigger was rejected due to the
+browser policy, which I will address in a followup CL.
 
-Bug: 1315523
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia17aaf8c28c1073c135ef3ac7fd5a3ec372139bc">Ia17aaf8c28c1073c135ef3ac7fd5a3ec372139bc</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3582201">https://chromium-review.googlesource.com/c/chromium/src/+/3582201</a>
-Reviewed-by: Mohamed Amir Yosef &lt;mamir@chromium.org&gt;
-Commit-Queue: Friedrich Horschig &lt;fhorschig@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#991461}
+Screenshot of changes in crbug.com/1295004#c7
+
+Bug: 1295004, 1309834
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9260eb603616a660f0c24815482145ff5ac7fe89">I9260eb603616a660f0c24815482145ff5ac7fe89</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3575264">https://chromium-review.googlesource.com/c/chromium/src/+/3575264</a>
+Reviewed-by: Nan Lin &lt;linnan@chromium.org&gt;
+Reviewed-by: Robert Sesek &lt;rsesek@chromium.org&gt;
+Commit-Queue: Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#991484}
 </pre>
 
 </body>
