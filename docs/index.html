@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/991454/"> 991454</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0b60fde11c0e334f5ba0d738a42e8c83422d0163">0b60fde11c0e334f5ba0d738a42e8c83422d0163</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/991461/"> 991461</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ca44f89fa5dc79c08886e0564b6ebbdeaecf7509">ca44f89fa5dc79c08886e0564b6ebbdeaecf7509</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/991437/">991437</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0b60fde11c0e334f5ba0d738a42e8c83422d0163
+   ca44f89fa5dc79c08886e0564b6ebbdeaecf7509
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0b60fde11c0e334f5ba0d738a42e8c83422d0163">
+    <a href="/chromium/src/+log/ca44f89fa5dc79c08886e0564b6ebbdeaecf7509">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0b60fde11c0e334f5ba0d738a42e8c83422d0163.tar.gz">
+    <a href="/chromium/src/+archive/ca44f89fa5dc79c08886e0564b6ebbdeaecf7509.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Roman Sorokin &lt;rsorokin@chromium.org&gt;
+   Friedrich Horschig &lt;fhorschig@chromium.org&gt;
   </td>
   <td>
-   Tue Apr 12 10:51:46 2022
+   Tue Apr 12 11:19:05 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 12 10:51:46 2022
+   Tue Apr 12 11:19:05 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0b60fde11c0e334f5ba0d738a42e8c83422d0163/">
-    a75301559a89af43789d1d497b1f500920c39ab8
+   <a href="/chromium/src/+/ca44f89fa5dc79c08886e0564b6ebbdeaecf7509/">
+    2b84c4ae7080273e53afd36a9c253c3c29fe2544
    </a>
   </td>
  </tr>
@@ -166,27 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0b60fde11c0e334f5ba0d738a42e8c83422d0163%5E">
-    5e4c896ed9c477b7c46ab13d6ab08d6fa87f5522
+   <a href="/chromium/src/+/ca44f89fa5dc79c08886e0564b6ebbdeaecf7509%5E">
+    9792a671709ad3e95caafa717aa9a2ab810fcf9d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0b60fde11c0e334f5ba0d738a42e8c83422d0163%5E%21/">
+    <a href="/chromium/src/+/ca44f89fa5dc79c08886e0564b6ebbdeaecf7509%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Oobe WebUI] Remove show_on_init logic from the ActiveDirectory handler
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Android][UPM] Fix DCHECK triggered by sync callback
 
-Bug: 1312734, 1309022, 1298392
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1e02ebc00a62896fa8c2a5a8918562a45f7a5399">I1e02ebc00a62896fa8c2a5a8918562a45f7a5399</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3579150">https://chromium-review.googlesource.com/c/chromium/src/+/3579150</a>
-Auto-Submit: Roman Sorokin &lt;rsorokin@chromium.org&gt;
-Reviewed-by: Osama Fathy &lt;osamafathy@google.com&gt;
-Commit-Queue: Roman Sorokin &lt;rsorokin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#991454}
+With <a href="https://crrev.com/c/3560442,">https://crrev.com/c/3560442,</a> the sync bridge tries to invoke a
+forwarding method on the proxy instead of the callback of the store
+directly.
+Because the proxy binds itself weakly to that forwarding method, the
+sequence checker will run into a DCHECK when the callback is called from
+an incorrect thread.
+
+Since the forwarding method doesn't need any information of the proxy
+(aside for a DCHECK), the simplest fix is to move forwarding method out
+of the proxy.
+
+Bug: 1315523
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia17aaf8c28c1073c135ef3ac7fd5a3ec372139bc">Ia17aaf8c28c1073c135ef3ac7fd5a3ec372139bc</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3582201">https://chromium-review.googlesource.com/c/chromium/src/+/3582201</a>
+Reviewed-by: Mohamed Amir Yosef &lt;mamir@chromium.org&gt;
+Commit-Queue: Friedrich Horschig &lt;fhorschig@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#991461}
 </pre>
 
 </body>
