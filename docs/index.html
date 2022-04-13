@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/992151/"> 992151</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/57715bc35db96740f6981d44afb87aafd8e8007a">57715bc35db96740f6981d44afb87aafd8e8007a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/992166/"> 992166</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ab53cd28eb8ac55c8d837d1a253c4a595bc3370d">ab53cd28eb8ac55c8d837d1a253c4a595bc3370d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/992151/">992151</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   57715bc35db96740f6981d44afb87aafd8e8007a
+   ab53cd28eb8ac55c8d837d1a253c4a595bc3370d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/57715bc35db96740f6981d44afb87aafd8e8007a">
+    <a href="/chromium/src/+log/ab53cd28eb8ac55c8d837d1a253c4a595bc3370d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/57715bc35db96740f6981d44afb87aafd8e8007a.tar.gz">
+    <a href="/chromium/src/+archive/ab53cd28eb8ac55c8d837d1a253c4a595bc3370d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Thiabaud Engelbrecht &lt;thiabaud@google.com&gt;
+   Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
   </td>
   <td>
-   Wed Apr 13 18:42:00 2022
+   Wed Apr 13 19:18:02 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 13 18:42:00 2022
+   Wed Apr 13 19:18:02 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/57715bc35db96740f6981d44afb87aafd8e8007a/">
-    be9cb7f58d8c02fdad6de3c73ee3d29c93c15479
+   <a href="/chromium/src/+/ab53cd28eb8ac55c8d837d1a253c4a595bc3370d/">
+    fdacc58343f7962aae82e87ae4522aa7e9af0c0d
    </a>
   </td>
  </tr>
@@ -166,29 +166,64 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/57715bc35db96740f6981d44afb87aafd8e8007a%5E">
-    e369dde42f6d6e85cc802177c986c82474bc1015
+   <a href="/chromium/src/+/ab53cd28eb8ac55c8d837d1a253c4a595bc3370d%5E">
+    020b46d3bb62cd852396fe76fe6842a04cb5ed4d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/57715bc35db96740f6981d44afb87aafd8e8007a%5E%21/">
+    <a href="/chromium/src/+/ab53cd28eb8ac55c8d837d1a253c4a595bc3370d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[partition_alloc] Don't purge after fork
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prerender: Update sticky user activation during prerender activation
 
-Purging after fork may crash due to the thread cache being inconsistent
-at that point. To avoid this, this CL simply skips purging after |fork()|.
+This CL fixes the DCHECK failure caused by discrepancy of
+FrameReplicationState::has_received_user_gesture_before_nav between
+prerender initial navigation and prerender activation navigation.
 
-Bug: 1289092
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1a1802609a515677cd211d2cc6c80707d78ee254">I1a1802609a515677cd211d2cc6c80707d78ee254</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3582593">https://chromium-review.googlesource.com/c/chromium/src/+/3582593</a>
-Reviewed-by: Benoit Lize &lt;lizeb@chromium.org&gt;
-Commit-Queue: Thiabaud Engelbrecht &lt;thiabaud@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#992151}
+&gt; High-level context
+
+Prerender runs navigations twice: navigation for prerendering a page
+(prerender initial navigation), and navigation for displaying the
+prerendered page (prerender activation navigation), like BFCache. These
+navigations are required to have the same navigation params for
+consistency, but currently has_received_user_gesture_before_nav on
+FrameReplicationState doesn't satisfy this requirement as the prerender
+initial navigation should never have the user activation but the
+prerender activation navigation may have it. This CL fixes the
+discrepancy by adjusting the param during the activation navigation.
+
+&gt; How is the param treated on regular navigation?
+
+On regular navigation, has_received_user_gesture_before_nav on
+FrameReplicationState is updated via a renderer =&gt; browser IPC
+(RenderFrameHostImpl::HadStickyUserActivationBeforeNavigationChanged),
+which is sent from blink::DocumentLoader::CommitNavigation in the
+renderer. However, this doesn't happen on prerender page activation, so
+the value is not correctly updated.
+
+&gt; How does this CL fix it?
+
+This CL explicitly updates the param during the activation navigation
+and propagates it to the prerendered page to be activated in a renderer.
+
+
+[Credit] A part of this change was originally written by
+hbolaria@google.com.
+
+Bug: 1268294
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I89452babf16eec3ecb67af20de109c9d6a52ca9a">I89452babf16eec3ecb67af20de109c9d6a52ca9a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3461077">https://chromium-review.googlesource.com/c/chromium/src/+/3461077</a>
+Reviewed-by: Harkiran Bolaria &lt;hbolaria@google.com&gt;
+Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Rakina Zata Amni &lt;rakina@chromium.org&gt;
+Reviewed-by: Mustaq Ahmed &lt;mustaq@chromium.org&gt;
+Commit-Queue: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#992166}
 </pre>
 
 </body>
