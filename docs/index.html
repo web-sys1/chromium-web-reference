@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/992009/"> 992009</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d5a293d2dd249b274d18d07daa1ab13d01088d74">d5a293d2dd249b274d18d07daa1ab13d01088d74</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/992018/"> 992018</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/962c1795a0cbf23e5ddc7b9130bd3d1245cb28fd">962c1795a0cbf23e5ddc7b9130bd3d1245cb28fd</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/991974/">991974</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c8bfc64e3dac4aec823175efc2b0014499129d9c">c8bfc64e3dac4aec823175efc2b0014499129d9c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/992009/">992009</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d5a293d2dd249b274d18d07daa1ab13d01088d74">d5a293d2dd249b274d18d07daa1ab13d01088d74</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d5a293d2dd249b274d18d07daa1ab13d01088d74
+   962c1795a0cbf23e5ddc7b9130bd3d1245cb28fd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d5a293d2dd249b274d18d07daa1ab13d01088d74">
+    <a href="/chromium/src/+log/962c1795a0cbf23e5ddc7b9130bd3d1245cb28fd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d5a293d2dd249b274d18d07daa1ab13d01088d74.tar.gz">
+    <a href="/chromium/src/+archive/962c1795a0cbf23e5ddc7b9130bd3d1245cb28fd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   James Lee &lt;ljjlee@google.com&gt;
+   Adithya Srinivasan &lt;adithyas@chromium.org&gt;
   </td>
   <td>
-   Wed Apr 13 13:03:04 2022
+   Wed Apr 13 13:48:04 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 13 13:03:04 2022
+   Wed Apr 13 13:48:04 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d5a293d2dd249b274d18d07daa1ab13d01088d74/">
-    a500fadfe1ab279a01afe4611973c59fcd1dd080
+   <a href="/chromium/src/+/962c1795a0cbf23e5ddc7b9130bd3d1245cb28fd/">
+    a6828a3b690f840e2e4621f02d699e860febb6c5
    </a>
   </td>
  </tr>
@@ -166,34 +166,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d5a293d2dd249b274d18d07daa1ab13d01088d74%5E">
-    3c72273e56b823b7c670d435b0888345fab242ee
+   <a href="/chromium/src/+/962c1795a0cbf23e5ddc7b9130bd3d1245cb28fd%5E">
+    d49b1c99727bf408a209b6c336586bce71a5a7a9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d5a293d2dd249b274d18d07daa1ab13d01088d74%5E%21/">
+    <a href="/chromium/src/+/962c1795a0cbf23e5ddc7b9130bd3d1245cb28fd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "Get child account status for all sync consent screens"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">MPArch: Enforce renderer content settings for fenced frames
 
-This simply relands the bug fix, but disables the newly-added flaky
-test as a temporary measure to get the final CL for this feature in
-M102.
+This CL aligns enforcement of renderer content settings in MPArch
+based fenced frames with iframes. Because MPArch fenced frames don't
+have the outermost frame's origin available in the renderer, we need
+to move some of the enforcement to the browser process. This CL does the
+following to accomplish this:
 
-A fix to the test infra is in progress in crrev.com/c/3541004 which will
-reenable the test.
+1) Move RenderContentSettingRules to be a per-frame object instead of
+   per-process (by adding a method in mojom.ContentSettingsAgent to
+   send the rules to each frame)
+2) Send a filtered subset of relevant rules to each frame instead of all
+   the rules; we filter by doing the "top origin x primary pattern"
+   check in the browser process and only keep rules that match for the
+   frame
+3) Modify the renderer to only check the secondary pattern with the
+   relevant URL (the primary pattern is already checked in the browser
+   where the required information is available)
 
-Bug: 1304737
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I047d1579bf2f08ac765ed647e115fd771666e32f">I047d1579bf2f08ac765ed647e115fd771666e32f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3582379">https://chromium-review.googlesource.com/c/chromium/src/+/3582379</a>
-Auto-Submit: James Lee &lt;ljjlee@google.com&gt;
-Reviewed-by: Boris Sazonov &lt;bsazonov@chromium.org&gt;
-Commit-Queue: James Lee &lt;ljjlee@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#992009}
+Also see <a href="https://docs.google.com/document/d/14rsc37GdHeB-4n2p608pD6m0OH75lLln_Bw_a89SI2s/edit">https://docs.google.com/document/d/14rsc37GdHeB-4n2p608pD6m0OH75lLln_Bw_a89SI2s/edit</a>
+for more details on how fenced frames interact with content settings.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic28aeb14ed20f8b9c0922ba59c9c2b684f50b13c">Ic28aeb14ed20f8b9c0922ba59c9c2b684f50b13c</a>
+Bug: 1187618
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3540587">https://chromium-review.googlesource.com/c/chromium/src/+/3540587</a>
+Reviewed-by: Christian Dullweber &lt;dullweber@chromium.org&gt;
+Reviewed-by: danakj &lt;danakj@chromium.org&gt;
+Owners-Override: Scott Violet &lt;sky@chromium.org&gt;
+Commit-Queue: Adithya Srinivasan &lt;adithyas@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#992018}
 </pre>
 
 </body>
