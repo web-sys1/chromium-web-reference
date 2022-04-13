@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/992166/"> 992166</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ab53cd28eb8ac55c8d837d1a253c4a595bc3370d">ab53cd28eb8ac55c8d837d1a253c4a595bc3370d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/992180/"> 992180</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3f959c353290f4325b60bcfcbc44681caa9d4417">3f959c353290f4325b60bcfcbc44681caa9d4417</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/992151/">992151</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/57715bc35db96740f6981d44afb87aafd8e8007a">57715bc35db96740f6981d44afb87aafd8e8007a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/992175/">992175</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2ac7136970e3a0dc10f509fab74649f020bf6264">2ac7136970e3a0dc10f509fab74649f020bf6264</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ab53cd28eb8ac55c8d837d1a253c4a595bc3370d
+   3f959c353290f4325b60bcfcbc44681caa9d4417
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ab53cd28eb8ac55c8d837d1a253c4a595bc3370d">
+    <a href="/chromium/src/+log/3f959c353290f4325b60bcfcbc44681caa9d4417">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ab53cd28eb8ac55c8d837d1a253c4a595bc3370d.tar.gz">
+    <a href="/chromium/src/+archive/3f959c353290f4325b60bcfcbc44681caa9d4417.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+   Simon Pelchat &lt;spelchat@chromium.org&gt;
   </td>
   <td>
-   Wed Apr 13 19:18:02 2022
+   Wed Apr 13 19:52:55 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 13 19:18:02 2022
+   Wed Apr 13 19:52:55 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ab53cd28eb8ac55c8d837d1a253c4a595bc3370d/">
-    fdacc58343f7962aae82e87ae4522aa7e9af0c0d
+   <a href="/chromium/src/+/3f959c353290f4325b60bcfcbc44681caa9d4417/">
+    099a9b24509aef1c9925d9fecbd9e9e8fd8d3154
    </a>
   </td>
  </tr>
@@ -166,64 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ab53cd28eb8ac55c8d837d1a253c4a595bc3370d%5E">
-    020b46d3bb62cd852396fe76fe6842a04cb5ed4d
+   <a href="/chromium/src/+/3f959c353290f4325b60bcfcbc44681caa9d4417%5E">
+    32520aa10df47c591d931ed7b38ceb25fdc902f8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ab53cd28eb8ac55c8d837d1a253c4a595bc3370d%5E%21/">
+    <a href="/chromium/src/+/3f959c353290f4325b60bcfcbc44681caa9d4417%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prerender: Update sticky user activation during prerender activation
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use the Android Data Saver API to insert "Save-data: on" headers.
 
-This CL fixes the DCHECK failure caused by discrepancy of
-FrameReplicationState::has_received_user_gesture_before_nav between
-prerender initial navigation and prerender activation navigation.
+Previously the Lite Mode setting used to result in Chrome adding
+"Save-data: on" headers to its network requests. Now that Lite Mode is
+deprecated, Chrome will rely on the Android Data Saver OS setting instead.
 
-&gt; High-level context
+This change also restores data saver tests that have been removed in
+<a href="https://chromium-review.googlesource.com/c/chromium/src/+/3419776">https://chromium-review.googlesource.com/c/chromium/src/+/3419776</a>
+The tests have been updated to use the Android Data Saver setting
+instead of the Lite-Mode setting.
 
-Prerender runs navigations twice: navigation for prerendering a page
-(prerender initial navigation), and navigation for displaying the
-prerendered page (prerender activation navigation), like BFCache. These
-navigations are required to have the same navigation params for
-consistency, but currently has_received_user_gesture_before_nav on
-FrameReplicationState doesn't satisfy this requirement as the prerender
-initial navigation should never have the user activation but the
-prerender activation navigation may have it. This CL fixes the
-discrepancy by adjusting the param during the activation navigation.
+Note that most of this CL has been written by jacobstanley@google.com.
 
-&gt; How is the param treated on regular navigation?
-
-On regular navigation, has_received_user_gesture_before_nav on
-FrameReplicationState is updated via a renderer =&gt; browser IPC
-(RenderFrameHostImpl::HadStickyUserActivationBeforeNavigationChanged),
-which is sent from blink::DocumentLoader::CommitNavigation in the
-renderer. However, this doesn't happen on prerender page activation, so
-the value is not correctly updated.
-
-&gt; How does this CL fix it?
-
-This CL explicitly updates the param during the activation navigation
-and propagates it to the prerendered page to be activated in a renderer.
-
-
-[Credit] A part of this change was originally written by
-hbolaria@google.com.
-
-Bug: 1268294
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I89452babf16eec3ecb67af20de109c9d6a52ca9a">I89452babf16eec3ecb67af20de109c9d6a52ca9a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3461077">https://chromium-review.googlesource.com/c/chromium/src/+/3461077</a>
-Reviewed-by: Harkiran Bolaria &lt;hbolaria@google.com&gt;
-Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Reviewed-by: Rakina Zata Amni &lt;rakina@chromium.org&gt;
-Reviewed-by: Mustaq Ahmed &lt;mustaq@chromium.org&gt;
-Commit-Queue: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#992166}
+Bug: 1286131
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ice4751d63ce4c5509749feba942d99600026d57e">Ice4751d63ce4c5509749feba942d99600026d57e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3573287">https://chromium-review.googlesource.com/c/chromium/src/+/3573287</a>
+Reviewed-by: Ryan Sturm &lt;ryansturm@chromium.org&gt;
+Reviewed-by: Tommy Nyquist &lt;nyquist@chromium.org&gt;
+Reviewed-by: Filip Gorski &lt;fgorski@chromium.org&gt;
+Commit-Queue: Simon Pelchat &lt;spelchat@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#992180}
 </pre>
 
 </body>
