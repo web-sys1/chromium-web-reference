@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/991893/"> 991893</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/297960b8a607bc1c6c9571fc1dec3d74b85ec8be">297960b8a607bc1c6c9571fc1dec3d74b85ec8be</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/991904/"> 991904</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e3b2c9c9761d9ee6addf6d8f7019482f5e337d61">e3b2c9c9761d9ee6addf6d8f7019482f5e337d61</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/991884/">991884</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   297960b8a607bc1c6c9571fc1dec3d74b85ec8be
+   e3b2c9c9761d9ee6addf6d8f7019482f5e337d61
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/297960b8a607bc1c6c9571fc1dec3d74b85ec8be">
+    <a href="/chromium/src/+log/e3b2c9c9761d9ee6addf6d8f7019482f5e337d61">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/297960b8a607bc1c6c9571fc1dec3d74b85ec8be.tar.gz">
+    <a href="/chromium/src/+archive/e3b2c9c9761d9ee6addf6d8f7019482f5e337d61.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Frédéric Wang &lt;fwang@igalia.com&gt;
+   Peter McNeeley &lt;petermcneeley@chromium.org&gt;
   </td>
   <td>
-   Wed Apr 13 05:19:50 2022
+   Wed Apr 13 05:48:50 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 13 05:19:50 2022
+   Wed Apr 13 05:48:50 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/297960b8a607bc1c6c9571fc1dec3d74b85ec8be/">
-    2dac73efedc98676fd1bfaccd17f9fdd5121d19c
+   <a href="/chromium/src/+/e3b2c9c9761d9ee6addf6d8f7019482f5e337d61/">
+    eddcda925f7b1f87bf1dd68d75474fde8e3ef094
    </a>
   </td>
  </tr>
@@ -166,60 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/297960b8a607bc1c6c9571fc1dec3d74b85ec8be%5E">
-    dbebded0ef0e1ff93fa1df0f99f75c65c938bcd5
+   <a href="/chromium/src/+/e3b2c9c9761d9ee6addf6d8f7019482f5e337d61%5E">
+    02868d4d16a8be62d5848596e051df80a0a329cb
    </a>
    <span>
     [
-    <a href="/chromium/src/+/297960b8a607bc1c6c9571fc1dec3d74b85ec8be%5E%21/">
+    <a href="/chromium/src/+/e3b2c9c9761d9ee6addf6d8f7019482f5e337d61%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix mistakes in setFontFamilies tests and make them more robust
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Account for UVs in Wayland buffer damage
 
-Tests `set-font-families.js` and `set-font-families-for-script.js` both
-use value "fixed" as a font-family. This is however not a valid generic
-family name, the one corresponding to the "fixed" font preferences is
-"monospace" [1] [2]. As long as there is no fonts called "fixed" on the
-system, this will just use the standard font as a fallback.
+Damage is sent through Wayland in buffer space. Transforming damage from
+target space (~pixels on the display) requires some effort.
 
-Additionally, `set-font-families-for-scripts.js` does not set any custom
-font-family for the div elements in the Russian language. So the initial
-font is used, which is again set to the standard font [1].
+Originally we were accounting for the transform to content space and
+then possible scaling due to resource size not being the same as the
+content rect size. With this cl we now correctly account for scaling and
+offsets that can occur when UVs are present.
 
-These mistakes are hidden by the fact that these tests use FontFamilies
-objects whose "standard" font is actually set to the same value as the
-"sansSerif" and "fixed" fonts.
-
-This CL fixes the above mistakes and adjusts FontFamilies accordingly so
-that they can become visible. Additionally, they are tweaked so that:
-- The inherited fonts on the div elements are verified to be a custom
-  Ahem font, rather than the standard font.
-- The div with "font-family: fixed" is tested to ensure it uses the
-  standard font as a fallback, rather than the fixed font.
-- The FontFamilies objects are changed to map the invalid "monospace"
-  key to a completely different system font, to verify it indeed has no
-  effect.
-
-This CL does not fix the limitation that multiple fonts of FontFamilies
-objects are mapped to a same value (making impossible to distinguish
-these mappings) or that only a few generic font are tested (e.g. serif,
-cursive and fantasy are supported but untested). This could be done in
-follow-up CLs.
-
-[1] <a href="https://docs.google.com/document/d/1bvY_Npe2zLW_705KXdmecsH6P9I9wBMpHRsZ9CxWNOI/edit#">https://docs.google.com/document/d/1bvY_Npe2zLW_705KXdmecsH6P9I9wBMpHRsZ9CxWNOI/edit#</a>
-[2] <a href="https://drafts.csswg.org/css-fonts/#generic-font-families">https://drafts.csswg.org/css-fonts/#generic-font-families</a>
-
-Bug: 1240117
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5d71582fe76827ea3836c5167ac4a59496beb8d0">I5d71582fe76827ea3836c5167ac4a59496beb8d0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3578956">https://chromium-review.googlesource.com/c/chromium/src/+/3578956</a>
-Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
-Commit-Queue: Frédéric Wang &lt;fwang@igalia.com&gt;
-Cr-Commit-Position: refs/heads/main@{#991893}
+Bug: 1300255, 1279965, 1307182, 1224991
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1a776a49288f59876b2205862806166f2db8ba07">I1a776a49288f59876b2205862806166f2db8ba07</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3570483">https://chromium-review.googlesource.com/c/chromium/src/+/3570483</a>
+Reviewed-by: Kramer Ge &lt;fangzhoug@chromium.org&gt;
+Reviewed-by: Eliot Courtney &lt;edcourtney@chromium.org&gt;
+Commit-Queue: Peter McNeeley &lt;petermcneeley@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#991904}
 </pre>
 
 </body>
