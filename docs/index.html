@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/992379/"> 992379</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4e199762eaee370ba75c11825bac5e9ea8c51eb3">4e199762eaee370ba75c11825bac5e9ea8c51eb3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/992369/"> 992369</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2f9c8a503880bcd14cbb53917c610b3fb8a0f485">2f9c8a503880bcd14cbb53917c610b3fb8a0f485</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/992371/">992371</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e7c476e69c0f7910707bef19a5f2b5048c070116">e7c476e69c0f7910707bef19a5f2b5048c070116</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/992341/">992341</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a241e648ac56c3dcfd15cde1a1cb4a1661754d92">a241e648ac56c3dcfd15cde1a1cb4a1661754d92</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4e199762eaee370ba75c11825bac5e9ea8c51eb3
+   2f9c8a503880bcd14cbb53917c610b3fb8a0f485
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4e199762eaee370ba75c11825bac5e9ea8c51eb3">
+    <a href="/chromium/src/+log/2f9c8a503880bcd14cbb53917c610b3fb8a0f485">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4e199762eaee370ba75c11825bac5e9ea8c51eb3.tar.gz">
+    <a href="/chromium/src/+archive/2f9c8a503880bcd14cbb53917c610b3fb8a0f485.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Amanda Deacon &lt;amandadeacon@chromium.org&gt;
+   Kent Tamura &lt;tkent@chromium.org&gt;
   </td>
   <td>
-   Thu Apr 14 02:52:21 2022
+   Thu Apr 14 02:15:12 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Apr 14 02:52:21 2022
+   Thu Apr 14 02:15:12 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4e199762eaee370ba75c11825bac5e9ea8c51eb3/">
-    08c0487a87f9b0c83bb0fd8f613dcb777e5d9cda
+   <a href="/chromium/src/+/2f9c8a503880bcd14cbb53917c610b3fb8a0f485/">
+    87dd5d5abe65764d397057c9a252db0e17da7a46
    </a>
   </td>
  </tr>
@@ -166,56 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4e199762eaee370ba75c11825bac5e9ea8c51eb3%5E">
-    3cdcefd0cffce732d4b288f0c3b9296ee980d14d
+   <a href="/chromium/src/+/2f9c8a503880bcd14cbb53917c610b3fb8a0f485%5E">
+    e23d033d5c4344a376da73f66e7957ccc4d686b2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4e199762eaee370ba75c11825bac5e9ea8c51eb3%5E%21/">
+    <a href="/chromium/src/+/2f9c8a503880bcd14cbb53917c610b3fb8a0f485%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Launcher pop-in] Pin Search and Assistant to bottom initially.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move out "media"-related specializations of CrossThreadCopier
 
-Existing behavior:
+... from cross_thread_copier.h to cross_thread_copier_media.h.
+This CL should not have any behavior changes.
 
-Pin the Search and Assistant category to the bottom of the categories
-list all the time, irrespective of timing considerations. See
-crrev.com/c/3469543.
-
-New behavior:
-
-Pin the Search and Assistant category to the bottom of the categories
-list at its time of arrival. For categories which arrive after Search
-and Assistant, place these categories below Search and Assistant.
-
-Justification:
-
-We want to uphold the spirit of the existing behavior, while mitigating
-some pop-in effects.
-
-The existing behavior was implemented because S&amp;A results can be easily
-triggered and fairly non-specific. However, within the existing
-behavior, in the following case we see a large pop-in effect with a
-sometimes high degree of vertical displacement:
-
-1) S&amp;A arrives pre-burn-in.
-2) Burn-in period elapses. S&amp;A is pinned to the bottom.
-3) A new category arrives post-burn-in. It pops-in second-from-bottom
-   (i.e. above S&amp;A, but below everything else).
-
-(See video in bug for an example)
-
-Test: unit tests, and added a new case
-Bug: 1313132
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8f353740a84eef34d310b9b4895633744f74ea7c">I8f353740a84eef34d310b9b4895633744f74ea7c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3585102">https://chromium-review.googlesource.com/c/chromium/src/+/3585102</a>
-Reviewed-by: Rachel Wong &lt;wrong@chromium.org&gt;
-Commit-Queue: Amanda Deacon &lt;amandadeacon@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#992379}
+Bug: 242216
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idc60cf028025258caf756685e1de59e4d5239a6c">Idc60cf028025258caf756685e1de59e4d5239a6c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3583871">https://chromium-review.googlesource.com/c/chromium/src/+/3583871</a>
+Auto-Submit: Kent Tamura &lt;tkent@chromium.org&gt;
+Reviewed-by: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+Commit-Queue: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#992369}
 </pre>
 
 </body>
