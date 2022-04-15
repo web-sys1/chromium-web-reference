@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/992803/"> 992803</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/03a4f631ce4598764f8695f1b91ed9cd200ac084">03a4f631ce4598764f8695f1b91ed9cd200ac084</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/992837/"> 992837</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e9bc6b1e8d20315016efab59c6194b54afcc2508">e9bc6b1e8d20315016efab59c6194b54afcc2508</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/992804/">992804</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   03a4f631ce4598764f8695f1b91ed9cd200ac084
+   e9bc6b1e8d20315016efab59c6194b54afcc2508
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/03a4f631ce4598764f8695f1b91ed9cd200ac084">
+    <a href="/chromium/src/+log/e9bc6b1e8d20315016efab59c6194b54afcc2508">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/03a4f631ce4598764f8695f1b91ed9cd200ac084.tar.gz">
+    <a href="/chromium/src/+archive/e9bc6b1e8d20315016efab59c6194b54afcc2508.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+   Kent Tamura &lt;tkent@chromium.org&gt;
   </td>
   <td>
-   Fri Apr 15 01:26:19 2022
+   Fri Apr 15 03:47:59 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 15 01:26:19 2022
+   Fri Apr 15 03:47:59 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/03a4f631ce4598764f8695f1b91ed9cd200ac084/">
-    4da3903cf84ef845e20e6363a06e46a167b54b67
+   <a href="/chromium/src/+/e9bc6b1e8d20315016efab59c6194b54afcc2508/">
+    c0d5c02c93afcf57e3c00346de5e27acb26d4461
    </a>
   </td>
  </tr>
@@ -166,48 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/03a4f631ce4598764f8695f1b91ed9cd200ac084%5E">
-    117617678598855c8df398435fff38cfd2b1ec36
+   <a href="/chromium/src/+/e9bc6b1e8d20315016efab59c6194b54afcc2508%5E">
+    96a5b4eebd9bcd1a18ba5ce79ac7c731b29ebb3c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/03a4f631ce4598764f8695f1b91ed9cd200ac084%5E%21/">
+    <a href="/chromium/src/+/e9bc6b1e8d20315016efab59c6194b54afcc2508%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove clip path cache in FragmentData
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move "blink"-related specializations of CrossThreadCopier
 
-The cache was to avoid a new copy of Path to be created when
-- the element having clip-path that could be path-based needed paint
-  property update; and
-- the clip-path didn't change.
+...from cross_thread_copier.h to cross_thread_copier_public.h
+This CL should not have any behavior changes.
 
-By removing the cache, we'll create a new copy of Path in the above
-case, but the performance impact will be trivial because:
-1. The case is not common;
-2. The clip path is either a simple shape or a reference to a
-   not-too-complex clip-path (otherwise we will use mask-based
-   clip-path), so creating a new Path is not expensive. Also for the
-   reference case, we cache the Path in LayoutSVGResourceClipper, so
-   the extra cost is just to create a path with an offset when the
-   paint offset is not zero (and the cost could be avoided if we
-   didn't bake paint offset into the path but this seems not worth
-   it).
-
-Removing the cache simplifies the invalidation logic.
-
-blink::Path is based on SkPath which is internally ref-counted and
-copied on write, so copying a blink::Path is trivial and
-RefCountedPath is unnecessary.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I31d79166c34c18d6f1a90e11470a61bf71605da8">I31d79166c34c18d6f1a90e11470a61bf71605da8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3577861">https://chromium-review.googlesource.com/c/chromium/src/+/3577861</a>
-Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
-Commit-Queue: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#992803}
+Bug: 242216, 1247393
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2702f289d5306c1d58b23b8799ce5aedcfb6ea60">I2702f289d5306c1d58b23b8799ce5aedcfb6ea60</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3582446">https://chromium-review.googlesource.com/c/chromium/src/+/3582446</a>
+Auto-Submit: Kent Tamura &lt;tkent@chromium.org&gt;
+Reviewed-by: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+Commit-Queue: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#992837}
 </pre>
 
 </body>
