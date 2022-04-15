@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/992776/"> 992776</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1e18102387669f14d45ed7451b76113e2f649720">1e18102387669f14d45ed7451b76113e2f649720</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/992803/"> 992803</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/03a4f631ce4598764f8695f1b91ed9cd200ac084">03a4f631ce4598764f8695f1b91ed9cd200ac084</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/992763/">992763</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2575f3e8a996150819aeb4f23b2076e922e5d8f0">2575f3e8a996150819aeb4f23b2076e922e5d8f0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/992791/">992791</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f641c658c30741a574499c5259dc4f0239169c7f">f641c658c30741a574499c5259dc4f0239169c7f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1e18102387669f14d45ed7451b76113e2f649720
+   03a4f631ce4598764f8695f1b91ed9cd200ac084
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1e18102387669f14d45ed7451b76113e2f649720">
+    <a href="/chromium/src/+log/03a4f631ce4598764f8695f1b91ed9cd200ac084">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1e18102387669f14d45ed7451b76113e2f649720.tar.gz">
+    <a href="/chromium/src/+archive/03a4f631ce4598764f8695f1b91ed9cd200ac084.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jiaming Cheng &lt;jiamingc@chromium.org&gt;
+   Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
   </td>
   <td>
-   Thu Apr 14 23:47:08 2022
+   Fri Apr 15 01:26:19 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Apr 14 23:47:08 2022
+   Fri Apr 15 01:26:19 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1e18102387669f14d45ed7451b76113e2f649720/">
-    724d09eec2e289d5aef5f0445db5278b193c8294
+   <a href="/chromium/src/+/03a4f631ce4598764f8695f1b91ed9cd200ac084/">
+    4da3903cf84ef845e20e6363a06e46a167b54b67
    </a>
   </td>
  </tr>
@@ -166,33 +166,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1e18102387669f14d45ed7451b76113e2f649720%5E">
-    99622f90cfe1c8c91aa8d9c28a1b29810c631299
+   <a href="/chromium/src/+/03a4f631ce4598764f8695f1b91ed9cd200ac084%5E">
+    117617678598855c8df398435fff38cfd2b1ec36
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1e18102387669f14d45ed7451b76113e2f649720%5E%21/">
+    <a href="/chromium/src/+/03a4f631ce4598764f8695f1b91ed9cd200ac084%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix a DateTray visibility bug
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove clip path cache in FragmentData
 
-The DateTray is not visible after the first time login with calendar
-feature enabled.
+The cache was to avoid a new copy of Path to be created when
+- the element having clip-path that could be path-based needed paint
+  property update; and
+- the clip-path didn't change.
 
-The root cause of it is the default visibility of this tray is false.
-We need to override the UpdateAfterLoginStatusChange method and set its
-visibility to true.
+By removing the cache, we'll create a new copy of Path in the above
+case, but the performance impact will be trivial because:
+1. The case is not common;
+2. The clip path is either a simple shape or a reference to a
+   not-too-complex clip-path (otherwise we will use mask-based
+   clip-path), so creating a new Path is not expensive. Also for the
+   reference case, we cache the Path in LayoutSVGResourceClipper, so
+   the extra cost is just to create a path with an offset when the
+   paint offset is not zero (and the cost could be avoided if we
+   didn't bake paint offset into the path but this seems not worth
+   it).
 
-BUG: 1316489
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0c60776b5f7ff886599a5ca26271c26dc5e166d6">I0c60776b5f7ff886599a5ca26271c26dc5e166d6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3587452">https://chromium-review.googlesource.com/c/chromium/src/+/3587452</a>
-Reviewed-by: Alex Newcomer &lt;newcomer@chromium.org&gt;
-Commit-Queue: Jiaming Cheng &lt;jiamingc@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#992776}
+Removing the cache simplifies the invalidation logic.
+
+blink::Path is based on SkPath which is internally ref-counted and
+copied on write, so copying a blink::Path is trivial and
+RefCountedPath is unnecessary.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I31d79166c34c18d6f1a90e11470a61bf71605da8">I31d79166c34c18d6f1a90e11470a61bf71605da8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3577861">https://chromium-review.googlesource.com/c/chromium/src/+/3577861</a>
+Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
+Commit-Queue: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#992803}
 </pre>
 
 </body>
