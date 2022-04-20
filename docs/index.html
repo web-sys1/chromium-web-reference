@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/994071/"> 994071</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/84c37a151d926934791951865ece7e211fbfdd56">84c37a151d926934791951865ece7e211fbfdd56</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/994081/"> 994081</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/48b0a916f640812455f0c234ed185f463707bf15">48b0a916f640812455f0c234ed185f463707bf15</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/994069/">994069</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   84c37a151d926934791951865ece7e211fbfdd56
+   48b0a916f640812455f0c234ed185f463707bf15
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/84c37a151d926934791951865ece7e211fbfdd56">
+    <a href="/chromium/src/+log/48b0a916f640812455f0c234ed185f463707bf15">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/84c37a151d926934791951865ece7e211fbfdd56.tar.gz">
+    <a href="/chromium/src/+archive/48b0a916f640812455f0c234ed185f463707bf15.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Yutaka Hirano &lt;yhirano@chromium.org&gt;
   </td>
   <td>
-   Wed Apr 20 07:31:15 2022
+   Wed Apr 20 07:50:31 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 20 07:31:15 2022
+   Wed Apr 20 07:50:31 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/84c37a151d926934791951865ece7e211fbfdd56/">
-    3261d550122f157d9f81e7f785d792a92f552f6e
+   <a href="/chromium/src/+/48b0a916f640812455f0c234ed185f463707bf15/">
+    9e706c7b0a52f9997ad5ab805da971d25cd3f2f5
    </a>
   </td>
  </tr>
@@ -166,50 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/84c37a151d926934791951865ece7e211fbfdd56%5E">
-    780455e90ae0f61b4bfabddf30eee13eb02b7beb
+   <a href="/chromium/src/+/48b0a916f640812455f0c234ed185f463707bf15%5E">
+    181fe7368b60a9c0068b710f594e416d3ef22978
    </a>
    <span>
     [
-    <a href="/chromium/src/+/84c37a151d926934791951865ece7e211fbfdd56%5E%21/">
+    <a href="/chromium/src/+/48b0a916f640812455f0c234ed185f463707bf15%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Skia from 5b64108aa768 to 55daca632da9 (2 revisions)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[disk cache] Fix DCHECK failure in CacheCreator::OnIOComplete
 
-<a href="https://skia.googlesource.com/skia.git/+log/5b64108aa768..55daca632da9">https://skia.googlesource.com/skia.git/+log/5b64108aa768..55daca632da9</a>
+CacheCreator::Run calls CacheCreator::OnIOComplete asynchronously with
+net::ERR_IO_PENDING. This is problematic, because when
+disk_cache::DelayedCacheCleanup fails in CacheCreator::OnIOComplete then
+DoCallback will be called with net::ERR_IO_PENDING, leading to a DCHECK
+failure.
 
-2022-04-20 skia-autoroll@skia-public.iam.gserviceaccount.com Roll ANGLE from 197100880118 to 5014ce664ca5 (17 revisions)
-2022-04-20 skia-autoroll@skia-public.iam.gserviceaccount.com Roll Chromium from e44993cc0096 to ec55e318ba2b (477 revisions)
+The asynchronous call in CacheCreator::OnIOComplete is pretending a
+failure, to handle `kReset` and `kResetOnError` in a unified manner.
+Let's give net::ERR_FAILED instead of net::ERR_IO_PENDING.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/skia-autoroll">https://autoroll.skia.org/r/skia-autoroll</a>
-Please CC wrightgeorge@google.com on the revert to ensure that a human
-is aware of the problem.
-
-To file a bug in Skia: <a href="https://bugs.chromium.org/p/skia/issues/entry">https://bugs.chromium.org/p/skia/issues/entry</a>
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chromium.try:android_optional_gpu_tests_rel;luci.chromium.try:linux-blink-rel;luci.chromium.try:linux-chromeos-compile-dbg;luci.chromium.try:linux_optional_gpu_tests_rel;luci.chromium.try:mac_optional_gpu_tests_rel;luci.chromium.try:win_optional_gpu_tests_rel
-Cq-Do-Not-Cancel-Tryjobs: true
-Bug: None
-Tbr: wrightgeorge@google.com
-Test: Test: Test: angle_perftests --gtest_filter="*monster_strike*"
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9111f07ddd58d1760dd82f33bd7ee98a782e3ea0">I9111f07ddd58d1760dd82f33bd7ee98a782e3ea0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3595709">https://chromium-review.googlesource.com/c/chromium/src/+/3595709</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#994071}
+Bug: 1316886
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I48c18cd6dd89792226dd2b22b6a3c40042490067">I48c18cd6dd89792226dd2b22b6a3c40042490067</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3592492">https://chromium-review.googlesource.com/c/chromium/src/+/3592492</a>
+Reviewed-by: Maks Orlovich &lt;morlovich@chromium.org&gt;
+Commit-Queue: Yutaka Hirano &lt;yhirano@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#994081}
 </pre>
 
 </body>
