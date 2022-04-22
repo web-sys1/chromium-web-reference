@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/995156/"> 995156</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bc7898cf8b8d92aa3855c45ac4af7e4e6075ce13">bc7898cf8b8d92aa3855c45ac4af7e4e6075ce13</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/995165/"> 995165</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8187d8eaad9043aff2ba00548e4021b6b054825e">8187d8eaad9043aff2ba00548e4021b6b054825e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/995160/">995160</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9fe2975a33466f5bc3aec9930f9d516320d13113">9fe2975a33466f5bc3aec9930f9d516320d13113</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/995169/">995169</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9de932da3b23ce0d1d2750a0a44a019a040cf563">9de932da3b23ce0d1d2750a0a44a019a040cf563</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   bc7898cf8b8d92aa3855c45ac4af7e4e6075ce13
+   8187d8eaad9043aff2ba00548e4021b6b054825e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/bc7898cf8b8d92aa3855c45ac4af7e4e6075ce13">
+    <a href="/chromium/src/+log/8187d8eaad9043aff2ba00548e4021b6b054825e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/bc7898cf8b8d92aa3855c45ac4af7e4e6075ce13.tar.gz">
+    <a href="/chromium/src/+archive/8187d8eaad9043aff2ba00548e4021b6b054825e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kent Tamura &lt;tkent@chromium.org&gt;
+   Patrick Meenan &lt;pmeenan@chromium.org&gt;
   </td>
   <td>
-   Fri Apr 22 12:34:07 2022
+   Fri Apr 22 13:08:00 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 22 12:34:07 2022
+   Fri Apr 22 13:08:00 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/bc7898cf8b8d92aa3855c45ac4af7e4e6075ce13/">
-    d71c83f7979c28700054221f7f9b9a2aef82db59
+   <a href="/chromium/src/+/8187d8eaad9043aff2ba00548e4021b6b054825e/">
+    33c7e78d61c56f6ef485232c45d0932b3b405695
    </a>
   </td>
  </tr>
@@ -166,40 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/bc7898cf8b8d92aa3855c45ac4af7e4e6075ce13%5E">
-    a50a03a130bb9f18b73b42aaf5d550160a853029
+   <a href="/chromium/src/+/8187d8eaad9043aff2ba00548e4021b6b054825e%5E">
+    ff067d780b6478235e48ae8df79f711e4bc0a2a2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/bc7898cf8b8d92aa3855c45ac4af7e4e6075ce13%5E%21/">
+    <a href="/chromium/src/+/8187d8eaad9043aff2ba00548e4021b6b054825e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">DeferredShaping: Fix crashes with a vertical writing-mode and minmax computation
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fixed camel case of fetchPriority IDL attribute
 
-Many tests using vertical writing-modes crashed by the following DCHECK
-in ShapeTextOrDefer():
+The priority-hints spec originally launched with an all-lowercase IDL
+attribute for fetchpriority. It was recently corrected to match the TAG
+design princilples of camel case IDL attributes.
 
-  DCHECK(IsHorizontalWritingMode(Style().GetWritingMode()));
+This updates the IDL attributes and relevant tests to use fetchPriority
+and leaves the content attribute lower-cased (to match the latest spec).
 
-because we missed to disable DeferredShaping for vertical writing-modes
-in NGBlockNode::ComputeMinMaxSizes().
-Note: NGBlockNode::Layout() already has the same
-DeferredShapingDisallowScope.
+Spec change: <a href="https://github.com/WICG/priority-hints/pull/71">https://github.com/WICG/priority-hints/pull/71</a>
 
-This CL fixes hundreds of failing tests with enabling DeferredShaping
-flag.
-
-Bug: 1259085
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I98b3342cc44c6c7528f89ae3445cd78d1289a708">I98b3342cc44c6c7528f89ae3445cd78d1289a708</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3599396">https://chromium-review.googlesource.com/c/chromium/src/+/3599396</a>
-Reviewed-by: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Commit-Queue: Kent Tamura &lt;tkent@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#995156}
+Bug: 1318469
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic830d9ac0a64e9a15e35d4a1deb75255d11de6a5">Ic830d9ac0a64e9a15e35d4a1deb75255d11de6a5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3599986">https://chromium-review.googlesource.com/c/chromium/src/+/3599986</a>
+Reviewed-by: Philip Jägenstedt &lt;foolip@chromium.org&gt;
+Commit-Queue: Patrick Meenan &lt;pmeenan@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#995165}
 </pre>
 
 </body>
