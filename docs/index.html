@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/994963/"> 994963</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d52e4b4a938d71a29b56ed987ab8a6c7fca7f9d1">d52e4b4a938d71a29b56ed987ab8a6c7fca7f9d1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/994973/"> 994973</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b31091120c7746803fbc3dadbe506024e413e462">b31091120c7746803fbc3dadbe506024e413e462</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/994912/">994912</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ae5b346d3e06756f9bc48001ad520d3a5860515c">ae5b346d3e06756f9bc48001ad520d3a5860515c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/994949/">994949</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9b292a093a025d41b429bc8254744834f2eee029">9b292a093a025d41b429bc8254744834f2eee029</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d52e4b4a938d71a29b56ed987ab8a6c7fca7f9d1
+   b31091120c7746803fbc3dadbe506024e413e462
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d52e4b4a938d71a29b56ed987ab8a6c7fca7f9d1">
+    <a href="/chromium/src/+log/b31091120c7746803fbc3dadbe506024e413e462">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d52e4b4a938d71a29b56ed987ab8a6c7fca7f9d1.tar.gz">
+    <a href="/chromium/src/+archive/b31091120c7746803fbc3dadbe506024e413e462.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Robert Sesek &lt;rsesek@chromium.org&gt;
+   Toby Huang &lt;tobyhuang@chromium.org&gt;
   </td>
   <td>
-   Thu Apr 21 23:01:27 2022
+   Thu Apr 21 23:31:00 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Apr 21 23:01:27 2022
+   Thu Apr 21 23:31:00 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d52e4b4a938d71a29b56ed987ab8a6c7fca7f9d1/">
-    47c7e50f28bcb1fbe4f8ae98ba143795a0858a0f
+   <a href="/chromium/src/+/b31091120c7746803fbc3dadbe506024e413e462/">
+    26671ff290cfb675bcf0f1efa28e15cf598be562
    </a>
   </td>
  </tr>
@@ -166,38 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d52e4b4a938d71a29b56ed987ab8a6c7fca7f9d1%5E">
-    0ace2ba8459b063cf3d85a138c6140a74152717e
+   <a href="/chromium/src/+/b31091120c7746803fbc3dadbe506024e413e462%5E">
+    553bd77c9e74f58d7a12d1d7f7a89a7047ac143a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d52e4b4a938d71a29b56ed987ab8a6c7fca7f9d1%5E%21/">
+    <a href="/chromium/src/+/b31091120c7746803fbc3dadbe506024e413e462%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Unconditionally include the about:nacl page resources on Mac.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Projector: Fix screen recording length metric
 
-The `enable_nacl` variable is set to `true` on x86_64 builds and `false`
-on arm64 (where NaCl is not available). However this breaks universal
-build production, which requires that resources.pak be bit-for-bit
-identical between the two single-architecture builds. This started
-happening after b588b52b1563aab65ab13c084473e79e205a5730, which
-corrected an erroneous use of Grit variables that previously included
-the resources on all builds.
+After crrev.com/c/3369081 landed in M99, both the regular and
+Projector versions of the ScreenRecordingLength metric stopped
+displaying properly on the UMA dashboard. This CL fixes the issue by
+adding the {TabletOrClamshell} token to the histograms.xml and adds
+test coverage for the Projector version of the ScreenRecordingLength
+metric.
 
-This CL bundles the resources for the about:nacl page in both x86_64 and
-arm64 builds. But the page is only available on x86_64, where the WebUI
-backend is actually enabled.
-
-Bug: 1318358
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I77b17cdca5ffcc83162780e4a68e50b7b56908a8">I77b17cdca5ffcc83162780e4a68e50b7b56908a8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3600794">https://chromium-review.googlesource.com/c/chromium/src/+/3600794</a>
-Reviewed-by: Demetrios Papadopoulos &lt;dpapad@chromium.org&gt;
-Commit-Queue: Robert Sesek &lt;rsesek@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#994963}
+Bug: 1318613,b/230012514
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I272d28344409cb0c470f47e9df75e6b050fc5d78">I272d28344409cb0c470f47e9df75e6b050fc5d78</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3600996">https://chromium-review.googlesource.com/c/chromium/src/+/3600996</a>
+Reviewed-by: Ahmed Fakhry &lt;afakhry@chromium.org&gt;
+Reviewed-by: Zentaro Kavanagh &lt;zentaro@chromium.org&gt;
+Commit-Queue: Toby Huang &lt;tobyhuang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#994973}
 </pre>
 
 </body>
