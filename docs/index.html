@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/995407/"> 995407</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a42e72cdd673929c3205117b537b45fa3e985253">a42e72cdd673929c3205117b537b45fa3e985253</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/995425/"> 995425</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b35159ee776f41bf6b5d14ff8bbefefe8293be86">b35159ee776f41bf6b5d14ff8bbefefe8293be86</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/995389/">995389</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7fc3f1e83306dae143ac0adf206babc73109bc32">7fc3f1e83306dae143ac0adf206babc73109bc32</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/995407/">995407</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a42e72cdd673929c3205117b537b45fa3e985253">a42e72cdd673929c3205117b537b45fa3e985253</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a42e72cdd673929c3205117b537b45fa3e985253
+   b35159ee776f41bf6b5d14ff8bbefefe8293be86
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a42e72cdd673929c3205117b537b45fa3e985253">
+    <a href="/chromium/src/+log/b35159ee776f41bf6b5d14ff8bbefefe8293be86">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a42e72cdd673929c3205117b537b45fa3e985253.tar.gz">
+    <a href="/chromium/src/+archive/b35159ee776f41bf6b5d14ff8bbefefe8293be86.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Daniel Cheng &lt;dcheng@chromium.org&gt;
+   Sean Kau &lt;skau@chromium.org&gt;
   </td>
   <td>
-   Fri Apr 22 22:49:20 2022
+   Fri Apr 22 23:43:55 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 22 22:49:20 2022
+   Fri Apr 22 23:43:55 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a42e72cdd673929c3205117b537b45fa3e985253/">
-    cfbb23d4fc282136cb520cd7e26252510fc12269
+   <a href="/chromium/src/+/b35159ee776f41bf6b5d14ff8bbefefe8293be86/">
+    d3563ec88dc1efe115e792744e22357193b13bb0
    </a>
   </td>
  </tr>
@@ -166,42 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a42e72cdd673929c3205117b537b45fa3e985253%5E">
-    0c0b18ac41400368116e4d8acae75005be69e79b
+   <a href="/chromium/src/+/b35159ee776f41bf6b5d14ff8bbefefe8293be86%5E">
+    04ca8b2c28b4be7b7c92ff372f89a7a881d54a5a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a42e72cdd673929c3205117b537b45fa3e985253%5E%21/">
+    <a href="/chromium/src/+/b35159ee776f41bf6b5d14ff8bbefefe8293be86%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove use of "generic" MojoUnion::New() helper in //remoting/host
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Extract OnlineWallpaperVariants code
 
-The New() method for unions has a generic-sounding name but actually
-creates a union containing the first declared subtype. In general, this
-behavior is non-intuitive; it can even give the impression that it
-creates an empty union that doesn't contain any of its subtypes.  It is
-also inefficient: many uses of the New() method immediately populate a
-different subtype, so the initial allocation to hold the first declared
-subtype is simply allocator churn.
+Separate fetch of OnlineWallpaperVariants into a single function in a
+new class to clarify what is happening in WallpaperController. Adds two
+functions: FetchDailyWallpaper and FetchOnlineWallpaper. FetchDaily
+always returns a new daily wallpaper.  FetchOnline returns information
+appropriate to info.asset_id.
 
-For these reasons, usage of MojoUnion::New() is being phased out and
-removed.
-
-This CL was uploaded by git cl split.
-
-R=garykac@chromium.org
-
-Bug: 1261169
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I006c66977676380daabecd3d61eba73063534990">I006c66977676380daabecd3d61eba73063534990</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3602213">https://chromium-review.googlesource.com/c/chromium/src/+/3602213</a>
-Auto-Submit: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Reviewed-by: Gary Kacmarcik &lt;garykac@chromium.org&gt;
-Commit-Queue: Gary Kacmarcik &lt;garykac@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#995407}
+Bug: 1298586
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9e0d88181a972c2727adc7c5664d77dd745498fb">I9e0d88181a972c2727adc7c5664d77dd745498fb</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3577189">https://chromium-review.googlesource.com/c/chromium/src/+/3577189</a>
+Reviewed-by: Jeffrey Young &lt;cowmoo@chromium.org&gt;
+Auto-Submit: Sean Kau &lt;skau@chromium.org&gt;
+Reviewed-by: Jason Thai &lt;jasontt@chromium.org&gt;
+Commit-Queue: Sean Kau &lt;skau@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#995425}
 </pre>
 
 </body>
