@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/996210/"> 996210</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ea96b4eb4de7a493d7c7649a8bb2e9158a4f8cd4">ea96b4eb4de7a493d7c7649a8bb2e9158a4f8cd4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/996221/"> 996221</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/05fd80b66da622f3a549bb7502227cf8108080d4">05fd80b66da622f3a549bb7502227cf8108080d4</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/996183/">996183</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/daac907aa42b880292ae1322f3b1ed9863f1bd7e">daac907aa42b880292ae1322f3b1ed9863f1bd7e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/996212/">996212</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/399caa0d79feca3191eb32c1012388153d6ed3cc">399caa0d79feca3191eb32c1012388153d6ed3cc</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ea96b4eb4de7a493d7c7649a8bb2e9158a4f8cd4
+   05fd80b66da622f3a549bb7502227cf8108080d4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ea96b4eb4de7a493d7c7649a8bb2e9158a4f8cd4">
+    <a href="/chromium/src/+log/05fd80b66da622f3a549bb7502227cf8108080d4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ea96b4eb4de7a493d7c7649a8bb2e9158a4f8cd4.tar.gz">
+    <a href="/chromium/src/+archive/05fd80b66da622f3a549bb7502227cf8108080d4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Joe Mason &lt;joenotcharles@google.com&gt;
+   Pavol Marko &lt;pmarko@google.com&gt;
   </td>
   <td>
-   Tue Apr 26 16:07:42 2022
+   Tue Apr 26 16:49:21 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 26 16:07:42 2022
+   Tue Apr 26 16:49:21 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ea96b4eb4de7a493d7c7649a8bb2e9158a4f8cd4/">
-    310ce8f9c1a37f57f157eb150b949057123265df
+   <a href="/chromium/src/+/05fd80b66da622f3a549bb7502227cf8108080d4/">
+    61a1d9e1a969d02694235553346b1551fea7fb87
    </a>
   </td>
  </tr>
@@ -166,42 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ea96b4eb4de7a493d7c7649a8bb2e9158a4f8cd4%5E">
-    8e406e0040317c42cb320b92516c1fd51c34ae7b
+   <a href="/chromium/src/+/05fd80b66da622f3a549bb7502227cf8108080d4%5E">
+    302543ba2e56ea53f0fca0cd153ebc4258a46923
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ea96b4eb4de7a493d7c7649a8bb2e9158a4f8cd4%5E%21/">
+    <a href="/chromium/src/+/05fd80b66da622f3a549bb7502227cf8108080d4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make ScopedMuteHookedSamplesForTesting safe in tests that don't start the
-sampler
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add browsertests for ONC variable expansion
 
-It should be safe to create and then delete a ScopedMuteHookedSamplesForTesting
-object in tests that don't actually initialize the
-PoissonAllocationSampler. (For example if
-ScopedMuteHookedSamplesForTesting is created in the constructor, but the
-test body calls GTEST_SKIP.)
+Add browsertests that test ONC variable expansion in the "EAP.Identity"
+field for:
+- profile-wide variables for device-wide networks, such as
+  DEVICE_SERIAL_NUMBER
+- profile-wide variables for user-specific networks, such as LOGIN_EMAIL
+- per-network variables based on a selected client certificate, such as
+  CERT_SUBJECT_COMMON_NAME
 
-However it updates the allocator hooks, which isn't safe unless
-g_sampled_address_set is initialized from the PoissonAllocationSampler
-constructor. To fix this always call PoissonAllocationSampler::Get()
-when creating a ScopedMuteHookedSamplesForTesting. This will only
-affect test code.
-
-R=etienneb
-
-Bug: 1318812
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I082c26b11b744c64e51c94d0bc0d9be903e88686">I082c26b11b744c64e51c94d0bc0d9be903e88686</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3606491">https://chromium-review.googlesource.com/c/chromium/src/+/3606491</a>
-Auto-Submit: Joe Mason &lt;joenotcharles@google.com&gt;
-Reviewed-by: Etienne Bergeron &lt;etienneb@chromium.org&gt;
-Commit-Queue: Etienne Bergeron &lt;etienneb@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#996210}
+Bug: b:215163180, b:209084821
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia066086ff05b867805b1c7fef9b8dfef42d93d13">Ia066086ff05b867805b1c7fef9b8dfef42d93d13</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3468703">https://chromium-review.googlesource.com/c/chromium/src/+/3468703</a>
+Reviewed-by: Michael Ershov &lt;miersh@google.com&gt;
+Commit-Queue: Pavol Marko &lt;pmarko@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#996221}
 </pre>
 
 </body>
