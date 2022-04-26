@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/996080/"> 996080</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4c01b57bb9b994933c77308a1fe07a0cb4683da4">4c01b57bb9b994933c77308a1fe07a0cb4683da4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/996085/"> 996085</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3abe39dcf0e7d72b852226de0f15fae784777d47">3abe39dcf0e7d72b852226de0f15fae784777d47</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/996072/">996072</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4c01b57bb9b994933c77308a1fe07a0cb4683da4
+   3abe39dcf0e7d72b852226de0f15fae784777d47
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4c01b57bb9b994933c77308a1fe07a0cb4683da4">
+    <a href="/chromium/src/+log/3abe39dcf0e7d72b852226de0f15fae784777d47">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4c01b57bb9b994933c77308a1fe07a0cb4683da4.tar.gz">
+    <a href="/chromium/src/+archive/3abe39dcf0e7d72b852226de0f15fae784777d47.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Henrik Boström &lt;hbos@chromium.org&gt;
+   Martin Bidlingmaier &lt;mbid@google.com&gt;
   </td>
   <td>
-   Tue Apr 26 09:50:07 2022
+   Tue Apr 26 10:19:31 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 26 09:50:07 2022
+   Tue Apr 26 10:19:31 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4c01b57bb9b994933c77308a1fe07a0cb4683da4/">
-    97b9e32e09eb6a592031f06aca1a303a3c9abf63
+   <a href="/chromium/src/+/3abe39dcf0e7d72b852226de0f15fae784777d47/">
+    32e44c173f84b84cd570f6aa95399a32a6ce0286
    </a>
   </td>
  </tr>
@@ -166,38 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4c01b57bb9b994933c77308a1fe07a0cb4683da4%5E">
-    1f8a79368bdf229126de29fbdf9664e68277886f
+   <a href="/chromium/src/+/3abe39dcf0e7d72b852226de0f15fae784777d47%5E">
+    e97d32b0cd1816cdff4871fa379fe0eec4b70ca6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4c01b57bb9b994933c77308a1fe07a0cb4683da4%5E%21/">
+    <a href="/chromium/src/+/3abe39dcf0e7d72b852226de0f15fae784777d47%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make metro TQ use the same base::TaskTraits as non-metro TQ.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Enable unsetting preferred view sizes
 
-I didn't think the task traits made much of a difference and forgot to
-have them align, but when seeing an increase of existing crashes in
-<a href="https://crbug.com/1319036,">https://crbug.com/1319036,</a> I'm wondering if the traits could affect
-which thread is chosen during block-invokes.
+We enable unestting preferred sizes by changing the argument of
+`View::SetPreferredSize` from `gfx::Size` to `optional&lt;gfx::Size&gt;`. This
+change made it necessary to update call-sites of the form
 
-Whether or not it makes a difference, having the traits match makes
-sense since there was no intent to change the behavior of the original
-TQ with regards to traits.
+	SetPreferredSize({width, height})
 
-Bug: 1319786, 1319036
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaef1ad9860dc89cd2fe59f67448f7f11eaa15934">Iaef1ad9860dc89cd2fe59f67448f7f11eaa15934</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3607671">https://chromium-review.googlesource.com/c/chromium/src/+/3607671</a>
-Reviewed-by: Markus Handell &lt;handellm@google.com&gt;
-Commit-Queue: Henrik Boström &lt;hbos@chromium.org&gt;
-Auto-Submit: Henrik Boström &lt;hbos@chromium.org&gt;
-Reviewed-by: Mirko Bonadei &lt;mbonadei@chromium.org&gt;
-Commit-Queue: Mirko Bonadei &lt;mbonadei@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#996080}
+to
+
+	SetPreferredSize(gfx::Size(width, height))
+
+in order to make implicit conversion work.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib652a4d9fc31329b132c47491ecaf2441b2bb216">Ib652a4d9fc31329b132c47491ecaf2441b2bb216</a>
+Bug: 1317987
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3595982">https://chromium-review.googlesource.com/c/chromium/src/+/3595982</a>
+Reviewed-by: Peter Kasting &lt;pkasting@chromium.org&gt;
+Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
+Reviewed-by: Tommy Steimel &lt;steimel@chromium.org&gt;
+Commit-Queue: Martin Bidlingmaier &lt;mbid@google.com&gt;
+Auto-Submit: Martin Bidlingmaier &lt;mbid@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#996085}
 </pre>
 
 </body>
