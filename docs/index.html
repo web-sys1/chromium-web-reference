@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/997417/"> 997417</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ee861dc43d6cb4e5821c8a41b3db04eba2dea53a">ee861dc43d6cb4e5821c8a41b3db04eba2dea53a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/997454/"> 997454</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5569ee7b01493e2ef3e0aa68532240101e3cf147">5569ee7b01493e2ef3e0aa68532240101e3cf147</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/997428/">997428</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ff7f9a17b480a6ed097f76fbd0e57968e1eae91b">ff7f9a17b480a6ed097f76fbd0e57968e1eae91b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/997454/">997454</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5569ee7b01493e2ef3e0aa68532240101e3cf147">5569ee7b01493e2ef3e0aa68532240101e3cf147</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ee861dc43d6cb4e5821c8a41b3db04eba2dea53a
+   5569ee7b01493e2ef3e0aa68532240101e3cf147
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ee861dc43d6cb4e5821c8a41b3db04eba2dea53a">
+    <a href="/chromium/src/+log/5569ee7b01493e2ef3e0aa68532240101e3cf147">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ee861dc43d6cb4e5821c8a41b3db04eba2dea53a.tar.gz">
+    <a href="/chromium/src/+archive/5569ee7b01493e2ef3e0aa68532240101e3cf147.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Lloyd Pique &lt;lpique@chromium.org&gt;
+   Michael Giorgis &lt;gebregiorgis@google.com&gt;
   </td>
   <td>
-   Thu Apr 28 21:23:02 2022
+   Thu Apr 28 22:54:07 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Apr 28 21:23:02 2022
+   Thu Apr 28 22:54:07 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ee861dc43d6cb4e5821c8a41b3db04eba2dea53a/">
-    6d0fe124b2859ed8dc9ef281ee9c6f774e715b99
+   <a href="/chromium/src/+/5569ee7b01493e2ef3e0aa68532240101e3cf147/">
+    5cb40c2d499aa36bc5b43543017fb44c501ba966
    </a>
   </td>
  </tr>
@@ -166,41 +166,27 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ee861dc43d6cb4e5821c8a41b3db04eba2dea53a%5E">
-    0fae2d3c50830a0b5ac330e34417db9cb79dea9b
+   <a href="/chromium/src/+/5569ee7b01493e2ef3e0aa68532240101e3cf147%5E">
+    076dedda1f750d2d0dfc1a6e17de2071ddf69fc2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ee861dc43d6cb4e5821c8a41b3db04eba2dea53a%5E%21/">
+    <a href="/chromium/src/+/5569ee7b01493e2ef3e0aa68532240101e3cf147%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix an invalid pointer access in the overlay code
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Flip use_dbus flag for chromecast.
 
-If the host window for an overlay is closed before the overlay is
-closed, the container view is destroyed, but then when the overlay
-window is closed, it tried to use the now invalid pointer to reset the
-focus behavior, leading to a segfault (luckily).
-
-An earlier changed removed some code to null out the pointer when the
-view is destroyed, and this regression wasn't caught by the tests.
-
-This patch restores the line to clear the pointer, and also the
-associated observer. And adds a unit test to explicitly test that
-destruction order (and I confirmed it reproduced the crash).
-
-Bug: 1319620
-Test: ash_unittests
-Test: exo_unittests
-Test: DGAPI v2 demo app
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7acc8ee76727b4ffcf0ddba7caf989c0364b0bed">I7acc8ee76727b4ffcf0ddba7caf989c0364b0bed</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3612703">https://chromium-review.googlesource.com/c/chromium/src/+/3612703</a>
-Commit-Queue: Lloyd Pique &lt;lpique@chromium.org&gt;
-Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#997417}
+Bug: b/219068672
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I585a5bcdc6ee9c37f027554790620213f14cd5ee">I585a5bcdc6ee9c37f027554790620213f14cd5ee</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3601252">https://chromium-review.googlesource.com/c/chromium/src/+/3601252</a>
+Commit-Queue: Michael Giorgis &lt;gebregiorgis@google.com&gt;
+Reviewed-by: Thomas Anderson &lt;thomasanderson@chromium.org&gt;
+Reviewed-by: Tommy Li &lt;tommycli@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#997454}
 </pre>
 
 </body>
