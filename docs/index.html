@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/998139/"> 998139</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fcc664329c5b026d276f2c5340da1475dd497bfe">fcc664329c5b026d276f2c5340da1475dd497bfe</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/998141/"> 998141</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/90e49c28b6591337906f6d8a44d5489369b9d6e7">90e49c28b6591337906f6d8a44d5489369b9d6e7</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/998137/">998137</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   fcc664329c5b026d276f2c5340da1475dd497bfe
+   90e49c28b6591337906f6d8a44d5489369b9d6e7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/fcc664329c5b026d276f2c5340da1475dd497bfe">
+    <a href="/chromium/src/+log/90e49c28b6591337906f6d8a44d5489369b9d6e7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/fcc664329c5b026d276f2c5340da1475dd497bfe.tar.gz">
+    <a href="/chromium/src/+archive/90e49c28b6591337906f6d8a44d5489369b9d6e7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ken Rockot &lt;rockot@google.com&gt;
+   Alex Keng &lt;shihken@microsoft.com&gt;
   </td>
   <td>
-   Sun May 01 04:08:46 2022
+   Sun May 01 04:43:06 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun May 01 04:08:46 2022
+   Sun May 01 04:43:06 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/fcc664329c5b026d276f2c5340da1475dd497bfe/">
-    c8f647989e9a034770454e7abe331134cfeff9c8
+   <a href="/chromium/src/+/90e49c28b6591337906f6d8a44d5489369b9d6e7/">
+    d29c1899e3ab7ef039d9af4ae812ee1066e79ea2
    </a>
   </td>
  </tr>
@@ -166,34 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/fcc664329c5b026d276f2c5340da1475dd497bfe%5E">
-    8dd74e7f06ba77fed6e9d47f491a92a40be85aa5
+   <a href="/chromium/src/+/90e49c28b6591337906f6d8a44d5489369b9d6e7%5E">
+    1a495822d40840a8e95d039fd5d4c1396802cde4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/fcc664329c5b026d276f2c5340da1475dd497bfe%5E%21/">
+    <a href="/chromium/src/+/90e49c28b6591337906f6d8a44d5489369b9d6e7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ipcz: Basic NodeLink and RemoteRouterLink
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">TSF: remove the workaround for PPAPI Flash
 
-Split out from the ipcz uber-CL: <a href="https://crrev.com/c/3570271">https://crrev.com/c/3570271</a>
+Given that it's been more than a year since Adobe stopped supporting
+Flash (on 12/31/2020) and blocked Flash content from running (1/12/2021)
+[1], this CL removes the workaround [2] for PPAPI Flash to make the code cleaner and also address a bug caused by the workaround where in EditContext[3], we should return TS_E_NOLAYOUT instead of the caret
+bound if the query index is invalid [4] (eg. TSF is querying the bounds
+for the 2nd character, and at the moment we only have bounds info for
+the 1st character because the author hasn't called
+EditContext.UpdateCharacterBounds for the 2nd character. In this
+case we should return TS_E_NOLAYOUT to let TSF know the layout info
+is not ready)
 
-Introduces very basic implementations of NodeLink and RemoteRouterLink
-as a foundation for internode connection and remote portal routes.
+[1] <a href="https://www.adobe.com/products/flashplayer/end-of-life.html">https://www.adobe.com/products/flashplayer/end-of-life.html</a>
+[2] <a href="https://chromium-review.googlesource.com/c/chromium/src/+/1603822">https://chromium-review.googlesource.com/c/chromium/src/+/1603822</a>
+[3] <a href="https://alexkeng.github.io/edit-context/index.html">https://alexkeng.github.io/edit-context/index.html</a>
+[4] <a href="https://source.chromium.org/chromium/chromium/src/+/main:content/browser/renderer_host/render_widget_host_view_aura.cc;drc=8ae0d11003e869c96a08346d2d53b8cff9bcc8ef;l=1412">https://source.chromium.org/chromium/chromium/src/+/main:content/browser/renderer_host/render_widget_host_view_aura.cc;drc=8ae0d11003e869c96a08346d2d53b8cff9bcc8ef;l=1412</a>
 
-A single new message is added to convey route closure, and it's tested
-end-to-end through a pair of Routers connected by RemoteRouterLinks.
-
-Bug: 1299283
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib4f4c5455dfdcf707c26520ba859e2c779262620">Ib4f4c5455dfdcf707c26520ba859e2c779262620</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3599525">https://chromium-review.googlesource.com/c/chromium/src/+/3599525</a>
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Commit-Queue: Ken Rockot &lt;rockot@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#998139}
+Bug: 963706
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iafa9f45ef1ff02954ae4bb75dc383cf91e20341f">Iafa9f45ef1ff02954ae4bb75dc383cf91e20341f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3614988">https://chromium-review.googlesource.com/c/chromium/src/+/3614988</a>
+Reviewed-by: Siye Liu &lt;siliu@microsoft.com&gt;
+Commit-Queue: Alex Keng &lt;shihken@microsoft.com&gt;
+Reviewed-by: Yohei Yukawa &lt;yukawa@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#998141}
 </pre>
 
 </body>
