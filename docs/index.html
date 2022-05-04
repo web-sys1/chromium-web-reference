@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/999352/"> 999352</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ef6ff1700cff6c799b5ccec6f6ca800f5c8c28bb">ef6ff1700cff6c799b5ccec6f6ca800f5c8c28bb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/999359/"> 999359</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/65cb8fab389b0a88f9f052fd23b140767b59d2ae">65cb8fab389b0a88f9f052fd23b140767b59d2ae</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/999334/">999334</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ef6ff1700cff6c799b5ccec6f6ca800f5c8c28bb
+   65cb8fab389b0a88f9f052fd23b140767b59d2ae
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ef6ff1700cff6c799b5ccec6f6ca800f5c8c28bb">
+    <a href="/chromium/src/+log/65cb8fab389b0a88f9f052fd23b140767b59d2ae">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ef6ff1700cff6c799b5ccec6f6ca800f5c8c28bb.tar.gz">
+    <a href="/chromium/src/+archive/65cb8fab389b0a88f9f052fd23b140767b59d2ae.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mahmoud Rashad &lt;mmrashad@google.com&gt;
+   Maksim Moskvitin &lt;mmoskvitin@google.com&gt;
   </td>
   <td>
-   Wed May 04 12:45:31 2022
+   Wed May 04 13:19:00 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed May 04 12:45:31 2022
+   Wed May 04 13:19:00 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ef6ff1700cff6c799b5ccec6f6ca800f5c8c28bb/">
-    adc76180efeb5c4aca32f9572469438a1c8f21c4
+   <a href="/chromium/src/+/65cb8fab389b0a88f9f052fd23b140767b59d2ae/">
+    4cb8594de21fcd4afa615c740486563bfcf3ac64
    </a>
   </td>
  </tr>
@@ -166,31 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ef6ff1700cff6c799b5ccec6f6ca800f5c8c28bb%5E">
-    a4c016204427b984df87fba572ddbdb6f194acb0
+   <a href="/chromium/src/+/65cb8fab389b0a88f9f052fd23b140767b59d2ae%5E">
+    c905dd753c2b5ff8545a51d601503022c6f2cc03
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ef6ff1700cff6c799b5ccec6f6ca800f5c8c28bb%5E%21/">
+    <a href="/chromium/src/+/65cb8fab389b0a88f9f052fd23b140767b59d2ae%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[sync] Add support for single-button design promos
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Sync] Fix wifi_sync metadata clearing logic
 
-This CL makes sure that all Android sync promos have only a single
-button with the string "Continue" when
-SyncAndroidPromosWithSingleButton flag is enabled.
+There are scenarios where all sync metadata needs to be cleaned (e.g.
+due to sync reset or during Lacros profile migration). This needs to be
+done during ApplyStopSyncChanges() call, afterwards bridge has to be
+ready to perform initial sync again (e.g. MergeSyncData()).
 
-Bug: 1297981
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I33360212551e0b2ff02d0a565b5b9d030908a43b">I33360212551e0b2ff02d0a565b5b9d030908a43b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3535944">https://chromium-review.googlesource.com/c/chromium/src/+/3535944</a>
-Reviewed-by: Boris Sazonov &lt;bsazonov@chromium.org&gt;
-Reviewed-by: Victor Vianna &lt;victorvianna@google.com&gt;
-Commit-Queue: Mahmoud Rashad &lt;mmrashad@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#999352}
+Before:
+WifiConfigurationBridge doesn't override ApplyStopSyncChanges(), relying
+on ModelTypeSyncBridge implementation (which simply calls
+ApplySyncChanges() with |delete_metadata_change_list|). This led to
+DCHECK() failure later, during MergeSyncData(), since bridge is not in
+the state to perform initial sync.
+
+After:
+Both in-memory state of the bridge and whole ModelTypeStore are cleared
+during ApplyStopSyncChanges(). While this also deletes all the data on
+the bridge level, not only metadata, it seems to be desired behavior:
+ModelTypeStore only intend to reflect known/desired server-side state,
+while the actual data stored by Shill, thus we can treat ModelTypeStore
+content as sync metadata.
+
+Bug: 1318390
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I110c045a00e204ca74d3ba9ba79dc632941de652">I110c045a00e204ca74d3ba9ba79dc632941de652</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3614021">https://chromium-review.googlesource.com/c/chromium/src/+/3614021</a>
+Reviewed-by: Jon Mann &lt;jonmann@chromium.org&gt;
+Commit-Queue: Maksim Moskvitin &lt;mmoskvitin@google.com&gt;
+Reviewed-by: Marc Treib &lt;treib@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#999359}
 </pre>
 
 </body>
