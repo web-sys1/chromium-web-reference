@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/999359/"> 999359</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/65cb8fab389b0a88f9f052fd23b140767b59d2ae">65cb8fab389b0a88f9f052fd23b140767b59d2ae</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/999384/"> 999384</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e26c066cab0e6cc3f918f81cdaf505947d8f6e2f">e26c066cab0e6cc3f918f81cdaf505947d8f6e2f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/999363/">999363</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   65cb8fab389b0a88f9f052fd23b140767b59d2ae
+   e26c066cab0e6cc3f918f81cdaf505947d8f6e2f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/65cb8fab389b0a88f9f052fd23b140767b59d2ae">
+    <a href="/chromium/src/+log/e26c066cab0e6cc3f918f81cdaf505947d8f6e2f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/65cb8fab389b0a88f9f052fd23b140767b59d2ae.tar.gz">
+    <a href="/chromium/src/+archive/e26c066cab0e6cc3f918f81cdaf505947d8f6e2f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Maksim Moskvitin &lt;mmoskvitin@google.com&gt;
+   Vidhan Jain &lt;vidhanj@google.com&gt;
   </td>
   <td>
-   Wed May 04 13:19:00 2022
+   Wed May 04 14:22:53 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed May 04 13:19:00 2022
+   Wed May 04 14:22:53 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/65cb8fab389b0a88f9f052fd23b140767b59d2ae/">
-    4cb8594de21fcd4afa615c740486563bfcf3ac64
+   <a href="/chromium/src/+/e26c066cab0e6cc3f918f81cdaf505947d8f6e2f/">
+    cb58b94b365c22408a024410bf718e1232752f5c
    </a>
   </td>
  </tr>
@@ -166,47 +166,28 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/65cb8fab389b0a88f9f052fd23b140767b59d2ae%5E">
-    c905dd753c2b5ff8545a51d601503022c6f2cc03
+   <a href="/chromium/src/+/e26c066cab0e6cc3f918f81cdaf505947d8f6e2f%5E">
+    dfb0dcea77108cba550fd41941ec941ca866a7b3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/65cb8fab389b0a88f9f052fd23b140767b59d2ae%5E%21/">
+    <a href="/chromium/src/+/e26c066cab0e6cc3f918f81cdaf505947d8f6e2f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Sync] Fix wifi_sync metadata clearing logic
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use Title case capitalization for Autofill Menu items
 
-There are scenarios where all sync metadata needs to be cleaned (e.g.
-due to sync reset or during Lacros profile migration). This needs to be
-done during ApplyStopSyncChanges() call, afterwards bridge has to be
-ready to perform initial sync again (e.g. MergeSyncData()).
+The change is only relevant for MacOSX.
 
-Before:
-WifiConfigurationBridge doesn't override ApplyStopSyncChanges(), relying
-on ModelTypeSyncBridge implementation (which simply calls
-ApplySyncChanges() with |delete_metadata_change_list|). This led to
-DCHECK() failure later, during MergeSyncData(), since bridge is not in
-the state to perform initial sync.
-
-After:
-Both in-memory state of the bridge and whole ModelTypeStore are cleared
-during ApplyStopSyncChanges(). While this also deletes all the data on
-the bridge level, not only metadata, it seems to be desired behavior:
-ModelTypeStore only intend to reflect known/desired server-side state,
-while the actual data stored by Shill, thus we can treat ModelTypeStore
-content as sync metadata.
-
-Bug: 1318390
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I110c045a00e204ca74d3ba9ba79dc632941de652">I110c045a00e204ca74d3ba9ba79dc632941de652</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3614021">https://chromium-review.googlesource.com/c/chromium/src/+/3614021</a>
-Reviewed-by: Jon Mann &lt;jonmann@chromium.org&gt;
-Commit-Queue: Maksim Moskvitin &lt;mmoskvitin@google.com&gt;
-Reviewed-by: Marc Treib &lt;treib@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#999359}
+Bug: 1321514
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1cb66256db1d5350275cfc49ac27cea5acd60adb">I1cb66256db1d5350275cfc49ac27cea5acd60adb</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3625650">https://chromium-review.googlesource.com/c/chromium/src/+/3625650</a>
+Commit-Queue: Vidhan Jain &lt;vidhanj@google.com&gt;
+Reviewed-by: Dominic Battré &lt;battre@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#999384}
 </pre>
 
 </body>
