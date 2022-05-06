@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1000296/"> 1000296</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b33fc0c81d713c0b39a65507fbf219a6b06898ac">b33fc0c81d713c0b39a65507fbf219a6b06898ac</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1000304/"> 1000304</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/81ca63003e1657165a5996b612d6664434e68521">81ca63003e1657165a5996b612d6664434e68521</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1000287/">1000287</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b33fc0c81d713c0b39a65507fbf219a6b06898ac
+   81ca63003e1657165a5996b612d6664434e68521
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b33fc0c81d713c0b39a65507fbf219a6b06898ac">
+    <a href="/chromium/src/+log/81ca63003e1657165a5996b612d6664434e68521">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b33fc0c81d713c0b39a65507fbf219a6b06898ac.tar.gz">
+    <a href="/chromium/src/+archive/81ca63003e1657165a5996b612d6664434e68521.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ramin Halavati &lt;rhalavati@chromium.org&gt;
+   Yutaka Hirano &lt;yhirano@chromium.org&gt;
   </td>
   <td>
-   Fri May 06 09:32:22 2022
+   Fri May 06 10:07:59 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri May 06 09:32:22 2022
+   Fri May 06 10:07:59 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b33fc0c81d713c0b39a65507fbf219a6b06898ac/">
-    fdff5590cdbeb8c05cc920f4ee3fa3459eab0d67
+   <a href="/chromium/src/+/81ca63003e1657165a5996b612d6664434e68521/">
+    73d9f50c72a8af6b599e73a89bf857d95dbc342e
    </a>
   </td>
  </tr>
@@ -166,33 +166,55 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b33fc0c81d713c0b39a65507fbf219a6b06898ac%5E">
-    caa5a1042abf1cf12b8b85b1c352ce1c547fed2b
+   <a href="/chromium/src/+/81ca63003e1657165a5996b612d6664434e68521%5E">
+    95d1afd8b26d5beab5a8d53f034364b5eb2f5a3c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b33fc0c81d713c0b39a65507fbf219a6b06898ac%5E%21/">
+    <a href="/chromium/src/+/81ca63003e1657165a5996b612d6664434e68521%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add Screen2x protos to ChromeScreenAI library.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revive DiskCacheBackendTest.FileSharing on Windows
 
-Two new protos are added from Google3 to pass data to
-MainContentExtraction function of ChromeScreenAI library.
+At [1], I replaced disk_cache::DeleteCacheFile calls to base::DeleteFile
+calls. There are subtle difference between them (especially on older
+Windows), the former returns true and the latter returns false when
+failing to get a file information. See [2] for details. That also failed
+DiskCacheBackendTest.FileSharing.
 
-Proto processing code in ScreenAIServiceImpl are moved to new
-proto_convertor.* files.
+This change accepts the difference and fixes the test. By checking the
+existing disk_cache::DeleteCacheFile calls in [1],
 
-Bug: 1278249
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4c8f23a56990fdc580f448857c71cc3bca952e7c">I4c8f23a56990fdc580f448857c71cc3bca952e7c</a>
-Ax-Relnotes: n/a
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3623904">https://chromium-review.googlesource.com/c/chromium/src/+/3623904</a>
-Reviewed-by: David Tseng &lt;dtseng@chromium.org&gt;
-Commit-Queue: Ramin Halavati &lt;rhalavati@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1000296}
+ - BlockFiles::RemoveEmptyFile
+   The return value is used only for reporting UMAs and adding LOGs.
+ - EntryImpl::DeleteData
+   The return value is used only for reporting UMAs and adding LOGs.
+ - SimpleSynchronousEntry::CloseSparseFile
+   The return value is not used.
+ - SimpleCacheDeleteFile(1)
+   The target path is just created, so there should be no file handles
+   that opens the path.
+ - SimpleCacheDeleteFile(2)
+   This is used only when the renaming failed, and we accept that the
+   operation can be flaky in this case, so we're fine with the behavior
+   difference.
+
+the behavior difference doesn't matter.
+
+1: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3583411">https://chromium-review.googlesource.com/c/chromium/src/+/3583411</a>
+2: <a href="https://groups.google.com/a/chromium.org/g/chromium-dev/c/-E9gf7ndh4A">https://groups.google.com/a/chromium.org/g/chromium-dev/c/-E9gf7ndh4A</a>
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I11535ed9f7c1c25c11b3d106cb1d2ded64026b80">I11535ed9f7c1c25c11b3d106cb1d2ded64026b80</a>
+Cq-Include-Trybots: luci.chromium.try:win7-rel
+Bug: 1317648
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3620035">https://chromium-review.googlesource.com/c/chromium/src/+/3620035</a>
+Reviewed-by: Maks Orlovich &lt;morlovich@chromium.org&gt;
+Commit-Queue: Yutaka Hirano &lt;yhirano@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1000304}
 </pre>
 
 </body>
