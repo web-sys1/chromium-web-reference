@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1000304/"> 1000304</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/81ca63003e1657165a5996b612d6664434e68521">81ca63003e1657165a5996b612d6664434e68521</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1000313/"> 1000313</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/290a677bbef63d9bc4120b354a1b033fd078a6f2">290a677bbef63d9bc4120b354a1b033fd078a6f2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1000287/">1000287</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/48d0046d3be5d0f8fe0af0b9103322fb5d626648">48d0046d3be5d0f8fe0af0b9103322fb5d626648</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1000313/">1000313</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/290a677bbef63d9bc4120b354a1b033fd078a6f2">290a677bbef63d9bc4120b354a1b033fd078a6f2</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   81ca63003e1657165a5996b612d6664434e68521
+   290a677bbef63d9bc4120b354a1b033fd078a6f2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/81ca63003e1657165a5996b612d6664434e68521">
+    <a href="/chromium/src/+log/290a677bbef63d9bc4120b354a1b033fd078a6f2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/81ca63003e1657165a5996b612d6664434e68521.tar.gz">
+    <a href="/chromium/src/+archive/290a677bbef63d9bc4120b354a1b033fd078a6f2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yutaka Hirano &lt;yhirano@chromium.org&gt;
+   Boris Sazonov &lt;bsazonov@chromium.org&gt;
   </td>
   <td>
-   Fri May 06 10:07:59 2022
+   Fri May 06 10:33:12 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri May 06 10:07:59 2022
+   Fri May 06 10:33:12 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/81ca63003e1657165a5996b612d6664434e68521/">
-    73d9f50c72a8af6b599e73a89bf857d95dbc342e
+   <a href="/chromium/src/+/290a677bbef63d9bc4120b354a1b033fd078a6f2/">
+    b6ffb06c080f047863d9952cac9bac53a4c2dd0a
    </a>
   </td>
  </tr>
@@ -166,55 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/81ca63003e1657165a5996b612d6664434e68521%5E">
-    95d1afd8b26d5beab5a8d53f034364b5eb2f5a3c
+   <a href="/chromium/src/+/290a677bbef63d9bc4120b354a1b033fd078a6f2%5E">
+    f9414a98e5ee752fd252ee58f5152c08874ac945
    </a>
    <span>
     [
-    <a href="/chromium/src/+/81ca63003e1657165a5996b612d6664434e68521%5E%21/">
+    <a href="/chromium/src/+/290a677bbef63d9bc4120b354a1b033fd078a6f2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revive DiskCacheBackendTest.FileSharing on Windows
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Android] Add ChildAccountStatusSupplier
 
-At [1], I replaced disk_cache::DeleteCacheFile calls to base::DeleteFile
-calls. There are subtle difference between them (especially on older
-Windows), the former returns true and the latter returns false when
-failing to get a file information. See [2] for details. That also failed
-DiskCacheBackendTest.FileSharing.
+Extracts ChildAccountStatusSupplier class that abstracts how FRE obtains
+the child account status and adds tests for this class.
 
-This change accepts the difference and fixes the test. By checking the
-existing disk_cache::DeleteCacheFile calls in [1],
-
- - BlockFiles::RemoveEmptyFile
-   The return value is used only for reporting UMAs and adding LOGs.
- - EntryImpl::DeleteData
-   The return value is used only for reporting UMAs and adding LOGs.
- - SimpleSynchronousEntry::CloseSparseFile
-   The return value is not used.
- - SimpleCacheDeleteFile(1)
-   The target path is just created, so there should be no file handles
-   that opens the path.
- - SimpleCacheDeleteFile(2)
-   This is used only when the renaming failed, and we accept that the
-   operation can be flaky in this case, so we're fine with the behavior
-   difference.
-
-the behavior difference doesn't matter.
-
-1: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3583411">https://chromium-review.googlesource.com/c/chromium/src/+/3583411</a>
-2: <a href="https://groups.google.com/a/chromium.org/g/chromium-dev/c/-E9gf7ndh4A">https://groups.google.com/a/chromium.org/g/chromium-dev/c/-E9gf7ndh4A</a>
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I11535ed9f7c1c25c11b3d106cb1d2ded64026b80">I11535ed9f7c1c25c11b3d106cb1d2ded64026b80</a>
-Cq-Include-Trybots: luci.chromium.try:win7-rel
-Bug: 1317648
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3620035">https://chromium-review.googlesource.com/c/chromium/src/+/3620035</a>
-Reviewed-by: Maks Orlovich &lt;morlovich@chromium.org&gt;
-Commit-Queue: Yutaka Hirano &lt;yhirano@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1000304}
+Bug: 1320374
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I704bda2ab451edd15ee13421b42fd1fb5eb3e350">I704bda2ab451edd15ee13421b42fd1fb5eb3e350</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3610007">https://chromium-review.googlesource.com/c/chromium/src/+/3610007</a>
+Commit-Queue: Boris Sazonov &lt;bsazonov@chromium.org&gt;
+Reviewed-by: Tanmoy Mollik &lt;triploblastic@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1000313}
 </pre>
 
 </body>
