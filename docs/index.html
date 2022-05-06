@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1000284/"> 1000284</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cc09d9880817b65196bf366b6b35c70a0d50dccd">cc09d9880817b65196bf366b6b35c70a0d50dccd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1000290/"> 1000290</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b65cb4ca2a11f55ce3e190422dafd80c69748c57">b65cb4ca2a11f55ce3e190422dafd80c69748c57</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1000278/">1000278</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   cc09d9880817b65196bf366b6b35c70a0d50dccd
+   b65cb4ca2a11f55ce3e190422dafd80c69748c57
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/cc09d9880817b65196bf366b6b35c70a0d50dccd">
+    <a href="/chromium/src/+log/b65cb4ca2a11f55ce3e190422dafd80c69748c57">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/cc09d9880817b65196bf366b6b35c70a0d50dccd.tar.gz">
+    <a href="/chromium/src/+archive/b65cb4ca2a11f55ce3e190422dafd80c69748c57.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Irina Fedorova &lt;irfedorova@google.com&gt;
   </td>
   <td>
-   Fri May 06 08:26:18 2022
+   Fri May 06 09:01:22 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri May 06 08:26:18 2022
+   Fri May 06 09:01:22 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/cc09d9880817b65196bf366b6b35c70a0d50dccd/">
-    b90a89842afad2e620140f9dc7f18f808e0cf77f
+   <a href="/chromium/src/+/b65cb4ca2a11f55ce3e190422dafd80c69748c57/">
+    aaacddf03c454cdd1b29c60a07169f27c645f00f
    </a>
   </td>
  </tr>
@@ -166,43 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/cc09d9880817b65196bf366b6b35c70a0d50dccd%5E">
-    d96626b3345f81006c012edb4d9c5e762db2aaf9
+   <a href="/chromium/src/+/b65cb4ca2a11f55ce3e190422dafd80c69748c57%5E">
+    6541e71af1fa911a13051304740e07dddfe570d5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/cc09d9880817b65196bf366b6b35c70a0d50dccd%5E%21/">
+    <a href="/chromium/src/+/b65cb4ca2a11f55ce3e190422dafd80c69748c57%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Mac PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">app_data: Kiosk PWA app can be auto-launched offline
 
-Roll Chrome Mac PGO profile from chrome-mac-main-1651795087-8aebf0ef58a841fc4df6307c36629d3b59f52cb1.profdata to chrome-mac-main-1651816596-32b849179f5731586347ab1e3e60b44af56ec0e2.profdata
+Update |LoadFromCache| function to be able to launch a PWA app offline
+after it has been successfully auto-launched.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-mac-chromium">https://autoroll.skia.org/r/pgo-mac-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+We have two flows for loading an app icon:
+  1) Load the icon from |icon_url_|. It’s used for loading the icon when
+  a user opens the App menu in the loading screen and the app wasn’t
+  installed earlier. Then we update |LastIconUrl|.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+  2) Load the icon from |WebAppInstallInfo| during the app installation.
+  In this case the icon was not loaded from |icon_url_| and we do not
+  update |LastIconUrl|.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+If the app was successfully auto-launched and installed, but never
+manually launched, |LastIconUrl| will be empty. But the app info is
+actually cached and the app can be launched offline. Because of this,
+we need to check for updated |icon_url_| only if the app has not been
+installed earlier.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
+FIXED:b/230659091
 
-Cq-Include-Trybots: luci.chrome.try:mac-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3f1f4316f9026acfee89dea237461bef0b3c352f">I3f1f4316f9026acfee89dea237461bef0b3c352f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3631033">https://chromium-review.googlesource.com/c/chromium/src/+/3631033</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1000284}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib0f27fa10e03146222d79f88bbc2b2b10562c5e2">Ib0f27fa10e03146222d79f88bbc2b2b10562c5e2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3629357">https://chromium-review.googlesource.com/c/chromium/src/+/3629357</a>
+Reviewed-by: Polina Bondarenko &lt;pbond@chromium.org&gt;
+Commit-Queue: Irina Fedorova &lt;irfedorova@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1000290}
 </pre>
 
 </body>
