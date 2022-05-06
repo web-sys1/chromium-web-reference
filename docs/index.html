@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1000555/"> 1000555</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7906f5da8896f0d1dd2967179284f8e2ee58fa8c">7906f5da8896f0d1dd2967179284f8e2ee58fa8c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1000580/"> 1000580</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e9e67461d278b9d67524b27d08b907643d202b35">e9e67461d278b9d67524b27d08b907643d202b35</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1000572/">1000572</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7906f5da8896f0d1dd2967179284f8e2ee58fa8c
+   e9e67461d278b9d67524b27d08b907643d202b35
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7906f5da8896f0d1dd2967179284f8e2ee58fa8c">
+    <a href="/chromium/src/+log/e9e67461d278b9d67524b27d08b907643d202b35">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7906f5da8896f0d1dd2967179284f8e2ee58fa8c.tar.gz">
+    <a href="/chromium/src/+archive/e9e67461d278b9d67524b27d08b907643d202b35.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   ssid &lt;ssid@chromium.org&gt;
+   Lan Wei &lt;lanwei@chromium.org&gt;
   </td>
   <td>
-   Fri May 06 21:06:15 2022
+   Fri May 06 22:09:55 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri May 06 21:06:15 2022
+   Fri May 06 22:09:55 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7906f5da8896f0d1dd2967179284f8e2ee58fa8c/">
-    ad263bef5986b47f65fb7bf5bf5bf4a5388c3d28
+   <a href="/chromium/src/+/e9e67461d278b9d67524b27d08b907643d202b35/">
+    39ab7814d8ae2d689f6648557b5e98f2b27964cf
    </a>
   </td>
  </tr>
@@ -166,33 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7906f5da8896f0d1dd2967179284f8e2ee58fa8c%5E">
-    f8e9bae1d3640be91ba26ecb63154fbf3e35d523
+   <a href="/chromium/src/+/e9e67461d278b9d67524b27d08b907643d202b35%5E">
+    2a98bac597a340877504e24a38d2ceb6813769df
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7906f5da8896f0d1dd2967179284f8e2ee58fa8c%5E%21/">
+    <a href="/chromium/src/+/e9e67461d278b9d67524b27d08b907643d202b35%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[segmentation] Add browser tests for UKM based features
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Deflake largest contentful paint browser test
 
-Adds a browser test that includes a default model with UKM based
-features. Then verifies if the platform computes the inputs and executes
-the model.
-Adds a utility for this test which will be used by unittests in the
-future, and changes config to use a default register to be able to
-override the default model provided to the platform.
+The test was flaky because the test generates three largest contentful
+paints, and they should be sent from renderer to browser, but we always
+do not receive the last one before we start to check the metrics in the
+test. We need to add the largest contentful paint count to make sure we
+have received all of them in the browser side before we start check the
+value of metrics in the test.
 
-Bug: 1316486
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaa176a8c2528501ba06070a5fe40cd5417ee67c9">Iaa176a8c2528501ba06070a5fe40cd5417ee67c9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3610787">https://chromium-review.googlesource.com/c/chromium/src/+/3610787</a>
-Commit-Queue: Siddhartha S &lt;ssid@chromium.org&gt;
-Reviewed-by: Min Qin &lt;qinmin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1000555}
+The page load metric waiter only checks the desired metric but it do not
+wait for the number of metrics we want. So I add the number of largest
+contentful paint check to make sure we have received three LCPs in this
+test.
+
+Bug: 1223602
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia63f626133900e639c988b033c26b311957e65d9">Ia63f626133900e639c988b033c26b311957e65d9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3631605">https://chromium-review.googlesource.com/c/chromium/src/+/3631605</a>
+Commit-Queue: Lan Wei &lt;lanwei@chromium.org&gt;
+Reviewed-by: Nicolás Peña &lt;npm@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1000580}
 </pre>
 
 </body>
