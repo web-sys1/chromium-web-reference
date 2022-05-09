@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1001203/"> 1001203</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6bc2305c717ccc10299d0226e60d5fc74e051513">6bc2305c717ccc10299d0226e60d5fc74e051513</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1001215/"> 1001215</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c4a4e451cb1dcc4a83c659684b0b1297e1ed6e8d">c4a4e451cb1dcc4a83c659684b0b1297e1ed6e8d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1001186/">1001186</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6bc2305c717ccc10299d0226e60d5fc74e051513
+   c4a4e451cb1dcc4a83c659684b0b1297e1ed6e8d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6bc2305c717ccc10299d0226e60d5fc74e051513">
+    <a href="/chromium/src/+log/c4a4e451cb1dcc4a83c659684b0b1297e1ed6e8d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6bc2305c717ccc10299d0226e60d5fc74e051513.tar.gz">
+    <a href="/chromium/src/+archive/c4a4e451cb1dcc4a83c659684b0b1297e1ed6e8d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Phillis Tang &lt;phillis@google.com&gt;
+   Ian Helmke &lt;helmke@google.com&gt;
   </td>
   <td>
-   Mon May 09 21:38:50 2022
+   Mon May 09 22:17:58 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon May 09 21:38:50 2022
+   Mon May 09 22:17:58 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6bc2305c717ccc10299d0226e60d5fc74e051513/">
-    2e73d65f88a3496c369d6c8dfeaf30a0935c356f
+   <a href="/chromium/src/+/c4a4e451cb1dcc4a83c659684b0b1297e1ed6e8d/">
+    84e2231a586c7f94552bab815d45b6aecb3a4415
    </a>
   </td>
  </tr>
@@ -166,30 +166,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6bc2305c717ccc10299d0226e60d5fc74e051513%5E">
-    67ad70a7e059eac615c6309322398b0a5debd704
+   <a href="/chromium/src/+/c4a4e451cb1dcc4a83c659684b0b1297e1ed6e8d%5E">
+    756501a9af6cb73a6727ee949a232f0c53a61240
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6bc2305c717ccc10299d0226e60d5fc74e051513%5E%21/">
+    <a href="/chromium/src/+/c4a4e451cb1dcc4a83c659684b0b1297e1ed6e8d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">webappcommand: remove InstallWebAppFromManifestWithFallback
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">lacros - enable accessibilityFeatures in lacros
 
-Remove `WebAppInstallManager::InstallWebAppFromManifestWithFallback`
-and move test to corresponding command.
+For extension-controlled prefs where the underlying pref is stored in
+ash, this change adds hooks for ChromeSetting get/set/clear.
+Specifically this adds support for all prefs in accessibilityFeatures.
 
-Bug: 1298130
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1f267b9b7cb09a876ba5621154ab5b7b869d4cf8">I1f267b9b7cb09a876ba5621154ab5b7b869d4cf8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3630723">https://chromium-review.googlesource.com/c/chromium/src/+/3630723</a>
-Reviewed-by: Daniel Murphy &lt;dmurph@chromium.org&gt;
-Commit-Queue: Phillis Tang &lt;phillis@chromium.org&gt;
-Reviewed-by: Dibyajyoti Pal &lt;dibyapal@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1001203}
+Lacros computes the expected value of all lacros extensions as normal
+and stores the result in a new "container" pref that lives in Lacros,
+in the EXTENSION_STORE prefstore. The computed value is then sent to Ash
+where it is stored in the STANDALONE_BROWSER_STORE prefstore.
+
+The Lacros version of the pref is stored under a new "container" pref
+value. This is not strictly necessary, though in at least one case
+(focusHighlight) the pref actually exists in both Lacros and Ash,
+but is only extension controlled in Ash. It also allows us to keep most
+of the existing extension-controlled-pref logic as-is and simply transfer
+the value to Ash.
+
+Observers will be implemented in a future change. Additional sync
+behavior (i.e. sending the value of the pref on startup) will also be
+implemented in a future change.
+
+Bug: 1218145
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib643de37f7bb4b9e540623fea63b80d177f59a9b">Ib643de37f7bb4b9e540623fea63b80d177f59a9b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3136914">https://chromium-review.googlesource.com/c/chromium/src/+/3136914</a>
+Commit-Queue: Ian Helmke &lt;helmke@google.com&gt;
+Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Reviewed-by: Erik Chen &lt;erikchen@chromium.org&gt;
+Reviewed-by: Gabriel Charette &lt;gab@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1001215}
 </pre>
 
 </body>
