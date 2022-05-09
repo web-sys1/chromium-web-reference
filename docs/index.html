@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1000851/"> 1000851</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/92caafa6f9b8dafa4e8ffa52889eb6b18e4a8086">92caafa6f9b8dafa4e8ffa52889eb6b18e4a8086</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1000856/"> 1000856</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3f4850f4831cbbac329d741384d42302c91b0719">3f4850f4831cbbac329d741384d42302c91b0719</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1000842/">1000842</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/50ecd63efad46b2c07fb9c494eda8cba8ae3f226">50ecd63efad46b2c07fb9c494eda8cba8ae3f226</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1000851/">1000851</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/92caafa6f9b8dafa4e8ffa52889eb6b18e4a8086">92caafa6f9b8dafa4e8ffa52889eb6b18e4a8086</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   92caafa6f9b8dafa4e8ffa52889eb6b18e4a8086
+   3f4850f4831cbbac329d741384d42302c91b0719
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/92caafa6f9b8dafa4e8ffa52889eb6b18e4a8086">
+    <a href="/chromium/src/+log/3f4850f4831cbbac329d741384d42302c91b0719">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/92caafa6f9b8dafa4e8ffa52889eb6b18e4a8086.tar.gz">
+    <a href="/chromium/src/+archive/3f4850f4831cbbac329d741384d42302c91b0719.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Fergal Daly &lt;fergal@chromium.org&gt;
+   Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
   </td>
   <td>
-   Mon May 09 02:38:17 2022
+   Mon May 09 03:15:57 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon May 09 02:38:17 2022
+   Mon May 09 03:15:57 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/92caafa6f9b8dafa4e8ffa52889eb6b18e4a8086/">
-    d7e89d81585e981e14423bd68e276316c427636d
+   <a href="/chromium/src/+/3f4850f4831cbbac329d741384d42302c91b0719/">
+    45bf31d1c9171a6d6625a48eefc6fcd08c2c215c
    </a>
   </td>
  </tr>
@@ -166,35 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/92caafa6f9b8dafa4e8ffa52889eb6b18e4a8086%5E">
-    5290d1c68378cd7838c95ca37507c352fef1d723
+   <a href="/chromium/src/+/3f4850f4831cbbac329d741384d42302c91b0719%5E">
+    bba79bcf27cc63c9e3611a25bbc5b2dc6a775697
    </a>
    <span>
     [
-    <a href="/chromium/src/+/92caafa6f9b8dafa4e8ffa52889eb6b18e4a8086%5E%21/">
+    <a href="/chromium/src/+/3f4850f4831cbbac329d741384d42302c91b0719%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix flaky test BackForwardCacheBrowserTest.VideoSuspendAndResume.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PageLoadMetricsObserver: Move Feature setup to TestHarness
 
-On very slow devices, the time between suspend and resume can still be
-very long. Particularly since the post-cache measurement is done by
-executing JS from the browser, so requires an IPC.
+Now the most observer implementations will need to care for supporting
+Prerendering and FencedFrames. So, we'd have the feature setup code
+in the PageLoadMetricsObserverContentTestHarness rather than having it
+in each unit test.
 
-The fix here is to:
-- use pageshow and pagehide to measure the interval. These are the 2 JS measurement points that are closest together and require no IPCs.
-- play the video at .1x speed to make it a 10s video as on Android it sometimes plays fully before the page even enters BFCache
-
-Bug: 1320011
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I53a48e737a68815fe69370618ada8457bbd7501b">I53a48e737a68815fe69370618ada8457bbd7501b</a>
-Cq-Include-Trybots: luci.chromium.try:android-10-arm64-rel,android-11-x86-rel,android-12-x64-dbg,android-12-x64-rel
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3620037">https://chromium-review.googlesource.com/c/chromium/src/+/3620037</a>
-Reviewed-by: Darren Willis &lt;djw@chromium.org&gt;
-Commit-Queue: Fergal Daly &lt;fergal@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1000851}
+Bug: 1317494
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic59858f92615903833dcd299768c174159c9730b">Ic59858f92615903833dcd299768c174159c9730b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3612821">https://chromium-review.googlesource.com/c/chromium/src/+/3612821</a>
+Commit-Queue: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Reviewed-by: Yoav Weiss &lt;yoavweiss@chromium.org&gt;
+Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
+Auto-Submit: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1000856}
 </pre>
 
 </body>
