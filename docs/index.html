@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1001451/"> 1001451</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9bf6cdf34cb02e14b7d6adaed422607ac1755244">9bf6cdf34cb02e14b7d6adaed422607ac1755244</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1001461/"> 1001461</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b93a8d17e9a1350846b49b11d1f770466e4be5fd">b93a8d17e9a1350846b49b11d1f770466e4be5fd</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1001433/">1001433</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b6892fc64549c4027f547f8c1fa53f3e0fdf085c">b6892fc64549c4027f547f8c1fa53f3e0fdf085c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1001461/">1001461</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b93a8d17e9a1350846b49b11d1f770466e4be5fd">b93a8d17e9a1350846b49b11d1f770466e4be5fd</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9bf6cdf34cb02e14b7d6adaed422607ac1755244
+   b93a8d17e9a1350846b49b11d1f770466e4be5fd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9bf6cdf34cb02e14b7d6adaed422607ac1755244">
+    <a href="/chromium/src/+log/b93a8d17e9a1350846b49b11d1f770466e4be5fd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9bf6cdf34cb02e14b7d6adaed422607ac1755244.tar.gz">
+    <a href="/chromium/src/+archive/b93a8d17e9a1350846b49b11d1f770466e4be5fd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alexander Hendrich &lt;hendrich@chromium.org&gt;
+   Jeroen Dhollander &lt;jeroendh@google.com&gt;
   </td>
   <td>
-   Tue May 10 11:37:23 2022
+   Tue May 10 12:13:13 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue May 10 11:37:23 2022
+   Tue May 10 12:13:13 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9bf6cdf34cb02e14b7d6adaed422607ac1755244/">
-    5d00414586519f420c08c5e41e2937ceed4b9a84
+   <a href="/chromium/src/+/b93a8d17e9a1350846b49b11d1f770466e4be5fd/">
+    2c8eb5fec743b598c33a305e31991f1e51e28478
    </a>
   </td>
  </tr>
@@ -166,61 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9bf6cdf34cb02e14b7d6adaed422607ac1755244%5E">
-    55ea45bc356120239040695a2d982ec2cf11cca7
+   <a href="/chromium/src/+/b93a8d17e9a1350846b49b11d1f770466e4be5fd%5E">
+    b0d779edefbae4d0e4e95106a2786a47303340a0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9bf6cdf34cb02e14b7d6adaed422607ac1755244%5E%21/">
+    <a href="/chromium/src/+/b93a8d17e9a1350846b49b11d1f770466e4be5fd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Prevent additional Chrome restart on Chrome OS"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Create a crash key for each feature in enable-features/disable-features
 
-This reverts commit d4a5857e9c55a9359f29977938b34fb82018616f.
+The "--enable-features" and "--disable-features" command line switches
+are used heavily on ChromeOS, as a way of interacting with session
+manager, and are generally so long that they are truncated by the
+character limit on switches.
 
-Reason for revert: test failures -&gt; <a href="https://b.corp.google.com/issues/216129138#comment35">https://b.corp.google.com/issues/216129138#comment35</a>
+This CL removes the `commandline-enabled-features` and
+`commandline-disabled-features` (as they could get truncated), and
+instead moves each feature in its own dedicated CrashKey, named
+"commandline-enabled-feature-&lt;X&gt;" and "commandline-disabled-feature-&lt;X&gt;"
+(with &lt;X&gt; an incrementing counter starting at 1).
 
-Original change's description:
-&gt; Prevent additional Chrome restart on Chrome OS
-&gt;
-&gt; If AttemptRelanuch is called before this change both Chrome and
-&gt; Chrome OS are restarted. The Chrome OS shutdown will stop Chrome itself,
-&gt; so there's no reason to shutdown Chrome except for faked dbus clients.
-&gt;
-&gt; For those, move a faked shutdown of Chrome into fake power manager.
-&gt; As that changes call order, two tests that relied on the previous
-&gt; behavior need to be adapted.
-&gt;
-&gt; This change should also remove flakiness of
-&gt; EnableDebuggingDevTest.ShowAndRemoveProtection.
-&gt;
-&gt; Also remove RebootPolicy, it was only used for flash updates which don't
-&gt; exist anymore.
-&gt;
-&gt; Bug: b/216129138
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia1dddadc9d4e56495a96c841b5feccb54b6a2a35">Ia1dddadc9d4e56495a96c841b5feccb54b6a2a35</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3506307">https://chromium-review.googlesource.com/c/chromium/src/+/3506307</a>
-&gt; Commit-Queue: Miriam Polzer &lt;mpolzer@google.com&gt;
-&gt; Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
-&gt; Reviewed-by: Yury Khmel &lt;khmel@chromium.org&gt;
-&gt; Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1001417}
+Note that this is on ChromeOS only.
 
-Bug: b/216129138
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I02bdf84fe175df6ea23270fbbb969ebc034df514">I02bdf84fe175df6ea23270fbbb969ebc034df514</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3637890">https://chromium-review.googlesource.com/c/chromium/src/+/3637890</a>
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Auto-Submit: Alexander Hendrich &lt;hendrich@chromium.org&gt;
-Owners-Override: Alexander Hendrich &lt;hendrich@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1001451}
+An example crash report can be found at
+<a href="http://crash-staging/browse?stbtiq=e15801b4044e9bf5#2,">http://crash-staging/browse?stbtiq=e15801b4044e9bf5#2,</a>
+and a screenshot of the crash keys can be found at
+<a href="http://screen/9S8x9dq2s7RVnbX.png">http://screen/9S8x9dq2s7RVnbX.png</a>
+
+Fixed: b/215594741
+Test: unit_tests --gtest_filter="CrashKeyTest*"
+Test: Manually deployed, triggered crash and checked.
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3d8b76e49f3ca2d0e564a4853874b7ac0b161d54">I3d8b76e49f3ca2d0e564a4853874b7ac0b161d54</a>
+Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3613648">https://chromium-review.googlesource.com/c/chromium/src/+/3613648</a>
+Auto-Submit: Jeroen Dhollander &lt;jeroendh@google.com&gt;
+Reviewed-by: Robert Sesek &lt;rsesek@chromium.org&gt;
+Reviewed-by: Ian Barkley-Yeung &lt;iby@chromium.org&gt;
+Commit-Queue: Jeroen Dhollander &lt;jeroendh@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1001461}
 </pre>
 
 </body>
