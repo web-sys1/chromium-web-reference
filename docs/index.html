@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1001447/"> 1001447</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8ff9c4dcacff85900be1f99ef1923656058c37fe">8ff9c4dcacff85900be1f99ef1923656058c37fe</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1001451/"> 1001451</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9bf6cdf34cb02e14b7d6adaed422607ac1755244">9bf6cdf34cb02e14b7d6adaed422607ac1755244</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1001433/">1001433</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8ff9c4dcacff85900be1f99ef1923656058c37fe
+   9bf6cdf34cb02e14b7d6adaed422607ac1755244
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8ff9c4dcacff85900be1f99ef1923656058c37fe">
+    <a href="/chromium/src/+log/9bf6cdf34cb02e14b7d6adaed422607ac1755244">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8ff9c4dcacff85900be1f99ef1923656058c37fe.tar.gz">
+    <a href="/chromium/src/+archive/9bf6cdf34cb02e14b7d6adaed422607ac1755244.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Alexander Hendrich &lt;hendrich@chromium.org&gt;
   </td>
   <td>
-   Tue May 10 11:03:55 2022
+   Tue May 10 11:37:23 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue May 10 11:03:55 2022
+   Tue May 10 11:37:23 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8ff9c4dcacff85900be1f99ef1923656058c37fe/">
-    d15ae93e53f19bd8f9c84329dfc5cad5fe658078
+   <a href="/chromium/src/+/9bf6cdf34cb02e14b7d6adaed422607ac1755244/">
+    5d00414586519f420c08c5e41e2937ceed4b9a84
    </a>
   </td>
  </tr>
@@ -166,41 +166,61 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8ff9c4dcacff85900be1f99ef1923656058c37fe%5E">
-    0eb5648aee0190a30d61de6fbff9be0375595804
+   <a href="/chromium/src/+/9bf6cdf34cb02e14b7d6adaed422607ac1755244%5E">
+    55ea45bc356120239040695a2d982ec2cf11cca7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8ff9c4dcacff85900be1f99ef1923656058c37fe%5E%21/">
+    <a href="/chromium/src/+/9bf6cdf34cb02e14b7d6adaed422607ac1755244%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll androidx from -sgL1-5L-... to Sv73ipWyj...
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Prevent additional Chrome restart on Chrome OS"
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/androidx-chromium">https://autoroll.skia.org/r/androidx-chromium</a>
-Please CC clank-library-failures@google.com,mheikal@google.com on the revert to ensure that a human
-is aware of the problem.
+This reverts commit d4a5857e9c55a9359f29977938b34fb82018616f.
 
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+Reason for revert: test failures -&gt; <a href="https://b.corp.google.com/issues/216129138#comment35">https://b.corp.google.com/issues/216129138#comment35</a>
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+Original change's description:
+&gt; Prevent additional Chrome restart on Chrome OS
+&gt;
+&gt; If AttemptRelanuch is called before this change both Chrome and
+&gt; Chrome OS are restarted. The Chrome OS shutdown will stop Chrome itself,
+&gt; so there's no reason to shutdown Chrome except for faked dbus clients.
+&gt;
+&gt; For those, move a faked shutdown of Chrome into fake power manager.
+&gt; As that changes call order, two tests that relied on the previous
+&gt; behavior need to be adapted.
+&gt;
+&gt; This change should also remove flakiness of
+&gt; EnableDebuggingDevTest.ShowAndRemoveProtection.
+&gt;
+&gt; Also remove RebootPolicy, it was only used for flash updates which don't
+&gt; exist anymore.
+&gt;
+&gt; Bug: b/216129138
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia1dddadc9d4e56495a96c841b5feccb54b6a2a35">Ia1dddadc9d4e56495a96c841b5feccb54b6a2a35</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3506307">https://chromium-review.googlesource.com/c/chromium/src/+/3506307</a>
+&gt; Commit-Queue: Miriam Polzer &lt;mpolzer@google.com&gt;
+&gt; Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
+&gt; Reviewed-by: Yury Khmel &lt;khmel@chromium.org&gt;
+&gt; Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1001417}
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:android-internal-binary-size;luci.chrome.try:android-internal-rel
-Tbr: clank-library-failures@google.com,mheikal@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4e0637aa9f997e63a2d5dc1fe860a52c2ebef259">I4e0637aa9f997e63a2d5dc1fe860a52c2ebef259</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3636705">https://chromium-review.googlesource.com/c/chromium/src/+/3636705</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1001447}
+Bug: b/216129138
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I02bdf84fe175df6ea23270fbbb969ebc034df514">I02bdf84fe175df6ea23270fbbb969ebc034df514</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3637890">https://chromium-review.googlesource.com/c/chromium/src/+/3637890</a>
+Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Auto-Submit: Alexander Hendrich &lt;hendrich@chromium.org&gt;
+Owners-Override: Alexander Hendrich &lt;hendrich@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1001451}
 </pre>
 
 </body>
