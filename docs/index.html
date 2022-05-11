@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1002114/"> 1002114</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3731c77eca8f0b18d297a63259e08aed04459b7b">3731c77eca8f0b18d297a63259e08aed04459b7b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1002137/"> 1002137</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7b37d46c4116af78d1f5d1940160ce8515277043">7b37d46c4116af78d1f5d1940160ce8515277043</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1002111/">1002111</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3731c77eca8f0b18d297a63259e08aed04459b7b
+   7b37d46c4116af78d1f5d1940160ce8515277043
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3731c77eca8f0b18d297a63259e08aed04459b7b">
+    <a href="/chromium/src/+log/7b37d46c4116af78d1f5d1940160ce8515277043">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3731c77eca8f0b18d297a63259e08aed04459b7b.tar.gz">
+    <a href="/chromium/src/+archive/7b37d46c4116af78d1f5d1940160ce8515277043.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Bo Liu &lt;boliu@chromium.org&gt;
+   Veronique Nguyen &lt;veronguyen@google.com&gt;
   </td>
   <td>
-   Wed May 11 15:50:30 2022
+   Wed May 11 16:40:50 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed May 11 15:50:30 2022
+   Wed May 11 16:40:50 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3731c77eca8f0b18d297a63259e08aed04459b7b/">
-    eb5ab0904439f1b60d82c8583699d2e650d0db52
+   <a href="/chromium/src/+/7b37d46c4116af78d1f5d1940160ce8515277043/">
+    ebcda184b336f6d14bba1b26e9c7e31f39fafe7a
    </a>
   </td>
  </tr>
@@ -166,39 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3731c77eca8f0b18d297a63259e08aed04459b7b%5E">
-    3d92a3a348e3e840e371c9b7b4b726922854918f
+   <a href="/chromium/src/+/7b37d46c4116af78d1f5d1940160ce8515277043%5E">
+    067d4f6c036aa780a0ab89ed9f11586a8bea6d41
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3731c77eca8f0b18d297a63259e08aed04459b7b%5E%21/">
+    <a href="/chromium/src/+/7b37d46c4116af78d1f5d1940160ce8515277043%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">android: Coalesce independent begin frame
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Clean up obsolete favicons from the Chrome app group storage (V2)
 
-Follow up to fling optimization. There is no throttling mechanism, so
-begin frame messages can be queued up if UI thread is slow, causing
-extra unnecessary work. So try to coalesce begin frame messages in this
-case by posting a task to gather already pending messages.
+- Run a task to remove the obsolete favicons from the storage when the
+Chrome app launches. (And remove the folder if the flag is disabled)
+- Sync favicons on launch.
 
-First only do this if there is potentially more messages pending. Then
-ensure the posted task and begin frame messages use the same task queue.
-Finally post task with a small non-zero delay which apparently is needed
-to ensure it comes after already pending mojo messages.
+Note: Next CL will contain the maximum favicons verification and will
+limit the sync and clean up to once a week. Since it is all under a
+feature flag, we can land the parts separately.
 
-Use the kUserInput queue to match priority of regular begin frames.
-
-Bug: 1070723
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I952c6e17d41d562842ab5922338287e5d92ce4b3">I952c6e17d41d562842ab5922338287e5d92ce4b3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3629978">https://chromium-review.googlesource.com/c/chromium/src/+/3629978</a>
-Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
-Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
-Commit-Queue: Bo Liu &lt;boliu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1002114}
+Bug: 1305244
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2163e4a82dc64463f9e487c6dc3922b36f1e9c9f">I2163e4a82dc64463f9e487c6dc3922b36f1e9c9f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3637844">https://chromium-review.googlesource.com/c/chromium/src/+/3637844</a>
+Commit-Queue: Veronique Nguyen &lt;veronguyen@google.com&gt;
+Reviewed-by: Rohit Rao &lt;rohitrao@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1002137}
 </pre>
 
 </body>
