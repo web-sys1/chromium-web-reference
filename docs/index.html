@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1002994/"> 1002994</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a025c933a8312d1c1d9d9ca7dacab2fb18cb451e">a025c933a8312d1c1d9d9ca7dacab2fb18cb451e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1002997/"> 1002997</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1636da313617a75187e92f1a80cbfe4d65e45eb9">1636da313617a75187e92f1a80cbfe4d65e45eb9</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1002990/">1002990</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3008dc1af73b215a8015b76fe356f84becafa6d7">3008dc1af73b215a8015b76fe356f84becafa6d7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1002995/">1002995</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d5c0c90eaa2b841a13ddb985dde15cd86b631f8a">d5c0c90eaa2b841a13ddb985dde15cd86b631f8a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a025c933a8312d1c1d9d9ca7dacab2fb18cb451e
+   1636da313617a75187e92f1a80cbfe4d65e45eb9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a025c933a8312d1c1d9d9ca7dacab2fb18cb451e">
+    <a href="/chromium/src/+log/1636da313617a75187e92f1a80cbfe4d65e45eb9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a025c933a8312d1c1d9d9ca7dacab2fb18cb451e.tar.gz">
+    <a href="/chromium/src/+archive/1636da313617a75187e92f1a80cbfe4d65e45eb9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Bertoni &lt;dbertoni@chromium.org&gt;
+   Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
   </td>
   <td>
-   Fri May 13 04:52:51 2022
+   Fri May 13 05:22:11 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri May 13 04:52:51 2022
+   Fri May 13 05:22:11 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a025c933a8312d1c1d9d9ca7dacab2fb18cb451e/">
-    32998195ef2e9ac0065190e4af5d838b8ee70d0e
+   <a href="/chromium/src/+/1636da313617a75187e92f1a80cbfe4d65e45eb9/">
+    50159c6beb8af029858875ba5574e96b33bbce3e
    </a>
   </td>
  </tr>
@@ -166,35 +166,75 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a025c933a8312d1c1d9d9ca7dacab2fb18cb451e%5E">
-    14b5b6d8cefd1945b604f9d48e31ee155683a0c1
+   <a href="/chromium/src/+/1636da313617a75187e92f1a80cbfe4d65e45eb9%5E">
+    5940d17ca5fedd432311e584b8e448653a622dd3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a025c933a8312d1c1d9d9ca7dacab2fb18cb451e%5E%21/">
+    <a href="/chromium/src/+/1636da313617a75187e92f1a80cbfe4d65e45eb9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CodeHealth] Remove uses of ListValue::Append in /chrome/browser/devtools.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "Properly account for fenced frames in crash visibility"
 
-This CL removes uses of the overload that accepts a
-std::unique_ptr&lt;base::Value&gt;. It attempts to modernize code where
-feasible and uses base::Value::FromUniquePtrValue where it's not.
+This reverts commit e391064aa942b88a0bd4e2eac57c88330aa575c4.
 
-This CL was uploaded by git cl split.
+Reason for revert:
+The root cause of the test failure has been resolved.
+The test failed because MaybeLogCrash did not called when the crashed
+frame became visible on Android.  Since MaybeLogCrash is called only
+for visible frame, it was not called because the frame's viewport
+intersection is empty and the frame was considered as invisible.
 
-R=caseq@chromium.org
+Unlike desktop, Android seems to need fencedframe height/width
+explicitly set to make them recognized as visible.  I have updated
+the browser test like so.
 
-Bug: 1187097
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I15ee7d7a95f6ed1da470090c80704ed5476c59c2">I15ee7d7a95f6ed1da470090c80704ed5476c59c2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3641104">https://chromium-review.googlesource.com/c/chromium/src/+/3641104</a>
-Auto-Submit: David Bertoni &lt;dbertoni@chromium.org&gt;
-Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
-Commit-Queue: Andrey Kosyakov &lt;caseq@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1002994}
+Original change's description:
+&gt; Revert "Properly account for fenced frames in crash visibility"
+&gt;
+&gt; This reverts commit 9e927d34119ebe4faa62f6c0a3aef7d959380376.
+&gt;
+&gt; Reason for revert: crbug.com/1309482 - fails on multiple bots
+&gt;
+&gt; Original change's description:
+&gt; &gt; Properly account for fenced frames in crash visibility
+&gt; &gt;
+&gt; &gt; Currently the browser may set CrashVisibility::kShownAfterCrashing to
+&gt; &gt; UMA if the crash happens inside fenced frames.  That is because the
+&gt; &gt; current code uses GetParent to track the ancestor frames.  Using
+&gt; &gt; GetParent worked for iframes but fencedframe+MPArch should use
+&gt; &gt; GetParentOrOuterDocument to track all the ancestor frames.
+&gt; &gt;
+&gt; &gt; For this case, we want to detect the ancestors are loading or not
+&gt; &gt; for setting the proper crash visibility, and that should not be
+&gt; &gt; a communication channel between fenced frames and the primary main
+&gt; &gt; frame.
+&gt; &gt;
+&gt; &gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibdaaa07909c25cdda0b1d0532d14c495c2c6c800">Ibdaaa07909c25cdda0b1d0532d14c495c2c6c800</a>
+&gt; &gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3506953">https://chromium-review.googlesource.com/c/chromium/src/+/3506953</a>
+&gt; &gt; Reviewed-by: Tsuyoshi Horo &lt;horo@chromium.org&gt;
+&gt; &gt; Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
+&gt; &gt; Commit-Queue: Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
+&gt; &gt; Cr-Commit-Position: refs/heads/main@{#983664}
+&gt;
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1d439cf7a6b56b724c447fefbc51ab66d81902a3">I1d439cf7a6b56b724c447fefbc51ab66d81902a3</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3545448">https://chromium-review.googlesource.com/c/chromium/src/+/3545448</a>
+&gt; Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+&gt; Commit-Queue: Andrey Zaytsev &lt;andzaytsev@google.com&gt;
+&gt; Owners-Override: Andrey Zaytsev &lt;andzaytsev@google.com&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#984363}
+
+Bug: 1309482
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib8d5eac3714642c338d6f69d2abbfc89e67ac004">Ib8d5eac3714642c338d6f69d2abbfc89e67ac004</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3552276">https://chromium-review.googlesource.com/c/chromium/src/+/3552276</a>
+Reviewed-by: Bo Liu &lt;boliu@chromium.org&gt;
+Reviewed-by: Rakina Zata Amni &lt;rakina@chromium.org&gt;
+Commit-Queue: Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1002997}
 </pre>
 
 </body>
