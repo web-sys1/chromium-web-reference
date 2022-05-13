@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1002929/"> 1002929</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c51b9e3b046b2f0a905ec78ac9803905635e2e18">c51b9e3b046b2f0a905ec78ac9803905635e2e18</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1002987/"> 1002987</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c528d652aa8aa3ce6267dfcfe3b406b60122781f">c528d652aa8aa3ce6267dfcfe3b406b60122781f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1002929/">1002929</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c51b9e3b046b2f0a905ec78ac9803905635e2e18">c51b9e3b046b2f0a905ec78ac9803905635e2e18</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1002976/">1002976</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f30c250fe4ad9f3b7d5a28e390faaaf3354b57e9">f30c250fe4ad9f3b7d5a28e390faaaf3354b57e9</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c51b9e3b046b2f0a905ec78ac9803905635e2e18
+   c528d652aa8aa3ce6267dfcfe3b406b60122781f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c51b9e3b046b2f0a905ec78ac9803905635e2e18">
+    <a href="/chromium/src/+log/c528d652aa8aa3ce6267dfcfe3b406b60122781f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c51b9e3b046b2f0a905ec78ac9803905635e2e18.tar.gz">
+    <a href="/chromium/src/+archive/c528d652aa8aa3ce6267dfcfe3b406b60122781f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Hayato Ito &lt;hayato@chromium.org&gt;
+   Scott Haseley &lt;shaseley@chromium.org&gt;
   </td>
   <td>
-   Fri May 13 02:07:50 2022
+   Fri May 13 03:47:34 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri May 13 02:07:50 2022
+   Fri May 13 03:47:34 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c51b9e3b046b2f0a905ec78ac9803905635e2e18/">
-    88ab2e8804b961463f20e4019ec58ebc3aa36b37
+   <a href="/chromium/src/+/c528d652aa8aa3ce6267dfcfe3b406b60122781f/">
+    a21d05f99ede836cad114ba0bd4c43667dfbd4c8
    </a>
   </td>
  </tr>
@@ -166,58 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c51b9e3b046b2f0a905ec78ac9803905635e2e18%5E">
-    7badcf174f4797939d9083c99afbf8ced8be572f
+   <a href="/chromium/src/+/c528d652aa8aa3ce6267dfcfe3b406b60122781f%5E">
+    9754118d20216eb2907a483fdc3e5601967c56cf
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c51b9e3b046b2f0a905ec78ac9803905635e2e18%5E%21/">
+    <a href="/chromium/src/+/c528d652aa8aa3ce6267dfcfe3b406b60122781f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Use llvm-ml when building Chrome on Windows"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Scheduler: Filter out continuous input for kPrioritizeCompositingAfterInput
 
-This reverts commit d69159786faf5c8182010e4dc80d60b39efb60d8.
+Continuous input, when rAF-algined, hops through the input task queue
+before ultimately running in rAF. This means we need to do more
+filtering in the scheduler to only prioritize rendering after discrete
+inputs. This CL adds that filtering.
 
-Reason for revert: FoundIt found this as a culprit of tree closer:
-<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/Win%20Builder/142221/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/Win%20Builder/142221/overview</a>
+This also moves the kPrioritizeCompositingAfterInput from
+OnTaskComplete() to
+MaybeUpdateCompositorTaskQueuePriorityOnTaskCompleted(), consolidating
+the logic to update compositor priority after a task runs.
 
-
-Original change's description:
-&gt; Use llvm-ml when building Chrome on Windows
-&gt;
-&gt; Replace MSVC ml.exe with llvm-ml when targeting Windows when building on
-&gt; Windows.
-&gt;
-&gt; Using llvm-ml when targeting Windows on non-Windows build environments
-&gt; is *not* supported at this time. Addiitonally, we don't intend to
-&gt; support calling llvm-ml on remote goma executors.
-&gt;
-&gt; This patch calls llvm-ml unconditionally for now. Please comment on the
-&gt; review or on <a href="https://crbug.com/762167">https://crbug.com/762167</a> if this causes a problem for your
-&gt; use case.
-&gt;
-&gt; Bug: 762167
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic555cf31e2c0293122bacfe681e946c72b8befc3">Ic555cf31e2c0293122bacfe681e946c72b8befc3</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3571944">https://chromium-review.googlesource.com/c/chromium/src/+/3571944</a>
-&gt; Commit-Queue: Alan Zhao &lt;ayzhao@google.com&gt;
-&gt; Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1002923}
-
-Bug: 762167
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5c13d44755dced1275583b52762d47607c170937">I5c13d44755dced1275583b52762d47607c170937</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3645172">https://chromium-review.googlesource.com/c/chromium/src/+/3645172</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Auto-Submit: Hayato Ito &lt;hayato@chromium.org&gt;
-Owners-Override: Hayato Ito &lt;hayato@chromium.org&gt;
-Commit-Queue: Hayato Ito &lt;hayato@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1002929}
+Bug: 853771, 1068426
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifd3d00440688b015015d7d20320de330a70db376">Ifd3d00440688b015015d7d20320de330a70db376</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3641430">https://chromium-review.googlesource.com/c/chromium/src/+/3641430</a>
+Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
+Reviewed-by: Minoru Chikamune &lt;chikamune@chromium.org&gt;
+Commit-Queue: Scott Haseley &lt;shaseley@chromium.org&gt;
+Reviewed-by: Dave Tapuska &lt;dtapuska@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1002987}
 </pre>
 
 </body>
