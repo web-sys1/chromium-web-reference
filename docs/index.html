@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1003166/"> 1003166</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f94885f76055744f298e048f449e7f8e6e150e4f">f94885f76055744f298e048f449e7f8e6e150e4f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1003148/"> 1003148</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/300c3dba1de899fc32a29cd6edb005720956bbb9">300c3dba1de899fc32a29cd6edb005720956bbb9</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1003151/">1003151</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f94885f76055744f298e048f449e7f8e6e150e4f
+   300c3dba1de899fc32a29cd6edb005720956bbb9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f94885f76055744f298e048f449e7f8e6e150e4f">
+    <a href="/chromium/src/+log/300c3dba1de899fc32a29cd6edb005720956bbb9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f94885f76055744f298e048f449e7f8e6e150e4f.tar.gz">
+    <a href="/chromium/src/+archive/300c3dba1de899fc32a29cd6edb005720956bbb9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Gabriel Oliveira &lt;gabolvr@google.com&gt;
+   Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
   </td>
   <td>
-   Fri May 13 17:02:35 2022
+   Fri May 13 16:17:39 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri May 13 17:02:35 2022
+   Fri May 13 16:17:39 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f94885f76055744f298e048f449e7f8e6e150e4f/">
-    bf17840525ec1e163730eeef7bb835f4dfa90e06
+   <a href="/chromium/src/+/300c3dba1de899fc32a29cd6edb005720956bbb9/">
+    5e02a1a5852aa59be6dc671ca33b56748b8508b9
    </a>
   </td>
  </tr>
@@ -166,29 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f94885f76055744f298e048f449e7f8e6e150e4f%5E">
-    15c2fbc864aad0e1125bc69dca7d28ac5c693853
+   <a href="/chromium/src/+/300c3dba1de899fc32a29cd6edb005720956bbb9%5E">
+    b87f756f8c0073480fae70b02c9bf1547bf8e17d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f94885f76055744f298e048f449e7f8e6e150e4f%5E%21/">
+    <a href="/chromium/src/+/300c3dba1de899fc32a29cd6edb005720956bbb9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add isLoaded parameter to ProfileState in profile-internals
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix dangling raw_ptr in TabStripPageHandler / WebuiTabStrip.
 
-Identify if the profile is loaded in memory.
+The |browser_| and |embedder_| attributes from the TabStripPageHandler
+might become dangling. This may results in UAF.
 
-Bug: 1313447
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icd9252d884999cd88f030e1a37c54b0a42a379fd">Icd9252d884999cd88f030e1a37c54b0a42a379fd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3644659">https://chromium-review.googlesource.com/c/chromium/src/+/3644659</a>
-Reviewed-by: David Roger &lt;droger@chromium.org&gt;
-Reviewed-by: Monica Basta &lt;msalama@chromium.org&gt;
-Commit-Queue: Gabriel Oliveira &lt;gabolvr@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1003166}
+This patch resets the borrowed references and clear the objects
+depending on them when they go out of scope.
+
+[Motivation]
+This is a dependency of:
+<a href="https://chromium-review.googlesource.com/c/chromium/src/+/3620393">https://chromium-review.googlesource.com/c/chromium/src/+/3620393</a>
+This deletes WebContents in its own task, which causes the dangling
+raw_ptr to become real UAF and one test to fail.
+
+Bug: 1308391,1311962
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1c56052069de76e304502bf76108d79e2236b2c1">I1c56052069de76e304502bf76108d79e2236b2c1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3634520">https://chromium-review.googlesource.com/c/chromium/src/+/3634520</a>
+Reviewed-by: Thomas Lukaszewicz &lt;tluk@chromium.org&gt;
+Reviewed-by: Collin Baker &lt;collinbaker@chromium.org&gt;
+Commit-Queue: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
+Reviewed-by: John Lee &lt;johntlee@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1003148}
 </pre>
 
 </body>
