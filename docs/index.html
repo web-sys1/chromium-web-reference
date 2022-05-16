@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1003962/"> 1003962</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/42feac3bf0a526617938af6559e6064efcecdb0c">42feac3bf0a526617938af6559e6064efcecdb0c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1003979/"> 1003979</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13">cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1003925/">1003925</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   42feac3bf0a526617938af6559e6064efcecdb0c
+   cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/42feac3bf0a526617938af6559e6064efcecdb0c">
+    <a href="/chromium/src/+log/cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/42feac3bf0a526617938af6559e6064efcecdb0c.tar.gz">
+    <a href="/chromium/src/+archive/cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   K. Moon &lt;kmoon@chromium.org&gt;
+   David Benjamin &lt;davidben@chromium.org&gt;
   </td>
   <td>
-   Mon May 16 21:55:40 2022
+   Mon May 16 22:34:02 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon May 16 21:55:40 2022
+   Mon May 16 22:34:02 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/42feac3bf0a526617938af6559e6064efcecdb0c/">
-    0c3e36282ac2769799cd1b1a9ac93598bb604a14
+   <a href="/chromium/src/+/cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13/">
+    32122cef4f979c7cdfa711da7a0d4bce51df42ac
    </a>
   </td>
  </tr>
@@ -166,38 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/42feac3bf0a526617938af6559e6064efcecdb0c%5E">
-    169d2d039f976aac93f77891e59b53847290c63c
+   <a href="/chromium/src/+/cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13%5E">
+    2b0d3c5b6a4237c70712dba09fb89dd0b54dbc29
    </a>
    <span>
     [
-    <a href="/chromium/src/+/42feac3bf0a526617938af6559e6064efcecdb0c%5E%21/">
+    <a href="/chromium/src/+/cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Improve PdfViewWebPlugin unit tests
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove pre-macOS 10.13 codepaths in ssl_platform_key_mac.cc
 
-Various small improvements to the PdfViewWebPlugin unit tests:
+We can now assume SecKeyCreateSignature and PSS algorithm constants are
+available. This means we finally drop the CSSM codepath here and the
+deprecated declarations warning.
 
-1. Adds expectations on the URL load started by Initialize().
-2. Adds an expectation on WebHttpBody::ElementCount(), to detect excess
-   elements.
-3. Improves CompleteURL() emulation by using an explicit document URL.
-   This better matches the actual behavior, which resolves against the
-   base URL of the embedding document, not PdfViewWebPlugin::GetURL().
-4. Uses a valid document base URL; GURL does not accept "dummy.pdf".
-5. More consistently converts blink::WebString to std::string, for
-   better failure messages.
+I've retained the PSS fallback code because, while the OS knows the PSS
+algorithm, the key may not in theory.
 
-Bug: 1323307
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4da7ba86c19ef5c131417bcf2039dceabf1e91c4">I4da7ba86c19ef5c131417bcf2039dceabf1e91c4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3649746">https://chromium-review.googlesource.com/c/chromium/src/+/3649746</a>
-Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
-Commit-Queue: K. Moon &lt;kmoon@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1003962}
+Bug: 1322548, 590914
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I40639b9577d199706e202420efdef8a8a445e71f">I40639b9577d199706e202420efdef8a8a445e71f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3645436">https://chromium-review.googlesource.com/c/chromium/src/+/3645436</a>
+Commit-Queue: Matt Mueller &lt;mattm@chromium.org&gt;
+Auto-Submit: David Benjamin &lt;davidben@chromium.org&gt;
+Reviewed-by: Matt Mueller &lt;mattm@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1003979}
 </pre>
 
 </body>
