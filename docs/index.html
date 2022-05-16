@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1003979/"> 1003979</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13">cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1003986/"> 1003986</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/688c768936c77614281c40df65a269937a87897b">688c768936c77614281c40df65a269937a87897b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1003925/">1003925</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0f98fbe9626fe303574374da7d41a3cb710df81d">0f98fbe9626fe303574374da7d41a3cb710df81d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1003967/">1003967</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/089a60efa10ed6f6173fdbd1a29317b0db00e27b">089a60efa10ed6f6173fdbd1a29317b0db00e27b</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13
+   688c768936c77614281c40df65a269937a87897b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13">
+    <a href="/chromium/src/+log/688c768936c77614281c40df65a269937a87897b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13.tar.gz">
+    <a href="/chromium/src/+archive/688c768936c77614281c40df65a269937a87897b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Benjamin &lt;davidben@chromium.org&gt;
+   Jeremy Roman &lt;jbroman@chromium.org&gt;
   </td>
   <td>
-   Mon May 16 22:34:02 2022
+   Mon May 16 23:03:31 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon May 16 22:34:02 2022
+   Mon May 16 23:03:31 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13/">
-    32122cef4f979c7cdfa711da7a0d4bce51df42ac
+   <a href="/chromium/src/+/688c768936c77614281c40df65a269937a87897b/">
+    dce84297b3b394fb4e109efae492aa9da00abfb8
    </a>
   </td>
  </tr>
@@ -166,34 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13%5E">
-    2b0d3c5b6a4237c70712dba09fb89dd0b54dbc29
+   <a href="/chromium/src/+/688c768936c77614281c40df65a269937a87897b%5E">
+    a5b3791615f113bea8405353522ab176c5587e1b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/cf6e2f3a6caeccb6d2aa43b539977ab17b55fc13%5E%21/">
+    <a href="/chromium/src/+/688c768936c77614281c40df65a269937a87897b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove pre-macOS 10.13 codepaths in ssl_platform_key_mac.cc
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Avoid some unnecessary GURL copies in fenced_frame_utils.cc.
 
-We can now assume SecKeyCreateSignature and PSS algorithm constants are
-available. This means we finally drop the CSSM codepath here and the
-deprecated declarations warning.
+Passing GURL by value copies the underlying string, which might involve
+allocation. Similarly, GURL::spec returns a const reference into the
+GURL which we don't need to copy in order to do simple checks.
 
-I've retained the PSS fallback code because, while the OS knows the PSS
-algorithm, the key may not in theory.
-
-Bug: 1322548, 590914
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I40639b9577d199706e202420efdef8a8a445e71f">I40639b9577d199706e202420efdef8a8a445e71f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3645436">https://chromium-review.googlesource.com/c/chromium/src/+/3645436</a>
-Commit-Queue: Matt Mueller &lt;mattm@chromium.org&gt;
-Auto-Submit: David Benjamin &lt;davidben@chromium.org&gt;
-Reviewed-by: Matt Mueller &lt;mattm@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1003979}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If826f8e721ca8ec4f366de30b2e7d65d1b7f6317">If826f8e721ca8ec4f366de30b2e7d65d1b7f6317</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3646603">https://chromium-review.googlesource.com/c/chromium/src/+/3646603</a>
+Commit-Queue: Dominic Farolino &lt;dom@chromium.org&gt;
+Auto-Submit: Jeremy Roman &lt;jbroman@chromium.org&gt;
+Commit-Queue: Jeremy Roman &lt;jbroman@chromium.org&gt;
+Reviewed-by: Dominic Farolino &lt;dom@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1003986}
 </pre>
 
 </body>
