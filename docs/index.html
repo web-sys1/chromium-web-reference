@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1004179/"> 1004179</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9c8b08c61a3308ceef5fa86e26808eaaeb17efb3">9c8b08c61a3308ceef5fa86e26808eaaeb17efb3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1004200/"> 1004200</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a1ff90cab807ec0c714d998c49e89c807f8d8604">a1ff90cab807ec0c714d998c49e89c807f8d8604</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1004188/">1004188</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9c8b08c61a3308ceef5fa86e26808eaaeb17efb3
+   a1ff90cab807ec0c714d998c49e89c807f8d8604
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9c8b08c61a3308ceef5fa86e26808eaaeb17efb3">
+    <a href="/chromium/src/+log/a1ff90cab807ec0c714d998c49e89c807f8d8604">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9c8b08c61a3308ceef5fa86e26808eaaeb17efb3.tar.gz">
+    <a href="/chromium/src/+archive/a1ff90cab807ec0c714d998c49e89c807f8d8604.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+   Clemens Backes &lt;clemensb@chromium.org&gt;
   </td>
   <td>
-   Tue May 17 10:11:33 2022
+   Tue May 17 11:18:50 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue May 17 10:11:33 2022
+   Tue May 17 11:18:50 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9c8b08c61a3308ceef5fa86e26808eaaeb17efb3/">
-    1e7c6dcc129e7c4ab3f57d205bb8cd7dc631b30b
+   <a href="/chromium/src/+/a1ff90cab807ec0c714d998c49e89c807f8d8604/">
+    eff49ed395b69d311f71dfb011ab910dd250d582
    </a>
   </td>
  </tr>
@@ -166,48 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9c8b08c61a3308ceef5fa86e26808eaaeb17efb3%5E">
-    73688e110bc44bc2aec2c4fb6609d207c8fa201b
+   <a href="/chromium/src/+/a1ff90cab807ec0c714d998c49e89c807f8d8604%5E">
+    5bc0b9eac85ed52d304bc31ede2b109f54a19999
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9c8b08c61a3308ceef5fa86e26808eaaeb17efb3%5E%21/">
+    <a href="/chromium/src/+/a1ff90cab807ec0c714d998c49e89c807f8d8604%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PageLoadMetrics: Do not create new PageLoadTracker during activation
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[gin] Use new OOMErrorCallback with more details
 
-Current MetricsWebContentsObserver creates a new PageLoadTracker for
-a prerendered page activation, uses it while the navigation is
-provisional, and switches to use the original PageLoadTracker on
-committing the activation. This was not an intentional behavior.
+This switches from LegacyOOMErrorCallback to OOMErrorCallback, which
+receives a reference to OOMDetails instead of just a boolean value.
+The struct currently holds an additional (optional) "detail" string, but
+might be further extended in the future.
 
-This patch stops creating a new PageLoadTracker for the provisional
-navigation that activates the prerendered page, and use the same
-PageLoadTracker consistently from the initial navigation through to
-the activation. With this fix, we don't create a new PageLoadTracker
-and observers that will see an unexpected normal page navigation
-(OnStart and OnCommit) during the prerender activation, and stop
-polluting existing metrics. Observers for prerendering (started with
-OnPrerenderStart) continue working without any behavioral change.
+A new crash key "v8-oom-detail" is added to capture the value of the
+optional detail string on OOM crashes.
 
-For testing, this patch moves ActivatePrerenderedPage functionality
-to TestWebContents so that unit tests outside content/ can use it.
-This replaces local ActivatePrerenderdPage functions in two test
-files. Also, this patch replaces ActivationObserver with the content's
-PrerenderHostObserver.
+R=mlippautz@chromium.org
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ieab534d0913f1c1ceabb8d0651f6b969ff77d8f9">Ieab534d0913f1c1ceabb8d0651f6b969ff77d8f9</a>
-Bug: 1301880
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3634214">https://chromium-review.googlesource.com/c/chromium/src/+/3634214</a>
-Commit-Queue: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
-Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
-Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1004179}
+Bug: chromium:1323177
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0478f5ea4e18bba821ccc990dd4684368c2abc48">I0478f5ea4e18bba821ccc990dd4684368c2abc48</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3650439">https://chromium-review.googlesource.com/c/chromium/src/+/3650439</a>
+Commit-Queue: Clemens Backes &lt;clemensb@chromium.org&gt;
+Reviewed-by: Michael Lippautz &lt;mlippautz@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1004200}
 </pre>
 
 </body>
