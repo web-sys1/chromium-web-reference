@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1004293/"> 1004293</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9d3fc53a6342169c882669ac93d6a2289d206010">9d3fc53a6342169c882669ac93d6a2289d206010</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1004312/"> 1004312</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a46a3d0d4e8683b59b55c3fc5250dad6d3cda01f">a46a3d0d4e8683b59b55c3fc5250dad6d3cda01f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1004280/">1004280</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8ce497450544fd42cf3663b5ac649418785b6297">8ce497450544fd42cf3663b5ac649418785b6297</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1004305/">1004305</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c285c102014e2cfe5dd62be1f61cf7df4f608e61">c285c102014e2cfe5dd62be1f61cf7df4f608e61</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9d3fc53a6342169c882669ac93d6a2289d206010
+   a46a3d0d4e8683b59b55c3fc5250dad6d3cda01f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9d3fc53a6342169c882669ac93d6a2289d206010">
+    <a href="/chromium/src/+log/a46a3d0d4e8683b59b55c3fc5250dad6d3cda01f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9d3fc53a6342169c882669ac93d6a2289d206010.tar.gz">
+    <a href="/chromium/src/+archive/a46a3d0d4e8683b59b55c3fc5250dad6d3cda01f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jeroen Dhollander &lt;jeroendh@google.com&gt;
+   Rafael Cintron &lt;rafael.cintron@microsoft.com&gt;
   </td>
   <td>
-   Tue May 17 16:24:10 2022
+   Tue May 17 17:01:14 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue May 17 16:24:10 2022
+   Tue May 17 17:01:14 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9d3fc53a6342169c882669ac93d6a2289d206010/">
-    2f1b979445d802b4d7c110722a09f591b1d8b19f
+   <a href="/chromium/src/+/a46a3d0d4e8683b59b55c3fc5250dad6d3cda01f/">
+    b4742d4f73763d9477932cb488eb8c4d5aaf5ba9
    </a>
   </td>
  </tr>
@@ -166,41 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9d3fc53a6342169c882669ac93d6a2289d206010%5E">
-    f93aafaf8f35858bb8a99ca4a88f91572a9887af
+   <a href="/chromium/src/+/a46a3d0d4e8683b59b55c3fc5250dad6d3cda01f%5E">
+    5cabc545ffefe0e2f7cee74509f6db0ef3c38b49
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9d3fc53a6342169c882669ac93d6a2289d206010%5E%21/">
+    <a href="/chromium/src/+/a46a3d0d4e8683b59b55c3fc5250dad6d3cda01f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix CRD remote command when RemoteAccessHostDomainList is set
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use RegisterSuspendResumeNotification to receive PBT_APMSUSPEND notifications
 
-The CRD Remote Command uses a very specific, internal host domain
-(chrome-enterprise-devices.gserviceaccount.com) to establish the
-connection.
+On machines with modern standby and Win8+, calling
+RegisterSuspendResumeNotification is required in order to get the
+PBT_APMSUSPEND message. The notification is no longer automatically
+fired.
 
-If the customer uses the RemoteAccessHostDomainList policy this will
-cause the CRD Remote Command to be rejected, unless the customer adds
-this internal host domain to their allowlist.
-
-This CL fixes this by skipping the host domain check for the CRD Remote
-Command enterprise connections.
-
-Fixed: b/227767159
-Test: new unittest in remoting_unittests
-Test: manually deployed
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I21952f132ce0b6a49fdb8012ab6cbb174007052e">I21952f132ce0b6a49fdb8012ab6cbb174007052e</a>
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3649602">https://chromium-review.googlesource.com/c/chromium/src/+/3649602</a>
-Reviewed-by: Joe Downing &lt;joedow@chromium.org&gt;
-Auto-Submit: Jeroen Dhollander &lt;jeroendh@google.com&gt;
-Commit-Queue: Jeroen Dhollander &lt;jeroendh@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1004293}
+Bug: 1316193
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib044393acc38f6128226b8873e4c37814aa6982d">Ib044393acc38f6128226b8873e4c37814aa6982d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3615832">https://chromium-review.googlesource.com/c/chromium/src/+/3615832</a>
+Reviewed-by: Francois Pierre Doray &lt;fdoray@chromium.org&gt;
+Reviewed-by: Etienne Bergeron &lt;etienneb@chromium.org&gt;
+Commit-Queue: Rafael Cintron &lt;rafael.cintron@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1004312}
 </pre>
 
 </body>
