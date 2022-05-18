@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1004686/"> 1004686</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2e8035f71398ef495e0838d145fff40d99c8aa1e">2e8035f71398ef495e0838d145fff40d99c8aa1e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1004698/"> 1004698</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5116dde2af91adb27a4cd0b964f58bf7f2c67c0f">5116dde2af91adb27a4cd0b964f58bf7f2c67c0f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1004682/">1004682</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/783fd2e2f906e4021f9c8e7e94bd5db452f3bb3e">783fd2e2f906e4021f9c8e7e94bd5db452f3bb3e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1004691/">1004691</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/29c95c8f354a7509e19a345d9866a43494b607f1">29c95c8f354a7509e19a345d9866a43494b607f1</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2e8035f71398ef495e0838d145fff40d99c8aa1e
+   5116dde2af91adb27a4cd0b964f58bf7f2c67c0f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2e8035f71398ef495e0838d145fff40d99c8aa1e">
+    <a href="/chromium/src/+log/5116dde2af91adb27a4cd0b964f58bf7f2c67c0f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2e8035f71398ef495e0838d145fff40d99c8aa1e.tar.gz">
+    <a href="/chromium/src/+archive/5116dde2af91adb27a4cd0b964f58bf7f2c67c0f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Friedrich Horschig &lt;fhorschig@chromium.org&gt;
+   Peter E Conn &lt;peconn@chromium.org&gt;
   </td>
   <td>
-   Wed May 18 10:26:10 2022
+   Wed May 18 11:39:34 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed May 18 10:26:10 2022
+   Wed May 18 11:39:34 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2e8035f71398ef495e0838d145fff40d99c8aa1e/">
-    4e44238e29d669f6f39d1f4737078e5025dec44b
+   <a href="/chromium/src/+/5116dde2af91adb27a4cd0b964f58bf7f2c67c0f/">
+    69774f96a70fd65e2703ebe3a20578c727412532
    </a>
   </td>
  </tr>
@@ -166,41 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2e8035f71398ef495e0838d145fff40d99c8aa1e%5E">
-    2b0d056c823bb474d9541618ac6b9ab9ace7e0de
+   <a href="/chromium/src/+/5116dde2af91adb27a4cd0b964f58bf7f2c67c0f%5E">
+    ba975e8358fdc6214223a76fc4e48d1c94fd4856
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2e8035f71398ef495e0838d145fff40d99c8aa1e%5E%21/">
+    <a href="/chromium/src/+/5116dde2af91adb27a4cd0b964f58bf7f2c67c0f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Android][UPM] Fix crash in TouchToFill due to accessing offscreen items
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">🔨 Move getTwaPackage to BaseCustomTabActivity.
 
-Before this CL, the loop that changed the backgrounds assumed incorrect
-indices due to the usage of RecyclerView.State#getItemCount:
-a) the 1st item is not necessarily the header (e.g. if it's off screen)
-b) the last item is not necessarily on screen
+BaseCustomTabActivity already has the isInTwaMode method so I don't
+think this is increasing the stuff BaseCustomTabActivity knows about.
 
-b is especially surprising since it caused the crash in the linked bug.
-Against all expectations, the number of items in the state exceeds the
-visible items. Using the general ViewGroup#getChildCount fixes that and
-in turn the crashes.
-
-Because we use the adapter positions and the total count of items in the
-adapter to compute the background drawable, it should also be correct if
-some items are off-screen (which wasn't an observed but a plausible
-issue).
-
-Bug: 1325333
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib2004c77aefa7306640042e326c1969c6ff0bb84">Ib2004c77aefa7306640042e326c1969c6ff0bb84</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3651980">https://chromium-review.googlesource.com/c/chromium/src/+/3651980</a>
-Commit-Queue: Friedrich Horschig &lt;fhorschig@chromium.org&gt;
-Reviewed-by: Ioana Pandele &lt;ioanap@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1004686}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic01fbc5790ed5a299d4b7795f7eb2c46564ee6b1">Ic01fbc5790ed5a299d4b7795f7eb2c46564ee6b1</a>
+Bug: 985328
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3652052">https://chromium-review.googlesource.com/c/chromium/src/+/3652052</a>
+Commit-Queue: Peter Conn &lt;peconn@chromium.org&gt;
+Auto-Submit: Peter Conn &lt;peconn@chromium.org&gt;
+Commit-Queue: Michael van Ouwerkerk &lt;mvanouwerkerk@chromium.org&gt;
+Reviewed-by: Michael van Ouwerkerk &lt;mvanouwerkerk@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1004698}
 </pre>
 
 </body>
