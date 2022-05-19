@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1005284/"> 1005284</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/37ce788999febde7a5c4360918e41d9ffac7a7da">37ce788999febde7a5c4360918e41d9ffac7a7da</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1005320/"> 1005320</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/31390b3bd650dc4bb27afba91f81de2df929b78a">31390b3bd650dc4bb27afba91f81de2df929b78a</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1005271/">1005271</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   37ce788999febde7a5c4360918e41d9ffac7a7da
+   31390b3bd650dc4bb27afba91f81de2df929b78a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/37ce788999febde7a5c4360918e41d9ffac7a7da">
+    <a href="/chromium/src/+log/31390b3bd650dc4bb27afba91f81de2df929b78a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/37ce788999febde7a5c4360918e41d9ffac7a7da.tar.gz">
+    <a href="/chromium/src/+archive/31390b3bd650dc4bb27afba91f81de2df929b78a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Steinar H. Gunderson &lt;sesse@chromium.org&gt;
+   Ella Ge &lt;eirage@chromium.org&gt;
   </td>
   <td>
-   Thu May 19 17:19:18 2022
+   Thu May 19 17:51:45 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 19 17:19:18 2022
+   Thu May 19 17:51:45 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/37ce788999febde7a5c4360918e41d9ffac7a7da/">
-    837ea09e59e87ccb99e68e6193bb3bbb3bb28c0b
+   <a href="/chromium/src/+/31390b3bd650dc4bb27afba91f81de2df929b78a/">
+    749441d92a06e2fcc762a98b6f493f53ce8eda4b
    </a>
   </td>
  </tr>
@@ -166,73 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/37ce788999febde7a5c4360918e41d9ffac7a7da%5E">
-    5d438af104743bd2d1ba569628297e16c8cc93c1
+   <a href="/chromium/src/+/31390b3bd650dc4bb27afba91f81de2df929b78a%5E">
+    73202e5c817590aa7c2f242ba39b9d76702a2928
    </a>
    <span>
     [
-    <a href="/chromium/src/+/37ce788999febde7a5c4360918e41d9ffac7a7da%5E%21/">
+    <a href="/chromium/src/+/31390b3bd650dc4bb27afba91f81de2df929b78a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move CheckPseudoHasCacheScope out of the hot path.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[CodeHealth] Remove uses of base::ListValue::Append() (Final)"
 
-The performance impact is somewhat curious; perf reports that all
-of the constructor and destructor (0.73% and 1.60% of runtime,
-respectively) goes away, but that there are also large changes in
-SelectorChecker, not all of which are positive (e.g., MatchSelector()
-gets -2.31% from baseline 7.20%, but CheckOne() gets +3.18% from
-baseline 8.63%). This means we get nowhere near the 2% (or more)
-that we should have saved, although the benchmarks still show a
-win. These are probably ripple effects from different inlining
-decisions or code placement, which may or may not be still relevant
-with PGO and in an actual browser setting.
+This reverts commit f10a878a3b1bc52d3434a73e58bc44a64ca1f787.
 
-Despite the not-hugely-winning benchmark, this should probably
-go in, since:
+Reason for revert: Suspect causing compile failure on multiple bots (crbug.com/1327254)
 
- a) The benchmarks are clearly _not negative_.
- b) The change makes sense.
- c) If just counting instructions, we win about 2.5%, and there
-    is no logical reason why the cycle count would show something
-    else over time.
+Original change's description:
+&gt; [CodeHealth] Remove uses of base::ListValue::Append() (Final)
+&gt;
+&gt; This CL removes uses of the overload that accepts a
+&gt; std::unique_ptr&lt;base::Value&gt;. It attempts to modernize code where
+&gt; feasible and uses base::Value::FromUniquePtrValue where it's not.
+&gt;
+&gt; Bug: 1187097
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9b2a05760998cf94c1d31a1a898f01e9998b9045">I9b2a05760998cf94c1d31a1a898f01e9998b9045</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3649301">https://chromium-review.googlesource.com/c/chromium/src/+/3649301</a>
+&gt; Commit-Queue: David Bertoni &lt;dbertoni@chromium.org&gt;
+&gt; Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1004980}
 
-Style microbenchmarks (Zen 3, LTO but no PGO):
-
-Initial style (µs)     Before     After    Perf      95% CI (BCa)
-=================== ========= ========= ======= =================
-ECommerce                7850      7830   +0.3%  [ -0.4%,  +1.3%]
-Encyclopedia            78422     78171   +0.3%  [ -0.3%,  +1.0%]
-Extension              185779    183640   +1.2%  [ +0.4%,  +2.6%]
-News                    32581     32499   +0.3%  [ -0.4%,  +0.9%]
-Search                   1925      1898   +1.4%  [ +0.7%,  +2.8%]
-Social1                 18914     19063   -0.8%  [ -3.5%,  +0.4%]
-Social2                   736       728   +1.1%  [ +0.3%,  +3.3%]
-Sports                  27311     26894   +1.6%  [ +0.9%,  +3.0%]
-Video                   30565     30535   +0.1%  [ -2.6%,  +1.4%]
-Geometric mean                            +0.6%  [ +0.0%,  +1.1%]
-
-Recalc style (µs)      Before     After    Perf      95% CI (BCa)
-=================== ========= ========= ======= =================
-ECommerce                9861      9786   +0.8%  [ +0.2%,  +1.4%]
-Encyclopedia            72303     71854   +0.6%  [ +0.0%,  +1.1%]
-Extension              186554    184146   +1.3%  [ +0.7%,  +1.9%]
-News                    25298     25266   +0.1%  [ -0.4%,  +0.6%]
-Search                    199       196   +1.5%  [ +0.8%,  +3.1%]
-Social1                 14051     14197   -1.0%  [ -4.0%,  +0.0%]
-Social2                   420       412   +1.7%  [ +1.0%,  +4.4%]
-Sports                  22936     22504   +1.9%  [ +1.3%,  +3.3%]
-Video                   22326     22293   +0.1%  [ -2.6%,  +2.6%]
-Geometric mean                            +0.8%  [ +0.3%,  +1.4%]
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic988c1a2f5bf0b32dab1ef72a8214f2b5ebbe034">Ic988c1a2f5bf0b32dab1ef72a8214f2b5ebbe034</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3650586">https://chromium-review.googlesource.com/c/chromium/src/+/3650586</a>
-Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Commit-Queue: Steinar H Gunderson &lt;sesse@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1005284}
+Bug: 1187097, 1327254
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If383d75dfc0bb7a1af4b14b29e73a1e1ca0928ab">If383d75dfc0bb7a1af4b14b29e73a1e1ca0928ab</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3654564">https://chromium-review.googlesource.com/c/chromium/src/+/3654564</a>
+Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Auto-Submit: Ella Ge &lt;eirage@chromium.org&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Owners-Override: Ella Ge &lt;eirage@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1005320}
 </pre>
 
 </body>
