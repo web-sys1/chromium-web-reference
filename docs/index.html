@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1005007/"> 1005007</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a44fb2eb244f36a3fd4b6374568a0e6f516d5504">a44fb2eb244f36a3fd4b6374568a0e6f516d5504</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1005026/"> 1005026</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ec27383027b064e62afab401887ef484730ea8af">ec27383027b064e62afab401887ef484730ea8af</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1004989/">1004989</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/31023d467957e8202def0e0a81b54edba4fbee16">31023d467957e8202def0e0a81b54edba4fbee16</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1005014/">1005014</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8c42773378dfb0ef2f722dcc9c7bf747a05c5a0f">8c42773378dfb0ef2f722dcc9c7bf747a05c5a0f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a44fb2eb244f36a3fd4b6374568a0e6f516d5504
+   ec27383027b064e62afab401887ef484730ea8af
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a44fb2eb244f36a3fd4b6374568a0e6f516d5504">
+    <a href="/chromium/src/+log/ec27383027b064e62afab401887ef484730ea8af">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a44fb2eb244f36a3fd4b6374568a0e6f516d5504.tar.gz">
+    <a href="/chromium/src/+archive/ec27383027b064e62afab401887ef484730ea8af.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Traian Captan &lt;tcaptan@chromium.org&gt;
+   Simon Pelchat &lt;spelchat@chromium.org&gt;
   </td>
   <td>
-   Wed May 18 23:10:23 2022
+   Wed May 18 23:45:02 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed May 18 23:10:23 2022
+   Wed May 18 23:45:02 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a44fb2eb244f36a3fd4b6374568a0e6f516d5504/">
-    8d4213491fbc5237bc3b19bd2960e7cd1cd810e5
+   <a href="/chromium/src/+/ec27383027b064e62afab401887ef484730ea8af/">
+    06596282265fe27ea4a8462b38a7a94d07df811e
    </a>
   </td>
  </tr>
@@ -166,42 +166,55 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a44fb2eb244f36a3fd4b6374568a0e6f516d5504%5E">
-    fd0e96bfe161bff635e06b383009c755d215f527
+   <a href="/chromium/src/+/ec27383027b064e62afab401887ef484730ea8af%5E">
+    dfc2efe833011595de06f4d18cd16c2b20fa348b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a44fb2eb244f36a3fd4b6374568a0e6f516d5504%5E%21/">
+    <a href="/chromium/src/+/ec27383027b064e62afab401887ef484730ea8af%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fixed Text Decoration Offset Calculation
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "Do not use event listeners for anchor element interaction preloading."
 
-The WPT test for zero text underline offset [0] is failing.
+This is a reland of commit df0eb6bc00e90d55beeb400ce9a414c4a909accf
 
-Based on the references spec [1], when text-underline-offset is zero,
-the underline should be drawn at the alphabetic baseline.
+The only change since original CL is that the browsertests simulate a
+mousedown event rather than both a mousedown and mouseup (full click).
+Generating a full click was triggering navigation which was making the
+tests flaky due to there being two UKM sources.
 
-The test is failing because the underline is drawn below the baseline,
-because of a gap that gets added between the baseline and the offset.
+Original change's description:
+&gt; Do not use event listeners for anchor element interaction preloading.
+&gt;
+&gt; Using event listeners causes two issues:
+&gt;
+&gt; 1) It causes FirstInputDelay calculations to be wrong because all link
+&gt;    clicks are not included in FirstInputDelay calculations, as if the
+&gt;    page inserted the event listener.
+&gt; 2) Many tests assume that there are no event listeners installed on
+&gt;    an empty document.
+&gt;
+&gt; Bug: 1323865
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2d5afe3dd151fe8b5969db7fcc64d5a7b391cb07">I2d5afe3dd151fe8b5969db7fcc64d5a7b391cb07</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3640543">https://chromium-review.googlesource.com/c/chromium/src/+/3640543</a>
+&gt; Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
+&gt; Reviewed-by: Mustafa Emre Acer &lt;meacer@chromium.org&gt;
+&gt; Commit-Queue: Simon Pelchat &lt;spelchat@chromium.org&gt;
+&gt; Reviewed-by: Max Curran &lt;curranmax@google.com&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1003258}
 
-The proposed fix is to have no gap
-when the underline offset position is fixed.
-
-[0] wpt/css/css-text-decor/text-underline-offset-zero-position.html
-[1] <a href="https://www.w3.org/TR/css-text-decor-4/#line-offset-zero">https://www.w3.org/TR/css-text-decor-4/#line-offset-zero</a>
-
-R=pdr
-
-Bug: 1251634
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3736f772d3006db9fb1323727c63e14e8ec080c8">I3736f772d3006db9fb1323727c63e14e8ec080c8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3653505">https://chromium-review.googlesource.com/c/chromium/src/+/3653505</a>
-Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
-Commit-Queue: Traian Captan &lt;tcaptan@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1005007}
+Bug: 1323865
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2a933fecb086a7ab9eb5f507d5bdd825831813be">I2a933fecb086a7ab9eb5f507d5bdd825831813be</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3652930">https://chromium-review.googlesource.com/c/chromium/src/+/3652930</a>
+Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
+Reviewed-by: Mustafa Emre Acer &lt;meacer@chromium.org&gt;
+Reviewed-by: Max Curran &lt;curranmax@chromium.org&gt;
+Commit-Queue: Simon Pelchat &lt;spelchat@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1005026}
 </pre>
 
 </body>
