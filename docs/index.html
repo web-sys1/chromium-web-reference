@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1005334/"> 1005334</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d951b819b1ba4ff02f97ebc861a3c1b5c2c4aa77">d951b819b1ba4ff02f97ebc861a3c1b5c2c4aa77</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1005342/"> 1005342</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3db803596c57eef7c92eeab0eee9c8ce5c0d41f0">3db803596c57eef7c92eeab0eee9c8ce5c0d41f0</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1005271/">1005271</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3b026b27fdc16ca62f0a327d892a8b88c2a5e5d3">3b026b27fdc16ca62f0a327d892a8b88c2a5e5d3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1005321/">1005321</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f62a749f5a6d95922260808e3bcb7370eb1ad6ae">f62a749f5a6d95922260808e3bcb7370eb1ad6ae</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d951b819b1ba4ff02f97ebc861a3c1b5c2c4aa77
+   3db803596c57eef7c92eeab0eee9c8ce5c0d41f0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d951b819b1ba4ff02f97ebc861a3c1b5c2c4aa77">
+    <a href="/chromium/src/+log/3db803596c57eef7c92eeab0eee9c8ce5c0d41f0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d951b819b1ba4ff02f97ebc861a3c1b5c2c4aa77.tar.gz">
+    <a href="/chromium/src/+archive/3db803596c57eef7c92eeab0eee9c8ce5c0d41f0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yoav Weiss &lt;yoavweiss@chromium.org&gt;
+   Frank Liberato &lt;liberato@chromium.org&gt;
   </td>
   <td>
-   Thu May 19 18:33:33 2022
+   Thu May 19 19:14:03 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 19 18:33:33 2022
+   Thu May 19 19:14:03 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d951b819b1ba4ff02f97ebc861a3c1b5c2c4aa77/">
-    f2d70fc6c3a7b0dc72ba405000f64b2cf30ca444
+   <a href="/chromium/src/+/3db803596c57eef7c92eeab0eee9c8ce5c0d41f0/">
+    ea93bd9dafbbeb421aba7d572faff28f68e1d26d
    </a>
   </td>
  </tr>
@@ -166,33 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d951b819b1ba4ff02f97ebc861a3c1b5c2c4aa77%5E">
-    29e8c7efc28fb7a7e8eefa20de3b23de00598c2b
+   <a href="/chromium/src/+/3db803596c57eef7c92eeab0eee9c8ce5c0d41f0%5E">
+    1f767fa9d0b1cfbee59e4492118232b46686b7d6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d951b819b1ba4ff02f97ebc861a3c1b5c2c4aa77%5E%21/">
+    <a href="/chromium/src/+/3db803596c57eef7c92eeab0eee9c8ce5c0d41f0%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Another SPA heuristics speculative crash fix
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Don't create PiP window except at StartSession.
 
-It seems like [1] wasn't sufficient to fix crashes in Canary, as more
-stacks without non-main-world tasks come in. This CL bail in the more
-general case, where a task is unrecognized. I'll try to catch those
-scenarios and remove the condition at a later point.
+Previously, several calls would either create or DCHECK on having a
+window for video picture in picture.  This CL makes all window
+creation happen when the pip session starts.  Any call that does not
+have a window will no-op successfully if it could happen due to an
+async browser event (e.g., "window closed").
 
-[1] <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3652310">https://chromium-review.googlesource.com/c/chromium/src/+/3652310</a>
-
-Bug: 1326872
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5e628761902eccafbcbe4129e1479813deb4bc7c">I5e628761902eccafbcbe4129e1479813deb4bc7c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3654185">https://chromium-review.googlesource.com/c/chromium/src/+/3654185</a>
-Commit-Queue: Yoav Weiss &lt;yoavweiss@chromium.org&gt;
-Reviewed-by: Scott Haseley &lt;shaseley@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1005334}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id64a338401a838ced2144d70aa618da12549ea72">Id64a338401a838ced2144d70aa618da12549ea72</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3652936">https://chromium-review.googlesource.com/c/chromium/src/+/3652936</a>
+Reviewed-by: David Trainor &lt;dtrainor@chromium.org&gt;
+Reviewed-by: Fr &lt;beaufort.francois@gmail.com&gt;
+Commit-Queue: Frank Liberato &lt;liberato@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1005342}
 </pre>
 
 </body>
