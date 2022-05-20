@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1005570/"> 1005570</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/baafa2c39562d1b2c06878875d9d16f0681131af">baafa2c39562d1b2c06878875d9d16f0681131af</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1005591/"> 1005591</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/505441634ff1f7d43fb61f23eccc65eaec253589">505441634ff1f7d43fb61f23eccc65eaec253589</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1005522/">1005522</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1c3098ca4f6059bd681daf181f0c0805c56a1f3c">1c3098ca4f6059bd681daf181f0c0805c56a1f3c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1005579/">1005579</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/779b2912d33511d32f7e9e891d4fb4e1d9b2c26f">779b2912d33511d32f7e9e891d4fb4e1d9b2c26f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   baafa2c39562d1b2c06878875d9d16f0681131af
+   505441634ff1f7d43fb61f23eccc65eaec253589
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/baafa2c39562d1b2c06878875d9d16f0681131af">
+    <a href="/chromium/src/+log/505441634ff1f7d43fb61f23eccc65eaec253589">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/baafa2c39562d1b2c06878875d9d16f0681131af.tar.gz">
+    <a href="/chromium/src/+archive/505441634ff1f7d43fb61f23eccc65eaec253589.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mitsuru Oshima &lt;oshima@chromium.org&gt;
+   Alex Danilo &lt;adanilo@chromium.org&gt;
   </td>
   <td>
-   Fri May 20 01:30:54 2022
+   Fri May 20 02:36:01 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri May 20 01:30:54 2022
+   Fri May 20 02:36:01 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/baafa2c39562d1b2c06878875d9d16f0681131af/">
-    aab377fc7a30299e718d259903906f59962aa906
+   <a href="/chromium/src/+/505441634ff1f7d43fb61f23eccc65eaec253589/">
+    32d89df1575939ca6a4c8f96c87811883aa24f02
    </a>
   </td>
  </tr>
@@ -166,61 +166,27 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/baafa2c39562d1b2c06878875d9d16f0681131af%5E">
-    0568b16f417d6494c24cfdc7312770927aa5a150
+   <a href="/chromium/src/+/505441634ff1f7d43fb61f23eccc65eaec253589%5E">
+    a941740812c327f5c3075ded3c95c49608f746b6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/baafa2c39562d1b2c06878875d9d16f0681131af%5E%21/">
+    <a href="/chromium/src/+/505441634ff1f7d43fb61f23eccc65eaec253589%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make sure screen object is created once in tests.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Extract: Add testing for UMA generation
 
-This is reland of crrev.com/c/3247911. The issue was that
-cast_shell_linux_dbg is component build, which depends on TestDesktopScreenOzone through WidgetTest. This isn't an issue
-in normal build because it links only what's necessary. This patch excludes the TestDesktopScreenOzone from cast build.
-Please see the diff between PS1 and PS2.
-
-
---- original commit message ---
-
-Replacing a screen instance is not safe because it carries a lot
-of state. This CL moves all test screen initialization to test SetUp
-phase so that single screen instance will be used during
-a single test.
-
-One exception is IOS because it currently relies on the implementation
-that carries some state from one test to another, and I was unable to
-eliminate that dependency. Looks like there is no IOS test that replaces
-the screen instance, so it is not required, but someone who is familiar
-with IOS needs to work on it if that's necessary.
-
-A class ScopedNativeScreen is added: This class creates and sets a NativeScreen instance only when the screen is not already created (by tests)
-
-Another class ScopedScreenOzone is added: This class creates and sets a ScreenOzone instance only when the screen is not already created (by tests). This is necessary as the creation of Screen may have to be delayed on some platform. I'll look into if we can fix or improve this separately.
-
-2-pagers doc: <a href="https://docs.google.com/document/d/1q7lJnR06DhNtHYHZP8jpHzN19FUlcFWk7zDkyNQpxLU/edit?resourcekey=0-zO3n4kN3Ci1RLpvVAjpwAA">https://docs.google.com/document/d/1q7lJnR06DhNtHYHZP8jpHzN19FUlcFWk7zDkyNQpxLU/edit?resourcekey=0-zO3n4kN3Ci1RLpvVAjpwAA</a>
-
-Bug: 1317416
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib75a35ec3456e8fe92b7bdbfa5acf050a0e6650d">Ib75a35ec3456e8fe92b7bdbfa5acf050a0e6650d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3651997">https://chromium-review.googlesource.com/c/chromium/src/+/3651997</a>
-Reviewed-by: Gary Kacmarcik &lt;garykac@chromium.org&gt;
-Reviewed-by: Mike West &lt;mkwst@chromium.org&gt;
-Reviewed-by: Mike Wasserman &lt;msw@chromium.org&gt;
-Reviewed-by: Wez &lt;wez@chromium.org&gt;
-Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
-Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
-Commit-Queue: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Reviewed-by: Finnur Thorarinsson &lt;finnur@chromium.org&gt;
-Reviewed-by: Robert Kroeger &lt;rjkroege@chromium.org&gt;
-Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
-Reviewed-by: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
-Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1005570}
+Bug: 953256
+Tests: browser_tests --gtest_filter="*zipExtract*"
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie029b9b53524d42655cfb6ecac4b0aae5917c1a9">Ie029b9b53524d42655cfb6ecac4b0aae5917c1a9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3653766">https://chromium-review.googlesource.com/c/chromium/src/+/3653766</a>
+Commit-Queue: Alex Danilo &lt;adanilo@chromium.org&gt;
+Reviewed-by: François Degros &lt;fdegros@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1005591}
 </pre>
 
 </body>
