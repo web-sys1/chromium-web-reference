@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1006012/"> 1006012</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4fefe9bb10d3f946dd65fd7a36b777cdab96cade">4fefe9bb10d3f946dd65fd7a36b777cdab96cade</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1006014/"> 1006014</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a11b5cce1bf0fbda07d4418eb8890ceabc8b7406">a11b5cce1bf0fbda07d4418eb8890ceabc8b7406</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1005964/">1005964</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d18946b4570796fc56381020352ded5dc0cffb9d">d18946b4570796fc56381020352ded5dc0cffb9d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1006006/">1006006</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0222fb6e4b4a532932ac9ca0d4a408e32ea70153">0222fb6e4b4a532932ac9ca0d4a408e32ea70153</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4fefe9bb10d3f946dd65fd7a36b777cdab96cade
+   a11b5cce1bf0fbda07d4418eb8890ceabc8b7406
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4fefe9bb10d3f946dd65fd7a36b777cdab96cade">
+    <a href="/chromium/src/+log/a11b5cce1bf0fbda07d4418eb8890ceabc8b7406">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4fefe9bb10d3f946dd65fd7a36b777cdab96cade.tar.gz">
+    <a href="/chromium/src/+archive/a11b5cce1bf0fbda07d4418eb8890ceabc8b7406.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Dan McArdle &lt;dmcardle@chromium.org&gt;
+   David Benjamin &lt;davidben@chromium.org&gt;
   </td>
   <td>
-   Fri May 20 23:00:58 2022
+   Fri May 20 23:13:39 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri May 20 23:00:58 2022
+   Fri May 20 23:13:39 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4fefe9bb10d3f946dd65fd7a36b777cdab96cade/">
-    5d7c255f21482a4bfe7c3f70ab18085077ad1d94
+   <a href="/chromium/src/+/a11b5cce1bf0fbda07d4418eb8890ceabc8b7406/">
+    2184d67787563922d645d3fe388efb765dc7b212
    </a>
   </td>
  </tr>
@@ -166,40 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4fefe9bb10d3f946dd65fd7a36b777cdab96cade%5E">
-    349ac8542f9e9fbc7846d4235dd0fe6d921f6924
+   <a href="/chromium/src/+/a11b5cce1bf0fbda07d4418eb8890ceabc8b7406%5E">
+    6a9daa9b6c899240c6cbebb4aaf379d3efcc29d6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4fefe9bb10d3f946dd65fd7a36b777cdab96cade%5E%21/">
+    <a href="/chromium/src/+/a11b5cce1bf0fbda07d4418eb8890ceabc8b7406%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Eliminate base::LowerCaseEqualsASCII in /third_party/blink/common/loader
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rewrite WebCrypto AES-CTR logic to no longer use BIGNUMs.
 
-This CL is a behavior-preserving refactor. It replaces calls to
-base::LowerCaseEqualsASCII with base::EqualsCaseInsensitiveASCII.
+BIGNUMs are overkill for this. We're just doing math over 128-bit
+integers, so use absl::uint128. Along the way, switch a bunch of things
+to base::span. The rest of the base::span conversion will be done as a
+follow-up, but I wanted this code out of the way first.
 
-We are deprecating base::LowerCaseEqualsASCII because its interface is a
-mild footgun, in that it requires the second parameter to be lowercase.
-
-See the design doc for more details.
-<a href="https://docs.google.com/document/d/18zWV0zN4oAqMZpond1Ut0QviHUeHCSwCo08mqThwHkQ/edit?usp=sharing">https://docs.google.com/document/d/18zWV0zN4oAqMZpond1Ut0QviHUeHCSwCo08mqThwHkQ/edit?usp=sharing</a>
-
-This CL was uploaded by git cl split.
-
-R=haraken@chromium.org
-
-Bug: 1326529
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifa38213dc0d2c0b004c0ed503abd319061ed6cfa">Ifa38213dc0d2c0b004c0ed503abd319061ed6cfa</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3657581">https://chromium-review.googlesource.com/c/chromium/src/+/3657581</a>
-Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Commit-Queue: Kentaro Hara &lt;haraken@chromium.org&gt;
-Auto-Submit: Dan McArdle &lt;dmcardle@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1006012}
+Bug: 1327058
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I635b9debabb14a414c2b1677325691e4dc84b468">I635b9debabb14a414c2b1677325691e4dc84b468</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3655662">https://chromium-review.googlesource.com/c/chromium/src/+/3655662</a>
+Auto-Submit: David Benjamin &lt;davidben@chromium.org&gt;
+Reviewed-by: Elly Fong-Jones &lt;ellyjones@chromium.org&gt;
+Commit-Queue: David Benjamin &lt;davidben@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1006014}
 </pre>
 
 </body>
