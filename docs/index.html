@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1006920/"> 1006920</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/43652e676f954418504a0e21646f45333e9d02fc">43652e676f954418504a0e21646f45333e9d02fc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1006947/"> 1006947</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cac6ddc491e2ca8ce89517e062dbff75d1e35106">cac6ddc491e2ca8ce89517e062dbff75d1e35106</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1006894/">1006894</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   43652e676f954418504a0e21646f45333e9d02fc
+   cac6ddc491e2ca8ce89517e062dbff75d1e35106
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/43652e676f954418504a0e21646f45333e9d02fc">
+    <a href="/chromium/src/+log/cac6ddc491e2ca8ce89517e062dbff75d1e35106">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/43652e676f954418504a0e21646f45333e9d02fc.tar.gz">
+    <a href="/chromium/src/+archive/cac6ddc491e2ca8ce89517e062dbff75d1e35106.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Scott Haseley &lt;shaseley@chromium.org&gt;
+   Fergal Daly &lt;fergal@chromium.org&gt;
   </td>
   <td>
-   Tue May 24 17:08:23 2022
+   Tue May 24 17:42:03 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue May 24 17:08:23 2022
+   Tue May 24 17:42:03 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/43652e676f954418504a0e21646f45333e9d02fc/">
-    1f25bc62bf1b66e7bcd8bbcf0d606002f26fa875
+   <a href="/chromium/src/+/cac6ddc491e2ca8ce89517e062dbff75d1e35106/">
+    99428fba87c890f41bc1d29792e7a644ed77db9c
    </a>
   </td>
  </tr>
@@ -166,31 +166,57 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/43652e676f954418504a0e21646f45333e9d02fc%5E">
-    acf3574960bc3310ed0af29f67cb9b84cd658015
+   <a href="/chromium/src/+/cac6ddc491e2ca8ce89517e062dbff75d1e35106%5E">
+    068f68ba2f78ea8a044205ab0190f8a1abbf6de3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/43652e676f954418504a0e21646f45333e9d02fc%5E%21/">
+    <a href="/chromium/src/+/cac6ddc491e2ca8ce89517e062dbff75d1e35106%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add field trial config for PrioritizeCompositingAfterInput
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor vlog initialization to be more robust.
 
-This adds a fieldtrial_testing_config entry for the
-PrioritizeCompositingAfterInput experiment. The results on Canary/Dev
-are encouraging, so we're enabling this in preparation for a Beta
-experiment.
+This fixes 2 problems.
 
-Bug: 853771
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9bf3a13a2b047effd4988c63f7bae1366fd00f3a">I9bf3a13a2b047effd4988c63f7bae1366fd00f3a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3660882">https://chromium-review.googlesource.com/c/chromium/src/+/3660882</a>
-Reviewed-by: Annie Sullivan &lt;sullivan@chromium.org&gt;
-Commit-Queue: Scott Haseley &lt;shaseley@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1006920}
+1 Previously BaseInitLoggingImpl was written to allow it to be called twice but if called more than twice it would CHECK.
+
+We hit this CHECK quite rarely but it does happen occasionally.
+
+<a href="https://crash.corp.google.com/browse?q=product.name+IN+%28%22Chrome_Android%22%2C+%22Chrome%22%29+AND+expanded_custom_data.ChromeCrashProto.channel+IN+%28%27%27%29+AND+expanded_custom_data.ChromeCrashProto.magic_signature_1.name+LIKE+%27%25BaseInitLoggingImpl%25%27&amp;engine=dremel&amp;stbtiq=&amp;reportid=851e8a2a7b2c5ab7&amp;index=2#4">https://crash.corp.google.com/browse?q=product.name+IN+%28%22Chrome_Android%22%2C+%22Chrome%22%29+AND+expanded_custom_data.ChromeCrashProto.channel+IN+%28%27%27%29+AND+expanded_custom_data.ChromeCrashProto.magic_signature_1.name+LIKE+%27%25BaseInitLoggingImpl%25%27&amp;engine=dremel&amp;stbtiq=&amp;reportid=851e8a2a7b2c5ab7&amp;index=2#4</a>
+
+The CHECK was added as part of the response to
+
+<a href="https://code.google.com/archive/p/chromium-os/issues/20865">https://code.google.com/archive/p/chromium-os/issues/20865</a>
+
+but is no needed.
+
+2 g_vlog_info is written and read from multiple threads, this makes it thread unsafe and it seems like mostly coincidence the the updates stop quickly enough that that tests running under TSAN don't catch this.
+
+----
+
+This CL makes it possible to call BaseInitLoggingImpl multiple times. Instead of storing the old value, this uses leak-san annotations to make it clear that the leak is intentional.
+
+Since g_vlog_info can be updated while other threads are reading from it, this also wraps it in std::atomic to make that safe.
+
+All these changes also help with <a href="https://crrev.com/c/3648806.">https://crrev.com/c/3648806.</a>
+
+Also add/update comments on #else and #endif.
+
+The leak-detection CQ bot has been broken for months :(
+
+# Cq-Include-Trybots: luci.chromium.try:leak_detection_linux
+
+
+Bug: 1326416
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3c7b08b3c166634c7f60a9cde788b4b41f60293f">I3c7b08b3c166634c7f60a9cde788b4b41f60293f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3653381">https://chromium-review.googlesource.com/c/chromium/src/+/3653381</a>
+Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1006947}
 </pre>
 
 </body>
