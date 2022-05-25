@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1007224/"> 1007224</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d7abc96f149de47a5a69d484c87d49c8ee631b1d">d7abc96f149de47a5a69d484c87d49c8ee631b1d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1007233/"> 1007233</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bd1412f198d4216c77ed8c8c6dabf56bb351ce5d">bd1412f198d4216c77ed8c8c6dabf56bb351ce5d</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1007207/">1007207</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/91ce842854bf53ed1e0c44b6bfbb00b054a0b9cb">91ce842854bf53ed1e0c44b6bfbb00b054a0b9cb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1007222/">1007222</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a31807297249093b0266f1591b26ab01caf3bf59">a31807297249093b0266f1591b26ab01caf3bf59</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d7abc96f149de47a5a69d484c87d49c8ee631b1d
+   bd1412f198d4216c77ed8c8c6dabf56bb351ce5d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d7abc96f149de47a5a69d484c87d49c8ee631b1d">
+    <a href="/chromium/src/+log/bd1412f198d4216c77ed8c8c6dabf56bb351ce5d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d7abc96f149de47a5a69d484c87d49c8ee631b1d.tar.gz">
+    <a href="/chromium/src/+archive/bd1412f198d4216c77ed8c8c6dabf56bb351ce5d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   K. Moon &lt;kmoon@chromium.org&gt;
+   Erik Chen &lt;erikchen@chromium.org&gt;
   </td>
   <td>
-   Wed May 25 04:13:47 2022
+   Wed May 25 04:49:25 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed May 25 04:13:47 2022
+   Wed May 25 04:49:25 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d7abc96f149de47a5a69d484c87d49c8ee631b1d/">
-    601e5d1692653368037a2fa05c9fc8bbab6a4b92
+   <a href="/chromium/src/+/bd1412f198d4216c77ed8c8c6dabf56bb351ce5d/">
+    41bbc7aafc7013d4eff34fd0dc5a1a5dc2d41f94
    </a>
   </td>
  </tr>
@@ -166,31 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d7abc96f149de47a5a69d484c87d49c8ee631b1d%5E">
-    f8c1bd9feaa8dab7e7b2a400361807d61c8540fb
+   <a href="/chromium/src/+/bd1412f198d4216c77ed8c8c6dabf56bb351ce5d%5E">
+    a962a558685e8887f871706ae7136ab7d6643dff
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d7abc96f149de47a5a69d484c87d49c8ee631b1d%5E%21/">
+    <a href="/chromium/src/+/bd1412f198d4216c77ed8c8c6dabf56bb351ce5d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[pdf] Migrate HandleSaveMessage() tests
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">lacros: Implement FileSystemProvider.ForwardOperation.
 
-Migrates tests exercising PdfViewPluginBase::HandleSaveMessage().
+This CL continues the process of implementing the FileSystemProvider
+extension API for lacros. This CL should have no functional effect on ash.
 
-Also splits TestPDFiumEngine::kSaveData into two separate constants to
-distinguish between initially loaded data, and modified data to save.
+This CL adds a single method ForwardOperation to the FileSystemProvider
+interface. Lacros registers itself as a FileSystemProvider with ash on
+startup. When ash receives an operation, it first attempts to forward to
+an ash-based extension. This covers the case where Lacros is not
+running. It then forwards the operation to all crosapi clients with the
+assumption that one of them will handle the event. The request manager
+itself handles timeouts and missing callbacks.
 
-Bug: 1323307
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6627f233eee94c56456cbbc77edeb09f28787bc0">I6627f233eee94c56456cbbc77edeb09f28787bc0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3664682">https://chromium-review.googlesource.com/c/chromium/src/+/3664682</a>
-Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
-Commit-Queue: K. Moon &lt;kmoon@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1007224}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id32501bf474c23604a1ea57a018abe2ad89dff4c">Id32501bf474c23604a1ea57a018abe2ad89dff4c</a>
+Bug: 1314397
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3662241">https://chromium-review.googlesource.com/c/chromium/src/+/3662241</a>
+Reviewed-by: Peter Marshall &lt;petermarshall@chromium.org&gt;
+Reviewed-by: Jenny Zhang &lt;jennyz@chromium.org&gt;
+Commit-Queue: Erik Chen &lt;erikchen@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1007233}
 </pre>
 
 </body>
