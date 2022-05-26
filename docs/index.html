@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1007744/"> 1007744</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1917b870dc57bec18062f1697feaa248e08bb042">1917b870dc57bec18062f1697feaa248e08bb042</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1007754/"> 1007754</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f79c4a324145c4caf85a9e86bf8f7d8112fae4ec">f79c4a324145c4caf85a9e86bf8f7d8112fae4ec</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1007742/">1007742</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/404d1c5cc47c7887c4c7330fb9203881d1d3bbeb">404d1c5cc47c7887c4c7330fb9203881d1d3bbeb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1007754/">1007754</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f79c4a324145c4caf85a9e86bf8f7d8112fae4ec">f79c4a324145c4caf85a9e86bf8f7d8112fae4ec</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1917b870dc57bec18062f1697feaa248e08bb042
+   f79c4a324145c4caf85a9e86bf8f7d8112fae4ec
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1917b870dc57bec18062f1697feaa248e08bb042">
+    <a href="/chromium/src/+log/f79c4a324145c4caf85a9e86bf8f7d8112fae4ec">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1917b870dc57bec18062f1697feaa248e08bb042.tar.gz">
+    <a href="/chromium/src/+archive/f79c4a324145c4caf85a9e86bf8f7d8112fae4ec.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anton Swifton &lt;swifton@google.com&gt;
+   Pritesh Agrawal &lt;priagra@microsoft.com&gt;
   </td>
   <td>
-   Thu May 26 06:27:43 2022
+   Thu May 26 07:09:32 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 26 06:27:43 2022
+   Thu May 26 07:09:32 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1917b870dc57bec18062f1697feaa248e08bb042/">
-    ea57682f59c6552bb044136dad406d9dc7d458a9
+   <a href="/chromium/src/+/f79c4a324145c4caf85a9e86bf8f7d8112fae4ec/">
+    5be98e2879201ffa16223d9e237677bbcd37d88b
    </a>
   </td>
  </tr>
@@ -166,31 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1917b870dc57bec18062f1697feaa248e08bb042%5E">
-    30b63ae2e345cbbdc6563454080cc25faa0af8f3
+   <a href="/chromium/src/+/f79c4a324145c4caf85a9e86bf8f7d8112fae4ec%5E">
+    69e10a04f9cc404a470a4d847a5c3b5fc6a18ba6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1917b870dc57bec18062f1697feaa248e08bb042%5E%21/">
+    <a href="/chromium/src/+/f79c4a324145c4caf85a9e86bf8f7d8112fae4ec%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Shimless: create a flag for the OS Update page
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">All blocked extensions are getting enable on browser restart,
+and extensions will be enabled till browser makes call
+to safebrowsing service.
 
-The OS Update page is not sufficiently tested and will not
-be included in the M104 release. This flag will turn off the
-page.
+Reason:
+On extension_service start, it loads all the extensions and correctly
+mark blocklist status based on preference file. After loading extensions,
+it re-validate the blocklist status from v4_local_database_manager,
+which gives all blocklisted ids, from local state.
+Till this time init of local db is not yet done. So extension_service
+gets empty blocklist extensions. As it gets empty list, it evaluates
+all blocklisted extensions as unblocklisted, and mark each of them as
+unblocklisted, which enables all these extensions.
 
-Bug: 1198187
-Test: N/A
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I042e1a0e0210d56732423374d26240437569bc96">I042e1a0e0210d56732423374d26240437569bc96</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3668775">https://chromium-review.googlesource.com/c/chromium/src/+/3668775</a>
-Commit-Queue: Anton Swifton &lt;swifton@google.com&gt;
-Reviewed-by: Gavin Williams &lt;gavinwill@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1007744}
+These will be disabled again, after the first call to safebrowsing
+service (~ 5 min after launch of browser), which gives the state of
+thsese extensions as blocklisted.
+
+Fix:
+Remove the call to update blocklist state based on
+v4_loca_databse_manager in init sequence, as service is able to mark
+correct state based on preference file,
+It can ignore re-evaluating of the state.
+
+Bug: 1313820
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0e562c976018c5c6c058efc98457175008f008c4">I0e562c976018c5c6c058efc98457175008f008c4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3577940">https://chromium-review.googlesource.com/c/chromium/src/+/3577940</a>
+Commit-Queue: Pritesh Agrawal &lt;priagra@microsoft.com&gt;
+Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Reviewed-by: Xinghui Lu &lt;xinghuilu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1007754}
 </pre>
 
 </body>
