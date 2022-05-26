@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1007994/"> 1007994</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/85d1bfabc3d78f6e31c9bf62c555f32134b16da5">85d1bfabc3d78f6e31c9bf62c555f32134b16da5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1008014/"> 1008014</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c03381909a59459fce0a1460f5fe4588ea51d985">c03381909a59459fce0a1460f5fe4588ea51d985</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1007974/">1007974</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   85d1bfabc3d78f6e31c9bf62c555f32134b16da5
+   c03381909a59459fce0a1460f5fe4588ea51d985
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/85d1bfabc3d78f6e31c9bf62c555f32134b16da5">
+    <a href="/chromium/src/+log/c03381909a59459fce0a1460f5fe4588ea51d985">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/85d1bfabc3d78f6e31c9bf62c555f32134b16da5.tar.gz">
+    <a href="/chromium/src/+archive/c03381909a59459fce0a1460f5fe4588ea51d985.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mark Schillaci &lt;mschillaci@google.com&gt;
+   Jeffrey Young &lt;cowmoo@google.com&gt;
   </td>
   <td>
-   Thu May 26 21:31:55 2022
+   Thu May 26 22:09:36 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 26 21:31:55 2022
+   Thu May 26 22:09:36 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/85d1bfabc3d78f6e31c9bf62c555f32134b16da5/">
-    5c55de06db36c7e6364859843f29ef92935612f7
+   <a href="/chromium/src/+/c03381909a59459fce0a1460f5fe4588ea51d985/">
+    20955ced9f3cfb759fb39ddeec505d43a4095a10
    </a>
   </td>
  </tr>
@@ -166,50 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/85d1bfabc3d78f6e31c9bf62c555f32134b16da5%5E">
-    7aca916700dfd07fb07f689406c8142e483cb4e1
+   <a href="/chromium/src/+/c03381909a59459fce0a1460f5fe4588ea51d985%5E">
+    86049e148f77674ffd907279bc1936980e7461a5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/85d1bfabc3d78f6e31c9bf62c555f32134b16da5%5E%21/">
+    <a href="/chromium/src/+/c03381909a59459fce0a1460f5fe4588ea51d985%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Improve cache clearing on accessibility Android, and send text change events
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">personalization: loading tiles on collection page
 
-With this CL we update the cache clearing mechanism for the Android
-accessibility code, and update our treatment of events to send
-a text change event to AT.
+Add loading ripple animation effect when loading straight onto
+individual collection page. Most obvious when pressing CTRL + R
+while viewing a wallpaper collection.
 
-With a previous CL: crrev.com/c/2988814
-we modified the clearing of a text node from a view when its content
-changes. We added the logic that whenever a text node is cleared from
-the cache, we must also clear all of its parents up to the first
-non-leaf parent, to account for things like a &lt;div&gt; or &lt;p&gt; with only
-text inside. This added many extra calls to IsLeaf and resulted in a
-performance hit.
+Before:
+<a href="https://photos.app.goo.gl/8pzZ3TWtf6osj6yHA">https://photos.app.goo.gl/8pzZ3TWtf6osj6yHA</a>
 
-With this CL we apply a more general rule that whenever the name of
-a node changes, we clear the node from the cache. This fixes the bug
-that the above CL also fixed, but does it without superfluous calls to
-IsLeaf.
+After:
+<a href="https://photos.app.goo.gl/Mpw4efJQMpgDeKUr9">https://photos.app.goo.gl/Mpw4efJQMpgDeKUr9</a>
 
-We also include a new event in this case. The Android API has an event
-type: CONTENT_CHANGED_TYPE_TEXT which we have not been sending in the
-past (added in API 19). We now send the event on name changes and leave
-it to AT to respond as desired. The event is sent during a name change,
-but only on nodes that act as a TextView on Android (e.g. staticText).
+BUG=b:225198866
 
-AX-Relnotes: N/A
-Bug: 1306508
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic12da0755d732899cc92d531804d4877acbeead9">Ic12da0755d732899cc92d531804d4877acbeead9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3669173">https://chromium-review.googlesource.com/c/chromium/src/+/3669173</a>
-Reviewed-by: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
-Commit-Queue: Mark Schillaci &lt;mschillaci@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1007994}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I411edceaaca6abe62d4375b29f3db66d33742a1e">I411edceaaca6abe62d4375b29f3db66d33742a1e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3665844">https://chromium-review.googlesource.com/c/chromium/src/+/3665844</a>
+Reviewed-by: Xiaohui Chen &lt;xiaohuic@chromium.org&gt;
+Commit-Queue: Jeffrey Young &lt;cowmoo@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1008014}
 </pre>
 
 </body>
