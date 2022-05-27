@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1008020/"> 1008020</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/097d05cde8e565dafb01d71777c8579a049014ca">097d05cde8e565dafb01d71777c8579a049014ca</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1008048/"> 1008048</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/faf8d314ac4d87901f923e0c859e6ebac8e3ff37">faf8d314ac4d87901f923e0c859e6ebac8e3ff37</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1008018/">1008018</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/37d5ef96834cb17d7c5e4ef666976fd61ed52add">37d5ef96834cb17d7c5e4ef666976fd61ed52add</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1008036/">1008036</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7274f62f36ce080edba95d11769e9506ce7d40f0">7274f62f36ce080edba95d11769e9506ce7d40f0</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   097d05cde8e565dafb01d71777c8579a049014ca
+   faf8d314ac4d87901f923e0c859e6ebac8e3ff37
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/097d05cde8e565dafb01d71777c8579a049014ca">
+    <a href="/chromium/src/+log/faf8d314ac4d87901f923e0c859e6ebac8e3ff37">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/097d05cde8e565dafb01d71777c8579a049014ca.tar.gz">
+    <a href="/chromium/src/+archive/faf8d314ac4d87901f923e0c859e6ebac8e3ff37.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jordan Bayles &lt;jophba@chromium.org&gt;
+   Victor Vasiliev &lt;vasilvv@chromium.org&gt;
   </td>
   <td>
-   Thu May 26 22:44:53 2022
+   Thu May 26 23:48:38 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 26 22:44:53 2022
+   Thu May 26 23:48:38 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/097d05cde8e565dafb01d71777c8579a049014ca/">
-    38956f2d9fd698a052823f9e78989ad774c9c5dd
+   <a href="/chromium/src/+/faf8d314ac4d87901f923e0c859e6ebac8e3ff37/">
+    84c92043512a157815761fe119c861f9120e00b2
    </a>
   </td>
  </tr>
@@ -166,58 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/097d05cde8e565dafb01d71777c8579a049014ca%5E">
-    1c765cc5e1c1bb5de4ffbef22d89b6832d9b5b75
+   <a href="/chromium/src/+/faf8d314ac4d87901f923e0c859e6ebac8e3ff37%5E">
+    ad438a8d2b6f85fba4ce9c82b4aec94c1127b790
    </a>
    <span>
     [
-    <a href="/chromium/src/+/097d05cde8e565dafb01d71777c8579a049014ca%5E%21/">
+    <a href="/chromium/src/+/faf8d314ac4d87901f923e0c859e6ebac8e3ff37%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "[Libcast-In-Chrome #1] Refactor FrameSender"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Disable -Wsign-compare for QUICHE code
 
-This reverts commit 32fbc928326807769ae7e555256e7a800b93c7fb,
-effectively relanding the original CL.
+-Wsign-compare interacts poorly with a lot template magic that
+CHECK_*/EXPECT_* macros use; in particular, it requires the caller to
+write "EXPECT_EQ(variable, 1u)" instead of "EXPECT_EQ(variable, 1)" if
+`variable` is unsigned.  google3 version of gtest does not have this
+limitation, causing friction for Chromium merge.
 
-The original patch broke a windows bot by including a file that
-doesn't properly handle windows DLL exports. The fix for this DLL
-export is also included.
-
-Bug: 1318499
-
-Original change's description:
-&gt; [Libcast-In-Chrome #1] Refactor FrameSender
-&gt;
-&gt; Patch:
-&gt; This is the first patch in a renewed series for finishing the
-&gt; Libcast-in-Chrome project. This patch refactors the FrameSender class to
-&gt; allow for swapping out the frame sender backing implementation for
-&gt; openscreen::cast::Sender, without having to rewrite the AudioSender,
-&gt; VideoSender, RemotingSender, and a myriad of unit test and end to end
-&gt; test suites.
-&gt;
-&gt; Overall feature:
-&gt; Libcast-In-Chrome is a project with the goal of having libcast be the
-&gt; backing implementation of cast streaming in Chrome.
-&gt;
-&gt; Bug: 1212803
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iff529ec50d4ac041d200ded3f3853b989376b837">Iff529ec50d4ac041d200ded3f3853b989376b837</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3645106">https://chromium-review.googlesource.com/c/chromium/src/+/3645106</a>
-&gt; Reviewed-by: Ryan Keane &lt;rwkeane@google.com&gt;
-&gt; Reviewed-by: Dan Sanders &lt;sandersd@chromium.org&gt;
-&gt; Reviewed-by: Mark Foltz &lt;mfoltz@chromium.org&gt;
-&gt; Commit-Queue: Jordan Bayles &lt;jophba@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1007558}
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5026b7435713499446454de4b212eab4008d970e">I5026b7435713499446454de4b212eab4008d970e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3671128">https://chromium-review.googlesource.com/c/chromium/src/+/3671128</a>
-Commit-Queue: Jordan Bayles &lt;jophba@chromium.org&gt;
-Reviewed-by: Dan Sanders &lt;sandersd@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1008020}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6a0af58d3be0d935a05ab3271ae1043dad71e208">I6a0af58d3be0d935a05ab3271ae1043dad71e208</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3669880">https://chromium-review.googlesource.com/c/chromium/src/+/3669880</a>
+Commit-Queue: Ryan Hamilton &lt;rch@chromium.org&gt;
+Auto-Submit: Victor Vasiliev &lt;vasilvv@chromium.org&gt;
+Reviewed-by: Ryan Hamilton &lt;rch@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1008048}
 </pre>
 
 </body>
