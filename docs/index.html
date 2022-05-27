@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1008294/"> 1008294</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6c2dbaf836ec739d9e487b8532e5b0b04737327d">6c2dbaf836ec739d9e487b8532e5b0b04737327d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1008280/"> 1008280</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f819b462c87157ba81c8c4a8d51229f2d9f5e576">f819b462c87157ba81c8c4a8d51229f2d9f5e576</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1008280/">1008280</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6c2dbaf836ec739d9e487b8532e5b0b04737327d
+   f819b462c87157ba81c8c4a8d51229f2d9f5e576
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6c2dbaf836ec739d9e487b8532e5b0b04737327d">
+    <a href="/chromium/src/+log/f819b462c87157ba81c8c4a8d51229f2d9f5e576">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6c2dbaf836ec739d9e487b8532e5b0b04737327d.tar.gz">
+    <a href="/chromium/src/+archive/f819b462c87157ba81c8c4a8d51229f2d9f5e576.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mark Schillaci &lt;mschillaci@google.com&gt;
+   danakj &lt;danakj@chromium.org&gt;
   </td>
   <td>
-   Fri May 27 16:59:07 2022
+   Fri May 27 16:21:47 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri May 27 16:59:07 2022
+   Fri May 27 16:21:47 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6c2dbaf836ec739d9e487b8532e5b0b04737327d/">
-    614890a4d9aa75c9af05f57f545c2f70723de654
+   <a href="/chromium/src/+/f819b462c87157ba81c8c4a8d51229f2d9f5e576/">
+    d6b0ef841021db05624e24701dacb504ab6f04da
    </a>
   </td>
  </tr>
@@ -166,34 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6c2dbaf836ec739d9e487b8532e5b0b04737327d%5E">
-    2ea616c261bcac2c35aee04132f0cad001c53998
+   <a href="/chromium/src/+/f819b462c87157ba81c8c4a8d51229f2d9f5e576%5E">
+    fafa0ef6a80f912554cfc4832b4efa864fa3a0c8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6c2dbaf836ec739d9e487b8532e5b0b04737327d%5E%21/">
+    <a href="/chromium/src/+/f819b462c87157ba81c8c4a8d51229f2d9f5e576%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add catch for possible Timeout exceptions in accessibility for Autofill
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PersistentMemoryAllocator expects sizes to be &lt;= 32 bits large
 
-This CL makes a quick fix to how the Android accessibility code
-responds to the presence of Autofill. The AutofillManager can throw
-an exception that has not been caught in the accessibility code. The
-exception that is thrown varies per Android OS level, so we catch a
-generic exception for simplicity, using the same approach as the Clank
-specific AutofillManagerWrapper class.
+Use checked_cast to verify this instead of potentially truncating
+and getting an incorrect size.
 
-AX-Relnotes: N/A
-Bug: 1329613
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8c900dd6e325516bab46feec0b6c95cba5567864">I8c900dd6e325516bab46feec0b6c95cba5567864</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3668913">https://chromium-review.googlesource.com/c/chromium/src/+/3668913</a>
-Commit-Queue: Mark Schillaci &lt;mschillaci@google.com&gt;
-Reviewed-by: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1008294}
+Found while reviewing code fixing signed/narrowing issues.
+
+FWIW, it would be nice to have the class receive uint32_t to express
+the expectations to the caller.
+
+R=pkasting@chromium.org
+
+Bug: 1292951
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2f846e62162516e3876459c810ba681a251d5f86">I2f846e62162516e3876459c810ba681a251d5f86</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3672918">https://chromium-review.googlesource.com/c/chromium/src/+/3672918</a>
+Reviewed-by: Peter Kasting &lt;pkasting@chromium.org&gt;
+Commit-Queue: Peter Kasting &lt;pkasting@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1008280}
 </pre>
 
 </body>
