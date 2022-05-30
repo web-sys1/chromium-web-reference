@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1008775/"> 1008775</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b45fc733f41912a702191b0bf6d7648a28c17b09">b45fc733f41912a702191b0bf6d7648a28c17b09</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1008782/"> 1008782</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0fafcc9b8a2b821ddea67e3e65f62330e6ea74ec">0fafcc9b8a2b821ddea67e3e65f62330e6ea74ec</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1008772/">1008772</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7a2a1e57c9384b6bc27127c55d48cafeb85eb719">7a2a1e57c9384b6bc27127c55d48cafeb85eb719</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1008781/">1008781</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/201d5af33eabc99bc3273ac58b7f5ac296bd24c2">201d5af33eabc99bc3273ac58b7f5ac296bd24c2</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b45fc733f41912a702191b0bf6d7648a28c17b09
+   0fafcc9b8a2b821ddea67e3e65f62330e6ea74ec
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b45fc733f41912a702191b0bf6d7648a28c17b09">
+    <a href="/chromium/src/+log/0fafcc9b8a2b821ddea67e3e65f62330e6ea74ec">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b45fc733f41912a702191b0bf6d7648a28c17b09.tar.gz">
+    <a href="/chromium/src/+archive/0fafcc9b8a2b821ddea67e3e65f62330e6ea74ec.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Dominic Battre &lt;battre@chromium.org&gt;
+   Andrew Moylan &lt;amoylan@chromium.org&gt;
   </td>
   <td>
-   Mon May 30 09:16:06 2022
+   Mon May 30 10:04:04 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon May 30 09:16:06 2022
+   Mon May 30 10:04:04 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b45fc733f41912a702191b0bf6d7648a28c17b09/">
-    470eabd217cdb3a2ddaa9ec3fea22e44a4c70ac1
+   <a href="/chromium/src/+/0fafcc9b8a2b821ddea67e3e65f62330e6ea74ec/">
+    b47183254c565e64d9997775ffb90490b037697f
    </a>
   </td>
  </tr>
@@ -166,49 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b45fc733f41912a702191b0bf6d7648a28c17b09%5E">
-    47c38c18cbf5657c922d0036cc2edb0d9595556d
+   <a href="/chromium/src/+/0fafcc9b8a2b821ddea67e3e65f62330e6ea74ec%5E">
+    201d5af33eabc99bc3273ac58b7f5ac296bd24c2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b45fc733f41912a702191b0bf6d7648a28c17b09%5E%21/">
+    <a href="/chromium/src/+/0fafcc9b8a2b821ddea67e3e65f62330e6ea74ec%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move Autofill State setting deeper
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move reminder about kInterfaceVersionEntries closer to relevant code
 
-This CL pushes the setting of the AutofillState into the
-SetSuggestedValue/SetAutofilledValue functions. After being called
-it is guaranteed that the value is as expected.
+Looks like kInterfaceVersionEntries got moved around. This CL just moves
+the corresponding helpful assert back close to it again.
 
-The reason for this change is the following:
-
-<a href="https://chromium-review.googlesource.com/c/chromium/src/+/3655349">https://chromium-review.googlesource.com/c/chromium/src/+/3655349</a>
-landed with the intention of notifying the browser process if
-JavaScript overrides an autofilled value.
-
-It turned out that this only worked if the JavaScript changed the
-value after the autofill. It is possible, however, that the website
-registers a 'change' event handler for an &lt;input&gt; element and overrides
-the autofilled value directly when it gets set. At this point the
-autofill state of the input element had not been updated and the
-entire reporting mechanism failed.
-
-With this change, we set the autofill state before setting the value
-(and before JavaScript can override it) and - to be behavior
-preserving - also after JavaScript had a chance to override it during
-the operation of setting the autofill value.
-
-Bug: 1314360
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2598adfaa17fc18ce80b4af3d35139b043aba0dd">I2598adfaa17fc18ce80b4af3d35139b043aba0dd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3663020">https://chromium-review.googlesource.com/c/chromium/src/+/3663020</a>
-Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
-Reviewed-by: Christoph Schwering &lt;schwering@google.com&gt;
-Commit-Queue: Dominic Battré &lt;battre@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1008775}
+Bug: None
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5bc7be2a78ff78360e2832e2a176ce79eadb1f7a">I5bc7be2a78ff78360e2832e2a176ce79eadb1f7a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3672995">https://chromium-review.googlesource.com/c/chromium/src/+/3672995</a>
+Commit-Queue: Andrew Moylan &lt;amoylan@chromium.org&gt;
+Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1008782}
 </pre>
 
 </body>
