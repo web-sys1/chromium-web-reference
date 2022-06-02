@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1010230/"> 1010230</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/89ee920ba6a8b83e1ae4afbcdffad156447ee12c">89ee920ba6a8b83e1ae4afbcdffad156447ee12c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1010247/"> 1010247</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7dfdd07585aa21bc96a7db3a58937be23575f13f">7dfdd07585aa21bc96a7db3a58937be23575f13f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1010232/">1010232</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   89ee920ba6a8b83e1ae4afbcdffad156447ee12c
+   7dfdd07585aa21bc96a7db3a58937be23575f13f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/89ee920ba6a8b83e1ae4afbcdffad156447ee12c">
+    <a href="/chromium/src/+log/7dfdd07585aa21bc96a7db3a58937be23575f13f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/89ee920ba6a8b83e1ae4afbcdffad156447ee12c.tar.gz">
+    <a href="/chromium/src/+archive/7dfdd07585aa21bc96a7db3a58937be23575f13f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tove Petersson &lt;tovep@chromium.org&gt;
+   Matthew Mourgos &lt;mmourgos@chromium.org&gt;
   </td>
   <td>
-   Thu Jun 02 19:29:03 2022
+   Thu Jun 02 20:07:56 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jun 02 19:29:03 2022
+   Thu Jun 02 20:07:56 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/89ee920ba6a8b83e1ae4afbcdffad156447ee12c/">
-    4919141bcc70fcceebcf5f2a149b88cf7e5842c0
+   <a href="/chromium/src/+/7dfdd07585aa21bc96a7db3a58937be23575f13f/">
+    b0b2475152bda93d9560a5c9d94ab90f0eab2685
    </a>
   </td>
  </tr>
@@ -166,28 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/89ee920ba6a8b83e1ae4afbcdffad156447ee12c%5E">
-    df5d2b4dea75b85466c4abb1278e22b74e9487e6
+   <a href="/chromium/src/+/7dfdd07585aa21bc96a7db3a58937be23575f13f%5E">
+    e857104babce4a8a93e7fa4c77d4057e6e002ab9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/89ee920ba6a8b83e1ae4afbcdffad156447ee12c%5E%21/">
+    <a href="/chromium/src/+/7dfdd07585aa21bc96a7db3a58937be23575f13f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Queue TMST::AddObserver calls until SetImplementation, then notify them
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rework AnimationBetweenRows() to support reversing animations.
 
-Queue calls to TransferredMediaStreamTrack::AddObserver() until SetImplementation() is called, and notify the observers when this happens.
+When dragging around an app item back and forth between rows, the
+row change animation would not properly reverse the animation.
 
-Bug: 1288839
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaef5d4a94d3cd155476325c277b7555d1ec018a4">Iaef5d4a94d3cd155476325c277b7555d1ec018a4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3683263">https://chromium-review.googlesource.com/c/chromium/src/+/3683263</a>
-Reviewed-by: Tony Herre &lt;toprice@chromium.org&gt;
-Commit-Queue: Tove Petersson &lt;tovep@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1010230}
+This CL rewrites AnimationBetweenRows() and moves the functionality
+into a new class AppsGridRowChangeAnimator. Now interrupting the
+animation with another row change will perfectly reverse the currently
+running animation when necessary. This is accomplished by creating
+a layer copy of the row changing item view. The layer copy is animated
+out of the grid towards the screen edge. The item view is animated into
+the new row position from the screen edge. When this row change
+animation is reversed, the layer copy and the item view switch places
+and are animated to the new correct target bounds.
+
+For a drag going across multiple rows, many items can have a row change
+animation happening. For this case, the layer copies are stored in a map
+called `row_change_layers_`, which associates each row change item with
+its copied layer.
+
+Also add a unittest for the case where the row change animation is
+reversed, to check that the view animates in the correct positions.
+
+Bug: 1318259
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I180053530c305178587888408bdd18a034bbf2ea">I180053530c305178587888408bdd18a034bbf2ea</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3603237">https://chromium-review.googlesource.com/c/chromium/src/+/3603237</a>
+Commit-Queue: Matthew Mourgos &lt;mmourgos@chromium.org&gt;
+Reviewed-by: Toni Barzic &lt;tbarzic@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1010247}
 </pre>
 
 </body>
