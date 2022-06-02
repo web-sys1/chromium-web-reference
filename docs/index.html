@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1010247/"> 1010247</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7dfdd07585aa21bc96a7db3a58937be23575f13f">7dfdd07585aa21bc96a7db3a58937be23575f13f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1010265/"> 1010265</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/00e5ae0d1285e219b60300d93cf16cd6743e8bdb">00e5ae0d1285e219b60300d93cf16cd6743e8bdb</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1010232/">1010232</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2c06ed3697126570ce8ce2e0a124788bed56538f">2c06ed3697126570ce8ce2e0a124788bed56538f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1010262/">1010262</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7089457135f05f4fd801e23adcf74df159bde355">7089457135f05f4fd801e23adcf74df159bde355</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7dfdd07585aa21bc96a7db3a58937be23575f13f
+   00e5ae0d1285e219b60300d93cf16cd6743e8bdb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7dfdd07585aa21bc96a7db3a58937be23575f13f">
+    <a href="/chromium/src/+log/00e5ae0d1285e219b60300d93cf16cd6743e8bdb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7dfdd07585aa21bc96a7db3a58937be23575f13f.tar.gz">
+    <a href="/chromium/src/+archive/00e5ae0d1285e219b60300d93cf16cd6743e8bdb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Matthew Mourgos &lt;mmourgos@chromium.org&gt;
+   Luc Nguyen &lt;lucnguyen@google.com&gt;
   </td>
   <td>
-   Thu Jun 02 20:07:56 2022
+   Thu Jun 02 20:38:39 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jun 02 20:07:56 2022
+   Thu Jun 02 20:38:39 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7dfdd07585aa21bc96a7db3a58937be23575f13f/">
-    b0b2475152bda93d9560a5c9d94ab90f0eab2685
+   <a href="/chromium/src/+/00e5ae0d1285e219b60300d93cf16cd6743e8bdb/">
+    ced0b0c832241689798924b1063d284166909cd6
    </a>
   </td>
  </tr>
@@ -166,47 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7dfdd07585aa21bc96a7db3a58937be23575f13f%5E">
-    e857104babce4a8a93e7fa4c77d4057e6e002ab9
+   <a href="/chromium/src/+/00e5ae0d1285e219b60300d93cf16cd6743e8bdb%5E">
+    239b538ad80365dda43e84c42bdad64ccb9456c9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7dfdd07585aa21bc96a7db3a58937be23575f13f%5E%21/">
+    <a href="/chromium/src/+/00e5ae0d1285e219b60300d93cf16cd6743e8bdb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rework AnimationBetweenRows() to support reversing animations.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add unit test for variation IDs in about://flags
 
-When dragging around an app item back and forth between rows, the
-row change animation would not properly reverse the animation.
+* Adds a test to verify that variation IDs specified in about://flags
+are: 1) well-formed, and 2) unique.
 
-This CL rewrites AnimationBetweenRows() and moves the functionality
-into a new class AppsGridRowChangeAnimator. Now interrupting the
-animation with another row change will perfectly reverse the currently
-running animation when necessary. This is accomplished by creating
-a layer copy of the row changing item view. The layer copy is animated
-out of the grid towards the screen edge. The item view is animated into
-the new row position from the screen edge. When this row change
-animation is reversed, the layer copy and the item view switch places
-and are animated to the new correct target bounds.
-
-For a drag going across multiple rows, many items can have a row change
-animation happening. For this case, the layer copies are stored in a map
-called `row_change_layers_`, which associates each row change item with
-its copied layer.
-
-Also add a unittest for the case where the row change animation is
-reversed, to check that the view animates in the correct positions.
-
-Bug: 1318259
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I180053530c305178587888408bdd18a034bbf2ea">I180053530c305178587888408bdd18a034bbf2ea</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3603237">https://chromium-review.googlesource.com/c/chromium/src/+/3603237</a>
-Commit-Queue: Matthew Mourgos &lt;mmourgos@chromium.org&gt;
-Reviewed-by: Toni Barzic &lt;tbarzic@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1010247}
+Bug: 1294948
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If91a42520854b6423737801a1108ae2916b96cf2">If91a42520854b6423737801a1108ae2916b96cf2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3673397">https://chromium-review.googlesource.com/c/chromium/src/+/3673397</a>
+Reviewed-by: Tommy Nyquist &lt;nyquist@chromium.org&gt;
+Commit-Queue: Luc Nguyen &lt;lucnguyen@google.com&gt;
+Reviewed-by: Caitlin Fischer &lt;caitlinfischer@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1010265}
 </pre>
 
 </body>
