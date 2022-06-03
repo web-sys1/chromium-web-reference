@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1010464/"> 1010464</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e7924dc02c284f27de5833248781056b4e43054a">e7924dc02c284f27de5833248781056b4e43054a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1010471/"> 1010471</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8d9fddff621d252cfcf41ad113cfda53a2d60e0c">8d9fddff621d252cfcf41ad113cfda53a2d60e0c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1010448/">1010448</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e7924dc02c284f27de5833248781056b4e43054a
+   8d9fddff621d252cfcf41ad113cfda53a2d60e0c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e7924dc02c284f27de5833248781056b4e43054a">
+    <a href="/chromium/src/+log/8d9fddff621d252cfcf41ad113cfda53a2d60e0c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e7924dc02c284f27de5833248781056b4e43054a.tar.gz">
+    <a href="/chromium/src/+archive/8d9fddff621d252cfcf41ad113cfda53a2d60e0c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yao Qijing &lt;yaoqq@google.com&gt;
+   Yuichiro Hanada &lt;yhanada@google.com&gt;
   </td>
   <td>
-   Fri Jun 03 06:39:35 2022
+   Fri Jun 03 07:26:14 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jun 03 06:39:35 2022
+   Fri Jun 03 07:26:14 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e7924dc02c284f27de5833248781056b4e43054a/">
-    fcdf40a9b1201a19aa5140f9eab7cbf604df1bba
+   <a href="/chromium/src/+/8d9fddff621d252cfcf41ad113cfda53a2d60e0c/">
+    452e18cbf62eba79043a94af53ad7ff6b8a367c4
    </a>
   </td>
  </tr>
@@ -166,56 +166,27 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e7924dc02c284f27de5833248781056b4e43054a%5E">
-    efe9bb91082a859dc8ec5733e5f1923fc915a516
+   <a href="/chromium/src/+/8d9fddff621d252cfcf41ad113cfda53a2d60e0c%5E">
+    313b691584a6ff127d08e93b63226d3c97caeb43
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e7924dc02c284f27de5833248781056b4e43054a%5E%21/">
+    <a href="/chromium/src/+/8d9fddff621d252cfcf41ad113cfda53a2d60e0c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">SetScale when client trigger SetBounds
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">arc: Record Arc.CompatMode.RightClickConversion only for right clicks.
 
-The CL is part of the effort to fix the bounds calculation issue when
-moving an ARC window between displays with Ctrl+Alt+M shortcut.
-
-Currently, when moving an ARC window to another display with mouse, a
-SetBoundsInScreen() is triggered when EndDragImpl() happens, which moves
-the current window to the new display before notifying Android. This
-workflow also triggers ClientControlledShellSurface to SetScale() -
-updates the |pending_scale_| with the device_scale_factor of the new
-display. Then when SetBound() is called from ARC, dp is calculated from
-the client bounds with the updated |pending_scale_|.
-
-However, for the case when moving the window with shortcut keys,
-SetBoundsInScreen() is only triggered when commit() happens, which is
-after SetBounds() has already finished calculating dp with the dsf of the
-old display, and the wrong dp value is used in commit(). Therefore, we need to figure out a way to update the scale at an earlier stage.
-
-Ideally, it would be better to also trigger SetBoundsInScreen() before
-notifying Android in the same way as in dragging cases, but extra effort
-is needed to ensure that the |pending_scale_| won't be overwritten in
-the upcoming commit()s (eg. flipping the kLockedToRootKey property in
-dragging cases). This commit circumvents that by always calling SetScale
-if use_default_scale_cancellation_ is false(where we can assume that we
-are in R and onward) when SetBounds is triggered by client, so that the
-calculation of dp can be using the dsf of the new display.
-
-Test: Manual Testing
-Test: ClientControlledShellSurfaceTest.SetBoundsWithAndWithoutDefaultScaleCancellation
-Bug: b/204251254
-Bug: b/216250765
-Bug: b/204265498
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia70557373d26ebff1a70e9ebe9ccf219c81fb45a">Ia70557373d26ebff1a70e9ebe9ccf219c81fb45a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3670321">https://chromium-review.googlesource.com/c/chromium/src/+/3670321</a>
-Commit-Queue: Qijing Yao &lt;yaoqq@google.com&gt;
-Reviewed-by: Toshiki Kikuchi &lt;toshikikikuchi@chromium.org&gt;
-Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1010464}
+Bug: b:234652772
+Test: ash_components_unittests
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If78fcd48f9b486abfac4bc4d20255d6935d1cff6">If78fcd48f9b486abfac4bc4d20255d6935d1cff6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3687257">https://chromium-review.googlesource.com/c/chromium/src/+/3687257</a>
+Commit-Queue: Yuichiro Hanada &lt;yhanada@chromium.org&gt;
+Reviewed-by: Hiroki Sato &lt;hirokisato@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1010471}
 </pre>
 
 </body>
