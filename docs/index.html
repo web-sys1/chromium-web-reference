@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1010458/"> 1010458</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/95133d9ba492314b38f0a9285a53eeba7a31dea5">95133d9ba492314b38f0a9285a53eeba7a31dea5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1010464/"> 1010464</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e7924dc02c284f27de5833248781056b4e43054a">e7924dc02c284f27de5833248781056b4e43054a</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1010448/">1010448</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   95133d9ba492314b38f0a9285a53eeba7a31dea5
+   e7924dc02c284f27de5833248781056b4e43054a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/95133d9ba492314b38f0a9285a53eeba7a31dea5">
+    <a href="/chromium/src/+log/e7924dc02c284f27de5833248781056b4e43054a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/95133d9ba492314b38f0a9285a53eeba7a31dea5.tar.gz">
+    <a href="/chromium/src/+archive/e7924dc02c284f27de5833248781056b4e43054a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Hidehiko Abe &lt;hidehiko@chromium.org&gt;
+   Yao Qijing &lt;yaoqq@google.com&gt;
   </td>
   <td>
-   Fri Jun 03 05:52:36 2022
+   Fri Jun 03 06:39:35 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jun 03 05:52:36 2022
+   Fri Jun 03 06:39:35 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/95133d9ba492314b38f0a9285a53eeba7a31dea5/">
-    5317301d07212258be88e429393820d1b30f094d
+   <a href="/chromium/src/+/e7924dc02c284f27de5833248781056b4e43054a/">
+    fcdf40a9b1201a19aa5140f9eab7cbf604df1bba
    </a>
   </td>
  </tr>
@@ -166,43 +166,56 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/95133d9ba492314b38f0a9285a53eeba7a31dea5%5E">
-    2fcd56addf42e517d186cb03e504a6f229a746f7
+   <a href="/chromium/src/+/e7924dc02c284f27de5833248781056b4e43054a%5E">
+    efe9bb91082a859dc8ec5733e5f1923fc915a516
    </a>
    <span>
     [
-    <a href="/chromium/src/+/95133d9ba492314b38f0a9285a53eeba7a31dea5%5E%21/">
+    <a href="/chromium/src/+/e7924dc02c284f27de5833248781056b4e43054a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Simplify ProfileHelper for testing.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">SetScale when client trigger SetBounds
 
-This removes two methods from ProfileHelper.
-- GetLockScreenIncognitoProfile: No users. Just remove.
-- GetProfileByUserIdHashForTest: Used only by tests.
+The CL is part of the effort to fix the bounds calculation issue when
+moving an ARC window between displays with Ctrl+Alt+M shortcut.
 
-The latter one is more complicated and the main focus of this CL.
-Despite of its name, it "Creates" a Profile instance synchronously,
-and in many uses, this creation is what tests want.
+Currently, when moving an ARC window to another display with mouse, a
+SetBoundsInScreen() is triggered when EndDragImpl() happens, which moves
+the current window to the new display before notifying Android. This
+workflow also triggers ClientControlledShellSurface to SetScale() -
+updates the |pending_scale_| with the device_scale_factor of the new
+display. Then when SetBound() is called from ARC, dp is calculated from
+the client bounds with the updated |pending_scale_|.
 
-Thus, this CL replaces many of them by profiles::testing::CreateProfileSync,
-which is a test utility designed for the purpose.
+However, for the case when moving the window with shortcut keys,
+SetBoundsInScreen() is only triggered when commit() happens, which is
+after SetBounds() has already finished calculating dp with the dsf of the
+old display, and the wrong dp value is used in commit(). Therefore, we need to figure out a way to update the scale at an earlier stage.
 
-In path_util_unittest.cc, it is used just a global getter and not the
-main test target, so instead use members to keep Profile instances.
+Ideally, it would be better to also trigger SetBoundsInScreen() before
+notifying Android in the same way as in dragging cases, but extra effort
+is needed to ensure that the |pending_scale_| won't be overwritten in
+the upcoming commit()s (eg. flipping the kLockedToRootKey property in
+dragging cases). This commit circumvents that by always calling SetScale
+if use_default_scale_cancellation_ is false(where we can assume that we
+are in R and onward) when SetBounds is triggered by client, so that the
+calculation of dp can be using the dsf of the new display.
 
-BUG=1325210
-TEST=Ran bots.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9cecd55766e8bd6b72285e73b9a786a566bad093">I9cecd55766e8bd6b72285e73b9a786a566bad093</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3675746">https://chromium-review.googlesource.com/c/chromium/src/+/3675746</a>
-Reviewed-by: David Trainor &lt;dtrainor@chromium.org&gt;
-Commit-Queue: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
+Test: Manual Testing
+Test: ClientControlledShellSurfaceTest.SetBoundsWithAndWithoutDefaultScaleCancellation
+Bug: b/204251254
+Bug: b/216250765
+Bug: b/204265498
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia70557373d26ebff1a70e9ebe9ccf219c81fb45a">Ia70557373d26ebff1a70e9ebe9ccf219c81fb45a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3670321">https://chromium-review.googlesource.com/c/chromium/src/+/3670321</a>
+Commit-Queue: Qijing Yao &lt;yaoqq@google.com&gt;
+Reviewed-by: Toshiki Kikuchi &lt;toshikikikuchi@chromium.org&gt;
 Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1010458}
+Cr-Commit-Position: refs/heads/main@{#1010464}
 </pre>
 
 </body>
