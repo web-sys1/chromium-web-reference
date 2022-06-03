@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1010720/"> 1010720</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b0672fc87077f6647e68b1db28cff24052399fdd">b0672fc87077f6647e68b1db28cff24052399fdd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1010736/"> 1010736</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ed3b825fc3bfa30d919a1b322370d08a364dbba6">ed3b825fc3bfa30d919a1b322370d08a364dbba6</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1010670/">1010670</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/26680533d4256dd740f616db6650a201de3e6b7f">26680533d4256dd740f616db6650a201de3e6b7f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1010733/">1010733</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/641ab22b0354c742d7b4f791195b798dbf16d893">641ab22b0354c742d7b4f791195b798dbf16d893</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b0672fc87077f6647e68b1db28cff24052399fdd
+   ed3b825fc3bfa30d919a1b322370d08a364dbba6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b0672fc87077f6647e68b1db28cff24052399fdd">
+    <a href="/chromium/src/+log/ed3b825fc3bfa30d919a1b322370d08a364dbba6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b0672fc87077f6647e68b1db28cff24052399fdd.tar.gz">
+    <a href="/chromium/src/+archive/ed3b825fc3bfa30d919a1b322370d08a364dbba6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Zhenyao Mo &lt;zmo@chromium.org&gt;
+   Dominic Battre &lt;battre@chromium.org&gt;
   </td>
   <td>
-   Fri Jun 03 19:57:46 2022
+   Fri Jun 03 20:38:01 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jun 03 19:57:46 2022
+   Fri Jun 03 20:38:01 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b0672fc87077f6647e68b1db28cff24052399fdd/">
-    af9661f0050727a1c3f6bf6275a53305e5fac30d
+   <a href="/chromium/src/+/ed3b825fc3bfa30d919a1b322370d08a364dbba6/">
+    ab2dd7797700fbe094233c0907138a809e6c0a91
    </a>
   </td>
  </tr>
@@ -166,44 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b0672fc87077f6647e68b1db28cff24052399fdd%5E">
-    4c3464faa3b4a81896d83c28535c1aa4c3ea3aec
+   <a href="/chromium/src/+/ed3b825fc3bfa30d919a1b322370d08a364dbba6%5E">
+    3996b2b873478891cf610a29f590f918b74d248c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b0672fc87077f6647e68b1db28cff24052399fdd%5E%21/">
+    <a href="/chromium/src/+/ed3b825fc3bfa30d919a1b322370d08a364dbba6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[reland] Pass GLDisplay pointer between gl_display init and gpu_init.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refill credit card fields if websites mess with the filled values.
 
-This is a reland plus a fix for the component build on all platforms
-(discovered on Mac Debug):
-<a href="https://chromium-review.googlesource.com/c/chromium/src/+/3621555">https://chromium-review.googlesource.com/c/chromium/src/+/3621555</a>
+Some websites have JavaScript handlers that mess with the input of the
+user and autofill. A common problem is that the date "09/2999" gets
+reformatted into "09 / 20" instead of "09 / 99".
 
-When a GLDisplay is initialized, the pointer needs to be passed up to
-gpu_init or other code that calls InitializeGLOneOff. This pointer can
-be used to initialize extension settings, and shutdown GL.
+With this CL, the following steps will happen:
+1) Autofill recognizes an expiration date field with maxlength=7, will
+   infer that it is supposed to fill 09/2999 and will fill that value.
+2) The website sees the content 09/2999 and reformats it to 09 / 29
+   because this is what websites do sometimes.
+3) The AutofillAgent recognizes that it failed to fill 09/2999 and
+   filled 09 / 29 instead. It recognizes the pattern and tries again,
+   this time filling 09 / 99.
 
-Bug: chromium:1251724,chromium:1330764
-TEST=bots
+The refilling logic is very conservative and only triggers when there
+is clear evidence that the YYYY part of an expiration date was stripped
+to the first to digits of the year instead of the last two digits.
 
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3621555">https://chromium-review.googlesource.com/c/chromium/src/+/3621555</a>
-Reviewed-by: Kramer Ge &lt;fangzhoug@chromium.org&gt;
-Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Reviewed-by: Bo Liu &lt;boliu@chromium.org&gt;
-Commit-Queue: Zhenyao Mo &lt;zmo@chromium.org&gt;
-Reviewed-by: Frank Liberato &lt;liberato@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Reviewed-by: Kenneth Russell &lt;kbr@chromium.org&gt;
-Cr-Original-Commit-Position: refs/heads/main@{#1009193}
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0464dab3fe64c8c66f8022fa235ee5d0d6fc30d7">I0464dab3fe64c8c66f8022fa235ee5d0d6fc30d7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3687507">https://chromium-review.googlesource.com/c/chromium/src/+/3687507</a>
-Reviewed-by: Zhenyao Mo &lt;zmo@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1010720}
+Bug: 1314360,1192353
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic9d8072f47979223700ca6cc778678c0e1e4ea47">Ic9d8072f47979223700ca6cc778678c0e1e4ea47</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3673766">https://chromium-review.googlesource.com/c/chromium/src/+/3673766</a>
+Reviewed-by: danakj &lt;danakj@chromium.org&gt;
+Reviewed-by: Christoph Schwering &lt;schwering@google.com&gt;
+Auto-Submit: Dominic Battré &lt;battre@chromium.org&gt;
+Commit-Queue: Dominic Battré &lt;battre@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1010736}
 </pre>
 
 </body>
