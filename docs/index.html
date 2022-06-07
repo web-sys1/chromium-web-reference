@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1011297/"> 1011297</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/81b4c569e2b254107853994034e750d4b1749182">81b4c569e2b254107853994034e750d4b1749182</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1011311/"> 1011311</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4b6d013efceb4ea57f641dfd6a9e13b6b42e90b6">4b6d013efceb4ea57f641dfd6a9e13b6b42e90b6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1011300/">1011300</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   81b4c569e2b254107853994034e750d4b1749182
+   4b6d013efceb4ea57f641dfd6a9e13b6b42e90b6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/81b4c569e2b254107853994034e750d4b1749182">
+    <a href="/chromium/src/+log/4b6d013efceb4ea57f641dfd6a9e13b6b42e90b6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/81b4c569e2b254107853994034e750d4b1749182.tar.gz">
+    <a href="/chromium/src/+archive/4b6d013efceb4ea57f641dfd6a9e13b6b42e90b6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yuki Shiino &lt;yukishiino@chromium.org&gt;
+   Fergus Dall &lt;sidereal@google.com&gt;
   </td>
   <td>
-   Tue Jun 07 05:52:57 2022
+   Tue Jun 07 07:06:16 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jun 07 05:52:57 2022
+   Tue Jun 07 07:06:16 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/81b4c569e2b254107853994034e750d4b1749182/">
-    61bc43de858ca573ed92296db6ef9d854d969787
+   <a href="/chromium/src/+/4b6d013efceb4ea57f641dfd6a9e13b6b42e90b6/">
+    ce9632e3d8d8f24d2e57b8a74f8aba5dca0f3a7c
    </a>
   </td>
  </tr>
@@ -166,29 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/81b4c569e2b254107853994034e750d4b1749182%5E">
-    d81f0102899e10250f4ad0298baa49a0ff646658
+   <a href="/chromium/src/+/4b6d013efceb4ea57f641dfd6a9e13b6b42e90b6%5E">
+    81067450d21269d60f0fdff161a5f5c97ab2010f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/81b4c569e2b254107853994034e750d4b1749182%5E%21/">
+    <a href="/chromium/src/+/4b6d013efceb4ea57f641dfd6a9e13b6b42e90b6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">bindings: Minor code cleanup
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add a GuestOS Installer WebUI with a stub implementation
 
-Adds an not-reached assert, updates comments of IDL parser,
-removes unnecessary empty lines, and makes PRESUBMIT always
-use python3.
+Right now it will just display a "This site can't be reached" error
+page because the implementation doesn't assign any resources to the
+WebUI.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia04bb8d634f8096aa63ff4650b59297340a573be">Ia04bb8d634f8096aa63ff4650b59297340a573be</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3686808">https://chromium-review.googlesource.com/c/chromium/src/+/3686808</a>
-Commit-Queue: Yuki Shiino &lt;yukishiino@chromium.org&gt;
-Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1011297}
+The intended flow is that a GuestOS implementation will call
+GuestOSInstallerDialog::Show with an appropriate URL (starting with
+kChromeUIGuestOSInstallerUrl). In chrome_web_ui_controller_factory.cc
+this URL is mapped to GuestOSInstallerUI as the C++-side WebUI
+delegate, which has a static ::Create function that gets the URL as
+input. It can then use this URL to decide which installer
+implementation to forward too, and the URL can contain parameters for
+further GuestOS-specific controls.
+
+Bug: b:230812129
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5c141431fbaeea3be5904ccfbd1e2ada84bef64e">I5c141431fbaeea3be5904ccfbd1e2ada84bef64e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3641357">https://chromium-review.googlesource.com/c/chromium/src/+/3641357</a>
+Reviewed-by: Ken Buchanan &lt;kenrb@chromium.org&gt;
+Commit-Queue: Fergus Dall &lt;sidereal@google.com&gt;
+Reviewed-by: David Munro &lt;davidmunro@google.com&gt;
+Reviewed-by: Christopher Lam &lt;calamity@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1011311}
 </pre>
 
 </body>
