@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1012140/"> 1012140</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f1ae628a2be4d75ec24073880ca47c7bb2c157f5">f1ae628a2be4d75ec24073880ca47c7bb2c157f5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1012169/"> 1012169</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a2d5430b9628a9aed6206898a2e946e81df3e061">a2d5430b9628a9aed6206898a2e946e81df3e061</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1012138/">1012138</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ee9c699551d7a3c5e8b7b2c1cf971a68e6bf2de8">ee9c699551d7a3c5e8b7b2c1cf971a68e6bf2de8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1012169/">1012169</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a2d5430b9628a9aed6206898a2e946e81df3e061">a2d5430b9628a9aed6206898a2e946e81df3e061</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f1ae628a2be4d75ec24073880ca47c7bb2c157f5
+   a2d5430b9628a9aed6206898a2e946e81df3e061
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f1ae628a2be4d75ec24073880ca47c7bb2c157f5">
+    <a href="/chromium/src/+log/a2d5430b9628a9aed6206898a2e946e81df3e061">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f1ae628a2be4d75ec24073880ca47c7bb2c157f5.tar.gz">
+    <a href="/chromium/src/+archive/a2d5430b9628a9aed6206898a2e946e81df3e061.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Shuran Huang &lt;shuuran@chromium.org&gt;
+   Angus L. M. McLean IV &lt;angusmclean@chromium.org&gt;
   </td>
   <td>
-   Wed Jun 08 20:43:39 2022
+   Wed Jun 08 21:37:37 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jun 08 20:43:39 2022
+   Wed Jun 08 21:37:37 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f1ae628a2be4d75ec24073880ca47c7bb2c157f5/">
-    0b0157e62d3fe2f3597b9c1f1a502785e8aa5462
+   <a href="/chromium/src/+/a2d5430b9628a9aed6206898a2e946e81df3e061/">
+    f70e4669602acaf4e287ded49f9c2bf36a4718b8
    </a>
   </td>
  </tr>
@@ -166,36 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f1ae628a2be4d75ec24073880ca47c7bb2c157f5%5E">
-    ce78dcdab0f576895492b20d4942b36cd0153ed4
+   <a href="/chromium/src/+/a2d5430b9628a9aed6206898a2e946e81df3e061%5E">
+    20f1b6739532ed748c8210068b9d7f82aee82021
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f1ae628a2be4d75ec24073880ca47c7bb2c157f5%5E%21/">
+    <a href="/chromium/src/+/a2d5430b9628a9aed6206898a2e946e81df3e061%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Apply FPS enterprise policy enable control at profile level.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">personalization: Handle pending UI for disabling daily refresh
 
-Change the location of the FirstPartySetsEnabled enterprise policy from
-local state to profile, since policies that affect the behavior of the
-web platform are prohibited from applying at the device level.
+In the previous fix for pending UI, I neglected to account for calls
+to `selectGooglePhotosAlbum` with an empty `albumId`, which is how we
+indicate that we want to disable Daily Refresh while keeping the
+currently show wallpaper permanently.
 
-This change also involves splitting the existing FPS enabled bit used in both browser side and network side into a machine level param (to allow
-embedders to disable FPS entirely) and a profile level param which is
-plumbed to network context via FirstPartySetsAccessDelegate.
+This is the only other case where `OnWallpaperChanged` is not called.
+It also requires that we fetch the daily refresh state to stop
+highlighting the "Change Daily" button.
 
-Bug: 1325050, 1244990
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id96ce29a6ab821710f8fe837388c21e8ed108808">Id96ce29a6ab821710f8fe837388c21e8ed108808</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3682499">https://chromium-review.googlesource.com/c/chromium/src/+/3682499</a>
-Reviewed-by: Chris Fredrickson &lt;cfredric@chromium.org&gt;
-Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
-Reviewed-by: Igor &lt;igorcov@chromium.org&gt;
-Commit-Queue: Shuran Huang &lt;shuuran@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1012140}
+Thank you dmblack@ for catching this.
+
+Bug: b:235370170
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I573a5dbd94a29cb0547b4ba0bb44a49b48b80728">I573a5dbd94a29cb0547b4ba0bb44a49b48b80728</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3696126">https://chromium-review.googlesource.com/c/chromium/src/+/3696126</a>
+Commit-Queue: Angus McLean &lt;angusmclean@chromium.org&gt;
+Reviewed-by: Jeffrey Young &lt;cowmoo@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1012169}
 </pre>
 
 </body>
