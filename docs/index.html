@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1012169/"> 1012169</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a2d5430b9628a9aed6206898a2e946e81df3e061">a2d5430b9628a9aed6206898a2e946e81df3e061</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1012188/"> 1012188</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e69166579760054178edde028274d88ddeb2b4b1">e69166579760054178edde028274d88ddeb2b4b1</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1012169/">1012169</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a2d5430b9628a9aed6206898a2e946e81df3e061
+   e69166579760054178edde028274d88ddeb2b4b1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a2d5430b9628a9aed6206898a2e946e81df3e061">
+    <a href="/chromium/src/+log/e69166579760054178edde028274d88ddeb2b4b1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a2d5430b9628a9aed6206898a2e946e81df3e061.tar.gz">
+    <a href="/chromium/src/+archive/e69166579760054178edde028274d88ddeb2b4b1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Angus L. M. McLean IV &lt;angusmclean@chromium.org&gt;
+   Fabrice de Gans &lt;fdegans@chromium.org&gt;
   </td>
   <td>
-   Wed Jun 08 21:37:37 2022
+   Wed Jun 08 22:15:25 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jun 08 21:37:37 2022
+   Wed Jun 08 22:15:25 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a2d5430b9628a9aed6206898a2e946e81df3e061/">
-    f70e4669602acaf4e287ded49f9c2bf36a4718b8
+   <a href="/chromium/src/+/e69166579760054178edde028274d88ddeb2b4b1/">
+    990ccd82566f336628200975093bb8e7a35173d5
    </a>
   </td>
  </tr>
@@ -166,37 +166,60 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a2d5430b9628a9aed6206898a2e946e81df3e061%5E">
-    20f1b6739532ed748c8210068b9d7f82aee82021
+   <a href="/chromium/src/+/e69166579760054178edde028274d88ddeb2b4b1%5E">
+    7e47715f645a9a48652872971f3df9abbc09000a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a2d5430b9628a9aed6206898a2e946e81df3e061%5E%21/">
+    <a href="/chromium/src/+/e69166579760054178edde028274d88ddeb2b4b1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">personalization: Handle pending UI for disabling daily refresh
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Updater: Delete versioned data dirs on candidate uninstallation."
 
-In the previous fix for pending UI, I neglected to account for calls
-to `selectGooglePhotosAlbum` with an empty `albumId`, which is how we
-indicate that we want to disable Daily Refresh while keeping the
-currently show wallpaper permanently.
+This reverts commit a75e195d653830e5f929fe3aa1dd65ffb6663f9c.
 
-This is the only other case where `OnWallpaperChanged` is not called.
-It also requires that we fetch the daily refresh state to stop
-highlighting the "Change Daily" button.
+Reason for revert: Broke mac bot.
+<a href="https://ci.chromium.org/ui/p/chrome/builders/ci/mac-chrome/24990/overview">https://ci.chromium.org/ui/p/chrome/builders/ci/mac-chrome/24990/overview</a>
 
-Thank you dmblack@ for catching this.
+Original change's description:
+&gt; Updater: Delete versioned data dirs on candidate uninstallation.
+&gt;
+&gt; This closes a filesystem leak.
+&gt;
+&gt; While I was here I also changed the uninstall behavior so that failure
+&gt; to delete folders, etc would not go on to prevent uninstallation of
+&gt; other elements of the program. If an uninstall step fails, I think it
+&gt; is best to continue to uninstall what we can rather than leaving extra
+&gt; dirty state on the machine.
+&gt;
+&gt; While I was here I became very confused about the path getter functions
+&gt; in util.h. I renamed them to be clearer (at least to me) and tried to
+&gt; better document their behavior.
+&gt;
+&gt; Fixed: 1334710
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8aa9b9eaa2c06002d761c32fba95b81956e32595">I8aa9b9eaa2c06002d761c32fba95b81956e32595</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3696996">https://chromium-review.googlesource.com/c/chromium/src/+/3696996</a>
+&gt; Commit-Queue: Joshua Pawlicki &lt;waffles@chromium.org&gt;
+&gt; Auto-Submit: Joshua Pawlicki &lt;waffles@chromium.org&gt;
+&gt; Commit-Queue: Sorin Jianu &lt;sorin@chromium.org&gt;
+&gt; Reviewed-by: Sorin Jianu &lt;sorin@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1012136}
 
-Bug: b:235370170
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I573a5dbd94a29cb0547b4ba0bb44a49b48b80728">I573a5dbd94a29cb0547b4ba0bb44a49b48b80728</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3696126">https://chromium-review.googlesource.com/c/chromium/src/+/3696126</a>
-Commit-Queue: Angus McLean &lt;angusmclean@chromium.org&gt;
-Reviewed-by: Jeffrey Young &lt;cowmoo@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1012169}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1302d35d27dd46ac969f6952ad2a69824dd8c094">I1302d35d27dd46ac969f6952ad2a69824dd8c094</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3697199">https://chromium-review.googlesource.com/c/chromium/src/+/3697199</a>
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Reviewed-by: Fabrice de Gans &lt;fdegans@chromium.org&gt;
+Auto-Submit: Fabrice de Gans &lt;fdegans@chromium.org&gt;
+Commit-Queue: Fabrice de Gans &lt;fdegans@chromium.org&gt;
+Owners-Override: Fabrice de Gans &lt;fdegans@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1012188}
 </pre>
 
 </body>
