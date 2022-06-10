@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1012867/"> 1012867</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/39622989088114d0c3e48edcd8f4821dbce6129e">39622989088114d0c3e48edcd8f4821dbce6129e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1012874/"> 1012874</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d88b1513bba58af77a8cd5416f360176ca2b1c30">d88b1513bba58af77a8cd5416f360176ca2b1c30</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1012851/">1012851</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   39622989088114d0c3e48edcd8f4821dbce6129e
+   d88b1513bba58af77a8cd5416f360176ca2b1c30
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/39622989088114d0c3e48edcd8f4821dbce6129e">
+    <a href="/chromium/src/+log/d88b1513bba58af77a8cd5416f360176ca2b1c30">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/39622989088114d0c3e48edcd8f4821dbce6129e.tar.gz">
+    <a href="/chromium/src/+archive/d88b1513bba58af77a8cd5416f360176ca2b1c30.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kenichi Ishibashi &lt;bashi@chromium.org&gt;
+   Dale Curtis &lt;dalecurtis@chromium.org&gt;
   </td>
   <td>
-   Fri Jun 10 09:07:35 2022
+   Fri Jun 10 09:39:35 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jun 10 09:07:35 2022
+   Fri Jun 10 09:39:35 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/39622989088114d0c3e48edcd8f4821dbce6129e/">
-    ea3958b66cf27987365454186888ce16df3b196e
+   <a href="/chromium/src/+/d88b1513bba58af77a8cd5416f360176ca2b1c30/">
+    1e66586c37526cae670abf86526898eabdab9649
    </a>
   </td>
  </tr>
@@ -166,30 +166,50 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/39622989088114d0c3e48edcd8f4821dbce6129e%5E">
-    8bae60fabfca1a0f6f3acf0d72fa68b810a3a582
+   <a href="/chromium/src/+/d88b1513bba58af77a8cd5416f360176ca2b1c30%5E">
+    15837ffb2b7fc455a75c4454c431edce369740f6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/39622989088114d0c3e48edcd8f4821dbce6129e%5E%21/">
+    <a href="/chromium/src/+/d88b1513bba58af77a8cd5416f360176ca2b1c30%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add HttpCache.AddTransactionToEntry histogram
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[VideoCapture] Don't double configure the capture device on macOS.
 
-It roughly captures time to acquire a write lock to a disk cache
-entry.
+The existing code was starting the device and then changing its
+configuration, this almost doubles the startup time. A comment in
+the code says it was done to ensure the configuration took effect.
 
-Bug: 1324058
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0e1136f39e05e385dbe128f05f6e4f8909e358ac">I0e1136f39e05e385dbe128f05f6e4f8909e358ac</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3695791">https://chromium-review.googlesource.com/c/chromium/src/+/3695791</a>
-Commit-Queue: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
-Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
-Reviewed-by: Yutaka Hirano &lt;yhirano@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1012867}
+macOS documentation[1] says instead that we should set the config
+before starting the session with a block of beginConfiguration and
+commitConfiguration calls.
+
+Notably this documentation was just updated after Monday's WWDC,
+previously it just said to hold lockForConfiguration when calling
+startRunning... which did not appear to work: b/234196290
+
+With this change resolution changes for the built-in camera on a
+M1 MacBook Pro 14" go from ~550ms to ~350ms using the test page
+from the bug. I saw no change in configuration times when using
+an external Logitech C910 on an Intel Mac Mini.
+
+This functionality is controlled by a new base::Feature called
+"ConfigureCaptureBeforeStart" which is on by default (since the
+new code is following Apple's recommended approach).
+
+[1]: <a href="https://developer.apple.com/documentation/avfoundation/avcapturedevice/1389221-activeformat#discussion">https://developer.apple.com/documentation/avfoundation/avcapturedevice/1389221-activeformat#discussion</a>
+
+Bug: 1324640
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id2da3340a0d36bf19879186cba97834214b8b697">Id2da3340a0d36bf19879186cba97834214b8b697</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3696666">https://chromium-review.googlesource.com/c/chromium/src/+/3696666</a>
+Commit-Queue: Markus Handell &lt;handellm@google.com&gt;
+Reviewed-by: Markus Handell &lt;handellm@google.com&gt;
+Auto-Submit: Dale Curtis &lt;dalecurtis@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1012874}
 </pre>
 
 </body>
