@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1012840/"> 1012840</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/83f10ba66d353268f1ba7e7ad49855529eaf233b">83f10ba66d353268f1ba7e7ad49855529eaf233b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1012841/"> 1012841</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/60589c6e91303f30d6f32145c3a0c6a5531ee7db">60589c6e91303f30d6f32145c3a0c6a5531ee7db</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1012819/">1012819</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   83f10ba66d353268f1ba7e7ad49855529eaf233b
+   60589c6e91303f30d6f32145c3a0c6a5531ee7db
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/83f10ba66d353268f1ba7e7ad49855529eaf233b">
+    <a href="/chromium/src/+log/60589c6e91303f30d6f32145c3a0c6a5531ee7db">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/83f10ba66d353268f1ba7e7ad49855529eaf233b.tar.gz">
+    <a href="/chromium/src/+archive/60589c6e91303f30d6f32145c3a0c6a5531ee7db.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nidhi Jaju &lt;nidhijaju@chromium.org&gt;
+   Colin Blundell &lt;blundell@chromium.org&gt;
   </td>
   <td>
-   Fri Jun 10 06:03:47 2022
+   Fri Jun 10 06:44:01 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jun 10 06:03:47 2022
+   Fri Jun 10 06:44:01 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/83f10ba66d353268f1ba7e7ad49855529eaf233b/">
-    9109c8e5daffcbf07e0bc4074e42b2c627d04105
+   <a href="/chromium/src/+/60589c6e91303f30d6f32145c3a0c6a5531ee7db/">
+    1df81ab78135cd1a20a310cabc2f4ee57a547838
    </a>
   </td>
  </tr>
@@ -166,49 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/83f10ba66d353268f1ba7e7ad49855529eaf233b%5E">
-    8924279a4bb42b5dc5997fe6db3191063030bfb5
+   <a href="/chromium/src/+/60589c6e91303f30d6f32145c3a0c6a5531ee7db%5E">
+    83f10ba66d353268f1ba7e7ad49855529eaf233b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/83f10ba66d353268f1ba7e7ad49855529eaf233b%5E%21/">
+    <a href="/chromium/src/+/60589c6e91303f30d6f32145c3a0c6a5531ee7db%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Stop generating code for policies that are no longer needed"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PreconnectManager] Eliminate max_inflight_preresolves feature
 
-This reverts commit 93ceb76d1ba936ae1d8b8c79ff509a4bbc16340f.
+After experimentation, we have determined that the current default
+value for the maximum number of in-flight preresolves is optimal. This
+CL eliminates the ability to experiment with this value via Finch,
+partially reverting
+<a href="https://chromium-review.googlesource.com/c/chromium/src/+/2316324.">https://chromium-review.googlesource.com/c/chromium/src/+/2316324.</a> We
+leave in place the ability to experiment with the maximum number of
+in-flight prefetches, as we have not done any experimentation on that
+front. This CL also eliminates the experiment from
+fieldtrial_testing_config.json.
 
-Reason for revert: Speculatively reverting due to compile failures on tree
-i.e. <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/lacros-arm-archive-rel/3977/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/lacros-arm-archive-rel/3977/overview</a>
+This CL has no behavioral impact on production, as it's not changing the
+current default value. It's just code cleanup.
 
-Original change's description:
-&gt; Stop generating code for policies that are no longer needed
-&gt;
-&gt; Also remove NativePrinters, U2fSecurityKeyApiEnabled and
-&gt; CloudPrintSubmitEnabled which are deprecated.
-&gt;
-&gt; Bug: 223616
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib07be4d5b0df73bd42d47432df6e1e33877be3e9">Ib07be4d5b0df73bd42d47432df6e1e33877be3e9</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3669521">https://chromium-review.googlesource.com/c/chromium/src/+/3669521</a>
-&gt; Reviewed-by: Martin Kreichgauer &lt;martinkr@google.com&gt;
-&gt; Reviewed-by: Finnur Thorarinsson &lt;finnur@chromium.org&gt;
-&gt; Reviewed-by: Maksim Ivanov &lt;emaxx@chromium.org&gt;
-&gt; Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-&gt; Reviewed-by: Owen Min &lt;zmin@chromium.org&gt;
-&gt; Commit-Queue: Yann Dago &lt;ydago@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1011023}
-
-Bug: 223616
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5810c3bceca1e24d597b0a9f74e8524ce94ad1e7">I5810c3bceca1e24d597b0a9f74e8524ce94ad1e7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3698505">https://chromium-review.googlesource.com/c/chromium/src/+/3698505</a>
-Owners-Override: Nidhi Jaju &lt;nidhijaju@chromium.org&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: Nidhi Jaju &lt;nidhijaju@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1012840}
+Bug: 1312974
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If636bc5049e1366c33cc9cba677b6fca266e73a6">If636bc5049e1366c33cc9cba677b6fca266e73a6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3695324">https://chromium-review.googlesource.com/c/chromium/src/+/3695324</a>
+Reviewed-by: Ryan Sturm &lt;ryansturm@chromium.org&gt;
+Commit-Queue: Colin Blundell &lt;blundell@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1012841}
 </pre>
 
 </body>
