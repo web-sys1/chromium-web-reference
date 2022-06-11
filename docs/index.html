@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1013189/"> 1013189</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c01dde7d627fa17fd58e3a6025b34c506c710775">c01dde7d627fa17fd58e3a6025b34c506c710775</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1013207/"> 1013207</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/006ebd021d167305efa723f2e9a3b4dfce28ae50">006ebd021d167305efa723f2e9a3b4dfce28ae50</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1013161/">1013161</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/58739002c8dbced0683523c9a6306e523a489215">58739002c8dbced0683523c9a6306e523a489215</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1013203/">1013203</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3e5c589a0a562f655182c1453b773df4eb6d1a82">3e5c589a0a562f655182c1453b773df4eb6d1a82</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c01dde7d627fa17fd58e3a6025b34c506c710775
+   006ebd021d167305efa723f2e9a3b4dfce28ae50
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c01dde7d627fa17fd58e3a6025b34c506c710775">
+    <a href="/chromium/src/+log/006ebd021d167305efa723f2e9a3b4dfce28ae50">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c01dde7d627fa17fd58e3a6025b34c506c710775.tar.gz">
+    <a href="/chromium/src/+archive/006ebd021d167305efa723f2e9a3b4dfce28ae50.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Bienvenu &lt;davidbienvenu@chromium.org&gt;
+   Chris Lu &lt;thegreenfrog@chromium.org&gt;
   </td>
   <td>
-   Fri Jun 10 23:41:51 2022
+   Sat Jun 11 01:31:26 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jun 10 23:41:51 2022
+   Sat Jun 11 01:31:26 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c01dde7d627fa17fd58e3a6025b34c506c710775/">
-    22426bacb33b32ac4a6300a076a9972943f4f672
+   <a href="/chromium/src/+/006ebd021d167305efa723f2e9a3b4dfce28ae50/">
+    1d38aa00beb504dbe9e9d8dd061fe454fb39453a
    </a>
   </td>
  </tr>
@@ -166,31 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c01dde7d627fa17fd58e3a6025b34c506c710775%5E">
-    1f12737e52574302e4e3439214a998a58900ee9e
+   <a href="/chromium/src/+/006ebd021d167305efa723f2e9a3b4dfce28ae50%5E">
+    558835abed6bf193d7e6ba9bb890eb0a314aa49b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c01dde7d627fa17fd58e3a6025b34c506c710775%5E%21/">
+    <a href="/chromium/src/+/006ebd021d167305efa723f2e9a3b4dfce28ae50%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">win: Fix touch mode detection DCHECK in canary
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ios] Fix Most Visited Tiles bugs
 
-Remove the DCHECK that the ConvertibleSlateMode key exists. If it does
-exist, and is set to 1 (physical keyboard available), then we're not
-in touch mode. If the key doesn't exist, or is set to the default (0),
-use IsDeviceUsedAsATablet() to determine if we're in touch mode.
+This change fixes two things. One, if a user removes the last MVTile,
+the entire Most Visited Tiles StackView must be removed. Otherwise, it
+will take up vertical space and push out the Shortcuts. Second,
+reloadAllData always re-initializes |parentItem| and that therefore
+creates a mismatch between the referenced parentItem passed to
+ContentSuggestionsFaviconMediator's API and the latest object. This is
+a problem since reloadAllData is called right after calling
+fetchFaviconForMostVisited:parentItem: Thus,
+ContentSuggestionsFaviconMediator's calls to the ViewController
+to update |parentItem| will do nothing because of that mismatch.
 
-Bug: 1330848
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic2d02979c4eb2d318fcc08b37a56163bb7cce55b">Ic2d02979c4eb2d318fcc08b37a56163bb7cce55b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3696127">https://chromium-review.googlesource.com/c/chromium/src/+/3696127</a>
-Commit-Queue: David Bienvenu &lt;davidbienvenu@chromium.org&gt;
-Reviewed-by: Jesse McKenna &lt;jessemckenna@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1013189}
+Bug: 1316991, 1335085
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I62a3015ce0ef6ea81b3e55a587f42232a44a7eba">I62a3015ce0ef6ea81b3e55a587f42232a44a7eba</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3698550">https://chromium-review.googlesource.com/c/chromium/src/+/3698550</a>
+Reviewed-by: Sebastien Seguin-Gagnon &lt;sebsg@chromium.org&gt;
+Commit-Queue: Chris Lu &lt;thegreenfrog@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1013207}
 </pre>
 
 </body>
