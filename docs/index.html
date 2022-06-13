@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1013427/"> 1013427</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2db62d41afdc56c6b8e20bcc6ed502d8d422a968">2db62d41afdc56c6b8e20bcc6ed502d8d422a968</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1013435/"> 1013435</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bae6efcbab9ddbb6902aa932531625f64b3bfdee">bae6efcbab9ddbb6902aa932531625f64b3bfdee</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1013422/">1013422</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2db62d41afdc56c6b8e20bcc6ed502d8d422a968
+   bae6efcbab9ddbb6902aa932531625f64b3bfdee
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2db62d41afdc56c6b8e20bcc6ed502d8d422a968">
+    <a href="/chromium/src/+log/bae6efcbab9ddbb6902aa932531625f64b3bfdee">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2db62d41afdc56c6b8e20bcc6ed502d8d422a968.tar.gz">
+    <a href="/chromium/src/+archive/bae6efcbab9ddbb6902aa932531625f64b3bfdee.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Petro Akzhygitov &lt;pakzhygitov@google.com&gt;
+   Oleh Lamzin &lt;lamzin@google.com&gt;
   </td>
   <td>
-   Mon Jun 13 12:27:43 2022
+   Mon Jun 13 12:54:30 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jun 13 12:27:43 2022
+   Mon Jun 13 12:54:30 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2db62d41afdc56c6b8e20bcc6ed502d8d422a968/">
-    a8be142aae9601c04060f140679de14ec3f2a1a0
+   <a href="/chromium/src/+/bae6efcbab9ddbb6902aa932531625f64b3bfdee/">
+    ec4033f599613ba80593ec1da551b98a95f00d19
    </a>
   </td>
  </tr>
@@ -166,30 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2db62d41afdc56c6b8e20bcc6ed502d8d422a968%5E">
-    77d1fb18dcbd800b9b04ce72ebc024a1496d1300
+   <a href="/chromium/src/+/bae6efcbab9ddbb6902aa932531625f64b3bfdee%5E">
+    ec5fc2d275a2516442347149c4ee0cbd651220be
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2db62d41afdc56c6b8e20bcc6ed502d8d422a968%5E%21/">
+    <a href="/chromium/src/+/bae6efcbab9ddbb6902aa932531625f64b3bfdee%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove NTP feature flag
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Telemetry] Dont use base::SysInfo
 
-– Removed NTP feature flag
-– Removed obsolete code behind the feature flag
+Chrome changed implementation of base::SysInfo::GetHardwareInfo and now
+it always returns "Google" as manufacturer name. This break API guard in
+Telemetry Extension which makes a decision whether API can be called
+based on that function.
 
-Bug: 1335370, 1329099
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia4030033f2bfdc803a3625082ac5a46ea827cd95">Ia4030033f2bfdc803a3625082ac5a46ea827cd95</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3697529">https://chromium-review.googlesource.com/c/chromium/src/+/3697529</a>
-Reviewed-by: Chris Lu &lt;thegreenfrog@chromium.org&gt;
-Commit-Queue: Petro Akzhygitov &lt;pakzhygitov@google.com&gt;
-Reviewed-by: Mark Cogan &lt;marq@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1013427}
+Culprit CL: crrev.com/c/3653791.
+
+Copy part of SysInfo::GetHardwareInfoSync() implementation from
+base/system/sys_info_linux.cc to the HardwareInfoDelegate.
+
+Bug: b:235584085
+Test: run Tast tests: tast run &lt;IP&gt; telemetryextension.*
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3226f5bad262fa1fd3af7007ebce56cc747b7073">I3226f5bad262fa1fd3af7007ebce56cc747b7073</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3700156">https://chromium-review.googlesource.com/c/chromium/src/+/3700156</a>
+Commit-Queue: Oleh Lamzin &lt;lamzin@google.com&gt;
+Reviewed-by: Victor-Gabriel Savu &lt;vsavu@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1013435}
 </pre>
 
 </body>
