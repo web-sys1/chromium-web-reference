@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1014653/"> 1014653</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/218c7ce0b41f9d2bbe48ce0bf71cf7498e2a68e1">218c7ce0b41f9d2bbe48ce0bf71cf7498e2a68e1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1014687/"> 1014687</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4c1bde1fd5938c76078d552fa76aa8d9e4988bf7">4c1bde1fd5938c76078d552fa76aa8d9e4988bf7</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1014618/">1014618</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/84ae86500c35381a13e7a6bce14b4f2a419c6470">84ae86500c35381a13e7a6bce14b4f2a419c6470</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1014664/">1014664</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cf979701a750986b354ab94ca255c07f856ab9cd">cf979701a750986b354ab94ca255c07f856ab9cd</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   218c7ce0b41f9d2bbe48ce0bf71cf7498e2a68e1
+   4c1bde1fd5938c76078d552fa76aa8d9e4988bf7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/218c7ce0b41f9d2bbe48ce0bf71cf7498e2a68e1">
+    <a href="/chromium/src/+log/4c1bde1fd5938c76078d552fa76aa8d9e4988bf7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/218c7ce0b41f9d2bbe48ce0bf71cf7498e2a68e1.tar.gz">
+    <a href="/chromium/src/+archive/4c1bde1fd5938c76078d552fa76aa8d9e4988bf7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ender &lt;ender@google.com&gt;
+   Saifuddin Hitawala &lt;hitawala@chromium.org&gt;
   </td>
   <td>
-   Wed Jun 15 21:40:18 2022
+   Wed Jun 15 22:54:16 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jun 15 21:40:18 2022
+   Wed Jun 15 22:54:16 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/218c7ce0b41f9d2bbe48ce0bf71cf7498e2a68e1/">
-    5e349fd0e5aa5c25ea91f942a10ae248ee1a9679
+   <a href="/chromium/src/+/4c1bde1fd5938c76078d552fa76aa8d9e4988bf7/">
+    f7965a553b8635614511f655fe61152d202e7286
    </a>
   </td>
  </tr>
@@ -166,39 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/218c7ce0b41f9d2bbe48ce0bf71cf7498e2a68e1%5E">
-    76ae4ab16d07b5f45efd78e0555e75ffb92f9d48
+   <a href="/chromium/src/+/4c1bde1fd5938c76078d552fa76aa8d9e4988bf7%5E">
+    260f183504ce7555aa7b8d17841980ae1c29294c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/218c7ce0b41f9d2bbe48ce0bf71cf7498e2a68e1%5E%21/">
+    <a href="/chromium/src/+/4c1bde1fd5938c76078d552fa76aa8d9e4988bf7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[MV][RQ] Extract and improve mechanism fetching favicons.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">OzoneBacking - gpu workaround for ARM Mali on ChromeOS
 
-This change extracts the mechanism that retrieves favicons to a
-separate component that is now shared between all Suggestion
-elements. The component caches information what kind of icon is
-available for any URL (but not the icon itself) for the duration of
-the Omnibox interaction.
+ChromeOS kevin board uses ARM Mali gpu drivers. When using it for
+producing GLTextures with passthrough command decoder,
+SharedImageRepresentationGLOzone is created which in turn creates a
+GLImage for each representation. These images use the same internal
+NativePixmap for binding to the texture but the driver confuses between
+these images/textures and doesn't call the GL commands in expected
+order which causes some WebGL2 conformance tests to fail
+(<a href="https://crbug.com/1327044">https://crbug.com/1327044</a>)
 
-The component introduces multi-step backoff in order to make an
-attempt to retrieve lower quality favicon if better quality favicon
-is not available, and allows the caller to fall back to using
-generated icon if that is desired.
+This CL adds a workaround for these drivers on ChromeOS where we wait
+on the write fence on the same GL context that allows for the associated
+GL operations to be completed on a texture before doing them on the
+next texture.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1bee36f2a8557018ea7d253dccf39038d69ed513">I1bee36f2a8557018ea7d253dccf39038d69ed513</a>
-Fixed: 1284722
-Fixed: 1335507
-Bug: 1317829
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3704893">https://chromium-review.googlesource.com/c/chromium/src/+/3704893</a>
-Reviewed-by: Patrick Noland &lt;pnoland@chromium.org&gt;
-Commit-Queue: Tomasz Wiszkowski &lt;ender@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1014653}
+Test: Tested on ChromeOS kevin board using crosfleet running WebGL2 conformance tests
+Bug: 1327044, 1241537
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8797670228436fe7ed58d20223b3496cb5bb6437">I8797670228436fe7ed58d20223b3496cb5bb6437</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3702939">https://chromium-review.googlesource.com/c/chromium/src/+/3702939</a>
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Commit-Queue: Saifuddin Hitawala &lt;hitawala@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1014687}
 </pre>
 
 </body>
