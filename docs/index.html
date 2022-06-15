@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1014176/"> 1014176</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3cca03fa58f060992734dc84f39616208a5cd984">3cca03fa58f060992734dc84f39616208a5cd984</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1014202/"> 1014202</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b66dd7d9a7da827099b0857014fd3a5831147c09">b66dd7d9a7da827099b0857014fd3a5831147c09</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1014163/">1014163</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/090f9e3701d4281c0ce9508459ce7c4d15f0539d">090f9e3701d4281c0ce9508459ce7c4d15f0539d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1014191/">1014191</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b7d01a4809e612ce562e565a9b786afbb605c8f8">b7d01a4809e612ce562e565a9b786afbb605c8f8</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3cca03fa58f060992734dc84f39616208a5cd984
+   b66dd7d9a7da827099b0857014fd3a5831147c09
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3cca03fa58f060992734dc84f39616208a5cd984">
+    <a href="/chromium/src/+log/b66dd7d9a7da827099b0857014fd3a5831147c09">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3cca03fa58f060992734dc84f39616208a5cd984.tar.gz">
+    <a href="/chromium/src/+archive/b66dd7d9a7da827099b0857014fd3a5831147c09.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Samuel Huang &lt;huangs@chromium.org&gt;
+   David Dorwin &lt;ddorwin@chromium.org&gt;
   </td>
   <td>
-   Tue Jun 14 22:27:28 2022
+   Tue Jun 14 23:34:56 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jun 14 22:27:28 2022
+   Tue Jun 14 23:34:56 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3cca03fa58f060992734dc84f39616208a5cd984/">
-    0d20372a5489cc73921442c68572bbacbeac0cc1
+   <a href="/chromium/src/+/b66dd7d9a7da827099b0857014fd3a5831147c09/">
+    655040aff480ab20763580373aa3521056ba225b
    </a>
   </td>
  </tr>
@@ -166,67 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3cca03fa58f060992734dc84f39616208a5cd984%5E">
-    e41bbd386caf10702749a3e5a0729d7c0606fa71
+   <a href="/chromium/src/+/b66dd7d9a7da827099b0857014fd3a5831147c09%5E">
+    ff3376063acfc71f3a18d66e4278601af7fb50b9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3cca03fa58f060992734dc84f39616208a5cd984%5E%21/">
+    <a href="/chromium/src/+/b66dd7d9a7da827099b0857014fd3a5831147c09%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Test Scripts] Save raw logs for JUnit local machine runs.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[fuchsia] Remove fuchsia/engine/web_instance_host/DEPS
 
-Previously JUnit running on local machine uses
+This file was replaced in <a href="https://crrev.com/c/3628363">https://crrev.com/c/3628363</a> and should have
+been deleted there.
 
-  -Drobolectric.logging=stdout
-
-(if -v) to control the presence of logcat at Robolectric level.
-
-We'd like to save logcat output in TEST_RESULTS_* directories:
-* This should happen regardless of whether -v is specified.
-* "Non-verbose" (no -v) console output should continue to omit logcat
-  lines.
-
-This CL implements the feature via the following:
-* Make Robolectric emit logcat output always.
-* Make test script save these to
-
-  TEST_RESULTS_*/raw_logs/raw_logs.txt
-
-  for local machine runs.
-* If non-verbose, heuristically filter (detect and omit) logcat lines
-  from console output.
-
-Details:
-* TestRun.RunTests(): Add optional |raw_logs_fh| param.
-  * Update LocalDeviceTestRun.RunTests() (param unused).
-* LocalMachineJunitTestRun:
-  * RunTests(): Take serialized lines generated from
-    _RunCommandsAndSerializeOutput(), output to |raw_logs_fh| if
-    specified, then omit logcat lines if non-verbose.
-    * Using RegExp to heuristically detect logcat lines.
-    * Log (in Main) the number of omitted lines, if &gt; 0.
-* RunTestsInPlatformMode() (caller):
-  * For local machine runs: Create io.StringIO() and pass it as
-    |raw_logs_fh| to capture logs, then write to raw_logs.txt on
-    completion.
-  * Doing the above instead of writing to file directly (which might be
-    useful by leaving logs on early termination) for simplicity:
-    * As before, TEST_RESULTS_* is only created at the end.
-    * Current infra uses contextmanager heavily, and adapting this to
-      conditionally (on local machine runs) create raw_logs.txt would be
-      unwieldy.
-
-Bug: 1238447
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5ff0cead43258e95e2dc1350470e8524c35e24db">I5ff0cead43258e95e2dc1350470e8524c35e24db</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3704398">https://chromium-review.googlesource.com/c/chromium/src/+/3704398</a>
-Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
-Commit-Queue: Samuel Huang &lt;huangs@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1014176}
+Bug: 1081525
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2a7fac8366575a2620535366ff08e0f3d2c18087">I2a7fac8366575a2620535366ff08e0f3d2c18087</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3703542">https://chromium-review.googlesource.com/c/chromium/src/+/3703542</a>
+Commit-Queue: Sergey Ulanov &lt;sergeyu@chromium.org&gt;
+Auto-Submit: David Dorwin &lt;ddorwin@chromium.org&gt;
+Reviewed-by: Sergey Ulanov &lt;sergeyu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1014202}
 </pre>
 
 </body>
