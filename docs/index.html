@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1015989/"> 1015989</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bf0d07ff496086d4961cd7407e47bc18e9686e78">bf0d07ff496086d4961cd7407e47bc18e9686e78</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1016000/"> 1016000</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8eca6b4bce3879509262338ee3acf12acf671cb8">8eca6b4bce3879509262338ee3acf12acf671cb8</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1015987/">1015987</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   bf0d07ff496086d4961cd7407e47bc18e9686e78
+   8eca6b4bce3879509262338ee3acf12acf671cb8
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/bf0d07ff496086d4961cd7407e47bc18e9686e78">
+    <a href="/chromium/src/+log/8eca6b4bce3879509262338ee3acf12acf671cb8">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/bf0d07ff496086d4961cd7407e47bc18e9686e78.tar.gz">
+    <a href="/chromium/src/+archive/8eca6b4bce3879509262338ee3acf12acf671cb8.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andrew Grieve &lt;agrieve@chromium.org&gt;
+   Morten Stenshorne &lt;mstensho@chromium.org&gt;
   </td>
   <td>
-   Mon Jun 20 20:55:26 2022
+   Mon Jun 20 21:44:15 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jun 20 20:55:26 2022
+   Mon Jun 20 21:44:15 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/bf0d07ff496086d4961cd7407e47bc18e9686e78/">
-    f34c9e04877e963071b34550cfca7e802c1b8367
+   <a href="/chromium/src/+/8eca6b4bce3879509262338ee3acf12acf671cb8/">
+    2b630bde7261bbae07b430f4da2990dd4bba3740
    </a>
   </td>
  </tr>
@@ -166,32 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/bf0d07ff496086d4961cd7407e47bc18e9686e78%5E">
-    a3158e2ee58e1496c9c434efa622c045344943b5
+   <a href="/chromium/src/+/8eca6b4bce3879509262338ee3acf12acf671cb8%5E">
+    76ea29fbeb99ce164a6ae927e6d2bbed162fe168
    </a>
    <span>
     [
-    <a href="/chromium/src/+/bf0d07ff496086d4961cd7407e47bc18e9686e78%5E%21/">
+    <a href="/chromium/src/+/8eca6b4bce3879509262338ee3acf12acf671cb8%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">generate_gradle.py: Take compile_sdk_version and min_sdk_version from GN
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Properly handle floats leaving an inline formatting context.
 
-* Always use public compileSdkVersion to avoid issues with pre-release
-SDKs.
-* Use default minSdkVersion since we don't currently care about
-  per-target minSdkVersion
+Revert all code changes from CL:3613771 and replace with this. The bad
+CL just did SetIsInLayoutNGInlineFormattingContext(false), which would
+leave fragment items behind pointing to layout objects. When such a
+layout object would later on be deleted, the fragment items wouldn't be
+notified, since IsInLayoutNGInlineFormattingContext was false.
 
-Bug: 1335494
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I951dd64d156cc9d1729b749fddf5a192b56f8e98">I951dd64d156cc9d1729b749fddf5a192b56f8e98</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3715252">https://chromium-review.googlesource.com/c/chromium/src/+/3715252</a>
-Auto-Submit: Andrew Grieve &lt;agrieve@chromium.org&gt;
-Reviewed-by: Peter Wen &lt;wnwen@chromium.org&gt;
-Commit-Queue: Peter Wen &lt;wnwen@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1015989}
+Notify the fragment items that layout object becoming in-flow
+non-floated will be "moved", to properly clear the association. There
+was already code for this when going out-of-flow, but we also need this
+when becoming in-flow non-floated.
+
+Bug: 1331189
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I888d81495627952b75ec33a83edce165f6a3ad01">I888d81495627952b75ec33a83edce165f6a3ad01</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3714111">https://chromium-review.googlesource.com/c/chromium/src/+/3714111</a>
+Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
+Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1016000}
 </pre>
 
 </body>
