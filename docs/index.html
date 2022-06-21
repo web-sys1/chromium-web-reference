@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1016137/"> 1016137</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f2585f150394d379cf7f84882d0ddb1f957cbdf1">f2585f150394d379cf7f84882d0ddb1f957cbdf1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1016134/"> 1016134</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/52e04747e8a4c676ee8e95ce06622b1fc1dcdac9">52e04747e8a4c676ee8e95ce06622b1fc1dcdac9</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1016126/">1016126</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9f056ad213f169882484e505ea6da5023c5d6063">9f056ad213f169882484e505ea6da5023c5d6063</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1016138/">1016138</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0b503309979d2f759f33f9804a1fc5ee848e345c">0b503309979d2f759f33f9804a1fc5ee848e345c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f2585f150394d379cf7f84882d0ddb1f957cbdf1
+   52e04747e8a4c676ee8e95ce06622b1fc1dcdac9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f2585f150394d379cf7f84882d0ddb1f957cbdf1">
+    <a href="/chromium/src/+log/52e04747e8a4c676ee8e95ce06622b1fc1dcdac9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f2585f150394d379cf7f84882d0ddb1f957cbdf1.tar.gz">
+    <a href="/chromium/src/+archive/52e04747e8a4c676ee8e95ce06622b1fc1dcdac9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andrzej Ostruszka &lt;andrzejo@google.com&gt;
+   Abhijith Nair &lt;abhijithnair@chromium.org&gt;
   </td>
   <td>
-   Tue Jun 21 12:25:26 2022
+   Tue Jun 21 11:54:48 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jun 21 12:25:26 2022
+   Tue Jun 21 11:54:48 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f2585f150394d379cf7f84882d0ddb1f957cbdf1/">
-    c7ca1628c988495e32a2d2b6dc705cb301fef98f
+   <a href="/chromium/src/+/52e04747e8a4c676ee8e95ce06622b1fc1dcdac9/">
+    6e26fda7443c242c53ccf2405f1195ef0163569a
    </a>
   </td>
  </tr>
@@ -166,31 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f2585f150394d379cf7f84882d0ddb1f957cbdf1%5E">
-    1e323d038dd6f36c071000adb48de45e8d4889ea
+   <a href="/chromium/src/+/52e04747e8a4c676ee8e95ce06622b1fc1dcdac9%5E">
+    e29d66f7432b651676907f2d97395772253339cb
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f2585f150394d379cf7f84882d0ddb1f957cbdf1%5E%21/">
+    <a href="/chromium/src/+/52e04747e8a4c676ee8e95ce06622b1fc1dcdac9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add couple of FGSec related metrics
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Implement provideNamedData() and android.consumeNamedDataAsArrayBuffer()
 
-Add couple of metrics related to the Fine-grained Security Property
-feature.  For more information please check:
-- go/fgsec-prd
-- go/cros-wifi-finegrained-security
+provideNamedData(String name, byte[] bytes) can be called from Java and android.consumeNamedDataAsArrayBuffer(name) can be called from JS. android.consumeNamedDataAsArrayBuffer(name) returns a promise to the ArrayBuffer. The byte array is pushed into a socket pair and the other end is sent over IPC to the receiving process. During consumptions the fd is read and converted to an ArrayBuffer and the result promise is resolved.
+This would allow clients to pass in data without worrying about the
+Binder transaction limits. Once the ArrayBuffer is received, it can be
+used for WASM compilation.
+This CL also adds support for returning promises. evaluateJavascript() will wait for the returned promise to resolve and return the resolved value of the promise as a string.
 
-Bug: 226138492
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6d6895ef105438601e40649d5821dacbc52e9605">I6d6895ef105438601e40649d5821dacbc52e9605</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3634379">https://chromium-review.googlesource.com/c/chromium/src/+/3634379</a>
-Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
-Commit-Queue: Andrzej Ostruszka &lt;andrzejo@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1016137}
+Bug: 1337810, 1297672
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I98d861107f59739c1c3c6a94152d69086d61cce1">I98d861107f59739c1c3c6a94152d69086d61cce1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3689504">https://chromium-review.googlesource.com/c/chromium/src/+/3689504</a>
+Reviewed-by: Mike Pinkerton &lt;pinkerton@chromium.org&gt;
+Reviewed-by: Andreas Haas &lt;ahaas@chromium.org&gt;
+Reviewed-by: Matthew Denton &lt;mpdenton@chromium.org&gt;
+Reviewed-by: Michael Lippautz &lt;mlippautz@chromium.org&gt;
+Reviewed-by: Richard Coles &lt;torne@chromium.org&gt;
+Reviewed-by: Camillo Bruni &lt;cbruni@chromium.org&gt;
+Commit-Queue: Abhijith Nair &lt;abhijithnair@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1016134}
 </pre>
 
 </body>
