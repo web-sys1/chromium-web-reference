@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1017033/"> 1017033</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c5984519eb25f9406d9a0b9be4103911a924e067">c5984519eb25f9406d9a0b9be4103911a924e067</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1017039/"> 1017039</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b84e1b72aefa281e038ed1deb7c41fe28cb87e4c">b84e1b72aefa281e038ed1deb7c41fe28cb87e4c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1017023/">1017023</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c5984519eb25f9406d9a0b9be4103911a924e067
+   b84e1b72aefa281e038ed1deb7c41fe28cb87e4c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c5984519eb25f9406d9a0b9be4103911a924e067">
+    <a href="/chromium/src/+log/b84e1b72aefa281e038ed1deb7c41fe28cb87e4c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c5984519eb25f9406d9a0b9be4103911a924e067.tar.gz">
+    <a href="/chromium/src/+archive/b84e1b72aefa281e038ed1deb7c41fe28cb87e4c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Gyuyoung Kim &lt;gyuyoung@igalia.com&gt;
+   Andres Calderon Jaramillo &lt;andrescj@chromium.org&gt;
   </td>
   <td>
-   Thu Jun 23 05:25:59 2022
+   Thu Jun 23 06:06:48 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jun 23 05:25:59 2022
+   Thu Jun 23 06:06:48 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c5984519eb25f9406d9a0b9be4103911a924e067/">
-    065e65fe52e7bddfec7c733eeb123e8a11548f11
+   <a href="/chromium/src/+/b84e1b72aefa281e038ed1deb7c41fe28cb87e4c/">
+    63949606a24979216699dff1aa35a2707dc7cbe5
    </a>
   </td>
  </tr>
@@ -166,41 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c5984519eb25f9406d9a0b9be4103911a924e067%5E">
-    3c134b1fae8b59e9b96bb9ca367f44ed959d68d6
+   <a href="/chromium/src/+/b84e1b72aefa281e038ed1deb7c41fe28cb87e4c%5E">
+    a6cc0fdd1707eb86e8a98c6e5f28e20e851ef922
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c5984519eb25f9406d9a0b9be4103911a924e067%5E%21/">
+    <a href="/chromium/src/+/b84e1b72aefa281e038ed1deb7c41fe28cb87e4c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Call ShowContextMenu Mojo method directly on Android
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ozone: Allow specifying a color space for NativePixmap GL binding.
 
-Even though the javascript selectionchange event is not
-triggered before calling ShowContextMenu Mojo method after
-migrating FrameHostMsg_ContextMenu IPC message to ShowContextMenu
-Mojo method, WebLocalFrameImpl::ShowContextMenu has been calling
-ShowContextMenu Mojo method with slight delay via a post-task.
+This CL makes GLOzone::ImportNativePixmap() take a gfx::ColorSpace that
+is then set on the underlying GLImageNativePixmap.
 
-Besides, the deferred ShowContextMenu invocation has sometimes
-caused an issue that doesn't call ShowContextMenu via the post-task
-like when an app has a complicated layout.
+This is a follow-up to CL:3662321: in that CL, I didn't plumb the color
+space for the SharedImageBackingOzone path. This is important because as
+of CL:3700122, we use this backing on ash-chrome, and the video decoder
+must be able to tell the GL driver how to convert from YUV to RGB.
 
-So, this CL removes the workaround code that is not necessary.
-
-TEST: RenderViewImplContextMenuTest.AndroidContextMenuSelectionOrdering
-
-Bug: 1330679, 729488
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6a8daad7cc4a00aa3eed5e5b1063205ccd6bc134">I6a8daad7cc4a00aa3eed5e5b1063205ccd6bc134</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3702905">https://chromium-review.googlesource.com/c/chromium/src/+/3702905</a>
-Reviewed-by: Dave Tapuska &lt;dtapuska@chromium.org&gt;
-Reviewed-by: Richard Coles &lt;torne@chromium.org&gt;
-Commit-Queue: Gyuyoung Kim &lt;gyuyoung@igalia.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1017033}
+Bug: b:220336463
+Test: Played full-range video on drallion
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3606144cd911e5da7a2f71b04d4562088c66893e">I3606144cd911e5da7a2f71b04d4562088c66893e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3712266">https://chromium-review.googlesource.com/c/chromium/src/+/3712266</a>
+Commit-Queue: Andres Calderon Jaramillo &lt;andrescj@chromium.org&gt;
+Reviewed-by: Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
+Reviewed-by: Robert Kroeger &lt;rjkroege@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1017039}
 </pre>
 
 </body>
