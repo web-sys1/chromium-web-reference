@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1017420/"> 1017420</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/56c285b4d54feb81b1e421accfa2dced62c06952">56c285b4d54feb81b1e421accfa2dced62c06952</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1017464/"> 1017464</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb386b14ddca612ee11b7f02518e26f4e2c8ff16">fb386b14ddca612ee11b7f02518e26f4e2c8ff16</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1017399/">1017399</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ed6c589812d53e357fb91f940d3e104fffedd208">ed6c589812d53e357fb91f940d3e104fffedd208</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1017438/">1017438</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/672f8286494bc859b0ef8f187bbed1d200b3a68f">672f8286494bc859b0ef8f187bbed1d200b3a68f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   56c285b4d54feb81b1e421accfa2dced62c06952
+   fb386b14ddca612ee11b7f02518e26f4e2c8ff16
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/56c285b4d54feb81b1e421accfa2dced62c06952">
+    <a href="/chromium/src/+log/fb386b14ddca612ee11b7f02518e26f4e2c8ff16">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/56c285b4d54feb81b1e421accfa2dced62c06952.tar.gz">
+    <a href="/chromium/src/+archive/fb386b14ddca612ee11b7f02518e26f4e2c8ff16.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mohit Saini &lt;mohitms@google.com&gt;
+   Rouslan Solomakhin &lt;rouslan@chromium.org&gt;
   </td>
   <td>
-   Thu Jun 23 23:52:55 2022
+   Fri Jun 24 01:41:20 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jun 23 23:52:55 2022
+   Fri Jun 24 01:41:20 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/56c285b4d54feb81b1e421accfa2dced62c06952/">
-    985da1b383e7f1b8368279a83b9064cae52db10f
+   <a href="/chromium/src/+/fb386b14ddca612ee11b7f02518e26f4e2c8ff16/">
+    33ba4b99e39b87f603c7dd6986074ea2c9b3cea4
    </a>
   </td>
  </tr>
@@ -166,45 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/56c285b4d54feb81b1e421accfa2dced62c06952%5E">
-    f74116cbdf209c6e0b8b52afd924e086d39a2389
+   <a href="/chromium/src/+/fb386b14ddca612ee11b7f02518e26f4e2c8ff16%5E">
+    66f4832b00e181e8e2a3e6bf1ac9207381902a34
    </a>
    <span>
     [
-    <a href="/chromium/src/+/56c285b4d54feb81b1e421accfa2dced62c06952%5E%21/">
+    <a href="/chromium/src/+/fb386b14ddca612ee11b7f02518e26f4e2c8ff16%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix crash on startup in sdk build
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Web Payment] Add a flag for identity in can-make-payment event
 
-Before this change chrome was crashing on startup in sdk build because
-of a problem caused by <a href="https://crrev.com/c/3644805">https://crrev.com/c/3644805</a>
+Before this patch, accessing merchant and user identity fields in the
+"canmakepayment" event would print a deprecation message in dev tools.
 
-Crash error: "Tracing not initialized. Call
-              perfetto::Tracing::Initialize() first."
+This patch adds an enabled-by-default flag for passing the merchant and
+user identity fields in the "canmakepayment" event for a service worker
+and the IS_READY_TO_PAY intent for an Android payment app.
 
-The problem:
-TracingSamplerProfilerDataSource is being used in startup trace as well
-as main trace. In that CL we are calling `DataSourceProxy::Register(..)`
-in the constructor of TracingSamplerProfilerDataSource. Which is
-incorrect because the singleton instance of
-TracingSamplerProfilerDataSource is created during startup tracing even
-before perfetto::Tracing::Initialize() is called. Currently when startup
-steps are completed, `TracingSamplerProfiler::RegisterDataSource` is
-being called. That's where perfetto's `DataSourceProxy::Register(..)`
-should have been called. This CL fixes that.
+After this patch, Chrome's existing default behavior is not changed,
+but if chrome://flags/#identity-in-can-make-payment flag is disabled,
+then the "canmakepayment" event and the IS_READY_TO_PAY intent do not
+pass the merchant and user identity to the payment handler.
 
-Bug: b/234107169
+Blink-dev intent:
+<a href="https://groups.google.com/a/chromium.org/g/blink-dev/c/AM2bwKxXacQ/m/2V91nC9JHQAJ">https://groups.google.com/a/chromium.org/g/blink-dev/c/AM2bwKxXacQ/m/2V91nC9JHQAJ</a>
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0edc7454b2e3a03efbb4c455e1ffd7ab40c7a40a">I0edc7454b2e3a03efbb4c455e1ffd7ab40c7a40a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3714440">https://chromium-review.googlesource.com/c/chromium/src/+/3714440</a>
-Commit-Queue: Mohit Saini &lt;mohitms@google.com&gt;
-Auto-Submit: Mohit Saini &lt;mohitms@google.com&gt;
-Reviewed-by: Siddhartha S &lt;ssid@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1017420}
+Bug: 1317941, 1290492
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I676b567947267b439743b6ef5e1936f4f95cc319">I676b567947267b439743b6ef5e1936f4f95cc319</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3714562">https://chromium-review.googlesource.com/c/chromium/src/+/3714562</a>
+Commit-Queue: Rouslan Solomakhin &lt;rouslan@chromium.org&gt;
+Reviewed-by: John Abd-El-Malek &lt;jam@chromium.org&gt;
+Reviewed-by: Stephen McGruer &lt;smcgruer@chromium.org&gt;
+Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1017464}
 </pre>
 
 </body>
