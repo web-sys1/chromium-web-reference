@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1017971/"> 1017971</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7ab6622362a0af2b2360ccdd61bb84c2d471a8d2">7ab6622362a0af2b2360ccdd61bb84c2d471a8d2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1017969/"> 1017969</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/506b3fd01b7db0277e580ab66abb594183cb121e">506b3fd01b7db0277e580ab66abb594183cb121e</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1017964/">1017964</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7ab6622362a0af2b2360ccdd61bb84c2d471a8d2
+   506b3fd01b7db0277e580ab66abb594183cb121e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7ab6622362a0af2b2360ccdd61bb84c2d471a8d2">
+    <a href="/chromium/src/+log/506b3fd01b7db0277e580ab66abb594183cb121e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7ab6622362a0af2b2360ccdd61bb84c2d471a8d2.tar.gz">
+    <a href="/chromium/src/+archive/506b3fd01b7db0277e580ab66abb594183cb121e.tar.gz">
      tgz
     </a>
     ]
@@ -137,7 +137,7 @@ body{
    Chen-Yu Tsai &lt;wenst@chromium.org&gt;
   </td>
   <td>
-   Sat Jun 25 15:35:18 2022
+   Sat Jun 25 15:18:48 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Jun 25 15:35:18 2022
+   Sat Jun 25 15:18:48 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7ab6622362a0af2b2360ccdd61bb84c2d471a8d2/">
-    410c85f84e06c23a1271aa41544697cea4ae55bb
+   <a href="/chromium/src/+/506b3fd01b7db0277e580ab66abb594183cb121e/">
+    2249aadfd35c37f12c4570738fe5358f59c64520
    </a>
   </td>
  </tr>
@@ -166,31 +166,65 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7ab6622362a0af2b2360ccdd61bb84c2d471a8d2%5E">
-    a5fe02c4b2b01c043c23847b6ef17235dd218b42
+   <a href="/chromium/src/+/506b3fd01b7db0277e580ab66abb594183cb121e%5E">
+    7700eae915f2017006cd2509fb57e07a44befdac
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7ab6622362a0af2b2360ccdd61bb84c2d471a8d2%5E%21/">
+    <a href="/chromium/src/+/506b3fd01b7db0277e580ab66abb594183cb121e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media/gpu/v4l2/test: Fix Chromium style error for MmapedBuffer
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media/gpu/v4l2/test: Split upstream compatible and ChromeOS code
 
-Chromium style dictates that "Classes that are ref-counted should have
-destructors that are declared protected or private."
+Various parts of the V4L2 acceleration code conform to upstream
+specifications. However, there are some parts that are ChromeOS
+specific. These include support for pre-upstream, pre-finalized
+stateless decoders, and DMAbuf offsets used in the encoders.
 
-Make the destructor of MmapedBuffer private.
+For the new v4l2_stateless_decoder test program, VP9 is finalized
+and supported upstream, but AV1 is not.
+
+Split the v4l2_stateless_decoder code along the "upstream compatible"
+line, such that an upstream compatible test program can be built for
+standard Linux.
+
+Currently this involves either building natively with a sufficiently
+recent set of kernel headers, or unpacking the latest (5.17.x as of
+this writing) linux-libc-dev package into the sysroots by hand:
+
+    wget <a href="http://ftp.us.debian.org/debian/pool/main/l/linux/linux-libc-dev_5.18.5-1_amd64.deb">http://ftp.us.debian.org/debian/pool/main/l/linux/linux-libc-dev_5.18.5-1_amd64.deb</a>
+    dpkg-deb -X linux-libc-dev_5.18.5-1_amd64.deb build/linux/debian_bullseye_amd64-sysroot/
+    wget <a href="http://ftp.us.debian.org/debian/pool/main/l/linux/linux-libc-dev_5.18.5-1_arm64.deb">http://ftp.us.debian.org/debian/pool/main/l/linux/linux-libc-dev_5.18.5-1_arm64.deb</a>
+    dpkg-deb -X linux-libc-dev_5.18.5-1_arm64.deb build/linux/debian_bullseye_arm64-sysroot/
+    wget <a href="http://ftp.us.debian.org/debian/pool/main/l/linux/linux-libc-dev_5.18.5-1_armhf.deb">http://ftp.us.debian.org/debian/pool/main/l/linux/linux-libc-dev_5.18.5-1_armhf.deb</a>
+    dpkg-deb -X linux-libc-dev_5.18.5-1_armhf.deb build/linux/debian_bullseye_arm-sysroot/
+    wget <a href="http://ftp.us.debian.org/debian/pool/main/l/linux/linux-libc-dev_5.18.5-1_i386.deb">http://ftp.us.debian.org/debian/pool/main/l/linux/linux-libc-dev_5.18.5-1_i386.deb</a>
+    dpkg-deb -X linux-libc-dev_5.18.5-1_i386.deb build/linux/debian_bullseye_i386-sysroot/
+
+For arm64, the amd64 headers also need to be updated, as V8 snapshot is
+currently built for amd64, and for some reason the V4L2 stuff is built,
+even though it is not used. Same goes for armhf and i386.
+
+This allows building the v4l2_stateless_decoder test program for testing
+V4L2 stateless VP9 video decoding on standard Linux, which would allow
+partners and the broader ecosystem to test and compare Chromium V4L2
+decoder implementations against others, such as Gstreamer or FFmpeg.
+
+To test, build v4l2_stateless_decoder for arm64 linux with above header
+updates and the following GN args:
+
+    use_v4l2_codec=true proprietary_codecs=true ffmpeg_branding="Chrome"
 
 Bug: none
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic32f2b936d860265f098e9c8550d87166dcc6c33">Ic32f2b936d860265f098e9c8550d87166dcc6c33</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3721938">https://chromium-review.googlesource.com/c/chromium/src/+/3721938</a>
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic173b249635ad9ea219645df1d61e1044f92d943">Ic173b249635ad9ea219645df1d61e1044f92d943</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3721937">https://chromium-review.googlesource.com/c/chromium/src/+/3721937</a>
 Commit-Queue: Chen-Yu Tsai &lt;wenst@chromium.org&gt;
 Reviewed-by: Miguel Casas-Sanchez &lt;mcasas@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1017971}
+Cr-Commit-Position: refs/heads/main@{#1017969}
 </pre>
 
 </body>
