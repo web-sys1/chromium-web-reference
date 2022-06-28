@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1018661/"> 1018661</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b7a7043d1111791d55bdb60fc4cc5ce0a7587332">b7a7043d1111791d55bdb60fc4cc5ce0a7587332</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1018681/"> 1018681</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/278a47fea273a43dae75902d5c30a8979c542374">278a47fea273a43dae75902d5c30a8979c542374</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1018655/">1018655</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b7a7043d1111791d55bdb60fc4cc5ce0a7587332
+   278a47fea273a43dae75902d5c30a8979c542374
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b7a7043d1111791d55bdb60fc4cc5ce0a7587332">
+    <a href="/chromium/src/+log/278a47fea273a43dae75902d5c30a8979c542374">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b7a7043d1111791d55bdb60fc4cc5ce0a7587332.tar.gz">
+    <a href="/chromium/src/+archive/278a47fea273a43dae75902d5c30a8979c542374.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Bartek Nowierski &lt;bartekn@chromium.org&gt;
+   dljames &lt;dljames@google.com&gt;
   </td>
   <td>
-   Tue Jun 28 13:46:24 2022
+   Tue Jun 28 14:57:48 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jun 28 13:46:24 2022
+   Tue Jun 28 14:57:48 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b7a7043d1111791d55bdb60fc4cc5ce0a7587332/">
-    3f6381f241057382ab925926a917de93ec1ce679
+   <a href="/chromium/src/+/278a47fea273a43dae75902d5c30a8979c542374/">
+    0696057c7d6476fcc0ff2dcfebfcdc110881e2f5
    </a>
   </td>
  </tr>
@@ -166,32 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b7a7043d1111791d55bdb60fc4cc5ce0a7587332%5E">
-    b3cb8b9d6f1f4fa962cfb1b361af59e50f14483e
+   <a href="/chromium/src/+/278a47fea273a43dae75902d5c30a8979c542374%5E">
+    e280da259cb24ffc9ec04aedda6f3d2adb0f1f72
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b7a7043d1111791d55bdb60fc4cc5ce0a7587332%5E%21/">
+    <a href="/chromium/src/+/278a47fea273a43dae75902d5c30a8979c542374%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PA] Add tasak@ to PartitionAlloc OWNERS
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fixed crash in OpenSavedTabGroupHelper.
 
-tasak@ has been an active developer of PA for 2 years now.
+Previously we use a std::move operation with in the function calls (OpenSavedTabGroup and OpenSavedTabGroupHelper to preserve the lifetime of the saved tab group being passed. This was not a good idea as sometimes when attempting to reopen saved groups using the buttons, the reference would be lost.
 
-While at it, improve inclusion of PA-related shim files, so that all PA
-owners automatically own these too.
+Accordingly, we check if the saved group is not null before we do any operations with it, in addition to checking if we are able to obtain a keyed service for saved tab groups to further ensure we are safe to query the id of our saved group.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idf11e70bf95dfc3bd8b58d51ebc821091e224ee1">Idf11e70bf95dfc3bd8b58d51ebc821091e224ee1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3731471">https://chromium-review.googlesource.com/c/chromium/src/+/3731471</a>
-Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Commit-Queue: Bartek Nowierski &lt;bartekn@chromium.org&gt;
-Reviewed-by: Will Harris &lt;wfh@chromium.org&gt;
-Reviewed-by: Benoit Lize &lt;lizeb@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1018661}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I684ef1d0567b602da5678dec878ee810bfc1ab95">I684ef1d0567b602da5678dec878ee810bfc1ab95</a>
+Bug: 1337098
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3710987">https://chromium-review.googlesource.com/c/chromium/src/+/3710987</a>
+Reviewed-by: David Pennington &lt;dpenning@chromium.org&gt;
+Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+Commit-Queue: Darryl James &lt;dljames@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1018681}
 </pre>
 
 </body>
