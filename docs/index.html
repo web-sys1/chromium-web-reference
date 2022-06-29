@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1018975/"> 1018975</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/01bb8b27bbd542f0373fd6285dc5504c9a3fef9c">01bb8b27bbd542f0373fd6285dc5504c9a3fef9c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1018980/"> 1018980</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/adfbb5a9a3536b178dc32d812e613d1c6d72e1cc">adfbb5a9a3536b178dc32d812e613d1c6d72e1cc</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1018973/">1018973</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   01bb8b27bbd542f0373fd6285dc5504c9a3fef9c
+   adfbb5a9a3536b178dc32d812e613d1c6d72e1cc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/01bb8b27bbd542f0373fd6285dc5504c9a3fef9c">
+    <a href="/chromium/src/+log/adfbb5a9a3536b178dc32d812e613d1c6d72e1cc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/01bb8b27bbd542f0373fd6285dc5504c9a3fef9c.tar.gz">
+    <a href="/chromium/src/+archive/adfbb5a9a3536b178dc32d812e613d1c6d72e1cc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Zoraiz Naeem &lt;zoraiznaeem@chromium.org&gt;
+   Lei Zhang &lt;thestig@chromium.org&gt;
   </td>
   <td>
-   Wed Jun 29 04:56:59 2022
+   Wed Jun 29 05:48:29 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jun 29 04:56:59 2022
+   Wed Jun 29 05:48:29 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/01bb8b27bbd542f0373fd6285dc5504c9a3fef9c/">
-    b9a5c617472258f2389dcf2bcfc1983ebe72a6c1
+   <a href="/chromium/src/+/adfbb5a9a3536b178dc32d812e613d1c6d72e1cc/">
+    d1a7e3321a69c0257cb177cfa66325aec96f4d46
    </a>
   </td>
  </tr>
@@ -166,28 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/01bb8b27bbd542f0373fd6285dc5504c9a3fef9c%5E">
-    d89a4219250e8583da6927d17367a236ac419b57
+   <a href="/chromium/src/+/adfbb5a9a3536b178dc32d812e613d1c6d72e1cc%5E">
+    8cd8f6b2d6903721d3c74ba8d9fef4b1407761e2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/01bb8b27bbd542f0373fd6285dc5504c9a3fef9c%5E%21/">
+    <a href="/chromium/src/+/adfbb5a9a3536b178dc32d812e613d1c6d72e1cc%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add rounded corners to display using the existing API to apply rounded corners
-to the layers.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Always check OOP print feature when calling RegisterSystemPrintClient().
 
-Bug: 1262970
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia9ff2043ede1ba250c2a17d6b0262cdd3f7c8560">Ia9ff2043ede1ba250c2a17d6b0262cdd3f7c8560</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3693037">https://chromium-review.googlesource.com/c/chromium/src/+/3693037</a>
-Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Reviewed-by: Sean Kau &lt;skau@chromium.org&gt;
-Commit-Queue: Zoraiz Naeem &lt;zoraiznaeem@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1018975}
+As is, <a href="https://crrev.com/1002819">https://crrev.com/1002819</a> is incomplete and missed this check for
+RegisterSystemPrintClient() in the system print dialog code path. This
+puts the browser process in a bad state, and the system print dialog no
+longer works correctly.
+
+Fix this by consistently checking the OOP print feature before calling
+RegisterSystemPrintClient(). Add DCHECKs to RegisterSystemPrintClient()
+and UnregisterSystemPrintClient() to sanity check that they are being
+called only when appropriate.
+
+Bug: 1340119
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib68363525986c47adfc5d8a98b51d2245265549f">Ib68363525986c47adfc5d8a98b51d2245265549f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3733413">https://chromium-review.googlesource.com/c/chromium/src/+/3733413</a>
+Reviewed-by: Rebekah Potter &lt;rbpotter@chromium.org&gt;
+Commit-Queue: Lei Zhang &lt;thestig@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1018980}
 </pre>
 
 </body>
