@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1019517/"> 1019517</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f535e90f1d695ee9193cf523b881197bd762bd6e">f535e90f1d695ee9193cf523b881197bd762bd6e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1019527/"> 1019527</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5618f52ee62defcaa19974cdd7dd6a57cd4762f5">5618f52ee62defcaa19974cdd7dd6a57cd4762f5</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1019503/">1019503</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f535e90f1d695ee9193cf523b881197bd762bd6e
+   5618f52ee62defcaa19974cdd7dd6a57cd4762f5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f535e90f1d695ee9193cf523b881197bd762bd6e">
+    <a href="/chromium/src/+log/5618f52ee62defcaa19974cdd7dd6a57cd4762f5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f535e90f1d695ee9193cf523b881197bd762bd6e.tar.gz">
+    <a href="/chromium/src/+archive/5618f52ee62defcaa19974cdd7dd6a57cd4762f5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Sergey Poromov &lt;poromov@chromium.org&gt;
   </td>
   <td>
-   Thu Jun 30 08:36:15 2022
+   Thu Jun 30 09:22:15 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jun 30 08:36:15 2022
+   Thu Jun 30 09:22:15 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f535e90f1d695ee9193cf523b881197bd762bd6e/">
-    c9d8efc8ebbea62ca7da7b717801774ecdc94ba7
+   <a href="/chromium/src/+/5618f52ee62defcaa19974cdd7dd6a57cd4762f5/">
+    ff4c7787a866641479648d503759d25b40429e76
    </a>
   </td>
  </tr>
@@ -166,43 +166,59 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f535e90f1d695ee9193cf523b881197bd762bd6e%5E">
-    ea82f4cd0d731196e98a57e421b10f6367c6c5d4
+   <a href="/chromium/src/+/5618f52ee62defcaa19974cdd7dd6a57cd4762f5%5E">
+    1ba38f1c6f84c47daf2debb06073ed110502bb5d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f535e90f1d695ee9193cf523b881197bd762bd6e%5E%21/">
+    <a href="/chromium/src/+/5618f52ee62defcaa19974cdd7dd6a57cd4762f5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update V8 to version 10.5.106.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "emoji-picker: centralize data loading processes"
 
-Summary of changes available at:
-<a href="https://chromium.googlesource.com/v8/v8/+log/3ebb03b7..5fa8905a">https://chromium.googlesource.com/v8/v8/+log/3ebb03b7..5fa8905a</a>
+This reverts commit 7d0f99bfd4ab9fe9d959ad207bb617805f6edae5.
 
-Please follow these instructions for assigning/CC'ing issues:
-<a href="https://v8.dev/docs/triage-issues">https://v8.dev/docs/triage-issues</a>
+Reason for revert: EmojiPickerMainTest.All is failing on linux-chromeos-chrome, e.g:
+<a href="https://ci.chromium.org/ui/p/chrome/builders/ci/linux-chromeos-chrome/22654/overview">https://ci.chromium.org/ui/p/chrome/builders/ci/linux-chromeos-chrome/22654/overview</a>
 
-Please close rolling in case of a roll revert:
-<a href="https://v8-roll.appspot.com/">https://v8-roll.appspot.com/</a>
-This only works with a Google account.
+Original change's description:
+&gt; emoji-picker: centralize data loading processes
+&gt;
+&gt; Data loading processes are organized through creating a DAG of promises.
+&gt; The following improvements are implemented:
+&gt;
+&gt; * A config function is created allowing to remove independent
+&gt;   configuration variables such as data file addresses. Also helping to
+&gt;   mock such configs in the tests.
+&gt; * A new function that creates a DAG of promises for fetching and
+&gt;   rendering all the UI. The process for creating the DAG is more generic
+&gt;   allowing addition of new data categories without extra effort. By this
+&gt;   implementation, async calls and callbacks are removed from different
+&gt;   parts of the code.
+&gt; * Relevant events are updated based on the implementation. Unused events
+&gt;   are removed.
+&gt;
+&gt; Fixed: b:233269582
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifdc7450e2141318a3f36cd9543d39fb89a312a09">Ifdc7450e2141318a3f36cd9543d39fb89a312a09</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3709386">https://chromium-review.googlesource.com/c/chromium/src/+/3709386</a>
+&gt; Commit-Queue: Mehrab N &lt;mehrab@chromium.org&gt;
+&gt; Reviewed-by: John Palmer &lt;jopalmer@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1019374}
 
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:linux-blink-rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:linux_optional_gpu_tests_rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:mac_optional_gpu_tests_rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:win_optional_gpu_tests_rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:android_optional_gpu_tests_rel
-
-R=hablich@chromium.org,vahl@chromium.org,v8-waterfall-sheriff@grotations.appspotmail.com
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1aa11cdad51ccde5d629a96f142bdcaf514d902a">I1aa11cdad51ccde5d629a96f142bdcaf514d902a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3735358">https://chromium-review.googlesource.com/c/chromium/src/+/3735358</a>
-Bot-Commit: v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
-Commit-Queue: v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1019517}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4ea25c379b34dc90df80c54df973a751c77b8349">I4ea25c379b34dc90df80c54df973a751c77b8349</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3735289">https://chromium-review.googlesource.com/c/chromium/src/+/3735289</a>
+Owners-Override: Sergey Poromov &lt;poromov@chromium.org&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Auto-Submit: Sergey Poromov &lt;poromov@chromium.org&gt;
+Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1019527}
 </pre>
 
 </body>
