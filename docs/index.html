@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1021224/"> 1021224</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e4760c76e16d620a885c4650e5c761f20cc10e30">e4760c76e16d620a885c4650e5c761f20cc10e30</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1021260/"> 1021260</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b2a4a92dd281160f05f9497fa0b3d86070752424">b2a4a92dd281160f05f9497fa0b3d86070752424</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1021221/">1021221</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e4760c76e16d620a885c4650e5c761f20cc10e30
+   b2a4a92dd281160f05f9497fa0b3d86070752424
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e4760c76e16d620a885c4650e5c761f20cc10e30">
+    <a href="/chromium/src/+log/b2a4a92dd281160f05f9497fa0b3d86070752424">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e4760c76e16d620a885c4650e5c761f20cc10e30.tar.gz">
+    <a href="/chromium/src/+archive/b2a4a92dd281160f05f9497fa0b3d86070752424.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Lukasz Anforowicz &lt;lukasza@chromium.org&gt;
+   Niels Möller &lt;nisse@chromium.org&gt;
   </td>
   <td>
-   Wed Jul 06 16:46:05 2022
+   Wed Jul 06 18:07:47 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jul 06 16:46:05 2022
+   Wed Jul 06 18:07:47 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e4760c76e16d620a885c4650e5c761f20cc10e30/">
-    7b0eecfec5b714cd8ee11ab37e98209ae7ef5b0d
+   <a href="/chromium/src/+/b2a4a92dd281160f05f9497fa0b3d86070752424/">
+    e25b4f277bb6bc21b41f4cc9547d082fa3a25d67
    </a>
   </td>
  </tr>
@@ -166,29 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e4760c76e16d620a885c4650e5c761f20cc10e30%5E">
-    4767021b86d8b712fb12ecee2046cc03ee1d4d73
+   <a href="/chromium/src/+/b2a4a92dd281160f05f9497fa0b3d86070752424%5E">
+    d6abed69b03e96e4133c7d019ede6c33046d853a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e4760c76e16d620a885c4650e5c761f20cc10e30%5E%21/">
+    <a href="/chromium/src/+/b2a4a92dd281160f05f9497fa0b3d86070752424%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[rust] rs_bindings_from_cc.gni: Support for *multiple* `public_headers`.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Delete call to deprecated webrtc::VideoFrame::transport_frame_id
 
-After this CL the `rs_bindings_from_cc` target template accepts a *list*
-of `public_headers` (rather than just a single *string*).
+Replaced with call to webrtc::VideoFrame::timestamp() which returns the
+same value: The 90kHz RTP timestamp.
 
-Bug: 1329611
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1d927a405690d53ce4eea95c63d79bba452df3e4">I1d927a405690d53ce4eea95c63d79bba452df3e4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3741423">https://chromium-review.googlesource.com/c/chromium/src/+/3741423</a>
-Reviewed-by: danakj &lt;danakj@chromium.org&gt;
-Commit-Queue: Łukasz Anforowicz &lt;lukasza@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1021224}
+Also renamed frame_id parameter to rtp_timestamp for clarity.
+Note that this timestamp wraps around in a bit more than 13 hours, and
+since its initial value is randomized, first wrap around may happen
+much earlier.
+
+See webrtc cl <a href="https://webrtc-review.googlesource.com/c/src/+/267823">https://webrtc-review.googlesource.com/c/src/+/267823</a>
+
+Bug: None
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4a8023f9e767ff6ef2bb0dc474f32b1f313e57b1">I4a8023f9e767ff6ef2bb0dc474f32b1f313e57b1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3745531">https://chromium-review.googlesource.com/c/chromium/src/+/3745531</a>
+Auto-Submit: Niels Möller &lt;nisse@chromium.org&gt;
+Commit-Queue: Gary Kacmarcik &lt;garykac@chromium.org&gt;
+Reviewed-by: Gary Kacmarcik &lt;garykac@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1021260}
 </pre>
 
 </body>
