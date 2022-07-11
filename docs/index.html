@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1022578/"> 1022578</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0c3550f93f7a47948a6f397b5f53215a1122e691">0c3550f93f7a47948a6f397b5f53215a1122e691</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1022581/"> 1022581</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/26f8b8c2383a4c2aad95ed1ac413ec356212523e">26f8b8c2383a4c2aad95ed1ac413ec356212523e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1022568/">1022568</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/842eb62fb1ca20fff8b094c172d66574b97e8746">842eb62fb1ca20fff8b094c172d66574b97e8746</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1022578/">1022578</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0c3550f93f7a47948a6f397b5f53215a1122e691">0c3550f93f7a47948a6f397b5f53215a1122e691</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0c3550f93f7a47948a6f397b5f53215a1122e691
+   26f8b8c2383a4c2aad95ed1ac413ec356212523e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0c3550f93f7a47948a6f397b5f53215a1122e691">
+    <a href="/chromium/src/+log/26f8b8c2383a4c2aad95ed1ac413ec356212523e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0c3550f93f7a47948a6f397b5f53215a1122e691.tar.gz">
+    <a href="/chromium/src/+archive/26f8b8c2383a4c2aad95ed1ac413ec356212523e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Aaron Leventhal &lt;aleventhal@google.com&gt;
+   Kenichi Ishibashi &lt;bashi@chromium.org&gt;
   </td>
   <td>
-   Mon Jul 11 05:04:14 2022
+   Mon Jul 11 05:26:14 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jul 11 05:04:14 2022
+   Mon Jul 11 05:26:14 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0c3550f93f7a47948a6f397b5f53215a1122e691/">
-    71aaccc6499786ec2a77593be6c0b92d31063fbc
+   <a href="/chromium/src/+/26f8b8c2383a4c2aad95ed1ac413ec356212523e/">
+    7c7989edd16b417c0a7d575f1365f659b481a081
    </a>
   </td>
  </tr>
@@ -166,64 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0c3550f93f7a47948a6f397b5f53215a1122e691%5E">
-    6bbd003a76a612232cb830ecbb6e7105fabd5680
+   <a href="/chromium/src/+/26f8b8c2383a4c2aad95ed1ac413ec356212523e%5E">
+    ff9ad5782e4051064233aca70c2875e425ede390
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0c3550f93f7a47948a6f397b5f53215a1122e691%5E%21/">
+    <a href="/chromium/src/+/26f8b8c2383a4c2aad95ed1ac413ec356212523e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland: Do not fire events in detached child frames
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Plumb whether a response is fetched via the network service in-memory cache
 
-Original: CL:3727378
-Revert: CL:3700452
-Reason for revert: crbug.com/1342326,crbug.com/1342425 (sometimes
-load complete events could be dropped, causing failing tests)
+This is a preparation for adding browser tests for the network service
+in-memory cache. We may also use the information to record time to
+complete a response from the in-memory cache in the renderer side.
 
-Only fire events on nodes that in documents that are attached
-to the root document of the a11y tree. Child trees will begin firing events as soon as all of their parent documents are serialized.
-This prevents a bug in AppKit that causes VoiceOver to get stuck repeating "not responding" messages. The bug goes away as long as
-events are only fired on objects that are attached to the root.
-
-We had the same bug in Views, and it was fixed in CL:3595084.
-One of the bugs listed in the CL description is bug 1221262, which refers to getting stuck saying "busy busy busy", that was the previous message that VoiceOver would speak -- "[appname] is not responding" appears to be the same issue.
-
-Also enforces tree relationship rules via additional CHECKs/DCHECKs.
-
-This CL currently applies only to non-Chrome OS web contents. For it to generalize to other trees not based on BrowserAccessibilityManager including all of Chrome OS, views, and others, we will need to bubble
-the logic up to ui/accessibility (AXTreeManagerBase).
-So, this should be an intermediate state until we can get AXTreeManager in as a base concrete class e.g. CL:3646162.
-
-Follow-ups:
-- Notify Apple of issue and workaround
-- Consider not generating events when CanFireEvents() returns false.
-  See CL:3726240
-- Look into bfcache/focus check failure. See TODO in
-  BrowserAccessibilityManager::GetLastFocusedNode()
-- Do not use/allow null delegates in BrowserAccessibilityManager (currently a workaround for unit tests): crbug.com/1340004
-- Explore whether Mac a11y still needs separate concept of ignored nodes: crbug.com/1339975
-- Clarify child tree serialization rules (CL:3727378)
-- Look into whether order of iframe serialization can be enforced to be parents first. See CL:3731609.
-- Try to remove generated load complete events as they are redundant
-  with Blink load complete events (crbug.com/1342649)
-- Move logic to AXTreeManagerBase
-
-Bug: 1311759
-Test: <a href="https://github.com/password_reset">https://github.com/password_reset</a>
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4337e731632427c11f776d3a351cd674ae655501">I4337e731632427c11f776d3a351cd674ae655501</a>
-AX-RelNotes: potential fix for issue where VoiceOver gets stuck saying "Chrome is not responding" repeatedly.
-Cq-Include-Trybots: luci.chromium.try:linux-blink-web-tests-force-accessibility-rel
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3700452">https://chromium-review.googlesource.com/c/chromium/src/+/3700452</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3750239">https://chromium-review.googlesource.com/c/chromium/src/+/3750239</a>
-Reviewed-by: Nektarios Paisios &lt;nektar@chromium.org&gt;
-Commit-Queue: Nektarios Paisios &lt;nektar@chromium.org&gt;
-Auto-Submit: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1022578}
+Bug: 1339708
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie69cea29f7a010712443ab6fce885df64347d2be">Ie69cea29f7a010712443ab6fce885df64347d2be</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3747596">https://chromium-review.googlesource.com/c/chromium/src/+/3747596</a>
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Commit-Queue: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
+Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
+Reviewed-by: Yutaka Hirano &lt;yhirano@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1022581}
 </pre>
 
 </body>
