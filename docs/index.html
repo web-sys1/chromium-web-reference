@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1022573/"> 1022573</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d42061ae8981051d7d6a7423059fa347303c16cd">d42061ae8981051d7d6a7423059fa347303c16cd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1022578/"> 1022578</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0c3550f93f7a47948a6f397b5f53215a1122e691">0c3550f93f7a47948a6f397b5f53215a1122e691</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1022568/">1022568</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d42061ae8981051d7d6a7423059fa347303c16cd
+   0c3550f93f7a47948a6f397b5f53215a1122e691
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d42061ae8981051d7d6a7423059fa347303c16cd">
+    <a href="/chromium/src/+log/0c3550f93f7a47948a6f397b5f53215a1122e691">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d42061ae8981051d7d6a7423059fa347303c16cd.tar.gz">
+    <a href="/chromium/src/+archive/0c3550f93f7a47948a6f397b5f53215a1122e691.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Giovanni Ortuño Urquidi &lt;ortuno@chromium.org&gt;
+   Aaron Leventhal &lt;aleventhal@google.com&gt;
   </td>
   <td>
-   Mon Jul 11 04:25:53 2022
+   Mon Jul 11 05:04:14 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jul 11 04:25:53 2022
+   Mon Jul 11 05:04:14 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d42061ae8981051d7d6a7423059fa347303c16cd/">
-    759ba3b4a5180e6e50b3c683aabb9c19233aa9e5
+   <a href="/chromium/src/+/0c3550f93f7a47948a6f397b5f53215a1122e691/">
+    71aaccc6499786ec2a77593be6c0b92d31063fbc
    </a>
   </td>
  </tr>
@@ -166,45 +166,64 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d42061ae8981051d7d6a7423059fa347303c16cd%5E">
-    ac1ffc0fe3632bb706c9235afee98f31c199beac
+   <a href="/chromium/src/+/0c3550f93f7a47948a6f397b5f53215a1122e691%5E">
+    6bbd003a76a612232cb830ecbb6e7105fabd5680
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d42061ae8981051d7d6a7423059fa347303c16cd%5E%21/">
+    <a href="/chromium/src/+/0c3550f93f7a47948a6f397b5f53215a1122e691%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">system-extensions: Implement CrosWindowManagementContext
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland: Do not fire events in detached child frames
 
-CrosWindowManagementContext is a class that manages CrosWindowManagement
-instances. It implements CrosWindowManagementFactory which the renderer
-uses to bind to WindowManagementImpl, the implementation of
-CrosWindowManagement.
+Original: CL:3727378
+Revert: CL:3700452
+Reason for revert: crbug.com/1342326,crbug.com/1342425 (sometimes
+load complete events could be dropped, causing failing tests)
 
-CrosWindowManagementContext holds a set of receivers for
-CrosWindowManagementFactory and a unique associated receiver set
-for WindowManagementImpl and CrosWindowManagement. The lifetime of
-WindowManagementImpls is tied to that of the
-CrosWindowManagementFactory receiver which itself is deleted when the
-pipe is closed, which should happen when the service worker is
-destroyed on the renderer side.
+Only fire events on nodes that in documents that are attached
+to the root document of the a11y tree. Child trees will begin firing events as soon as all of their parent documents are serialized.
+This prevents a bug in AppKit that causes VoiceOver to get stuck repeating "not responding" messages. The bug goes away as long as
+events are only fired on objects that are attached to the root.
 
-This is slightly problematic since the pipe could be closed after the
-process and profile are deleted, but WindowManagementImpl checks that
-both the process and the profile at the start of its functions. A
-followup CL could ensure that WindowManagementImpl is destroyed
-when the process gets destroyed to make this more safe.
+We had the same bug in Views, and it was fixed in CL:3595084.
+One of the bugs listed in the CL description is bug 1221262, which refers to getting stuck saying "busy busy busy", that was the previous message that VoiceOver would speak -- "[appname] is not responding" appears to be the same issue.
 
-Bug: b/221123297
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I088ef95def63937e6049e8bb49b37a221f788234">I088ef95def63937e6049e8bb49b37a221f788234</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3743884">https://chromium-review.googlesource.com/c/chromium/src/+/3743884</a>
-Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
-Commit-Queue: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1022573}
+Also enforces tree relationship rules via additional CHECKs/DCHECKs.
+
+This CL currently applies only to non-Chrome OS web contents. For it to generalize to other trees not based on BrowserAccessibilityManager including all of Chrome OS, views, and others, we will need to bubble
+the logic up to ui/accessibility (AXTreeManagerBase).
+So, this should be an intermediate state until we can get AXTreeManager in as a base concrete class e.g. CL:3646162.
+
+Follow-ups:
+- Notify Apple of issue and workaround
+- Consider not generating events when CanFireEvents() returns false.
+  See CL:3726240
+- Look into bfcache/focus check failure. See TODO in
+  BrowserAccessibilityManager::GetLastFocusedNode()
+- Do not use/allow null delegates in BrowserAccessibilityManager (currently a workaround for unit tests): crbug.com/1340004
+- Explore whether Mac a11y still needs separate concept of ignored nodes: crbug.com/1339975
+- Clarify child tree serialization rules (CL:3727378)
+- Look into whether order of iframe serialization can be enforced to be parents first. See CL:3731609.
+- Try to remove generated load complete events as they are redundant
+  with Blink load complete events (crbug.com/1342649)
+- Move logic to AXTreeManagerBase
+
+Bug: 1311759
+Test: <a href="https://github.com/password_reset">https://github.com/password_reset</a>
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4337e731632427c11f776d3a351cd674ae655501">I4337e731632427c11f776d3a351cd674ae655501</a>
+AX-RelNotes: potential fix for issue where VoiceOver gets stuck saying "Chrome is not responding" repeatedly.
+Cq-Include-Trybots: luci.chromium.try:linux-blink-web-tests-force-accessibility-rel
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3700452">https://chromium-review.googlesource.com/c/chromium/src/+/3700452</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3750239">https://chromium-review.googlesource.com/c/chromium/src/+/3750239</a>
+Reviewed-by: Nektarios Paisios &lt;nektar@chromium.org&gt;
+Commit-Queue: Nektarios Paisios &lt;nektar@chromium.org&gt;
+Auto-Submit: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1022578}
 </pre>
 
 </body>
