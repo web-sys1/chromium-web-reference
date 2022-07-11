@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1022567/"> 1022567</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/449149c22891675572ac668cdb2c18da70475c01">449149c22891675572ac668cdb2c18da70475c01</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1022573/"> 1022573</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d42061ae8981051d7d6a7423059fa347303c16cd">d42061ae8981051d7d6a7423059fa347303c16cd</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1022557/">1022557</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/739efcefcbfeb9e2ebb71fea3adbc0cafeb683ce">739efcefcbfeb9e2ebb71fea3adbc0cafeb683ce</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1022568/">1022568</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/842eb62fb1ca20fff8b094c172d66574b97e8746">842eb62fb1ca20fff8b094c172d66574b97e8746</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   449149c22891675572ac668cdb2c18da70475c01
+   d42061ae8981051d7d6a7423059fa347303c16cd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/449149c22891675572ac668cdb2c18da70475c01">
+    <a href="/chromium/src/+log/d42061ae8981051d7d6a7423059fa347303c16cd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/449149c22891675572ac668cdb2c18da70475c01.tar.gz">
+    <a href="/chromium/src/+archive/d42061ae8981051d7d6a7423059fa347303c16cd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Hidehiko Abe &lt;hidehiko@chromium.org&gt;
+   Giovanni Ortuño Urquidi &lt;ortuno@chromium.org&gt;
   </td>
   <td>
-   Mon Jul 11 03:12:43 2022
+   Mon Jul 11 04:25:53 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jul 11 03:12:43 2022
+   Mon Jul 11 04:25:53 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/449149c22891675572ac668cdb2c18da70475c01/">
-    4e75fa3b73cb8ca3e505c47ac1d1104c4985a5de
+   <a href="/chromium/src/+/d42061ae8981051d7d6a7423059fa347303c16cd/">
+    759ba3b4a5180e6e50b3c683aabb9c19233aa9e5
    </a>
   </td>
  </tr>
@@ -166,36 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/449149c22891675572ac668cdb2c18da70475c01%5E">
-    d4f93612eabb53e8137ae2d80f4e5a33b74f85e1
+   <a href="/chromium/src/+/d42061ae8981051d7d6a7423059fa347303c16cd%5E">
+    ac1ffc0fe3632bb706c9235afee98f31c199beac
    </a>
    <span>
     [
-    <a href="/chromium/src/+/449149c22891675572ac668cdb2c18da70475c01%5E%21/">
+    <a href="/chromium/src/+/d42061ae8981051d7d6a7423059fa347303c16cd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Notify modifier update always.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">system-extensions: Implement CrosWindowManagementContext
 
-The original code sends modifiers on KeyEvent sending.
-However, we had an edge case that if the event triggered an accelerator
-(such as ALT+TAB), KeyEvent is not propagated to exo::Keyboard,
-so that the modifier state was not updated until next Key event comes.
-This resulted some weird behavior in Lacros.
+CrosWindowManagementContext is a class that manages CrosWindowManagement
+instances. It implements CrosWindowManagementFactory which the renderer
+uses to bind to WindowManagementImpl, the implementation of
+CrosWindowManagement.
 
-This change will send the modifier state update always.
+CrosWindowManagementContext holds a set of receivers for
+CrosWindowManagementFactory and a unique associated receiver set
+for WindowManagementImpl and CrosWindowManagement. The lifetime of
+WindowManagementImpls is tied to that of the
+CrosWindowManagementFactory receiver which itself is deleted when the
+pipe is closed, which should happen when the service worker is
+destroyed on the renderer side.
 
-BUG=1295104
-TEST=Ran on DUT. Ran exo_unittests.
+This is slightly problematic since the pipe could be closed after the
+process and profile are deleted, but WindowManagementImpl checks that
+both the process and the profile at the start of its functions. A
+followup CL could ensure that WindowManagementImpl is destroyed
+when the process gets destroyed to make this more safe.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I601951bc212047143054daffb96aa6dc59cf29e7">I601951bc212047143054daffb96aa6dc59cf29e7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3750627">https://chromium-review.googlesource.com/c/chromium/src/+/3750627</a>
-Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Commit-Queue: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1022567}
+Bug: b/221123297
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I088ef95def63937e6049e8bb49b37a221f788234">I088ef95def63937e6049e8bb49b37a221f788234</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3743884">https://chromium-review.googlesource.com/c/chromium/src/+/3743884</a>
+Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
+Commit-Queue: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1022573}
 </pre>
 
 </body>
