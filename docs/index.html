@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1023333/"> 1023333</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/67829407c667d2623f14a3f885d4a963e3009368">67829407c667d2623f14a3f885d4a963e3009368</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1023313/"> 1023313</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fe9f947cbd5444332753a9c5a19e0f9b52db142d">fe9f947cbd5444332753a9c5a19e0f9b52db142d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1023282/">1023282</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   67829407c667d2623f14a3f885d4a963e3009368
+   fe9f947cbd5444332753a9c5a19e0f9b52db142d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/67829407c667d2623f14a3f885d4a963e3009368">
+    <a href="/chromium/src/+log/fe9f947cbd5444332753a9c5a19e0f9b52db142d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/67829407c667d2623f14a3f885d4a963e3009368.tar.gz">
+    <a href="/chromium/src/+archive/fe9f947cbd5444332753a9c5a19e0f9b52db142d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Maks Orlovich &lt;morlovich@chromium.org&gt;
+   avvall &lt;avvall@google.com&gt;
   </td>
   <td>
-   Tue Jul 12 18:59:06 2022
+   Tue Jul 12 18:18:43 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jul 12 18:59:06 2022
+   Tue Jul 12 18:18:43 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/67829407c667d2623f14a3f885d4a963e3009368/">
-    4f2d8b6897a37ddfd28dfa07a45f5c61dd7f5485
+   <a href="/chromium/src/+/fe9f947cbd5444332753a9c5a19e0f9b52db142d/">
+    a8bdee965bcde9c323c440f04cb4eef8f258d095
    </a>
   </td>
  </tr>
@@ -166,29 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/67829407c667d2623f14a3f885d4a963e3009368%5E">
-    17b2737d235d0ec3b5278ef62b25aa3d4af92eac
+   <a href="/chromium/src/+/fe9f947cbd5444332753a9c5a19e0f9b52db142d%5E">
+    efaa554ba445c8a22e54d066d6e873884d5729a4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/67829407c667d2623f14a3f885d4a963e3009368%5E%21/">
+    <a href="/chromium/src/+/fe9f947cbd5444332753a9c5a19e0f9b52db142d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Re-enable RFHI test ComputeIsolationInfoForNavigationSiteForCookies
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">WebView: Replace Context#bindService calls with ServiceHelper#bindService.
 
-It was disabled due to failures on TSAN bot, but those should be
-resolved by the fix to crbug.com/1338413
+Android platform disallows calling Context#bindService() from within a
+BroadcastReceiver context. If we call this method anyway, then bindService()
+throws a RuntimeException.
 
-Bug: 1338387
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib934ed37da95e23750ad5da8a98b3fc676e53df3">Ib934ed37da95e23750ad5da8a98b3fc676e53df3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3750902">https://chromium-review.googlesource.com/c/chromium/src/+/3750902</a>
-Reviewed-by: Charlie Reis &lt;creis@chromium.org&gt;
-Commit-Queue: Charlie Reis &lt;creis@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1023333}
+In order to avoid this RuntimeException from occurring,
+the Context#bindService calls are replaced with
+ServiceHelper#bindService calls that circumvent this exception.
+
+The set of WebView instrumentation tests were used to test the changes since no new functionality was added.
+
+Test: `out/Default/bin/run_webview_instrumentation_test_apk`
+
+Bug: 1332918
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ieffe0ac4bb1c5032e28a5a25c918641670c66bf9">Ieffe0ac4bb1c5032e28a5a25c918641670c66bf9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3739826">https://chromium-review.googlesource.com/c/chromium/src/+/3739826</a>
+Commit-Queue: Adam Walls &lt;avvall@google.com&gt;
+Reviewed-by: Richard Coles &lt;torne@chromium.org&gt;
+Reviewed-by: Hazem Ashmawy &lt;hazems@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1023313}
 </pre>
 
 </body>
