@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1023971/"> 1023971</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a5ea9578b8136dc161727aa73a781033200cdbee">a5ea9578b8136dc161727aa73a781033200cdbee</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1023991/"> 1023991</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5540978413beb43c89c55bd36ec0c5021e096698">5540978413beb43c89c55bd36ec0c5021e096698</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1023965/">1023965</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a5ea9578b8136dc161727aa73a781033200cdbee
+   5540978413beb43c89c55bd36ec0c5021e096698
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a5ea9578b8136dc161727aa73a781033200cdbee">
+    <a href="/chromium/src/+log/5540978413beb43c89c55bd36ec0c5021e096698">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a5ea9578b8136dc161727aa73a781033200cdbee.tar.gz">
+    <a href="/chromium/src/+archive/5540978413beb43c89c55bd36ec0c5021e096698.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Adam Langley &lt;agl@chromium.org&gt;
+   George Benz &lt;gbj@google.com&gt;
   </td>
   <td>
-   Wed Jul 13 22:37:43 2022
+   Wed Jul 13 23:21:14 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jul 13 22:37:43 2022
+   Wed Jul 13 23:21:14 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a5ea9578b8136dc161727aa73a781033200cdbee/">
-    f1b2c38c412d30ecb9686d4e5572a46fd9086e13
+   <a href="/chromium/src/+/5540978413beb43c89c55bd36ec0c5021e096698/">
+    b06d705eb897dd3cc8f6d892c0e329e28081241b
    </a>
   </td>
  </tr>
@@ -166,34 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a5ea9578b8136dc161727aa73a781033200cdbee%5E">
-    25050a9e7850c51224d992b6bbcacb8889c5b45b
+   <a href="/chromium/src/+/5540978413beb43c89c55bd36ec0c5021e096698%5E">
+    6f2c2b8fc47a236c2f07c275e16580133bdc4134
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a5ea9578b8136dc161727aa73a781033200cdbee%5E%21/">
+    <a href="/chromium/src/+/5540978413beb43c89c55bd36ec0c5021e096698%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">webauthn: add interface for managing local credentials.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Nullify MediaRouter after shutdown and add no-op checks.
 
-A settings UI for managing local credentials will need a wrapper that
-abstracts over platform-specific differences. This change adds such a
-wrapper. At the moment only Windows is supported, so the
-platform-agnostic bit is merely "potential" rather than "actual". But it
-includes code to handle the fact that we'll need to quickly know if
-credentials exist (in order to decide whether to show a link on the
-passwords page) but enumerating credentials on Windows gets rather slow
-if there are too many of them.
+There have been hard to repro, but multiple reports across several OS of invalid media_router pointers within the access code cast sink service.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icddc3170f962a70aae9fc432ddd3d67e5289bdda">Icddc3170f962a70aae9fc432ddd3d67e5289bdda</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3753438">https://chromium-review.googlesource.com/c/chromium/src/+/3753438</a>
-Reviewed-by: Martin Kreichgauer &lt;martinkr@google.com&gt;
-Commit-Queue: Adam Langley &lt;agl@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1023971}
+After KeyedService::Shutdown() has been called, we shouldn't be fetching or calling methods on MR. Even if we got a MR pointer back, its internal state may no longer be valid.
+
+Additionally a unittest is added to the ACCSSFactory and some duplicated test code is extracted to a common class. A TODO bug is added to add a browsertest case to properly verify this since these interactions occur at the browser level and cannot be tested on the unittest level.
+
+Bug: b/237093307
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I569c4623ac8d7632e94836a16285a87b87f39abe">I569c4623ac8d7632e94836a16285a87b87f39abe</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3747291">https://chromium-review.googlesource.com/c/chromium/src/+/3747291</a>
+Reviewed-by: Benjamin Zielinski &lt;bzielinski@google.com&gt;
+Reviewed-by: Alex Gough &lt;ajgo@chromium.org&gt;
+Commit-Queue: George Benz &lt;gbj@google.com&gt;
+Reviewed-by: Takumi Fujimoto &lt;takumif@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1023991}
 </pre>
 
 </body>
