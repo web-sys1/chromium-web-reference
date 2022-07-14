@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1024142/"> 1024142</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/156ca252c50a95f990c77c6cfdb9fc0bda9cd796">156ca252c50a95f990c77c6cfdb9fc0bda9cd796</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1024149/"> 1024149</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9acb188e0cfad0cb12bd7e467c5e08f6832f827e">9acb188e0cfad0cb12bd7e467c5e08f6832f827e</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1024122/">1024122</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   156ca252c50a95f990c77c6cfdb9fc0bda9cd796
+   9acb188e0cfad0cb12bd7e467c5e08f6832f827e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/156ca252c50a95f990c77c6cfdb9fc0bda9cd796">
+    <a href="/chromium/src/+log/9acb188e0cfad0cb12bd7e467c5e08f6832f827e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/156ca252c50a95f990c77c6cfdb9fc0bda9cd796.tar.gz">
+    <a href="/chromium/src/+archive/9acb188e0cfad0cb12bd7e467c5e08f6832f827e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+   Zain Afzal &lt;zafzal@google.com&gt;
   </td>
   <td>
-   Thu Jul 14 06:49:59 2022
+   Thu Jul 14 07:23:59 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jul 14 06:49:59 2022
+   Thu Jul 14 07:23:59 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/156ca252c50a95f990c77c6cfdb9fc0bda9cd796/">
-    02bbd7ba309da3c1b1641e19fee2fe172fa6fc03
+   <a href="/chromium/src/+/9acb188e0cfad0cb12bd7e467c5e08f6832f827e/">
+    1244c5513d46e4c2dd503dd18056c5a768580bed
    </a>
   </td>
  </tr>
@@ -166,61 +166,57 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/156ca252c50a95f990c77c6cfdb9fc0bda9cd796%5E">
-    cdbdb4520d6be65fdb04fc85aea5d12953f1a1da
+   <a href="/chromium/src/+/9acb188e0cfad0cb12bd7e467c5e08f6832f827e%5E">
+    1ad6b7e70fbd4514e5d1c453b502a6caf9969fd4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/156ca252c50a95f990c77c6cfdb9fc0bda9cd796%5E%21/">
+    <a href="/chromium/src/+/9acb188e0cfad0cb12bd7e467c5e08f6832f827e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "Prerender2: verify chrome.declarativeNetRequest behaviors"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Initial implementation of ChromeOS X86_64 stack walker"
 
-This is a reland of commit b37e7fc26893ab35c42df9f744a238dc910b4d8a
+This reverts commit a1d168747ed75f8b13feb7d19982cc14eeb66a4a.
 
-The test failed on mac because the first network request reaches
-to the embedded server even though the URL is registered as a
-static rule for blocking. This is because the test starts running
-before the static rules are applied. So, the tests are fixed to use
-dynamic rules to workaround the setup race issue.
+Reason for revert: Suspected culprit for <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/Linux%20ChromiumOS%20MSan%20Tests/29103/blamelist">https://ci.chromium.org/ui/p/chromium/builders/ci/Linux%20ChromiumOS%20MSan%20Tests/29103/blamelist</a>
 
 Original change's description:
-&gt; Prerender2: verify chrome.declarativeNetRequest behaviors
+&gt; Initial implementation of ChromeOS X86_64 stack walker
 &gt;
-&gt; chrome.declarativeNetRequest API is used to monitor all network
-&gt; requests regardless of the request initiator's page state.
-&gt; So, we just extend this capability to pre-rendered pages.
+&gt; Apple and ChromeOS X86_64 both have frame pointers, so moved the
+&gt; Apple-specific native unwinder to a "frame-pointer-having" native
+&gt; unwinder for both Apple and ChromeOS X86_64.
 &gt;
-&gt; This patch verify if rules to block requests work for prerendering,
-&gt; or network requests from pre-rendered pages.
+&gt; Passes unit tests on device but haven't yet tried with real Chrome.
 &gt;
-&gt; Also we should clear the pending navigation information
-&gt; in the ActionTracker also on finishing non primary page navigations.
+&gt; This shouldn't have any effect on end-user devices as the experiment
+&gt; isn't on for ChromeOS devices;
+&gt; StackSamplingProfiler::IsSupportedForCurrentPlatform() still returns
+&gt; false.
 &gt;
-&gt; Relevant explainer in the design doc:
-&gt; <a href="https://docs.google.com/document/d/16Sy2Xq-AcnhwnpC0q232OMSmxTpQYDANRAO-zJ8DKiA/edit#bookmark=id.k18lj9xlkzfl">https://docs.google.com/document/d/16Sy2Xq-AcnhwnpC0q232OMSmxTpQYDANRAO-zJ8DKiA/edit#bookmark=id.k18lj9xlkzfl</a>
+&gt; BUG=b:214117401,chromium:1324337
 &gt;
-&gt; Bug: 1278141
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I97f2d760a19fda6191186f6ff1c780762d8820e6">I97f2d760a19fda6191186f6ff1c780762d8820e6</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3726468">https://chromium-review.googlesource.com/c/chromium/src/+/3726468</a>
-&gt; Commit-Queue: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
-&gt; Reviewed-by: Huanpo Lin &lt;robertlin@chromium.org&gt;
-&gt; Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
-&gt; Reviewed-by: Dave Tapuska &lt;dtapuska@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1021534}
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I594f3c6034c70138b87feb44e1094114e151a1ae">I594f3c6034c70138b87feb44e1094114e151a1ae</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3749997">https://chromium-review.googlesource.com/c/chromium/src/+/3749997</a>
+&gt; Commit-Queue: Ian Barkley-Yeung &lt;iby@chromium.org&gt;
+&gt; Reviewed-by: Mike Wittman &lt;wittman@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1024086}
 
-Bug: 1278141, 1342597
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5331eac5d1da2d106cc86a69bb5264b2c62aa543">I5331eac5d1da2d106cc86a69bb5264b2c62aa543</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3752281">https://chromium-review.googlesource.com/c/chromium/src/+/3752281</a>
-Commit-Queue: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
-Auto-Submit: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
-Reviewed-by: Huanpo Lin &lt;robertlin@chromium.org&gt;
-Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1024142}
+Bug: b:214117401,chromium:1324337, 1344414
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I476bddacbe24379c4a879cd0dd63fd771e10a92a">I476bddacbe24379c4a879cd0dd63fd771e10a92a</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3762075">https://chromium-review.googlesource.com/c/chromium/src/+/3762075</a>
+Commit-Queue: Zain Afzal &lt;zafzal@google.com&gt;
+Reviewed-by: Zain Afzal &lt;zafzal@google.com&gt;
+Owners-Override: Zain Afzal &lt;zafzal@google.com&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1024149}
 </pre>
 
 </body>
