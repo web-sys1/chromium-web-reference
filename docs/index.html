@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1024125/"> 1024125</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/31e1847c8f6aa80c9c93e13d9b98d959e11df648">31e1847c8f6aa80c9c93e13d9b98d959e11df648</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1024142/"> 1024142</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/156ca252c50a95f990c77c6cfdb9fc0bda9cd796">156ca252c50a95f990c77c6cfdb9fc0bda9cd796</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1024112/">1024112</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/73e286995aecb859aa7b60a8bdee73727144f43c">73e286995aecb859aa7b60a8bdee73727144f43c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1024122/">1024122</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/085a276b165cc2203dc0fb534c5955e396f0fe87">085a276b165cc2203dc0fb534c5955e396f0fe87</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   31e1847c8f6aa80c9c93e13d9b98d959e11df648
+   156ca252c50a95f990c77c6cfdb9fc0bda9cd796
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/31e1847c8f6aa80c9c93e13d9b98d959e11df648">
+    <a href="/chromium/src/+log/156ca252c50a95f990c77c6cfdb9fc0bda9cd796">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/31e1847c8f6aa80c9c93e13d9b98d959e11df648.tar.gz">
+    <a href="/chromium/src/+archive/156ca252c50a95f990c77c6cfdb9fc0bda9cd796.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kenichi Ishibashi &lt;bashi@chromium.org&gt;
+   Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
   </td>
   <td>
-   Thu Jul 14 06:12:52 2022
+   Thu Jul 14 06:49:59 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jul 14 06:12:52 2022
+   Thu Jul 14 06:49:59 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/31e1847c8f6aa80c9c93e13d9b98d959e11df648/">
-    dbebed7a1ef2252f236eb27ec5e68a18e9ea5093
+   <a href="/chromium/src/+/156ca252c50a95f990c77c6cfdb9fc0bda9cd796/">
+    02bbd7ba309da3c1b1641e19fee2fe172fa6fc03
    </a>
   </td>
  </tr>
@@ -166,34 +166,61 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/31e1847c8f6aa80c9c93e13d9b98d959e11df648%5E">
-    5ca84279284e5034375d651d45eb23149bbddea0
+   <a href="/chromium/src/+/156ca252c50a95f990c77c6cfdb9fc0bda9cd796%5E">
+    cdbdb4520d6be65fdb04fc85aea5d12953f1a1da
    </a>
    <span>
     [
-    <a href="/chromium/src/+/31e1847c8f6aa80c9c93e13d9b98d959e11df648%5E%21/">
+    <a href="/chromium/src/+/156ca252c50a95f990c77c6cfdb9fc0bda9cd796%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Don't serve in-memory cached responses when NIK is transient
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "Prerender2: verify chrome.declarativeNetRequest behaviors"
 
-The following two NIKs, one is non-transient and the other is
-transient, will generate the same cache key:
-* NetworkIsolationKey("foo", "foo", &lt;no nonce&gt;)
-* NetworkIsolationKey("foo", "foo", &lt;some nonce&gt;)
+This is a reland of commit b37e7fc26893ab35c42df9f744a238dc910b4d8a
 
-The in-memory cache should distinguish them. Don't serve responses
-from the in-memory cache when the request's NIK is transient.
+The test failed on mac because the first network request reaches
+to the embedded server even though the URL is registered as a
+static rule for blocking. This is because the test starts running
+before the static rules are applied. So, the tests are fixed to use
+dynamic rules to workaround the setup race issue.
 
-Bug: 1339708
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idd24ae6d30a9c11692f0ecab99ff2d095ee853c1">Idd24ae6d30a9c11692f0ecab99ff2d095ee853c1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3758298">https://chromium-review.googlesource.com/c/chromium/src/+/3758298</a>
-Commit-Queue: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
-Reviewed-by: Matt Menke &lt;mmenke@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1024125}
+Original change's description:
+&gt; Prerender2: verify chrome.declarativeNetRequest behaviors
+&gt;
+&gt; chrome.declarativeNetRequest API is used to monitor all network
+&gt; requests regardless of the request initiator's page state.
+&gt; So, we just extend this capability to pre-rendered pages.
+&gt;
+&gt; This patch verify if rules to block requests work for prerendering,
+&gt; or network requests from pre-rendered pages.
+&gt;
+&gt; Also we should clear the pending navigation information
+&gt; in the ActionTracker also on finishing non primary page navigations.
+&gt;
+&gt; Relevant explainer in the design doc:
+&gt; <a href="https://docs.google.com/document/d/16Sy2Xq-AcnhwnpC0q232OMSmxTpQYDANRAO-zJ8DKiA/edit#bookmark=id.k18lj9xlkzfl">https://docs.google.com/document/d/16Sy2Xq-AcnhwnpC0q232OMSmxTpQYDANRAO-zJ8DKiA/edit#bookmark=id.k18lj9xlkzfl</a>
+&gt;
+&gt; Bug: 1278141
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I97f2d760a19fda6191186f6ff1c780762d8820e6">I97f2d760a19fda6191186f6ff1c780762d8820e6</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3726468">https://chromium-review.googlesource.com/c/chromium/src/+/3726468</a>
+&gt; Commit-Queue: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+&gt; Reviewed-by: Huanpo Lin &lt;robertlin@chromium.org&gt;
+&gt; Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+&gt; Reviewed-by: Dave Tapuska &lt;dtapuska@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1021534}
+
+Bug: 1278141, 1342597
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5331eac5d1da2d106cc86a69bb5264b2c62aa543">I5331eac5d1da2d106cc86a69bb5264b2c62aa543</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3752281">https://chromium-review.googlesource.com/c/chromium/src/+/3752281</a>
+Commit-Queue: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Auto-Submit: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Reviewed-by: Huanpo Lin &lt;robertlin@chromium.org&gt;
+Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1024142}
 </pre>
 
 </body>
