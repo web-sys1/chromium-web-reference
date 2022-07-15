@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1024608/"> 1024608</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/233133d7d717239be2734e7fa765397f7563f399">233133d7d717239be2734e7fa765397f7563f399</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1024614/"> 1024614</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d19b3e76906eee92dff565506231c28992b5894f">d19b3e76906eee92dff565506231c28992b5894f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1024602/">1024602</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   233133d7d717239be2734e7fa765397f7563f399
+   d19b3e76906eee92dff565506231c28992b5894f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/233133d7d717239be2734e7fa765397f7563f399">
+    <a href="/chromium/src/+log/d19b3e76906eee92dff565506231c28992b5894f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/233133d7d717239be2734e7fa765397f7563f399.tar.gz">
+    <a href="/chromium/src/+archive/d19b3e76906eee92dff565506231c28992b5894f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nancy Wang &lt;nancylingwang@chromium.org&gt;
+   manukh &lt;manukh@chromium.org&gt;
   </td>
   <td>
-   Fri Jul 15 06:13:19 2022
+   Fri Jul 15 06:54:09 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jul 15 06:13:19 2022
+   Fri Jul 15 06:54:09 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/233133d7d717239be2734e7fa765397f7563f399/">
-    83cb7875b4bed72ac7bc9f3902b18947fa81fae2
+   <a href="/chromium/src/+/d19b3e76906eee92dff565506231c28992b5894f/">
+    5fd09fc24b678ad5f3037597c797e203a30b95b3
    </a>
   </td>
  </tr>
@@ -166,40 +166,125 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/233133d7d717239be2734e7fa765397f7563f399%5E">
-    5cd2ff81c6046bc865fa4bed52202e2e9e114323
+   <a href="/chromium/src/+/d19b3e76906eee92dff565506231c28992b5894f%5E">
+    21a57b38aa5118b5f1fbe29d607cc1678a702ef3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/233133d7d717239be2734e7fa765397f7563f399%5E%21/">
+    <a href="/chromium/src/+/d19b3e76906eee92dff565506231c28992b5894f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Modify intent interfaces to use the non mojom Intent struct.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[reland][omnibox] Capture escape keys when popup is open.
 
-This CL is used to prepare for CL:3758283. Modify
-CreateShareIntentFromFiles and CreateShareIntentFromFiles to return the
-non mojom intent struct.
+Relands crrev.com/c/3761156 .
+Which was reverted with crrev.com/c/3762407 due to
+linux-chromeos-chrome bot failure.
+The bot failure is fixed by explicitly enabling a feature in the failing
+test. Maybe, field_trial_config.json wasn't sufficient for some reason?
 
-Add MakeShareIntent for the non mojom intent struct to replace
-CreateShareIntentFromDriveFile. CL:3758283 will use the new
-MakeShareIntent interface.
+Currently, the omnibox captures the escape key only when input is in
+progress, but not when the popup is open without input.
 
-This is pure refactor and no function change.
+(The popup being open also means the omnibox has focus. If the omnibox
+loses focus, the popup is closed.)
 
-BUG=1253250
+Therefore, when both the omnibox popup and find dialog are open, without
+omnibox input, escape closes the find dialog rather than the omnibox
+popup. A 2nd escape then closes the popup.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I99a5531137d33807349bbe268a25c6f14644827b">I99a5531137d33807349bbe268a25c6f14644827b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3759055">https://chromium-review.googlesource.com/c/chromium/src/+/3759055</a>
-Commit-Queue: Nancy Wang &lt;nancylingwang@chromium.org&gt;
-Reviewed-by: Eric Willigers &lt;ericwilligers@chromium.org&gt;
-Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
-Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
-Reviewed-by: Tim Sergeant &lt;tsergeant@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1024608}
+This CL changes the omnibox to capture escape when either the input is
+in progress OR (it is focused AND the kBlurWithEscape feature is
+enabled).
+
+This fix is limited to when the kBlurWithEscape feature is enabled,
+because, otherwise, the omnibox never loses focus and indefinitely
+captures escape presses. That may still be better than current behavior,
+but it's less clear.
+
+This has multiple benefits:
+
+1) It makes the escape handling consistent between zero-suggest and
+   non-0-suggest.
+   - Before, with 0-suggest and an omnibox selection, 1st the selection
+     would be cleared, then find closed, then the omnibox closed.
+   - Before, with non-0-suggest and an omnibox selection, 1st the
+     selection would be cleared, then the omnibox closed, then find
+     closed.
+   - With this CL, in both 0 and non-0, 1st the selection is closed,
+     then the omnibox closed, then the omnibox blurred, then find
+     closed.
+
+2) It makes omnibox-v-find order consistent.
+   - Before, sometimes find was closed before the omnibox (e.g. with no
+     user input).
+   - Before, sometimes find was closed after the omnibox (e.g. with user
+     input).
+   - Before, sometimes find was interleaved between omnibox actions
+     (e.g. with an omnibox selection).
+   - With this CL, find is always last.
+
+Exhaustively, the following documents ordering for all combinations of:
+before/after this CL; with kBlurWithEscape enabled/disabled; with 0 and
+non-0-suggest; and with neither, either, or both omnibox input and
+selection:
+
+Before CL
+  Feature disabled
+    0-suggest
+      no input = find, popup
+      input = input + popup, find
+      selection = selection, find, popup
+      input + selection = selection, input + popup, find
+    non-0-suggest
+      no input = find, elide
+      input = input + popup, find
+      selection = selection, popup, find
+      input+selection = selection, input + popup, find
+  kBlurWithEscape enabled
+    0-suggest
+      no input = find, popup, blur
+      input = input + popup, find, blur
+      selection = selection, find, popup, blur
+      input + selection = selection, input + popup, find, blur
+    non-0-suggest
+      no input = find, blur
+      input = input + popup, find, blur
+      selection = selection, popup, find, blur
+      input+selection = selection, input + popup, find, blur
+With CL
+  kBlurWithEscape disabled
+    0-suggest
+      no input = find, popup
+      input = input + popup, find
+      selection = selection, find, popup
+      input + selection = selection, input + popup, find
+    non-0-suggest (same as before patch)
+      no input = find, elide
+      input = input + popup, find
+      selection = selection, popup, find
+      input+selection = selection, input + popup, find
+  kBlurWithEscape enabled
+    0-suggest
+      no input = popup, blur, find
+      input = input + popup, blur, find
+      selection = selection, popup, blur, find
+      input + selection = selection, input + popup, blur, find
+    non-0-suggest
+      no input = popup, blur, find
+      input = input + popup, blur, find
+      selection = selection, popup, blur, find
+      input + selection = selection, input + popup, blur, find
+
+Bug: 776080, 935157
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0d4418bedf77b78757a497a84ef57dce17102665">I0d4418bedf77b78757a497a84ef57dce17102665</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3763500">https://chromium-review.googlesource.com/c/chromium/src/+/3763500</a>
+Reviewed-by: Peter Kasting &lt;pkasting@chromium.org&gt;
+Commit-Queue: manuk hovanesian &lt;manukh@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1024614}
 </pre>
 
 </body>
