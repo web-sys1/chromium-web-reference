@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1024648/"> 1024648</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/eafea51cf92a98ac6bf078b95c492fe8ac73a3c9">eafea51cf92a98ac6bf078b95c492fe8ac73a3c9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1024661/"> 1024661</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c7d10c1b2af66c8187dd78537736a48e110df559">c7d10c1b2af66c8187dd78537736a48e110df559</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1024628/">1024628</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   eafea51cf92a98ac6bf078b95c492fe8ac73a3c9
+   c7d10c1b2af66c8187dd78537736a48e110df559
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/eafea51cf92a98ac6bf078b95c492fe8ac73a3c9">
+    <a href="/chromium/src/+log/c7d10c1b2af66c8187dd78537736a48e110df559">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/eafea51cf92a98ac6bf078b95c492fe8ac73a3c9.tar.gz">
+    <a href="/chromium/src/+archive/c7d10c1b2af66c8187dd78537736a48e110df559.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Minoru Chikamune &lt;chikamune@chromium.org&gt;
+   Alexander Hendrich &lt;hendrich@chromium.org&gt;
   </td>
   <td>
-   Fri Jul 15 09:19:31 2022
+   Fri Jul 15 10:06:29 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jul 15 09:19:31 2022
+   Fri Jul 15 10:06:29 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/eafea51cf92a98ac6bf078b95c492fe8ac73a3c9/">
-    8706fd04bded45d4afe1aae00da326560e565767
+   <a href="/chromium/src/+/c7d10c1b2af66c8187dd78537736a48e110df559/">
+    045ec97baa8845ab45bc5a0b1a87a2540a2bb128
    </a>
   </td>
  </tr>
@@ -166,29 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/eafea51cf92a98ac6bf078b95c492fe8ac73a3c9%5E">
-    ec3c954ce4143f5e709ea21bd20a7e70336b7783
+   <a href="/chromium/src/+/c7d10c1b2af66c8187dd78537736a48e110df559%5E">
+    fb698134ec9be60e4bb500cce807ad6fd454f705
    </a>
    <span>
     [
-    <a href="/chromium/src/+/eafea51cf92a98ac6bf078b95c492fe8ac73a3c9%5E%21/">
+    <a href="/chromium/src/+/c7d10c1b2af66c8187dd78537736a48e110df559%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactoring: Remove LoadIfLazyAfterTimeout()
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use persistent hash for policy-to-pref test chunking
 
-LoadIfLazyAfterTimeout is only used to ignore the return value from
-LoadImmediatelyIfLazy. This can be replaced with base::IgnoreResult().
+All the policies were split into even-sized chunks based on their hash. However, this hash was using FastHash() instead of PersistentHash(), which creates unstable hash values. 
+That could cause a policy to end up in chunk X, if that chunk fails, it gets rerun. However, due to the unstable hash, that problematic policy might now be in chunk Y, so chunk X succeeds and CQ let's the CL pass.
 
-Bug: 1247131
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ieb7a9d7d5b7a041ee71350edc1ffb372a60ae02b">Ieb7a9d7d5b7a041ee71350edc1ffb372a60ae02b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3764794">https://chromium-review.googlesource.com/c/chromium/src/+/3764794</a>
-Commit-Queue: Kouhei Ueno &lt;kouhei@chromium.org&gt;
-Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1024648}
+This CL fixes that by using persistent hashes, which are stable.
+
+Bug: 1344410, 1337770
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib7d155319303902008e6b274a7aa20c2a9eb6659">Ib7d155319303902008e6b274a7aa20c2a9eb6659</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3764343">https://chromium-review.googlesource.com/c/chromium/src/+/3764343</a>
+Reviewed-by: Roman Sorokin &lt;rsorokin@chromium.org&gt;
+Commit-Queue: Alexander Hendrich &lt;hendrich@chromium.org&gt;
+Auto-Submit: Alexander Hendrich &lt;hendrich@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1024661}
 </pre>
 
 </body>
