@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1024614/"> 1024614</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d19b3e76906eee92dff565506231c28992b5894f">d19b3e76906eee92dff565506231c28992b5894f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1024620/"> 1024620</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a02eaa2a98ebd73f3cd1e2d36aa0528afe25d0ba">a02eaa2a98ebd73f3cd1e2d36aa0528afe25d0ba</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1024602/">1024602</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9e1a9293f87457e99168ff8bcb7a5f40346b36af">9e1a9293f87457e99168ff8bcb7a5f40346b36af</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1024614/">1024614</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d19b3e76906eee92dff565506231c28992b5894f">d19b3e76906eee92dff565506231c28992b5894f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d19b3e76906eee92dff565506231c28992b5894f
+   a02eaa2a98ebd73f3cd1e2d36aa0528afe25d0ba
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d19b3e76906eee92dff565506231c28992b5894f">
+    <a href="/chromium/src/+log/a02eaa2a98ebd73f3cd1e2d36aa0528afe25d0ba">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d19b3e76906eee92dff565506231c28992b5894f.tar.gz">
+    <a href="/chromium/src/+archive/a02eaa2a98ebd73f3cd1e2d36aa0528afe25d0ba.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   manukh &lt;manukh@chromium.org&gt;
+   Noam Rosenthal &lt;nrosenthal@chromium.org&gt;
   </td>
   <td>
-   Fri Jul 15 06:54:09 2022
+   Fri Jul 15 07:40:09 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jul 15 06:54:09 2022
+   Fri Jul 15 07:40:09 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d19b3e76906eee92dff565506231c28992b5894f/">
-    5fd09fc24b678ad5f3037597c797e203a30b95b3
+   <a href="/chromium/src/+/a02eaa2a98ebd73f3cd1e2d36aa0528afe25d0ba/">
+    c957327b971004f829a5f3a5dc79a23cba92af91
    </a>
   </td>
  </tr>
@@ -166,125 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d19b3e76906eee92dff565506231c28992b5894f%5E">
-    21a57b38aa5118b5f1fbe29d607cc1678a702ef3
+   <a href="/chromium/src/+/a02eaa2a98ebd73f3cd1e2d36aa0528afe25d0ba%5E">
+    9bbd1d6504a1d63d1b409e696c522497b111a572
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d19b3e76906eee92dff565506231c28992b5894f%5E%21/">
+    <a href="/chromium/src/+/a02eaa2a98ebd73f3cd1e2d36aa0528afe25d0ba%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[reland][omnibox] Capture escape keys when popup is open.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Preload: Avoid unnecessary fetches when media attribute changes
 
-Relands crrev.com/c/3761156 .
-Which was reverted with crrev.com/c/3762407 due to
-linux-chromeos-chrome bot failure.
-The bot failure is fixed by explicitly enabling a feature in the failing
-test. Maybe, field_trial_config.json wasn't sufficient for some reason?
+- If media was matching before and now doesn't, abort.
+- If media was not matching before and now does, fetch.
+- Otherwise do nothing.
 
-Currently, the omnibox captures the escape key only when input is in
-progress, but not when the popup is open without input.
-
-(The popup being open also means the omnibox has focus. If the omnibox
-loses focus, the popup is closed.)
-
-Therefore, when both the omnibox popup and find dialog are open, without
-omnibox input, escape closes the find dialog rather than the omnibox
-popup. A 2nd escape then closes the popup.
-
-This CL changes the omnibox to capture escape when either the input is
-in progress OR (it is focused AND the kBlurWithEscape feature is
-enabled).
-
-This fix is limited to when the kBlurWithEscape feature is enabled,
-because, otherwise, the omnibox never loses focus and indefinitely
-captures escape presses. That may still be better than current behavior,
-but it's less clear.
-
-This has multiple benefits:
-
-1) It makes the escape handling consistent between zero-suggest and
-   non-0-suggest.
-   - Before, with 0-suggest and an omnibox selection, 1st the selection
-     would be cleared, then find closed, then the omnibox closed.
-   - Before, with non-0-suggest and an omnibox selection, 1st the
-     selection would be cleared, then the omnibox closed, then find
-     closed.
-   - With this CL, in both 0 and non-0, 1st the selection is closed,
-     then the omnibox closed, then the omnibox blurred, then find
-     closed.
-
-2) It makes omnibox-v-find order consistent.
-   - Before, sometimes find was closed before the omnibox (e.g. with no
-     user input).
-   - Before, sometimes find was closed after the omnibox (e.g. with user
-     input).
-   - Before, sometimes find was interleaved between omnibox actions
-     (e.g. with an omnibox selection).
-   - With this CL, find is always last.
-
-Exhaustively, the following documents ordering for all combinations of:
-before/after this CL; with kBlurWithEscape enabled/disabled; with 0 and
-non-0-suggest; and with neither, either, or both omnibox input and
-selection:
-
-Before CL
-  Feature disabled
-    0-suggest
-      no input = find, popup
-      input = input + popup, find
-      selection = selection, find, popup
-      input + selection = selection, input + popup, find
-    non-0-suggest
-      no input = find, elide
-      input = input + popup, find
-      selection = selection, popup, find
-      input+selection = selection, input + popup, find
-  kBlurWithEscape enabled
-    0-suggest
-      no input = find, popup, blur
-      input = input + popup, find, blur
-      selection = selection, find, popup, blur
-      input + selection = selection, input + popup, find, blur
-    non-0-suggest
-      no input = find, blur
-      input = input + popup, find, blur
-      selection = selection, popup, find, blur
-      input+selection = selection, input + popup, find, blur
-With CL
-  kBlurWithEscape disabled
-    0-suggest
-      no input = find, popup
-      input = input + popup, find
-      selection = selection, find, popup
-      input + selection = selection, input + popup, find
-    non-0-suggest (same as before patch)
-      no input = find, elide
-      input = input + popup, find
-      selection = selection, popup, find
-      input+selection = selection, input + popup, find
-  kBlurWithEscape enabled
-    0-suggest
-      no input = popup, blur, find
-      input = input + popup, blur, find
-      selection = selection, popup, blur, find
-      input + selection = selection, input + popup, blur, find
-    non-0-suggest
-      no input = popup, blur, find
-      input = input + popup, blur, find
-      selection = selection, popup, blur, find
-      input + selection = selection, input + popup, blur, find
-
-Bug: 776080, 935157
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0d4418bedf77b78757a497a84ef57dce17102665">I0d4418bedf77b78757a497a84ef57dce17102665</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3763500">https://chromium-review.googlesource.com/c/chromium/src/+/3763500</a>
-Reviewed-by: Peter Kasting &lt;pkasting@chromium.org&gt;
-Commit-Queue: manuk hovanesian &lt;manukh@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1024614}
+Bug: 1311586
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id9894ed4f140adbd3c62e997087f09f9670e777e">Id9894ed4f140adbd3c62e997087f09f9670e777e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3755135">https://chromium-review.googlesource.com/c/chromium/src/+/3755135</a>
+Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
+Commit-Queue: Noam Rosenthal &lt;nrosenthal@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1024620}
 </pre>
 
 </body>
