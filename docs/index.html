@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1025608/"> 1025608</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4703c5833eba3520a25bb5a3b4bb29c9cdf5947a">4703c5833eba3520a25bb5a3b4bb29c9cdf5947a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1025617/"> 1025617</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/50933b18ebfdb20673a93ab5ce262031402bd5ce">50933b18ebfdb20673a93ab5ce262031402bd5ce</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1025566/">1025566</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4703c5833eba3520a25bb5a3b4bb29c9cdf5947a
+   50933b18ebfdb20673a93ab5ce262031402bd5ce
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4703c5833eba3520a25bb5a3b4bb29c9cdf5947a">
+    <a href="/chromium/src/+log/50933b18ebfdb20673a93ab5ce262031402bd5ce">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4703c5833eba3520a25bb5a3b4bb29c9cdf5947a.tar.gz">
+    <a href="/chromium/src/+archive/50933b18ebfdb20673a93ab5ce262031402bd5ce.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kent Tamura &lt;tkent@chromium.org&gt;
+   Peter Birk Pakkenberg &lt;pbirk@chromium.org&gt;
   </td>
   <td>
-   Tue Jul 19 07:57:25 2022
+   Tue Jul 19 08:29:46 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jul 19 07:57:25 2022
+   Tue Jul 19 08:29:46 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4703c5833eba3520a25bb5a3b4bb29c9cdf5947a/">
-    1efbb81b67d958c8c859e6e92e8667fd097b1a42
+   <a href="/chromium/src/+/50933b18ebfdb20673a93ab5ce262031402bd5ce/">
+    75ecbda0029cabeb408829d4034b20eb0c4a75d0
    </a>
   </td>
  </tr>
@@ -166,62 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4703c5833eba3520a25bb5a3b4bb29c9cdf5947a%5E">
-    162e6962fecb2ddf0377e2ba199b6ed13c5a14ca
+   <a href="/chromium/src/+/50933b18ebfdb20673a93ab5ce262031402bd5ce%5E">
+    9302fba5ed9c5ff2fd41d96c8688455411427e27
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4703c5833eba3520a25bb5a3b4bb29c9cdf5947a%5E%21/">
+    <a href="/chromium/src/+/50933b18ebfdb20673a93ab5ce262031402bd5ce%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland again "Fieldset NG: Fix paint order of OOF objects in a LEGEND and the corresponding anonymous content box."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Mark DeveloperUiService as foreground in onStartCommand
 
-This is a reland of commit 2c20b99e08731c4bae71da9d4598d10146f52848
+The Webview DeveloperUiService is always started with
+Context.startForegroundService, which requires services to then call
+Service.startForeground within 5 seconds.
 
-The differences from the original CL:
-Because the original CL caused a performance regression, this CL adds
-a cache of the state of CanContainAbsolutePositionObjects().
-LayoutObjectBitfields already has 96 bits, and this CL adds a bit flag
-between full_paint_invalidation_reason_ and the bitfields. The size
-of LayoutObject is not changed by this CL.
+This CL moves that second call to onStartCommand to make sure it is
+always called, as there are currently reports of it not being called in
+time, which causes app crashes.
 
-The differences from the first reland CL:
-Fix Windows x64 build failure.
+The javadoc change is replacing a } with a ).
 
-Original change's description:
-&gt; Fieldset NG: Fix paint order of OOF objects in a LEGEND and the
-&gt; corresponding anonymous content box.
-&gt;
-&gt; If a FIELDSET is an OOF container, we made its anonymous content box
-&gt; an OOF container by setting position:relative. It's bad because OOF
-&gt; objects in the LEGEND is painted behind the anonymous content box. So
-&gt; this CL updates OOF container conditions for anonymous fieldset content
-&gt; boxes, and avoids setting position:relative.
-&gt;
-&gt; * ng_fieldset_algorithm.cc:
-&gt; Handle NGBreakStatus::kDisableFragmentation.
-&gt; Without this change, floated-multicol-in-multicol-crash.html in WPT has
-&gt; a DCHECK failure.
-&gt;
-&gt; Bug: 1341413
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I650b3020df53eba5d05f930bc44675b80ff4e90b">I650b3020df53eba5d05f930bc44675b80ff4e90b</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3764404">https://chromium-review.googlesource.com/c/chromium/src/+/3764404</a>
-&gt; Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-&gt; Commit-Queue: Kent Tamura &lt;tkent@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1025081}
-
-Bug: 1341413
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib539ae3b11700cc7f51eb11ae33a8e972c940538">Ib539ae3b11700cc7f51eb11ae33a8e972c940538</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3767050">https://chromium-review.googlesource.com/c/chromium/src/+/3767050</a>
-Auto-Submit: Kent Tamura &lt;tkent@chromium.org&gt;
-Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
-Commit-Queue: Kent Tamura &lt;tkent@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1025608}
+Fixed: b/237496875
+Fixed: 1330024
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iad43ee83bdd88e83c5a4d70a0971f0e87153fe60">Iad43ee83bdd88e83c5a4d70a0971f0e87153fe60</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3749201">https://chromium-review.googlesource.com/c/chromium/src/+/3749201</a>
+Reviewed-by: Nate Fischer &lt;ntfschr@chromium.org&gt;
+Reviewed-by: Peter Beverloo &lt;peter@chromium.org&gt;
+Commit-Queue: Peter Pakkenberg &lt;pbirk@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1025617}
 </pre>
 
 </body>
