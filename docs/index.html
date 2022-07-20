@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1026396/"> 1026396</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e206e3ccca99ac4da745931030ed214b4164299b">e206e3ccca99ac4da745931030ed214b4164299b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1026420/"> 1026420</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d70b84e6994cb88c1231ca9ff1f68d564cea6d9e">d70b84e6994cb88c1231ca9ff1f68d564cea6d9e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1026271/">1026271</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9095b41802d1f524792c6f7d97ad58a037deb416">9095b41802d1f524792c6f7d97ad58a037deb416</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1026368/">1026368</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/74a9048a4741a4d3170662979058ee2bcf2974d3">74a9048a4741a4d3170662979058ee2bcf2974d3</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e206e3ccca99ac4da745931030ed214b4164299b
+   d70b84e6994cb88c1231ca9ff1f68d564cea6d9e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e206e3ccca99ac4da745931030ed214b4164299b">
+    <a href="/chromium/src/+log/d70b84e6994cb88c1231ca9ff1f68d564cea6d9e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e206e3ccca99ac4da745931030ed214b4164299b.tar.gz">
+    <a href="/chromium/src/+archive/d70b84e6994cb88c1231ca9ff1f68d564cea6d9e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+   Chris Harrelson &lt;chrishtr@chromium.org&gt;
   </td>
   <td>
-   Wed Jul 20 19:49:56 2022
+   Wed Jul 20 20:36:57 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jul 20 19:49:56 2022
+   Wed Jul 20 20:36:57 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e206e3ccca99ac4da745931030ed214b4164299b/">
-    9ae8220c637c9685c629a0111802c14a52917988
+   <a href="/chromium/src/+/d70b84e6994cb88c1231ca9ff1f68d564cea6d9e/">
+    4f24638cf3e2ce7486a7aa2a86e922842b955493
    </a>
   </td>
  </tr>
@@ -166,56 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e206e3ccca99ac4da745931030ed214b4164299b%5E">
-    2eb7e17dbb1b9d09ce24b0c00ec3838cc89904be
+   <a href="/chromium/src/+/d70b84e6994cb88c1231ca9ff1f68d564cea6d9e%5E">
+    ddb01ecd04636f66de3aaa0dcc81609da195173a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e206e3ccca99ac4da745931030ed214b4164299b%5E%21/">
+    <a href="/chromium/src/+/d70b84e6994cb88c1231ca9ff1f68d564cea6d9e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix hairlines along edges of mask bounding box in masked layers
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[a11y-during-render] Call AddImageAnnotations from within Blink
 
-The following caused the hairlines:
-1. Both the mask layer and the masked layer were under the same clip
-   node which clips the layers to the mask bounding box;
-2. The mask layer and the masked layer used different raster scales,
-   and mapping clip rects between the layer space and the screen
-   space caused errors. In the screen space, if the rect on the
-   masked layer was bigger than the mask layer, pixels along the
-   edges of the mask bounding box in the masked layer would
-   be visible.
+Why: moves more of the serialization code out of BlinkAXTreeSource,
+  unblocking further refactoring. It also increases performance by
+  reducing copies and enabling use of the display lock memoizer.
 
-We can't force the same raster scale of the masked layer and the mask
-layer because sometimes they are determined independently for the best
-result of each layer. For example, we want to use the native scale for
-surface layers (used for composited videos).
+Why not move AXImageAnnotator entirely to Blink: I tried it, and it
+was going to be a *ton* of work given how much string manipluation
+is in there. Since there are not a whole lot of images on pages, it
+didn't seem worth it to avoid passing around a few more WebAXObjects.
 
-To solve the problem:
-1. Change the output clip of the mask effect node and its isolation
-   group node from the mask clip to the parent of the mask clip.
-2. Change the painted result of the mask layer to the above output
-   clip, so that the mask is no longer clipped by the mask bounding
-   box.
-3. Expand the bounds of the mask layer to make sure it always covers
-   the masked layer.
+AX-Relnotes: n/a
+Bug: 1068668
 
-This won't change the rendered result (except for slight change in
-anti-aliased pixels when the surface/texture pixels are not 1:1
-matching physical pixels) because the mask layer should be transparent
-outside of the mask bounding box, and these transparent pixels should
-mask off the pixels in the masked layers just like an exact mask clip.
-
-Bug: 1171601
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I85ff66e54eb67d8be01a5791d38622397da3cdf7">I85ff66e54eb67d8be01a5791d38622397da3cdf7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3742680">https://chromium-review.googlesource.com/c/chromium/src/+/3742680</a>
-Commit-Queue: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
-Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1026396}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8e2687b3a0ce338b2149ae256f7d5a4e13183d7d">I8e2687b3a0ce338b2149ae256f7d5a4e13183d7d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3767642">https://chromium-review.googlesource.com/c/chromium/src/+/3767642</a>
+Commit-Queue: Chris Harrelson &lt;chrishtr@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Vladimir Levin &lt;vmpstr@chromium.org&gt;
+Reviewed-by: David Tseng &lt;dtseng@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1026420}
 </pre>
 
 </body>
