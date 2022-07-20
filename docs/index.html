@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1026337/"> 1026337</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fca774ca49c2b7b96bcbc85d393e1dfc294f1c51">fca774ca49c2b7b96bcbc85d393e1dfc294f1c51</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1026396/"> 1026396</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e206e3ccca99ac4da745931030ed214b4164299b">e206e3ccca99ac4da745931030ed214b4164299b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1026271/">1026271</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   fca774ca49c2b7b96bcbc85d393e1dfc294f1c51
+   e206e3ccca99ac4da745931030ed214b4164299b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/fca774ca49c2b7b96bcbc85d393e1dfc294f1c51">
+    <a href="/chromium/src/+log/e206e3ccca99ac4da745931030ed214b4164299b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/fca774ca49c2b7b96bcbc85d393e1dfc294f1c51.tar.gz">
+    <a href="/chromium/src/+archive/e206e3ccca99ac4da745931030ed214b4164299b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
   </td>
   <td>
-   Wed Jul 20 18:26:47 2022
+   Wed Jul 20 19:49:56 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jul 20 18:26:47 2022
+   Wed Jul 20 19:49:56 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/fca774ca49c2b7b96bcbc85d393e1dfc294f1c51/">
-    a2a8c60d57411d8ee7a5a5537a0e4ac1d3f6b98a
+   <a href="/chromium/src/+/e206e3ccca99ac4da745931030ed214b4164299b/">
+    9ae8220c637c9685c629a0111802c14a52917988
    </a>
   </td>
  </tr>
@@ -166,40 +166,56 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/fca774ca49c2b7b96bcbc85d393e1dfc294f1c51%5E">
-    6d66dcec13ba60c0d27f1abf056d73ec3981c328
+   <a href="/chromium/src/+/e206e3ccca99ac4da745931030ed214b4164299b%5E">
+    2eb7e17dbb1b9d09ce24b0c00ec3838cc89904be
    </a>
    <span>
     [
-    <a href="/chromium/src/+/fca774ca49c2b7b96bcbc85d393e1dfc294f1c51%5E%21/">
+    <a href="/chromium/src/+/e206e3ccca99ac4da745931030ed214b4164299b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll RTS model from 4llBi6MBg... to 6ThYAVPsB...
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix hairlines along edges of mask bounding box in masked layers
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/rts-windows-amd64-chromium-autoroll">https://autoroll.skia.org/r/rts-windows-amd64-chromium-autoroll</a>
-Please CC guterman@google.com on the revert to ensure that a human
-is aware of the problem.
+The following caused the hairlines:
+1. Both the mask layer and the masked layer were under the same clip
+   node which clips the layers to the mask bounding box;
+2. The mask layer and the masked layer used different raster scales,
+   and mapping clip rects between the layer space and the screen
+   space caused errors. In the screen space, if the rect on the
+   masked layer was bigger than the mask layer, pixels along the
+   edges of the mask bounding box in the masked layer would
+   be visible.
 
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+We can't force the same raster scale of the masked layer and the mask
+layer because sometimes they are determined independently for the best
+result of each layer. For example, we want to use the native scale for
+surface layers (used for composited videos).
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+To solve the problem:
+1. Change the output clip of the mask effect node and its isolation
+   group node from the mask clip to the parent of the mask clip.
+2. Change the painted result of the mask layer to the above output
+   clip, so that the mask is no longer clipped by the mask bounding
+   box.
+3. Expand the bounds of the mask layer to make sure it always covers
+   the masked layer.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
+This won't change the rendered result (except for slight change in
+anti-aliased pixels when the surface/texture pixels are not 1:1
+matching physical pixels) because the mask layer should be transparent
+outside of the mask bounding box, and these transparent pixels should
+mask off the pixels in the masked layers just like an exact mask clip.
 
-Tbr: guterman@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia7d69c2d82196888939f306101edf584f3b32d91">Ia7d69c2d82196888939f306101edf584f3b32d91</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3777463">https://chromium-review.googlesource.com/c/chromium/src/+/3777463</a>
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1026337}
+Bug: 1171601
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I85ff66e54eb67d8be01a5791d38622397da3cdf7">I85ff66e54eb67d8be01a5791d38622397da3cdf7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3742680">https://chromium-review.googlesource.com/c/chromium/src/+/3742680</a>
+Commit-Queue: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1026396}
 </pre>
 
 </body>
