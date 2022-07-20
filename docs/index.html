@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1026271/"> 1026271</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9095b41802d1f524792c6f7d97ad58a037deb416">9095b41802d1f524792c6f7d97ad58a037deb416</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1026278/"> 1026278</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d5fddb840539897dd835db1def27b449525faa75">d5fddb840539897dd835db1def27b449525faa75</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1026217/">1026217</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9095b41802d1f524792c6f7d97ad58a037deb416
+   d5fddb840539897dd835db1def27b449525faa75
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9095b41802d1f524792c6f7d97ad58a037deb416">
+    <a href="/chromium/src/+log/d5fddb840539897dd835db1def27b449525faa75">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9095b41802d1f524792c6f7d97ad58a037deb416.tar.gz">
+    <a href="/chromium/src/+archive/d5fddb840539897dd835db1def27b449525faa75.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Adam Langley &lt;agl@chromium.org&gt;
+   Evan Stade &lt;estade@chromium.org&gt;
   </td>
   <td>
-   Wed Jul 20 16:14:50 2022
+   Wed Jul 20 16:53:39 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jul 20 16:14:50 2022
+   Wed Jul 20 16:53:39 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9095b41802d1f524792c6f7d97ad58a037deb416/">
-    c83d5486872bcd87620a1e5b29f772e5072ee284
+   <a href="/chromium/src/+/d5fddb840539897dd835db1def27b449525faa75/">
+    8390eadcd6a81a2762157b5e6da021dbce87cde1
    </a>
   </td>
  </tr>
@@ -166,79 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9095b41802d1f524792c6f7d97ad58a037deb416%5E">
-    677264654b9df3444b49601404a6c766b1d95f9f
+   <a href="/chromium/src/+/d5fddb840539897dd835db1def27b449525faa75%5E">
+    b81a7b46c99826c29e533a2ad253612f6e2a9038
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9095b41802d1f524792c6f7d97ad58a037deb416%5E%21/">
+    <a href="/chromium/src/+/d5fddb840539897dd835db1def27b449525faa75%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[Sheriff] Revert "webauthn: be more careful reporting transports.""
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Storage buckets: add some support for non-default buckets to IDB
 
-This reverts commit 480f459ff1303a0d97c8501c6cee2f933bcd350c.
+No functional changes yet, but some methods are renamed and
+non-default buckets are at least retrieved from the database
+when the user tries to clear IDB data for an origin.
 
-Reason for revert: this wasn't it.
-
-Original change's description:
-&gt; [Sheriff] Revert "webauthn: be more careful reporting transports."
-&gt;
-&gt; This reverts commit ef59976d2c87df67684c49a1f6bd65860219294c.
-&gt;
-&gt; Reason for revert: Suspect for breaking blink_wpt_tests
-&gt; <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/WebKit%20Win10/102100/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/WebKit%20Win10/102100/overview</a>
-&gt;
-&gt; Original change's description:
-&gt; &gt; webauthn: be more careful reporting transports.
-&gt; &gt;
-&gt; &gt; Prior to this change, Chrome would report the union of the transport
-&gt; &gt; used to communicate with an authenticator, and any transports learned
-&gt; &gt; from its attestation certificate, in a navigator.credentials.create()
-&gt; &gt; response.
-&gt; &gt;
-&gt; &gt; However, if we don't get transports from the attestation certificate
-&gt; &gt; then the used transport might be too narrow. E.g. a USB+NFC
-&gt; &gt; authenticator used over USB would be reported as ['usb'], and wouldn't
-&gt; &gt; work over NFC in the future.
-&gt; &gt;
-&gt; &gt; This change only reports transports if we learned of them from either
-&gt; &gt; the attestation certificate or from getInfo. We didn't record the latter
-&gt; &gt; previously so this change also adds support for collecting transports
-&gt; &gt; from getInfo.
-&gt; &gt;
-&gt; &gt; Bug: 1344586
-&gt; &gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic3ed3481bdf0df998962a1c6d1f05fc2158f6b62">Ic3ed3481bdf0df998962a1c6d1f05fc2158f6b62</a>
-&gt; &gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3765185">https://chromium-review.googlesource.com/c/chromium/src/+/3765185</a>
-&gt; &gt; Reviewed-by: Martin Kreichgauer &lt;martinkr@google.com&gt;
-&gt; &gt; Commit-Queue: Adam Langley &lt;agl@chromium.org&gt;
-&gt; &gt; Cr-Commit-Position: refs/heads/main@{#1026007}
-&gt;
-&gt; Bug: 1344586
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6d0c0ceaf8d58fed42eadbbb3960a398e9448d19">I6d0c0ceaf8d58fed42eadbbb3960a398e9448d19</a>
-&gt; No-Presubmit: true
-&gt; No-Tree-Checks: true
-&gt; No-Try: true
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3776658">https://chromium-review.googlesource.com/c/chromium/src/+/3776658</a>
-&gt; Auto-Submit: Anatoliy Potapchuk &lt;apotapchuk@chromium.org&gt;
-&gt; Reviewed-by: Amr Aboelkher &lt;amraboelkher@chromium.org&gt;
-&gt; Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-&gt; Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-&gt; Owners-Override: Anatoliy Potapchuk &lt;apotapchuk@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1026199}
-
-Bug: 1344586
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0e552e263dbd5b3c1247dfa72b08e5565b61c13f">I0e552e263dbd5b3c1247dfa72b08e5565b61c13f</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3777517">https://chromium-review.googlesource.com/c/chromium/src/+/3777517</a>
-Commit-Queue: Adam Langley &lt;agl@chromium.org&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1026271}
+Bug: 1338303
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I029ead1e2337083045126da06192a6846bb1f392">I029ead1e2337083045126da06192a6846bb1f392</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3765908">https://chromium-review.googlesource.com/c/chromium/src/+/3765908</a>
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Commit-Queue: Evan Stade &lt;estade@chromium.org&gt;
+Reviewed-by: Joshua Bell &lt;jsbell@chromium.org&gt;
+Reviewed-by: Ayu Ishii &lt;ayui@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1026278}
 </pre>
 
 </body>
