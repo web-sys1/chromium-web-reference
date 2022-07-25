@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1027637/"> 1027637</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/57e8b5fa66aa45714849b31a816a039869b011cc">57e8b5fa66aa45714849b31a816a039869b011cc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1027639/"> 1027639</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1f3c4ba5ad9a1a47a920f6cec415ce68b356547b">1f3c4ba5ad9a1a47a920f6cec415ce68b356547b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1027634/">1027634</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3a80f2e37e12a8d84b5b92732b6b172837e4e01b">3a80f2e37e12a8d84b5b92732b6b172837e4e01b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1027635/">1027635</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d7dff1c8ad831700b2ff14f2bbf24868cec35a92">d7dff1c8ad831700b2ff14f2bbf24868cec35a92</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   57e8b5fa66aa45714849b31a816a039869b011cc
+   1f3c4ba5ad9a1a47a920f6cec415ce68b356547b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/57e8b5fa66aa45714849b31a816a039869b011cc">
+    <a href="/chromium/src/+log/1f3c4ba5ad9a1a47a920f6cec415ce68b356547b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/57e8b5fa66aa45714849b31a816a039869b011cc.tar.gz">
+    <a href="/chromium/src/+archive/1f3c4ba5ad9a1a47a920f6cec415ce68b356547b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kalvin Lee &lt;kdlee@chromium.org&gt;
+   David Munro &lt;davidmunro@google.com&gt;
   </td>
   <td>
-   Mon Jul 25 05:51:39 2022
+   Mon Jul 25 06:16:00 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jul 25 05:51:39 2022
+   Mon Jul 25 06:16:00 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/57e8b5fa66aa45714849b31a816a039869b011cc/">
-    b47bed6b3711afca34de6cf3da59c18ea2f41de7
+   <a href="/chromium/src/+/1f3c4ba5ad9a1a47a920f6cec415ce68b356547b/">
+    2d6887fbaba1b28a4ba51d080e90acc647143fe8
    </a>
   </td>
  </tr>
@@ -166,41 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/57e8b5fa66aa45714849b31a816a039869b011cc%5E">
-    6df38fe2b31130046398c4dd27ac056d6171be5b
+   <a href="/chromium/src/+/1f3c4ba5ad9a1a47a920f6cec415ce68b356547b%5E">
+    d31cae7f79dc845b3d783e0fa0c9eea9288d9096
    </a>
    <span>
     [
-    <a href="/chromium/src/+/57e8b5fa66aa45714849b31a816a039869b011cc%5E%21/">
+    <a href="/chromium/src/+/1f3c4ba5ad9a1a47a920f6cec415ce68b356547b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">raw_ptr_unittest: Enact boilerplate reduction
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">crostini: Add a terminal_supported attribute to the container pref
 
-Following up from change 3782443, this CL applies the pattern to all
-clusters of `EXPECT_EQ(foo, RawPtrCountingImpl::foo_counter)`.
+Each session we set/unset an attribute on each entry in the containers
+pref indicating if it should show up in the terminal app nor not, this
+way the terminal app, which already reads/writes prefs directly, can
+filter itself to only show the right guests.
 
-There are some caveats:
-*   Single-line EXPECTations are left alone, as they would not benefit
-    from this new helper matcher.
-*   This CL makes the expectation-vs-reality ordering somewhat more
-    uniform, since the tests were split between "regular" expectations
-    and "Yoda" expectations. (This has no effect on test operation.)
-*   The style guide mandates that we supply arguments to designated
-    initializers in the order of declaration, which forces us to match
-    the declaration order of the members of RawPtrCountingImpl. (This
-    has no effect on test operation, but makes the diff a bit trickier
-    to navigate.)
+Bug: b:238823940
+Bug: b:233287586
+Test: CQ, deploy and use terminal with multiple Crostini containers.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I517189ef11b0f1067526761c488b549984faa550">I517189ef11b0f1067526761c488b549984faa550</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3782510">https://chromium-review.googlesource.com/c/chromium/src/+/3782510</a>
-Reviewed-by: Keishi Hattori &lt;keishi@chromium.org&gt;
-Auto-Submit: Kalvin Lee &lt;kdlee@chromium.org&gt;
-Commit-Queue: Kalvin Lee &lt;kdlee@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1027637}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4a705631ac59d91d6e43533ca5a8075580b508b1">I4a705631ac59d91d6e43533ca5a8075580b508b1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3774559">https://chromium-review.googlesource.com/c/chromium/src/+/3774559</a>
+Commit-Queue: David Munro &lt;davidmunro@google.com&gt;
+Reviewed-by: Joel Hockey &lt;joelhockey@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1027639}
 </pre>
 
 </body>
