@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1028221/"> 1028221</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ace8edcd1214070ce022246fb496a73385c8557a">ace8edcd1214070ce022246fb496a73385c8557a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1028240/"> 1028240</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/86bfffd944f053ea47e70edc543912763b507f84">86bfffd944f053ea47e70edc543912763b507f84</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1028190/">1028190</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ace8edcd1214070ce022246fb496a73385c8557a
+   86bfffd944f053ea47e70edc543912763b507f84
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ace8edcd1214070ce022246fb496a73385c8557a">
+    <a href="/chromium/src/+log/86bfffd944f053ea47e70edc543912763b507f84">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ace8edcd1214070ce022246fb496a73385c8557a.tar.gz">
+    <a href="/chromium/src/+archive/86bfffd944f053ea47e70edc543912763b507f84.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Aida Zolic &lt;aidazolic@chromium.org&gt;
+   manukh &lt;manukh@chromium.org&gt;
   </td>
   <td>
-   Tue Jul 26 13:12:20 2022
+   Tue Jul 26 14:00:56 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jul 26 13:12:20 2022
+   Tue Jul 26 14:00:56 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ace8edcd1214070ce022246fb496a73385c8557a/">
-    962c850e3f34dcaa2ff12aa72c306c5748d6667a
+   <a href="/chromium/src/+/86bfffd944f053ea47e70edc543912763b507f84/">
+    c5a1639f992d5adacc1431e94b8602e841f4d65a
    </a>
   </td>
  </tr>
@@ -166,34 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ace8edcd1214070ce022246fb496a73385c8557a%5E">
-    9c9f31f6f038df30294ffae8e23e6f914760ecbe
+   <a href="/chromium/src/+/86bfffd944f053ea47e70edc543912763b507f84%5E">
+    875cef6387c6cbaf6053d30960888203f356b582
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ace8edcd1214070ce022246fb496a73385c8557a%5E%21/">
+    <a href="/chromium/src/+/86bfffd944f053ea47e70edc543912763b507f84%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Cleanup in dlp_content_manager_browser_test.cc
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[memories][persist-clusters] Fix edge case with cont params bounds.
 
-Small changes in the browser test file to simplify function mocking and
-comply with best practices to not specify wildcard parameters when it
-is not necessary.
+Currently, we consider history exhuasted when the continuation params
+reach either 'now' or `begin_time_limit_`.
 
-R=ayaelattar@chromium.org
+This is usually accurate. Except when we reach a clustered visit, we
+'rewind' the continuation params 1 query (i.e. 1 day) so that the last
+query can be repeated a 2nd time. Otherwise, the clustered visits of
+that day would be omitted.
 
-Fixed: 1347449
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6e8aee06c6f7f1ecae6bffa296da1397f4eaecba">I6e8aee06c6f7f1ecae6bffa296da1397f4eaecba</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3781354">https://chromium-review.googlesource.com/c/chromium/src/+/3781354</a>
-Commit-Queue: Aida Zolic &lt;aidazolic@chromium.org&gt;
-Reviewed-by: Aya Elsayed &lt;ayaelattar@chromium.org&gt;
-Auto-Submit: Aida Zolic &lt;aidazolic@chromium.org&gt;
-Commit-Queue: Aya Elsayed &lt;ayaelattar@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1028221}
+If there is a clustered visit today, this can cause us rewinding the
+continuation params to [yesterday, today, which we incorrectly interpret
+as having exhausted history.
+
+This CL conditions the exhaustion detection to only consider
+`begin_time_limit_` when iterating recent 1st, and only consider 'now'
+when iterating oldest 1st.
+
+Bug: 1184879, 1184875, 1171352
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I926b4078a958f8a7c701fde8c6a177014c3c7e79">I926b4078a958f8a7c701fde8c6a177014c3c7e79</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3781658">https://chromium-review.googlesource.com/c/chromium/src/+/3781658</a>
+Reviewed-by: Tommy Li &lt;tommycli@chromium.org&gt;
+Commit-Queue: manuk hovanesian &lt;manukh@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1028240}
 </pre>
 
 </body>
