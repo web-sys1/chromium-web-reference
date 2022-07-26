@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1028240/"> 1028240</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/86bfffd944f053ea47e70edc543912763b507f84">86bfffd944f053ea47e70edc543912763b507f84</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1028253/"> 1028253</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cb12bbce909a3214791d1517550b197c9866eea2">cb12bbce909a3214791d1517550b197c9866eea2</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1028216/">1028216</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   86bfffd944f053ea47e70edc543912763b507f84
+   cb12bbce909a3214791d1517550b197c9866eea2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/86bfffd944f053ea47e70edc543912763b507f84">
+    <a href="/chromium/src/+log/cb12bbce909a3214791d1517550b197c9866eea2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/86bfffd944f053ea47e70edc543912763b507f84.tar.gz">
+    <a href="/chromium/src/+archive/cb12bbce909a3214791d1517550b197c9866eea2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   manukh &lt;manukh@chromium.org&gt;
+   Salman Malik &lt;salmanmalik@chromium.org&gt;
   </td>
   <td>
-   Tue Jul 26 14:00:56 2022
+   Tue Jul 26 14:39:30 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jul 26 14:00:56 2022
+   Tue Jul 26 14:39:30 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/86bfffd944f053ea47e70edc543912763b507f84/">
-    c5a1639f992d5adacc1431e94b8602e841f4d65a
+   <a href="/chromium/src/+/cb12bbce909a3214791d1517550b197c9866eea2/">
+    33ee9a699d1b4c01a08d4622511c96dfbdb7a169
    </a>
   </td>
  </tr>
@@ -166,42 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/86bfffd944f053ea47e70edc543912763b507f84%5E">
-    875cef6387c6cbaf6053d30960888203f356b582
+   <a href="/chromium/src/+/cb12bbce909a3214791d1517550b197c9866eea2%5E">
+    ef276944cf52d3e59d18346aebd635ef8050dece
    </a>
    <span>
     [
-    <a href="/chromium/src/+/86bfffd944f053ea47e70edc543912763b507f84%5E%21/">
+    <a href="/chromium/src/+/cb12bbce909a3214791d1517550b197c9866eea2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[memories][persist-clusters] Fix edge case with cont params bounds.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">remoting: Support overridable monitor resolution
 
-Currently, we consider history exhuasted when the continuation params
-reach either 'now' or `begin_time_limit_`.
+This change allows the users to provide the number
+of virtual monitors by specifying the initial
+size / resolution of each monitor.
 
-This is usually accurate. Except when we reach a clustered visit, we
-'rewind' the continuation params 1 query (i.e. 1 day) so that the last
-query can be repeated a 2nd time. Otherwise, the clustered visits of
-that day would be omitted.
+Users will be able to persist the monitor configuration
+by editing the service file as follows:
 
-If there is a clustered visit today, this can cause us rewinding the
-continuation params to [yesterday, today, which we incorrectly interpret
-as having exhausted history.
+sudo systemctl edit chrome-remote-desktop@$USER
 
-This CL conditions the exhaustion detection to only consider
-`begin_time_limit_` when iterating recent 1st, and only consider 'now'
-when iterating oldest 1st.
+And then adding the configuration for the monitors e.g.:
 
-Bug: 1184879, 1184875, 1171352
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I926b4078a958f8a7c701fde8c6a177014c3c7e79">I926b4078a958f8a7c701fde8c6a177014c3c7e79</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3781658">https://chromium-review.googlesource.com/c/chromium/src/+/3781658</a>
-Reviewed-by: Tommy Li &lt;tommycli@chromium.org&gt;
-Commit-Queue: manuk hovanesian &lt;manukh@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1028240}
+[Service]
+Environment=CHROME_REMOTE_DESKTOP_WAYLAND_DESKTOP_SIZES=1280x720,1280x720
+
+Bug: chromium:1291247
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8fd3b806b5923f092bf8c2e2300171373a31de7f">I8fd3b806b5923f092bf8c2e2300171373a31de7f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3779705">https://chromium-review.googlesource.com/c/chromium/src/+/3779705</a>
+Reviewed-by: Lambros Lambrou &lt;lambroslambrou@chromium.org&gt;
+Commit-Queue: Salman Malik &lt;salmanmalik@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1028253}
 </pre>
 
 </body>
