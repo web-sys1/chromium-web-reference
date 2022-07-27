@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1028514/"> 1028514</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/27bbedde58559fefdf22316519176f712e112baa">27bbedde58559fefdf22316519176f712e112baa</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1028549/"> 1028549</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5873f7307a13afa9bf8c772bfbe864d44ab95e38">5873f7307a13afa9bf8c772bfbe864d44ab95e38</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1028497/">1028497</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   27bbedde58559fefdf22316519176f712e112baa
+   5873f7307a13afa9bf8c772bfbe864d44ab95e38
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/27bbedde58559fefdf22316519176f712e112baa">
+    <a href="/chromium/src/+log/5873f7307a13afa9bf8c772bfbe864d44ab95e38">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/27bbedde58559fefdf22316519176f712e112baa.tar.gz">
+    <a href="/chromium/src/+archive/5873f7307a13afa9bf8c772bfbe864d44ab95e38.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yiren Wang &lt;yrw@chromium.org&gt;
+   Kalvin Lee &lt;kdlee@chromium.org&gt;
   </td>
   <td>
-   Tue Jul 26 23:53:44 2022
+   Wed Jul 27 01:58:22 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jul 26 23:53:44 2022
+   Wed Jul 27 01:58:22 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/27bbedde58559fefdf22316519176f712e112baa/">
-    dac456efcaf1bfeba54d96d580f91e18bb9f0f2d
+   <a href="/chromium/src/+/5873f7307a13afa9bf8c772bfbe864d44ab95e38/">
+    3c1b689cf8ea628057cf652b092f6b1168fc148f
    </a>
   </td>
  </tr>
@@ -166,35 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/27bbedde58559fefdf22316519176f712e112baa%5E">
-    4124de17d8277ce68662609da11830fdbd66461b
+   <a href="/chromium/src/+/5873f7307a13afa9bf8c772bfbe864d44ab95e38%5E">
+    fff0853d544610b4838f351027a65046db940a9b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/27bbedde58559fefdf22316519176f712e112baa%5E%21/">
+    <a href="/chromium/src/+/5873f7307a13afa9bf8c772bfbe864d44ab95e38%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add PictureInPictureBrowserFrameView for PiP 2.0
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">BrowserProcessImpl: Create member once
 
-This is an initial commit to add a new subclass of
-BrowserNonClientFrameView for the Picture-in-Picture 2.0 window. This
-allows us to have a consistent PiP UI across all the platforms while it
-is backed by the browser.
+There exists a code path in which network_time_tracker_ is initialized
+twice. While this is not leaky, it does sometimes foul a browser test
+(see notes in crrev.com/c/3779439) when a previously cached copy of
+the pointer is invalidated.
 
-This frame view is currently only added and tested on Linux, and still
-has many TODOs which are bugs to be fixed in follow-up CLs.
+This CL assumes that the unconditional assignment to
+`network_time_tracker_` was intended simply to be the "early" case,
+and that there's no particular need to actually reinitialize the member
+(e.g. with updated states). By making this assumption, we force the
+member to initialize just once - at whichever call site demands
+it first.
 
-Bug: 1346734
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic81572c366cb7f52990081a405cef79752a44200">Ic81572c366cb7f52990081a405cef79752a44200</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3773920">https://chromium-review.googlesource.com/c/chromium/src/+/3773920</a>
+Bug: 1298696
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8fc956d261408f03db3ed339cd215c858c4d28a2">I8fc956d261408f03db3ed339cd215c858c4d28a2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3780025">https://chromium-review.googlesource.com/c/chromium/src/+/3780025</a>
 Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Commit-Queue: Yiren Wang &lt;yrw@chromium.org&gt;
-Reviewed-by: Peter Kasting &lt;pkasting@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1028514}
+Commit-Queue: Kalvin Lee &lt;kdlee@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1028549}
 </pre>
 
 </body>
