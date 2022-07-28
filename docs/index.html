@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1029491/"> 1029491</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/42b377f68bf0dd5664617a6d94676be28a864a7d">42b377f68bf0dd5664617a6d94676be28a864a7d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1029507/"> 1029507</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/48b5ea42b1646e6c16fc81f1d5ac964123d1464b">48b5ea42b1646e6c16fc81f1d5ac964123d1464b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1029423/">1029423</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   42b377f68bf0dd5664617a6d94676be28a864a7d
+   48b5ea42b1646e6c16fc81f1d5ac964123d1464b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/42b377f68bf0dd5664617a6d94676be28a864a7d">
+    <a href="/chromium/src/+log/48b5ea42b1646e6c16fc81f1d5ac964123d1464b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/42b377f68bf0dd5664617a6d94676be28a864a7d.tar.gz">
+    <a href="/chromium/src/+archive/48b5ea42b1646e6c16fc81f1d5ac964123d1464b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Joel Hockey &lt;joelhockey@chromium.org&gt;
   </td>
   <td>
-   Thu Jul 28 22:23:43 2022
+   Thu Jul 28 23:03:09 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jul 28 22:23:43 2022
+   Thu Jul 28 23:03:09 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/42b377f68bf0dd5664617a6d94676be28a864a7d/">
-    cb217ce58b5014420058d49708c02fa0518d5c8a
+   <a href="/chromium/src/+/48b5ea42b1646e6c16fc81f1d5ac964123d1464b/">
+    71b89892a31a70369d559f0305a0bbc0412c21f3
    </a>
   </td>
  </tr>
@@ -166,44 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/42b377f68bf0dd5664617a6d94676be28a864a7d%5E">
-    04904062da08d6b48b2dc2d9acfa96d2a53baf9c
+   <a href="/chromium/src/+/48b5ea42b1646e6c16fc81f1d5ac964123d1464b%5E">
+    cd107be3ebbdc44b666330a67ba9dde1b9647a6d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/42b377f68bf0dd5664617a6d94676be28a864a7d%5E%21/">
+    <a href="/chromium/src/+/48b5ea42b1646e6c16fc81f1d5ac964123d1464b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update V8 to version 10.6.53.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Do ProcessProxy writes on ThreadPool to avoid deadlock
 
-Summary of changes available at:
-<a href="https://chromium.googlesource.com/v8/v8/+log/1fa5f4a4..1a60714b">https://chromium.googlesource.com/v8/v8/+log/1fa5f4a4..1a60714b</a>
+ProcessProxy has an ack system to provide flow control when a process
+sends bursts of output.  Reading from the process is paused until the
+previous output has been acked.
+Acks added in <a href="https://codereview.chromium.org/1455793003.">https://codereview.chromium.org/1455793003.</a>
 
-Please follow these instructions for assigning/CC'ing issues:
-<a href="https://v8.dev/docs/triage-issues">https://v8.dev/docs/triage-issues</a>
+The handling of the Read is done on the same TaskRunner as the calls to
+Write. When a program such as vim sends us output while we are writing
+to it, and refuses to complete reading our input until we take more
+output, we get deadlock.
 
-Please close rolling in case of a roll revert:
-<a href="https://v8-roll.appspot.com/">https://v8-roll.appspot.com/</a>
-This only works with a Google account.
+To fix this, we will use ThreadPool to do writes.
 
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:linux-blink-rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:linux_chromium_chromeos_msan_rel_ng
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:linux_optional_gpu_tests_rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:mac_optional_gpu_tests_rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:win_optional_gpu_tests_rel
-CQ_INCLUDE_TRYBOTS=luci.chromium.try:android_optional_gpu_tests_rel
-
-R=hablich@chromium.org,vahl@chromium.org,v8-waterfall-sheriff@grotations.appspotmail.com
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7506ee3c657c4ec8aab57ee355049f1f59cb9cee">I7506ee3c657c4ec8aab57ee355049f1f59cb9cee</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3792687">https://chromium-review.googlesource.com/c/chromium/src/+/3792687</a>
-Bot-Commit: v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
-Commit-Queue: v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1029491}
+Bug: 1205764
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8ed0930bd615bfe141ecfecf8e3fd8bbe59bd0c0">I8ed0930bd615bfe141ecfecf8e3fd8bbe59bd0c0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3790582">https://chromium-review.googlesource.com/c/chromium/src/+/3790582</a>
+Commit-Queue: Joel Hockey &lt;joelhockey@chromium.org&gt;
+Reviewed-by: Jason Lin &lt;lxj@google.com&gt;
+Reviewed-by: Toni Barzic &lt;tbarzic@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1029507}
 </pre>
 
 </body>
