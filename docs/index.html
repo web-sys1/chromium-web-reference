@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1029081/"> 1029081</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/288d735867844e50207f7a19eb7629d27ece1182">288d735867844e50207f7a19eb7629d27ece1182</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1029087/"> 1029087</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5c4d74b08a9ae017b906b0a5289779c02404ee8d">5c4d74b08a9ae017b906b0a5289779c02404ee8d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1029065/">1029065</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   288d735867844e50207f7a19eb7629d27ece1182
+   5c4d74b08a9ae017b906b0a5289779c02404ee8d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/288d735867844e50207f7a19eb7629d27ece1182">
+    <a href="/chromium/src/+log/5c4d74b08a9ae017b906b0a5289779c02404ee8d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/288d735867844e50207f7a19eb7629d27ece1182.tar.gz">
+    <a href="/chromium/src/+archive/5c4d74b08a9ae017b906b0a5289779c02404ee8d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xiaohan Wang &lt;xhwang@chromium.org&gt;
+   Yeunjoo Choi &lt;ychoi@igalia.com&gt;
   </td>
   <td>
-   Thu Jul 28 04:07:02 2022
+   Thu Jul 28 04:41:36 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jul 28 04:07:02 2022
+   Thu Jul 28 04:41:36 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/288d735867844e50207f7a19eb7629d27ece1182/">
-    16cdae270123174a9f4166f7147b4a5e26059694
+   <a href="/chromium/src/+/5c4d74b08a9ae017b906b0a5289779c02404ee8d/">
+    f4ab5a70fd6407a9a6966467a497bb4ece336eef
    </a>
   </td>
  </tr>
@@ -166,56 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/288d735867844e50207f7a19eb7629d27ece1182%5E">
-    0f0f505bc2fbf270832032f539b5263b5557e630
+   <a href="/chromium/src/+/5c4d74b08a9ae017b906b0a5289779c02404ee8d%5E">
+    2829d8850a098cb1b066528531e3d9fdd978aac3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/288d735867844e50207f7a19eb7629d27ece1182%5E%21/">
+    <a href="/chromium/src/+/5c4d74b08a9ae017b906b0a5289779c02404ee8d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media: Support Dolby Vision query for EME
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move //chromeos/{=&gt;ash/components}/dbus/debug_daemon
 
-This CL adds support for Dolby Vision codec/profile query for
-protected content.
+And the moved files are migrated from namespace chromeos to ash. Also,
+this CL removes its deps from public_deps entry of "dbus" components
+in //chromeos/dbus/BUILD.gn
 
-Manually tested by following the steps below:
-0. Set `enable_platform_dolby_vision = true` in gn args.
-1. Hack MediaFoundationService to fake DV support.
-2. Hack KeySystemConfigSelector::IsSupportedContentType() to ignore
-   the `is_supported_media_type_cb_.Run()` which is currently not
-   supported.
-3. Build and start chrome, and in JS console, run
-```
-navigator.requestMediaKeySystemAccess("com.widevine.alpha", [{
-  initDataTypes: ["cenc"],
-  distinctiveIdentifier: "required",
-  persistentState: "required",
-  sessionTypes: ["temporary"],
-  videoCapabilities: [{
-    robustness: "HW_SECURE_ALL",
-    contentType: "video/mp4; codecs=dvhe.05.07",
-  }],
-}]);
-```
-4. Verify that profile 4/5/8 are supported, and other profiles
-   (e.g. 9) are not supported.
+This CL is part of the Chrome OS source code directory migration:
+<a href="https://docs.google.com/document/d/1g-98HpzA8XcoGBWUv1gQNr4rbnD5yfvbtYZyPDDbkaE.">https://docs.google.com/document/d/1g-98HpzA8XcoGBWUv1gQNr4rbnD5yfvbtYZyPDDbkaE.</a>
 
-A chrome/browser/media/encrypted_media_supported_types_browsertest.cc
-should be added but not added in this CL due to the need for a hack
-in step 2 above. We'll add the test when we fix that hack.
-
-Bug: b/198001221
-Test: See above
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I79966e7a7a0f98b29e4c1dd401abce9d9646f71c">I79966e7a7a0f98b29e4c1dd401abce9d9646f71c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3788535">https://chromium-review.googlesource.com/c/chromium/src/+/3788535</a>
-Reviewed-by: John Rummell &lt;jrummell@chromium.org&gt;
-Commit-Queue: Xiaohan Wang &lt;xhwang@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1029081}
+Bug: 1164001
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8c6104ea986c50b3fc9f2fe1cec88902abe16b5a">I8c6104ea986c50b3fc9f2fe1cec88902abe16b5a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3787661">https://chromium-review.googlesource.com/c/chromium/src/+/3787661</a>
+Commit-Queue: Yeunjoo Choi &lt;ychoi@igalia.com&gt;
+Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
+Owners-Override: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1029087}
 </pre>
 
 </body>
