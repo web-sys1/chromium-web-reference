@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1029507/"> 1029507</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/48b5ea42b1646e6c16fc81f1d5ac964123d1464b">48b5ea42b1646e6c16fc81f1d5ac964123d1464b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1029522/"> 1029522</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7192037947e8f6796959af1142ef8899f8cfcd6a">7192037947e8f6796959af1142ef8899f8cfcd6a</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1029423/">1029423</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fa6408cc32885f254bab54b29ca7ea5030f3dd79">fa6408cc32885f254bab54b29ca7ea5030f3dd79</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1029482/">1029482</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/933ebac0b41c9e1ecff2d64fbc673376c55b2242">933ebac0b41c9e1ecff2d64fbc673376c55b2242</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   48b5ea42b1646e6c16fc81f1d5ac964123d1464b
+   7192037947e8f6796959af1142ef8899f8cfcd6a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/48b5ea42b1646e6c16fc81f1d5ac964123d1464b">
+    <a href="/chromium/src/+log/7192037947e8f6796959af1142ef8899f8cfcd6a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/48b5ea42b1646e6c16fc81f1d5ac964123d1464b.tar.gz">
+    <a href="/chromium/src/+archive/7192037947e8f6796959af1142ef8899f8cfcd6a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Joel Hockey &lt;joelhockey@chromium.org&gt;
+   Stefan Zager &lt;szager@chromium.org&gt;
   </td>
   <td>
-   Thu Jul 28 23:03:09 2022
+   Thu Jul 28 23:38:20 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jul 28 23:03:09 2022
+   Thu Jul 28 23:38:20 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/48b5ea42b1646e6c16fc81f1d5ac964123d1464b/">
-    71b89892a31a70369d559f0305a0bbc0412c21f3
+   <a href="/chromium/src/+/7192037947e8f6796959af1142ef8899f8cfcd6a/">
+    1ccc5574655a7480e0b51ef3d0fa716692527037
    </a>
   </td>
  </tr>
@@ -166,39 +166,26 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/48b5ea42b1646e6c16fc81f1d5ac964123d1464b%5E">
-    cd107be3ebbdc44b666330a67ba9dde1b9647a6d
+   <a href="/chromium/src/+/7192037947e8f6796959af1142ef8899f8cfcd6a%5E">
+    635ddb59e5e6d6168c6764624eaf56a2d55cb6ed
    </a>
    <span>
     [
-    <a href="/chromium/src/+/48b5ea42b1646e6c16fc81f1d5ac964123d1464b%5E%21/">
+    <a href="/chromium/src/+/7192037947e8f6796959af1142ef8899f8cfcd6a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Do ProcessProxy writes on ThreadPool to avoid deadlock
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">DCHECK to enforce no invalidations during synchronous IO notifications
 
-ProcessProxy has an ack system to provide flow control when a process
-sends bursts of output.  Reading from the process is paused until the
-previous output has been acked.
-Acks added in <a href="https://codereview.chromium.org/1455793003.">https://codereview.chromium.org/1455793003.</a>
-
-The handling of the Read is done on the same TaskRunner as the calls to
-Write. When a program such as vim sends us output while we are writing
-to it, and refuses to complete reading our input until we take more
-output, we get deadlock.
-
-To fix this, we will use ThreadPool to do writes.
-
-Bug: 1205764
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8ed0930bd615bfe141ecfecf8e3fd8bbe59bd0c0">I8ed0930bd615bfe141ecfecf8e3fd8bbe59bd0c0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3790582">https://chromium-review.googlesource.com/c/chromium/src/+/3790582</a>
-Commit-Queue: Joel Hockey &lt;joelhockey@chromium.org&gt;
-Reviewed-by: Jason Lin &lt;lxj@google.com&gt;
-Reviewed-by: Toni Barzic &lt;tbarzic@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1029507}
+Bug: 1230917
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4eee809ae80f9134f616961ef04b2d85d940b723">I4eee809ae80f9134f616961ef04b2d85d940b723</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3723040">https://chromium-review.googlesource.com/c/chromium/src/+/3723040</a>
+Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Commit-Queue: Stefan Zager &lt;szager@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1029522}
 </pre>
 
 </body>
