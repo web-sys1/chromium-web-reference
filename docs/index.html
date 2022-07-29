@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1029624/"> 1029624</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/606b7a466aa0865506aa795b1befd89b4701d017">606b7a466aa0865506aa795b1befd89b4701d017</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1029660/"> 1029660</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3019e8b61afee13c8a85410a39b88e4445fa1d19">3019e8b61afee13c8a85410a39b88e4445fa1d19</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1029619/">1029619</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   606b7a466aa0865506aa795b1befd89b4701d017
+   3019e8b61afee13c8a85410a39b88e4445fa1d19
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/606b7a466aa0865506aa795b1befd89b4701d017">
+    <a href="/chromium/src/+log/3019e8b61afee13c8a85410a39b88e4445fa1d19">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/606b7a466aa0865506aa795b1befd89b4701d017.tar.gz">
+    <a href="/chromium/src/+archive/3019e8b61afee13c8a85410a39b88e4445fa1d19.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Clark DuVall &lt;cduvall@chromium.org&gt;
+   keno &lt;kenoss@chromium.org&gt;
   </td>
   <td>
-   Fri Jul 29 04:43:33 2022
+   Fri Jul 29 06:48:57 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jul 29 04:43:33 2022
+   Fri Jul 29 06:48:57 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/606b7a466aa0865506aa795b1befd89b4701d017/">
-    e3d7fbcdccac30120e1ce17e8d950bcfd2f6f70f
+   <a href="/chromium/src/+/3019e8b61afee13c8a85410a39b88e4445fa1d19/">
+    9f332e55f5d56ce6569baac46b8cfbe7d4d0d952
    </a>
   </td>
  </tr>
@@ -166,27 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/606b7a466aa0865506aa795b1befd89b4701d017%5E">
-    ded379824f5de39357b6b1894578101aba5cdf05
+   <a href="/chromium/src/+/3019e8b61afee13c8a85410a39b88e4445fa1d19%5E">
+    4b9767a37753bd6d351c28317ed1a16104643c1f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/606b7a466aa0865506aa795b1befd89b4701d017%5E%21/">
+    <a href="/chromium/src/+/3019e8b61afee13c8a85410a39b88e4445fa1d19%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add DelayToolbarUpdateOnLoadStarted to fieldtrial_testing_config.json
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PageLoadMetrics: Add utilities for PLMOs and Prerender2
 
-Bug: 1338302
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3e45b6c6af8b534a0a1b256e4682357eea99bc77">I3e45b6c6af8b534a0a1b256e4682357eea99bc77</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3792526">https://chromium-review.googlesource.com/c/chromium/src/+/3792526</a>
-Reviewed-by: John Abd-El-Malek &lt;jam@chromium.org&gt;
-Auto-Submit: Clark DuVall &lt;cduvall@chromium.org&gt;
-Commit-Queue: John Abd-El-Malek &lt;jam@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1029624}
+To make PLMOs support prerendering, we have to consider time origins of
+metrics. For example, the time origin of First Contentful Paint is
+navigation start. Such kind of metrics can be arbitrary large as the
+activation delayed. These metrics should represent how long the users
+"wait" for those events. Prerendering shorten these waits. So, we should
+correct those metrics.
+
+For the details, see
+<a href="https://docs.google.com/document/d/1Mg44THmNtUsK2NiT6sze65LdcdGBRaZrkh9ko1-ez-0">https://docs.google.com/document/d/1Mg44THmNtUsK2NiT6sze65LdcdGBRaZrkh9ko1-ez-0</a> .
+
+As a first step, this CL adds utilities for prerendering to
+PageLoadMetricsObserverDelegate and page_load_metrics_util.
+
+Bug: 1317494
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If92f8618a043e6619adafc7dfebf80bf10387dfc">If92f8618a043e6619adafc7dfebf80bf10387dfc</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3788945">https://chromium-review.googlesource.com/c/chromium/src/+/3788945</a>
+Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Commit-Queue: Ken Okada &lt;kenoss@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1029660}
 </pre>
 
 </body>
