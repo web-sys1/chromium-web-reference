@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1030081/"> 1030081</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/86bb36c4598c2e5837a39aad3557b8a2def14b81">86bb36c4598c2e5837a39aad3557b8a2def14b81</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1030082/"> 1030082</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ae417876c87dafb1260860b3cf7f015fe81c2a9e">ae417876c87dafb1260860b3cf7f015fe81c2a9e</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1030080/">1030080</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   86bb36c4598c2e5837a39aad3557b8a2def14b81
+   ae417876c87dafb1260860b3cf7f015fe81c2a9e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/86bb36c4598c2e5837a39aad3557b8a2def14b81">
+    <a href="/chromium/src/+log/ae417876c87dafb1260860b3cf7f015fe81c2a9e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/86bb36c4598c2e5837a39aad3557b8a2def14b81.tar.gz">
+    <a href="/chromium/src/+archive/ae417876c87dafb1260860b3cf7f015fe81c2a9e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Julie Jeongeun Kim &lt;jkim@igalia.com&gt;
+   Nancy Wang &lt;nancylingwang@chromium.org&gt;
   </td>
   <td>
-   Sun Jul 31 12:24:37 2022
+   Sun Jul 31 13:26:08 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Jul 31 12:24:37 2022
+   Sun Jul 31 13:26:08 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/86bb36c4598c2e5837a39aad3557b8a2def14b81/">
-    e8b8f65887ff9d86b88e29b6e8e9211242b52d83
+   <a href="/chromium/src/+/ae417876c87dafb1260860b3cf7f015fe81c2a9e/">
+    a57de1d5f19b4cdf6ea10b4d40915caf8f28c5c2
    </a>
   </td>
  </tr>
@@ -166,32 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/86bb36c4598c2e5837a39aad3557b8a2def14b81%5E">
-    a7d1e31920f8ff5b6666f5ef4f8edd8f3e2cf403
+   <a href="/chromium/src/+/ae417876c87dafb1260860b3cf7f015fe81c2a9e%5E">
+    86bb36c4598c2e5837a39aad3557b8a2def14b81
    </a>
    <span>
     [
-    <a href="/chromium/src/+/86bb36c4598c2e5837a39aad3557b8a2def14b81%5E%21/">
+    <a href="/chromium/src/+/ae417876c87dafb1260860b3cf7f015fe81c2a9e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[mparch] block DevTools security commands in a frame level
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix the browser test HelpAppV2DiscoverTabNotification.
 
-This CL adds the condition for checking if the attached frame for
-DevTools is a primary main frame to SecurityHandler and introduces a
-test that ensures DevTools security commands work in WebContents
-and it handles all certificate errors.
+The browser test HelpAppV2DiscoverTabNotification is broken when the
+flag kAppServiceLaunchWithoutMojom is enabled:
+<a href="https://ci.chromium.org/p/chromium/builders/try/linux-chromeos-rel/1262612?">https://ci.chromium.org/p/chromium/builders/try/linux-chromeos-rel/1262612?</a>
 
-Bug: 1346589
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If8fcdfc2c4083696962f08d368079997c32b0a5a">If8fcdfc2c4083696962f08d368079997c32b0a5a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3782816">https://chromium-review.googlesource.com/c/chromium/src/+/3782816</a>
-Reviewed-by: Adithya Srinivasan &lt;adithyas@chromium.org&gt;
-Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
-Commit-Queue: Julie Jeongeun Kim &lt;jkim@igalia.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1030081}
+Because the non mojom launch interface runs synchronously. Replace the
+asynchronously WaitForAppToOpen, with the synchronously checking after
+running SimulateClick to launch the help app.
+
+The checking ENABLE_CROS_HELP_APP can be removed, because the help app
+is always launched.
+
+BUG=1253250
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I52f751ac52ca8bbdc1a4578ed6ca64d8c0bb1d95">I52f751ac52ca8bbdc1a4578ed6ca64d8c0bb1d95</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3790425">https://chromium-review.googlesource.com/c/chromium/src/+/3790425</a>
+Commit-Queue: Nancy Wang &lt;nancylingwang@chromium.org&gt;
+Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
+Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1030082}
 </pre>
 
 </body>
