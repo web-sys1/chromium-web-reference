@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1030066/"> 1030066</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/949b26bf2c5e2ea2200ae8dfde24a39a46d9abcf">949b26bf2c5e2ea2200ae8dfde24a39a46d9abcf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1030067/"> 1030067</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6188e2290c1570b6b674ca406378968dbe4767db">6188e2290c1570b6b674ca406378968dbe4767db</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1030063/">1030063</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/702b845d1f9f5666e8f398b45225e67d08f5f2ea">702b845d1f9f5666e8f398b45225e67d08f5f2ea</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1030066/">1030066</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/949b26bf2c5e2ea2200ae8dfde24a39a46d9abcf">949b26bf2c5e2ea2200ae8dfde24a39a46d9abcf</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   949b26bf2c5e2ea2200ae8dfde24a39a46d9abcf
+   6188e2290c1570b6b674ca406378968dbe4767db
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/949b26bf2c5e2ea2200ae8dfde24a39a46d9abcf">
+    <a href="/chromium/src/+log/6188e2290c1570b6b674ca406378968dbe4767db">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/949b26bf2c5e2ea2200ae8dfde24a39a46d9abcf.tar.gz">
+    <a href="/chromium/src/+archive/6188e2290c1570b6b674ca406378968dbe4767db.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Aaron Leventhal &lt;aleventhal@google.com&gt;
   </td>
   <td>
-   Sun Jul 31 03:59:26 2022
+   Sun Jul 31 04:48:29 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Jul 31 03:59:26 2022
+   Sun Jul 31 04:48:29 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/949b26bf2c5e2ea2200ae8dfde24a39a46d9abcf/">
-    9b6d2d77ecc90ca91e266d0aff9d35aacfb874da
+   <a href="/chromium/src/+/6188e2290c1570b6b674ca406378968dbe4767db/">
+    2268f297868af983782a4d761506581f01f9471c
    </a>
   </td>
  </tr>
@@ -166,43 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/949b26bf2c5e2ea2200ae8dfde24a39a46d9abcf%5E">
-    d4257f1551903e0397c86d76332661797deb41d9
+   <a href="/chromium/src/+/6188e2290c1570b6b674ca406378968dbe4767db%5E">
+    949b26bf2c5e2ea2200ae8dfde24a39a46d9abcf
    </a>
    <span>
     [
-    <a href="/chromium/src/+/949b26bf2c5e2ea2200ae8dfde24a39a46d9abcf%5E%21/">
+    <a href="/chromium/src/+/6188e2290c1570b6b674ca406378968dbe4767db%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Mac PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Enforce clean serializations
 
-Roll Chrome Mac PGO profile from chrome-mac-main-1659153757-7ebdf5bcf7cc89e6723a56a54d19838510cac59a.profdata to chrome-mac-main-1659224936-f59e227912c2df97756e1edbc20398b176436b4d.profdata
+- Do not send events with nonexistent targets. The event serialization
+loop has been moved until after the dirty object loop, so that it's
+easy to check whether that event's target was serialized, before passing
+the event to the serializer.
+- Do not send serializations that have no updates
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-mac-chromium">https://autoroll.skia.org/r/pgo-mac-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+This also cleans up the last failing tests on the a11y CI bot, which
+were failing because RenderFrameHostImpl was received a11y
+serializations where details.updates.empty() == true, and triggering
+a DCHECK.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:mac-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I08853cde6b21be28664ed27508914d50f2a38be2">I08853cde6b21be28664ed27508914d50f2a38be2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3798826">https://chromium-review.googlesource.com/c/chromium/src/+/3798826</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1030066}
+Bug: None
+Cq-Include-Trybots: luci.chromium.try:linux-blink-web-tests-force-accessibility-rel
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8bb3366cd095ec5e552279796f3151167b3b90f6">I8bb3366cd095ec5e552279796f3151167b3b90f6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3769556">https://chromium-review.googlesource.com/c/chromium/src/+/3769556</a>
+Reviewed-by: Nektarios Paisios &lt;nektar@chromium.org&gt;
+Commit-Queue: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1030067}
 </pre>
 
 </body>
