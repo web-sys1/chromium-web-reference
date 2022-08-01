@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1030133/"> 1030133</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1fc26d2633512b8c5e30d5555fb2ee5a3b47775d">1fc26d2633512b8c5e30d5555fb2ee5a3b47775d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1030148/"> 1030148</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4349742ede6f0f280f8d09ef7cae98cbdfbaf53c">4349742ede6f0f280f8d09ef7cae98cbdfbaf53c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1030099/">1030099</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1fc26d2633512b8c5e30d5555fb2ee5a3b47775d
+   4349742ede6f0f280f8d09ef7cae98cbdfbaf53c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1fc26d2633512b8c5e30d5555fb2ee5a3b47775d">
+    <a href="/chromium/src/+log/4349742ede6f0f280f8d09ef7cae98cbdfbaf53c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1fc26d2633512b8c5e30d5555fb2ee5a3b47775d.tar.gz">
+    <a href="/chromium/src/+archive/4349742ede6f0f280f8d09ef7cae98cbdfbaf53c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Matt Reichhoff &lt;mreichhoff@chromium.org&gt;
+   Duncan Mercer &lt;mercerd@google.com&gt;
   </td>
   <td>
-   Mon Aug 01 16:17:15 2022
+   Mon Aug 01 16:55:56 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 01 16:17:15 2022
+   Mon Aug 01 16:55:56 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1fc26d2633512b8c5e30d5555fb2ee5a3b47775d/">
-    5c88f7f9985e4b52e500892027e080d67d92cef6
+   <a href="/chromium/src/+/4349742ede6f0f280f8d09ef7cae98cbdfbaf53c/">
+    dc3ab3a2cb43527717b2f4c83b777cfd0b401dd0
    </a>
   </td>
  </tr>
@@ -166,29 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1fc26d2633512b8c5e30d5555fb2ee5a3b47775d%5E">
-    0a6d8d7b464087cafaa8bdefac100c241e785b57
+   <a href="/chromium/src/+/4349742ede6f0f280f8d09ef7cae98cbdfbaf53c%5E">
+    5eb13a183fbec79002d109e579dd2066a423a70c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1fc26d2633512b8c5e30d5555fb2ee5a3b47775d%5E%21/">
+    <a href="/chromium/src/+/4349742ede6f0f280f8d09ef7cae98cbdfbaf53c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[sheriff] Disable flaky promise-rejection-event-during-parse
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fixed bug causing page to sometimes not render correctly with side panel v2.
 
-It has been flaky on linux for multiple weeks.
+This change is similar to <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3792486">https://chromium-review.googlesource.com/c/chromium/src/+/3792486</a> but is the fix for Side Panel V2. The main difference between this change and the Side Panel v1 fix is the coordinator does not own the side panel view, so I had to make the side panel view be responsible for rendering the page only when it is safe to do so.
 
-Bug: 1225773
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I40952dee0b53588583c4211d811065d58bc62e4d">I40952dee0b53588583c4211d811065d58bc62e4d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3796907">https://chromium-review.googlesource.com/c/chromium/src/+/3796907</a>
-Reviewed-by: Ramin Halavati &lt;rhalavati@chromium.org&gt;
-Commit-Queue: Matt Reichhoff &lt;mreichhoff@chromium.org&gt;
-Owners-Override: Matt Reichhoff &lt;mreichhoff@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1030133}
+This change fixes a bug that was causing a race condition within Lens Web. This bug was being caused by WebContents being 0px by 0px. This would cause Lens Web to start rendering as if the viewport was 0px wide and 0px tall. Most the times this was fixed by a resize event, but if the javascript wasn't loaded yet, the webpage would miss the resize event and not rerender. To fix this, we now manually wait until side panel has a width, and set the WebContents to the same dimensions as side panel before trying to render Lens Web. This fixes two bugs, one that in unlikely cases, caused the page to completely break when rendering and show no image. Another bug is fixed by this change that was causing the initial region search to not render and instead would render as a blue, unclickable gleam.
+
+TESTED: Manually tested that the blue dot gleams no longer appear on first render in Side Panel V2. Also was unable to get the page to fail to render after fix, but will manually verify again in canary. I checked image search and region search to ensure they both are working properly. Also tested that both still work if side panel starts closed or starts open.
+Bug: b:231610810, b:240270069
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I63cee566beb208d7d8af4eba48e29631a9571f28">I63cee566beb208d7d8af4eba48e29631a9571f28</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3794605">https://chromium-review.googlesource.com/c/chromium/src/+/3794605</a>
+Commit-Queue: Duncan Mercer &lt;mercerd@google.com&gt;
+Reviewed-by: Thomas Lukaszewicz &lt;tluk@chromium.org&gt;
+Reviewed-by: Tom Lukaszewicz &lt;tluk@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1030148}
 </pre>
 
 </body>
