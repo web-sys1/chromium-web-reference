@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1030148/"> 1030148</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4349742ede6f0f280f8d09ef7cae98cbdfbaf53c">4349742ede6f0f280f8d09ef7cae98cbdfbaf53c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1030182/"> 1030182</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0c89927ced1a599243750cb9b752b273cfe63953">0c89927ced1a599243750cb9b752b273cfe63953</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1030099/">1030099</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fa4cb38fe542ff5908189b24d1c33cbf740537d0">fa4cb38fe542ff5908189b24d1c33cbf740537d0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1030137/">1030137</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/385db450b206158ab2985172c3a5c02eaad95d68">385db450b206158ab2985172c3a5c02eaad95d68</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4349742ede6f0f280f8d09ef7cae98cbdfbaf53c
+   0c89927ced1a599243750cb9b752b273cfe63953
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4349742ede6f0f280f8d09ef7cae98cbdfbaf53c">
+    <a href="/chromium/src/+log/0c89927ced1a599243750cb9b752b273cfe63953">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4349742ede6f0f280f8d09ef7cae98cbdfbaf53c.tar.gz">
+    <a href="/chromium/src/+archive/0c89927ced1a599243750cb9b752b273cfe63953.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Duncan Mercer &lt;mercerd@google.com&gt;
+   David Maunder &lt;davidjm@google.com&gt;
   </td>
   <td>
-   Mon Aug 01 16:55:56 2022
+   Mon Aug 01 18:12:08 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 01 16:55:56 2022
+   Mon Aug 01 18:12:08 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4349742ede6f0f280f8d09ef7cae98cbdfbaf53c/">
-    dc3ab3a2cb43527717b2f4c83b777cfd0b401dd0
+   <a href="/chromium/src/+/0c89927ced1a599243750cb9b752b273cfe63953/">
+    b6d7d688fd7f4c5efc7b97e2b3e758fee1d84a14
    </a>
   </td>
  </tr>
@@ -166,32 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4349742ede6f0f280f8d09ef7cae98cbdfbaf53c%5E">
-    5eb13a183fbec79002d109e579dd2066a423a70c
+   <a href="/chromium/src/+/0c89927ced1a599243750cb9b752b273cfe63953%5E">
+    2bd9b5909fb205317dff15d48401c6a8cd62fe16
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4349742ede6f0f280f8d09ef7cae98cbdfbaf53c%5E%21/">
+    <a href="/chromium/src/+/0c89927ced1a599243750cb9b752b273cfe63953%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fixed bug causing page to sometimes not render correctly with side panel v2.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Generalize Notifications on Desktop through OptimizationGuide
 
-This change is similar to <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3792486">https://chromium-review.googlesource.com/c/chromium/src/+/3792486</a> but is the fix for Side Panel V2. The main difference between this change and the Side Panel v1 fix is the coordinator does not own the side panel view, so I had to make the side panel view be responsible for rendering the page only when it is safe to do so.
+This CL makes the Unido handler available on Desktop, not just Android, creates a non-abstract parent class of AndroidPushNotificationManager, namely PushNotificationManager, and moves the non-Android specific parts from AndroidPushNotificationManager to PushNotificationManager. This culmination of these efforts enables Desktop notifications through OptimizationGuide.
 
-This change fixes a bug that was causing a race condition within Lens Web. This bug was being caused by WebContents being 0px by 0px. This would cause Lens Web to start rendering as if the viewport was 0px wide and 0px tall. Most the times this was fixed by a resize event, but if the javascript wasn't loaded yet, the webpage would miss the resize event and not rerender. To fix this, we now manually wait until side panel has a width, and set the WebContents to the same dimensions as side panel before trying to render Lens Web. This fixes two bugs, one that in unlikely cases, caused the page to completely break when rendering and show no image. Another bug is fixed by this change that was causing the initial region search to not render and instead would render as a blue, unclickable gleam.
-
-TESTED: Manually tested that the blue dot gleams no longer appear on first render in Side Panel V2. Also was unable to get the page to fail to render after fix, but will manually verify again in canary. I checked image search and region search to ensure they both are working properly. Also tested that both still work if side panel starts closed or starts open.
-Bug: b:231610810, b:240270069
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I63cee566beb208d7d8af4eba48e29631a9571f28">I63cee566beb208d7d8af4eba48e29631a9571f28</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3794605">https://chromium-review.googlesource.com/c/chromium/src/+/3794605</a>
-Commit-Queue: Duncan Mercer &lt;mercerd@google.com&gt;
-Reviewed-by: Thomas Lukaszewicz &lt;tluk@chromium.org&gt;
-Reviewed-by: Tom Lukaszewicz &lt;tluk@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1030148}
+Bug: 1347595
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iafe86917f17782f71b53cddeae11be4982287835">Iafe86917f17782f71b53cddeae11be4982287835</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3787024">https://chromium-review.googlesource.com/c/chromium/src/+/3787024</a>
+Reviewed-by: Michael van Ouwerkerk &lt;mvanouwerkerk@chromium.org&gt;
+Reviewed-by: Sophie Chang &lt;sophiechang@chromium.org&gt;
+Commit-Queue: David Maunder &lt;davidjm@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1030182}
 </pre>
 
 </body>
