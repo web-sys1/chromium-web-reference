@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1030743/"> 1030743</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1029601b825e3e271cb6e4e21067bb625e46713c">1029601b825e3e271cb6e4e21067bb625e46713c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1030755/"> 1030755</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/61672858eefbc277b4a70c6b965df53f03abca26">61672858eefbc277b4a70c6b965df53f03abca26</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1030727/">1030727</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1029601b825e3e271cb6e4e21067bb625e46713c
+   61672858eefbc277b4a70c6b965df53f03abca26
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1029601b825e3e271cb6e4e21067bb625e46713c">
+    <a href="/chromium/src/+log/61672858eefbc277b4a70c6b965df53f03abca26">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1029601b825e3e271cb6e4e21067bb625e46713c.tar.gz">
+    <a href="/chromium/src/+archive/61672858eefbc277b4a70c6b965df53f03abca26.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andrew Xu &lt;andrewxu@chromium.org&gt;
+   Taylor Bergquist &lt;tbergquist@chromium.org&gt;
   </td>
   <td>
-   Tue Aug 02 20:58:26 2022
+   Tue Aug 02 21:36:25 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 02 20:58:26 2022
+   Tue Aug 02 21:36:25 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1029601b825e3e271cb6e4e21067bb625e46713c/">
-    666a14218865f9cbfe7e1d8c929db4ee9f383367
+   <a href="/chromium/src/+/61672858eefbc277b4a70c6b965df53f03abca26/">
+    5905e4834fbecbbc7b2d23a2f4092e54b741e434
    </a>
   </td>
  </tr>
@@ -166,38 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1029601b825e3e271cb6e4e21067bb625e46713c%5E">
-    c392de5ff27c75e5ad2e7adaed67f8c6fce4973b
+   <a href="/chromium/src/+/61672858eefbc277b4a70c6b965df53f03abca26%5E">
+    35ed9b2a20826cf8c32a7cc972db2f75dd927df7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1029601b825e3e271cb6e4e21067bb625e46713c%5E%21/">
+    <a href="/chromium/src/+/61672858eefbc277b4a70c6b965df53f03abca26%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Shelf] Use `LoginTestBase` in the login shelf pixel test
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix pinned tabs stuck at the wrong index when dragged in from the left.
 
-In this CL, `LoginShelfViewPixelTest` uses `LoginTestBase` as the
-test base instead of `AshTestBase`. In addition, adding an extra
-parameter to `AshTestBase::ShowLoginScreen()` to control whether
-to set the wallpaper. Because the pixel test already sets the wallpaper,
-in `LoginShelfViewPixelTest`, `AshTestBase::ShowLoginScreen()` should
-not set the wallpaper again.
+Once upon a time, the math for determining insertion index when attaching to a new tabstrip was totally separate from the math for determining the index when dragging within the tabstrip. I changed that in <a href="https://chromium-review.googlesource.com/c/chromium/src/+/2575428">https://chromium-review.googlesource.com/c/chromium/src/+/2575428</a> so attaching to a new tabstrip just inserts in a valid spot and then uses the rearranging math.
 
-This CL also makes the test scenario more complex by checking the
-focus traversal from the lock contents user view to the login shelf.
+However, I apparently missed this one special case that prevented an ugly behavior of the old system, which prevented the rearranging code from fixing the mistakes made by the insertion code if fixing those mistakes would look weird - namely if it would involve swapping a tab to the right in response to the mouse moving left, or vice versa. That code was acting up in this new context and causing the linked bug.
 
-This CL should only affect tests.
+TL;DR shit is now less complicated and we can delete the complicated bandaid code. Yay!
 
-Bug: 1347171
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id73b5ce4874a750d3bd230f51914fd6f2fec7df0">Id73b5ce4874a750d3bd230f51914fd6f2fec7df0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3793567">https://chromium-review.googlesource.com/c/chromium/src/+/3793567</a>
-Commit-Queue: Andrew Xu &lt;andrewxu@chromium.org&gt;
-Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1030743}
+Bug: 1220878
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1e713b453be555136ff764a7a33d49c2b93da2ff">I1e713b453be555136ff764a7a33d49c2b93da2ff</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3803381">https://chromium-review.googlesource.com/c/chromium/src/+/3803381</a>
+Reviewed-by: Peter Boström &lt;pbos@chromium.org&gt;
+Commit-Queue: Taylor Bergquist &lt;tbergquist@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1030755}
 </pre>
 
 </body>
