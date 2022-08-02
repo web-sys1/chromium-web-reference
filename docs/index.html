@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1030703/"> 1030703</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/da76fb933515e6569dfd863a5081991e7ede8bfa">da76fb933515e6569dfd863a5081991e7ede8bfa</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1030724/"> 1030724</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/927f234fd2e3f62a68ec0c610a95ea50a29343f9">927f234fd2e3f62a68ec0c610a95ea50a29343f9</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1030669/">1030669</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   da76fb933515e6569dfd863a5081991e7ede8bfa
+   927f234fd2e3f62a68ec0c610a95ea50a29343f9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/da76fb933515e6569dfd863a5081991e7ede8bfa">
+    <a href="/chromium/src/+log/927f234fd2e3f62a68ec0c610a95ea50a29343f9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/da76fb933515e6569dfd863a5081991e7ede8bfa.tar.gz">
+    <a href="/chromium/src/+archive/927f234fd2e3f62a68ec0c610a95ea50a29343f9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Christian Dullweber &lt;dullweber@chromium.org&gt;
+   Kevin Haslett &lt;khaslett@chromium.org&gt;
   </td>
   <td>
-   Tue Aug 02 19:22:21 2022
+   Tue Aug 02 20:10:58 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 02 19:22:21 2022
+   Tue Aug 02 20:10:58 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/da76fb933515e6569dfd863a5081991e7ede8bfa/">
-    d74dc11475bf880a3832ae16c54225704e2a261a
+   <a href="/chromium/src/+/927f234fd2e3f62a68ec0c610a95ea50a29343f9/">
+    dc81d3f9f6c3c48d1903ba76da69af4dc2bd913e
    </a>
   </td>
  </tr>
@@ -166,43 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/da76fb933515e6569dfd863a5081991e7ede8bfa%5E">
-    7305358b8ea79e9a83025d5111189fd7dec8ab27
+   <a href="/chromium/src/+/927f234fd2e3f62a68ec0c610a95ea50a29343f9%5E">
+    5d99de70d2daea7b3055417635ecfbf704334455
    </a>
    <span>
     [
-    <a href="/chromium/src/+/da76fb933515e6569dfd863a5081991e7ede8bfa%5E%21/">
+    <a href="/chromium/src/+/927f234fd2e3f62a68ec0c610a95ea50a29343f9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Android][IncognitoReauth] Refactor the logic of canAuthenticate method
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make InProcessCommandBuffer testonly
 
-The current use of canAuthenticate returns true only if biometrics are
-enrolled. It doesn't take into account if screenlock might be enabled
-for authentication instead. This was done so to support the password
-manager's requirement.
+InProcessCommandBuffer, GLInProcessContext, GpuInProcessThreadService
+are no longer used by GLRenderer and only exist for tests.
+Move non-test classes into gpu/command_buffer/service
 
-However, with new clients like Incognito reauth, the requirement for
-only relying on biometrics is not true in that case. Hence to support
-that, this CL:
+In order to remove dependency on InProcessCommandBuffer,
+SharedImageInterfaceHelper was moved to an interface within
+SharedImageInterfaceInProcess, and converted to a raw_ptr. I also added
+some null checks while I was there because command_buffer_helper_ was
+and is sometimes null.
 
-a) Renames the canAuthenticate method in BiometricAuthenticatorBridge
-to canAuthenticateWithBiometrics and adds a new method canAuthenticateWithBiometricsOrScreenlock to consider the general
-case stated above.
-
-b) Updates the BiometricAuthenticatorAndroid#canAuthenticate to check
-on the requester and invoke canAuthenticateWithBiometricsOrScreenlock
-for reauth page and canAuthenticateWithBiometric otherwise.
-
-Bug: 1227656
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2b15461dd6c962650bb84ca8ae3bd33abb938611">I2b15461dd6c962650bb84ca8ae3bd33abb938611</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3791348">https://chromium-review.googlesource.com/c/chromium/src/+/3791348</a>
-Reviewed-by: Ioana Pandele &lt;ioanap@chromium.org&gt;
-Commit-Queue: Christian Dullweber &lt;dullweber@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1030703}
+Bug: 1334605
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I77eeaf28b059e991d4c9419c25224b8e7dada6fe">I77eeaf28b059e991d4c9419c25224b8e7dada6fe</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3795326">https://chromium-review.googlesource.com/c/chromium/src/+/3795326</a>
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Reviewed-by: vikas soni &lt;vikassoni@chromium.org&gt;
+Commit-Queue: Kevin Haslett &lt;khaslett@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1030724}
 </pre>
 
 </body>
