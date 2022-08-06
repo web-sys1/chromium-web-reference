@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1032217/"> 1032217</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b94b8d853cfc36b65ab08b2bd2f3816019430b33">b94b8d853cfc36b65ab08b2bd2f3816019430b33</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1032228/"> 1032228</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c76b73c12d34759e1edf1a9ef67a641212a9343b">c76b73c12d34759e1edf1a9ef67a641212a9343b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1032212/">1032212</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b94b8d853cfc36b65ab08b2bd2f3816019430b33
+   c76b73c12d34759e1edf1a9ef67a641212a9343b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b94b8d853cfc36b65ab08b2bd2f3816019430b33">
+    <a href="/chromium/src/+log/c76b73c12d34759e1edf1a9ef67a641212a9343b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b94b8d853cfc36b65ab08b2bd2f3816019430b33.tar.gz">
+    <a href="/chromium/src/+archive/c76b73c12d34759e1edf1a9ef67a641212a9343b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Simon Pelchat &lt;spelchat@chromium.org&gt;
   </td>
   <td>
-   Sat Aug 06 02:11:54 2022
+   Sat Aug 06 03:36:26 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Aug 06 02:11:54 2022
+   Sat Aug 06 03:36:26 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b94b8d853cfc36b65ab08b2bd2f3816019430b33/">
-    92a88d904818d6cc56ed6ec2128088e4cf1e6576
+   <a href="/chromium/src/+/c76b73c12d34759e1edf1a9ef67a641212a9343b/">
+    944f89fb08e1db1a15576c7179d5c2639217e946
    </a>
   </td>
  </tr>
@@ -166,41 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b94b8d853cfc36b65ab08b2bd2f3816019430b33%5E">
-    e630c3db43685f97bd8d47a327db6a1833925eac
+   <a href="/chromium/src/+/c76b73c12d34759e1edf1a9ef67a641212a9343b%5E">
+    4aea6fb781bb91fde539e2fe9ded12fe6c8eb62c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b94b8d853cfc36b65ab08b2bd2f3816019430b33%5E%21/">
+    <a href="/chromium/src/+/c76b73c12d34759e1edf1a9ef67a641212a9343b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll androidx from gAsD4l8Eo... to ZYh4te5k8...
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add Features to make clearOmniboxFocus call async.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/androidx-chromium">https://autoroll.skia.org/r/androidx-chromium</a>
-Please CC clank-library-failures@google.com,mheikal@google.com on the revert to ensure that a human
-is aware of the problem.
+Clearing the Omnibox focus is very slow and blocks navigation. There
+are two ways we can improve latency:
 
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+1) Clear the Omnibox focus in a follow-up task. This is the fastest
+   option: the navigation gets kicked off right away, and important
+   navigation tasks can get scheduled between the current task and
+   the task clearing the Omnibox focus. The
+   ClearOmniboxFocusAfterNavAsync feature implements this option.
+2) Clear the Omnibox focus synchronously *after* the navigation has
+   been kicked off. This allows some navigation work outside the
+   browser process (e.g. running beforeunload handlers) to start
+   ASAP. This is implemented by the ClearOmniboxFocusAfterNavSync
+   feature.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+If both features are enabled, ClearOmniboxFocusAfterNavAsync takes
+priority.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
+Note that both options are gated behind a Feature so we can revert
+the behavior if this causes issues on real users.
 
-Cq-Include-Trybots: luci.chrome.try:android-internal-binary-size;luci.chrome.try:android-internal-rel
-Tbr: clank-library-failures@google.com,mheikal@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I885191b53a48dc5ee9bfbaebde983b2358abfdf3">I885191b53a48dc5ee9bfbaebde983b2358abfdf3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3813924">https://chromium-review.googlesource.com/c/chromium/src/+/3813924</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1032217}
+Bug: 1348324
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia0705b771082d7eaac7164ba3a1a8ee290ed5800">Ia0705b771082d7eaac7164ba3a1a8ee290ed5800</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3792860">https://chromium-review.googlesource.com/c/chromium/src/+/3792860</a>
+Reviewed-by: Tomasz Wiszkowski &lt;ender@google.com&gt;
+Commit-Queue: Simon Pelchat &lt;spelchat@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1032228}
 </pre>
 
 </body>
