@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1032752/"> 1032752</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/81e09249e051df8075c94ea5e36fb08021c16517">81e09249e051df8075c94ea5e36fb08021c16517</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1032762/"> 1032762</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c459401727cb5a761a57ed47df85f36b3dde4280">c459401727cb5a761a57ed47df85f36b3dde4280</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1032681/">1032681</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   81e09249e051df8075c94ea5e36fb08021c16517
+   c459401727cb5a761a57ed47df85f36b3dde4280
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/81e09249e051df8075c94ea5e36fb08021c16517">
+    <a href="/chromium/src/+log/c459401727cb5a761a57ed47df85f36b3dde4280">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/81e09249e051df8075c94ea5e36fb08021c16517.tar.gz">
+    <a href="/chromium/src/+archive/c459401727cb5a761a57ed47df85f36b3dde4280.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alberto Juarez &lt;albertojuarez@google.com&gt;
+   ckitagawa &lt;ckitagawa@chromium.org&gt;
   </td>
   <td>
-   Mon Aug 08 21:57:15 2022
+   Mon Aug 08 22:36:48 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 08 21:57:15 2022
+   Mon Aug 08 22:36:48 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/81e09249e051df8075c94ea5e36fb08021c16517/">
-    b2456343b2231dfad0896bf6897fe8246464d7a1
+   <a href="/chromium/src/+/c459401727cb5a761a57ed47df85f36b3dde4280/">
+    631ac99b5ac3d65c726dd9cd9b7bbb4839d8c3ed
    </a>
   </td>
  </tr>
@@ -166,31 +166,50 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/81e09249e051df8075c94ea5e36fb08021c16517%5E">
-    61fd7d649c92c5f7103d4b993c4c226b8aeb7f87
+   <a href="/chromium/src/+/c459401727cb5a761a57ed47df85f36b3dde4280%5E">
+    228765bb4c1ff00885aa2f3781973b0dc734023e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/81e09249e051df8075c94ea5e36fb08021c16517%5E%21/">
+    <a href="/chromium/src/+/c459401727cb5a761a57ed47df85f36b3dde4280%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reporting: Add touch screen info proto
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Android Bulk Tab Edit] Fix flaky tests
 
-Add the proto messages to collect information about the internal touch screens.
+After reproducing locally it seems like the click() from the Espresso
+library is flaking. It happens rarely ~20% of the time. The UI &amp; Views
+are present in every post test screenshot and the elements are in an
+enabled, displayed state.
 
-Design doc: go/cros-touchscreen-telemetry
-Bug: b:241788232
+Work around this by calling the equivalent "perform" action on the
+View/MenuItem.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6e7e27d420266b7875d507b9da14221fcb98f6a4">I6e7e27d420266b7875d507b9da14221fcb98f6a4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3816890">https://chromium-review.googlesource.com/c/chromium/src/+/3816890</a>
-Reviewed-by: Leonid Baraz &lt;lbaraz@chromium.org&gt;
-Auto-Submit: Alberto Juarez &lt;albertojuarez@google.com&gt;
-Commit-Queue: Alberto Juarez &lt;albertojuarez@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1032752}
+More investigation details:
+
+The ActionView flake is rarer and seems to be the result of click()
+not triggering a click handler. I suspect the click is either too short
+or pressed before the view is fully ready.
+
+The MenuItem flake occurs often and the Espresso click() claims throws
+an error stating the view is &lt; 90% visible. I suspect the menu takes
+a bit of time to display or is rendered slightly off the screen on
+occasion.
+
+BlankUiTestActivity disables animations, but this doesn't seem
+reliable on Android 12 (S) so that might explain most of the flakes?
+See <a href="https://crbug.com/1225707.">https://crbug.com/1225707.</a>
+
+Bug: 1348666, 1348710
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie8f2c33559cc92461c043d8e08b15879d13960d7">Ie8f2c33559cc92461c043d8e08b15879d13960d7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3806062">https://chromium-review.googlesource.com/c/chromium/src/+/3806062</a>
+Auto-Submit: Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
+Commit-Queue: Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
+Reviewed-by: Mei Liang &lt;meiliang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1032762}
 </pre>
 
 </body>
