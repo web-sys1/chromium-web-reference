@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1032492/"> 1032492</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e9c5f7c33a327666313f0268ff07f6a99d967de3">e9c5f7c33a327666313f0268ff07f6a99d967de3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1032499/"> 1032499</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/da059fa5438f5321fe92b7f4cfdaf29a2694ffc4">da059fa5438f5321fe92b7f4cfdaf29a2694ffc4</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1032479/">1032479</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e9c5f7c33a327666313f0268ff07f6a99d967de3
+   da059fa5438f5321fe92b7f4cfdaf29a2694ffc4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e9c5f7c33a327666313f0268ff07f6a99d967de3">
+    <a href="/chromium/src/+log/da059fa5438f5321fe92b7f4cfdaf29a2694ffc4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e9c5f7c33a327666313f0268ff07f6a99d967de3.tar.gz">
+    <a href="/chromium/src/+archive/da059fa5438f5321fe92b7f4cfdaf29a2694ffc4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andreu Botella &lt;abotella@igalia.com&gt;
+   Petro Akzhygitov &lt;pakzhygitov@google.com&gt;
   </td>
   <td>
-   Mon Aug 08 10:27:23 2022
+   Mon Aug 08 11:19:41 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 08 10:27:23 2022
+   Mon Aug 08 11:19:41 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e9c5f7c33a327666313f0268ff07f6a99d967de3/">
-    8198ebe796a8b70b1aa2884596072aa3b3eb68d2
+   <a href="/chromium/src/+/da059fa5438f5321fe92b7f4cfdaf29a2694ffc4/">
+    ba0a360c35f0ce0b26200db9b97a89122f5a00f3
    </a>
   </td>
  </tr>
@@ -166,46 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e9c5f7c33a327666313f0268ff07f6a99d967de3%5E">
-    5be9178d7c969a0a4c7de3bb823dfff8ac94ba63
+   <a href="/chromium/src/+/da059fa5438f5321fe92b7f4cfdaf29a2694ffc4%5E">
+    1c1a7cfc8cc002d8a7d4ced3fdcaa7abaf10a37d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e9c5f7c33a327666313f0268ff07f6a99d967de3%5E%21/">
+    <a href="/chromium/src/+/da059fa5438f5321fe92b7f4cfdaf29a2694ffc4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix computation of caret rect alignment when unicode-bidi: plaintext
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor the CloseCurrentTab command into a model update [Part 1].
 
-In |NGCaretRect::ComputeLocalCaretRectAtTextOffset|, the caret position
-corresponding to that text offset is first computed, and then it is
-clamped to a bounding box that depends on the line box rect and the
-line's container. This bounding box depends on the line's text
-alignment, as computed by the |ShouldAlignCaretRight| function.
+– Updated command handlers where appropriate.
+– Moved `CloseCurrentTab` command out of BVC.
 
-However, the |should_align_caret_right| variable has an additional
-condition, such that if the unicode-bidi CSS property is set to
-plaintext, that variable can only be true if the cursor is in an LTR
-text fragment, regardless of the text alignment. There are no comments
-explaining why this extra condition is needed, and it seems to have
-been added as part of <a href="https://crrev.com/c/2234323">https://crrev.com/c/2234323</a> with no reasoning
-attached.
+This CL should make it easier to refactor this command into a model update in the following CLs. The command its will still exist because
+there are several callers using it. But instead of doing all the logic
+it is currently does it could simply call `webStateList-&gt;CloseWebStateAt()` instead. WebStateList observer in the mediator will handle all the other logic.
 
-This extra condition makes |should_align_caret_right| be false whenever
-the cursor is pointing into RTL text, which can make a difference as
-shown in the added test. It is also the underlying cause behind
-<a href="https://crbug.com/1278559.">https://crbug.com/1278559.</a> This patch removes this condition.
-
-Bug: 1349390
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0167a4259bf65a10a3f3694d431bbe5421ab6425">I0167a4259bf65a10a3f3694d431bbe5421ab6425</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3805880">https://chromium-review.googlesource.com/c/chromium/src/+/3805880</a>
-Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Commit-Queue: Andreu Botella &lt;abotella@igalia.com&gt;
-Reviewed-by: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1032492}
+Bug: 906662, 1272498
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I03b1c3230a6bb9967ec1ec08d7d9ae3c1b82f2d5">I03b1c3230a6bb9967ec1ec08d7d9ae3c1b82f2d5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3789338">https://chromium-review.googlesource.com/c/chromium/src/+/3789338</a>
+Commit-Queue: Petro Akzhygitov &lt;pakzhygitov@google.com&gt;
+Reviewed-by: Mark Cogan &lt;marq@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1032499}
 </pre>
 
 </body>
