@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1032762/"> 1032762</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c459401727cb5a761a57ed47df85f36b3dde4280">c459401727cb5a761a57ed47df85f36b3dde4280</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1032792/"> 1032792</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cd1ad60f47c422c122f09dcfa50d44156b4f702d">cd1ad60f47c422c122f09dcfa50d44156b4f702d</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1032681/">1032681</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1765d1fa0d023dc6392e7ae73022fbe0135d0859">1765d1fa0d023dc6392e7ae73022fbe0135d0859</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1032748/">1032748</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/832c2922c642f12b7c34e9a56d87ef81c68745d8">832c2922c642f12b7c34e9a56d87ef81c68745d8</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c459401727cb5a761a57ed47df85f36b3dde4280
+   cd1ad60f47c422c122f09dcfa50d44156b4f702d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c459401727cb5a761a57ed47df85f36b3dde4280">
+    <a href="/chromium/src/+log/cd1ad60f47c422c122f09dcfa50d44156b4f702d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c459401727cb5a761a57ed47df85f36b3dde4280.tar.gz">
+    <a href="/chromium/src/+archive/cd1ad60f47c422c122f09dcfa50d44156b4f702d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   ckitagawa &lt;ckitagawa@chromium.org&gt;
+   Henrique Ferreiro &lt;hferreiro@igalia.com&gt;
   </td>
   <td>
-   Mon Aug 08 22:36:48 2022
+   Mon Aug 08 23:58:03 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 08 22:36:48 2022
+   Mon Aug 08 23:58:03 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c459401727cb5a761a57ed47df85f36b3dde4280/">
-    631ac99b5ac3d65c726dd9cd9b7bbb4839d8c3ed
+   <a href="/chromium/src/+/cd1ad60f47c422c122f09dcfa50d44156b4f702d/">
+    3f1e85aca206cebf40fcf5ddb683b43e24fd4462
    </a>
   </td>
  </tr>
@@ -166,50 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c459401727cb5a761a57ed47df85f36b3dde4280%5E">
-    228765bb4c1ff00885aa2f3781973b0dc734023e
+   <a href="/chromium/src/+/cd1ad60f47c422c122f09dcfa50d44156b4f702d%5E">
+    4a1dd15261bc16eb22df76f676b1f01475fcc338
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c459401727cb5a761a57ed47df85f36b3dde4280%5E%21/">
+    <a href="/chromium/src/+/cd1ad60f47c422c122f09dcfa50d44156b4f702d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Android Bulk Tab Edit] Fix flaky tests
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move {ash =&gt; chromeos/ash}/components/account_manager/
 
-After reproducing locally it seems like the click() from the Espresso
-library is flaking. It happens rarely ~20% of the time. The UI &amp; Views
-are present in every post test screenshot and the elements are in an
-enabled, displayed state.
+ChromeOS components and services are meant to live in chromeos/,
+separate from Ash shell code. Fix a previous migration that used the
+wrong directory.
 
-Work around this by calling the equivalent "perform" action on the
-View/MenuItem.
+This CL is part of the ChromeOS source code directory migration:
+<a href="https://docs.google.com/document/d/1g-98HpzA8XcoGBWUv1gQNr4rbnD5yfvbtYZyPDDbkaE.">https://docs.google.com/document/d/1g-98HpzA8XcoGBWUv1gQNr4rbnD5yfvbtYZyPDDbkaE.</a>
 
-More investigation details:
-
-The ActionView flake is rarer and seems to be the result of click()
-not triggering a click handler. I suspect the click is either too short
-or pressed before the view is fully ready.
-
-The MenuItem flake occurs often and the Espresso click() claims throws
-an error stating the view is &lt; 90% visible. I suspect the menu takes
-a bit of time to display or is rendered slightly off the screen on
-occasion.
-
-BlankUiTestActivity disables animations, but this doesn't seem
-reliable on Android 12 (S) so that might explain most of the flakes?
-See <a href="https://crbug.com/1225707.">https://crbug.com/1225707.</a>
-
-Bug: 1348666, 1348710
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie8f2c33559cc92461c043d8e08b15879d13960d7">Ie8f2c33559cc92461c043d8e08b15879d13960d7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3806062">https://chromium-review.googlesource.com/c/chromium/src/+/3806062</a>
-Auto-Submit: Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
-Commit-Queue: Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
-Reviewed-by: Mei Liang &lt;meiliang@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1032762}
+Bug: 1164001
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I96d1a1ef010c4033dd50037b9423419e63c5b8c9">I96d1a1ef010c4033dd50037b9423419e63c5b8c9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3780114">https://chromium-review.googlesource.com/c/chromium/src/+/3780114</a>
+Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
+Owners-Override: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
+Commit-Queue: Henrique Ferreiro &lt;hferreiro@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1032792}
 </pre>
 
 </body>
