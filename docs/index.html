@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1032916/"> 1032916</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/84fea912280658832bcb3e4eb8a489f248196009">84fea912280658832bcb3e4eb8a489f248196009</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1032924/"> 1032924</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9206c02acd351bd66cb250ea0c636552e188658e">9206c02acd351bd66cb250ea0c636552e188658e</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1032888/">1032888</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   84fea912280658832bcb3e4eb8a489f248196009
+   9206c02acd351bd66cb250ea0c636552e188658e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/84fea912280658832bcb3e4eb8a489f248196009">
+    <a href="/chromium/src/+log/9206c02acd351bd66cb250ea0c636552e188658e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/84fea912280658832bcb3e4eb8a489f248196009.tar.gz">
+    <a href="/chromium/src/+archive/9206c02acd351bd66cb250ea0c636552e188658e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Wenbo Jie &lt;wenbojie@chromium.org&gt;
+   Greg Thompson &lt;grt@chromium.org&gt;
   </td>
   <td>
-   Tue Aug 09 08:36:37 2022
+   Tue Aug 09 09:21:27 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 09 08:36:37 2022
+   Tue Aug 09 09:21:27 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/84fea912280658832bcb3e4eb8a489f248196009/">
-    1ec2e633e1f326e90c15b787d10b76793b3c9040
+   <a href="/chromium/src/+/9206c02acd351bd66cb250ea0c636552e188658e/">
+    d6de5a1520be2967a27f0528f9489826abfe9762
    </a>
   </td>
  </tr>
@@ -166,27 +166,54 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/84fea912280658832bcb3e4eb8a489f248196009%5E">
-    3343b8e6c5af29f49821994ac4c1020ca0e54619
+   <a href="/chromium/src/+/9206c02acd351bd66cb250ea0c636552e188658e%5E">
+    a957a4ec4ee51f98e72501d301fab0c1cd40330b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/84fea912280658832bcb3e4eb8a489f248196009%5E%21/">
+    <a href="/chromium/src/+/9206c02acd351bd66cb250ea0c636552e188658e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Files] Remove jsconfig file
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "diagnostics: prevent UaF in CreateSessionLog"
 
-We have tsconfig_base now, so no need to use jsconfig any more.
+This reverts commit b30af4026fa902967522854e0c0b61566107e652.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0c4b52fe2b6d69303d7e7364b64a998ee30f9fe3">I0c4b52fe2b6d69303d7e7364b64a998ee30f9fe3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3818749">https://chromium-review.googlesource.com/c/chromium/src/+/3818749</a>
-Reviewed-by: Luciano Pacheco &lt;lucmult@chromium.org&gt;
-Commit-Queue: Wenbo Jie &lt;wenbojie@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1032916}
+Reason for revert: LeakSanitizer: detected memory leaks; see <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/Linux%20Chromium%20OS%20ASan%20LSan%20Tests%20%281%29/44982/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/Linux%20Chromium%20OS%20ASan%20LSan%20Tests%20(1)/44982/overview</a>
+
+Original change's description:
+&gt; diagnostics: prevent UaF in CreateSessionLog
+&gt;
+&gt; - Add helper class to handle lifetime of CreateSessionLog and prevent
+&gt;   Use-after-Free when DiagnosticsLogController flag is off.
+&gt; - Update PostTaskAndReplyWithResult to use logic from helper when flag
+&gt;   disabled.
+&gt; - Test Use-After-Free case by calling reset on SessionLogHandler after
+&gt;   task to CreateSessionLog posted when flag disabled.
+&gt;
+&gt; Bug: 1328708
+&gt; Test: Ran ash_unittests and ash_webui_unittests.
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I18afc0726cac6c20c87143d095a7cb957fd3bccd">I18afc0726cac6c20c87143d095a7cb957fd3bccd</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3810860">https://chromium-review.googlesource.com/c/chromium/src/+/3810860</a>
+&gt; Reviewed-by: Jimmy Gong &lt;jimmyxgong@chromium.org&gt;
+&gt; Commit-Queue: Ashley Prasad &lt;ashleydp@google.com&gt;
+&gt; Auto-Submit: Ashley Prasad &lt;ashleydp@google.com&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1032811}
+
+Bug: 1328708
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib36b63d1697f1bc17331b4032482c088ef67b1ad">Ib36b63d1697f1bc17331b4032482c088ef67b1ad</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3817988">https://chromium-review.googlesource.com/c/chromium/src/+/3817988</a>
+Owners-Override: Greg Thompson &lt;grt@google.com&gt;
+Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Auto-Submit: Greg Thompson &lt;grt@chromium.org&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1032924}
 </pre>
 
 </body>
