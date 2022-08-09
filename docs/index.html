@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1033016/"> 1033016</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cb9e13cf2aa48e7b22db0574ec336f4d7d8aea34">cb9e13cf2aa48e7b22db0574ec336f4d7d8aea34</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1033040/"> 1033040</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/09129c561030c4437f7717b81d6212ac5aa99882">09129c561030c4437f7717b81d6212ac5aa99882</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1032982/">1032982</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/53319891225152ab5dfebf327ce7310f32c68dff">53319891225152ab5dfebf327ce7310f32c68dff</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1033004/">1033004</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7ce31debf00584c886aa13140f50657b6c3c0cdc">7ce31debf00584c886aa13140f50657b6c3c0cdc</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   cb9e13cf2aa48e7b22db0574ec336f4d7d8aea34
+   09129c561030c4437f7717b81d6212ac5aa99882
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/cb9e13cf2aa48e7b22db0574ec336f4d7d8aea34">
+    <a href="/chromium/src/+log/09129c561030c4437f7717b81d6212ac5aa99882">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/cb9e13cf2aa48e7b22db0574ec336f4d7d8aea34.tar.gz">
+    <a href="/chromium/src/+archive/09129c561030c4437f7717b81d6212ac5aa99882.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Luc Nguyen &lt;lucnguyen@google.com&gt;
+   Patrick Noland &lt;pnoland@google.com&gt;
   </td>
   <td>
-   Tue Aug 09 15:03:42 2022
+   Tue Aug 09 15:48:50 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 09 15:03:42 2022
+   Tue Aug 09 15:48:50 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/cb9e13cf2aa48e7b22db0574ec336f4d7d8aea34/">
-    2153997d58892819740471704e0896a29171614c
+   <a href="/chromium/src/+/09129c561030c4437f7717b81d6212ac5aa99882/">
+    63cc61a26a1aa9337a1410035f784c2abb67802f
    </a>
   </td>
  </tr>
@@ -166,38 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/cb9e13cf2aa48e7b22db0574ec336f4d7d8aea34%5E">
-    3054b6801db0ab18b500ca47c744e2b8bf11c41a
+   <a href="/chromium/src/+/09129c561030c4437f7717b81d6212ac5aa99882%5E">
+    fa6728ddc8e16400210df81c378c890a2a3133c4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/cb9e13cf2aa48e7b22db0574ec336f4d7d8aea34%5E%21/">
+    <a href="/chromium/src/+/09129c561030c4437f7717b81d6212ac5aa99882%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prevent metric tests from writing to registry on Windows
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Journeys] Fix appearance of TabLayout toggle
 
-Adds RegistryOverrideManager to metrics tests that affect the Windows
-registry. In particular, tests that call SetCollectStatsConsent,
-either directly or indirectly (through
-ChangeMetricsReportingState/ChangeMetricsReportingStateWithReply).
+Three issues are addressed here:
+* The elevation values were accidentally backwards in
+  section_tab_background
+* Calling selectTab() from onTabSelected is racy. Things are much more
+  reliable if we set the correct tab when swapping back.
+* Having the TabLayout share a background with the tabs themselves is
+  unreliable because of caching; the bounds are not reliably reset.
 
-This was causing flakiness with some tests on Windows since they
-sometimes started with metrics reporting enabled, and sometimes with
-metrics reporting disabled. This is because the default state of
-metrics reporting is decided by some registry value ("usagestats").
-
-Bug: 1334765
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I441b651e8e55e48430d4f28c2eea8078732b234e">I441b651e8e55e48430d4f28c2eea8078732b234e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3811450">https://chromium-review.googlesource.com/c/chromium/src/+/3811450</a>
-Commit-Queue: Luc Nguyen &lt;lucnguyen@google.com&gt;
-Reviewed-by: Greg Thompson &lt;grt@chromium.org&gt;
-Reviewed-by: Alexei Svitkine &lt;asvitkine@chromium.org&gt;
-Reviewed-by: Ilya Sherman &lt;isherman@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1033016}
+Bug: 1347626, 1347538
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id78bb1ecaac2bc0ec26975ae75910bb0ceb52c3a">Id78bb1ecaac2bc0ec26975ae75910bb0ceb52c3a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3811179">https://chromium-review.googlesource.com/c/chromium/src/+/3811179</a>
+Reviewed-by: Sky Malice &lt;skym@chromium.org&gt;
+Commit-Queue: Patrick Noland &lt;pnoland@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1033040}
 </pre>
 
 </body>
