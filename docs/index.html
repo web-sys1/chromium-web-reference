@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1033437/"> 1033437</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/909675b6713c763f54665cb071311bb0ea1da173">909675b6713c763f54665cb071311bb0ea1da173</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1033448/"> 1033448</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e7abd7a89a1185690701805fbc1ce3ccb6af0f56">e7abd7a89a1185690701805fbc1ce3ccb6af0f56</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1033398/">1033398</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   909675b6713c763f54665cb071311bb0ea1da173
+   e7abd7a89a1185690701805fbc1ce3ccb6af0f56
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/909675b6713c763f54665cb071311bb0ea1da173">
+    <a href="/chromium/src/+log/e7abd7a89a1185690701805fbc1ce3ccb6af0f56">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/909675b6713c763f54665cb071311bb0ea1da173.tar.gz">
+    <a href="/chromium/src/+archive/e7abd7a89a1185690701805fbc1ce3ccb6af0f56.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+   Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
   </td>
   <td>
-   Wed Aug 10 10:09:48 2022
+   Wed Aug 10 10:46:46 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 10 10:09:48 2022
+   Wed Aug 10 10:46:46 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/909675b6713c763f54665cb071311bb0ea1da173/">
-    e0f5981fc232093d028099e736a082d21b6eae88
+   <a href="/chromium/src/+/e7abd7a89a1185690701805fbc1ce3ccb6af0f56/">
+    3acd843612565ceb9eee4c39469e25b636474543
    </a>
   </td>
  </tr>
@@ -166,67 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/909675b6713c763f54665cb071311bb0ea1da173%5E">
-    573a880d4e12cb3eba6ed3fc6a0ad41013b3f938
+   <a href="/chromium/src/+/e7abd7a89a1185690701805fbc1ce3ccb6af0f56%5E">
+    977d7c7a3a7f7ce12bbdc6b62af4e0af40a8cd82
    </a>
    <span>
     [
-    <a href="/chromium/src/+/909675b6713c763f54665cb071311bb0ea1da173%5E%21/">
+    <a href="/chromium/src/+/e7abd7a89a1185690701805fbc1ce3ccb6af0f56%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Reland "Add tests for headless flows""
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prerender: Don't cancel prerendering on subframes' DidFailLoadWithError
 
-This reverts commit ee1708ad96b841bfbf6f9f49f92da0804a6851e5.
+Now DidFailLoadWithError cancels prerendering always, but we want
+to avoid it for subframe failures as this happens when the site
+intentionally call `window.stop()`.
 
-Reason for revert:
-Findit (<a href="https://goo.gl/kROfz5">https://goo.gl/kROfz5</a>) identified this CL at revision ee1708ad96b841bfbf6f9f49f92da0804a6851e5 as
-the culprit for failures in the continuous build including:
+This patch changes to accept DidFailLoadWithError for subframes
+during prerendering, and propagate DidFailLoad event to observers.
+This is an internal behavior change that impacts content API.
+We already modified the existing observers to check the primary
+main frame on touching UI to support MPArch. So, this change is safe.
+From theviewpoint of Chrome Extensions, exposing such error events
+are also preferable behaviors.
 
-Sample Failed Build: <a href="https://ci.chromium.org/b/8806225944813083921">https://ci.chromium.org/b/8806225944813083921</a>
-Sample Failed Step: compile
-
-If it is a false positive, please report it at <a href="https://bugs.chromium.org/p/chromium/issues/entry?status=Available&amp;comment=Datastore+key+for+the+culprit+entity%3A+chromium.googlesource.com%2Fchromium%2Fsrc%2Frefs%2Fheads%2Fmain%2Fee1708ad96b841bfbf6f9f49f92da0804a6851e5&amp;labels=Test-Findit-Wrong&amp;components=Tools%3ETest%3EFindIt&amp;summary=Wrongly+blame+ee1708ad96b841bfbf6f9f49f92da0804a6851e5">https://bugs.chromium.org/p/chromium/issues/entry?status=Available&amp;comment=Datastore+key+for+the+culprit+entity%3A+chromium.googlesource.com%2Fchromium%2Fsrc%2Frefs%2Fheads%2Fmain%2Fee1708ad96b841bfbf6f9f49f92da0804a6851e5&amp;labels=Test-Findit-Wrong&amp;components=Tools%3ETest%3EFindIt&amp;summary=Wrongly+blame+ee1708ad96b841bfbf6f9f49f92da0804a6851e5</a>
-
-Original change's description:
-&gt; Reland "Add tests for headless flows"
-&gt; 
-&gt; This is a reland of commit 0ae12021cc015f01aba2002478930466e6db9a43
-&gt; 
-&gt; Original change's description:
-&gt; &gt; Add tests for headless flows
-&gt; &gt;
-&gt; &gt; This CL refactors the headless script controller and client to allow for the necessary injections to be able to test a full headless flow. This CL also includes a couple of basic tests. More coverage will follow.
-&gt; &gt;
-&gt; &gt;
-&gt; &gt; Bug: b/201964911
-&gt; &gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8fc67dbbd064e4b65da7e8a4dcd52c946dc3ca75">I8fc67dbbd064e4b65da7e8a4dcd52c946dc3ca75</a>
-&gt; &gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3807499">https://chromium-review.googlesource.com/c/chromium/src/+/3807499</a>
-&gt; &gt; Reviewed-by: Clemens Arbesser &lt;arbesser@google.com&gt;
-&gt; &gt; Commit-Queue: Luca Hunkeler &lt;hluca@google.com&gt;
-&gt; &gt; Cr-Commit-Position: refs/heads/main@{#1031959}
-&gt; 
-&gt; Bug: b/201964911
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I018b7fdab53dd40d3df21278f14e5adaab36ef46">I018b7fdab53dd40d3df21278f14e5adaab36ef46</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3813721">https://chromium-review.googlesource.com/c/chromium/src/+/3813721</a>
-&gt; Commit-Queue: Luca Hunkeler &lt;hluca@google.com&gt;
-&gt; Reviewed-by: Clemens Arbesser &lt;arbesser@google.com&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1033434}
-
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic05ba0e0ac5de23eee818bc543eb03d13e4bf815">Ic05ba0e0ac5de23eee818bc543eb03d13e4bf815</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Bug: b/201964911
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3823201">https://chromium-review.googlesource.com/c/chromium/src/+/3823201</a>
-Reviewed-by: Rushan Suleymanov &lt;rushans@google.com&gt;
-Commit-Queue: Rushan Suleymanov &lt;rushans@google.com&gt;
-Owners-Override: Rushan Suleymanov &lt;rushans@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1033437}
+Bug: 1347716
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibf4c4e30c293e60942d1103698f6323ee39bc7ec">Ibf4c4e30c293e60942d1103698f6323ee39bc7ec</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3782554">https://chromium-review.googlesource.com/c/chromium/src/+/3782554</a>
+Commit-Queue: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+Reviewed-by: Rakina Zata Amni &lt;rakina@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1033448}
 </pre>
 
 </body>
