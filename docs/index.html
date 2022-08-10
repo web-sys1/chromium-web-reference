@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1033640/"> 1033640</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9813d19ae49fe583cfbc30e3a27ca65ec40957b6">9813d19ae49fe583cfbc30e3a27ca65ec40957b6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1033677/"> 1033677</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f57e8a584b8272de64f2de7e45eae3bcf552127b">f57e8a584b8272de64f2de7e45eae3bcf552127b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1033535/">1033535</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9813d19ae49fe583cfbc30e3a27ca65ec40957b6
+   f57e8a584b8272de64f2de7e45eae3bcf552127b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9813d19ae49fe583cfbc30e3a27ca65ec40957b6">
+    <a href="/chromium/src/+log/f57e8a584b8272de64f2de7e45eae3bcf552127b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9813d19ae49fe583cfbc30e3a27ca65ec40957b6.tar.gz">
+    <a href="/chromium/src/+archive/f57e8a584b8272de64f2de7e45eae3bcf552127b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Joshua Pius &lt;joshuapius@google.com&gt;
+   Ashley Prasad &lt;ashleydp@google.com&gt;
   </td>
   <td>
-   Wed Aug 10 19:09:50 2022
+   Wed Aug 10 19:52:34 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 10 19:09:50 2022
+   Wed Aug 10 19:52:34 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9813d19ae49fe583cfbc30e3a27ca65ec40957b6/">
-    e1691d0948e549f9e6dbb38dc1d0dee4d32e0d6c
+   <a href="/chromium/src/+/f57e8a584b8272de64f2de7e45eae3bcf552127b/">
+    5eabb185b0c4ddf4af8adbdbe7e78203af13ce79
    </a>
   </td>
  </tr>
@@ -166,27 +166,52 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9813d19ae49fe583cfbc30e3a27ca65ec40957b6%5E">
-    fea653d7290ef9f14bdb61b4fef79de9ba1a6088
+   <a href="/chromium/src/+/f57e8a584b8272de64f2de7e45eae3bcf552127b%5E">
+    58fd901f44beaee7fda15a2c493d4cd0ffd0c65e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9813d19ae49fe583cfbc30e3a27ca65ec40957b6%5E%21/">
+    <a href="/chromium/src/+/f57e8a584b8272de64f2de7e45eae3bcf552127b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Added the OWNERS file needed for the chrome ash BUILD flags
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "diagnostics: prevent UaF in CreateSessionLog"
 
-Bug: None
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7759439aff921bb9bc92eceed3191ad4d05c986f">I7759439aff921bb9bc92eceed3191ad4d05c986f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3823472">https://chromium-review.googlesource.com/c/chromium/src/+/3823472</a>
-Reviewed-by: Kyle Williams &lt;kdgwill@chromium.org&gt;
-Commit-Queue: Joshua Pius &lt;joshuapius@google.com&gt;
-Reviewed-by: Thomas Anderson &lt;thomasanderson@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1033640}
+This is a reland of commit b30af4026fa902967522854e0c0b61566107e652
+
+- Use unique_ptr for logs to ensure memory is released when test
+  completes.
+
+Original change's description:
+&gt; diagnostics: prevent UaF in CreateSessionLog
+&gt;
+&gt; - Add helper class to handle lifetime of CreateSessionLog and prevent
+&gt;   Use-after-Free when DiagnosticsLogController flag is off.
+&gt; - Update PostTaskAndReplyWithResult to use logic from helper when flag
+&gt;   disabled.
+&gt; - Test Use-After-Free case by calling reset on SessionLogHandler after
+&gt;   task to CreateSessionLog posted when flag disabled.
+&gt;
+&gt; Bug: 1328708
+&gt; Test: Ran ash_unittests and ash_webui_unittests.
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I18afc0726cac6c20c87143d095a7cb957fd3bccd">I18afc0726cac6c20c87143d095a7cb957fd3bccd</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3810860">https://chromium-review.googlesource.com/c/chromium/src/+/3810860</a>
+&gt; Reviewed-by: Jimmy Gong &lt;jimmyxgong@chromium.org&gt;
+&gt; Commit-Queue: Ashley Prasad &lt;ashleydp@google.com&gt;
+&gt; Auto-Submit: Ashley Prasad &lt;ashleydp@google.com&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1032811}
+
+Bug: 1328708
+Test: Ran ash_unittests and ash_webui_unittests.
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1c4220d918405692b5aa0c0eb5fbd8563b41b432">I1c4220d918405692b5aa0c0eb5fbd8563b41b432</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3820322">https://chromium-review.googlesource.com/c/chromium/src/+/3820322</a>
+Commit-Queue: Ashley Prasad &lt;ashleydp@google.com&gt;
+Auto-Submit: Ashley Prasad &lt;ashleydp@google.com&gt;
+Reviewed-by: Jimmy Gong &lt;jimmyxgong@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1033677}
 </pre>
 
 </body>
