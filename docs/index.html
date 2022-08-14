@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1034886/"> 1034886</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7482310cebc6f68fd1a775447cf97c81ef3dd02c">7482310cebc6f68fd1a775447cf97c81ef3dd02c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1034888/"> 1034888</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c9498424d56af845fc331e0f8387e2f18506cf2c">c9498424d56af845fc331e0f8387e2f18506cf2c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1034870/">1034870</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b47ef02ce10e5e58bddd1adb6626c6513d0196bd">b47ef02ce10e5e58bddd1adb6626c6513d0196bd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1034878/">1034878</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0130a64260669297a10a8bcc41077452937bf587">0130a64260669297a10a8bcc41077452937bf587</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7482310cebc6f68fd1a775447cf97c81ef3dd02c
+   c9498424d56af845fc331e0f8387e2f18506cf2c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7482310cebc6f68fd1a775447cf97c81ef3dd02c">
+    <a href="/chromium/src/+log/c9498424d56af845fc331e0f8387e2f18506cf2c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7482310cebc6f68fd1a775447cf97c81ef3dd02c.tar.gz">
+    <a href="/chromium/src/+archive/c9498424d56af845fc331e0f8387e2f18506cf2c.tar.gz">
      tgz
     </a>
     ]
@@ -137,7 +137,7 @@ body{
    François Degros &lt;fdegros@chromium.org&gt;
   </td>
   <td>
-   Sun Aug 14 09:55:42 2022
+   Sun Aug 14 10:40:23 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Aug 14 09:55:42 2022
+   Sun Aug 14 10:40:23 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7482310cebc6f68fd1a775447cf97c81ef3dd02c/">
-    370547086bee9a3c1e2503d2607bb323e81bf4a9
+   <a href="/chromium/src/+/c9498424d56af845fc331e0f8387e2f18506cf2c/">
+    c6c90174bc431002143d442cc227515d4cb0d4f9
    </a>
   </td>
  </tr>
@@ -166,32 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7482310cebc6f68fd1a775447cf97c81ef3dd02c%5E">
-    d265049f731a1bd441a29ac4c021460663aa0508
+   <a href="/chromium/src/+/c9498424d56af845fc331e0f8387e2f18506cf2c%5E">
+    2dbde614dd84ba41f2c2102b8cd96af0af233c4f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7482310cebc6f68fd1a775447cf97c81ef3dd02c%5E%21/">
+    <a href="/chromium/src/+/c9498424d56af845fc331e0f8387e2f18506cf2c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Files app] Use MountPoint instead of MountPointInfo
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Files app] Refactor DiskMountManager::MountPointMap -&gt; MountPoints
 
-Use the shorter name of this struct.
-Use brace initialization when constructing MountPoint values.
-Less code for the same thing.
+Changed the type of the DiskMountManager::MountPointMap collection from
+a map&lt;string, MountInfo&gt; to a set&lt;MountInfo&gt; indexed by mount path.
+
+Previously, the mount path string was duplicated and stored twice (once
+as key of the map entry, and once as part of the associated MountInfo
+value). Now, with the set, there is no such data duplication, and the
+code using this collections looks simpler and more natural.
 
 BUG=chromium:1313346
-TEST=autoninja -C out/Default unit_tests browser_tests components_unittests ash_components_unittests
+TEST=autoninja -C out/Default unit_tests browser_tests components_unittests ash_components_unittests chrome
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie1973f3d056ac7950ac3d215a44da0597f0425f7">Ie1973f3d056ac7950ac3d215a44da0597f0425f7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3827458">https://chromium-review.googlesource.com/c/chromium/src/+/3827458</a>
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic5dc1b485af005f6648e11e8600c3b6613f99a8c">Ic5dc1b485af005f6648e11e8600c3b6613f99a8c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3828330">https://chromium-review.googlesource.com/c/chromium/src/+/3828330</a>
+Reviewed-by: Tommy Li &lt;tommycli@chromium.org&gt;
 Commit-Queue: François Degros &lt;fdegros@chromium.org&gt;
-Reviewed-by: Reilly Grant &lt;reillyg@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1034886}
+Reviewed-by: Maksim Ivanov &lt;emaxx@chromium.org&gt;
+Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
+Reviewed-by: Marcello Salomao &lt;msalomao@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1034888}
 </pre>
 
 </body>
