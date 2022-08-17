@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1035839/"> 1035839</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ddf6af12bf984d170862373b5e2dfde57ce299f5">ddf6af12bf984d170862373b5e2dfde57ce299f5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1035887/"> 1035887</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/68b0fb2a9324b16f8d9c7fc91ef27fde78437821">68b0fb2a9324b16f8d9c7fc91ef27fde78437821</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1035760/">1035760</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ec40e34683d8ca1afdf350e16fa027c29a3d0d9f">ec40e34683d8ca1afdf350e16fa027c29a3d0d9f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1035821/">1035821</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7fa4316e6e132ebe86779bcee30dc45cfd7475ae">7fa4316e6e132ebe86779bcee30dc45cfd7475ae</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ddf6af12bf984d170862373b5e2dfde57ce299f5
+   68b0fb2a9324b16f8d9c7fc91ef27fde78437821
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ddf6af12bf984d170862373b5e2dfde57ce299f5">
+    <a href="/chromium/src/+log/68b0fb2a9324b16f8d9c7fc91ef27fde78437821">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ddf6af12bf984d170862373b5e2dfde57ce299f5.tar.gz">
+    <a href="/chromium/src/+archive/68b0fb2a9324b16f8d9c7fc91ef27fde78437821.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Trent Apted &lt;tapted@chromium.org&gt;
+   Loko Kung &lt;lokokung@google.com&gt;
   </td>
   <td>
-   Wed Aug 17 01:56:57 2022
+   Wed Aug 17 04:05:10 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 17 01:56:57 2022
+   Wed Aug 17 04:05:10 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ddf6af12bf984d170862373b5e2dfde57ce299f5/">
-    d29b335b3085527d5527230083043581f2d08f37
+   <a href="/chromium/src/+/68b0fb2a9324b16f8d9c7fc91ef27fde78437821/">
+    51164b16a6a8bad18d4ed5203ef005e9d4fde021
    </a>
   </td>
  </tr>
@@ -166,42 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ddf6af12bf984d170862373b5e2dfde57ce299f5%5E">
-    894955d70d2160a0544b5407838a835021574a17
+   <a href="/chromium/src/+/68b0fb2a9324b16f8d9c7fc91ef27fde78437821%5E">
+    6bc0ab5a6e70f3b94bd46cfa26a7315bbd56d738
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ddf6af12bf984d170862373b5e2dfde57ce299f5%5E%21/">
+    <a href="/chromium/src/+/68b0fb2a9324b16f8d9c7fc91ef27fde78437821%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">HaTS config for the Photos Experience on Chromebooks.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactors gpu disk cache to be typed and handle based.
 
-To trigger, during SWA initialization, an observer is added for for a
-Profile's AppServiceProxy's InstanceRegistry. This will possibly
-trigger a happiness tracking survey (HaTS) when it observes the Photos
-Android app being closed.
+- Gpu disk cache no longer maintains client_id information, just opaque
+  handles instead. Users, i.e. the GpuHostImpl are tasked with keeping
+  client_id mapping instead.
+- Adds mojom support for the types and handles.
+- Adds a handle that maps 1:1 with physical path so that x-processes can
+  determine which cache a loaded entry is a part of without duplication.
+- Fixes a potential race where entries might have been loaded without
+  a set callback to handle them.
+- Updates mojo calls to reflect that the entries can be blobs now, not
+  just shaders.
 
-The survey includes four bools to assist filtering of responses:
-whether the user had opened an {image,video} in Gallery via the
-Gallery file handler, and whether the user had clicked the "More
-tools in Photos" button in the app while viewing an {image,video}.
-Collectors for these values are added in this CL.
-
-Adds integration tests for the survey trigger and data collectors.
-
-Bug: chromium:1347347, b:241060504
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5bdc6206d3bd0d02d7691d9c9e64ef89871afbb8">I5bdc6206d3bd0d02d7691d9c9e64ef89871afbb8</a>
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3825203">https://chromium-review.googlesource.com/c/chromium/src/+/3825203</a>
-Commit-Queue: Trent Apted &lt;tapted@chromium.org&gt;
-Reviewed-by: Ian Barkley-Yeung &lt;iby@chromium.org&gt;
-Reviewed-by: Caitlin Fischer &lt;caitlinfischer@google.com&gt;
-Reviewed-by: Patti Lor &lt;patricialor@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1035839}
+Bug: dawn:549
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib4a10e0fef0b112cc50e9eb1f8d1d2c815eff52f">Ib4a10e0fef0b112cc50e9eb1f8d1d2c815eff52f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3812182">https://chromium-review.googlesource.com/c/chromium/src/+/3812182</a>
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Austin Eng &lt;enga@chromium.org&gt;
+Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Commit-Queue: Loko Kung &lt;lokokung@google.com&gt;
+Reviewed-by: Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1035887}
 </pre>
 
 </body>
