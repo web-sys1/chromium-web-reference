@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1035899/"> 1035899</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3423e583ed839b3a82d85f6867381ebc6a5685cf">3423e583ed839b3a82d85f6867381ebc6a5685cf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1035928/"> 1035928</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/90cbb2f2581ca1493e2271602304d90090cba3eb">90cbb2f2581ca1493e2271602304d90090cba3eb</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1035874/">1035874</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3423e583ed839b3a82d85f6867381ebc6a5685cf
+   90cbb2f2581ca1493e2271602304d90090cba3eb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3423e583ed839b3a82d85f6867381ebc6a5685cf">
+    <a href="/chromium/src/+log/90cbb2f2581ca1493e2271602304d90090cba3eb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3423e583ed839b3a82d85f6867381ebc6a5685cf.tar.gz">
+    <a href="/chromium/src/+archive/90cbb2f2581ca1493e2271602304d90090cba3eb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
+   sisidovski &lt;sisidovski@chromium.org&gt;
   </td>
   <td>
-   Wed Aug 17 04:43:42 2022
+   Wed Aug 17 06:07:37 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 17 04:43:42 2022
+   Wed Aug 17 06:07:37 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3423e583ed839b3a82d85f6867381ebc6a5685cf/">
-    9c9fe3b450aef8a8de4f811a7b86a88e76cc25f6
+   <a href="/chromium/src/+/90cbb2f2581ca1493e2271602304d90090cba3eb/">
+    40ea55513b2faa719e87ee1fc9b97e1a914d9bba
    </a>
   </td>
  </tr>
@@ -166,30 +166,53 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3423e583ed839b3a82d85f6867381ebc6a5685cf%5E">
-    5d51a0916c49e682c5206ee928e4492985d1a8b0
+   <a href="/chromium/src/+/90cbb2f2581ca1493e2271602304d90090cba3eb%5E">
+    41861ce07de82b0709821dedb7c12282a5ec05be
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3423e583ed839b3a82d85f6867381ebc6a5685cf%5E%21/">
+    <a href="/chromium/src/+/90cbb2f2581ca1493e2271602304d90090cba3eb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[flex] Add UMA for justify-content static-position change.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add the new option to LazyEmbeds to lazily load non-ad frames
 
-To see if we can stop justify-content affecting the static-position
-of OOF-positioned items.
+This CL will introduce the new option to LazyEmbeds. The new feature
+param called `strategy` indicates the way how to decide eligible frames
+for LazyEmbeds. If the `strategy` value is "non_ads", the eligibility
+detection is based on the Ad Tagging in Chrome. The `strategy` param is
+defined with `AutomaticLazyFrameLoadingToEmbedLoadingStrategy` enum,
+which has 1) kAllowList: default behavior 2) kNonAds: apply lazy-loading
+to non ad related frames.
 
-There should be no beahviour change.
+We don't add this param to `kAutomaticLazyFrametLoadingToEmbeds`, we add
+it to `kAutomaticLazyFrameLoadingToEmbedUrls` for the UKM analysis
+purpose. We want to measure the number of eligible frames on both
+experiment enabled/disabled groups. We'd like to explore
+this experiment as one of the effective iframe loading ideas.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I74f0fb2082b5da50d7aca9cf7122848ef08a5e2b">I74f0fb2082b5da50d7aca9cf7122848ef08a5e2b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3834773">https://chromium-review.googlesource.com/c/chromium/src/+/3834773</a>
-Commit-Queue: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
-Reviewed-by: David Grogan &lt;dgrogan@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1035899}
+Design doc is here.
+<a href="https://docs.google.com/document/d/1xlERn2N3CaPWrDlnTRi_4Cdq_Cx8xGzTdWtWlZxpY7Y/edit#heading=h.x9lt2svj754v">https://docs.google.com/document/d/1xlERn2N3CaPWrDlnTRi_4Cdq_Cx8xGzTdWtWlZxpY7Y/edit#heading=h.x9lt2svj754v</a>
+
+To avoid apply LazyEmbeds to in-viewport frames, we have a plan to run
+this feature with the existing opt-out mechanism [1].
+
+
+[1] <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3781826">https://chromium-review.googlesource.com/c/chromium/src/+/3781826</a>
+
+
+Bug: 1247131
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7357b88dcfd34935c2a88daf7d625d12d1380152">I7357b88dcfd34935c2a88daf7d625d12d1380152</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3827940">https://chromium-review.googlesource.com/c/chromium/src/+/3827940</a>
+Reviewed-by: Hiroshige Hayashizaki &lt;hiroshige@chromium.org&gt;
+Reviewed-by: Minoru Chikamune &lt;chikamune@chromium.org&gt;
+Commit-Queue: Shunya Shishido &lt;sisidovski@chromium.org&gt;
+Reviewed-by: Alex Turner &lt;alexmt@chromium.org&gt;
+Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1035928}
 </pre>
 
 </body>
