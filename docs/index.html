@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1035928/"> 1035928</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/90cbb2f2581ca1493e2271602304d90090cba3eb">90cbb2f2581ca1493e2271602304d90090cba3eb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1035944/"> 1035944</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/30edfd8b6099c07ca4b4576772705e28c2c00c84">30edfd8b6099c07ca4b4576772705e28c2c00c84</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1035874/">1035874</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f936c89a74d9cdac7b0e3fae06e1bd603f6810f7">f936c89a74d9cdac7b0e3fae06e1bd603f6810f7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1035922/">1035922</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c34b795b5fbc28afdec27db3d9dc6e582de4ecf8">c34b795b5fbc28afdec27db3d9dc6e582de4ecf8</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   90cbb2f2581ca1493e2271602304d90090cba3eb
+   30edfd8b6099c07ca4b4576772705e28c2c00c84
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/90cbb2f2581ca1493e2271602304d90090cba3eb">
+    <a href="/chromium/src/+log/30edfd8b6099c07ca4b4576772705e28c2c00c84">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/90cbb2f2581ca1493e2271602304d90090cba3eb.tar.gz">
+    <a href="/chromium/src/+archive/30edfd8b6099c07ca4b4576772705e28c2c00c84.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   sisidovski &lt;sisidovski@chromium.org&gt;
+   Roland Bock &lt;rbock@google.com&gt;
   </td>
   <td>
-   Wed Aug 17 06:07:37 2022
+   Wed Aug 17 06:44:29 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 17 06:07:37 2022
+   Wed Aug 17 06:44:29 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/90cbb2f2581ca1493e2271602304d90090cba3eb/">
-    40ea55513b2faa719e87ee1fc9b97e1a914d9bba
+   <a href="/chromium/src/+/30edfd8b6099c07ca4b4576772705e28c2c00c84/">
+    04a9d01fd9eb461fd5b5bc08bf68376467f4f766
    </a>
   </td>
  </tr>
@@ -166,53 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/90cbb2f2581ca1493e2271602304d90090cba3eb%5E">
-    41861ce07de82b0709821dedb7c12282a5ec05be
+   <a href="/chromium/src/+/30edfd8b6099c07ca4b4576772705e28c2c00c84%5E">
+    d213024f5cef8c9d73235c2b38d86bb4b5550691
    </a>
    <span>
     [
-    <a href="/chromium/src/+/90cbb2f2581ca1493e2271602304d90090cba3eb%5E%21/">
+    <a href="/chromium/src/+/30edfd8b6099c07ca4b4576772705e28c2c00c84%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add the new option to LazyEmbeds to lazily load non-ad frames
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor TaskManager to use PrefService::GetValueDict
 
-This CL will introduce the new option to LazyEmbeds. The new feature
-param called `strategy` indicates the way how to decide eligible frames
-for LazyEmbeds. If the `strategy` value is "non_ads", the eligibility
-detection is based on the Ad Tagging in Chrome. The `strategy` param is
-defined with `AutomaticLazyFrameLoadingToEmbedLoadingStrategy` enum,
-which has 1) kAllowList: default behavior 2) kNonAds: apply lazy-loading
-to non ad related frames.
+This is part of a larger migration effort based on
+go/trust-your-prefs.
 
-We don't add this param to `kAutomaticLazyFrametLoadingToEmbeds`, we add
-it to `kAutomaticLazyFrameLoadingToEmbedUrls` for the UKM analysis
-purpose. We want to measure the number of eligible frames on both
-experiment enabled/disabled groups. We'd like to explore
-this experiment as one of the effective iframe loading ideas.
-
-Design doc is here.
-<a href="https://docs.google.com/document/d/1xlERn2N3CaPWrDlnTRi_4Cdq_Cx8xGzTdWtWlZxpY7Y/edit#heading=h.x9lt2svj754v">https://docs.google.com/document/d/1xlERn2N3CaPWrDlnTRi_4Cdq_Cx8xGzTdWtWlZxpY7Y/edit#heading=h.x9lt2svj754v</a>
-
-To avoid apply LazyEmbeds to in-viewport frames, we have a plan to run
-this feature with the existing opt-out mechanism [1].
-
-
-[1] <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3781826">https://chromium-review.googlesource.com/c/chromium/src/+/3781826</a>
-
-
-Bug: 1247131
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7357b88dcfd34935c2a88daf7d625d12d1380152">I7357b88dcfd34935c2a88daf7d625d12d1380152</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3827940">https://chromium-review.googlesource.com/c/chromium/src/+/3827940</a>
-Reviewed-by: Hiroshige Hayashizaki &lt;hiroshige@chromium.org&gt;
-Reviewed-by: Minoru Chikamune &lt;chikamune@chromium.org&gt;
-Commit-Queue: Shunya Shishido &lt;sisidovski@chromium.org&gt;
-Reviewed-by: Alex Turner &lt;alexmt@chromium.org&gt;
-Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1035928}
+Bug: 1341996
+Test: Existing unit tests
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie5b392667724359a7ebc55d4ef58aa407f4c041c">Ie5b392667724359a7ebc55d4ef58aa407f4c041c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3832228">https://chromium-review.googlesource.com/c/chromium/src/+/3832228</a>
+Reviewed-by: Peter Kasting &lt;pkasting@chromium.org&gt;
+Commit-Queue: Roland Bock &lt;rbock@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1035944}
 </pre>
 
 </body>
