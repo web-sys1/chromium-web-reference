@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1036486/"> 1036486</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e00b3c102db68904388af89ac99b672db2d5e407">e00b3c102db68904388af89ac99b672db2d5e407</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1036494/"> 1036494</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9193e4a29b2e54ee45d14935e2b642c7c2d7e817">9193e4a29b2e54ee45d14935e2b642c7c2d7e817</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1036451/">1036451</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fed915f66e5586d159ddb0c6724a04b271270c27">fed915f66e5586d159ddb0c6724a04b271270c27</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1036482/">1036482</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7f3befa9aba109413cb4ee012627fd7e33df771e">7f3befa9aba109413cb4ee012627fd7e33df771e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e00b3c102db68904388af89ac99b672db2d5e407
+   9193e4a29b2e54ee45d14935e2b642c7c2d7e817
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e00b3c102db68904388af89ac99b672db2d5e407">
+    <a href="/chromium/src/+log/9193e4a29b2e54ee45d14935e2b642c7c2d7e817">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e00b3c102db68904388af89ac99b672db2d5e407.tar.gz">
+    <a href="/chromium/src/+archive/9193e4a29b2e54ee45d14935e2b642c7c2d7e817.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chris Fredrickson &lt;cfredric@chromium.org&gt;
+   Hirokazu Honda &lt;hiroh@chromium.org&gt;
   </td>
   <td>
-   Thu Aug 18 07:05:33 2022
+   Thu Aug 18 07:42:14 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Aug 18 07:05:33 2022
+   Thu Aug 18 07:42:14 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e00b3c102db68904388af89ac99b672db2d5e407/">
-    6b0d8269213d87f7baf22ab5f0fd57ba20e005a5
+   <a href="/chromium/src/+/9193e4a29b2e54ee45d14935e2b642c7c2d7e817/">
+    ed0a53a8ab969f15d9c8e9aca9477e00b3fc4382
    </a>
   </td>
  </tr>
@@ -166,30 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e00b3c102db68904388af89ac99b672db2d5e407%5E">
-    8648aa5e09eb3cac4056e8e172557d0c7d56050e
+   <a href="/chromium/src/+/9193e4a29b2e54ee45d14935e2b642c7c2d7e817%5E">
+    8014d147e5a6a4b8cee336fb080f91a1b3ce855b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e00b3c102db68904388af89ac99b672db2d5e407%5E%21/">
+    <a href="/chromium/src/+/9193e4a29b2e54ee45d14935e2b642c7c2d7e817%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Expose a single private method for tests instead of all private members.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">MojoSharedBufferVideoFrame: Use base::ReadOnlySharedMemoryRegion
 
-This approach scales better with new tests that get written, and it
-limits the ways that the tests can reach into the private details of
-the SUT.
+MojoSharedBufferVideoFrame manages the buffer with
+base::UnsafeSharedMemoryRegion. But it is used to pass a video frame
+for a hardware accelerated video encoder and encrypted video
+decoded in the utility process for a renderer. Either encoder or renderer must not to the buffer. This CL changes
+MojoSharedBufferVideoFrame uses base::ReadOnlySharedMemoryRegion.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4fcc6a8ade03c121d78eb283630376e95a6f0b6c">I4fcc6a8ade03c121d78eb283630376e95a6f0b6c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3830317">https://chromium-review.googlesource.com/c/chromium/src/+/3830317</a>
-Auto-Submit: Chris Fredrickson &lt;cfredric@chromium.org&gt;
-Commit-Queue: Mike West &lt;mkwst@chromium.org&gt;
-Reviewed-by: Mike West &lt;mkwst@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1036486}
+Bug: b:241362231
+Bug: b:242527747
+Test: webrtc call
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I64a46b19ca4f4e82b6f1e5887dbef7de1ccd109b">I64a46b19ca4f4e82b6f1e5887dbef7de1ccd109b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3833795">https://chromium-review.googlesource.com/c/chromium/src/+/3833795</a>
+Commit-Queue: Hirokazu Honda &lt;hiroh@chromium.org&gt;
+Reviewed-by: John Rummell &lt;jrummell@chromium.org&gt;
+Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1036494}
 </pre>
 
 </body>
