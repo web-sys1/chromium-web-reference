@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1036798/"> 1036798</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c5428ec02924768d19324917aca7ceb7aba3ce65">c5428ec02924768d19324917aca7ceb7aba3ce65</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1036822/"> 1036822</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/aa7d1eed6b0374de813d66c424e90906f0258fc1">aa7d1eed6b0374de813d66c424e90906f0258fc1</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1036745/">1036745</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c5428ec02924768d19324917aca7ceb7aba3ce65
+   aa7d1eed6b0374de813d66c424e90906f0258fc1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c5428ec02924768d19324917aca7ceb7aba3ce65">
+    <a href="/chromium/src/+log/aa7d1eed6b0374de813d66c424e90906f0258fc1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c5428ec02924768d19324917aca7ceb7aba3ce65.tar.gz">
+    <a href="/chromium/src/+archive/aa7d1eed6b0374de813d66c424e90906f0258fc1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   conniekxu &lt;conniekxu@chromium.org&gt;
+   Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
   </td>
   <td>
-   Thu Aug 18 21:52:32 2022
+   Thu Aug 18 22:32:32 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Aug 18 21:52:32 2022
+   Thu Aug 18 22:32:32 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c5428ec02924768d19324917aca7ceb7aba3ce65/">
-    41e29b6c5701ef9bdb9bbdb6dec9ec4995081be0
+   <a href="/chromium/src/+/aa7d1eed6b0374de813d66c424e90906f0258fc1/">
+    60be8da11f927801ed2498e3ece00255789606e6
    </a>
   </td>
  </tr>
@@ -166,30 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c5428ec02924768d19324917aca7ceb7aba3ce65%5E">
-    0468a6a2231b808229bf4369488fd82d56e238ac
+   <a href="/chromium/src/+/aa7d1eed6b0374de813d66c424e90906f0258fc1%5E">
+    be24990c223234675f9ed7193b5946d65393166e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c5428ec02924768d19324917aca7ceb7aba3ce65%5E%21/">
+    <a href="/chromium/src/+/aa7d1eed6b0374de813d66c424e90906f0258fc1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">migration: Let GetShieldLayerColor get colors from ui::ColorProvider
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ScrollUpdateOptimizations] Fix fixed-position overlap testing
 
-Let AshColorProvider::GetShieldLayerColor get colors
-from ui::ColorProvider by using the color id corresponding to the
-ShieldLayerType.
+1. Fall back to the generic cross-scroll overlap testing if there
+   is any additional clip between the fixed-position state and the
+   scroller overflow clip because the expanded fixed-position
+   rect would be incorrectly clipped.
+2. Also use CompositingReason::kFixedPosition for special fixed-
+   position compositing reasons in a non-scrollable viewport, to
+   use the fixed-position code path in overlap testing if possible
+   to avoid extra overlaps.
 
-Fixed: 1350502
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifdbc4a16d0a5bfa73fa8e0bb2344e91c276e0247">Ifdbc4a16d0a5bfa73fa8e0bb2344e91c276e0247</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3834811">https://chromium-review.googlesource.com/c/chromium/src/+/3834811</a>
-Reviewed-by: Sean Kau &lt;skau@chromium.org&gt;
-Commit-Queue: Connie Xu &lt;conniekxu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1036798}
+Found the issues because the following tests failed with
+ScrollUpdateOptimizations enabled by default:
+
+external/wpt/css/css-multicol/fixedpos-static-pos-with-viewport-cb-001.html
+external/wpt/css/css-multicol/fixedpos-static-pos-with-viewport-cb-002.html
+external/wpt/css/css-multicol/fixedpos-static-pos-with-viewport-cb-003.html
+external/wpt/css/css-position/position-fixed-scroll-overlap.html
+
+I probably only checked blink_web_tests for failures when I tried the
+original ScrollUpdateOptimizations CL with the feature enabled.
+
+Bug: 1346789
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia6fbcd72aebb355b1ba42f5c332a8e61a679ee66">Ia6fbcd72aebb355b1ba42f5c332a8e61a679ee66</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3838628">https://chromium-review.googlesource.com/c/chromium/src/+/3838628</a>
+Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
+Commit-Queue: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1036822}
 </pre>
 
 </body>
