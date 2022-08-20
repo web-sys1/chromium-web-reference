@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1037343/"> 1037343</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/218b37482048facfb7ffb4a573e5197e9b408f13">218b37482048facfb7ffb4a573e5197e9b408f13</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1037355/"> 1037355</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bb8bd2a13b46dc5233b941fb9d02fc211657bdce">bb8bd2a13b46dc5233b941fb9d02fc211657bdce</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1037314/">1037314</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   218b37482048facfb7ffb4a573e5197e9b408f13
+   bb8bd2a13b46dc5233b941fb9d02fc211657bdce
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/218b37482048facfb7ffb4a573e5197e9b408f13">
+    <a href="/chromium/src/+log/bb8bd2a13b46dc5233b941fb9d02fc211657bdce">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/218b37482048facfb7ffb4a573e5197e9b408f13.tar.gz">
+    <a href="/chromium/src/+archive/bb8bd2a13b46dc5233b941fb9d02fc211657bdce.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   manukh &lt;manukh@chromium.org&gt;
+   Robert Mader &lt;robert.mader@collabora.com&gt;
   </td>
   <td>
-   Sat Aug 20 01:37:08 2022
+   Sat Aug 20 02:13:17 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Aug 20 01:37:08 2022
+   Sat Aug 20 02:13:17 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/218b37482048facfb7ffb4a573e5197e9b408f13/">
-    fea419744d54fca58e3bd3f368fbb07837d451cf
+   <a href="/chromium/src/+/bb8bd2a13b46dc5233b941fb9d02fc211657bdce/">
+    6f53b4fdfe5a0ff87600cbdba0ed2c579662dd28
    </a>
   </td>
  </tr>
@@ -166,43 +166,130 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/218b37482048facfb7ffb4a573e5197e9b408f13%5E">
-    77e11d70ecb1d01547a452ab90c821d5b909bc0c
+   <a href="/chromium/src/+/bb8bd2a13b46dc5233b941fb9d02fc211657bdce%5E">
+    f93fb6e15b4942b57e3d891a8823aea26a169148
    </a>
    <span>
     [
-    <a href="/chromium/src/+/218b37482048facfb7ffb4a573e5197e9b408f13%5E%21/">
+    <a href="/chromium/src/+/bb8bd2a13b46dc5233b941fb9d02fc211657bdce%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[omnibox][memories] Nav intent filtering for cluster suggestions.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">exo: Implement zwp_linux_dmabuf_v1 v3 and initial v4 support
 
-Currently, cluster actions are hidden when we detect nav intent.
-Specifically, when both a) the top scoring suggestion is a navigation
-(as opposed to search) and b) it's scored at least 1300.
+This series implements full v3 and initial v4 support for the
+Wayland zwp_linux_dmabuf_v1 protocol.
 
-This CL adds the same restriction to cluster suggestions.
+EGL and Vulkan Wayland clients use it indirectly and automatically
+via Mesa, making them use more optimal DRM modifiers. This should
+increase performance in most cases. However, as scanout tranche
+support is not optimally implemented yet, on some hardware this may decrease the likelihood that direct scanout fast paths can be used by the DRM backend.
 
-This reuses the existing param 'omnibox_action_on_navigation_intents' &amp;
-'omnibox_action_on_navigation_intent_score_threshold' params shared by
-the action filtering.
+Tested via EGL/DRM, EGL/X11 and GLX/X11 backend on Intel and
+AMD hardware.
 
-Unlike the action filtering which looks at all result suggestions after
-deduping, culling, etc; cluster filtering looks at only search and
-history URL providers' suggestions before dedpuing, culling, etc. So
-they may differ, but since we're mostly concerned with high scoring
-suggestions, and history URL is the dominant nav provider, this should
-be sufficient.
+Notes and observations:
+- good test clients are `wayland-info`, `wayland-simple-egl` and `weston-simple-dmabuf-feedback`.
+- when used with the X11 EGL backend, i.e. in nested mode, Wayland EGL
+  clients do not fall back to swrast software rendering any more but
+  can properly exercise the dmabuf paths. That is because v4 allows
+  the clients to get the right drm render node. Clients using GBM
+  directly can do the same once they implement v4 of the protocol.
+- the priviously hardcoded list of formats included formats
+  that were actually not supported by either the render backend or
+  the driver during testing, notably `AR30`/`DRM_FORMAT_ARGB2101010`/`gfx::BufferFormat::BGRA_1010102`
+  (assuming the new code is correct).
 
-Bug: 1327076
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7a4c324da3b1459dd2fb7490c5170cb3b4c4699b">I7a4c324da3b1459dd2fb7490c5170cb3b4c4699b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3842856">https://chromium-review.googlesource.com/c/chromium/src/+/3842856</a>
-Reviewed-by: Tommy Li &lt;tommycli@chromium.org&gt;
-Commit-Queue: manuk hovanesian &lt;manukh@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1037343}
+Suggested testing parameters:
+Native/TTY:
+`EGL_PLATFORM=surfaceless out/Default/chrome --force-system-compositor-mode --enable-wayland-server`
+Nested:
+`out/Default/chrome --ozone-platform=x11 --enable-wayland-server --use-gl=egl`
+
+Additionally `--wayland-server-socket=wayland-1` should be added if there's already a running Wayland compositor of the same user. Wayland clients then need to be started with `WAYLAND_DISPLAY=wayland-1`.
+
+---
+
+exo: Add test for zwp_linux_dmabuf_v1 v3 and v4
+
+1. Allow clients to specify requested protocol version
+2. Explicitely check v2, v3 and v4 - in the later case both
+   default and surface specific feedback.
+3. Check that each format/modifier combination advertised by the
+   compositor can be successfully used, both individually and in
+   bulk. The later lets the driver choose from a list.
+
+Note: local testing revealed driver that both on Intel and AMD
+individual combinations do not work. There is no overlap between
+the drivers, suggesting that this is caused by driver bugs.
+
+
+exo: Add surfaces to scanout candidates when fullscreen
+
+This implements a very simple heuristic for when chances
+are high for the compositor to directly scan out the buffer
+of a surface to a hardware surface. In that case we want
+the feedback mananger to (re)send a feedback with scanout
+tranches, making clients (such as Mesa) use formats/modifiers
+supported by the CRTC (but may not be optimal for
+compositing).
+
+More sophisticated methods used in other compositors most
+likely require deeper integration with the scene graph and
+the DRM backend (and thus IPC etc.). Thus for now take
+a simplistic approach and consider all fullscreen clients
+scanout candidates.
+This should cover the most urgend cases like gaming, fullscreen
+video play etc. and may serve as a good starting point.
+
+
+exo: Implement zwp_linux_dmabuf_v1 v3 and initial v4 support
+
+- introduce the data structures for v4 support such as per surface
+feedbacks, tranches etc.
+- determine whether v4 or only v3 support can be advertised based on
+render backend capabilities. v4 can not be advertized without correct
+render node, which currently can only determined via the EGL/GLES
+render backend on the GPU process.
+- use DRM formats and modifiers from the render backend / the
+GPU process. This ensures that any format/modifier combination
+advertised by the protocol is supported by both the driver and the
+renderer. This allows to remove the hardcoded format list.
+- add GPU specific hardcoded modifiers for scanout tranches, disabled
+by default (example data for my two test devices included, using
+the `weston-simple-dmabuf-feedback` test client on other compositors).
+In the long run this should get replaced with a generic detection
+in the DRM backend on the GPU process. As this is quite involved,
+stick to an easy solution for now.
+
+This allows Wayland clients, most notable clients using EGL or Vulkan,
+to use more optimal modifiers - improving performance etc.
+
+
+gpu: Add DRM modifiers and render node to capabilities in GPU process
+
+Exo, the Wayland compositor in ChromeOS, needs to know the DRM
+formats and respective modifiers that the graphics driver can
+import, as well as the used render node. Query these using the
+respective EGL extensions if the GLES render backend is used
+on ChromeOS and add them to the capabilities.
+Only include formats that are advertised as supported in
+`gpu_memory_buffer_formats`.
+
+
+Bug: b:224580219
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I54aaac74cec23c545ac87f06e24d9c6d1a013821">I54aaac74cec23c545ac87f06e24d9c6d1a013821</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3555829">https://chromium-review.googlesource.com/c/chromium/src/+/3555829</a>
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Reviewed-by: Tom Sepez &lt;tsepez@chromium.org&gt;
+Reviewed-by: Geoff Lang &lt;geofflang@chromium.org&gt;
+Reviewed-by: Mike West &lt;mkwst@chromium.org&gt;
+Commit-Queue: Stéphane Marchesin &lt;marcheu@chromium.org&gt;
+Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1037355}
 </pre>
 
 </body>
