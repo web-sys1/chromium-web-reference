@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1037429/"> 1037429</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/32475bcfeb2c50abb5eda61eb85b9aaf00249cad">32475bcfeb2c50abb5eda61eb85b9aaf00249cad</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1037431/"> 1037431</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bcc5a287a2b0e971b3d6bee67aaf832a6f9af123">bcc5a287a2b0e971b3d6bee67aaf832a6f9af123</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1037422/">1037422</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   32475bcfeb2c50abb5eda61eb85b9aaf00249cad
+   bcc5a287a2b0e971b3d6bee67aaf832a6f9af123
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/32475bcfeb2c50abb5eda61eb85b9aaf00249cad">
+    <a href="/chromium/src/+log/bcc5a287a2b0e971b3d6bee67aaf832a6f9af123">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/32475bcfeb2c50abb5eda61eb85b9aaf00249cad.tar.gz">
+    <a href="/chromium/src/+archive/bcc5a287a2b0e971b3d6bee67aaf832a6f9af123.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Lei Zhang &lt;thestig@chromium.org&gt;
+   Dmitry Gozman &lt;dgozman@chromium.org&gt;
   </td>
   <td>
-   Sat Aug 20 18:24:08 2022
+   Sat Aug 20 18:42:09 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Aug 20 18:24:08 2022
+   Sat Aug 20 18:42:09 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/32475bcfeb2c50abb5eda61eb85b9aaf00249cad/">
-    bdb6fb6b7ac4362857528567d6a3640c827d7697
+   <a href="/chromium/src/+/bcc5a287a2b0e971b3d6bee67aaf832a6f9af123/">
+    134d52532ab47d57680a580585fb18fbbe765b0d
    </a>
   </td>
  </tr>
@@ -166,31 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/32475bcfeb2c50abb5eda61eb85b9aaf00249cad%5E">
-    b965e0871493da874455d6587207b78fa1ab4500
+   <a href="/chromium/src/+/bcc5a287a2b0e971b3d6bee67aaf832a6f9af123%5E">
+    2d80641f6a154c732be4904a89f70778a8ec19af
    </a>
    <span>
     [
-    <a href="/chromium/src/+/32475bcfeb2c50abb5eda61eb85b9aaf00249cad%5E%21/">
+    <a href="/chromium/src/+/bcc5a287a2b0e971b3d6bee67aaf832a6f9af123%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add some missing mojo/public/cpp/system/functions.h includes.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ProfileDestroyer: allow custom force-destruction timeout
 
-Files that use mojo::SetDefaultProcessErrorHandler() should include
-mojo/public/cpp/system/functions.h.
+This is useful for automation scenarios where slow computers
+may not be able to close all processes in two seconds, but
+will eventually succeed.
 
-Bug: 1300573
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iae4cbac2b6640c67554495569575c7e96a512f29">Iae4cbac2b6640c67554495569575c7e96a512f29</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3812940">https://chromium-review.googlesource.com/c/chromium/src/+/3812940</a>
-Reviewed-by: Ken Rockot &lt;rockot@google.com&gt;
-Owners-Override: Nico Weber &lt;thakis@chromium.org&gt;
-Auto-Submit: Lei Zhang &lt;thestig@chromium.org&gt;
-Commit-Queue: Nico Weber &lt;thakis@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1037429}
+Currently, we hit CHECK in ~ProfileDestroyer, most likely because
+we force-destroy upon timeout of ~2 seconds. This change allows
+automation profiles to provide a custom timeout that would be
+enough to destroy all render process hosts.
+
+Bug: 1349150
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iadbd45a6e23c90b1dae43c23b3c4de7930727c8d">Iadbd45a6e23c90b1dae43c23b3c4de7930727c8d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3821446">https://chromium-review.googlesource.com/c/chromium/src/+/3821446</a>
+Commit-Queue: Dmitry Gozman &lt;dgozman@chromium.org&gt;
+Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
+Reviewed-by: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
+Reviewed-by: Nicolas Ouellet-Payeur &lt;nicolaso@chromium.org&gt;
+Reviewed-by: Ramin Halavati &lt;rhalavati@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1037431}
 </pre>
 
 </body>
