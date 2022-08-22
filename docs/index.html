@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1037781/"> 1037781</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/80397d05e253991852bc3384c8a6cc107253dffd">80397d05e253991852bc3384c8a6cc107253dffd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1037811/"> 1037811</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/199f95c8de55071d4c736d14be14d8d7b2a68cf9">199f95c8de55071d4c736d14be14d8d7b2a68cf9</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1037765/">1037765</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   80397d05e253991852bc3384c8a6cc107253dffd
+   199f95c8de55071d4c736d14be14d8d7b2a68cf9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/80397d05e253991852bc3384c8a6cc107253dffd">
+    <a href="/chromium/src/+log/199f95c8de55071d4c736d14be14d8d7b2a68cf9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/80397d05e253991852bc3384c8a6cc107253dffd.tar.gz">
+    <a href="/chromium/src/+archive/199f95c8de55071d4c736d14be14d8d7b2a68cf9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ryan Sultanem &lt;rsult@google.com&gt;
+   Kentaro Hara &lt;haraken@chromium.org&gt;
   </td>
   <td>
-   Mon Aug 22 16:20:08 2022
+   Mon Aug 22 17:06:39 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 22 16:20:08 2022
+   Mon Aug 22 17:06:39 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/80397d05e253991852bc3384c8a6cc107253dffd/">
-    d82bef4310c4e63a3e4f6d9bae119535fab1b098
+   <a href="/chromium/src/+/199f95c8de55071d4c736d14be14d8d7b2a68cf9/">
+    d9f96af719b31db5eeb0019b57b70c34496759e6
    </a>
   </td>
  </tr>
@@ -166,30 +166,59 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/80397d05e253991852bc3384c8a6cc107253dffd%5E">
-    9f6d81e74ef3ac5988bf4d5084695303da6caab1
+   <a href="/chromium/src/+/199f95c8de55071d4c736d14be14d8d7b2a68cf9%5E">
+    8f0f9f66a6e5f70b96ac3b4ff19d564b742a8793
    </a>
    <span>
     [
-    <a href="/chromium/src/+/80397d05e253991852bc3384c8a6cc107253dffd%5E%21/">
+    <a href="/chromium/src/+/199f95c8de55071d4c736d14be14d8d7b2a68cf9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Migration of Refcounted Keyed Services Factories
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove inactive owners from /ash/keyboard
 
-Created RefcountedProfileKeyedServiceFactory similar to
-ProfileKeyedServiceFactory to support ProfileSelections for
-Refcounted Services.
+Per discussion on the chromium-dev@ thread [1], we remove owners who made
+0 commits / reviews to the Chromium repository in the past 12 months
+(2021/7/26 - 2022/7/26).
 
-Bug: 1284664
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9fa7e58b402d9d0438dfb0627bbf70004972143d">I9fa7e58b402d9d0438dfb0627bbf70004972143d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3842334">https://chromium-review.googlesource.com/c/chromium/src/+/3842334</a>
-Reviewed-by: David Roger &lt;droger@chromium.org&gt;
-Commit-Queue: Ryan Sultanem &lt;rsult@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1037781}
+For each owner removal, we upload a CL to remove the owner. The CL adds the
+owner being removed and two other owners as reviewers. The CL will be
+committed once it gets an LGTM from one of the reviewers.
+
+Instructions:
+
+- The guiding principle is: only owners who are meeting the owner's
+expectations [2] should be written in OWNERS files. This is important to
+ensure that developers can find active owners by looking at the OWNERS files.
+- Please LGTM or not-LGTM the CL based on the removal guideline [3]. i.e.,
+if the owner being removed was inactive only for a certain period of time
+while they were on a long leave and has been meeting the owner's expectations
+in other times, please not-LGTM the CL. Otherwise, please LGTM the CL.
+- If the CL was LGTMed and landed by mistake (e.g., the reviewer was not aware
+of the owner's leave status), we can just revert the CL.
+- If you have any questions / comments, please send an explicit email to
+haraken@chromium.org. (haraken@ is not watching all the comments of all the
+removal CLs :-) If there is any disagreement between owners, it will be
+escalated to Chrome Eng Review and resolved per [3].
+
+[1] <a href="https://groups.google.com/a/chromium.org/g/chromium-dev/c/aGC8BTTFK64">https://groups.google.com/a/chromium.org/g/chromium-dev/c/aGC8BTTFK64</a>
+[2] <a href="https://chromium.googlesource.com/chromium/src/+/main/docs/code_reviews.md#expectations-of-owners">https://chromium.googlesource.com/chromium/src/+/main/docs/code_reviews.md#expectations-of-owners</a>
+[3] <a href="https://chromium.googlesource.com/chromium/src/+/main/docs/code_reviews.md#removal-of-owners">https://chromium.googlesource.com/chromium/src/+/main/docs/code_reviews.md#removal-of-owners</a>
+
+This CL was uploaded by git cl split.
+
+R=bshe@chromium.org, rsadam@chromium.org, shend@chromium.org, shuchen@chromium.org, wuyingbing@chromium.org
+
+Bug: 1355150
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I42bc995538f7b138e47fa71501af78c9f1273fd3">I42bc995538f7b138e47fa71501af78c9f1273fd3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3843435">https://chromium-review.googlesource.com/c/chromium/src/+/3843435</a>
+Auto-Submit: Kentaro Hara &lt;haraken@chromium.org&gt;
+Commit-Queue: Darren Shen &lt;shend@chromium.org&gt;
+Reviewed-by: Darren Shen &lt;shend@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1037811}
 </pre>
 
 </body>
