@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1037531/"> 1037531</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f903e1f2306628bb774245e5bdf978f65e21b4b4">f903e1f2306628bb774245e5bdf978f65e21b4b4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1037552/"> 1037552</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f23ca121a6eb369ef92b01d013e34b0b27b43be7">f23ca121a6eb369ef92b01d013e34b0b27b43be7</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1037520/">1037520</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1117fe1bf370f2b982c54f9b9d3e947b3d177559">1117fe1bf370f2b982c54f9b9d3e947b3d177559</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1037539/">1037539</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d1331bf08fbd6c347120d709cf513e5fdcc58b64">d1331bf08fbd6c347120d709cf513e5fdcc58b64</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f903e1f2306628bb774245e5bdf978f65e21b4b4
+   f23ca121a6eb369ef92b01d013e34b0b27b43be7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f903e1f2306628bb774245e5bdf978f65e21b4b4">
+    <a href="/chromium/src/+log/f23ca121a6eb369ef92b01d013e34b0b27b43be7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f903e1f2306628bb774245e5bdf978f65e21b4b4.tar.gz">
+    <a href="/chromium/src/+archive/f23ca121a6eb369ef92b01d013e34b0b27b43be7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mehrab N &lt;mehrab@chromium.org&gt;
+   Clement Yan &lt;clamclamyan@google.com&gt;
   </td>
   <td>
-   Mon Aug 22 01:54:54 2022
+   Mon Aug 22 03:50:25 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 22 01:54:54 2022
+   Mon Aug 22 03:50:25 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f903e1f2306628bb774245e5bdf978f65e21b4b4/">
-    f30e8d0b758eee4585325639b2c3f0db1793471c
+   <a href="/chromium/src/+/f23ca121a6eb369ef92b01d013e34b0b27b43be7/">
+    26fa5c7de89e49cabeda4015673e8d84a79e6bf0
    </a>
   </td>
  </tr>
@@ -166,49 +166,28 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f903e1f2306628bb774245e5bdf978f65e21b4b4%5E">
-    38c01d769c433875d56a27b0389ca234cebe33d8
+   <a href="/chromium/src/+/f23ca121a6eb369ef92b01d013e34b0b27b43be7%5E">
+    9d02c886da434653b699434e9b79ce196e22bf39
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f903e1f2306628bb774245e5bdf978f65e21b4b4%5E%21/">
+    <a href="/chromium/src/+/f23ca121a6eb369ef92b01d013e34b0b27b43be7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">autocorrect: unify VK and PK logics
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[System Extensions] Disable trusted types for system extensions
 
-Previously, PK and VK had a shared logic for accepting/clearing
-autocorrect range. At the same time, PK had an extra logic where four
-key presses could trigger accepting autocorrect range. There were few
-problems with this approach:
+System extensions are unable to create trusted types policies and require disabling trusted types to run.
 
-* PK and VK experience had differences.
-* Different user interactions with the aim of implicitly rejecting the
-  autocorrect suggestion could trigger the 'accept' process beforehand.
-  This would impact the user experience negatively, but most importantly
-  provide an incorrect metric where a bad suggestion was counted as a
-  good one instead. Examples of such interactions included long-press of
-  Ctrl (+Backspace for deleting the suggestion or +Z for undo),
-  Shift+Arrow keys to select all/part of the suggestion and
-  remove/replace it, typing two chars after the suggestion (due to late
-  noticing of the suggestion) and using backspace to remove the
-  suggestion, and moving with arrow keys to move the cursor inside
-  suggestion and mutate it.
-
-Now, with removing PK specific logics, the autocorrect experience is the
-same for both PK and VK and most of the PK specific issues mentioned are
-resolved.
-
-Bug: b:161490813, b:240351102
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic424ee407e5bceecc10a091aa436ec4670c9500d">Ic424ee407e5bceecc10a091aa436ec4670c9500d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3824559">https://chromium-review.googlesource.com/c/chromium/src/+/3824559</a>
-Commit-Queue: Mehrab N &lt;mehrab@chromium.org&gt;
-Reviewed-by: Curtis McMullan &lt;curtismcmullan@chromium.org&gt;
-Reviewed-by: Darren Shen &lt;shend@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1037531}
+Bug: b/221119860
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2792ba02ade2a17cede5ec6e8a25b567c707b21d">I2792ba02ade2a17cede5ec6e8a25b567c707b21d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3824840">https://chromium-review.googlesource.com/c/chromium/src/+/3824840</a>
+Reviewed-by: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
+Commit-Queue: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1037552}
 </pre>
 
 </body>
