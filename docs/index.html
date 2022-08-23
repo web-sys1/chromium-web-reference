@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1038255/"> 1038255</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3cc95c574182aa1b2e9198079dd9809b6b3eb327">3cc95c574182aa1b2e9198079dd9809b6b3eb327</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1038303/"> 1038303</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e59798cefb858b6060af0eb8dc56dfbc606167aa">e59798cefb858b6060af0eb8dc56dfbc606167aa</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1038234/">1038234</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/58d6ebc349a9dda55ee40a586fff6983271d5fb9">58d6ebc349a9dda55ee40a586fff6983271d5fb9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1038258/">1038258</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7621a2b16f53960d11c8d8baac51eb868a6d13b5">7621a2b16f53960d11c8d8baac51eb868a6d13b5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3cc95c574182aa1b2e9198079dd9809b6b3eb327
+   e59798cefb858b6060af0eb8dc56dfbc606167aa
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3cc95c574182aa1b2e9198079dd9809b6b3eb327">
+    <a href="/chromium/src/+log/e59798cefb858b6060af0eb8dc56dfbc606167aa">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3cc95c574182aa1b2e9198079dd9809b6b3eb327.tar.gz">
+    <a href="/chromium/src/+archive/e59798cefb858b6060af0eb8dc56dfbc606167aa.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tsuyoshi Horo &lt;horo@chromium.org&gt;
+   Maxim Anufriev &lt;maxan@google.com&gt;
   </td>
   <td>
-   Tue Aug 23 15:43:53 2022
+   Tue Aug 23 17:03:30 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 23 15:43:53 2022
+   Tue Aug 23 17:03:30 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3cc95c574182aa1b2e9198079dd9809b6b3eb327/">
-    1b69124c5cdb765846424ddbb074ae3e14162970
+   <a href="/chromium/src/+/e59798cefb858b6060af0eb8dc56dfbc606167aa/">
+    5fd451ced647cf4d7b9a9e4d94f35ff3128fbd63
    </a>
   </td>
  </tr>
@@ -166,78 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3cc95c574182aa1b2e9198079dd9809b6b3eb327%5E">
-    850c4a3af29c4bcc8f9f58f25469e870c401000d
+   <a href="/chromium/src/+/e59798cefb858b6060af0eb8dc56dfbc606167aa%5E">
+    787abcee07a731790417aabbc3a37c0b64fad58f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3cc95c574182aa1b2e9198079dd9809b6b3eb327%5E%21/">
+    <a href="/chromium/src/+/e59798cefb858b6060af0eb8dc56dfbc606167aa%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix use-of-uninitialized-value bug in DnsAttempt
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[UPM][Metrics] Report uptime on specific GMS 1P API errors
 
-There are three sub classes of DnsAttempt.
- 1. DnsUDPAttempt
- 2. DnsHTTPAttempt
- 3. DnsTCPAttempt
+Chrome uptime (since password store backend initialisation) will be
+reported for the following GMS 1P API errors which are possibly related
+to the GMS Core update installation:
 
-All sub classes have use-of-uninitialized-value bug in
-GetRawResponseBufferForLog() method which is called when Netlog with
-"Include raw bytes" is enabled.
+- API_NOT_CONNECTED
+- CONNECTTION_SUSPENDED_DURING_CALL
+- RECONNECTION_TIMED_OUT
 
-1. DnsUDPAttempt's response_ is initialized with (kMaxUDPSize + 1) size
-   buffer. And the buffer will be written with the UDP response bytes by
-   socket_-&gt;Read() call in DoReadResponse(). The remaining buffer is not
-   initialized, and GetRawResponseBufferForLog() will access the
-   uninitialized area.
-
-2. DnsHTTPAttempt reads the response body to a GrowableIOBuffer buffer_.
-   And response_ is initialized with buffer_ and the size is set to (the
-   offset of buffer_ + 1). The last one byte is not initialized, and
-   GetRawResponseBufferForLog() will access the uninitialized last byte.
-
-3. DnsTCPAttempt reads the first sizeof(uint16_t) bytes of the response
-   to length_buffer_, and gets the remaining response length from the
-   length_buffer_. And initializes response_ with (the remaining
-   response length + 1) size buffer. And read the remaining response to
-   the buffer. So the last one byte is not initialized, and
-   GetRawResponseBufferForLog() will access the uninitialized last byte.
-
-
-To fix this, this CL changes as followings:
-
-1. DnsUDPAttempt will keep the written byte size in read_size_, and
-   GetRawResponseBufferForLog() will only returns the written area.
-
-2. 3. DnsHTTPAttempt and DnsTCPAttempt will initialize response_ with
-   the necessary size without + 1. We have been allocating the more one
-   byte space. It is because when <a href="https://crrev.com/174227">https://crrev.com/174227</a> introduced
-   DnsTCPAttempt, DnsResponse::InitParse() was checking the buffer size
-   with greater or equal `&gt;=`:
-   if (... || nbytes &gt;= io_buffer_-&gt;size()) {
-     return false;
-   }
-   So we needed one more byte space to pass the sanity check. But this
-   was misguided. We can use greater `&gt;` for checking the buffer size.
-   <a href="https://crrev.com/665935">https://crrev.com/665935</a> changed DnsResponse::InitParse() to
-   use greater `&gt;`. So now we don't need to allocate the more one byte
-   anymore.
-
-This CL adds following tests in dns_transaction_unittest.cc,
- - DnsTransactionTest.LookupWithLog
- - DnsTransactionTest.TcpLookup_UdpRetry_WithLog
-and re-enables DnsTransactionTest.HttpsPostLookupWithLog.
-
-Bug: 1245953
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7b827abaa1a2fc4ba7585b025189476f708fb13b">I7b827abaa1a2fc4ba7585b025189476f708fb13b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3849096">https://chromium-review.googlesource.com/c/chromium/src/+/3849096</a>
-Reviewed-by: Dan McArdle &lt;dmcardle@chromium.org&gt;
-Commit-Queue: Tsuyoshi Horo &lt;horo@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1038255}
+Bug: 1355880, 1349276
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0693bcd1115320c83d3273f2e2d1e10c3d12e9d9">I0693bcd1115320c83d3273f2e2d1e10c3d12e9d9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3846093">https://chromium-review.googlesource.com/c/chromium/src/+/3846093</a>
+Commit-Queue: Maxim Anufriev &lt;maxan@google.com&gt;
+Reviewed-by: Vasilii Sukhanov &lt;vasilii@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1038303}
 </pre>
 
 </body>
