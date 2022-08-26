@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1039600/"> 1039600</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/44f019b3037144c9fa43c041335253f635ed39be">44f019b3037144c9fa43c041335253f635ed39be</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1039618/"> 1039618</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/439251d77ec2d240ff35e45efb25b80cb1ff94e6">439251d77ec2d240ff35e45efb25b80cb1ff94e6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1039606/">1039606</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   44f019b3037144c9fa43c041335253f635ed39be
+   439251d77ec2d240ff35e45efb25b80cb1ff94e6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/44f019b3037144c9fa43c041335253f635ed39be">
+    <a href="/chromium/src/+log/439251d77ec2d240ff35e45efb25b80cb1ff94e6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/44f019b3037144c9fa43c041335253f635ed39be.tar.gz">
+    <a href="/chromium/src/+archive/439251d77ec2d240ff35e45efb25b80cb1ff94e6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Asami Doi &lt;asamidoi@chromium.org&gt;
+   Nigel Tao &lt;nigeltao@chromium.org&gt;
   </td>
   <td>
-   Fri Aug 26 05:33:06 2022
+   Fri Aug 26 07:04:16 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Aug 26 05:33:06 2022
+   Fri Aug 26 07:04:16 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/44f019b3037144c9fa43c041335253f635ed39be/">
-    ce5f76a138d14d87d2f357f0ebbe7bb7670014c8
+   <a href="/chromium/src/+/439251d77ec2d240ff35e45efb25b80cb1ff94e6/">
+    db35e67f404c4678a33cf26c88d14652552c30ae
    </a>
   </td>
  </tr>
@@ -166,58 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/44f019b3037144c9fa43c041335253f635ed39be%5E">
-    32eb2b5404271145b3bb8da20addeedb65c0c7a3
+   <a href="/chromium/src/+/439251d77ec2d240ff35e45efb25b80cb1ff94e6%5E">
+    3daa9e28091942ddf83c4de26b2effe9cd5b36d5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/44f019b3037144c9fa43c041335253f635ed39be%5E%21/">
+    <a href="/chromium/src/+/439251d77ec2d240ff35e45efb25b80cb1ff94e6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prerender: add a metric for multiple speculation rules
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Files app] Strip '\n' bytes from ADP identifiers
 
-This CL adds a new metric Prerender.Experimental.
-CancellationPercentageByExcessiveMemoryUsage.SpeculationRule that
-records the percentage of destroyed prerenders by the excessive memory
-usage (kMemoryLimitExceeded).
+We don't use Fusebox for ADP volumes yet, but we will shortly and it's
+problematic without this adjustment.
 
-The metric will be used in a Finch experiment. In the experiment, the
-value of `acceptable_percent_of_system_memory` will be a variable and
-we try to find a "good" value of it.
-The definition of the "good" value is:
-- No regression in an OOM killer: can be measured by
-Stability.Android.SystemExitReason.*
-- More prerenders can start &amp; less prerenders are canceled: can be
-measured by Prerender.Experimental.
-CancellationPercentageByExcessiveMemoryUsage.SpeculationRule.
-
-Here are example scenarios:
-- all prerenders start and they are not cancelled by
-kMemoryLimitExceeded =&gt; the value of Prerender.Experimental.
-CancellationPercentageByExcessiveMemoryUsage.SpeculationRule is 0 (%).
-- half of prerenders are cancelled by kMemoryLimitExceeded =&gt; the value
-of the metric is 50 (%).
-- all prerenders are cancelled by kMemoryLimitExceeded =&gt; the value
-of the metric is 100 (%).
-
-If 0 (%) is dominant in the experiment, we decrease the value of
-`acceptable_percent_of_system_memory`.
-If 1~ (%) appears in the experiment, we increase or adjust the value
-as long as there is no regression in an OOM killer.
-
-Bug: 1273341
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia6e90ab113b9000a15c330de5ffc4b292deb46f7">Ia6e90ab113b9000a15c330de5ffc4b292deb46f7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3715883">https://chromium-review.googlesource.com/c/chromium/src/+/3715883</a>
-Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
-Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
-Reviewed-by: Lingqi Chi &lt;lingqi@chromium.org&gt;
-Commit-Queue: Asami Doi &lt;asamidoi@chromium.org&gt;
-Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1039600}
+Bug: 1292825
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iee866ceeca5db3236ecd93d2297eee744612f960">Iee866ceeca5db3236ecd93d2297eee744612f960</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3858727">https://chromium-review.googlesource.com/c/chromium/src/+/3858727</a>
+Reviewed-by: Ben Reich &lt;benreich@chromium.org&gt;
+Commit-Queue: Ben Reich &lt;benreich@chromium.org&gt;
+Auto-Submit: Nigel Tao &lt;nigeltao@chromium.org&gt;
+Commit-Queue: Nigel Tao &lt;nigeltao@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1039618}
 </pre>
 
 </body>
