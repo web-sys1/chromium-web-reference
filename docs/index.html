@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1039661/"> 1039661</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f6cd769a880007d524037a2d95736081a34ce704">f6cd769a880007d524037a2d95736081a34ce704</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1039669/"> 1039669</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7cf423b69f3b4f025e0d6c89d6e1f41e7abd5ca2">7cf423b69f3b4f025e0d6c89d6e1f41e7abd5ca2</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1039650/">1039650</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f6cd769a880007d524037a2d95736081a34ce704
+   7cf423b69f3b4f025e0d6c89d6e1f41e7abd5ca2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f6cd769a880007d524037a2d95736081a34ce704">
+    <a href="/chromium/src/+log/7cf423b69f3b4f025e0d6c89d6e1f41e7abd5ca2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f6cd769a880007d524037a2d95736081a34ce704.tar.gz">
+    <a href="/chromium/src/+archive/7cf423b69f3b4f025e0d6c89d6e1f41e7abd5ca2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jonathan Hao &lt;phao@chromium.org&gt;
+   Ali Hijazi &lt;ahijazi@chromium.org&gt;
   </td>
   <td>
-   Fri Aug 26 09:18:21 2022
+   Fri Aug 26 10:00:05 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Aug 26 09:18:21 2022
+   Fri Aug 26 10:00:05 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f6cd769a880007d524037a2d95736081a34ce704/">
-    fef9480e7c9a1f4dbba2463570b1be90669ce865
+   <a href="/chromium/src/+/7cf423b69f3b4f025e0d6c89d6e1f41e7abd5ca2/">
+    394835e0cc397c85ebe5d47d29eabd01fe5fb32c
    </a>
   </td>
  </tr>
@@ -166,61 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f6cd769a880007d524037a2d95736081a34ce704%5E">
-    7557c08f29c31d40cad9f45d87f8d5f4be58488f
+   <a href="/chromium/src/+/7cf423b69f3b4f025e0d6c89d6e1f41e7abd5ca2%5E">
+    0da0ed8c22d9d84c1765dc01a7a2c350f598afd3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f6cd769a880007d524037a2d95736081a34ce704%5E%21/">
+    <a href="/chromium/src/+/7cf423b69f3b4f025e0d6c89d6e1f41e7abd5ca2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Policy container inheritance for service workers
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">DanglingPtr: fix dangling ptrs in VertexArrayObjectManager
 
-Project: <a href="https://docs.google.com/document/d/1mAuxWRLcmhghtCoapc30nLo0H12XTMZUJWqw079XOR8/edit?hl=en&amp;forcehl=1">https://docs.google.com/document/d/1mAuxWRLcmhghtCoapc30nLo0H12XTMZUJWqw079XOR8/edit?hl=en&amp;forcehl=1</a>
+Use unique_ptr instead of raw_ptr with new and delete to avoid holding
+dangling ptrs.
 
-This is the part about service worker.
-
-Attach a PolicyContainerHost to ServiceWorkerVersion. This
-PolicyContainerHost is obtained:
-- for local schemes by cloning the creator’s PolicyContainerHost in
-  ServiceWorkerRegisterJob::StartWorkerForUpdate
-- for network schemes by parsing the policies from the response headers
-  inside ServiceWorkerNewScriptLoader::OnReceiveResponse (new script) or
-  ServiceWorkerSingleScriptUpdateChecker::OnReceiveResponse (updated
-  script).
-- for previously loaded script which is stored in the database, we write
-  the policy container policies to db just like the existing service
-  worker data, hence the changes around service worker database and
-  protocol buffer. - The sandbox flags is represented as a int32 instead
-  of a enum because protocol buffer enums can't be or'ed like a flag.
-- CSP is skipped in this CL because the type is quite complicated and
-  require a lot more work.  We don't seem to use the policy container CSP
-  in the renderer anyway.
-- I added a test to make sure that the encoding and decoding works
-
-The policy container is then passed down to renderer and set as the
-execution context's policy container.
-
-This CL also fixes
-external/wpt/html/cross-origin-embedder-policy/reflection-credentialless.tentative.https.any.serviceworker.html
-and
-external/wpt/html/cross-origin-embedder-policy/reflection-require-corp.tentative.https.any.serviceworker.html
-because the passed down policy container contains the correct COEP.
-
-Follow-ups: merge CSPs into our policy container.
-
-Bug: 1177199
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie90c02b8dd3e295c5456e7e2ff03685339277d6a">Ie90c02b8dd3e295c5456e7e2ff03685339277d6a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3766681">https://chromium-review.googlesource.com/c/chromium/src/+/3766681</a>
-Commit-Queue: Jonathan Hao &lt;phao@chromium.org&gt;
-Reviewed-by: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
-Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
-Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1039661}
+Bug: 1291138
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I48cb95710808300b940ea30746a1a1181bb8e3d6">I48cb95710808300b940ea30746a1a1181bb8e3d6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3810421">https://chromium-review.googlesource.com/c/chromium/src/+/3810421</a>
+Reviewed-by: Geoff Lang &lt;geofflang@chromium.org&gt;
+Commit-Queue: Ali Hijazi &lt;ahijazi@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1039669}
 </pre>
 
 </body>
