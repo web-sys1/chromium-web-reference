@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1040621/"> 1040621</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2dd6760b2ef09cd4de9847abfe19c899739d5aa4">2dd6760b2ef09cd4de9847abfe19c899739d5aa4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1040638/"> 1040638</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9e399461576d99dad7325c58be65b3025321bcf5">9e399461576d99dad7325c58be65b3025321bcf5</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1040593/">1040593</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a5ad65ad2aebbc30c488f1e9a8cb29b6517e051b">a5ad65ad2aebbc30c488f1e9a8cb29b6517e051b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1040637/">1040637</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5e7591f9ab6b30d2f86dd9e0d7ba0794a0bdc16b">5e7591f9ab6b30d2f86dd9e0d7ba0794a0bdc16b</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2dd6760b2ef09cd4de9847abfe19c899739d5aa4
+   9e399461576d99dad7325c58be65b3025321bcf5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2dd6760b2ef09cd4de9847abfe19c899739d5aa4">
+    <a href="/chromium/src/+log/9e399461576d99dad7325c58be65b3025321bcf5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2dd6760b2ef09cd4de9847abfe19c899739d5aa4.tar.gz">
+    <a href="/chromium/src/+archive/9e399461576d99dad7325c58be65b3025321bcf5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ashley Prasad &lt;ashleydp@google.com&gt;
+   Juliet Levesque &lt;julietlevesque@google.com&gt;
   </td>
   <td>
-   Mon Aug 29 21:45:30 2022
+   Mon Aug 29 22:28:06 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 29 21:45:30 2022
+   Mon Aug 29 22:28:06 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2dd6760b2ef09cd4de9847abfe19c899739d5aa4/">
-    fd19ede0307eaf4e98a4fce0e5db1b4b71caa6d5
+   <a href="/chromium/src/+/9e399461576d99dad7325c58be65b3025321bcf5/">
+    ce2d4866127abef90a92067ff44c0682307950f3
    </a>
   </td>
  </tr>
@@ -166,36 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2dd6760b2ef09cd4de9847abfe19c899739d5aa4%5E">
-    08265983b43cea85f42552f558573922f4774f9c
+   <a href="/chromium/src/+/9e399461576d99dad7325c58be65b3025321bcf5%5E">
+    5e7591f9ab6b30d2f86dd9e0d7ba0794a0bdc16b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2dd6760b2ef09cd4de9847abfe19c899739d5aa4%5E%21/">
+    <a href="/chromium/src/+/9e399461576d99dad7325c58be65b3025321bcf5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">diagnostics: always reset receiver
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Fast Pair] Don't show subsequent pairing notification for saved device
 
-Reload does not destroy the system_routine_controller instance and
-disconnect handler is not called causing subsequence BindInterface
-call to trigger a DCHECK crash.
+Prevents the subsequent pairing notification for devices that have
+been saved to a user's GAIA from another platform, and paired with a
+Chromebook via classic Bluetooth Settings by iterating over the devices
+that are currently paired with the BluetoothAdapter, using each paired
+devices' |mac_address| and the |account_key| from the
+NotDiscoverableAdv to cross reference for a SHA256(concat(account_key,
+mac_address)) match with any of the user's saved devices.
 
-- Remove DCHECK and instead always reset receiver on BindInterface to
-  ensure reload does not cause a crash.
-- Update name of `ReceiverIsBound` function name now that is only
-  used for test validation.
+TEST=Verified the subsequent pairing doesn't appear for a device that
+is classically paired and saved to my GAIA on DUT, and verified that
+the notif still appears for a device that is not paired and is saved
+to my GAIA
 
-Bug: b:242910333
-Test: Ran ash_webui_unittest --gtest_filter=SystemRoutineController.*
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I801a10203a0b60421f5a9dd6f554461fa87cbad7">I801a10203a0b60421f5a9dd6f554461fa87cbad7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3858057">https://chromium-review.googlesource.com/c/chromium/src/+/3858057</a>
-Reviewed-by: Michael Checo &lt;michaelcheco@google.com&gt;
-Commit-Queue: Ashley Prasad &lt;ashleydp@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1040621}
+Fixed: b/242891006
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I25ce463a70145e9ddb0b263988945ea72509abb3">I25ce463a70145e9ddb0b263988945ea72509abb3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3857791">https://chromium-review.googlesource.com/c/chromium/src/+/3857791</a>
+Reviewed-by: Daniel Classon &lt;dclasson@google.com&gt;
+Reviewed-by: Michael Hansen &lt;hansenmichael@google.com&gt;
+Commit-Queue: Juliet Lévesque &lt;julietlevesque@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1040638}
 </pre>
 
 </body>
