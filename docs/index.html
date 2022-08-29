@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1040435/"> 1040435</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9359af686b52fb0b2b3c1009cb6fa3234e44cef3">9359af686b52fb0b2b3c1009cb6fa3234e44cef3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1040442/"> 1040442</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3aaede8217af7018db709b0d46c4d572b7160529">3aaede8217af7018db709b0d46c4d572b7160529</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1040381/">1040381</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9359af686b52fb0b2b3c1009cb6fa3234e44cef3
+   3aaede8217af7018db709b0d46c4d572b7160529
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9359af686b52fb0b2b3c1009cb6fa3234e44cef3">
+    <a href="/chromium/src/+log/3aaede8217af7018db709b0d46c4d572b7160529">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9359af686b52fb0b2b3c1009cb6fa3234e44cef3.tar.gz">
+    <a href="/chromium/src/+archive/3aaede8217af7018db709b0d46c4d572b7160529.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Colin Blundell &lt;blundell@chromium.org&gt;
+   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 29 15:21:16 2022
+   Mon Aug 29 15:45:53 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 29 15:21:16 2022
+   Mon Aug 29 15:45:53 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9359af686b52fb0b2b3c1009cb6fa3234e44cef3/">
-    a9db28515f078aa3b229879ecb8e2c2fc0587daa
+   <a href="/chromium/src/+/3aaede8217af7018db709b0d46c4d572b7160529/">
+    8023f7507728b099e44b40cdad0b0f4933a18dd9
    </a>
   </td>
  </tr>
@@ -166,63 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9359af686b52fb0b2b3c1009cb6fa3234e44cef3%5E">
-    c217b182106b69e6e711a93dab158c72d81e4358
+   <a href="/chromium/src/+/3aaede8217af7018db709b0d46c4d572b7160529%5E">
+    28dd7f56e2264108138f7de9197f8cb303ed7f58
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9359af686b52fb0b2b3c1009cb6fa3234e44cef3%5E%21/">
+    <a href="/chromium/src/+/3aaede8217af7018db709b0d46c4d572b7160529%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Graphics] Mark StreamTextureSII's GLImage as bound when binding
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Mac Arm PGO Profile
 
-The goal of this CL is to eliminate the GL command decoders' thinking
-that StreamTextureSharedImageInterface instances need lazy binding when
-clients have correctly called BeginSharedImageAccessDirectCHROMIUM()
-before invoking drawing operations. Currently, the SharedImageBacking
-subclass that sets the StreamTextureSII instance in the texture [1] does
-not mark it as bound in BeginAccess(), so the decoders are not aware
-that the images have been bound.
+Roll Chrome Mac Arm PGO profile from chrome-mac-arm-main-1661752129-b587e96bc360c4fbea1553a31aeb87facaccd380.profdata to chrome-mac-arm-main-1661774378-c654d521101a893ab687d3e50b04dd51ee679381.profdata
 
-This CL adds such marking. However, it turns out that that is not
-enough: the two subclasses of StreamTextureSII currently each override
-HasMutableState() to return false, which means that TextureManager
-short-circuits out of actually updating its binding state for the
-image. This was implemented to ensure that copies of the image are
-not mistakenly elided when one of these subclasses is reused with a
-different buffer. In StreamTexture, both CopyTexImage() and
-BindTexImage() are effectively no-ops, meaning that the semantic change
-doesn't actually matter. In CodecImage this is not the case. To ensure
-that the necessary semantics here are preserved, this CL also sets
-the image state to be unbound in the SharedImageBacking sublasses'
-implementations of EndAccess(). We do not believe that CodecImage
-will have its associated buffer changed while a client is accessing
-it (i.e., in between a call to BeginAccess() and a call to EndAccess()).
+If this roll has caused a breakage, revert this CL and stop the roller
+using the controls here:
+<a href="https://autoroll.skia.org/r/pgo-mac-arm-chromium">https://autoroll.skia.org/r/pgo-mac-arm-chromium</a>
+Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
+is aware of the problem.
 
-Note: It is possible to see the impact of this change on lazy binding
-in tests by viewing the trybot results on PS3 and PS8:
+To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
 
-- PS3 has CHECKs inserted where the decoders do lazy binding. Android
-  test failures are due to this issue.
-- PS8 keeps the CHECKs and adds the production fix in this CL. All of
-  the Android test failures disappear.
+To report a problem with the AutoRoller itself, please file a bug:
+<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
 
-[1] <a href="https://source.chromium.org/chromium/chromium/src/+/main:gpu/command_buffer/service/shared_image/video_surface_texture_image_backing.cc;drc=db0d32ea0c658e4744009d0935d3da0d8b5e7b0a;l=191">https://source.chromium.org/chromium/chromium/src/+/main:gpu/command_buffer/service/shared_image/video_surface_texture_image_backing.cc;drc=db0d32ea0c658e4744009d0935d3da0d8b5e7b0a;l=191</a>
+Documentation for the AutoRoller is here:
+<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
 
-Bug: 1345585
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3434bd82dc7b76d01872414aa7232dd870d1cd8c">I3434bd82dc7b76d01872414aa7232dd870d1cd8c</a>
-Cq-Do-Not-Cancel-Tryjobs: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3790843">https://chromium-review.googlesource.com/c/chromium/src/+/3790843</a>
-Reviewed-by: vikas soni &lt;vikassoni@chromium.org&gt;
-Reviewed-by: Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
-Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
-Reviewed-by: Frank Liberato &lt;liberato@chromium.org&gt;
-Commit-Queue: Colin Blundell &lt;blundell@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1040435}
+Cq-Include-Trybots: luci.chrome.try:mac-chrome
+Tbr: pgo-profile-sheriffs@google.com
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iabc554adff72f08a6f77e555f0d883af038de6b6">Iabc554adff72f08a6f77e555f0d883af038de6b6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3860186">https://chromium-review.googlesource.com/c/chromium/src/+/3860186</a>
+Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1040442}
 </pre>
 
 </body>
