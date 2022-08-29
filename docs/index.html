@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1040419/"> 1040419</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/64320af343ff1169697fa12378b2098f3a0bd15c">64320af343ff1169697fa12378b2098f3a0bd15c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1040435/"> 1040435</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9359af686b52fb0b2b3c1009cb6fa3234e44cef3">9359af686b52fb0b2b3c1009cb6fa3234e44cef3</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1040381/">1040381</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   64320af343ff1169697fa12378b2098f3a0bd15c
+   9359af686b52fb0b2b3c1009cb6fa3234e44cef3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/64320af343ff1169697fa12378b2098f3a0bd15c">
+    <a href="/chromium/src/+log/9359af686b52fb0b2b3c1009cb6fa3234e44cef3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/64320af343ff1169697fa12378b2098f3a0bd15c.tar.gz">
+    <a href="/chromium/src/+archive/9359af686b52fb0b2b3c1009cb6fa3234e44cef3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Colin Blundell &lt;blundell@chromium.org&gt;
   </td>
   <td>
-   Mon Aug 29 14:41:29 2022
+   Mon Aug 29 15:21:16 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 29 14:41:29 2022
+   Mon Aug 29 15:21:16 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/64320af343ff1169697fa12378b2098f3a0bd15c/">
-    568d2be2042853a445c62e00832bb696227b6768
+   <a href="/chromium/src/+/9359af686b52fb0b2b3c1009cb6fa3234e44cef3/">
+    a9db28515f078aa3b229879ecb8e2c2fc0587daa
    </a>
   </td>
  </tr>
@@ -166,48 +166,63 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/64320af343ff1169697fa12378b2098f3a0bd15c%5E">
-    54e728172cb1d9a2905582a490c5537cc43919e0
+   <a href="/chromium/src/+/9359af686b52fb0b2b3c1009cb6fa3234e44cef3%5E">
+    c217b182106b69e6e711a93dab158c72d81e4358
    </a>
    <span>
     [
-    <a href="/chromium/src/+/64320af343ff1169697fa12378b2098f3a0bd15c%5E%21/">
+    <a href="/chromium/src/+/9359af686b52fb0b2b3c1009cb6fa3234e44cef3%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Skia from dbc976b9d2d6 to 8cd227c75580 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Graphics] Mark StreamTextureSII's GLImage as bound when binding
 
-<a href="https://skia.googlesource.com/skia.git/+log/dbc976b9d2d6..8cd227c75580">https://skia.googlesource.com/skia.git/+log/dbc976b9d2d6..8cd227c75580</a>
+The goal of this CL is to eliminate the GL command decoders' thinking
+that StreamTextureSharedImageInterface instances need lazy binding when
+clients have correctly called BeginSharedImageAccessDirectCHROMIUM()
+before invoking drawing operations. Currently, the SharedImageBacking
+subclass that sets the StreamTextureSII instance in the texture [1] does
+not mark it as bound in BeginAccess(), so the decoders are not aware
+that the images have been bound.
 
-2022-08-29 ototot@google.com Update Chrome OS name to ChromeOS
+This CL adds such marking. However, it turns out that that is not
+enough: the two subclasses of StreamTextureSII currently each override
+HasMutableState() to return false, which means that TextureManager
+short-circuits out of actually updating its binding state for the
+image. This was implemented to ensure that copies of the image are
+not mistakenly elided when one of these subclasses is reused with a
+different buffer. In StreamTexture, both CopyTexImage() and
+BindTexImage() are effectively no-ops, meaning that the semantic change
+doesn't actually matter. In CodecImage this is not the case. To ensure
+that the necessary semantics here are preserved, this CL also sets
+the image state to be unbound in the SharedImageBacking sublasses'
+implementations of EndAccess(). We do not believe that CodecImage
+will have its associated buffer changed while a client is accessing
+it (i.e., in between a call to BeginAccess() and a call to EndAccess()).
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/skia-autoroll">https://autoroll.skia.org/r/skia-autoroll</a>
-Please CC kjlubick@google.com on the revert to ensure that a human
-is aware of the problem.
+Note: It is possible to see the impact of this change on lazy binding
+in tests by viewing the trybot results on PS3 and PS8:
 
-To file a bug in Skia: <a href="https://bugs.chromium.org/p/skia/issues/entry">https://bugs.chromium.org/p/skia/issues/entry</a>
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+- PS3 has CHECKs inserted where the decoders do lazy binding. Android
+  test failures are due to this issue.
+- PS8 keeps the CHECKs and adds the production fix in this CL. All of
+  the Android test failures disappear.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+[1] <a href="https://source.chromium.org/chromium/chromium/src/+/main:gpu/command_buffer/service/shared_image/video_surface_texture_image_backing.cc;drc=db0d32ea0c658e4744009d0935d3da0d8b5e7b0a;l=191">https://source.chromium.org/chromium/chromium/src/+/main:gpu/command_buffer/service/shared_image/video_surface_texture_image_backing.cc;drc=db0d32ea0c658e4744009d0935d3da0d8b5e7b0a;l=191</a>
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chromium.try:android_optional_gpu_tests_rel;luci.chromium.try:linux-blink-rel;luci.chromium.try:linux-chromeos-compile-dbg;luci.chromium.try:linux_optional_gpu_tests_rel;luci.chromium.try:mac_optional_gpu_tests_rel;luci.chromium.try:win_optional_gpu_tests_rel
+Bug: 1345585
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3434bd82dc7b76d01872414aa7232dd870d1cd8c">I3434bd82dc7b76d01872414aa7232dd870d1cd8c</a>
 Cq-Do-Not-Cancel-Tryjobs: true
-Bug: None
-Tbr: kjlubick@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I064c5d86fd29fc24f78e75233bab787d6080f314">I064c5d86fd29fc24f78e75233bab787d6080f314</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3861909">https://chromium-review.googlesource.com/c/chromium/src/+/3861909</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1040419}
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3790843">https://chromium-review.googlesource.com/c/chromium/src/+/3790843</a>
+Reviewed-by: vikas soni &lt;vikassoni@chromium.org&gt;
+Reviewed-by: Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Reviewed-by: Frank Liberato &lt;liberato@chromium.org&gt;
+Commit-Queue: Colin Blundell &lt;blundell@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1040435}
 </pre>
 
 </body>
