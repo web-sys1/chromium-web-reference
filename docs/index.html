@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1041144/"> 1041144</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0186cb661617974be8ebcc8b71f46f3424770b2e">0186cb661617974be8ebcc8b71f46f3424770b2e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1041165/"> 1041165</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/abe8dd4e4ca26e2ba6f7d5ad15d96a253c61738f">abe8dd4e4ca26e2ba6f7d5ad15d96a253c61738f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1041134/">1041134</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0186cb661617974be8ebcc8b71f46f3424770b2e
+   abe8dd4e4ca26e2ba6f7d5ad15d96a253c61738f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0186cb661617974be8ebcc8b71f46f3424770b2e">
+    <a href="/chromium/src/+log/abe8dd4e4ca26e2ba6f7d5ad15d96a253c61738f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0186cb661617974be8ebcc8b71f46f3424770b2e.tar.gz">
+    <a href="/chromium/src/+archive/abe8dd4e4ca26e2ba6f7d5ad15d96a253c61738f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Steinar H. Gunderson &lt;sesse@chromium.org&gt;
+   Brian Sheedy &lt;bsheedy@chromium.org&gt;
   </td>
   <td>
-   Tue Aug 30 19:54:39 2022
+   Tue Aug 30 20:37:41 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 30 19:54:39 2022
+   Tue Aug 30 20:37:41 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0186cb661617974be8ebcc8b71f46f3424770b2e/">
-    0ce3c858c87b398a5d9b0feaac35a80e373a88a7
+   <a href="/chromium/src/+/abe8dd4e4ca26e2ba6f7d5ad15d96a253c61738f/">
+    b91621d40a5e18c9308d264b4a639d1e97fa67ad
    </a>
   </td>
  </tr>
@@ -166,58 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0186cb661617974be8ebcc8b71f46f3424770b2e%5E">
-    705435bcabc0ac2e6a8700289f21cb60d5b20a64
+   <a href="/chromium/src/+/abe8dd4e4ca26e2ba6f7d5ad15d96a253c61738f%5E">
+    591aa337b541be4579f8e1360f16a1460d8ed52e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0186cb661617974be8ebcc8b71f46f3424770b2e%5E%21/">
+    <a href="/chromium/src/+/abe8dd4e4ca26e2ba6f7d5ad15d96a253c61738f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add an arena for CSS parser selectors.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove Gold CQ workarounds
 
-During parsing, we allocate parser selectors (on PartitionAlloc),
-convert them into their final form (on Oilpan), and then immediately
-deallocate them. There's a TODO to rearchitect this to avoid the
-intermediate step, but until that, we can at least make the allocation
-and deallocation much cheaper.
+Removes the workarounds we had in place for Skia Gold-backed tests on
+the CQ to prevent retries from clobbering results. This is no longer
+necessary since Gold natively supports multiple images for the same
+test/config from the same patchset now.
 
-We make a very simple implementation of the arena pattern, which
-allows us to allocate very quickly and deallocate everything
-in O(1) at the end. There will probably be a tiny bit higher peak
-memory allocation during the milliseconds that the parser runs,
-but that should be bearable.
-
-This is really only a win for parsing entire stylesheets, but for
-simplicity, we use the same code when parsing e.g. a single selector
-for querySelector(). (The next patch contains code to make the use
-of the arena conditional on a Finch flag, but it won't really change
-this, and it should be temporary.)
-
-Style microbenchmarks (Zen 3, LTO but no PGO):
-
-Parse (µs)             Before     After    Perf      95% CI (BCa)
-=================== ========= ========= ======= =================
-ECommerce                1726      1644   +5.0%  [ +4.4%,  +5.6%]
-Encyclopedia             9037      8495   +6.4%  [ +5.9%,  +6.7%]
-Extension                1629      1483   +9.9%  [ +9.2%, +10.6%]
-News                    10437      9686   +7.8%  [ +7.3%,  +8.3%]
-Search                   6087      5781   +5.3%  [ +5.0%,  +5.7%]
-Social1                 20062     19380   +3.5%  [ +3.0%,  +4.1%]
-Social2                   730       695   +5.0%  [ +4.2%,  +6.0%]
-Sports                  69393     65685   +5.6%  [ +5.2%,  +6.1%]
-Video                   44317     42801   +3.5%  [ +0.3%,  +3.9%]
-Geometric mean                            +5.8%  [ +5.4%,  +6.0%]
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8d252de73e9264986cf285cf05cd57341b08226c">I8d252de73e9264986cf285cf05cd57341b08226c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3859578">https://chromium-review.googlesource.com/c/chromium/src/+/3859578</a>
-Commit-Queue: Steinar H Gunderson &lt;sesse@chromium.org&gt;
-Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1041144}
+Bug: skia:12149, 1234216, 1292713, 1344218
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5faac95d76de97ba76faa7502816586cb0e64216">I5faac95d76de97ba76faa7502816586cb0e64216</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3858053">https://chromium-review.googlesource.com/c/chromium/src/+/3858053</a>
+Reviewed-by: Sven Zheng &lt;svenzheng@chromium.org&gt;
+Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Commit-Queue: Brian Sheedy &lt;bsheedy@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1041165}
 </pre>
 
 </body>
