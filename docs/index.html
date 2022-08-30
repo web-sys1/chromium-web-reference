@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1040834/"> 1040834</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/07fd178d39a4aeb14224c77056203a6c5e32ca64">07fd178d39a4aeb14224c77056203a6c5e32ca64</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1040841/"> 1040841</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fc96914a2d400b054fb2fcabff8f9ebeeffa5416">fc96914a2d400b054fb2fcabff8f9ebeeffa5416</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1040828/">1040828</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   07fd178d39a4aeb14224c77056203a6c5e32ca64
+   fc96914a2d400b054fb2fcabff8f9ebeeffa5416
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/07fd178d39a4aeb14224c77056203a6c5e32ca64">
+    <a href="/chromium/src/+log/fc96914a2d400b054fb2fcabff8f9ebeeffa5416">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/07fd178d39a4aeb14224c77056203a6c5e32ca64.tar.gz">
+    <a href="/chromium/src/+archive/fc96914a2d400b054fb2fcabff8f9ebeeffa5416.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Justin Cohen &lt;justincohen@google.com&gt;
+   Dominik Inführ &lt;dinfuehr@chromium.org&gt;
   </td>
   <td>
-   Tue Aug 30 07:50:13 2022
+   Tue Aug 30 08:25:37 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 30 07:50:13 2022
+   Tue Aug 30 08:25:37 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/07fd178d39a4aeb14224c77056203a6c5e32ca64/">
-    a4c9a288953aecb683ce3d0cbe20687bcd933ce1
+   <a href="/chromium/src/+/fc96914a2d400b054fb2fcabff8f9ebeeffa5416/">
+    476baf0402575e93b7cb473001c064b194ced556
    </a>
   </td>
  </tr>
@@ -166,27 +166,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/07fd178d39a4aeb14224c77056203a6c5e32ca64%5E">
-    f51001b104d31686240c8962528299a9ce37dcb4
+   <a href="/chromium/src/+/fc96914a2d400b054fb2fcabff8f9ebeeffa5416%5E">
+    2475d94fa3df189ddb303177ba253428feb25f5f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/07fd178d39a4aeb14224c77056203a6c5e32ca64%5E%21/">
+    <a href="/chromium/src/+/fc96914a2d400b054fb2fcabff8f9ebeeffa5416%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ios: Extend expiration dates for IOS.MainThreadFreezeDetection.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">gin: Remove broken DCHECKs in DumpHeapStatistics
 
-Fixed: 1348967
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9574d904bddd56643b5847bf53c4ce564edbe940">I9574d904bddd56643b5847bf53c4ce564edbe940</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3863363">https://chromium-review.googlesource.com/c/chromium/src/+/3863363</a>
-Commit-Queue: Olivier Robin &lt;olivierrobin@chromium.org&gt;
-Auto-Submit: Justin Cohen &lt;justincohen@chromium.org&gt;
-Reviewed-by: Olivier Robin &lt;olivierrobin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1040834}
+DumpHeapStatistics invokes:
+  1) V8's GetHeapStatistics() and then
+  2) GetHeapSpaceStatistics() for each individual space.
+
+The DCHECKs ensures that the total sizes reported for
+GetHeapStatistics() matches the sum of the individual spaces. Due
+to concurrent allocation spaces can grow in-between operation 1)
+and 2), so the DCHECKs allow for that as well. However some metrics
+might even decrease between 1) and 2).
+
+total_physical_size() might decrease due to sweeping, while
+used_heap_size() might decrease in the concurrent allocation path. So
+both values can't be used for these DCHECKs.
+
+However, we should be able to keep the DCHECK for total_heap_size().
+This value is only decreased during a GC when we release pages, which
+can't happen in-between 1) and 2) here.
+
+While it's unfortunate that we have to drop those two DCHECKs, the
+remaining DCHECK will still ensure that all spaces are properly
+accounted.
+
+Bug: chromium:1357181
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4c7a74c4bac8fcd517858944509d8589ed7ce9e4">I4c7a74c4bac8fcd517858944509d8589ed7ce9e4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3864664">https://chromium-review.googlesource.com/c/chromium/src/+/3864664</a>
+Commit-Queue: Dominik Inführ &lt;dinfuehr@chromium.org&gt;
+Reviewed-by: Michael Lippautz &lt;mlippautz@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1040841}
 </pre>
 
 </body>
