@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1041117/"> 1041117</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3fc71c4533b669359661741de78e455da15c2048">3fc71c4533b669359661741de78e455da15c2048</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1041144/"> 1041144</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0186cb661617974be8ebcc8b71f46f3424770b2e">0186cb661617974be8ebcc8b71f46f3424770b2e</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1041082/">1041082</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3fc71c4533b669359661741de78e455da15c2048
+   0186cb661617974be8ebcc8b71f46f3424770b2e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3fc71c4533b669359661741de78e455da15c2048">
+    <a href="/chromium/src/+log/0186cb661617974be8ebcc8b71f46f3424770b2e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3fc71c4533b669359661741de78e455da15c2048.tar.gz">
+    <a href="/chromium/src/+archive/0186cb661617974be8ebcc8b71f46f3424770b2e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tom Anderson &lt;thomasanderson@chromium.org&gt;
+   Steinar H. Gunderson &lt;sesse@chromium.org&gt;
   </td>
   <td>
-   Tue Aug 30 19:17:23 2022
+   Tue Aug 30 19:54:39 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 30 19:17:23 2022
+   Tue Aug 30 19:54:39 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3fc71c4533b669359661741de78e455da15c2048/">
-    bbea430899bfe5d65a6f00a0a8306943387f21cb
+   <a href="/chromium/src/+/0186cb661617974be8ebcc8b71f46f3424770b2e/">
+    0ce3c858c87b398a5d9b0feaac35a80e373a88a7
    </a>
   </td>
  </tr>
@@ -166,39 +166,58 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3fc71c4533b669359661741de78e455da15c2048%5E">
-    0cd4bc1f9f2aba8fea32ff04c10ed6dc9262a217
+   <a href="/chromium/src/+/0186cb661617974be8ebcc8b71f46f3424770b2e%5E">
+    705435bcabc0ac2e6a8700289f21cb60d5b20a64
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3fc71c4533b669359661741de78e455da15c2048%5E%21/">
+    <a href="/chromium/src/+/0186cb661617974be8ebcc8b71f46f3424770b2e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll src/third_party/cros_system_api/ c96f7fef3..3cd46d04b (4 commits)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add an arena for CSS parser selectors.
 
-<a href="https://chromium.googlesource.com/chromiumos/platform2/system_api.git/+log/c96f7fef336e..3cd46d04bd6c">https://chromium.googlesource.com/chromiumos/platform2/system_api.git/+log/c96f7fef336e..3cd46d04bd6c</a>
+During parsing, we allocate parser selectors (on PartitionAlloc),
+convert them into their final form (on Oilpan), and then immediately
+deallocate them. There's a TODO to rearchitect this to avoid the
+intermediate step, but until that, we can at least make the allocation
+and deallocation much cheaper.
 
-$ git log c96f7fef3..3cd46d04b --date=short --no-merges --format='%ad %ae %s'
-2022-06-03 evgreen hiberman: Add AbortResume dbus interface
-2022-08-24 nigeltao system_api: add FuseBox D-Bus debugging names
-2022-08-23 jadmanski system_api: Remove start auth session supported_auth_factors
-2022-08-24 thomasanderson system_api: Fix build with -Wextra-semi
+We make a very simple implementation of the arena pattern, which
+allows us to allocate very quickly and deallocate everything
+in O(1) at the end. There will probably be a tiny bit higher peak
+memory allocation during the milliseconds that the parser runs,
+but that should be bearable.
 
-Created with:
-  roll-dep src/third_party/cros_system_api
-R=thakis@chromium.org
+This is really only a win for parsing entire stylesheets, but for
+simplicity, we use the same code when parsing e.g. a single selector
+for querySelector(). (The next patch contains code to make the use
+of the arena conditional on a Finch flag, but it won't really change
+this, and it should be temporary.)
 
-Bug: 1355871
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6d87578d681c4150a09df2be69c324a65b3a709a">I6d87578d681c4150a09df2be69c324a65b3a709a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3862985">https://chromium-review.googlesource.com/c/chromium/src/+/3862985</a>
-Auto-Submit: Thomas Anderson &lt;thomasanderson@chromium.org&gt;
-Commit-Queue: Nico Weber &lt;thakis@chromium.org&gt;
-Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1041117}
+Style microbenchmarks (Zen 3, LTO but no PGO):
+
+Parse (µs)             Before     After    Perf      95% CI (BCa)
+=================== ========= ========= ======= =================
+ECommerce                1726      1644   +5.0%  [ +4.4%,  +5.6%]
+Encyclopedia             9037      8495   +6.4%  [ +5.9%,  +6.7%]
+Extension                1629      1483   +9.9%  [ +9.2%, +10.6%]
+News                    10437      9686   +7.8%  [ +7.3%,  +8.3%]
+Search                   6087      5781   +5.3%  [ +5.0%,  +5.7%]
+Social1                 20062     19380   +3.5%  [ +3.0%,  +4.1%]
+Social2                   730       695   +5.0%  [ +4.2%,  +6.0%]
+Sports                  69393     65685   +5.6%  [ +5.2%,  +6.1%]
+Video                   44317     42801   +3.5%  [ +0.3%,  +3.9%]
+Geometric mean                            +5.8%  [ +5.4%,  +6.0%]
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8d252de73e9264986cf285cf05cd57341b08226c">I8d252de73e9264986cf285cf05cd57341b08226c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3859578">https://chromium-review.googlesource.com/c/chromium/src/+/3859578</a>
+Commit-Queue: Steinar H Gunderson &lt;sesse@chromium.org&gt;
+Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1041144}
 </pre>
 
 </body>
