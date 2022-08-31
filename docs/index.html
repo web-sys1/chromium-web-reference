@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1041401/"> 1041401</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/afca265e8d62c70a3e4715039eaeaf95efe9c091">afca265e8d62c70a3e4715039eaeaf95efe9c091</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1041411/"> 1041411</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7f268835e475cb2aaa497b5035766d9dd03c234e">7f268835e475cb2aaa497b5035766d9dd03c234e</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1041403/">1041403</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   afca265e8d62c70a3e4715039eaeaf95efe9c091
+   7f268835e475cb2aaa497b5035766d9dd03c234e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/afca265e8d62c70a3e4715039eaeaf95efe9c091">
+    <a href="/chromium/src/+log/7f268835e475cb2aaa497b5035766d9dd03c234e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/afca265e8d62c70a3e4715039eaeaf95efe9c091.tar.gz">
+    <a href="/chromium/src/+archive/7f268835e475cb2aaa497b5035766d9dd03c234e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Asami Doi &lt;asamidoi@chromium.org&gt;
+   Steffen Seckler &lt;sseckler@google.com&gt;
   </td>
   <td>
-   Wed Aug 31 07:35:13 2022
+   Wed Aug 31 08:19:38 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 31 07:35:13 2022
+   Wed Aug 31 08:19:38 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/afca265e8d62c70a3e4715039eaeaf95efe9c091/">
-    48eec5fc8a9bafa2d79d8de053e732d218acca2e
+   <a href="/chromium/src/+/7f268835e475cb2aaa497b5035766d9dd03c234e/">
+    ada5d5b8d95728a819d30f11c2e7e3d7bd012f6c
    </a>
   </td>
  </tr>
@@ -166,28 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/afca265e8d62c70a3e4715039eaeaf95efe9c091%5E">
-    0311f0c8e5261c1e604cbef9addea40bf7f79402
+   <a href="/chromium/src/+/7f268835e475cb2aaa497b5035766d9dd03c234e%5E">
+    0346d321743398418a22fddb84544f89b4fa8578
    </a>
    <span>
     [
-    <a href="/chromium/src/+/afca265e8d62c70a3e4715039eaeaf95efe9c091%5E%21/">
+    <a href="/chromium/src/+/7f268835e475cb2aaa497b5035766d9dd03c234e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">sheriff: disable PageLoadMetricsBrowserTestWithAnimatedLCPFlag.PageLCPAnimatedImage on Windows too
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix uploads not working on arc directories
 
-Bug: 1260953
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idadc21d6f5b8b9f37a690580f3bc3311fec57d65">Idadc21d6f5b8b9f37a690580f3bc3311fec57d65</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3867075">https://chromium-review.googlesource.com/c/chromium/src/+/3867075</a>
-Owners-Override: Asami Doi &lt;asamidoi@chromium.org&gt;
-Auto-Submit: Asami Doi &lt;asamidoi@chromium.org&gt;
-Reviewed-by: Yuki Shiino &lt;yukishiino@chromium.org&gt;
-Commit-Queue: Yuki Shiino &lt;yukishiino@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1041401}
+MemoryMappedFile (posix) always uses MAP_SHARED.
+Using mmap in shared mode is not supported on some file systems (e.g.,
+fuse-io in direct-io mode which is, e.g., used by ARC on ChromeOS):
+<a href="https://www.kernel.org/doc/Documentation/filesystems/fuse-io.txt">https://www.kernel.org/doc/Documentation/filesystems/fuse-io.txt</a>
+For READ-ONLY access the MAP_PRIVATE and MAP_SHARED mostly behave
+similarly, s.t., we can retry access with MAP_PRIVATE if MAP_SHARED
+fails.
+So on posix systems, we create our own MemoryMappedFile that can execute
+mmap calls using MAP_PRIVATE.
+
+Fixed: 1347488
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3957eb776dfa8f0857a4831ef21c023ee3de2ba4">I3957eb776dfa8f0857a4831ef21c023ee3de2ba4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3865950">https://chromium-review.googlesource.com/c/chromium/src/+/3865950</a>
+Reviewed-by: Dominique Fauteux-Chapleau &lt;domfc@chromium.org&gt;
+Commit-Queue: Steffen Seckler &lt;sseckler@google.com&gt;
+Reviewed-by: Daniel Rubery &lt;drubery@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1041411}
 </pre>
 
 </body>
