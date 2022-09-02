@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1042730/"> 1042730</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3bffaf2d866140e802ffb9927971ab82e3f19eb2">3bffaf2d866140e802ffb9927971ab82e3f19eb2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1042760/"> 1042760</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/288b63d194d83e6d0f1edd008b4ea6637f587b64">288b63d194d83e6d0f1edd008b4ea6637f587b64</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1042685/">1042685</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3bffaf2d866140e802ffb9927971ab82e3f19eb2
+   288b63d194d83e6d0f1edd008b4ea6637f587b64
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3bffaf2d866140e802ffb9927971ab82e3f19eb2">
+    <a href="/chromium/src/+log/288b63d194d83e6d0f1edd008b4ea6637f587b64">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3bffaf2d866140e802ffb9927971ab82e3f19eb2.tar.gz">
+    <a href="/chromium/src/+archive/288b63d194d83e6d0f1edd008b4ea6637f587b64.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chromium WPT Sync &lt;wpt-autoroller@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Peter McNeeley &lt;petermcneeley@chromium.org&gt;
   </td>
   <td>
-   Fri Sep 02 19:45:23 2022
+   Fri Sep 02 20:28:35 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Sep 02 19:45:23 2022
+   Fri Sep 02 20:28:35 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3bffaf2d866140e802ffb9927971ab82e3f19eb2/">
-    ac776e213966086a9fbbe5a55efe3d0ac62e76b8
+   <a href="/chromium/src/+/288b63d194d83e6d0f1edd008b4ea6637f587b64/">
+    cc80740d64ed56f21eaa42abf6c35a6a1c4e586f
    </a>
   </td>
  </tr>
@@ -166,51 +166,56 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3bffaf2d866140e802ffb9927971ab82e3f19eb2%5E">
-    7f31720be4314a7866e320a8a1d66b8d526253af
+   <a href="/chromium/src/+/288b63d194d83e6d0f1edd008b4ea6637f587b64%5E">
+    2df30121c4d10ec1dea3168377373fd9d139cb1f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3bffaf2d866140e802ffb9927971ab82e3f19eb2%5E%21/">
+    <a href="/chromium/src/+/288b63d194d83e6d0f1edd008b4ea6637f587b64%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Import wpt@2cb1cd3686ef2f5dc3bb60c14cf4bb01df574539
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "OzoneImageBacking - Return early if cannot BeginRead/Write"
 
-Using wpt-import in Chromium e9075fc0b94fabaa76e4bf5dff005e50b388d6f5.
-With Chromium commits locally applied on WPT:
-7eed88d612 "Update popup-redirect-cache.https.html to use dispatcher"
-a693cb8616 "Ensure that sends to each uuid occur in order."
+This reverts commit 06dbb5399d052fb677a8d68b106714c8ab4ae4e8.
 
+Reason for revert: Causes failures on chromeos gpu.fyi generic
+see crbug.com/1359404
 
-Note to sheriffs: This CL imports external tests and adds
-expectations for those tests; if this CL is large and causes
-a few new failures, please fix the failures by adding new
-lines to TestExpectations rather than reverting. See:
-<a href="https://chromium.googlesource.com/chromium/src/+/main/docs/testing/web_platform_tests.md">https://chromium.googlesource.com/chromium/src/+/main/docs/testing/web_platform_tests.md</a>
+Original change's description:
+&gt; OzoneImageBacking - Return early if cannot BeginRead/Write
+&gt;
+&gt; When OzoneImageBacking::BeginAccess is called, if read/write is already
+&gt; in progress there's an early return from the function. In such cases,
+&gt; we should return early from calling functions to avoid anything
+&gt; unexpected.
+&gt;
+&gt; Recently, there was a bug b/243039477 where
+&gt; DCHECK_GT(reads_on progress_, 0u) crashes for a debug build. This
+&gt; shouldn't happen unless a client was calling Begin/EndAccess out of
+&gt; order or some usages were not set properly for concurrent access.
+&gt; This CL fixes for the early return suspecting the cause to be
+&gt; elsewhere in client.
+&gt;
+&gt; Bug: b/243039477
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib5eeb30218291782f47178bc2c5448cc0cb7a9af">Ib5eeb30218291782f47178bc2c5448cc0cb7a9af</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3863369">https://chromium-review.googlesource.com/c/chromium/src/+/3863369</a>
+&gt; Reviewed-by: Kyle Charbonneau &lt;kylechar@chromium.org&gt;
+&gt; Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+&gt; Commit-Queue: Saifuddin Hitawala &lt;hitawala@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1041561}
 
-Directory owners for changes in this CL:
-cbiesinger@chromium.org:
-  external/wpt/css/css-sizing
-drott@chromium.org, kojii@chromium.org:
-  external/wpt/css/css-fonts
-rego@igalia.com:
-  external/wpt/css/selectors
-
-NOAUTOREVERT=true
-R=rubber-stamper@appspot.gserviceaccount.com
-
-No-Export: true
-Cq-Include-Trybots: luci.chromium.try:linux-wpt-identity-fyi-rel,linux-wpt-input-fyi-rel,linux-blink-rel
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0a2a71f1b63380ffdc83810f942006223c411c71">I0a2a71f1b63380ffdc83810f942006223c411c71</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3871859">https://chromium-review.googlesource.com/c/chromium/src/+/3871859</a>
-Auto-Submit: WPT Autoroller &lt;wpt-autoroller@chops-service-accounts.iam.gserviceaccount.com&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Bug: b/243039477
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7f3ae0935499cc95591bc26310f6d6c456382bf7">I7f3ae0935499cc95591bc26310f6d6c456382bf7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3871618">https://chromium-review.googlesource.com/c/chromium/src/+/3871618</a>
 Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1042730}
+Commit-Queue: Peter McNeeley &lt;petermcneeley@chromium.org&gt;
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Commit-Queue: Peter McNeeley &lt;petermcneeley@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1042760}
 </pre>
 
 </body>
