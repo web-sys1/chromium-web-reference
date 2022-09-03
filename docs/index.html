@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1042958/"> 1042958</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7f028a2b43cb737a3151290db305ac41c132c581">7f028a2b43cb737a3151290db305ac41c132c581</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1042959/"> 1042959</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/32d1dae0d236658433e5a53b6a1e51bf4162b811">32d1dae0d236658433e5a53b6a1e51bf4162b811</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1042953/">1042953</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f28ad6838b8acacc2b0270adb7e82b58977315fc">f28ad6838b8acacc2b0270adb7e82b58977315fc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1042957/">1042957</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/21775eeed95887e820dbd3a54150906c634965d5">21775eeed95887e820dbd3a54150906c634965d5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7f028a2b43cb737a3151290db305ac41c132c581
+   32d1dae0d236658433e5a53b6a1e51bf4162b811
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7f028a2b43cb737a3151290db305ac41c132c581">
+    <a href="/chromium/src/+log/32d1dae0d236658433e5a53b6a1e51bf4162b811">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7f028a2b43cb737a3151290db305ac41c132c581.tar.gz">
+    <a href="/chromium/src/+archive/32d1dae0d236658433e5a53b6a1e51bf4162b811.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Tony Herre &lt;toprice@chromium.org&gt;
   </td>
   <td>
-   Sat Sep 03 21:03:32 2022
+   Sat Sep 03 21:54:53 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Sep 03 21:03:32 2022
+   Sat Sep 03 21:54:53 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7f028a2b43cb737a3151290db305ac41c132c581/">
-    414e3d909ad3012bf853bf91803b712d86657ad8
+   <a href="/chromium/src/+/32d1dae0d236658433e5a53b6a1e51bf4162b811/">
+    46a4cb6baa02676d0ac31b8ebf8f8380bb3686f5
    </a>
   </td>
  </tr>
@@ -166,43 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7f028a2b43cb737a3151290db305ac41c132c581%5E">
-    21775eeed95887e820dbd3a54150906c634965d5
+   <a href="/chromium/src/+/32d1dae0d236658433e5a53b6a1e51bf4162b811%5E">
+    7f028a2b43cb737a3151290db305ac41c132c581
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7f028a2b43cb737a3151290db305ac41c132c581%5E%21/">
+    <a href="/chromium/src/+/32d1dae0d236658433e5a53b6a1e51bf4162b811%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Win32 PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move KeepDeviceAliveForTransfer to UserMediaClient
 
-Roll Chrome Win32 PGO profile from chrome-win32-main-1662217017-03dfd06a554bf0bdc071572d7fb4323a087fe2d8.profdata to chrome-win32-main-1662227292-787da5a574dff5accded21db1057bfdd5a5f4c13.profdata
+Instead of using the MediaStreamDispatcherHost connections created
+ad-hoc in each Platform Source class, use the per-frame instance in
+UserMediaProcessor used for almost all other MSDH calls, via
+UserMediaClient.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-win32-chromium">https://autoroll.skia.org/r/pgo-win32-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+This means:
+- UMC can continue its role of knowing which requests need to be queued (gUM/gDM, stop, applyconstraints) or can continue anyway
+- we can rely on the ordering guarantees of the single MSDH remote, eg that sending KeepDeviceAliveForTransfer then Stop will be delivered in that order
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:win-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie1c9519b4fbe4e800832e7204583084669796774">Ie1c9519b4fbe4e800832e7204583084669796774</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3873492">https://chromium-review.googlesource.com/c/chromium/src/+/3873492</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1042958}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2c02977e605eb6b8e9bb0a56890f9c48654f87bd">I2c02977e605eb6b8e9bb0a56890f9c48654f87bd</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3865493">https://chromium-review.googlesource.com/c/chromium/src/+/3865493</a>
+Reviewed-by: Palak Agarwal &lt;agpalak@chromium.org&gt;
+Commit-Queue: Tony Herre &lt;toprice@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1042959}
 </pre>
 
 </body>
