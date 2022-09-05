@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1043273/"> 1043273</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/05ad415d34cd188b5b4008a76cc337036e912c74">05ad415d34cd188b5b4008a76cc337036e912c74</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1043274/"> 1043274</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/655692824b8b1b3fa65d8a723c2bce25a3be85e4">655692824b8b1b3fa65d8a723c2bce25a3be85e4</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1043269/">1043269</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   05ad415d34cd188b5b4008a76cc337036e912c74
+   655692824b8b1b3fa65d8a723c2bce25a3be85e4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/05ad415d34cd188b5b4008a76cc337036e912c74">
+    <a href="/chromium/src/+log/655692824b8b1b3fa65d8a723c2bce25a3be85e4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/05ad415d34cd188b5b4008a76cc337036e912c74.tar.gz">
+    <a href="/chromium/src/+archive/655692824b8b1b3fa65d8a723c2bce25a3be85e4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Will Harris &lt;wfh@chromium.org&gt;
+   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Sep 05 19:55:19 2022
+   Mon Sep 05 20:41:19 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Sep 05 19:55:19 2022
+   Mon Sep 05 20:41:19 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/05ad415d34cd188b5b4008a76cc337036e912c74/">
-    b7a50a963d2f0a3f0b91fcca6b731602a189494e
+   <a href="/chromium/src/+/655692824b8b1b3fa65d8a723c2bce25a3be85e4/">
+    fda733e8ce60f5c85e451091f26ab5e2167be20f
    </a>
   </td>
  </tr>
@@ -166,55 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/05ad415d34cd188b5b4008a76cc337036e912c74%5E">
-    9a221f12a95af3d50aa265b711ff8c646fbd345a
+   <a href="/chromium/src/+/655692824b8b1b3fa65d8a723c2bce25a3be85e4%5E">
+    05ad415d34cd188b5b4008a76cc337036e912c74
    </a>
    <span>
     [
-    <a href="/chromium/src/+/05ad415d34cd188b5b4008a76cc337036e912c74%5E%21/">
+    <a href="/chromium/src/+/655692824b8b1b3fa65d8a723c2bce25a3be85e4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Some cleanups and fixes for TransferableSocket.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Mac PGO Profile
 
-This CL cleans up and fixes some issues with TransferableSocket.
+Roll Chrome Mac PGO profile from chrome-mac-main-1662378686-3b494c7daf6f3987e45b8f33cfa3925a64cef863.profdata to chrome-mac-main-1662400059-0ce3ef0073110da1533540e361f2868501ef060f.profdata
 
-These were discovered during development of future CLs that
-contain the the rest of the socket broker code on Windows.
+If this roll has caused a breakage, revert this CL and stop the roller
+using the controls here:
+<a href="https://autoroll.skia.org/r/pgo-mac-chromium">https://autoroll.skia.org/r/pgo-mac-chromium</a>
+Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
+is aware of the problem.
 
-1. Constructor needed to pass process handle on platforms that didn't
-   need to supply one, so this was made optional on those platforms.
-2. Constructor was taking a const ref to net::SocketDescriptor when
-   the standard in net code is to take just net::SocketDescriptor.
-3. On Windows, there was a handle leak in the code that sent the
-   socket. This was because the socket was not being correctly
-   closed after duplicated.
-4. As the constructor took a base::ProcessHandle it was possible
-   that the base::Process might have gone out of scope before
-   the call was made to duplicate the socket. To avoid this,
-   the constructor now takes a fully scoped base::Process.
-5. When passing a net::kInvalidHandle, the other side would
-   mistakenly get a null handle rather than an invalid handle.
-6. Some unneeded methods and fields were removed from the internals
-   of the TransferableSocket, that only served a purpose to check
-   correct usage.
-7. Because some fields were removed, DCHECK-only code was added to
-   verify that the TransferableSocket was only passed once across
-   the process boundary, and no attempt was made to pass it back
-   again, or try and Take the socket before it had been passed.
-8. Tests for all of the above were added.
-9. Comments were added to the public .h definitions.
+To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
 
-BUG=1311014
+To report a problem with the AutoRoller itself, please file a bug:
+<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1304d3058a5ad54036b97c3ed6b39214f053307d">I1304d3058a5ad54036b97c3ed6b39214f053307d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3872765">https://chromium-review.googlesource.com/c/chromium/src/+/3872765</a>
-Commit-Queue: Will Harris &lt;wfh@chromium.org&gt;
-Reviewed-by: Yutaka Hirano &lt;yhirano@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1043273}
+Documentation for the AutoRoller is here:
+<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
+
+Cq-Include-Trybots: luci.chrome.try:mac-chrome
+Tbr: pgo-profile-sheriffs@google.com
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1a04be4ef90b1a746e7e7aac5ddc6f25e981c838">I1a04be4ef90b1a746e7e7aac5ddc6f25e981c838</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3874030">https://chromium-review.googlesource.com/c/chromium/src/+/3874030</a>
+Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1043274}
 </pre>
 
 </body>
