@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1043609/"> 1043609</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/079b8fcc046e20857eb4e43828f01bef00fe6b97">079b8fcc046e20857eb4e43828f01bef00fe6b97</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1043645/"> 1043645</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b080445b723d2dc9ec5a7528c9cbab9fdd5c1654">b080445b723d2dc9ec5a7528c9cbab9fdd5c1654</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1043558/">1043558</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   079b8fcc046e20857eb4e43828f01bef00fe6b97
+   b080445b723d2dc9ec5a7528c9cbab9fdd5c1654
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/079b8fcc046e20857eb4e43828f01bef00fe6b97">
+    <a href="/chromium/src/+log/b080445b723d2dc9ec5a7528c9cbab9fdd5c1654">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/079b8fcc046e20857eb4e43828f01bef00fe6b97.tar.gz">
+    <a href="/chromium/src/+archive/b080445b723d2dc9ec5a7528c9cbab9fdd5c1654.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sammie Quon &lt;sammiequon@chromium.org&gt;
+   ginnnnnnny &lt;ginnyhuang@chromium.org&gt;
   </td>
   <td>
-   Tue Sep 06 20:37:53 2022
+   Tue Sep 06 21:22:16 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 06 20:37:53 2022
+   Tue Sep 06 21:22:16 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/079b8fcc046e20857eb4e43828f01bef00fe6b97/">
-    d89b2d6f0ab68846b004b02890082222a217e80d
+   <a href="/chromium/src/+/b080445b723d2dc9ec5a7528c9cbab9fdd5c1654/">
+    00f2edfad6d45fe346b46e84c9cea5a69bf7537f
    </a>
   </td>
  </tr>
@@ -166,27 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/079b8fcc046e20857eb4e43828f01bef00fe6b97%5E">
-    fc283e2fd82ff1c67fdbf1045d6a2e83432f08ab
+   <a href="/chromium/src/+/b080445b723d2dc9ec5a7528c9cbab9fdd5c1654%5E">
+    cbef741452d0f17e817c813707504745ee2cbe34
    </a>
    <span>
     [
-    <a href="/chromium/src/+/079b8fcc046e20857eb4e43828f01bef00fe6b97%5E%21/">
+    <a href="/chromium/src/+/b080445b723d2dc9ec5a7528c9cbab9fdd5c1654%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">frame: Move some codes from FrameHeader to CaptionContainerView.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS][finch-first-run] Adds iOS variations seed fetcher
 
-Bug: 1092005
-Test: existing tests
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I316f8ab66eefb90bb546fc2d315bc5ff0e0fd9e6">I316f8ab66eefb90bb546fc2d315bc5ff0e0fd9e6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3868535">https://chromium-review.googlesource.com/c/chromium/src/+/3868535</a>
-Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Commit-Queue: Sammie Quon &lt;sammiequon@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1043609}
+This CL implements an almost native Objective-C version of variations
+service, in the way that it could execute independent of Chromium
+initialization. This way, when the user runs Chrome on iOS the first
+time after installation, we could retrieve the seed before Chrome iOS
+starts Chromium, and have it ready to be used to establish field trials
+when variations service starts.
+
+- IOSChromeFirstRunVariationsSeedFetcher initiates the HTTP(s)
+transaction to get the seed.
+- IOSChromeFirstRunSeedResponseManager stores the seed returned from the
+variations server, so that it is exposed to variations service when it
+needs to be used to establish field trials.
+
+Since the code should only execute on first runs, logic related to
+updating existing seed is removed.
+
+Follow up CLs for importing the seed response to variations services and
+test cases will be created.
+
+Bug: 1353937
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I728b00451b1e9e214d52af4131e2bb886f69aa1b">I728b00451b1e9e214d52af4131e2bb886f69aa1b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3835653">https://chromium-review.googlesource.com/c/chromium/src/+/3835653</a>
+Reviewed-by: Rohit Rao &lt;rohitrao@chromium.org&gt;
+Commit-Queue: Ginny Huang &lt;ginnyhuang@chromium.org&gt;
+Reviewed-by: Alexei Svitkine &lt;asvitkine@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1043645}
 </pre>
 
 </body>
