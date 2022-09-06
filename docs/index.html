@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1043645/"> 1043645</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b080445b723d2dc9ec5a7528c9cbab9fdd5c1654">b080445b723d2dc9ec5a7528c9cbab9fdd5c1654</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1043673/"> 1043673</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bdb11ac124148a53488b25360411381f444d9083">bdb11ac124148a53488b25360411381f444d9083</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1043558/">1043558</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/26b36e499233e71d80c5866f5b75da8e49c1c234">26b36e499233e71d80c5866f5b75da8e49c1c234</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1043611/">1043611</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/15eeed93782d6534fa984a91829615bc4e283928">15eeed93782d6534fa984a91829615bc4e283928</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b080445b723d2dc9ec5a7528c9cbab9fdd5c1654
+   bdb11ac124148a53488b25360411381f444d9083
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b080445b723d2dc9ec5a7528c9cbab9fdd5c1654">
+    <a href="/chromium/src/+log/bdb11ac124148a53488b25360411381f444d9083">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b080445b723d2dc9ec5a7528c9cbab9fdd5c1654.tar.gz">
+    <a href="/chromium/src/+archive/bdb11ac124148a53488b25360411381f444d9083.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   ginnnnnnny &lt;ginnyhuang@chromium.org&gt;
+   dpapad &lt;dpapad@chromium.org&gt;
   </td>
   <td>
-   Tue Sep 06 21:22:16 2022
+   Tue Sep 06 22:04:23 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 06 21:22:16 2022
+   Tue Sep 06 22:04:23 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b080445b723d2dc9ec5a7528c9cbab9fdd5c1654/">
-    00f2edfad6d45fe346b46e84c9cea5a69bf7537f
+   <a href="/chromium/src/+/bdb11ac124148a53488b25360411381f444d9083/">
+    43c264ee22c5a12d0bc955ae2ea8060234e90a55
    </a>
   </td>
  </tr>
@@ -166,46 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b080445b723d2dc9ec5a7528c9cbab9fdd5c1654%5E">
-    cbef741452d0f17e817c813707504745ee2cbe34
+   <a href="/chromium/src/+/bdb11ac124148a53488b25360411381f444d9083%5E">
+    5a5e9b4df6441e4352e1243c8538138a6f4fca5f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b080445b723d2dc9ec5a7528c9cbab9fdd5c1654%5E%21/">
+    <a href="/chromium/src/+/bdb11ac124148a53488b25360411381f444d9083%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS][finch-first-run] Adds iOS variations seed fetcher
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">WebUI: Migrate cr_elements/policy to TypeScript.
 
-This CL implements an almost native Objective-C version of variations
-service, in the way that it could execute independent of Chromium
-initialization. This way, when the user runs Chrome on iOS the first
-time after installation, we could retrieve the seed before Chrome iOS
-starts Chromium, and have it ready to be used to establish field trials
-when variations service starts.
+ - Include cr_policy_indicator_behavior.js on CrOS-only.
+ - Add equivalent CrPolicyIndicatorMixin and tests.
+ - Migrate all cr_elements/policy/ files to TypeScript.
+ - Add minimal Closure externs as needed to satisfy CrOS code still
+   using JS.
+ - Add &lt;if expr&gt; statements to CrPolicyStrings type to reflect the
+   fields that actually exist on each platform.
 
-- IOSChromeFirstRunVariationsSeedFetcher initiates the HTTP(s)
-transaction to get the seed.
-- IOSChromeFirstRunSeedResponseManager stores the seed returned from the
-variations server, so that it is exposed to variations service when it
-needs to be used to establish field trials.
-
-Since the code should only execute on first runs, logic related to
-updating existing seed is removed.
-
-Follow up CLs for importing the seed response to variations services and
-test cases will be created.
-
-Bug: 1353937
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I728b00451b1e9e214d52af4131e2bb886f69aa1b">I728b00451b1e9e214d52af4131e2bb886f69aa1b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3835653">https://chromium-review.googlesource.com/c/chromium/src/+/3835653</a>
-Reviewed-by: Rohit Rao &lt;rohitrao@chromium.org&gt;
-Commit-Queue: Ginny Huang &lt;ginnyhuang@chromium.org&gt;
-Reviewed-by: Alexei Svitkine &lt;asvitkine@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1043645}
+Bug: 1184053
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I245a0e85bea05afe697e9783d448dd85e059269d">I245a0e85bea05afe697e9783d448dd85e059269d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3866492">https://chromium-review.googlesource.com/c/chromium/src/+/3866492</a>
+Commit-Queue: Rebekah Potter &lt;rbpotter@chromium.org&gt;
+Auto-Submit: Demetrios Papadopoulos &lt;dpapad@chromium.org&gt;
+Reviewed-by: Rebekah Potter &lt;rbpotter@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1043673}
 </pre>
 
 </body>
