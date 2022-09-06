@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1043338/"> 1043338</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fde8a5574f6c19ee1b27786b2cf810c517959cf9">fde8a5574f6c19ee1b27786b2cf810c517959cf9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1043351/"> 1043351</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5617729a5e6ca58a7efe0a40467b0067156c6ed2">5617729a5e6ca58a7efe0a40467b0067156c6ed2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1043334/">1043334</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2c071fb9a2fef7f247e053905c9c0c4dc9e02c60">2c071fb9a2fef7f247e053905c9c0c4dc9e02c60</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1043345/">1043345</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/860b6e7e576e3602ef12e00afb1418c7dd222d99">860b6e7e576e3602ef12e00afb1418c7dd222d99</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   fde8a5574f6c19ee1b27786b2cf810c517959cf9
+   5617729a5e6ca58a7efe0a40467b0067156c6ed2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/fde8a5574f6c19ee1b27786b2cf810c517959cf9">
+    <a href="/chromium/src/+log/5617729a5e6ca58a7efe0a40467b0067156c6ed2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/fde8a5574f6c19ee1b27786b2cf810c517959cf9.tar.gz">
+    <a href="/chromium/src/+archive/5617729a5e6ca58a7efe0a40467b0067156c6ed2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sami Kyöstilä &lt;skyostil@chromium.org&gt;
+   Pâris &lt;pmeuleman@chromium.org&gt;
   </td>
   <td>
-   Tue Sep 06 07:54:52 2022
+   Tue Sep 06 09:10:33 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 06 07:54:52 2022
+   Tue Sep 06 09:10:33 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/fde8a5574f6c19ee1b27786b2cf810c517959cf9/">
-    8315240495ab8d366bcafabf84b502f93a8204b8
+   <a href="/chromium/src/+/5617729a5e6ca58a7efe0a40467b0067156c6ed2/">
+    325d215bcc6a01565d9140c35960022d8338fae2
    </a>
   </td>
  </tr>
@@ -166,35 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/fde8a5574f6c19ee1b27786b2cf810c517959cf9%5E">
-    f0c41d15d68b95ef735465807dac257fced4d382
+   <a href="/chromium/src/+/5617729a5e6ca58a7efe0a40467b0067156c6ed2%5E">
+    6c224afcefe431b1cdb59758d17ae7bf5efab1d9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/fde8a5574f6c19ee1b27786b2cf810c517959cf9%5E%21/">
+    <a href="/chromium/src/+/5617729a5e6ca58a7efe0a40467b0067156c6ed2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">tools/perf: Disable photoshop benchmarks on win-laptop
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Mark dangling pointer occurring within ~FrameTreeNode
 
-Disable the following photoshop benchmarks on win-laptop since they are
-consistently failing:
+This marks a subset of the failing content_browsertests detected
+in [1].
+For instance this occur in test [2]:
+AccessibilityActionBrowserTest.FocusLostOnDeletedNodeInInnerWebContents
 
-system_health.common_desktop/browse:tools:photoshop:2021
-v8.browsing_desktop-future/browse:tools:photoshop_warm:2021
+These all occur during the FrameTreeNode destructor call following the
+end of a render process.
+Bisecting, these did not seem to happen before [3] landed.
 
-Bug: 1360312
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I29fe13ae35fb1f2c056bfaf422b0bc7a0fadf9eb">I29fe13ae35fb1f2c056bfaf422b0bc7a0fadf9eb</a>
-No-Try: True
-Cc: ahaas@chromium.org
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3874351">https://chromium-review.googlesource.com/c/chromium/src/+/3874351</a>
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Auto-Submit: Sami Kyöstilä &lt;skyostil@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1043338}
+[1] <a href="https://ci.chromium.org/ui/p/chromium/builders/try/linux-rel/1118913/steps#:~:text=249.-,content_browsertests,-%28with%20patch%29%20on">https://ci.chromium.org/ui/p/chromium/builders/try/linux-rel/1118913/steps#:~:text=249.-,content_browsertests,-(with%20patch)%20on</a>
+[2] <a href="https://luci-milo.appspot.com/ui/inv/build-8804304862631147009/test-results?q=AccessibilityActionBrowserTest.FocusLostOnDeletedNodeInInnerWebContents">https://luci-milo.appspot.com/ui/inv/build-8804304862631147009/test-results?q=AccessibilityActionBrowserTest.FocusLostOnDeletedNodeInInnerWebContents</a>
+[3] <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3864671">https://chromium-review.googlesource.com/c/chromium/src/+/3864671</a>
+
+Bug: 1291138
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2c418b8096984f992c2d77da01178050d6767829">I2c418b8096984f992c2d77da01178050d6767829</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3864679">https://chromium-review.googlesource.com/c/chromium/src/+/3864679</a>
+Auto-Submit: Pâris Meuleman &lt;pmeuleman@chromium.org&gt;
+Reviewed-by: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
+Commit-Queue: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
+Owners-Override: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1043351}
 </pre>
 
 </body>
