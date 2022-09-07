@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1043816/"> 1043816</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/38c5732a8fabe48629a038f0c46d57c3517cf284">38c5732a8fabe48629a038f0c46d57c3517cf284</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1043838/"> 1043838</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/88d2d5da28c00e158648dffe08033b79d3385f46">88d2d5da28c00e158648dffe08033b79d3385f46</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1043810/">1043810</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3b6663478fdf3b438391721c2c0fe3b74bd4abec">3b6663478fdf3b438391721c2c0fe3b74bd4abec</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1043823/">1043823</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b6b2ccca741fea1768212aeb3697842f1dfa58af">b6b2ccca741fea1768212aeb3697842f1dfa58af</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   38c5732a8fabe48629a038f0c46d57c3517cf284
+   88d2d5da28c00e158648dffe08033b79d3385f46
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/38c5732a8fabe48629a038f0c46d57c3517cf284">
+    <a href="/chromium/src/+log/88d2d5da28c00e158648dffe08033b79d3385f46">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/38c5732a8fabe48629a038f0c46d57c3517cf284.tar.gz">
+    <a href="/chromium/src/+archive/88d2d5da28c00e158648dffe08033b79d3385f46.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Daniel Cheng &lt;dcheng@chromium.org&gt;
+   Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
   </td>
   <td>
-   Wed Sep 07 04:33:13 2022
+   Wed Sep 07 05:59:07 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 07 04:33:13 2022
+   Wed Sep 07 05:59:07 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/38c5732a8fabe48629a038f0c46d57c3517cf284/">
-    2bc3091b152b93ed7e8247a94d7d8d77485aff7c
+   <a href="/chromium/src/+/88d2d5da28c00e158648dffe08033b79d3385f46/">
+    88a81dc9451ba16f16407fe3145df4195058de4b
    </a>
   </td>
  </tr>
@@ -166,37 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/38c5732a8fabe48629a038f0c46d57c3517cf284%5E">
-    a9c3367188a8470b3524ad594bc8381f75235556
+   <a href="/chromium/src/+/88d2d5da28c00e158648dffe08033b79d3385f46%5E">
+    1d10c928bc95af0c3e4dc5734f9c4d2d3b3885fe
    </a>
    <span>
     [
-    <a href="/chromium/src/+/38c5732a8fabe48629a038f0c46d57c3517cf284%5E%21/">
+    <a href="/chromium/src/+/88d2d5da28c00e158648dffe08033b79d3385f46%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Uprev //base/third_party/symbolize to b70ea80433c2a8f20b832be97b90f1f82b0d29e9
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Extensions] Use BrowserContext::IsOffTheRecord in the webRequest API
 
-The majority of changes here are not really relevant to Chrome. So why
-bother?
+The WebRequestEventRouter had a separate method,
+IsIncognitoBrowserContext(), to determine if a browser context was
+incognito. I suspect this was a carryover of the days when the
+WebRequestEventRouter ran on the I/O thread (pre-network service), and
+so we couldn't just use BrowserContext::IsOffTheRecord(). Now that the
+WebRequestEventRouter runs on the UI thread, we can.
 
-Past changes to files have not kept a record of local modifications,
-making it harder to both accept fixes from upstream as well as
-submitting fixes upstream.
+Remove WebRequestEventRouter::IsIncognitoBrowserContext() and the
+corresponding is_incognito property on the BrowserContextData
+struct and just use BrowserContext::IsOffTheRecord().
 
-This is intended to make it easier to stage the followup fixes for the
-DWARF line number parser, with the potential goal of eventually
-upstreaming the changes.
-
-Bug: 1335630
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I047689b476f84799cc7b92f1f1da03c0ae1bb948">I047689b476f84799cc7b92f1f1da03c0ae1bb948</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3871572">https://chromium-review.googlesource.com/c/chromium/src/+/3871572</a>
-Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
-Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1043816}
+Bug: None
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6d922031ca804a9c82fd585e256a761a7ddba8e1">I6d922031ca804a9c82fd585e256a761a7ddba8e1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3841863">https://chromium-review.googlesource.com/c/chromium/src/+/3841863</a>
+Reviewed-by: David Bertoni &lt;dbertoni@chromium.org&gt;
+Commit-Queue: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1043838}
 </pre>
 
 </body>
