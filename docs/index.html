@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1044127/"> 1044127</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1c1a114a7cfec8ac3c592652200c165b7ede2ce8">1c1a114a7cfec8ac3c592652200c165b7ede2ce8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1044176/"> 1044176</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb82904797e1f1902af438826cf93a654c8b882f">fb82904797e1f1902af438826cf93a654c8b882f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1044108/">1044108</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9a3a676c94f7184b775996fa21aea34c9260791c">9a3a676c94f7184b775996fa21aea34c9260791c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1044152/">1044152</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5a9fd22f86002b8dce00cf62a88be6befaf03607">5a9fd22f86002b8dce00cf62a88be6befaf03607</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1c1a114a7cfec8ac3c592652200c165b7ede2ce8
+   fb82904797e1f1902af438826cf93a654c8b882f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1c1a114a7cfec8ac3c592652200c165b7ede2ce8">
+    <a href="/chromium/src/+log/fb82904797e1f1902af438826cf93a654c8b882f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1c1a114a7cfec8ac3c592652200c165b7ede2ce8.tar.gz">
+    <a href="/chromium/src/+archive/fb82904797e1f1902af438826cf93a654c8b882f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Koji Ishii &lt;kojii@chromium.org&gt;
+   Daniel White &lt;danieltwhite@google.com&gt;
   </td>
   <td>
-   Wed Sep 07 19:37:11 2022
+   Wed Sep 07 21:04:27 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 07 19:37:11 2022
+   Wed Sep 07 21:04:27 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1c1a114a7cfec8ac3c592652200c165b7ede2ce8/">
-    f6866b9549e683fd0e12cc12067ba995570c0115
+   <a href="/chromium/src/+/fb82904797e1f1902af438826cf93a654c8b882f/">
+    ee2af6d1cc766e2370d676425a15d12c1c89e459
    </a>
   </td>
  </tr>
@@ -166,51 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1c1a114a7cfec8ac3c592652200c165b7ede2ce8%5E">
-    2c6eccdd4266679d547982c36a446e8708d8db52
+   <a href="/chromium/src/+/fb82904797e1f1902af438826cf93a654c8b882f%5E">
+    30fc3e02227dd9529f48ea00ff1b264db1fed86c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1c1a114a7cfec8ac3c592652200c165b7ede2ce8%5E%21/">
+    <a href="/chromium/src/+/fb82904797e1f1902af438826cf93a654c8b882f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[anchor-position] Support containing blocks in multicol
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Push Notification Infrastructure Integration
 
-r1035362 crrev.com/c/3823145 supported anchors in multicol,
-but not for each containing block inside of the multicol. This
-patch extends that, to compute stitched queries one for each
-containing block.
+In this CL, the Push Notification infrastructure is migrated into the
+codebase. This CL connects the Push Notification providers lifecycle
+hooks to the appropriate iOS lifecycle hooks.
 
-When it's not block-fragmented, this is done by propagating
-anchors to ancestors. But when block-fragmented, OOF objects
-are added to their fragmentainers instead of their containing
-blocks.
-
-This patch adds |NGLogicalAnchorQueryForFragmentation| to
-support this case. It creates one anchor query for each
-containing block that has anchors.
-
-|LayoutFragmentainerDescendants| creates this instance. Then
-it chunks OOF nodes by their containing blocks so that the
-layout order matches non-block-fragmented case. For the
-performance reasons to reduce the number of rebuilding
-fragmentainers, this is done only when anchors exist.
-
-As in TODO comments in this CL, not all cases are supported
-yet. They will be in following patches, on top of this change.
-
-LOW_COVERAGE_REASON=Oilpan Trace and minor error cases
-
-Bug: 1309178
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3dc72bbffcd7e4d6d8f038c8b0391e924fa567f9">I3dc72bbffcd7e4d6d8f038c8b0391e924fa567f9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3864183">https://chromium-review.googlesource.com/c/chromium/src/+/3864183</a>
-Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
-Reviewed-by: Alison Maher &lt;almaher@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1044127}
+Bug: 1349107
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3e86e0e146e8c0e69cf93498c92b63afcf85f20f">I3e86e0e146e8c0e69cf93498c92b63afcf85f20f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3876687">https://chromium-review.googlesource.com/c/chromium/src/+/3876687</a>
+Reviewed-by: Ali Juma &lt;ajuma@chromium.org&gt;
+Reviewed-by: Éric Noyau &lt;noyau@chromium.org&gt;
+Commit-Queue: Daniel White &lt;danieltwhite@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1044176}
 </pre>
 
 </body>
