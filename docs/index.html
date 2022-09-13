@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1046536/"> 1046536</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cf2b0b1e0a1e4ee7ab42af563125528919eddcdb">cf2b0b1e0a1e4ee7ab42af563125528919eddcdb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1046567/"> 1046567</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5579b9caa230c5da5f5d6ff25d84608fa4425095">5579b9caa230c5da5f5d6ff25d84608fa4425095</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1046514/">1046514</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   cf2b0b1e0a1e4ee7ab42af563125528919eddcdb
+   5579b9caa230c5da5f5d6ff25d84608fa4425095
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/cf2b0b1e0a1e4ee7ab42af563125528919eddcdb">
+    <a href="/chromium/src/+log/5579b9caa230c5da5f5d6ff25d84608fa4425095">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/cf2b0b1e0a1e4ee7ab42af563125528919eddcdb.tar.gz">
+    <a href="/chromium/src/+archive/5579b9caa230c5da5f5d6ff25d84608fa4425095.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Shelley Vohr &lt;shelley.vohr@gmail.com&gt;
+   Pavol Marko &lt;pmarko@google.com&gt;
   </td>
   <td>
-   Tue Sep 13 20:21:14 2022
+   Tue Sep 13 21:09:29 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 13 20:21:14 2022
+   Tue Sep 13 21:09:29 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/cf2b0b1e0a1e4ee7ab42af563125528919eddcdb/">
-    e747a339d174c5ddb99669e53a304da6f119b1a7
+   <a href="/chromium/src/+/5579b9caa230c5da5f5d6ff25d84608fa4425095/">
+    006425a8983e6a299279178fe97f8aeefbe09729
    </a>
   </td>
  </tr>
@@ -166,41 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/cf2b0b1e0a1e4ee7ab42af563125528919eddcdb%5E">
-    daac5cab735a712a4d42afa1a4a1b5126485d2d1
+   <a href="/chromium/src/+/5579b9caa230c5da5f5d6ff25d84608fa4425095%5E">
+    f44573cb8081163ad5b934a4eeed60644f5ac00b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/cf2b0b1e0a1e4ee7ab42af563125528919eddcdb%5E%21/">
+    <a href="/chromium/src/+/5579b9caa230c5da5f5d6ff25d84608fa4425095%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert EmulationHandler update functions to early return
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use existing Ethernet settings when applying Ethernet policy
 
-When Electron force swap site instances, our debugger class
-(a subclass of content::DevToolsAgentHostClient) isn't aware of those
-changes unless we hook RenderFrameHostChanged. If we don't do this,
-some navigation lifecycle events {loadingFinished, dataReceived}
-emitted by the renderer are lost. We disconnect and reconnect the
-webcontents to the DevToolsAgentHost to prevent this from happening.
+Use "ethernet_any" shill service when applying Ethernet settings.
+This leads to the following effective changes in behavior:
+- when re-applying policy, a manually configured IP address is not lost
+- when removing Ethernet policy, the network resets to default state.
 
-As of <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3758294">https://chromium-review.googlesource.com/c/chromium/src/+/3758294</a>
-this results in a DCHECK, since DevToolsAgentHost::DisconnectWebContents
-results in a call to UpdateDeviceEmulationState and host_ is nullptr.
+This revealed that previously, an outdated GUID could get stuck in an
+Ethernet adapter's UIData (presumably because policy could provide
+multiple Ethernet NetworkConfigurations with different GUIDs) which led
+to DCHECKs in the UI code, so fix up Ethernet services' UIData GUIDs.
 
-To fix this, this CL reverts those state update calls to early returns.
-
-Bug: 1356666
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifacc1e4cc8f646bb25ef36c11909202e66ff12b5">Ifacc1e4cc8f646bb25ef36c11909202e66ff12b5</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3856525">https://chromium-review.googlesource.com/c/chromium/src/+/3856525</a>
-Reviewed-by: Adithya Srinivasan &lt;adithyas@chromium.org&gt;
-Reviewed-by: Danil Somsikov &lt;dsv@chromium.org&gt;
-Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
-Commit-Queue: Adithya Srinivasan &lt;adithyas@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1046536}
+Bug: b:236420724, b:183676832, b:180365271
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id4f906b10bffe4f55887c8a11dcd75aa10a6a034">Id4f906b10bffe4f55887c8a11dcd75aa10a6a034</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3879209">https://chromium-review.googlesource.com/c/chromium/src/+/3879209</a>
+Reviewed-by: Steven Bennetts &lt;stevenjb@chromium.org&gt;
+Reviewed-by: Chad Duffin &lt;chadduffin@chromium.org&gt;
+Commit-Queue: Pavol Marko &lt;pmarko@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1046567}
 </pre>
 
 </body>
