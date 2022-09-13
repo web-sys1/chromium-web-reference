@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1046505/"> 1046505</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/94d3852173e91b0a211369a5c3ae05bb55fff431">94d3852173e91b0a211369a5c3ae05bb55fff431</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1046536/"> 1046536</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cf2b0b1e0a1e4ee7ab42af563125528919eddcdb">cf2b0b1e0a1e4ee7ab42af563125528919eddcdb</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1046514/">1046514</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   94d3852173e91b0a211369a5c3ae05bb55fff431
+   cf2b0b1e0a1e4ee7ab42af563125528919eddcdb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/94d3852173e91b0a211369a5c3ae05bb55fff431">
+    <a href="/chromium/src/+log/cf2b0b1e0a1e4ee7ab42af563125528919eddcdb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/94d3852173e91b0a211369a5c3ae05bb55fff431.tar.gz">
+    <a href="/chromium/src/+archive/cf2b0b1e0a1e4ee7ab42af563125528919eddcdb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chris Lu &lt;thegreenfrog@chromium.org&gt;
+   Shelley Vohr &lt;shelley.vohr@gmail.com&gt;
   </td>
   <td>
-   Tue Sep 13 19:27:50 2022
+   Tue Sep 13 20:21:14 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 13 19:27:50 2022
+   Tue Sep 13 20:21:14 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/94d3852173e91b0a211369a5c3ae05bb55fff431/">
-    3a0e4fa8dcce3bf43f2803fb590532dd108bad14
+   <a href="/chromium/src/+/cf2b0b1e0a1e4ee7ab42af563125528919eddcdb/">
+    e747a339d174c5ddb99669e53a304da6f119b1a7
    </a>
   </td>
  </tr>
@@ -166,31 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/94d3852173e91b0a211369a5c3ae05bb55fff431%5E">
-    24134a47c561ff7841c012c9708c633c59ecd89c
+   <a href="/chromium/src/+/cf2b0b1e0a1e4ee7ab42af563125528919eddcdb%5E">
+    daac5cab735a712a4d42afa1a4a1b5126485d2d1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/94d3852173e91b0a211369a5c3ae05bb55fff431%5E%21/">
+    <a href="/chromium/src/+/cf2b0b1e0a1e4ee7ab42af563125528919eddcdb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ios] Remove TrendingQueriesModule from Stable
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert EmulationHandler update functions to early return
 
-A new desired experiment arm configuration means the current stable
-groupings should be removed.
+When Electron force swap site instances, our debugger class
+(a subclass of content::DevToolsAgentHostClient) isn't aware of those
+changes unless we hook RenderFrameHostChanged. If we don't do this,
+some navigation lifecycle events {loadingFinished, dataReceived}
+emitted by the renderer are lost. We disconnect and reconnect the
+webcontents to the DevToolsAgentHost to prevent this from happening.
 
-Bug: 1340123
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iddd66833baa64e1efac8f31e5f94c54aac5e8eb7">Iddd66833baa64e1efac8f31e5f94c54aac5e8eb7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3891722">https://chromium-review.googlesource.com/c/chromium/src/+/3891722</a>
-Commit-Queue: Sergio Collazos &lt;sczs@chromium.org&gt;
-Reviewed-by: Sergio Collazos &lt;sczs@chromium.org&gt;
-Auto-Submit: Chris Lu &lt;thegreenfrog@chromium.org&gt;
-Commit-Queue: Chris Lu &lt;thegreenfrog@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1046505}
+As of <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3758294">https://chromium-review.googlesource.com/c/chromium/src/+/3758294</a>
+this results in a DCHECK, since DevToolsAgentHost::DisconnectWebContents
+results in a call to UpdateDeviceEmulationState and host_ is nullptr.
+
+To fix this, this CL reverts those state update calls to early returns.
+
+Bug: 1356666
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifacc1e4cc8f646bb25ef36c11909202e66ff12b5">Ifacc1e4cc8f646bb25ef36c11909202e66ff12b5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3856525">https://chromium-review.googlesource.com/c/chromium/src/+/3856525</a>
+Reviewed-by: Adithya Srinivasan &lt;adithyas@chromium.org&gt;
+Reviewed-by: Danil Somsikov &lt;dsv@chromium.org&gt;
+Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
+Commit-Queue: Adithya Srinivasan &lt;adithyas@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1046536}
 </pre>
 
 </body>
