@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1046826/"> 1046826</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9357223b151ddeb10ba3113a8a2db84c8698ade0">9357223b151ddeb10ba3113a8a2db84c8698ade0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1046840/"> 1046840</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b16cbb76eaa1212fdb228237b402b878964a194d">b16cbb76eaa1212fdb228237b402b878964a194d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1046814/">1046814</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9357223b151ddeb10ba3113a8a2db84c8698ade0
+   b16cbb76eaa1212fdb228237b402b878964a194d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9357223b151ddeb10ba3113a8a2db84c8698ade0">
+    <a href="/chromium/src/+log/b16cbb76eaa1212fdb228237b402b878964a194d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9357223b151ddeb10ba3113a8a2db84c8698ade0.tar.gz">
+    <a href="/chromium/src/+archive/b16cbb76eaa1212fdb228237b402b878964a194d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Florian Leimgruber &lt;fleimgruber@google.com&gt;
+   Jan Keitel &lt;jkeitel@google.com&gt;
   </td>
   <td>
-   Wed Sep 14 10:01:08 2022
+   Wed Sep 14 10:46:13 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 14 10:01:08 2022
+   Wed Sep 14 10:46:13 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9357223b151ddeb10ba3113a8a2db84c8698ade0/">
-    5e00a12a580f327f725bed696c49a52bd28674a2
+   <a href="/chromium/src/+/b16cbb76eaa1212fdb228237b402b878964a194d/">
+    f6bad0c61292af357bd6774df203fe4b18ab5951
    </a>
   </td>
  </tr>
@@ -166,44 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9357223b151ddeb10ba3113a8a2db84c8698ade0%5E">
-    92078d9e5d8f3652a594e8871a8a389c37f7151e
+   <a href="/chromium/src/+/b16cbb76eaa1212fdb228237b402b878964a194d%5E">
+    d395af0314e778a9bbea16bd83ac596ba902016b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9357223b151ddeb10ba3113a8a2db84c8698ade0%5E%21/">
+    <a href="/chromium/src/+/b16cbb76eaa1212fdb228237b402b878964a194d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add AutofillRefinedPhoneNumberTypes to field trial config.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[FastCheckout] Add tab helper to prewarm cache on checkout navigation.
 
-This feature consists of 2 arms (+ Disabled). As only a single arm can
-be added to the field trial config, the WithoutPhoneNumberSeparators one
-is chosen. This arm doesn't enable the
-AutofillConsiderPhoneNumberSeparatorsValidLabels feature, which is
-currently only supported on non-iOS platforms*. As the outputs of the
-data driven heuristics tests change, enabling this features causes
-problems with the iOS bots otherwise.
+This CL adds the last missing piece in order to make the
+FastCheckoutCapabilitiesFetcher functional.
+FastCheckoutCapabilitiesFetcher is a service that contacts Google
+server to check the availability of "Fast Checkout" scripts for a
+domain so that, when queried by Autofill during upon form interaction,
+it can provide information about whether to offer "Fast Checkout".
+To do so, the capabilities fetcher cache must be prewarmed prior. This
+CL introduces a tab helper that listens for navigation starts,
+uses a commerce service to determine whether they are likely to be
+checkout pages and, if so, asks the capabilities fetcher to fetch
+information about script availability.
 
-The updated outputs of the data driven heuristics tests show that the
-correct trunk prefix types are assigned.
+For now, this tab helper is gated behind a feature and disabled by
+default.
 
-*The reason is that label inference is implemented separately on iOS and
-passing a finch flag there is extremely cumbersome. See
-<a href="https://source.chromium.org/chromium/chromium/src/+/main:components/autofill/ios/form_util/resources/fill.js;l=1325;drc=3d4f8d32ae06c684c133328a958be17f0b70d1d0.">https://source.chromium.org/chromium/chromium/src/+/main:components/autofill/ios/form_util/resources/fill.js;l=1325;drc=3d4f8d32ae06c684c133328a958be17f0b70d1d0.</a>
-If the feature is successful, this 1 line regex update can be done on
-iOS as well.
-
-Bug: 1311937
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I386959dd14c4e74bd1c572796b3aab655190d233">I386959dd14c4e74bd1c572796b3aab655190d233</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3876376">https://chromium-review.googlesource.com/c/chromium/src/+/3876376</a>
-Reviewed-by: Olivier Robin &lt;olivierrobin@chromium.org&gt;
-Commit-Queue: Florian Leimgruber &lt;fleimgruber@google.com&gt;
-Reviewed-by: Dominic Battré &lt;battre@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1046826}
+Bug: 1334642
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8d76d56b76f74d33a7e11456af4abfbeb522126f">I8d76d56b76f74d33a7e11456af4abfbeb522126f</a>
+Validate-Test-Flakiness: skip
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3889062">https://chromium-review.googlesource.com/c/chromium/src/+/3889062</a>
+Commit-Queue: Jan Keitel &lt;jkeitel@google.com&gt;
+Reviewed-by: Elly Fong-Jones &lt;ellyjones@chromium.org&gt;
+Reviewed-by: Wolfgang Billenstein &lt;bwolfgang@google.com&gt;
+Reviewed-by: Yue Zhang &lt;yuezhanggg@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1046840}
 </pre>
 
 </body>
