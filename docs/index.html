@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1047384/"> 1047384</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e1d413646469280a67a1f828a745683ffa33b186">e1d413646469280a67a1f828a745683ffa33b186</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1047408/"> 1047408</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/56b9eefb881c366c748204959b0023210f9cfa1f">56b9eefb881c366c748204959b0023210f9cfa1f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1047384/">1047384</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e1d413646469280a67a1f828a745683ffa33b186">e1d413646469280a67a1f828a745683ffa33b186</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1047403/">1047403</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/eb9b044bcbd96458ba15f743d34b9c67401f8188">eb9b044bcbd96458ba15f743d34b9c67401f8188</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e1d413646469280a67a1f828a745683ffa33b186
+   56b9eefb881c366c748204959b0023210f9cfa1f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e1d413646469280a67a1f828a745683ffa33b186">
+    <a href="/chromium/src/+log/56b9eefb881c366c748204959b0023210f9cfa1f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e1d413646469280a67a1f828a745683ffa33b186.tar.gz">
+    <a href="/chromium/src/+archive/56b9eefb881c366c748204959b0023210f9cfa1f.tar.gz">
      tgz
     </a>
     ]
@@ -137,7 +137,7 @@ body{
    Steinar H. Gunderson &lt;sesse@chromium.org&gt;
   </td>
   <td>
-   Thu Sep 15 09:55:20 2022
+   Thu Sep 15 11:25:37 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Sep 15 09:55:20 2022
+   Thu Sep 15 11:25:37 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e1d413646469280a67a1f828a745683ffa33b186/">
-    3e77222efdee138591c4a5782d8a88de48c0646b
+   <a href="/chromium/src/+/56b9eefb881c366c748204959b0023210f9cfa1f/">
+    dcfd86feba1c7cc89b8d23d0b1ecb4adbcd24658
    </a>
   </td>
  </tr>
@@ -166,46 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e1d413646469280a67a1f828a745683ffa33b186%5E">
-    45e8c8dcb11017aa18c4e19a11c5f39d3b708bc2
+   <a href="/chromium/src/+/56b9eefb881c366c748204959b0023210f9cfa1f%5E">
+    0f80206b7769063b6c8d855df947c82ae7852835
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e1d413646469280a67a1f828a745683ffa33b186%5E%21/">
+    <a href="/chromium/src/+/56b9eefb881c366c748204959b0023210f9cfa1f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Optimize CSSVariableData for a single backing string.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">SSO for CSSParserToken.
 
-In most cases, we'll have a single backing string for any given
-CSS variable, and placing that in a Vector (with slop and all)
-is wasteful. We can store the number out-of-line, and then have
-a path where we just store a single String inline in the class
-if we don't need more.
+For CSSParserTokens that contain strings, the string is often so
+short that we can store the string directly in the token instead
+of a pointer to a backing string (short string optimization, or SSO).
+This saves on the requirement to store a backing string _and_ the
+pointer to it (although the latter is now generally cheaper than
+it used to be, after the backing_string vector patch).
 
 Style perftest PartitionAlloc usage (measured through the same
 hooks as last patch):
 
-  ECommerce       1389 →  1388 kB (  -1 kB)
-  Encyclopedia    6410 →  6408 kB (  -2 kB)
+  ECommerce       1388 →  1388 kB
+  Encyclopedia    6408 →  6407 kB (  -1 kB)
   Extension       6342 →  6342 kB
-  News            3959 →  3932 kB ( -27 kB)
-  Search          1916 →  1902 kB ( -14 kB)
-  Social1         5933 →  5800 kB (-133 kB)
+  News            3932 →  3926 kB (  -6 kB)
+  Search          1902 →  1899 kB (  -3 kB)
+  Social1         5800 →  5751 kB ( -49 kB)
   Social2          489 →   489 kB
-  Sports          3724 →  3724 kB
-  Video          12746 → 12183 kB (-563 kB)
+  Sports          3724 →  3723 kB (  -1 kB)
+  Video          12183 → 12079 kB (-104 kB)
 
 Performance is generally neutral.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifef1139f701cff75b585446d3c3fde327519dce8">Ifef1139f701cff75b585446d3c3fde327519dce8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3891271">https://chromium-review.googlesource.com/c/chromium/src/+/3891271</a>
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie01892ced01f5bd0c4dd44e3636e8a1fc4da5a22">Ie01892ced01f5bd0c4dd44e3636e8a1fc4da5a22</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3891061">https://chromium-review.googlesource.com/c/chromium/src/+/3891061</a>
 Commit-Queue: Steinar H Gunderson &lt;sesse@chromium.org&gt;
 Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1047384}
+Cr-Commit-Position: refs/heads/main@{#1047408}
 </pre>
 
 </body>
