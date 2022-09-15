@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1047371/"> 1047371</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/52e082c85fab6fd46e822fcb0efe394afcfec583">52e082c85fab6fd46e822fcb0efe394afcfec583</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1047384/"> 1047384</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e1d413646469280a67a1f828a745683ffa33b186">e1d413646469280a67a1f828a745683ffa33b186</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1047371/">1047371</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   52e082c85fab6fd46e822fcb0efe394afcfec583
+   e1d413646469280a67a1f828a745683ffa33b186
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/52e082c85fab6fd46e822fcb0efe394afcfec583">
+    <a href="/chromium/src/+log/e1d413646469280a67a1f828a745683ffa33b186">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/52e082c85fab6fd46e822fcb0efe394afcfec583.tar.gz">
+    <a href="/chromium/src/+archive/e1d413646469280a67a1f828a745683ffa33b186.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nidhi Jaju &lt;nidhijaju@chromium.org&gt;
+   Steinar H. Gunderson &lt;sesse@chromium.org&gt;
   </td>
   <td>
-   Thu Sep 15 08:59:06 2022
+   Thu Sep 15 09:55:20 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Sep 15 08:59:06 2022
+   Thu Sep 15 09:55:20 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/52e082c85fab6fd46e822fcb0efe394afcfec583/">
-    dadaffcd032743aa56418caeb0e33390b3cf87c3
+   <a href="/chromium/src/+/e1d413646469280a67a1f828a745683ffa33b186/">
+    3e77222efdee138591c4a5782d8a88de48c0646b
    </a>
   </td>
  </tr>
@@ -166,29 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/52e082c85fab6fd46e822fcb0efe394afcfec583%5E">
-    a567798425ced7d9b47f11210f0633911d9c8307
+   <a href="/chromium/src/+/e1d413646469280a67a1f828a745683ffa33b186%5E">
+    45e8c8dcb11017aa18c4e19a11c5f39d3b708bc2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/52e082c85fab6fd46e822fcb0efe394afcfec583%5E%21/">
+    <a href="/chromium/src/+/e1d413646469280a67a1f828a745683ffa33b186%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove unused ScopedFeatureList from NetworkContextConfigurationBrowserTest
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Optimize CSSVariableData for a single backing string.
 
-This CL removes the ScopedFeatureList declaration in
-NetworkContextConfigurationBrowserTest as it is not used in the tests.
+In most cases, we'll have a single backing string for any given
+CSS variable, and placing that in a Vector (with slop and all)
+is wasteful. We can store the number out-of-line, and then have
+a path where we just store a single String inline in the class
+if we don't need more.
 
-Bug: 1344573
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iba643e4768ed580bc6f8954438ccffcbefa7a2bd">Iba643e4768ed580bc6f8954438ccffcbefa7a2bd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3897711">https://chromium-review.googlesource.com/c/chromium/src/+/3897711</a>
-Reviewed-by: Adam Rice &lt;ricea@chromium.org&gt;
-Commit-Queue: Nidhi Jaju &lt;nidhijaju@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1047371}
+Style perftest PartitionAlloc usage (measured through the same
+hooks as last patch):
+
+  ECommerce       1389 →  1388 kB (  -1 kB)
+  Encyclopedia    6410 →  6408 kB (  -2 kB)
+  Extension       6342 →  6342 kB
+  News            3959 →  3932 kB ( -27 kB)
+  Search          1916 →  1902 kB ( -14 kB)
+  Social1         5933 →  5800 kB (-133 kB)
+  Social2          489 →   489 kB
+  Sports          3724 →  3724 kB
+  Video          12746 → 12183 kB (-563 kB)
+
+Performance is generally neutral.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifef1139f701cff75b585446d3c3fde327519dce8">Ifef1139f701cff75b585446d3c3fde327519dce8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3891271">https://chromium-review.googlesource.com/c/chromium/src/+/3891271</a>
+Commit-Queue: Steinar H Gunderson &lt;sesse@chromium.org&gt;
+Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1047384}
 </pre>
 
 </body>
