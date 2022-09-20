@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1049047/"> 1049047</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6411156071ce76a1f3787742309b5108f44ab8c3">6411156071ce76a1f3787742309b5108f44ab8c3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1049054/"> 1049054</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1c7e624366ba65872aeff752e720793245bcea02">1c7e624366ba65872aeff752e720793245bcea02</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1049048/">1049048</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6411156071ce76a1f3787742309b5108f44ab8c3
+   1c7e624366ba65872aeff752e720793245bcea02
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6411156071ce76a1f3787742309b5108f44ab8c3">
+    <a href="/chromium/src/+log/1c7e624366ba65872aeff752e720793245bcea02">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6411156071ce76a1f3787742309b5108f44ab8c3.tar.gz">
+    <a href="/chromium/src/+archive/1c7e624366ba65872aeff752e720793245bcea02.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Egor Pasko &lt;pasko@chromium.org&gt;
   </td>
   <td>
-   Tue Sep 20 12:06:05 2022
+   Tue Sep 20 12:45:39 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 20 12:06:05 2022
+   Tue Sep 20 12:45:39 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6411156071ce76a1f3787742309b5108f44ab8c3/">
-    5c64844b3726652c5dc61abb98df546fe3488b18
+   <a href="/chromium/src/+/1c7e624366ba65872aeff752e720793245bcea02/">
+    d81149d26169811b6a1db835523a3913fe5b2cc2
    </a>
   </td>
  </tr>
@@ -166,46 +166,78 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6411156071ce76a1f3787742309b5108f44ab8c3%5E">
-    b9a42b5f3c6b392a71ff5e036dcbdae3efc0da25
+   <a href="/chromium/src/+/1c7e624366ba65872aeff752e720793245bcea02%5E">
+    1cfd9f7b605fe3d7dc185258536ff5ee2e0f9e19
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6411156071ce76a1f3787742309b5108f44ab8c3%5E%21/">
+    <a href="/chromium/src/+/1c7e624366ba65872aeff752e720793245bcea02%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Perfetto from c47b09bb32e6 to fb24424ca970 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use non-allocating PRNG in poisson_allocation_sampler
 
-<a href="https://android.googlesource.com/platform/external/perfetto.git/+log/c47b09bb32e6..fb24424ca970">https://android.googlesource.com/platform/external/perfetto.git/+log/c47b09bb32e6..fb24424ca970</a>
+Currently switching base::RandBytes() to BoringSSL causes stack overflow
+because an allocation needs a random number for PoissonAllocationSampler
+while RAND_bytes() from BoringSSL can allocate. Here is the repeating
+fragment of the stack trace on Linux:
 
-2022-09-20 ddrone@google.com Pivot table V2 documentation
+```
+malloc()
+    at allocator_shim_override_libc_symbols.h:37
+OPENSSL_malloc()
+    at third_party/boringssl/src/crypto/mem.c:156
+RAND_bytes_with_additional_data()
+    at third_party/boringssl/src/crypto/fipsmodule/rand/rand.c:371
+RAND_bytes()
+    at third_party/boringssl/src/crypto/fipsmodule/rand/rand.c:469
+base::RandUint64()
+    at base/rand_util.cc:21
+base::RandDouble()
+    at base/rand_util.cc:39
+base::PoissonAllocationSampler::GetNextSampleInterval()
+    at poisson_allocation_sampler.cc:257
+base::PoissonAllocationSampler::DoRecordAlloc()
+    at poisson_allocation_sampler.cc:323
+base::allocator::dispatcher[...]::AllocFn()
+    at base/allocator/dispatcher/dispatcher.cc:31
+ShimMalloc()
+    at allocator_shim.cc:200
+malloc()
+    at allocator_shim_override_libc_symbols.h:37
+```
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/perfetto-chromium-autoroll">https://autoroll.skia.org/r/perfetto-chromium-autoroll</a>
-Please CC perfetto-bugs@google.com on the revert to ensure that a human
-is aware of the problem.
+Expose a minimal interface necessary for this specific use:
+base::RandDoubleAvoidAllocation(). Special care is taken to use the
+more performant primitives for it, to avoid regressions when the sampler
+is used.
 
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+Possible alternatives:
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+1. InsecureRandomGenerator
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
+   - not thread safe, does not fit with thread safety guarantees for the
+     allocator shim, would have needed patching to avoid calling the
+     base::RandBytes() during initialization
 
-Cq-Include-Trybots: luci.chromium.try:linux-perfetto-rel
-Bug: None
-Tbr: perfetto-bugs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2c3ec441c91400ae6000d4b9eb853150d975d925">I2c3ec441c91400ae6000d4b9eb853150d975d925</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3907326">https://chromium-review.googlesource.com/c/chromium/src/+/3907326</a>
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1049047}
+2. partition_alloc::internal::base::RandDouble(), as demonstrated in
+   <a href="http://crrev.com/c/3891028.">http://crrev.com/c/3891028.</a>
+
+   - it is reserved for use only inside PartitionAlloc. There is a plan
+     to move PartitionAlloc to a separate dynamic library (for cleaner
+     injection via DYLD_INSERT_LIBRARIES), and having external
+     dependencies on non-allocating RandDouble() would make this plan
+     more difficult.
+
+Bug: 1291287
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ief562190e3c752ceffecdf42276e53026541b86b">Ief562190e3c752ceffecdf42276e53026541b86b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3902350">https://chromium-review.googlesource.com/c/chromium/src/+/3902350</a>
+Commit-Queue: Egor Pasko &lt;pasko@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1049054}
 </pre>
 
 </body>
