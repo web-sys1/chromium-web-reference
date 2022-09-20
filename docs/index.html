@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1049054/"> 1049054</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1c7e624366ba65872aeff752e720793245bcea02">1c7e624366ba65872aeff752e720793245bcea02</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1049062/"> 1049062</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/dfa6f01802cb9625031f15bdf220f6c4c4c7edab">dfa6f01802cb9625031f15bdf220f6c4c4c7edab</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1049048/">1049048</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/af05307ba2fab3ce8aa607db03f1cbfabb160169">af05307ba2fab3ce8aa607db03f1cbfabb160169</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1049061/">1049061</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/57e20e51c6fdeffa565120dda43f0165330b2464">57e20e51c6fdeffa565120dda43f0165330b2464</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1c7e624366ba65872aeff752e720793245bcea02
+   dfa6f01802cb9625031f15bdf220f6c4c4c7edab
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1c7e624366ba65872aeff752e720793245bcea02">
+    <a href="/chromium/src/+log/dfa6f01802cb9625031f15bdf220f6c4c4c7edab">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1c7e624366ba65872aeff752e720793245bcea02.tar.gz">
+    <a href="/chromium/src/+archive/dfa6f01802cb9625031f15bdf220f6c4c4c7edab.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Egor Pasko &lt;pasko@chromium.org&gt;
+   Peter Kasting &lt;pkasting@chromium.org&gt;
   </td>
   <td>
-   Tue Sep 20 12:45:39 2022
+   Tue Sep 20 13:34:51 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 20 12:45:39 2022
+   Tue Sep 20 13:34:51 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1c7e624366ba65872aeff752e720793245bcea02/">
-    d81149d26169811b6a1db835523a3913fe5b2cc2
+   <a href="/chromium/src/+/dfa6f01802cb9625031f15bdf220f6c4c4c7edab/">
+    12d8063865476683fd40542bd63b241b137d08a7
    </a>
   </td>
  </tr>
@@ -166,78 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1c7e624366ba65872aeff752e720793245bcea02%5E">
-    1cfd9f7b605fe3d7dc185258536ff5ee2e0f9e19
+   <a href="/chromium/src/+/dfa6f01802cb9625031f15bdf220f6c4c4c7edab%5E">
+    57e20e51c6fdeffa565120dda43f0165330b2464
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1c7e624366ba65872aeff752e720793245bcea02%5E%21/">
+    <a href="/chromium/src/+/dfa6f01802cb9625031f15bdf220f6c4c4c7edab%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use non-allocating PRNG in poisson_allocation_sampler
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Change std::find_if*() to use base:: functions: gpu/
 
-Currently switching base::RandBytes() to BoringSSL causes stack overflow
-because an allocation needs a random number for PoissonAllocationSampler
-while RAND_bytes() from BoringSSL can allocate. Here is the repeating
-fragment of the stack trace on Linux:
+Goal: Slightly simpler and/or more semantically-accurate code.
 
-```
-malloc()
-    at allocator_shim_override_libc_symbols.h:37
-OPENSSL_malloc()
-    at third_party/boringssl/src/crypto/mem.c:156
-RAND_bytes_with_additional_data()
-    at third_party/boringssl/src/crypto/fipsmodule/rand/rand.c:371
-RAND_bytes()
-    at third_party/boringssl/src/crypto/fipsmodule/rand/rand.c:469
-base::RandUint64()
-    at base/rand_util.cc:21
-base::RandDouble()
-    at base/rand_util.cc:39
-base::PoissonAllocationSampler::GetNextSampleInterval()
-    at poisson_allocation_sampler.cc:257
-base::PoissonAllocationSampler::DoRecordAlloc()
-    at poisson_allocation_sampler.cc:323
-base::allocator::dispatcher[...]::AllocFn()
-    at base/allocator/dispatcher/dispatcher.cc:31
-ShimMalloc()
-    at allocator_shim.cc:200
-malloc()
-    at allocator_shim_override_libc_symbols.h:37
-```
-
-Expose a minimal interface necessary for this specific use:
-base::RandDoubleAvoidAllocation(). Special care is taken to use the
-more performant primitives for it, to avoid regressions when the sampler
-is used.
-
-Possible alternatives:
-
-1. InsecureRandomGenerator
-
-   - not thread safe, does not fit with thread safety guarantees for the
-     allocator shim, would have needed patching to avoid calling the
-     base::RandBytes() during initialization
-
-2. partition_alloc::internal::base::RandDouble(), as demonstrated in
-   <a href="http://crrev.com/c/3891028.">http://crrev.com/c/3891028.</a>
-
-   - it is reserved for use only inside PartitionAlloc. There is a plan
-     to move PartitionAlloc to a separate dynamic library (for cleaner
-     injection via DYLD_INSERT_LIBRARIES), and having external
-     dependencies on non-allocating RandDouble() would make this plan
-     more difficult.
-
-Bug: 1291287
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ief562190e3c752ceffecdf42276e53026541b86b">Ief562190e3c752ceffecdf42276e53026541b86b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3902350">https://chromium-review.googlesource.com/c/chromium/src/+/3902350</a>
-Commit-Queue: Egor Pasko &lt;pasko@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1049054}
+Bug: none
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I689982786bf9e3a0c3cc1c64c4eda2353807cbe8">I689982786bf9e3a0c3cc1c64c4eda2353807cbe8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3905257">https://chromium-review.googlesource.com/c/chromium/src/+/3905257</a>
+Commit-Queue: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Auto-Submit: Peter Kasting &lt;pkasting@chromium.org&gt;
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1049062}
 </pre>
 
 </body>
