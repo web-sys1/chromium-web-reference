@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1049647/"> 1049647</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/59dcd0401fb1d6bb3ae7cf57fc66325c984d228f">59dcd0401fb1d6bb3ae7cf57fc66325c984d228f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1049666/"> 1049666</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b6c8285ef692ab68a4613fc9d72f2383ff25cab3">b6c8285ef692ab68a4613fc9d72f2383ff25cab3</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1049636/">1049636</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   59dcd0401fb1d6bb3ae7cf57fc66325c984d228f
+   b6c8285ef692ab68a4613fc9d72f2383ff25cab3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/59dcd0401fb1d6bb3ae7cf57fc66325c984d228f">
+    <a href="/chromium/src/+log/b6c8285ef692ab68a4613fc9d72f2383ff25cab3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/59dcd0401fb1d6bb3ae7cf57fc66325c984d228f.tar.gz">
+    <a href="/chromium/src/+archive/b6c8285ef692ab68a4613fc9d72f2383ff25cab3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Regan Hsu &lt;hsuregan@google.com&gt;
+   Matthias Körber &lt;koerber@google.com&gt;
   </td>
   <td>
-   Wed Sep 21 15:08:14 2022
+   Wed Sep 21 15:53:28 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 21 15:08:14 2022
+   Wed Sep 21 15:53:28 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/59dcd0401fb1d6bb3ae7cf57fc66325c984d228f/">
-    0f2c000beb3307f7946d274512506f7ad5fe8405
+   <a href="/chromium/src/+/b6c8285ef692ab68a4613fc9d72f2383ff25cab3/">
+    0c2f9f80526248cef82e4e7ba42e9f2a64f78316
    </a>
   </td>
  </tr>
@@ -166,58 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/59dcd0401fb1d6bb3ae7cf57fc66325c984d228f%5E">
-    977f8a8f2eff68a92cfc9690c3cc3f5487e3b460
+   <a href="/chromium/src/+/b6c8285ef692ab68a4613fc9d72f2383ff25cab3%5E">
+    8e141cee443f23dfe363b310fa7534769a566897
    </a>
    <span>
     [
-    <a href="/chromium/src/+/59dcd0401fb1d6bb3ae7cf57fc66325c984d228f%5E%21/">
+    <a href="/chromium/src/+/b6c8285ef692ab68a4613fc9d72f2383ff25cab3%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CrOS SLP] Fix issue which shows enterprise icon by mistake
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove the feature flag for structured addresses
 
-Previously, CrosNetworkConfig would default global network
-configuration boolean values to false in GetBoolean(), if the key
-did not exist in the global network configuration dictionary fetched
-from ManagedNetworkConfigurationHandler.
+This CL removes the feature flag and cleans up code that is only
+relevant in the disabled branch of the feature.
 
-If a ManagedNetworkConfigurationHandler boolean Allow*() value had a
-default value of true, CrosNetworkConfig would default the value to
-false nonetheless.
-
-Defaulting to false caused an enterprise icon to show by mistake next
-to the Lock SIM setting in Settings for non-managed devices.
-
-The |allow_cellular_sim_lock| setting has a default value of true.
-
-However, on non-managed devices, global network
-configuration keys do not exist in the dictionary fetched from
-ManagedNetworkConfigurationHandler (confirmed manually). As a result,
-|allow_cellular_sim_lock| value was defaulted to false in
-CrosNetworkConfig, along with the other boolean global network
-configuration settings, and propagated to the Settings UI. The issue
-with |allow_cellular_sim_lock| is that it is the only global network
-configuration setting with a default of true declared in
-cros_network_config.mojom, whereas the other settings had a default
-of false.
-
-Instead, the values for |allow_cellular_sim_lock| and the other
-boolean global network configuration settings should default to the
-intended values declared at cros_network_config.mojom [1].
-
-[1] <a href="https://source.chromium.org/chromium/chromium/src/+/main:chromeos/services/network_config/public/mojom/cros_network_config.mojom;l=941-960?q=file:cros_network_config.mojom%20">https://source.chromium.org/chromium/chromium/src/+/main:chromeos/services/network_config/public/mojom/cros_network_config.mojom;l=941-960?q=file:cros_network_config.mojom%20</a>
-
-Bug: 247884361
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I29233ba1e91845780e66a063829ed42461485dcd">I29233ba1e91845780e66a063829ed42461485dcd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3908420">https://chromium-review.googlesource.com/c/chromium/src/+/3908420</a>
-Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
-Commit-Queue: Regan Hsu &lt;hsuregan@chromium.org&gt;
-Reviewed-by: Tom Sepez &lt;tsepez@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1049647}
+Fixed: 1130194
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I37bed7983632e6da5388c3c06aab2c66ce587e63">I37bed7983632e6da5388c3c06aab2c66ce587e63</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3907734">https://chromium-review.googlesource.com/c/chromium/src/+/3907734</a>
+Reviewed-by: Florian Leimgruber &lt;fleimgruber@google.com&gt;
+Commit-Queue: Matthias Körber &lt;koerber@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1049666}
 </pre>
 
 </body>
