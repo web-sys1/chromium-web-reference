@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1049635/"> 1049635</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/98ae9eb368ddc12d28f2b1c225d6fb10252f4c5c">98ae9eb368ddc12d28f2b1c225d6fb10252f4c5c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1049647/"> 1049647</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/59dcd0401fb1d6bb3ae7cf57fc66325c984d228f">59dcd0401fb1d6bb3ae7cf57fc66325c984d228f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1049636/">1049636</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   98ae9eb368ddc12d28f2b1c225d6fb10252f4c5c
+   59dcd0401fb1d6bb3ae7cf57fc66325c984d228f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/98ae9eb368ddc12d28f2b1c225d6fb10252f4c5c">
+    <a href="/chromium/src/+log/59dcd0401fb1d6bb3ae7cf57fc66325c984d228f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/98ae9eb368ddc12d28f2b1c225d6fb10252f4c5c.tar.gz">
+    <a href="/chromium/src/+archive/59dcd0401fb1d6bb3ae7cf57fc66325c984d228f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   PKI Metadata Updates Bot &lt;mdb.chrome-pki-metadata-release-jobs@google.com&gt;
+   Regan Hsu &lt;hsuregan@google.com&gt;
   </td>
   <td>
-   Wed Sep 21 14:32:38 2022
+   Wed Sep 21 15:08:14 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 21 14:32:38 2022
+   Wed Sep 21 15:08:14 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/98ae9eb368ddc12d28f2b1c225d6fb10252f4c5c/">
-    6f766b5b9ffc76b27c1b2ed625c8fe9fd180ef11
+   <a href="/chromium/src/+/59dcd0401fb1d6bb3ae7cf57fc66325c984d228f/">
+    0f2c000beb3307f7946d274512506f7ad5fe8405
    </a>
   </td>
  </tr>
@@ -166,27 +166,58 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/98ae9eb368ddc12d28f2b1c225d6fb10252f4c5c%5E">
-    8352f7f34c07c92189fa6daf1aaae11167406579
+   <a href="/chromium/src/+/59dcd0401fb1d6bb3ae7cf57fc66325c984d228f%5E">
+    977f8a8f2eff68a92cfc9690c3cc3f5487e3b460
    </a>
    <span>
     [
-    <a href="/chromium/src/+/98ae9eb368ddc12d28f2b1c225d6fb10252f4c5c%5E%21/">
+    <a href="/chromium/src/+/59dcd0401fb1d6bb3ae7cf57fc66325c984d228f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Automatic update from google3
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CrOS SLP] Fix issue which shows enterprise icon by mistake
 
-Automatic update for 2022-09-21 UTC
+Previously, CrosNetworkConfig would default global network
+configuration boolean values to false in GetBoolean(), if the key
+did not exist in the global network configuration dictionary fetched
+from ManagedNetworkConfigurationHandler.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie2c3bce341c187d6b76fe236206e86708211991e">Ie2c3bce341c187d6b76fe236206e86708211991e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3908810">https://chromium-review.googlesource.com/c/chromium/src/+/3908810</a>
-Commit-Queue: PKI Metadata Updates Bot &lt;mdb.chrome-pki-metadata-release-jobs@google.com&gt;
-Bot-Commit: PKI Metadata Updates Bot &lt;mdb.chrome-pki-metadata-release-jobs@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1049635}
+If a ManagedNetworkConfigurationHandler boolean Allow*() value had a
+default value of true, CrosNetworkConfig would default the value to
+false nonetheless.
+
+Defaulting to false caused an enterprise icon to show by mistake next
+to the Lock SIM setting in Settings for non-managed devices.
+
+The |allow_cellular_sim_lock| setting has a default value of true.
+
+However, on non-managed devices, global network
+configuration keys do not exist in the dictionary fetched from
+ManagedNetworkConfigurationHandler (confirmed manually). As a result,
+|allow_cellular_sim_lock| value was defaulted to false in
+CrosNetworkConfig, along with the other boolean global network
+configuration settings, and propagated to the Settings UI. The issue
+with |allow_cellular_sim_lock| is that it is the only global network
+configuration setting with a default of true declared in
+cros_network_config.mojom, whereas the other settings had a default
+of false.
+
+Instead, the values for |allow_cellular_sim_lock| and the other
+boolean global network configuration settings should default to the
+intended values declared at cros_network_config.mojom [1].
+
+[1] <a href="https://source.chromium.org/chromium/chromium/src/+/main:chromeos/services/network_config/public/mojom/cros_network_config.mojom;l=941-960?q=file:cros_network_config.mojom%20">https://source.chromium.org/chromium/chromium/src/+/main:chromeos/services/network_config/public/mojom/cros_network_config.mojom;l=941-960?q=file:cros_network_config.mojom%20</a>
+
+Bug: 247884361
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I29233ba1e91845780e66a063829ed42461485dcd">I29233ba1e91845780e66a063829ed42461485dcd</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3908420">https://chromium-review.googlesource.com/c/chromium/src/+/3908420</a>
+Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
+Commit-Queue: Regan Hsu &lt;hsuregan@chromium.org&gt;
+Reviewed-by: Tom Sepez &lt;tsepez@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1049647}
 </pre>
 
 </body>
