@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1050143/"> 1050143</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2f2e23ba5c1f3f9041530abc9e2287c720de317d">2f2e23ba5c1f3f9041530abc9e2287c720de317d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1050150/"> 1050150</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/249cf84d12c5d2c53211ac1f2f695d1f0fd126df">249cf84d12c5d2c53211ac1f2f695d1f0fd126df</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1050143/">1050143</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2f2e23ba5c1f3f9041530abc9e2287c720de317d
+   249cf84d12c5d2c53211ac1f2f695d1f0fd126df
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2f2e23ba5c1f3f9041530abc9e2287c720de317d">
+    <a href="/chromium/src/+log/249cf84d12c5d2c53211ac1f2f695d1f0fd126df">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2f2e23ba5c1f3f9041530abc9e2287c720de317d.tar.gz">
+    <a href="/chromium/src/+archive/249cf84d12c5d2c53211ac1f2f695d1f0fd126df.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Arnaud Mandy &lt;arnaud.mandy@intel.com&gt;
+   Yuki Shiino &lt;yukishiino@chromium.org&gt;
   </td>
   <td>
-   Thu Sep 22 12:08:37 2022
+   Thu Sep 22 13:03:10 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Sep 22 12:08:37 2022
+   Thu Sep 22 13:03:10 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2f2e23ba5c1f3f9041530abc9e2287c720de317d/">
-    7e9dca342d4014649042f72b5a469c1ff77f14e9
+   <a href="/chromium/src/+/249cf84d12c5d2c53211ac1f2f695d1f0fd126df/">
+    0ce5424d62ac74a2fa95ad9c6d159db655274a6c
    </a>
   </td>
  </tr>
@@ -166,37 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2f2e23ba5c1f3f9041530abc9e2287c720de317d%5E">
-    cc26260716a3166c25432e5ecf8111a241e59131
+   <a href="/chromium/src/+/249cf84d12c5d2c53211ac1f2f695d1f0fd126df%5E">
+    2c70d730b6d3860be39b33eaad499b79ae597cec
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2f2e23ba5c1f3f9041530abc9e2287c720de317d%5E%21/">
+    <a href="/chromium/src/+/249cf84d12c5d2c53211ac1f2f695d1f0fd126df%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">compute pressure: Invoke PressureUpdateCallback with a list of PressureRecords
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">bindings: Introduce ScriptWrappable::ToMostDerived (and DowncastTo)
 
-This patch is implementing what is described in [1] about
-PressureObserverCallback parameters, records should be a sequence of
-values and a single value.
+Since the following pattern is error-prone,
 
-To fulfill [2], the callback to the observer user is invoked in
-a PostCancellableTask
+  ScriptWrappable* script_wrappable = ...;
+  if (script_wrappable-&gt;GetWrapperTypeInfo() ==
+          V8Foo::GetWrapperTypeInfo()) {
+    Foo* foo = script_wrappable-&gt;ToImpl&lt;Foo&gt;();
+  }
 
-[1] <a href="https://github.com/WICG/compute-pressure/commit/e3da844ddb2a9bf5d8c86ab561f62bf666ed6d27">https://github.com/WICG/compute-pressure/commit/e3da844ddb2a9bf5d8c86ab561f62bf666ed6d27</a>
-[2] <a href="https://github.com/WICG/compute-pressure/commit/6ecbb9120d2d05996004ba999b2db2475c944">https://github.com/WICG/compute-pressure/commit/6ecbb9120d2d05996004ba999b2db2475c944</a>
+where we use V8Foo for type check and Foo for casting, and
+ToImpl&lt;Foo&gt; doesn't perform any type check, so it's possible that
+a type mismatch (like V8Foo and Bar) would happen.
 
-Bug: 1360050
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibfda9fd7d049f201a4d3d236484227e35bbe625e">Ibfda9fd7d049f201a4d3d236484227e35bbe625e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3874943">https://chromium-review.googlesource.com/c/chromium/src/+/3874943</a>
-Commit-Queue: Arnaud Mandy &lt;arnaud.mandy@intel.com&gt;
-Reviewed-by: Raphael Kubo Da Costa &lt;raphael.kubo.da.costa@intel.com&gt;
-Reviewed-by: Fr &lt;beaufort.francois@gmail.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1050143}
+This patch introduces the following pattern to prevent a possible
+type mismatch.
+
+  if (Foo* foo = script_wrappable-&gt;ToMostDerived&lt;Foo&gt;()) {
+    // foo-&gt;something();
+  }
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3dbfd3311fade543e5b97a97441303bbb37a042b">I3dbfd3311fade543e5b97a97441303bbb37a042b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3856709">https://chromium-review.googlesource.com/c/chromium/src/+/3856709</a>
+Reviewed-by: Jeremy Roman &lt;jbroman@chromium.org&gt;
+Commit-Queue: Yuki Shiino &lt;yukishiino@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1050150}
 </pre>
 
 </body>
