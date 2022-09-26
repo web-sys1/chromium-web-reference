@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1051042/"> 1051042</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/575323e10abc270fb7ac073e1f7da4639ac4371c">575323e10abc270fb7ac073e1f7da4639ac4371c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1051059/"> 1051059</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/dcc8a0b98a2bd4a8df95cf4ab390a42c01b39945">dcc8a0b98a2bd4a8df95cf4ab390a42c01b39945</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1051041/">1051041</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ed9d94f9c20304de0091ac2540fadc374a151ddc">ed9d94f9c20304de0091ac2540fadc374a151ddc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1051046/">1051046</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/70f94a771b2637e7da65775cf4593a9980fbdc4b">70f94a771b2637e7da65775cf4593a9980fbdc4b</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   575323e10abc270fb7ac073e1f7da4639ac4371c
+   dcc8a0b98a2bd4a8df95cf4ab390a42c01b39945
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/575323e10abc270fb7ac073e1f7da4639ac4371c">
+    <a href="/chromium/src/+log/dcc8a0b98a2bd4a8df95cf4ab390a42c01b39945">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/575323e10abc270fb7ac073e1f7da4639ac4371c.tar.gz">
+    <a href="/chromium/src/+archive/dcc8a0b98a2bd4a8df95cf4ab390a42c01b39945.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Patrick Meenan &lt;pmeenan@chromium.org&gt;
   </td>
   <td>
-   Sun Sep 25 23:40:39 2022
+   Mon Sep 26 03:02:30 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Sep 25 23:40:39 2022
+   Mon Sep 26 03:02:30 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/575323e10abc270fb7ac073e1f7da4639ac4371c/">
-    8b064503ca803608183048f5fbbad68d49990db4
+   <a href="/chromium/src/+/dcc8a0b98a2bd4a8df95cf4ab390a42c01b39945/">
+    fdb14511629dd842e44ecdad8d0b8ecd9b1ff044
    </a>
   </td>
  </tr>
@@ -166,43 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/575323e10abc270fb7ac073e1f7da4639ac4371c%5E">
-    ed9d94f9c20304de0091ac2540fadc374a151ddc
+   <a href="/chromium/src/+/dcc8a0b98a2bd4a8df95cf4ab390a42c01b39945%5E">
+    794acb7a52bf87a910ed49efecf4ebbb28387268
    </a>
    <span>
     [
-    <a href="/chromium/src/+/575323e10abc270fb7ac073e1f7da4639ac4371c%5E%21/">
+    <a href="/chromium/src/+/dcc8a0b98a2bd4a8df95cf4ab390a42c01b39945%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Win64 PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix request batching to span multiple preload chunks
 
-Roll Chrome Win64 PGO profile from chrome-win64-main-1664127231-42c51ecd0d6fa6176264b9b2eee2929f8896a4d0.profdata to chrome-win64-main-1664138699-df9195e6db10b85d23f8e0cfbba28d765705d184.profdata
+The preloads in any given preload were already batched but the
+background parsser splits chunks of tokens on any css or script tags
+so the batching was a bit more limited than desired.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-win64-chromium">https://autoroll.skia.org/r/pgo-win64-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+This change adds a scope lock for the batching across all of the
+available chunks and better aligns with batching everything discovered
+during the current task while still freeing up the batches when the
+parser yields.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+The batching itself is still behind an experiment flag to measure the impact.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:win64-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3aea21f3f6aba874c30e15669658660803caf2fd">I3aea21f3f6aba874c30e15669658660803caf2fd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3917047">https://chromium-review.googlesource.com/c/chromium/src/+/3917047</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1051042}
+Bug: 1338206
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I78a54e6786b952c8eb011924b6d7bc64b97b72a4">I78a54e6786b952c8eb011924b6d7bc64b97b72a4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3913647">https://chromium-review.googlesource.com/c/chromium/src/+/3913647</a>
+Commit-Queue: Patrick Meenan &lt;pmeenan@chromium.org&gt;
+Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1051059}
 </pre>
 
 </body>
