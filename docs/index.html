@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1051103/"> 1051103</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/416ded9ac67d0b73e1a853f10d9361d52efeea3e">416ded9ac67d0b73e1a853f10d9361d52efeea3e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1051130/"> 1051130</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/da862296cad34b417cfcbd03950c92f978177c0c">da862296cad34b417cfcbd03950c92f978177c0c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1051101/">1051101</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   416ded9ac67d0b73e1a853f10d9361d52efeea3e
+   da862296cad34b417cfcbd03950c92f978177c0c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/416ded9ac67d0b73e1a853f10d9361d52efeea3e">
+    <a href="/chromium/src/+log/da862296cad34b417cfcbd03950c92f978177c0c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/416ded9ac67d0b73e1a853f10d9361d52efeea3e.tar.gz">
+    <a href="/chromium/src/+archive/da862296cad34b417cfcbd03950c92f978177c0c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Louis Romero &lt;lpromero@google.com&gt;
+   Eriko Kurimoto &lt;elkurin@chromium.org&gt;
   </td>
   <td>
-   Mon Sep 26 09:06:07 2022
+   Mon Sep 26 10:12:30 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Sep 26 09:06:07 2022
+   Mon Sep 26 10:12:30 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/416ded9ac67d0b73e1a853f10d9361d52efeea3e/">
-    3dd6785426631594b1f0413b8b9993b67e494567
+   <a href="/chromium/src/+/da862296cad34b417cfcbd03950c92f978177c0c/">
+    6a6b16e71eca2802e13b66683cb44f99a8246a33
    </a>
   </td>
  </tr>
@@ -166,30 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/416ded9ac67d0b73e1a853f10d9361d52efeea3e%5E">
-    a596952f53c47f95e230460ebbc0791c15b1e538
+   <a href="/chromium/src/+/da862296cad34b417cfcbd03950c92f978177c0c%5E">
+    94f504dd96af56014c455dd9fd2fe6d9227bd5c0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/416ded9ac67d0b73e1a853f10d9361d52efeea3e%5E%21/">
+    <a href="/chromium/src/+/da862296cad34b417cfcbd03950c92f978177c0c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Disable BackgroundDownloadTaskHelperTest tests
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">LacrosTablet: Get tablet state on TableState initialization
 
-The tests are triggering a RunLoop timeout.
+This CL fixes the crash happening when Lacros tries to create
+NonClientFrameView too early while tablet mode is enabled.
 
-Bug: 1367306
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iab43b850759e840bb638915c97c12069b8151a9e">Iab43b850759e840bb638915c97c12069b8151a9e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3913037">https://chromium-review.googlesource.com/c/chromium/src/+/3913037</a>
-Commit-Queue: Olivier Robin &lt;olivierrobin@chromium.org&gt;
-Reviewed-by: Olivier Robin &lt;olivierrobin@chromium.org&gt;
-Owners-Override: Louis Romero &lt;lpromero@google.com&gt;
-Auto-Submit: Louis Romero &lt;lpromero@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1051103}
+The crash is caused by early call of DisplayObserver that is introduced
+by crrev.com/c/3881753.
+This CL is for not to drop the tablet state given before TabletState
+initialization, but we remove this observer call inside AddObserver
+to resolve crash issues.
+Instead, we cache tablet state value and let TabletState get the
+cached value.
+
+Bug: 1363023, 1363541
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4068d90a3b084582778beffa4821f4283970ec35">I4068d90a3b084582778beffa4821f4283970ec35</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3908938">https://chromium-review.googlesource.com/c/chromium/src/+/3908938</a>
+Commit-Queue: Eriko Kurimoto &lt;elkurin@chromium.org&gt;
+Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
+Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1051130}
 </pre>
 
 </body>
