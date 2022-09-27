@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1052076/"> 1052076</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fd1f8d8c44a065eda538f80c1d4d6f8311f91cb3">fd1f8d8c44a065eda538f80c1d4d6f8311f91cb3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1052093/"> 1052093</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a28563a955e469fd10ea4ca31deeb0a5b307793d">a28563a955e469fd10ea4ca31deeb0a5b307793d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1052059/">1052059</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   fd1f8d8c44a065eda538f80c1d4d6f8311f91cb3
+   a28563a955e469fd10ea4ca31deeb0a5b307793d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/fd1f8d8c44a065eda538f80c1d4d6f8311f91cb3">
+    <a href="/chromium/src/+log/a28563a955e469fd10ea4ca31deeb0a5b307793d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/fd1f8d8c44a065eda538f80c1d4d6f8311f91cb3.tar.gz">
+    <a href="/chromium/src/+archive/a28563a955e469fd10ea4ca31deeb0a5b307793d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Trevor Perrier &lt;perrier@chromium.org&gt;
+   Alex Rudenko &lt;alexrudenko@chromium.org&gt;
   </td>
   <td>
-   Tue Sep 27 22:14:23 2022
+   Tue Sep 27 22:49:58 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 27 22:14:23 2022
+   Tue Sep 27 22:49:58 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/fd1f8d8c44a065eda538f80c1d4d6f8311f91cb3/">
-    40d1341431bf942b859aaee1706285cb01d26cfa
+   <a href="/chromium/src/+/a28563a955e469fd10ea4ca31deeb0a5b307793d/">
+    c4f427add12d43ae0eeeb1962b82bc30312d1ff3
    </a>
   </td>
  </tr>
@@ -166,34 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/fd1f8d8c44a065eda538f80c1d4d6f8311f91cb3%5E">
-    06baa7b7c8f7834a76080e059248e9482b02349e
+   <a href="/chromium/src/+/a28563a955e469fd10ea4ca31deeb0a5b307793d%5E">
+    d4f270301bf858d45f94a8302945c332929ba54c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/fd1f8d8c44a065eda538f80c1d4d6f8311f91cb3%5E%21/">
+    <a href="/chromium/src/+/a28563a955e469fd10ea4ca31deeb0a5b307793d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ULP] Add page language metrics
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[a11y] refactor code for retaining AXContext and cache integration
 
-This CL adds three metrics to compare the page language histogram to
-the ULP languages. The histograms are:
+Before this CL, RetainAXContextForDocument would also
+register the current agent with the current instance of the
+AXObjectCache in addition to retaining the context. This
+CL refactors the RetainAXContextForDocument to be only concerned
+with retaining AXContexts and creates a new helper method
+AttachToAXObjectCache that is expected to perform all steps
+necessary to configure the current AXObjectCache and AXContext
+properly. This refactoring also fixes a bug when the a11y agent
+will be added to the cache instance but there will be multiple cache
+instances for the lifetime of a document (in that case, newer cache instances won't have the agent added).
 
- - LanguageUsage.ULP.Initiation.AcceptLanguagesPageLanguageOverlap.Base
- - LanguageUsage.ULP.Initiation.PageLanguagesMissingFromULP
- - LanguageUsage.ULP.Initiation.PageLanguagesMissingFromULP.Count
+LOW_COVERAGE_REASON=coverage is provided by inspector-protocol tests as instantiating agents for unit tests is somewhat involved and there are not current unit tests
 
-Bug: 1363833
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8c4ee634135dee0098a74b57e7e044c0fd1af94b">I8c4ee634135dee0098a74b57e7e044c0fd1af94b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3922739">https://chromium-review.googlesource.com/c/chromium/src/+/3922739</a>
-Reviewed-by: Basia Zimirska &lt;basiaz@google.com&gt;
-Reviewed-by: Max Curran &lt;curranmax@chromium.org&gt;
-Commit-Queue: Trevor Perrier &lt;perrier@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1052076}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I17ada542efa28ee640cd064753dc9ee1c9097d1b">I17ada542efa28ee640cd064753dc9ee1c9097d1b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3913505">https://chromium-review.googlesource.com/c/chromium/src/+/3913505</a>
+Reviewed-by: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
+Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
+Commit-Queue: Andrey Kosyakov &lt;caseq@chromium.org&gt;
+Auto-Submit: Alex Rudenko &lt;alexrudenko@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1052093}
 </pre>
 
 </body>
