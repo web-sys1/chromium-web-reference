@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1052093/"> 1052093</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a28563a955e469fd10ea4ca31deeb0a5b307793d">a28563a955e469fd10ea4ca31deeb0a5b307793d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1052136/"> 1052136</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/85af8764718f33f0d221e96f31f5d993f364b4a2">85af8764718f33f0d221e96f31f5d993f364b4a2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1052059/">1052059</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8a893dea0673ada3de422edeff4be7a6324735be">8a893dea0673ada3de422edeff4be7a6324735be</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1052091/">1052091</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a8710099af7d4fb26b5a34f5cd70a5f7d4939cda">a8710099af7d4fb26b5a34f5cd70a5f7d4939cda</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a28563a955e469fd10ea4ca31deeb0a5b307793d
+   85af8764718f33f0d221e96f31f5d993f364b4a2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a28563a955e469fd10ea4ca31deeb0a5b307793d">
+    <a href="/chromium/src/+log/85af8764718f33f0d221e96f31f5d993f364b4a2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a28563a955e469fd10ea4ca31deeb0a5b307793d.tar.gz">
+    <a href="/chromium/src/+archive/85af8764718f33f0d221e96f31f5d993f364b4a2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alex Rudenko &lt;alexrudenko@chromium.org&gt;
+   Qiu Jianlin &lt;jianlin.qiu@intel.com&gt;
   </td>
   <td>
-   Tue Sep 27 22:49:58 2022
+   Wed Sep 28 00:31:32 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 27 22:49:58 2022
+   Wed Sep 28 00:31:32 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a28563a955e469fd10ea4ca31deeb0a5b307793d/">
-    c4f427add12d43ae0eeeb1962b82bc30312d1ff3
+   <a href="/chromium/src/+/85af8764718f33f0d221e96f31f5d993f364b4a2/">
+    4cd8ac5c9365c8f93391ed1e3b7fd328a5b62715
    </a>
   </td>
  </tr>
@@ -166,40 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a28563a955e469fd10ea4ca31deeb0a5b307793d%5E">
-    d4f270301bf858d45f94a8302945c332929ba54c
+   <a href="/chromium/src/+/85af8764718f33f0d221e96f31f5d993f364b4a2%5E">
+    3076e8104240cba720c78cc9c6d5027a3c859949
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a28563a955e469fd10ea4ca31deeb0a5b307793d%5E%21/">
+    <a href="/chromium/src/+/85af8764718f33f0d221e96f31f5d993f364b4a2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[a11y] refactor code for retaining AXContext and cache integration
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Send HEVC HDR display metadata to decoder.
 
-Before this CL, RetainAXContextForDocument would also
-register the current agent with the current instance of the
-AXObjectCache in addition to retaining the context. This
-CL refactors the RetainAXContextForDocument to be only concerned
-with retaining AXContexts and creates a new helper method
-AttachToAXObjectCache that is expected to perform all steps
-necessary to configure the current AXObjectCache and AXContext
-properly. This refactoring also fixes a bug when the a11y agent
-will be added to the cache instance but there will be multiple cache
-instances for the lifetime of a document (in that case, newer cache instances won't have the agent added).
+HEVC HDR mastering displaying content volume information and content light level information may not be included in mdcv/clli box, but instead be present in prefix-sei if it is not Atmos. In that case, we rely on extra data after demuxing to parse corresponding prefix-sei and populate the HDR display metadata, and carry it over to decoder for delivering to display.
 
-LOW_COVERAGE_REASON=coverage is provided by inspector-protocol tests as instantiating agents for unit tests is somewhat involved and there are not current unit tests
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I17ada542efa28ee640cd064753dc9ee1c9097d1b">I17ada542efa28ee640cd064753dc9ee1c9097d1b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3913505">https://chromium-review.googlesource.com/c/chromium/src/+/3913505</a>
-Reviewed-by: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
-Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
-Commit-Queue: Andrey Kosyakov &lt;caseq@chromium.org&gt;
-Auto-Submit: Alex Rudenko &lt;alexrudenko@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1052093}
+Bug: 1362411,1362288
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3fa419aea71216c17da5b3651e3d4af7ab8e220e">I3fa419aea71216c17da5b3651e3d4af7ab8e220e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3916840">https://chromium-review.googlesource.com/c/chromium/src/+/3916840</a>
+Commit-Queue: Jianlin Qiu &lt;jianlin.qiu@intel.com&gt;
+Reviewed-by: Dan Sanders &lt;sandersd@chromium.org&gt;
+Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1052136}
 </pre>
 
 </body>
