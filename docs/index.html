@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1053660/"> 1053660</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/219a8df9ce569411cef0472cf20239e1ea3f6a85">219a8df9ce569411cef0472cf20239e1ea3f6a85</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1053769/"> 1053769</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0a13bbbb26807b993e6a3e38a02a8b5bd3a227ea">0a13bbbb26807b993e6a3e38a02a8b5bd3a227ea</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1053675/">1053675</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ed6d9660126c96f5f1e4fe3244ff75dc7d7f3e4b">ed6d9660126c96f5f1e4fe3244ff75dc7d7f3e4b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1053742/">1053742</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/dd0dfbbbb31f04b7ad263fd2372de5aaefb77615">dd0dfbbbb31f04b7ad263fd2372de5aaefb77615</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   219a8df9ce569411cef0472cf20239e1ea3f6a85
+   0a13bbbb26807b993e6a3e38a02a8b5bd3a227ea
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/219a8df9ce569411cef0472cf20239e1ea3f6a85">
+    <a href="/chromium/src/+log/0a13bbbb26807b993e6a3e38a02a8b5bd3a227ea">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/219a8df9ce569411cef0472cf20239e1ea3f6a85.tar.gz">
+    <a href="/chromium/src/+archive/0a13bbbb26807b993e6a3e38a02a8b5bd3a227ea.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Josip Sokcevic &lt;sokcevic@google.com&gt;
+   Patrick Noland &lt;pnoland@google.com&gt;
   </td>
   <td>
-   Fri Sep 30 17:59:31 2022
+   Fri Sep 30 21:12:53 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Sep 30 17:59:31 2022
+   Fri Sep 30 21:12:53 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/219a8df9ce569411cef0472cf20239e1ea3f6a85/">
-    d08948e3d609de9f0e8e479501190e7e290a69ab
+   <a href="/chromium/src/+/0a13bbbb26807b993e6a3e38a02a8b5bd3a227ea/">
+    f5c8534934b2ce7626e1d10d90b6506a0b0f7fa9
    </a>
   </td>
  </tr>
@@ -166,31 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/219a8df9ce569411cef0472cf20239e1ea3f6a85%5E">
-    fa5e56ef86657599bf0527a3c8ccaf40038db1cf
+   <a href="/chromium/src/+/0a13bbbb26807b993e6a3e38a02a8b5bd3a227ea%5E">
+    f12d759473802f17ef76e4124f3b9e92e836e65f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/219a8df9ce569411cef0472cf20239e1ea3f6a85%5E%21/">
+    <a href="/chromium/src/+/0a13bbbb26807b993e6a3e38a02a8b5bd3a227ea%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Set platform property for gen-win-try
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Short-circuit regex logic in AutocompleteInput::Parse for non-js scheme
 
-Without platform, win machine is running linux commands.
+The regex is notably more expensive than a simple string comparison, and
+isn't necessary unless the scheme (which we already know) is javascript,
+so we can avoid the expense in most cases.
 
-R=jojwang@google.com
+Local testing on an Android emulator (release build) showed a 4x speedup
+for Parse(), improving from 0.2ms average to 0.05ms. This adds up to a
+full ms of delay when loading a url, since we call parse() five times
+while generating the url bar data.
 
-Fixed: 1370049
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1ebb00618df44643de0a8aca41441c847bddf315">I1ebb00618df44643de0a8aca41441c847bddf315</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3926113">https://chromium-review.googlesource.com/c/chromium/src/+/3926113</a>
-Reviewed-by: Ben Pastene &lt;bpastene@chromium.org&gt;
-Commit-Queue: Ben Pastene &lt;bpastene@chromium.org&gt;
-Auto-Submit: Josip Sokcevic &lt;sokcevic@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1053660}
+Bug: none
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6427e7b2a4ddbd9e4c362707df659d776e66e743">I6427e7b2a4ddbd9e4c362707df659d776e66e743</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3923871">https://chromium-review.googlesource.com/c/chromium/src/+/3923871</a>
+Reviewed-by: Travis Skare &lt;skare@chromium.org&gt;
+Reviewed-by: Justin Donnelly &lt;jdonnelly@chromium.org&gt;
+Commit-Queue: Patrick Noland &lt;pnoland@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1053769}
 </pre>
 
 </body>
