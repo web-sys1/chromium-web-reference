@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1054635/"> 1054635</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bab736d3068c44bd53f1c462942652c0856061c1">bab736d3068c44bd53f1c462942652c0856061c1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1054637/"> 1054637</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2cb2ba34dfdd0a1484e7b559df63f426ac2ab73b">2cb2ba34dfdd0a1484e7b559df63f426ac2ab73b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1054615/">1054615</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cd867370971653a2ffdf6b4b497d8f48b3b847a5">cd867370971653a2ffdf6b4b497d8f48b3b847a5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1054635/">1054635</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bab736d3068c44bd53f1c462942652c0856061c1">bab736d3068c44bd53f1c462942652c0856061c1</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   bab736d3068c44bd53f1c462942652c0856061c1
+   2cb2ba34dfdd0a1484e7b559df63f426ac2ab73b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/bab736d3068c44bd53f1c462942652c0856061c1">
+    <a href="/chromium/src/+log/2cb2ba34dfdd0a1484e7b559df63f426ac2ab73b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/bab736d3068c44bd53f1c462942652c0856061c1.tar.gz">
+    <a href="/chromium/src/+archive/2cb2ba34dfdd0a1484e7b559df63f426ac2ab73b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andrew Rayskiy &lt;greengrape@google.com&gt;
+   Daniel Cheng &lt;dcheng@chromium.org&gt;
   </td>
   <td>
-   Tue Oct 04 11:10:35 2022
+   Tue Oct 04 12:34:43 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Oct 04 11:10:35 2022
+   Tue Oct 04 12:34:43 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/bab736d3068c44bd53f1c462942652c0856061c1/">
-    257baae5776ab8840085f8007a49239733674a29
+   <a href="/chromium/src/+/2cb2ba34dfdd0a1484e7b559df63f426ac2ab73b/">
+    fe9f87e58deedb6b9769543c1600a1bbe93345dd
    </a>
   </td>
  </tr>
@@ -166,35 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/bab736d3068c44bd53f1c462942652c0856061c1%5E">
-    69bd54d07d81a75f6f274121b6ab490ebb908022
+   <a href="/chromium/src/+/2cb2ba34dfdd0a1484e7b559df63f426ac2ab73b%5E">
+    3bb4324a07f0596b4e68ece7b6d7855f5bfe8705
    </a>
    <span>
     [
-    <a href="/chromium/src/+/bab736d3068c44bd53f1c462942652c0856061c1%5E%21/">
+    <a href="/chromium/src/+/2cb2ba34dfdd0a1484e7b559df63f426ac2ab73b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[FileManager] Return policy information alongside the list of file tasks
-in FindTasksOfAllTypes().
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use base::test::FeatureRef for feature vectors in //components/password_manager.
 
-Replace std::unique_ptr&lt;std::vector&lt;FullTaskDescriptor&gt;&gt;
-with std::unique_ptr&lt;ResultingTaskSet&gt; in all relevant calls to allow
-ChooseAndSetDefaultTask() to indicate whether the default task selection
-has been affected by DefaultHandlersForFileExtensions policy.
+A base::Feature should not be copyable; a feature is intended to have a
+single global instance, as it caches internal mutable state.
 
-This is a technical refactoring with no intended behavior change.
+Feature vectors in conjunction with `base::test::ScopedFeatureList` are
+by far the most common use of the base::Feature copy constructor. This
+is a mostly automated replacement of `std::vector&lt;base::Feature&gt;` with
+`std::vector&lt;base::test::FeatureRef&gt;` to remove that dependency.
 
-Bug: 1366815
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I73491ac569f4e9cbc37dfc01e70882a5db15277e">I73491ac569f4e9cbc37dfc01e70882a5db15277e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3913091">https://chromium-review.googlesource.com/c/chromium/src/+/3913091</a>
-Reviewed-by: Luciano Pacheco &lt;lucmult@chromium.org&gt;
-Commit-Queue: Andrew Rayskiy &lt;greengrape@google.com&gt;
-Reviewed-by: Jeremie Boulic &lt;jboulic@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1054635}
+This CL was uploaded by git cl split.
+
+R=kolos@chromium.org
+
+Bug: 1370572
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8120eef6771be53d7c7daa49080222ee81e15c92">I8120eef6771be53d7c7daa49080222ee81e15c92</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3934053">https://chromium-review.googlesource.com/c/chromium/src/+/3934053</a>
+Reviewed-by: Maxim Kolosovskiy &lt;kolos@chromium.org&gt;
+Auto-Submit: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Commit-Queue: Maxim Kolosovskiy &lt;kolos@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1054637}
 </pre>
 
 </body>
