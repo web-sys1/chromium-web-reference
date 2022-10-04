@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1054855/"> 1054855</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4838ad6b4e4032d5cf6e7debeae60426c6391842">4838ad6b4e4032d5cf6e7debeae60426c6391842</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1054872/"> 1054872</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ee3a21f15a7a43de68b5d47f50a177ee9ef05d51">ee3a21f15a7a43de68b5d47f50a177ee9ef05d51</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1054810/">1054810</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/06165856c37b27137bb1f0e923cd3c0d9ec33baf">06165856c37b27137bb1f0e923cd3c0d9ec33baf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1054872/">1054872</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ee3a21f15a7a43de68b5d47f50a177ee9ef05d51">ee3a21f15a7a43de68b5d47f50a177ee9ef05d51</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4838ad6b4e4032d5cf6e7debeae60426c6391842
+   ee3a21f15a7a43de68b5d47f50a177ee9ef05d51
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4838ad6b4e4032d5cf6e7debeae60426c6391842">
+    <a href="/chromium/src/+log/ee3a21f15a7a43de68b5d47f50a177ee9ef05d51">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4838ad6b4e4032d5cf6e7debeae60426c6391842.tar.gz">
+    <a href="/chromium/src/+archive/ee3a21f15a7a43de68b5d47f50a177ee9ef05d51.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Etienne Pierre-Doray &lt;etiennep@chromium.org&gt;
+   Daniel Cheng &lt;dcheng@chromium.org&gt;
   </td>
   <td>
-   Tue Oct 04 18:44:34 2022
+   Tue Oct 04 19:17:52 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Oct 04 18:44:34 2022
+   Tue Oct 04 19:17:52 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4838ad6b4e4032d5cf6e7debeae60426c6391842/">
-    f70481f7c88090b89b791c8a5ff0415f458407f9
+   <a href="/chromium/src/+/ee3a21f15a7a43de68b5d47f50a177ee9ef05d51/">
+    5bc66cdebd8f1f7c830ad25a9a5091c234520681
    </a>
   </td>
  </tr>
@@ -166,51 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4838ad6b4e4032d5cf6e7debeae60426c6391842%5E">
-    504694f12ae3298ef6ecf04258064343eda0cdff
+   <a href="/chromium/src/+/ee3a21f15a7a43de68b5d47f50a177ee9ef05d51%5E">
+    453ea3a81f97e974bf48e1bf27879c8b9dfc1bbe
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4838ad6b4e4032d5cf6e7debeae60426c6391842%5E%21/">
+    <a href="/chromium/src/+/ee3a21f15a7a43de68b5d47f50a177ee9ef05d51%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "ash: Replace layer delegates with gfx::LinearGradient"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use base::test::FeatureRef for feature vectors in //chrome/browser/apps.
 
-This reverts commit 316c74f427d076b3f20460d80c3a2c37da5d3bbf.
+A base::Feature should not be copyable; a feature is intended to have a
+single global instance, as it caches internal mutable state.
 
-Reason for revert: Failing RTL/ScrollableShelfViewRTLTest.CorrectUIAfterDisplayRotationLongToShort on chromium/ci/Linux Chromium OS ASan LSan Tests
+Feature vectors in conjunction with `base::test::ScopedFeatureList` are
+by far the most common use of the base::Feature copy constructor. This
+is a mostly automated replacement of `std::vector&lt;base::Feature&gt;` with
+`std::vector&lt;base::test::FeatureRef&gt;` to remove that dependency.
 
-Original change's description:
-&gt; ash: Replace layer delegates with gfx::LinearGradient
-&gt;
-&gt; Rather than create a new layer delegate to implement gradients, use a
-&gt; gradient mask directly on the "target" layer. We should see some
-&gt; performance improvements in compositing fewer UI layers.
-&gt;
-&gt; Increase LinearGradient::kMaxStepSize from 6 to 8 to accommodate
-&gt; scrollable_shelf_view requirements.
-&gt;
-&gt; Bug: 1039003
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icbe8490297c3db310d1205df15cff7f302d6ace7">Icbe8490297c3db310d1205df15cff7f302d6ace7</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3755894">https://chromium-review.googlesource.com/c/chromium/src/+/3755894</a>
-&gt; Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
-&gt; Reviewed-by: Andrew Xu &lt;andrewxu@chromium.org&gt;
-&gt; Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-&gt; Commit-Queue: Sasha McIntosh &lt;sashamcintosh@chromium.org&gt;
-&gt; Reviewed-by: Joe Mason &lt;joenotcharles@google.com&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1038552}
+This CL was uploaded by git cl split.
 
-Bug: 1039003, 1370435
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2880086dea186d45217cd5002d4876cdde745541">I2880086dea186d45217cd5002d4876cdde745541</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3932971">https://chromium-review.googlesource.com/c/chromium/src/+/3932971</a>
-Owners-Override: Emily Shack &lt;emshack@google.com&gt;
-Commit-Queue: Etienne Pierre-Doray &lt;etiennep@chromium.org&gt;
-Reviewed-by: Emily Shack &lt;emshack@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1054855}
+R=lazyboy@chromium.org
+
+Bug: 1370572
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7a4f35fc80df7ec5333a8c92bc05b8d5f92fbceb">I7a4f35fc80df7ec5333a8c92bc05b8d5f92fbceb</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3933117">https://chromium-review.googlesource.com/c/chromium/src/+/3933117</a>
+Auto-Submit: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Istiaque Ahmed &lt;lazyboy@chromium.org&gt;
+Commit-Queue: Istiaque Ahmed &lt;lazyboy@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1054872}
 </pre>
 
 </body>
