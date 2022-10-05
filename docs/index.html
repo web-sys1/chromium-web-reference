@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1055172/"> 1055172</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9362f1fbb16a2e3cc3e490b6842f1ba8eafdc014">9362f1fbb16a2e3cc3e490b6842f1ba8eafdc014</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1055182/"> 1055182</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4252ed2a5a5681dc56def7c493e60451cff70231">4252ed2a5a5681dc56def7c493e60451cff70231</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1055162/">1055162</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9362f1fbb16a2e3cc3e490b6842f1ba8eafdc014
+   4252ed2a5a5681dc56def7c493e60451cff70231
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9362f1fbb16a2e3cc3e490b6842f1ba8eafdc014">
+    <a href="/chromium/src/+log/4252ed2a5a5681dc56def7c493e60451cff70231">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9362f1fbb16a2e3cc3e490b6842f1ba8eafdc014.tar.gz">
+    <a href="/chromium/src/+archive/4252ed2a5a5681dc56def7c493e60451cff70231.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Koji Ishii &lt;kojii@chromium.org&gt;
+   Alan Cutter &lt;alancutter@chromium.org&gt;
   </td>
   <td>
-   Wed Oct 05 08:15:33 2022
+   Wed Oct 05 09:04:19 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Oct 05 08:15:33 2022
+   Wed Oct 05 09:04:19 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9362f1fbb16a2e3cc3e490b6842f1ba8eafdc014/">
-    4aab0484fd1be5aeb7e3152c5d37af5106871d2a
+   <a href="/chromium/src/+/4252ed2a5a5681dc56def7c493e60451cff70231/">
+    ae7265102cd31b4e160500e0963d825633251098
    </a>
   </td>
  </tr>
@@ -166,40 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9362f1fbb16a2e3cc3e490b6842f1ba8eafdc014%5E">
-    12e60063e12be7b9335bdd9dd1b29195732c1bb1
+   <a href="/chromium/src/+/4252ed2a5a5681dc56def7c493e60451cff70231%5E">
+    0da786b58e6e523266055540091c86a54d7f8eca
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9362f1fbb16a2e3cc3e490b6842f1ba8eafdc014%5E%21/">
+    <a href="/chromium/src/+/4252ed2a5a5681dc56def7c493e60451cff70231%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[anchor-position] Add tests for multiple anchors in multicol
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add WeakPtrFactory::GetMutableWeakPtr()
 
-Following up a review comment[1], this patch adds a test that
-has multiple OOF anchors in different containing blocks in
-multicol.
+Update the WeakPtrFactory interface from:
+  WeakPtr&lt;T&gt; GetWeakPtr() const;
+to:
+  WeakPtr&lt;T&gt; GetWeakPtr();
+  WeakPtr&lt;T&gt; GetWeakPtr() const;
+  WeakPtr&lt;T&gt; GetMutableWeakPtr() const;
 
-Similar to the `anchor-position-multicol-003.html`, the
-current code works only if the containing block of the
-querying elements is outside of the multicol, and this test
-doesn't include the situation, but makes sure r1040243
-crrev.com/c/3856814 works for multiple containing blocks.
+See Chromium cxx discussion: <a href="https://groups.google.com/a/chromium.org/g/cxx/c/KQNaPvB_3tg">https://groups.google.com/a/chromium.org/g/cxx/c/KQNaPvB_3tg</a>
 
-[1] <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3856814/comments/2312217c_e2c4ee05">https://chromium-review.googlesource.com/c/chromium/src/+/3856814/comments/2312217c_e2c4ee05</a>
+Once all uses of `WeakPtr&lt;T&gt; GetWeakPtr() const` are replaced with
+`WeakPtr&lt;T&gt; GetMutableWeakPtr() const`,
+`WeakPtr&lt;T&gt; GetWeakPtr() const` will be replaced with
+`WeakPtr&lt;const T&gt; GetWeakPtr() const` to help enforce semantic
+const correctness.
 
-Bug: 1309178
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1bc4835630c4c4fc39066e33d396ff184110e62c">I1bc4835630c4c4fc39066e33d396ff184110e62c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3861771">https://chromium-review.googlesource.com/c/chromium/src/+/3861771</a>
-Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
-Commit-Queue: Kent Tamura &lt;tkent@chromium.org&gt;
-Auto-Submit: Koji Ishii &lt;kojii@chromium.org&gt;
-Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1055172}
+Bug: 1366168
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5e8f12979b93c2bc94083e074349d1010d70af5b">I5e8f12979b93c2bc94083e074349d1010d70af5b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3907427">https://chromium-review.googlesource.com/c/chromium/src/+/3907427</a>
+Reviewed-by: Wez &lt;wez@chromium.org&gt;
+Commit-Queue: Alan Cutter &lt;alancutter@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1055182}
 </pre>
 
 </body>
