@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1055447/"> 1055447</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2bb463d87d35efa7e75a1967691e7b332a6ff3e0">2bb463d87d35efa7e75a1967691e7b332a6ff3e0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1055466/"> 1055466</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/381c1830a21623cda0d5bba989f6b70ddab5dfe6">381c1830a21623cda0d5bba989f6b70ddab5dfe6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1055435/">1055435</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2bb463d87d35efa7e75a1967691e7b332a6ff3e0
+   381c1830a21623cda0d5bba989f6b70ddab5dfe6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2bb463d87d35efa7e75a1967691e7b332a6ff3e0">
+    <a href="/chromium/src/+log/381c1830a21623cda0d5bba989f6b70ddab5dfe6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2bb463d87d35efa7e75a1967691e7b332a6ff3e0.tar.gz">
+    <a href="/chromium/src/+archive/381c1830a21623cda0d5bba989f6b70ddab5dfe6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jesse McKenna &lt;jessemckenna@google.com&gt;
+   Daniel Cheng &lt;dcheng@chromium.org&gt;
   </td>
   <td>
-   Wed Oct 05 19:49:21 2022
+   Wed Oct 05 20:21:59 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Oct 05 19:49:21 2022
+   Wed Oct 05 20:21:59 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2bb463d87d35efa7e75a1967691e7b332a6ff3e0/">
-    284ade0f7d481a2049bc4c074b084eebc87c2385
+   <a href="/chromium/src/+/381c1830a21623cda0d5bba989f6b70ddab5dfe6/">
+    95ad7234e3608320708d686614ec27242298cf63
    </a>
   </td>
  </tr>
@@ -166,35 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2bb463d87d35efa7e75a1967691e7b332a6ff3e0%5E">
-    f410297956dcc7110dd4118f99c0994414140ad4
+   <a href="/chromium/src/+/381c1830a21623cda0d5bba989f6b70ddab5dfe6%5E">
+    5fc51c7016f63f32a0214d2be033b650167891a7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2bb463d87d35efa7e75a1967691e7b332a6ff3e0%5E%21/">
+    <a href="/chromium/src/+/381c1830a21623cda0d5bba989f6b70ddab5dfe6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">breadcrumbs: alias DoWriteEvents... on Android
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use base::test::FeatureRef for feature vectors in //chrome/browser/media.
 
-Breadcrumbs was recently enabled on Android, and the crash in
-DoWriteEventsToFile() has appeared on that platform. This change expands
-the base::debug::Alias block to Android, so crashes on either platform
-can be investigated. This should hopefully help me to understand the
-crash more quickly as Android has a Canary channel (CrOS does not).
+A base::Feature should not be copyable; a feature is intended to have a
+single global instance, as it caches internal mutable state.
 
-Android can be debugged in Crash's CloudLLDB, but at symbol_level 1,
-so the Alias block is still needed.
+Feature vectors in conjunction with `base::test::ScopedFeatureList` are
+by far the most common use of the base::Feature copy constructor. This
+is a mostly automated replacement of `std::vector&lt;base::Feature&gt;` with
+`std::vector&lt;base::test::FeatureRef&gt;` to remove that dependency.
 
-Bug: 1327267
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0da6dd36da060438f58fa4cbe0084f8184fb1e47">I0da6dd36da060438f58fa4cbe0084f8184fb1e47</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3936009">https://chromium-review.googlesource.com/c/chromium/src/+/3936009</a>
-Reviewed-by: David Bienvenu &lt;davidbienvenu@chromium.org&gt;
-Commit-Queue: Jesse McKenna &lt;jessemckenna@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1055447}
+This CL was uploaded by git cl split.
+
+R=wolenetz@chromium.org
+
+Bug: 1370572
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I922cbccd7dabba4f71350cafb5c452f230605745">I922cbccd7dabba4f71350cafb5c452f230605745</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3933267">https://chromium-review.googlesource.com/c/chromium/src/+/3933267</a>
+Auto-Submit: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Matthew Wolenetz &lt;wolenetz@chromium.org&gt;
+Commit-Queue: Matthew Wolenetz &lt;wolenetz@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1055466}
 </pre>
 
 </body>
