@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1056099/"> 1056099</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9f3098504421049eec960fe86cc79ce9999a3425">9f3098504421049eec960fe86cc79ce9999a3425</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1056114/"> 1056114</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/338262d24e0af7d4e578e7df8df64b45c8c7d6e1">338262d24e0af7d4e578e7df8df64b45c8c7d6e1</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1056092/">1056092</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9f3098504421049eec960fe86cc79ce9999a3425
+   338262d24e0af7d4e578e7df8df64b45c8c7d6e1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9f3098504421049eec960fe86cc79ce9999a3425">
+    <a href="/chromium/src/+log/338262d24e0af7d4e578e7df8df64b45c8c7d6e1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9f3098504421049eec960fe86cc79ce9999a3425.tar.gz">
+    <a href="/chromium/src/+archive/338262d24e0af7d4e578e7df8df64b45c8c7d6e1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Loko Kung &lt;lokokung@google.com&gt;
+   Eric Sum &lt;esum@google.com&gt;
   </td>
   <td>
-   Fri Oct 07 04:09:31 2022
+   Fri Oct 07 04:46:02 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 07 04:09:31 2022
+   Fri Oct 07 04:46:02 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9f3098504421049eec960fe86cc79ce9999a3425/">
-    43e76a25f0f73f26d47237a7ac77a4c08b09f9cf
+   <a href="/chromium/src/+/338262d24e0af7d4e578e7df8df64b45c8c7d6e1/">
+    72f03f4386e8fdf54ce157e111c29006abeab3ae
    </a>
   </td>
  </tr>
@@ -166,31 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9f3098504421049eec960fe86cc79ce9999a3425%5E">
-    a12bcf6a3734454212a7cdf430f82924900ff6ee
+   <a href="/chromium/src/+/338262d24e0af7d4e578e7df8df64b45c8c7d6e1%5E">
+    8cc65deeda15e5868145549e044852accc1b0ed7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9f3098504421049eec960fe86cc79ce9999a3425%5E%21/">
+    <a href="/chromium/src/+/338262d24e0af7d4e578e7df8df64b45c8c7d6e1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Modifies WebGPU command to pass WebGPUExecutionContextToken.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use throttled frame interval when sending frame timing details.
 
-- The previous ExecutionContextToken is no longer useful because
-  DocumentToken will be separate from it for now. Using the dedicated
-  WebGPUExecutionContextToken should allow progress without waiting on
-  more changes on Blink side.
+cc/metrics/jank_metrics.cc is using the interval in the frame timing
+details to compute whether or not there is jank. Even when the caller
+has requested to throttle the frame rate, the frame interval attached
+still reflects the default vsync interval (typically 60 fps). This
+causes the metrics to incorrectly report jank when the frames are
+intentionally presented at a slower rate. Although this is the one
+immediately noticed, there may be other consumer use cases out there of
+similar nature.
 
-Bug: dawn:549
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6558f9762dbb1deaae951e0bf3cc0f14d6462227">I6558f9762dbb1deaae951e0bf3cc0f14d6462227</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3933220">https://chromium-review.googlesource.com/c/chromium/src/+/3933220</a>
-Reviewed-by: Austin Eng &lt;enga@chromium.org&gt;
-Commit-Queue: Loko Kung &lt;lokokung@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1056099}
+Bug: b:249539848
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I625a014386585688a8c08ca2a441c251b28bf2d9">I625a014386585688a8c08ca2a441c251b28bf2d9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3926137">https://chromium-review.googlesource.com/c/chromium/src/+/3926137</a>
+Commit-Queue: Eric Sum &lt;esum@google.com&gt;
+Reviewed-by: Jonathan Ross &lt;jonross@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1056114}
 </pre>
 
 </body>
