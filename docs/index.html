@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1056176/"> 1056176</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/38a998b5e7b6914bc70c0339faede6b44f64847d">38a998b5e7b6914bc70c0339faede6b44f64847d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1056182/"> 1056182</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/838cbb6cecb0c3443a2b7ad06ef0868ba8180041">838cbb6cecb0c3443a2b7ad06ef0868ba8180041</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1056149/">1056149</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/aa80ac530a4890bd18d10667080d3840b36b7252">aa80ac530a4890bd18d10667080d3840b36b7252</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1056176/">1056176</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/38a998b5e7b6914bc70c0339faede6b44f64847d">38a998b5e7b6914bc70c0339faede6b44f64847d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   38a998b5e7b6914bc70c0339faede6b44f64847d
+   838cbb6cecb0c3443a2b7ad06ef0868ba8180041
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/38a998b5e7b6914bc70c0339faede6b44f64847d">
+    <a href="/chromium/src/+log/838cbb6cecb0c3443a2b7ad06ef0868ba8180041">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/38a998b5e7b6914bc70c0339faede6b44f64847d.tar.gz">
+    <a href="/chromium/src/+archive/838cbb6cecb0c3443a2b7ad06ef0868ba8180041.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andrew Rayskiy &lt;greengrape@google.com&gt;
+   Marc Treib &lt;treib@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 07 07:19:48 2022
+   Fri Oct 07 07:54:00 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 07 07:19:48 2022
+   Fri Oct 07 07:54:00 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/38a998b5e7b6914bc70c0339faede6b44f64847d/">
-    26849829253b24cbf36df4e21e9d28571aafb2be
+   <a href="/chromium/src/+/838cbb6cecb0c3443a2b7ad06ef0868ba8180041/">
+    bf1443a43a07e91f712c37420a52b9c70fa9679c
    </a>
   </td>
  </tr>
@@ -166,33 +166,59 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/38a998b5e7b6914bc70c0339faede6b44f64847d%5E">
-    8bceb4547b1f802f8850a5d0ff8e2596afb53169
+   <a href="/chromium/src/+/838cbb6cecb0c3443a2b7ad06ef0868ba8180041%5E">
+    ae708f7e40266c6fba0b53cc100d5e88d7173a3f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/38a998b5e7b6914bc70c0339faede6b44f64847d%5E%21/">
+    <a href="/chromium/src/+/838cbb6cecb0c3443a2b7ad06ef0868ba8180041%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove IsIsolatedApplication() checks in the renderer
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Split service worker check from other installable checks"
 
-This is no longer required since permissions_policy is not a nullopt
-if and only if we're inside an isolated application.
+This reverts commit 8691a3608892184808ea8045f32971b045acb683.
 
-Context: go/iwa-api-access
+Reason for revert: Suspected of making PwaInstallViewBrowserTest.IconStateAfterUnInstallation flaky on Windows, see crbug.com/1372255
 
-Bug: 1371797
+Original change's description:
+&gt; Split service worker check from other installable checks
+&gt;
+&gt; This makes AppBannerManager checking other installable criteria first
+&gt; before having another run with InstallableManager to check the service
+&gt; worker criteria.
+&gt; With this change, the installable result can be "kYes_ByUserRequest"
+&gt; even when the worker check is not finished yet. The banner should behave the same, as sending beforeinstall event still require the worker check
+&gt; passed.
+&gt;
+&gt; This implements figure 2 in
+&gt; <a href="http://doc/1OOjju7BRVd6MsU0BD65CZiZuJaZFgk-PwVuzj-ur-hA">http://doc/1OOjju7BRVd6MsU0BD65CZiZuJaZFgk-PwVuzj-ur-hA</a>
+&gt;
+&gt; Figure 3 will be implemented in a separate CL.
+&gt;
+&gt; Bug: 1371091
+&gt;
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibc12fde71a63201ec456eb9dd033e66af27bdc70">Ibc12fde71a63201ec456eb9dd033e66af27bdc70</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3891541">https://chromium-review.googlesource.com/c/chromium/src/+/3891541</a>
+&gt; Commit-Queue: Ella Ge &lt;eirage@chromium.org&gt;
+&gt; Reviewed-by: Daniel Murphy &lt;dmurph@chromium.org&gt;
+&gt; Reviewed-by: Glenn Hartmann &lt;hartmanng@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1056037}
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5f3171503fbf9b3c3233b3dd70b9919d3d6dbafa">I5f3171503fbf9b3c3233b3dd70b9919d3d6dbafa</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3936274">https://chromium-review.googlesource.com/c/chromium/src/+/3936274</a>
-Auto-Submit: Andrew Rayskiy &lt;greengrape@google.com&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1056176}
+Bug: 1371091
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3949b80c13fbc6c8e5e4edcc35ea1773939563e3">I3949b80c13fbc6c8e5e4edcc35ea1773939563e3</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3937956">https://chromium-review.googlesource.com/c/chromium/src/+/3937956</a>
+Owners-Override: Marc Treib &lt;treib@chromium.org&gt;
+Reviewed-by: Mikel Astiz &lt;mastiz@chromium.org&gt;
+Auto-Submit: Marc Treib &lt;treib@chromium.org&gt;
+Commit-Queue: Mikel Astiz &lt;mastiz@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1056182}
 </pre>
 
 </body>
