@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1057137/"> 1057137</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/567aee9024c0ced4b0780129fa824a72fe1c67b1">567aee9024c0ced4b0780129fa824a72fe1c67b1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1057239/"> 1057239</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/26155b74188ac3f24620ea6283989c56aa5d38a7">26155b74188ac3f24620ea6283989c56aa5d38a7</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1057146/">1057146</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/337c208641f200e2e5796119edd0a8c14e737549">337c208641f200e2e5796119edd0a8c14e737549</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1057167/">1057167</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4325836e3dfd62c853853dcf37ec37f147c3b028">4325836e3dfd62c853853dcf37ec37f147c3b028</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   567aee9024c0ced4b0780129fa824a72fe1c67b1
+   26155b74188ac3f24620ea6283989c56aa5d38a7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/567aee9024c0ced4b0780129fa824a72fe1c67b1">
+    <a href="/chromium/src/+log/26155b74188ac3f24620ea6283989c56aa5d38a7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/567aee9024c0ced4b0780129fa824a72fe1c67b1.tar.gz">
+    <a href="/chromium/src/+archive/26155b74188ac3f24620ea6283989c56aa5d38a7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Muyao Xu &lt;muyaoxu@google.com&gt;
+   Jack Shira &lt;jackshira@google.com&gt;
   </td>
   <td>
-   Mon Oct 10 20:56:41 2022
+   Tue Oct 11 00:17:39 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Oct 10 20:56:41 2022
+   Tue Oct 11 00:17:39 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/567aee9024c0ced4b0780129fa824a72fe1c67b1/">
-    de298c72a48844194f65480a7203beb496f3935f
+   <a href="/chromium/src/+/26155b74188ac3f24620ea6283989c56aa5d38a7/">
+    8263cb46ba1c16ceb9e7df64a36e7c4d6c0d226d
    </a>
   </td>
  </tr>
@@ -166,37 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/567aee9024c0ced4b0780129fa824a72fe1c67b1%5E">
-    b6030563fc2a216ab43a9778a03765e3da3c1366
+   <a href="/chromium/src/+/26155b74188ac3f24620ea6283989c56aa5d38a7%5E">
+    eb6672aa8b10f44056a863b8be1689746e632297
    </a>
    <span>
     [
-    <a href="/chromium/src/+/567aee9024c0ced4b0780129fa824a72fe1c67b1%5E%21/">
+    <a href="/chromium/src/+/26155b74188ac3f24620ea6283989c56aa5d38a7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Remote Playback] Pass Remote Playback metadata from WebMediaPlayerImpl
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CrOS HaTS] Rework HaTS/UMA integration
 
-This CL utilizes the existing mojo pipes to pass media codec and
-`is_remote_playback_disabled` field from the WebMediaPlayerImpl to
-MediaControllerObserver.
+Moving forward, we will allow surveys to opt-in to the sending
+of all survey questions to both Lisntr and UMA. This CL provides
+the infrastructure for a survey to flag on UMA metrics for their
+survey by providing a `histogram_name` parameter to their survey
+feature. Since it is important for the UMA metrics to be tied to
+the HaTS survey ID, it requires both of those values to be provided
+in a way that can be updated out-of-band of normal ChromeOS releases.
 
-This info will be used to initialize the
-MediaRouterUI to discover compatible Media Sinks in a subsequent CL.
+Testing this new change involved running ChromeOS on Linux with specific
+survey feature parameters to enable the survey for testing purposes. The
+histograms produced were confirmed via chrome://histograms. The flags
+used are as follows:
 
-LOW_COVERAGE_REASON=trivial change
+--force-happiness-tracking-system
+--enable-features=HappinessTrackingSystem:prob/1.0/trigger_id/test/histogram_name/ChromeOS.HaTS.TestSurvey
 
-Bug: 1356027
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9ed8076c0a0e75267d89422cfd4704e15c0d31d2">I9ed8076c0a0e75267d89422cfd4704e15c0d31d2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3896793">https://chromium-review.googlesource.com/c/chromium/src/+/3896793</a>
-Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
-Commit-Queue: Muyao Xu &lt;muyaoxu@google.com&gt;
-Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
-Reviewed-by: Tom Sepez &lt;tsepez@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1057137}
+BUG=b:208685719
+TEST=ran unit tests
+TEST=manually verified histograms via steps above
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic3ce453c147d5f5f49d70559be0f5adf5e6101fe">Ic3ce453c147d5f5f49d70559be0f5adf5e6101fe</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3923592">https://chromium-review.googlesource.com/c/chromium/src/+/3923592</a>
+Commit-Queue: Jack Shira &lt;jackshira@google.com&gt;
+Reviewed-by: Miriam Zimmerman &lt;mutexlox@chromium.org&gt;
+Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1057239}
 </pre>
 
 </body>
