@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1058758/"> 1058758</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6f4bb1a1f8a84792ee34a24f58163bcc445ca687">6f4bb1a1f8a84792ee34a24f58163bcc445ca687</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1058794/"> 1058794</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/048d230f2c9769f37fa4566092ee833a6158d64a">048d230f2c9769f37fa4566092ee833a6158d64a</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1058775/">1058775</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6f4bb1a1f8a84792ee34a24f58163bcc445ca687
+   048d230f2c9769f37fa4566092ee833a6158d64a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6f4bb1a1f8a84792ee34a24f58163bcc445ca687">
+    <a href="/chromium/src/+log/048d230f2c9769f37fa4566092ee833a6158d64a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6f4bb1a1f8a84792ee34a24f58163bcc445ca687.tar.gz">
+    <a href="/chromium/src/+archive/048d230f2c9769f37fa4566092ee833a6158d64a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
+   Eric Sum &lt;esum@google.com&gt;
   </td>
   <td>
-   Thu Oct 13 16:09:27 2022
+   Thu Oct 13 17:23:14 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Oct 13 16:09:27 2022
+   Thu Oct 13 17:23:14 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6f4bb1a1f8a84792ee34a24f58163bcc445ca687/">
-    edc162f3b2e20809e1400900f4e346ac19650301
+   <a href="/chromium/src/+/048d230f2c9769f37fa4566092ee833a6158d64a/">
+    ddbd6d76d1eded01515af33344d344b95b056752
    </a>
   </td>
  </tr>
@@ -166,45 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6f4bb1a1f8a84792ee34a24f58163bcc445ca687%5E">
-    0837e9a3e86ef730aababfc7c3ab2086891e3f93
+   <a href="/chromium/src/+/048d230f2c9769f37fa4566092ee833a6158d64a%5E">
+    6a27e75d4fc5d22183524badc64331f4e1de4119
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6f4bb1a1f8a84792ee34a24f58163bcc445ca687%5E%21/">
+    <a href="/chromium/src/+/048d230f2c9769f37fa4566092ee833a6158d64a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll devtools-internal from 2a5345463369 to 9e21d760bc24 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Modify FrameThrottlingController API for ambient animations use case.
 
-<a href="https://chrome-internal.googlesource.com/devtools/devtools-internal.git/+log/2a5345463369..9e21d760bc24">https://chrome-internal.googlesource.com/devtools/devtools-internal.git/+log/2a5345463369..9e21d760bc24</a>
+For ambient mode (screensaver) animations, we want to throttle the
+frame rate to save power when the device is in battery mode. To do this,
+we want to go through ash's FrameThrottlingController, which already
+supports manual frame rate throttling (those requested explicitly by
+a client). There are a few things missing though for our case use:
+* We need to be able to throttle NON_APP windows (the ambient one
+  falls under this ash::AppType).
+* Ambient animations may require a different frame rate than the
+  hard-coded default (20 fps). It depends on how much motion is in
+  the animation theme that's been chosen. The caller should be able
+  to choose, but also not harm the smoothness of other UIs that may
+  concurrently be getting throttled.
+* Add a few basic unit tests for the FrameThrottlingController.
 
-Also rolling transitive DEPS:
-  <a href="https://chromium.googlesource.com/devtools/devtools-frontend.git/+log/16062552bfc4d831d865cb21de170797e75375e3..c0ca255a6ca3956e7cdd7415c6c1e354cf74c9b3">https://chromium.googlesource.com/devtools/devtools-frontend.git/+log/16062552bfc4d831d865cb21de170797e75375e3..c0ca255a6ca3956e7cdd7415c6c1e354cf74c9b3</a>
-
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://skia-autoroll.corp.goog/r/devtools-internal-chromium">https://skia-autoroll.corp.goog/r/devtools-internal-chromium</a>
-Please CC devtools-waterfall-sheriff-onduty@grotations.appspotmail.com on the revert to ensure that a human
-is aware of the problem.
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Bug: None
-Tbr: devtools-waterfall-sheriff-onduty@grotations.appspotmail.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic58c674e73cc10e80bd15316ddcba373233c6114">Ic58c674e73cc10e80bd15316ddcba373233c6114</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3952896">https://chromium-review.googlesource.com/c/chromium/src/+/3952896</a>
-Bot-Commit: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Commit-Queue: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1058758}
+Bug: b:249539848
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I614e6380c8feaa28381d295a69e7d457170f95c2">I614e6380c8feaa28381d295a69e7d457170f95c2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3943056">https://chromium-review.googlesource.com/c/chromium/src/+/3943056</a>
+Reviewed-by: Matthew Denton &lt;mpdenton@chromium.org&gt;
+Commit-Queue: Eric Sum &lt;esum@google.com&gt;
+Reviewed-by: James Cook &lt;jamescook@chromium.org&gt;
+Reviewed-by: Chris Bookholt &lt;bookholt@chromium.org&gt;
+Reviewed-by: Jim Shargo &lt;jshargo@chromium.org&gt;
+Reviewed-by: Vladimir Levin &lt;vmpstr@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1058794}
 </pre>
 
 </body>
