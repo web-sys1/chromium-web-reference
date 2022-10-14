@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1059233/"> 1059233</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1ca4eff5679450c509a507ba26427a836b9e72dd">1ca4eff5679450c509a507ba26427a836b9e72dd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1059243/"> 1059243</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/95bab1068244e63424e00299c189bb8b64b0de95">95bab1068244e63424e00299c189bb8b64b0de95</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1059213/">1059213</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1ca4eff5679450c509a507ba26427a836b9e72dd
+   95bab1068244e63424e00299c189bb8b64b0de95
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1ca4eff5679450c509a507ba26427a836b9e72dd">
+    <a href="/chromium/src/+log/95bab1068244e63424e00299c189bb8b64b0de95">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1ca4eff5679450c509a507ba26427a836b9e72dd.tar.gz">
+    <a href="/chromium/src/+archive/95bab1068244e63424e00299c189bb8b64b0de95.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
+   Jonathan Ross &lt;jonross@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 14 13:34:59 2022
+   Fri Oct 14 14:10:24 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 14 13:34:59 2022
+   Fri Oct 14 14:10:24 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1ca4eff5679450c509a507ba26427a836b9e72dd/">
-    2d6250c86de656a64b1b76fa42878f593b7971db
+   <a href="/chromium/src/+/95bab1068244e63424e00299c189bb8b64b0de95/">
+    87a7160598b72e9e74e8ba28072a129b8b3cb025
    </a>
   </td>
  </tr>
@@ -166,42 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1ca4eff5679450c509a507ba26427a836b9e72dd%5E">
-    5eb0eb45f78835cb6a446b39b20ff122c140e637
+   <a href="/chromium/src/+/95bab1068244e63424e00299c189bb8b64b0de95%5E">
+    cacbad843cbe430101245d27877b0672a7340969
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1ca4eff5679450c509a507ba26427a836b9e72dd%5E%21/">
+    <a href="/chromium/src/+/95bab1068244e63424e00299c189bb8b64b0de95%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll clank/internal/apps from a0e04a26b393 to 3cba862bbb0b (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Android Tab Change Metrics
 
-<a href="https://chrome-internal.googlesource.com/clank/internal/apps.git/+log/a0e04a26b393..3cba862bbb0b">https://chrome-internal.googlesource.com/clank/internal/apps.git/+log/a0e04a26b393..3cba862bbb0b</a>
+The Browser.Tabs.TabSwitch were not implemented on Android.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://skia-autoroll.corp.goog/r/clank-apps-chromium-autoroll">https://skia-autoroll.corp.goog/r/clank-apps-chromium-autoroll</a>
-Please CC fernandex@google.com on the revert to ensure that a human
-is aware of the problem.
+This refactors adjusts RenderWidgetHostViewAndroid to make use of
+RenderWidgetHostViewBase::OnShowWithPageVisibility which is used by
+other platforms for handling complicated tab metrics.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+Android does not make use of the same Tab Controller that desktop
+platforms do. Instead it has a mix of visibility signals via JNI calls,
+as well as direct Navigation visibility changes when reloading tabs.
+This change hooks up these sites to RequestRecordTimeToVisible to begin
+recording tab changes.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
+Furthermore some piping DelegateFrameHostAndroid to Android's
+CompositorImpl are added to make sure the requests are queued. As
+ui::Compositor itself is not exposed to this portion of the code.
 
-Bug: None
-Tbr: fernandex@google.com
-No-Try: true
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4c12ebb214926b1a9cacbef7b4ca3489689e6236">I4c12ebb214926b1a9cacbef7b4ca3489689e6236</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3956098">https://chromium-review.googlesource.com/c/chromium/src/+/3956098</a>
-Bot-Commit: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Commit-Queue: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1059233}
+LOW_COVERAGE_REASON=RenderWidgetHostBase historically has low coverage. I only added two lines
+
+Bug: 1253938
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I59a2cb0fcb8e793ea94e4bc291a3c20be48ab52d">I59a2cb0fcb8e793ea94e4bc291a3c20be48ab52d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3894618">https://chromium-review.googlesource.com/c/chromium/src/+/3894618</a>
+Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Bo Liu &lt;boliu@chromium.org&gt;
+Reviewed-by: David Trainor &lt;dtrainor@chromium.org&gt;
+Commit-Queue: Jonathan Ross &lt;jonross@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1059243}
 </pre>
 
 </body>
