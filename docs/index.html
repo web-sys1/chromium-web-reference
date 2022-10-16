@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1059741/"> 1059741</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f6257793ce1a463c0810dc177d30664ca40cf5b4">f6257793ce1a463c0810dc177d30664ca40cf5b4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1059743/"> 1059743</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/12854ffaf89d4c133083a76eeab66c8f5a677dcc">12854ffaf89d4c133083a76eeab66c8f5a677dcc</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1059740/">1059740</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f6257793ce1a463c0810dc177d30664ca40cf5b4
+   12854ffaf89d4c133083a76eeab66c8f5a677dcc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f6257793ce1a463c0810dc177d30664ca40cf5b4">
+    <a href="/chromium/src/+log/12854ffaf89d4c133083a76eeab66c8f5a677dcc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f6257793ce1a463c0810dc177d30664ca40cf5b4.tar.gz">
+    <a href="/chromium/src/+archive/12854ffaf89d4c133083a76eeab66c8f5a677dcc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   yixie &lt;yixie@chromium.org&gt;
+   Jan-Michael Brummer &lt;jan.brummer@tabos.org&gt;
   </td>
   <td>
-   Sun Oct 16 18:42:00 2022
+   Sun Oct 16 18:57:09 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Oct 16 18:42:00 2022
+   Sun Oct 16 18:57:09 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f6257793ce1a463c0810dc177d30664ca40cf5b4/">
-    7faa2cb2b3f7a26a91ba757599d7c7b95d94f035
+   <a href="/chromium/src/+/12854ffaf89d4c133083a76eeab66c8f5a677dcc/">
+    5ee14ab9365cda8a88a8655bac7da7797fb81566
    </a>
   </td>
  </tr>
@@ -166,30 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f6257793ce1a463c0810dc177d30664ca40cf5b4%5E">
-    6c7ae2b10f154f4c15d816fc721e308717640b5a
+   <a href="/chromium/src/+/12854ffaf89d4c133083a76eeab66c8f5a677dcc%5E">
+    0e5f13414cd2a386789dc6a6788fcd2d4a15d70f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f6257793ce1a463c0810dc177d30664ca40cf5b4%5E%21/">
+    <a href="/chromium/src/+/12854ffaf89d4c133083a76eeab66c8f5a677dcc%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add NEW_POPUP to App Service crosapi
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix GSettingsSchema lookup
 
-Fix crash while launching Chrome app Kiosk in Lacros.
+Current proxy detection using GSettings does not work reliable. This is
+caused by using non-recursive schema source lookup for the default
+schema source.
 
-Bug: b:253565951
-Test: manual
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I979420038323dd6fc40c61f108d790f2f056bdd2">I979420038323dd6fc40c61f108d790f2f056bdd2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3956314">https://chromium-review.googlesource.com/c/chromium/src/+/3956314</a>
-Reviewed-by: Roland Bock &lt;rbock@google.com&gt;
-Reviewed-by: Nancy Wang &lt;nancylingwang@chromium.org&gt;
-Commit-Queue: Yi Xie &lt;yixie@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1059741}
+g_settings_schema_source_get_default() can contain multiple schema
+sources from different directories and that's why the API recommends to
+do all lookups recusively.
+
+Change all g_settings_schema_source_lookup() calls to do a recursive lookup.
+
+Bug: 1374714
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ieffd790bbc3dc1f2539e8bce7bce505a47873dae">Ieffd790bbc3dc1f2539e8bce7bce505a47873dae</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3956879">https://chromium-review.googlesource.com/c/chromium/src/+/3956879</a>
+Commit-Queue: Matt Menke &lt;mmenke@chromium.org&gt;
+Reviewed-by: Matt Menke &lt;mmenke@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1059743}
 </pre>
 
 </body>
