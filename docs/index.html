@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1060131/"> 1060131</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4d854b6e2f0aa7bbb72e5c6956033edf746436a0">4d854b6e2f0aa7bbb72e5c6956033edf746436a0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1060136/"> 1060136</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/69b0ab83af451c9630e9a72f8d8f721aa1e70ed9">69b0ab83af451c9630e9a72f8d8f721aa1e70ed9</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1060114/">1060114</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4d854b6e2f0aa7bbb72e5c6956033edf746436a0
+   69b0ab83af451c9630e9a72f8d8f721aa1e70ed9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4d854b6e2f0aa7bbb72e5c6956033edf746436a0">
+    <a href="/chromium/src/+log/69b0ab83af451c9630e9a72f8d8f721aa1e70ed9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4d854b6e2f0aa7bbb72e5c6956033edf746436a0.tar.gz">
+    <a href="/chromium/src/+archive/69b0ab83af451c9630e9a72f8d8f721aa1e70ed9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Hazem Ashmawy &lt;hazems@chromium.org&gt;
+   Morten Stenshorne &lt;mstensho@chromium.org&gt;
   </td>
   <td>
-   Mon Oct 17 20:49:43 2022
+   Mon Oct 17 21:22:38 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Oct 17 20:49:43 2022
+   Mon Oct 17 21:22:38 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4d854b6e2f0aa7bbb72e5c6956033edf746436a0/">
-    e9d3119166a079e10f3ba0500f3547d08f49368b
+   <a href="/chromium/src/+/69b0ab83af451c9630e9a72f8d8f721aa1e70ed9/">
+    cf93ac0158d6fc00838d5fa544c0fca0f1b1b2f0
    </a>
   </td>
  </tr>
@@ -166,32 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4d854b6e2f0aa7bbb72e5c6956033edf746436a0%5E">
-    ff18fb6adb4bec3c4da35c27a9c18d69d6d74a7d
+   <a href="/chromium/src/+/69b0ab83af451c9630e9a72f8d8f721aa1e70ed9%5E">
+    e6eb51b6e4cb5f2b65a2a63740cc939d21991c4e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4d854b6e2f0aa7bbb72e5c6956033edf746436a0%5E%21/">
+    <a href="/chromium/src/+/69b0ab83af451c9630e9a72f8d8f721aa1e70ed9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[AW] Clean-up copybara test file
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Let the table layout algo handle out-of-fragmentainer-space situations.
 
-This was added to test that copybara service copies files correctly.
-Now that the service is running as expected, I think this file is no
-longer needed.
+We don't need special-code for when caption layout aborts because of
+kOutOfFragmentainerSpace. Just leave it to the table layout algorithm,
+which will call BreakBeforeChildIfNeeded() and handle this situation
+correctly.
 
-Bug: N/A
-Test: N/A
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0789b490207b175b19ebce40adaa335115efbb05">I0789b490207b175b19ebce40adaa335115efbb05</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3960236">https://chromium-review.googlesource.com/c/chromium/src/+/3960236</a>
-Commit-Queue: Nate Fischer &lt;ntfschr@chromium.org&gt;
-Auto-Submit: Hazem Ashmawy &lt;hazems@chromium.org&gt;
-Reviewed-by: Nate Fischer &lt;ntfschr@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1060131}
+As it was, we could attempt to insert a break before the table, even
+though the table had already produced fragments, which isn't allowed.
+
+CL:3829930 was wrong in comparing the situation for table captions to
+that for table cells. If this happens to cells, we DO need to propagate
+kOutOfFragmentainerSpace to someone who can handle it (the table section
+layout algorithm), since the table row layout algorithm lays out in the
+inline direction.
+
+Bug: 1375029
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3e53903004591922080338f88633b1b33c9890ed">I3e53903004591922080338f88633b1b33c9890ed</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3959677">https://chromium-review.googlesource.com/c/chromium/src/+/3959677</a>
+Commit-Queue: Morten Stenshorne &lt;mstensho@chromium.org&gt;
+Reviewed-by: Alison Maher &lt;almaher@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1060136}
 </pre>
 
 </body>
