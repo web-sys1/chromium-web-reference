@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1060769/"> 1060769</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5c44ece5d285d606ef8b31302d8c95af889b8bb7">5c44ece5d285d606ef8b31302d8c95af889b8bb7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1060849/"> 1060849</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a35651a9ff0547ad4e6215817aa308e341768d24">a35651a9ff0547ad4e6215817aa308e341768d24</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1060740/">1060740</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/18b1296725312759525cd3b2f596b14874fda272">18b1296725312759525cd3b2f596b14874fda272</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1060815/">1060815</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/13fb190c0ebb8dd0220edcf979b080547e376174">13fb190c0ebb8dd0220edcf979b080547e376174</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5c44ece5d285d606ef8b31302d8c95af889b8bb7
+   a35651a9ff0547ad4e6215817aa308e341768d24
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5c44ece5d285d606ef8b31302d8c95af889b8bb7">
+    <a href="/chromium/src/+log/a35651a9ff0547ad4e6215817aa308e341768d24">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5c44ece5d285d606ef8b31302d8c95af889b8bb7.tar.gz">
+    <a href="/chromium/src/+archive/a35651a9ff0547ad4e6215817aa308e341768d24.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xiaohan Wang &lt;xhwang@chromium.org&gt;
+   Michele Fan &lt;michelefan@chromium.org&gt;
   </td>
   <td>
-   Wed Oct 19 00:24:12 2022
+   Wed Oct 19 03:24:22 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Oct 19 00:24:12 2022
+   Wed Oct 19 03:24:22 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5c44ece5d285d606ef8b31302d8c95af889b8bb7/">
-    1f225cd0c006a33bd66cabe16478217b7d917eb2
+   <a href="/chromium/src/+/a35651a9ff0547ad4e6215817aa308e341768d24/">
+    ad2cad30a0952db2e628679b347ff1d0227d3c67
    </a>
   </td>
  </tr>
@@ -166,56 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5c44ece5d285d606ef8b31302d8c95af889b8bb7%5E">
-    63f921ea6ccb58a17153f904496b80c63decafb9
+   <a href="/chromium/src/+/a35651a9ff0547ad4e6215817aa308e341768d24%5E">
+    dbaa2f33e56c3d7c3394081d8a637e4a9028dddb
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5c44ece5d285d606ef8b31302d8c95af889b8bb7%5E%21/">
+    <a href="/chromium/src/+/a35651a9ff0547ad4e6215817aa308e341768d24%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media: Fix InterfaceFactoryImpl renderer disconnection handling
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">capture-mode-demo-tools: Extract accelerators APIs
 
-The buildflag guards used for handling `renderer_receivers_`
-disconnection errors are different from those for `renderer_receivers_`
-declaration.
+Extract the accelerators APIs in ash/accelerators so that they can be reused in ash/*.
 
-When using MojoRendererService for clear playback, during tear down,
-InterfaceFactoryImpl gets disconnected first. If there's still
-MojoRendererService there, it should not be destructed, to prevent
-this disconnection error. But due to the bug, IsEmpty() returns true
-and InterfaceFactoryImpl is destructed, which then will destruct
-MediaFoundationRenderer.
-
-This can also happen when we have both a MojoRendererService and
-MojoCdmService. This should be pretty rare since in WebMediaPlayerImpl
-holds a reference to the CDM. So this should only happen when the
-disconnection handling of the CDM and the media Renderer gets out
-of order. So when the CDM is destroyed, it'll trigger the
-OnReceiverDisconnect(), which will check IsEmpty(), which will
-return true due to this mismatch, even though the Renderer is still
-connected. This will cause the destroy callback be invoked and
-InterfaceFactoryImpl destroyed, which will destroy the
-MediaFoundationRenderer prematurely, causing a disconnection error in
-MediaFoundationRendererClient.
-
-Note that when MojoCdmService is destroyed, the underlying
-MediaFoundationCdm will not be destroyed immediately since
-MojoRendererService still holds a ref-count to it. It'll only
-be destroyed after MediaFoundationRenderer is destroyed, to prevent
-playback error caused during the tear down process.
-
-Bug: 1376166
-Test: Manually tested and the problem doesn't repro anymore.
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7f3c1860c5f4b1d7ce2914ead51c1931d1d583bf">I7f3c1860c5f4b1d7ce2914ead51c1931d1d583bf</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3964850">https://chromium-review.googlesource.com/c/chromium/src/+/3964850</a>
-Commit-Queue: Xiaohan Wang &lt;xhwang@chromium.org&gt;
-Reviewed-by: Frank Li &lt;frankli@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1060769}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib9e6e4aa5e6e7b474f2cd82d645938f42bdb6b49">Ib9e6e4aa5e6e7b474f2cd82d645938f42bdb6b49</a>
+Bug: b:252343558
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3964789">https://chromium-review.googlesource.com/c/chromium/src/+/3964789</a>
+Commit-Queue: Michele Fan &lt;michelefan@chromium.org&gt;
+Reviewed-by: Ahmed Fakhry &lt;afakhry@chromium.org&gt;
+Reviewed-by: Tony Yeoman &lt;tby@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1060849}
 </pre>
 
 </body>
