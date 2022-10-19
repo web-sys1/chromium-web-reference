@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1061088/"> 1061088</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/892be77b07730f38d23ea2a63f823766b1581d88">892be77b07730f38d23ea2a63f823766b1581d88</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1061108/"> 1061108</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7e81e5ae240240b9dcebd6743f1ac60a66d05106">7e81e5ae240240b9dcebd6743f1ac60a66d05106</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1061071/">1061071</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   892be77b07730f38d23ea2a63f823766b1581d88
+   7e81e5ae240240b9dcebd6743f1ac60a66d05106
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/892be77b07730f38d23ea2a63f823766b1581d88">
+    <a href="/chromium/src/+log/7e81e5ae240240b9dcebd6743f1ac60a66d05106">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/892be77b07730f38d23ea2a63f823766b1581d88.tar.gz">
+    <a href="/chromium/src/+archive/7e81e5ae240240b9dcebd6743f1ac60a66d05106.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Bozydar Szadkowski &lt;bozydar@google.com&gt;
+   Ben Pastene &lt;bpastene@chromium.org&gt;
   </td>
   <td>
-   Wed Oct 19 16:51:01 2022
+   Wed Oct 19 17:25:25 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Oct 19 16:51:01 2022
+   Wed Oct 19 17:25:25 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/892be77b07730f38d23ea2a63f823766b1581d88/">
-    e89d2ad4661b872dd61ba9d70b9b247e3152c8a9
+   <a href="/chromium/src/+/7e81e5ae240240b9dcebd6743f1ac60a66d05106/">
+    a752730f5c9f7bbbe46649df6d9f1c99e9301821
    </a>
   </td>
  </tr>
@@ -166,29 +166,51 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/892be77b07730f38d23ea2a63f823766b1581d88%5E">
-    c111a69681acd7474511c78ead03016fa92ebd44
+   <a href="/chromium/src/+/7e81e5ae240240b9dcebd6743f1ac60a66d05106%5E">
+    b66cb08d641a3cd5d04dfd5838d94df75260ef79
    </a>
    <span>
     [
-    <a href="/chromium/src/+/892be77b07730f38d23ea2a63f823766b1581d88%5E%21/">
+    <a href="/chromium/src/+/7e81e5ae240240b9dcebd6743f1ac60a66d05106%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[reclient] Set chromium.fyi defaults to reclient
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Exit early in blink's merge_results.py when no JSON is available
 
-Set defaults in chromium.fyi.star to reclient
-to prevent newly created builders from using Goma.
+Right now, the exit codes of merge scripts are ignored. This means that
+any assert failures encountered in this script are silently ignored
+and have no effect in the builds.
 
-Bug: b/236383669
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I505d61e2ea3fd59eb5b7488c21f017939562724f">I505d61e2ea3fd59eb5b7488c21f017939562724f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3966470">https://chromium-review.googlesource.com/c/chromium/src/+/3966470</a>
-Reviewed-by: Garrett Beaty &lt;gbeaty@google.com&gt;
-Commit-Queue: Bozydar Szadkowski &lt;bozydar@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1061088}
+We'd like to start exposing these exit codes and make them fail the
+build (crbug.com/1346781). However, this particular assert in
+web_tests' merge script will fail the script when no swarming task
+produced any JSON. This can happen somewhat frequently if shards are
+expiring. eg:
+<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/linux-wpt-identity-fyi-rel/45681/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/linux-wpt-identity-fyi-rel/45681/overview</a>
+
+Were the merge script's exit code exposed, that assert failure is
+bubbled-up and causes the build to fail early, eg:
+<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/linux-wpt-identity-fyi-rel/45682/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/linux-wpt-identity-fyi-rel/45682/overview</a>
+
+But expired tasks aren't super uncommon, and we don't want the whole
+build quitting early if web_tests' shards expire. So this makes that
+scenario non-fatal for web_tests' merge script. eg: See the first run
+of web_tests in:
+<a href="https://luci-milo.appspot.com/swarming/task/5e05dc41fb105d10">https://luci-milo.appspot.com/swarming/task/5e05dc41fb105d10</a>
+
+The suite is still considered a failure, but web_tests' merge_script
+doesn't fail the whole build. (The expirations later in the build are
+unrelated.)
+
+Bug: 1376204, 1346781
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9a31b30f31c7e4d04647b2a27aeed0c9fab696da">I9a31b30f31c7e4d04647b2a27aeed0c9fab696da</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3964769">https://chromium-review.googlesource.com/c/chromium/src/+/3964769</a>
+Reviewed-by: Weizhong Xia &lt;weizhong@google.com&gt;
+Commit-Queue: Ben Pastene &lt;bpastene@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1061108}
 </pre>
 
 </body>
