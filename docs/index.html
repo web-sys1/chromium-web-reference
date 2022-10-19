@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1060735/"> 1060735</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e4aba91622348a009fd60a1fb9753ade33a80c0c">e4aba91622348a009fd60a1fb9753ade33a80c0c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1060769/"> 1060769</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5c44ece5d285d606ef8b31302d8c95af889b8bb7">5c44ece5d285d606ef8b31302d8c95af889b8bb7</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1060676/">1060676</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dc42090b4a8d7239d439495c8074eb28f0a6327a">dc42090b4a8d7239d439495c8074eb28f0a6327a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1060740/">1060740</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/18b1296725312759525cd3b2f596b14874fda272">18b1296725312759525cd3b2f596b14874fda272</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e4aba91622348a009fd60a1fb9753ade33a80c0c
+   5c44ece5d285d606ef8b31302d8c95af889b8bb7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e4aba91622348a009fd60a1fb9753ade33a80c0c">
+    <a href="/chromium/src/+log/5c44ece5d285d606ef8b31302d8c95af889b8bb7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e4aba91622348a009fd60a1fb9753ade33a80c0c.tar.gz">
+    <a href="/chromium/src/+archive/5c44ece5d285d606ef8b31302d8c95af889b8bb7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chromium WPT Sync &lt;wpt-autoroller@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Xiaohan Wang &lt;xhwang@chromium.org&gt;
   </td>
   <td>
-   Tue Oct 18 23:12:55 2022
+   Wed Oct 19 00:24:12 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Oct 18 23:12:55 2022
+   Wed Oct 19 00:24:12 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e4aba91622348a009fd60a1fb9753ade33a80c0c/">
-    ce48c5e93712a79a7d5ea8d710cc4a2aafd830d3
+   <a href="/chromium/src/+/5c44ece5d285d606ef8b31302d8c95af889b8bb7/">
+    1f225cd0c006a33bd66cabe16478217b7d917eb2
    </a>
   </td>
  </tr>
@@ -166,46 +166,56 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e4aba91622348a009fd60a1fb9753ade33a80c0c%5E">
-    39151a70c1d63b19b22fdf38e2eb22a7926debf9
+   <a href="/chromium/src/+/5c44ece5d285d606ef8b31302d8c95af889b8bb7%5E">
+    63f921ea6ccb58a17153f904496b80c63decafb9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e4aba91622348a009fd60a1fb9753ade33a80c0c%5E%21/">
+    <a href="/chromium/src/+/5c44ece5d285d606ef8b31302d8c95af889b8bb7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Import wpt@9125e441cf246bf7a352eca3e649f205c7003967
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media: Fix InterfaceFactoryImpl renderer disconnection handling
 
-Using wpt-import in Chromium b795bab1cdc6ac33afa2ba261ed51a47fcd9d6f6.
-With Chromium commits locally applied on WPT:
-4c9aa435ea "[Mixed Content] WPT tests for sandboxed documents."
+The buildflag guards used for handling `renderer_receivers_`
+disconnection errors are different from those for `renderer_receivers_`
+declaration.
 
+When using MojoRendererService for clear playback, during tear down,
+InterfaceFactoryImpl gets disconnected first. If there's still
+MojoRendererService there, it should not be destructed, to prevent
+this disconnection error. But due to the bug, IsEmpty() returns true
+and InterfaceFactoryImpl is destructed, which then will destruct
+MediaFoundationRenderer.
 
-Note to sheriffs: This CL imports external tests and adds
-expectations for those tests; if this CL is large and causes
-a few new failures, please fix the failures by adding new
-lines to TestExpectations rather than reverting. See:
-<a href="https://chromium.googlesource.com/chromium/src/+/main/docs/testing/web_platform_tests.md">https://chromium.googlesource.com/chromium/src/+/main/docs/testing/web_platform_tests.md</a>
+This can also happen when we have both a MojoRendererService and
+MojoCdmService. This should be pretty rare since in WebMediaPlayerImpl
+holds a reference to the CDM. So this should only happen when the
+disconnection handling of the CDM and the media Renderer gets out
+of order. So when the CDM is destroyed, it'll trigger the
+OnReceiverDisconnect(), which will check IsEmpty(), which will
+return true due to this mismatch, even though the Renderer is still
+connected. This will cause the destroy callback be invoked and
+InterfaceFactoryImpl destroyed, which will destroy the
+MediaFoundationRenderer prematurely, causing a disconnection error in
+MediaFoundationRendererClient.
 
-Directory owners for changes in this CL:
-drott@chromium.org, kojii@chromium.org:
-  external/wpt/css/css-fonts
+Note that when MojoCdmService is destroyed, the underlying
+MediaFoundationCdm will not be destroyed immediately since
+MojoRendererService still holds a ref-count to it. It'll only
+be destroyed after MediaFoundationRenderer is destroyed, to prevent
+playback error caused during the tear down process.
 
-NOAUTOREVERT=true
-R=rubber-stamper@appspot.gserviceaccount.com
-
-No-Export: true
-Cq-Include-Trybots: luci.chromium.try:linux-wpt-identity-fyi-rel,linux-wpt-input-fyi-rel,linux-blink-rel
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iefdd22cbe1eb99821305e5e331cf038f9433095f">Iefdd22cbe1eb99821305e5e331cf038f9433095f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3963299">https://chromium-review.googlesource.com/c/chromium/src/+/3963299</a>
-Auto-Submit: WPT Autoroller &lt;wpt-autoroller@chops-service-accounts.iam.gserviceaccount.com&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1060735}
+Bug: 1376166
+Test: Manually tested and the problem doesn't repro anymore.
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7f3c1860c5f4b1d7ce2914ead51c1931d1d583bf">I7f3c1860c5f4b1d7ce2914ead51c1931d1d583bf</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3964850">https://chromium-review.googlesource.com/c/chromium/src/+/3964850</a>
+Commit-Queue: Xiaohan Wang &lt;xhwang@chromium.org&gt;
+Reviewed-by: Frank Li &lt;frankli@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1060769}
 </pre>
 
 </body>
