@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1061532/"> 1061532</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/882516cc2f5d61f5f2c1c297662d5165c10119f0">882516cc2f5d61f5f2c1c297662d5165c10119f0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1061551/"> 1061551</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4a77cc02bac564a9f9d4fc06c34406e3188da8f1">4a77cc02bac564a9f9d4fc06c34406e3188da8f1</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1061514/">1061514</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   882516cc2f5d61f5f2c1c297662d5165c10119f0
+   4a77cc02bac564a9f9d4fc06c34406e3188da8f1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/882516cc2f5d61f5f2c1c297662d5165c10119f0">
+    <a href="/chromium/src/+log/4a77cc02bac564a9f9d4fc06c34406e3188da8f1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/882516cc2f5d61f5f2c1c297662d5165c10119f0.tar.gz">
+    <a href="/chromium/src/+archive/4a77cc02bac564a9f9d4fc06c34406e3188da8f1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ryan Sultanem &lt;rsult@google.com&gt;
+   Steinar H. Gunderson &lt;sesse@chromium.org&gt;
   </td>
   <td>
-   Thu Oct 20 12:39:12 2022
+   Thu Oct 20 13:16:48 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Oct 20 12:39:12 2022
+   Thu Oct 20 13:16:48 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/882516cc2f5d61f5f2c1c297662d5165c10119f0/">
-    c21bf9e71338560dba9bc7571c264371e4001c97
+   <a href="/chromium/src/+/4a77cc02bac564a9f9d4fc06c34406e3188da8f1/">
+    008d1cd55aa9e0bd9de0d0e7952a5d003ffa2415
    </a>
   </td>
  </tr>
@@ -166,46 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/882516cc2f5d61f5f2c1c297662d5165c10119f0%5E">
-    be0e526d7edd35b2f3b2f61192032a09282d07ee
+   <a href="/chromium/src/+/4a77cc02bac564a9f9d4fc06c34406e3188da8f1%5E">
+    ec8ef89b5024482fa73339c6a3ac32ed23452c0e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/882516cc2f5d61f5f2c1c297662d5165c10119f0%5E%21/">
+    <a href="/chromium/src/+/4a77cc02bac564a9f9d4fc06c34406e3188da8f1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ContentSettings Histogram not to record metrics for irregular Profiles
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[css-nesting] Fix a DCHECK when CSS Nesting is active.
 
-ContentSettings.* histograms used to record metrics for all profiles,
-including irregular ones (Incognito, Guest, System Profile and other
-ChromeOS specific irregular profiles).
+In the case where we thought we could use lazy parsing but ended up
+backtracking and doing eager parsing instead (because we thought we
+saw a left brace within the block), we would not properly clear out
+the arena, giving a small temporary memory leak and a DCHECK failure.
 
-Now those histograms only record metrics for Regular user profiles.
+In this specific test case, the check for braces gave a false positive
+(a — sign that, after conversion to UTF-16, happens to include a
+left-brace ASCII byte), but this could probably happen in real
+situations, too.
 
-Renamed the histograms to follow the following logic:
+Fix by using a scope guard to properly clear it out in all code paths.
+Since we don't seem to have anything like scope_guard, we simulate it
+using an unique_ptr with a custom deleter.
 
-ContentSettings.{RegularProfileFiltered}Default*
-ContentSettings.{RegularProfileFiltered}Exceptions.*
-
-Where RegularProfileFiltered={"","RegularProfile."}
-""                 -&gt; old obsolete histograms (all profile types).
-"RegularProfile."  -&gt; new histograms (regular profile only).
-
-
-Bug: 1259891,1284659
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8d2e6e5aa23b2bb2d880eabaaed9f2abc47a275b">I8d2e6e5aa23b2bb2d880eabaaed9f2abc47a275b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3891582">https://chromium-review.googlesource.com/c/chromium/src/+/3891582</a>
-Reviewed-by: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
-Commit-Queue: Ryan Sultanem &lt;rsult@google.com&gt;
-Reviewed-by: David Roger &lt;droger@chromium.org&gt;
-Reviewed-by: Mark Pearson &lt;mpearson@chromium.org&gt;
-Reviewed-by: Colin Blundell &lt;blundell@chromium.org&gt;
-Reviewed-by: Balazs Engedy &lt;engedy@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1061532}
+Fixed: 1376485
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id9b2a6083be590661ed81823b3ba84d3dc0d67de">Id9b2a6083be590661ed81823b3ba84d3dc0d67de</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3968071">https://chromium-review.googlesource.com/c/chromium/src/+/3968071</a>
+Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+Commit-Queue: Steinar H Gunderson &lt;sesse@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1061551}
 </pre>
 
 </body>
