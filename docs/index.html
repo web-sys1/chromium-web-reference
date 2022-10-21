@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1062013/"> 1062013</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/83c773cdd4a65fecfcab9d3f699bb9a81ba43c28">83c773cdd4a65fecfcab9d3f699bb9a81ba43c28</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1062015/"> 1062015</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4961fe3ac6b8b42767e5ec30fbeced1d84829ef9">4961fe3ac6b8b42767e5ec30fbeced1d84829ef9</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1062006/">1062006</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fcca26ba12e7e20193fa64cab0949185d502e466">fcca26ba12e7e20193fa64cab0949185d502e466</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1062013/">1062013</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/83c773cdd4a65fecfcab9d3f699bb9a81ba43c28">83c773cdd4a65fecfcab9d3f699bb9a81ba43c28</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   83c773cdd4a65fecfcab9d3f699bb9a81ba43c28
+   4961fe3ac6b8b42767e5ec30fbeced1d84829ef9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/83c773cdd4a65fecfcab9d3f699bb9a81ba43c28">
+    <a href="/chromium/src/+log/4961fe3ac6b8b42767e5ec30fbeced1d84829ef9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/83c773cdd4a65fecfcab9d3f699bb9a81ba43c28.tar.gz">
+    <a href="/chromium/src/+archive/4961fe3ac6b8b42767e5ec30fbeced1d84829ef9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Nancy Wang &lt;nancylingwang@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 21 08:43:33 2022
+   Fri Oct 21 09:35:04 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 21 08:43:33 2022
+   Fri Oct 21 09:35:04 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/83c773cdd4a65fecfcab9d3f699bb9a81ba43c28/">
-    44a3ad04bc2ce54e06913671ea71e2e785783c9f
+   <a href="/chromium/src/+/4961fe3ac6b8b42767e5ec30fbeced1d84829ef9/">
+    cd7b8c0d08bb87111c47131445ef6158d2c60488
    </a>
   </td>
  </tr>
@@ -166,41 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/83c773cdd4a65fecfcab9d3f699bb9a81ba43c28%5E">
-    c136aad8c599d9b8d3dfd51c91fca2d5a02e0a2a
+   <a href="/chromium/src/+/4961fe3ac6b8b42767e5ec30fbeced1d84829ef9%5E">
+    4bfb58585ac07951d75a84c4378f11d93dd56b4e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/83c773cdd4a65fecfcab9d3f699bb9a81ba43c28%5E%21/">
+    <a href="/chromium/src/+/4961fe3ac6b8b42767e5ec30fbeced1d84829ef9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Fuchsia SDK from 10.20221020.1.1 to 10.20221020.2.1
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix the website metrics usage time when the tab is closed.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/fuchsia-sdk-chromium-autoroll">https://autoroll.skia.org/r/fuchsia-sdk-chromium-autoroll</a>
-Please CC chrome-fuchsia-gardener@grotations.appspotmail.com on the revert to ensure that a human
-is aware of the problem.
+When the tab is closed, SetTabInActivated is called to calculate the
+usage time in the past 5 minutes. However, the usage time is not added
+to running_time_in_two_hours. SaveUsageTime is responsible for
+writing the 5 minutes time to running_time_in_two_hours. Well, if
+SaveUsageTime is not called by OnFiveMinutes, when OnTwoHours is called,
+running_time_in_two_hours is recorded. Since the tab is closed,
+url_info_ is updated to record the opened tabs usage time only, then
+the closed tab usage time is lost.
 
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+Modify SetTabInActivated to add the usage time in the past 5 minutes to
+running_time_in_two_hours for the closed tabs.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+BUG=1377175
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Tbr: chrome-fuchsia-gardener@grotations.appspotmail.com
-Disable-Retries: true
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I41ddf189436e176ded0a47660d9abbe764c4a11e">I41ddf189436e176ded0a47660d9abbe764c4a11e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3969363">https://chromium-review.googlesource.com/c/chromium/src/+/3969363</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1062013}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7cf651e380ef7ce9587d1096054b6b21972b4e6f">I7cf651e380ef7ce9587d1096054b6b21972b4e6f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3970018">https://chromium-review.googlesource.com/c/chromium/src/+/3970018</a>
+Commit-Queue: Nancy Wang &lt;nancylingwang@chromium.org&gt;
+Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1062015}
 </pre>
 
 </body>
