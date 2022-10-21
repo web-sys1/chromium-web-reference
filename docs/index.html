@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1062015/"> 1062015</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4961fe3ac6b8b42767e5ec30fbeced1d84829ef9">4961fe3ac6b8b42767e5ec30fbeced1d84829ef9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1062016/"> 1062016</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/66180058946469c1f3ecedc028fc22e2ea15b8bb">66180058946469c1f3ecedc028fc22e2ea15b8bb</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1062013/">1062013</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/83c773cdd4a65fecfcab9d3f699bb9a81ba43c28">83c773cdd4a65fecfcab9d3f699bb9a81ba43c28</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1062015/">1062015</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4961fe3ac6b8b42767e5ec30fbeced1d84829ef9">4961fe3ac6b8b42767e5ec30fbeced1d84829ef9</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4961fe3ac6b8b42767e5ec30fbeced1d84829ef9
+   66180058946469c1f3ecedc028fc22e2ea15b8bb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4961fe3ac6b8b42767e5ec30fbeced1d84829ef9">
+    <a href="/chromium/src/+log/66180058946469c1f3ecedc028fc22e2ea15b8bb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4961fe3ac6b8b42767e5ec30fbeced1d84829ef9.tar.gz">
+    <a href="/chromium/src/+archive/66180058946469c1f3ecedc028fc22e2ea15b8bb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nancy Wang &lt;nancylingwang@chromium.org&gt;
+   Asami Doi &lt;asamidoi@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 21 09:35:04 2022
+   Fri Oct 21 10:47:37 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 21 09:35:04 2022
+   Fri Oct 21 10:47:37 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4961fe3ac6b8b42767e5ec30fbeced1d84829ef9/">
-    cd7b8c0d08bb87111c47131445ef6158d2c60488
+   <a href="/chromium/src/+/66180058946469c1f3ecedc028fc22e2ea15b8bb/">
+    48e6f1661f58ed9d7b747d652f1f965d2a7f4413
    </a>
   </td>
  </tr>
@@ -166,39 +166,28 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4961fe3ac6b8b42767e5ec30fbeced1d84829ef9%5E">
-    4bfb58585ac07951d75a84c4378f11d93dd56b4e
+   <a href="/chromium/src/+/66180058946469c1f3ecedc028fc22e2ea15b8bb%5E">
+    4961fe3ac6b8b42767e5ec30fbeced1d84829ef9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4961fe3ac6b8b42767e5ec30fbeced1d84829ef9%5E%21/">
+    <a href="/chromium/src/+/66180058946469c1f3ecedc028fc22e2ea15b8bb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix the website metrics usage time when the tab is closed.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prerender: extend expired date for prerendering metrics
 
-When the tab is closed, SetTabInActivated is called to calculate the
-usage time in the past 5 minutes. However, the usage time is not added
-to running_time_in_two_hours. SaveUsageTime is responsible for
-writing the 5 minutes time to running_time_in_two_hours. Well, if
-SaveUsageTime is not called by OnFiveMinutes, when OnTwoHours is called,
-running_time_in_two_hours is recorded. Since the tab is closed,
-url_info_ is updated to record the opened tabs usage time only, then
-the closed tab usage time is lost.
-
-Modify SetTabInActivated to add the usage time in the past 5 minutes to
-running_time_in_two_hours for the closed tabs.
-
-BUG=1377175
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7cf651e380ef7ce9587d1096054b6b21972b4e6f">I7cf651e380ef7ce9587d1096054b6b21972b4e6f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3970018">https://chromium-review.googlesource.com/c/chromium/src/+/3970018</a>
-Commit-Queue: Nancy Wang &lt;nancylingwang@chromium.org&gt;
-Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1062015}
+Bug: 1375737, 1375736, 1375735, 1375734, 1375733, 1375732, 1375731, 1375730, 1375729
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6346c54d31f220a156f60b8ee3c603f6197a9761">I6346c54d31f220a156f60b8ee3c603f6197a9761</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3970085">https://chromium-review.googlesource.com/c/chromium/src/+/3970085</a>
+Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Commit-Queue: Asami Doi &lt;asamidoi@chromium.org&gt;
+Commit-Queue: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Auto-Submit: Asami Doi &lt;asamidoi@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1062016}
 </pre>
 
 </body>
