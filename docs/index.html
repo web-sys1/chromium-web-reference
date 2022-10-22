@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1062392/"> 1062392</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/da5d2ffb6dd8d0face18a6249d35bd5bc32263f2">da5d2ffb6dd8d0face18a6249d35bd5bc32263f2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1062405/"> 1062405</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4d6e6bbfa187c2adfdf5d89cdb54e25e1528c308">4d6e6bbfa187c2adfdf5d89cdb54e25e1528c308</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1062382/">1062382</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   da5d2ffb6dd8d0face18a6249d35bd5bc32263f2
+   4d6e6bbfa187c2adfdf5d89cdb54e25e1528c308
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/da5d2ffb6dd8d0face18a6249d35bd5bc32263f2">
+    <a href="/chromium/src/+log/4d6e6bbfa187c2adfdf5d89cdb54e25e1528c308">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/da5d2ffb6dd8d0face18a6249d35bd5bc32263f2.tar.gz">
+    <a href="/chromium/src/+archive/4d6e6bbfa187c2adfdf5d89cdb54e25e1528c308.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Aaron Leventhal &lt;aleventhal@google.com&gt;
+   Peter Kasting &lt;pkasting@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 21 22:56:08 2022
+   Fri Oct 21 23:33:10 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 21 22:56:08 2022
+   Fri Oct 21 23:33:10 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/da5d2ffb6dd8d0face18a6249d35bd5bc32263f2/">
-    8875edcb711c149279c10644f20552a7baaa7cf2
+   <a href="/chromium/src/+/4d6e6bbfa187c2adfdf5d89cdb54e25e1528c308/">
+    819fed0e43599335c3718db7b85448ec4412bfc7
    </a>
   </td>
  </tr>
@@ -166,49 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/da5d2ffb6dd8d0face18a6249d35bd5bc32263f2%5E">
-    57da01059daf87ef4f90373e9ae69c7fa7a02d9c
+   <a href="/chromium/src/+/4d6e6bbfa187c2adfdf5d89cdb54e25e1528c308%5E">
+    18c1fc80abe3735584fa4ac7e07f2f8ff74af96c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/da5d2ffb6dd8d0face18a6249d35bd5bc32263f2%5E%21/">
+    <a href="/chromium/src/+/4d6e6bbfa187c2adfdf5d89cdb54e25e1528c308%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move a11y to post-lifecycle steps (iteration #4)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Enable C++20 for all platforms but LaCrOS and Fuchsia.
 
-A11y is moved to the end of the document lifecycle, where it can
-occur in parallel with other tasks.
+This increases the APK size by ~0.2% on Android, which is due to a
+host of small inlinining losses around the codebase. Looking into
+these more, I suspect many are due to increased inlining of things
+like vector methods in constructors/destructors (vector has become
+constexpr). It's not clear we can avoid this except by filing targeted
+bugs against Clang/libc++ for bad heuristics.
 
-Parts of the code that used to force layout updates in order to
-update the AX tree now call UpdateAXForAllDocuments(), a new
-method introduced in the previous CL, which first updates the
-lifecycle and then manually updates the AX tree.
-
-Additional code cleanups in AXObjectCacheImpl related to
-popups were also now possible.
-
-Test changes:
-* Changes to css-display-expected-win.txt and content-editable-notifications.html were due to a subtle change in event ordering,
-but are still correct.
-
-Follow-ups:
-* Try DCHECK(!IsFrozen()) inside of UpdateAXForAllDocuments().
-* Update SCOPED_DISALLOW_LIFECYCLE_TRANSITION to use document_ and
-  popup_document_ and remove the argument.
-
-Bug: None
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If01ee1b43672e58be5a120eaa7cc9572170f6257">If01ee1b43672e58be5a120eaa7cc9572170f6257</a>
-Cq-Do-Not-Cancel-Tryjobs: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3964415">https://chromium-review.googlesource.com/c/chromium/src/+/3964415</a>
-Reviewed-by: Chris Harrelson &lt;chrishtr@chromium.org&gt;
-Commit-Queue: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
-Reviewed-by: Stefan Zager &lt;szager@chromium.org&gt;
-Reviewed-by: David Tseng &lt;dtseng@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1062392}
+Bug: 1284275
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iff7f04eac9b4af09bb9239b80f9a5c8ce929f329">Iff7f04eac9b4af09bb9239b80f9a5c8ce929f329</a>
+Binary-Size: Size increase is unavoidable (see above).
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3946562">https://chromium-review.googlesource.com/c/chromium/src/+/3946562</a>
+Commit-Queue: Peter Kasting &lt;pkasting@chromium.org&gt;
+Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Reviewed-by: Danil Chapovalov &lt;danilchap@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1062405}
 </pre>
 
 </body>
