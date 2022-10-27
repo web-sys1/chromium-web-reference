@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1064397/"> 1064397</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/764b352acebd1a9b5ead31d74b9a95473f8d5ca9">764b352acebd1a9b5ead31d74b9a95473f8d5ca9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1064418/"> 1064418</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c754fe84eee28a89e673f9fce6d4ccf7bb9b1967">c754fe84eee28a89e673f9fce6d4ccf7bb9b1967</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1064339/">1064339</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/aff78ade388ce3047619f49bd62567a48ab42da6">aff78ade388ce3047619f49bd62567a48ab42da6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1064399/">1064399</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/33a3c9e0706eb20477c84e43ae6aa995d6f63703">33a3c9e0706eb20477c84e43ae6aa995d6f63703</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   764b352acebd1a9b5ead31d74b9a95473f8d5ca9
+   c754fe84eee28a89e673f9fce6d4ccf7bb9b1967
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/764b352acebd1a9b5ead31d74b9a95473f8d5ca9">
+    <a href="/chromium/src/+log/c754fe84eee28a89e673f9fce6d4ccf7bb9b1967">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/764b352acebd1a9b5ead31d74b9a95473f8d5ca9.tar.gz">
+    <a href="/chromium/src/+archive/c754fe84eee28a89e673f9fce6d4ccf7bb9b1967.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Bob Beck &lt;bbe@google.com&gt;
+   Andrey Davydov &lt;andreydav@google.com&gt;
   </td>
   <td>
-   Thu Oct 27 17:09:04 2022
+   Thu Oct 27 17:44:36 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Oct 27 17:09:04 2022
+   Thu Oct 27 17:44:36 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/764b352acebd1a9b5ead31d74b9a95473f8d5ca9/">
-    78c3aeda8199509d6de2ba1f1b672af67430f981
+   <a href="/chromium/src/+/c754fe84eee28a89e673f9fce6d4ccf7bb9b1967/">
+    d877a26e2f5640a189cc6828f7bf735dd8a9ef19
    </a>
   </td>
  </tr>
@@ -166,43 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/764b352acebd1a9b5ead31d74b9a95473f8d5ca9%5E">
-    22436c3f6945fda31c6590bf3e5ad79a5214dd84
+   <a href="/chromium/src/+/c754fe84eee28a89e673f9fce6d4ccf7bb9b1967%5E">
+    2a0d1ebe3d4bc71730282abf0e31561b56fe705e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/764b352acebd1a9b5ead31d74b9a95473f8d5ca9%5E%21/">
+    <a href="/chromium/src/+/c754fe84eee28a89e673f9fce6d4ccf7bb9b1967%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove use of base::TimeTicks from net/cert/pki
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove wrong policy dependency for online reauth flow in dev builds
 
-This removes any notion of what a deadline for path building
-is from the path builder - Instead the delegate has a virtual
-IsDeadlineExceeded function that can be used by the caller
-to tell the path builder when the deadline is exceeded and path
-building should cease.
+Online reauth on the lock screen always goes through
+`InSessionPasswordSyncManager::CreateAndShowDialog()`. With DCHECKs
+enabled this function hits NOTREACHED if
+`LockScreenReauthenticationEnabled` policy is disabled. This policy -
+despite the name - should only affect password sync flow, and not all
+online reauth flows on the lock screen. This cl removes this
+uniintendend dependency.
 
-This adds a manually settable "deadline has expired" to the
-simple path builder which is false by default but can be
-set to true for testing. the path builder unit tests are
-adapted to use this method rather than the mock base::time
-clock.
-
-cert_verify_proc_builtin is changed to provide an implementation
-of IsDeadlineExceeded in the delegate that does the same
-thing as the original logic with base::TimeTicks within the
-path builder.
-
-Bug: 1322914
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib97a1b6982616bfa8654036f0b311f727e62440a">Ib97a1b6982616bfa8654036f0b311f727e62440a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3970635">https://chromium-review.googlesource.com/c/chromium/src/+/3970635</a>
-Commit-Queue: Bob Beck &lt;bbe@google.com&gt;
-Reviewed-by: Matt Mueller &lt;mattm@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1064397}
+Bug: 1377017
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4dfe53497bcb3fbf255d72f89e3282ee0769dab8">I4dfe53497bcb3fbf255d72f89e3282ee0769dab8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3986430">https://chromium-review.googlesource.com/c/chromium/src/+/3986430</a>
+Reviewed-by: Roman Sorokin &lt;rsorokin@google.com&gt;
+Commit-Queue: Andrey Davydov &lt;andreydav@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1064418}
 </pre>
 
 </body>
