@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1064548/"> 1064548</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dcfba32d18447026dabaa1e174b798347deab863">dcfba32d18447026dabaa1e174b798347deab863</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1064562/"> 1064562</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/92eb8964068f195cb355242ba64d6d8f53c9680e">92eb8964068f195cb355242ba64d6d8f53c9680e</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1064502/">1064502</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   dcfba32d18447026dabaa1e174b798347deab863
+   92eb8964068f195cb355242ba64d6d8f53c9680e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/dcfba32d18447026dabaa1e174b798347deab863">
+    <a href="/chromium/src/+log/92eb8964068f195cb355242ba64d6d8f53c9680e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/dcfba32d18447026dabaa1e174b798347deab863.tar.gz">
+    <a href="/chromium/src/+archive/92eb8964068f195cb355242ba64d6d8f53c9680e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Morten Stenshorne &lt;mstensho@chromium.org&gt;
+   Abbas Nayebi &lt;nayebi@google.com&gt;
   </td>
   <td>
-   Thu Oct 27 21:29:15 2022
+   Thu Oct 27 21:59:26 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Oct 27 21:29:15 2022
+   Thu Oct 27 21:59:26 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/dcfba32d18447026dabaa1e174b798347deab863/">
-    e3e358a28b63a2a49db0390dc701a5acb83ce0c6
+   <a href="/chromium/src/+/92eb8964068f195cb355242ba64d6d8f53c9680e/">
+    01b12e419708d8bda700d295b50979a581c676a7
    </a>
   </td>
  </tr>
@@ -166,52 +166,27 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/dcfba32d18447026dabaa1e174b798347deab863%5E">
-    bf298c18a0f5335ec8fc134fff6cba42520cbbed
+   <a href="/chromium/src/+/92eb8964068f195cb355242ba64d6d8f53c9680e%5E">
+    b1367b85314939ee3d7b8a4ed53a046af778fcad
    </a>
    <span>
     [
-    <a href="/chromium/src/+/dcfba32d18447026dabaa1e174b798347deab863%5E%21/">
+    <a href="/chromium/src/+/92eb8964068f195cb355242ba64d6d8f53c9680e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Ignore repeated table sections in the block fragmentation machinery.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Deleting copy/move constructors of SoftBindAttestationFlow::Session.
 
-This means adjusting the fragmentainer block-offset to where it would
-have been without any repeated table header, and shrink the
-fragmentainer block-size to exclude both the repeated header and the
-repeated footer (if any).
-
-We used to end up in an infinite loop if there was tall monolithic
-content after a repeated header, because we'd allow a break before it,
-even if we hadn't placed any content yet. But if the fragmentainer
-block-offset is 0 at this point, we'll refuse to break. We either need a
-positive fragmentainer block-offset, or at the very least, already
-having laid out some content (even if it has zero block-size), in order
-to allow a break. We had similar problems with repeated headers when
-border-spacing was larger than the block-size of the fragmentainer.
-In addition to the block-size of the header itself, just exclude
-border-spacing preceding the repeated header and the border-spacing
-that comes after the repeated header, so that whatever (a non-repeated
-section) comes right after that is seen as the start of the
-fragmentainer (lest we be tempted to break there).
-
-The correctness test included isn't very spectacular (although it neither freezes nor shows any red), since the repeated header had to be
-invisible, in order not to trigger crbug.com/1378607 . We create too
-many fragments in this case, because there's some problem with the table
-layout code that doesn't handle fragmentainer overflow correctly,
-resulting in a taller table than what we should have, and therefore
-excess fragmentainers.
-
-Bug: 1378576, 1378661
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I938cb01a83d293bef5e8953248b726f01353dcb3">I938cb01a83d293bef5e8953248b726f01353dcb3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3981856">https://chromium-review.googlesource.com/c/chromium/src/+/3981856</a>
-Reviewed-by: Alison Maher &lt;almaher@microsoft.com&gt;
-Commit-Queue: Morten Stenshorne &lt;mstensho@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1064548}
+Bug: b/240239595
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ife1d0b560a668f69dfebe2ffcef055c0f0e5405f">Ife1d0b560a668f69dfebe2ffcef055c0f0e5405f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3980196">https://chromium-review.googlesource.com/c/chromium/src/+/3980196</a>
+Commit-Queue: Darren Krahn &lt;dkrahn@chromium.org&gt;
+Reviewed-by: Darren Krahn &lt;dkrahn@chromium.org&gt;
+Auto-Submit: Abbas Nayebi &lt;nayebi@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1064562}
 </pre>
 
 </body>
