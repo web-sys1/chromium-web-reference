@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1064536/"> 1064536</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/29625710fae34d7c20e3dbe86dd108e821688969">29625710fae34d7c20e3dbe86dd108e821688969</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1064548/"> 1064548</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/dcfba32d18447026dabaa1e174b798347deab863">dcfba32d18447026dabaa1e174b798347deab863</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1064443/">1064443</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3c4137915b045ee31f131686fc2edd7b34dc0de1">3c4137915b045ee31f131686fc2edd7b34dc0de1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1064502/">1064502</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/aafc68d7b7e792dba1e757d61d2ed97a5ff558ea">aafc68d7b7e792dba1e757d61d2ed97a5ff558ea</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   29625710fae34d7c20e3dbe86dd108e821688969
+   dcfba32d18447026dabaa1e174b798347deab863
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/29625710fae34d7c20e3dbe86dd108e821688969">
+    <a href="/chromium/src/+log/dcfba32d18447026dabaa1e174b798347deab863">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/29625710fae34d7c20e3dbe86dd108e821688969.tar.gz">
+    <a href="/chromium/src/+archive/dcfba32d18447026dabaa1e174b798347deab863.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Judy Wang &lt;shidi@chromium.org&gt;
+   Morten Stenshorne &lt;mstensho@chromium.org&gt;
   </td>
   <td>
-   Thu Oct 27 20:55:19 2022
+   Thu Oct 27 21:29:15 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Oct 27 20:55:19 2022
+   Thu Oct 27 21:29:15 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/29625710fae34d7c20e3dbe86dd108e821688969/">
-    3e3caeb265b85fcdd8b00c7b9bdde7da82e05550
+   <a href="/chromium/src/+/dcfba32d18447026dabaa1e174b798347deab863/">
+    e3e358a28b63a2a49db0390dc701a5acb83ce0c6
    </a>
   </td>
  </tr>
@@ -166,33 +166,52 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/29625710fae34d7c20e3dbe86dd108e821688969%5E">
-    d420ca3ad03a8b1dc93501294bf5653a5306f2d8
+   <a href="/chromium/src/+/dcfba32d18447026dabaa1e174b798347deab863%5E">
+    bf298c18a0f5335ec8fc134fff6cba42520cbbed
    </a>
    <span>
     [
-    <a href="/chromium/src/+/29625710fae34d7c20e3dbe86dd108e821688969%5E%21/">
+    <a href="/chromium/src/+/dcfba32d18447026dabaa1e174b798347deab863%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">FloatWindow: Keyboard event blocking when switching desk.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Ignore repeated table sections in the block fragmentation machinery.
 
-Fixed the issue where keyboard events are all blocked on an new empty
-desk when we have a floated window on another inactive desk.
+This means adjusting the fragmentainer block-offset to where it would
+have been without any repeated table header, and shrink the
+fragmentainer block-size to exclude both the repeated header and the
+repeated footer (if any).
 
-The floated window on the inactive desk was mistakenly treated as a
-to be active window even it's in an inactive desk in focus rules.
+We used to end up in an infinite loop if there was tall monolithic
+content after a repeated header, because we'd allow a break before it,
+even if we hadn't placed any content yet. But if the fragmentainer
+block-offset is 0 at this point, we'll refuse to break. We either need a
+positive fragmentainer block-offset, or at the very least, already
+having laid out some content (even if it has zero block-size), in order
+to allow a break. We had similar problems with repeated headers when
+border-spacing was larger than the block-size of the fragmentainer.
+In addition to the block-size of the header itself, just exclude
+border-spacing preceding the repeated header and the border-spacing
+that comes after the repeated header, so that whatever (a non-repeated
+section) comes right after that is seen as the start of the
+fragmentainer (lest we be tempted to break there).
 
-Test: Manual and Unit test.
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib0f11bb613a331f2a85723bb347a596d26a81663">Ib0f11bb613a331f2a85723bb347a596d26a81663</a>
-Fixed: b/252504839
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3979480">https://chromium-review.googlesource.com/c/chromium/src/+/3979480</a>
-Commit-Queue: Judy Wang &lt;shidi@chromium.org&gt;
-Reviewed-by: Ahmed Fakhry &lt;afakhry@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1064536}
+The correctness test included isn't very spectacular (although it neither freezes nor shows any red), since the repeated header had to be
+invisible, in order not to trigger crbug.com/1378607 . We create too
+many fragments in this case, because there's some problem with the table
+layout code that doesn't handle fragmentainer overflow correctly,
+resulting in a taller table than what we should have, and therefore
+excess fragmentainers.
+
+Bug: 1378576, 1378661
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I938cb01a83d293bef5e8953248b726f01353dcb3">I938cb01a83d293bef5e8953248b726f01353dcb3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3981856">https://chromium-review.googlesource.com/c/chromium/src/+/3981856</a>
+Reviewed-by: Alison Maher &lt;almaher@microsoft.com&gt;
+Commit-Queue: Morten Stenshorne &lt;mstensho@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1064548}
 </pre>
 
 </body>
