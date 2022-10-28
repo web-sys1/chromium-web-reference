@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1064793/"> 1064793</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/99f2486cec0ea3bb49e676c5d071c5ab6c32fc3a">99f2486cec0ea3bb49e676c5d071c5ab6c32fc3a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1064805/"> 1064805</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a8c5f7011e48e757044c9037dc90752c7f109ecc">a8c5f7011e48e757044c9037dc90752c7f109ecc</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1064775/">1064775</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/56587d02b6624dcd70f90779a6ae36849aef153f">56587d02b6624dcd70f90779a6ae36849aef153f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1064799/">1064799</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d800b820322d7bbe4cceead93ec8509731e971ef">d800b820322d7bbe4cceead93ec8509731e971ef</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   99f2486cec0ea3bb49e676c5d071c5ab6c32fc3a
+   a8c5f7011e48e757044c9037dc90752c7f109ecc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/99f2486cec0ea3bb49e676c5d071c5ab6c32fc3a">
+    <a href="/chromium/src/+log/a8c5f7011e48e757044c9037dc90752c7f109ecc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/99f2486cec0ea3bb49e676c5d071c5ab6c32fc3a.tar.gz">
+    <a href="/chromium/src/+archive/a8c5f7011e48e757044c9037dc90752c7f109ecc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kartar Singh &lt;kartarsingh@google.com&gt;
+   Christoph Schwering &lt;schwering@google.com&gt;
   </td>
   <td>
-   Fri Oct 28 11:45:27 2022
+   Fri Oct 28 13:02:39 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 28 11:45:27 2022
+   Fri Oct 28 13:02:39 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/99f2486cec0ea3bb49e676c5d071c5ab6c32fc3a/">
-    51c6660eb4934b5a76a39d7a30360837216a9df1
+   <a href="/chromium/src/+/a8c5f7011e48e757044c9037dc90752c7f109ecc/">
+    d814e17fcd6234a421fc32e560ef4f8f0e62cc17
    </a>
   </td>
  </tr>
@@ -166,54 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/99f2486cec0ea3bb49e676c5d071c5ab6c32fc3a%5E">
-    7f498d422be2714b56ccd245882053b18f62f98a
+   <a href="/chromium/src/+/a8c5f7011e48e757044c9037dc90752c7f109ecc%5E">
+    46702c16fea03a69f51731f9876a18a5f25e3303
    </a>
    <span>
     [
-    <a href="/chromium/src/+/99f2486cec0ea3bb49e676c5d071c5ab6c32fc3a%5E%21/">
+    <a href="/chromium/src/+/a8c5f7011e48e757044c9037dc90752c7f109ecc%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Add modules from libunwindstack directly to module_cache"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Autofill] Work around flickering keyboard with aync parsing + TTF.
 
-This reverts commit b1f445bbf4ca83faa222721db774554203b4617d.
+Asynchronous parsing breaks TTF's assumption that
+BrowserAutofillManager::OnAskForValuesToFillImpl() is called before
+RenderWidgetHostImpl::TextInputStateChanged().
 
-Reason for revert: Some native modules in traces will be missing build ids as a result. Since we are creating NonElfModule objects for all the associated maps. And the GetId() for NonElfModule objects is a trivial implementation returning empty string.
-
-Original change's description:
-&gt; Add modules from libunwindstack directly to module_cache
-&gt;
-&gt; libunwindstack's Unwinder object populates vector of frames
-&gt; which already have pointer to associated MapInfo object.
-&gt; As per the current implementation we were querying Maps
-&gt; object again to get the associated MapInfo object for creating a
-&gt; Module object. With this CL we avoid doing the redundant
-&gt; query(maps_-&gt;Find()) on the Maps object.
-&gt; This would also solve the issue of "missing" module info
-&gt; for interpreted java frames.
-&gt;
-&gt; Bug: 1370988, b/246509988
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ida7c7d97f7d0afc675a6bb08a4d6b070345f079d">Ida7c7d97f7d0afc675a6bb08a4d6b070345f079d</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3981354">https://chromium-review.googlesource.com/c/chromium/src/+/3981354</a>
-&gt; Reviewed-by: Tushar Agarwal &lt;agarwaltushar@google.com&gt;
-&gt; Reviewed-by: Mike Wittman &lt;wittman@chromium.org&gt;
-&gt; Commit-Queue: Kartar Singh &lt;kartarsingh@google.com&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1064538}
-
-Bug: 1370988, b/246509988
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If25a9fa9309d3d5ea6dcd8378eff9e2fdc6b58ec">If25a9fa9309d3d5ea6dcd8378eff9e2fdc6b58ec</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3990407">https://chromium-review.googlesource.com/c/chromium/src/+/3990407</a>
-Reviewed-by: Tushar Agarwal &lt;agarwaltushar@google.com&gt;
-Reviewed-by: Kartar Singh &lt;kartarsingh@google.com&gt;
-Commit-Queue: Kartar Singh &lt;kartarsingh@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1064793}
+Bug: 1309848, 1345089, 1375966, 1379149
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic758a64de5be269b3c39cffd9562bf7b8248e47f">Ic758a64de5be269b3c39cffd9562bf7b8248e47f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3990707">https://chromium-review.googlesource.com/c/chromium/src/+/3990707</a>
+Commit-Queue: Christoph Schwering &lt;schwering@google.com&gt;
+Reviewed-by: Norge Vizcay &lt;vizcay@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1064805}
 </pre>
 
 </body>
