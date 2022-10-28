@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1064815/"> 1064815</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/762406aca65eda2904bc1b7dc6b5dc8cd2eb0b16">762406aca65eda2904bc1b7dc6b5dc8cd2eb0b16</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1064819/"> 1064819</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0a19cc66c50c337316960533316d0c5e68cb6c4d">0a19cc66c50c337316960533316d0c5e68cb6c4d</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1064799/">1064799</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d800b820322d7bbe4cceead93ec8509731e971ef">d800b820322d7bbe4cceead93ec8509731e971ef</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1064815/">1064815</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/762406aca65eda2904bc1b7dc6b5dc8cd2eb0b16">762406aca65eda2904bc1b7dc6b5dc8cd2eb0b16</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   762406aca65eda2904bc1b7dc6b5dc8cd2eb0b16
+   0a19cc66c50c337316960533316d0c5e68cb6c4d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/762406aca65eda2904bc1b7dc6b5dc8cd2eb0b16">
+    <a href="/chromium/src/+log/0a19cc66c50c337316960533316d0c5e68cb6c4d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/762406aca65eda2904bc1b7dc6b5dc8cd2eb0b16.tar.gz">
+    <a href="/chromium/src/+archive/0a19cc66c50c337316960533316d0c5e68cb6c4d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Greg Thompson &lt;grt@chromium.org&gt;
+   Fredrik Söderquist &lt;fs@opera.com&gt;
   </td>
   <td>
-   Fri Oct 28 13:39:05 2022
+   Fri Oct 28 14:09:45 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 28 13:39:05 2022
+   Fri Oct 28 14:09:45 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/762406aca65eda2904bc1b7dc6b5dc8cd2eb0b16/">
-    28caf99c6bcfc99ec4f84b00c089d2b0014915df
+   <a href="/chromium/src/+/0a19cc66c50c337316960533316d0c5e68cb6c4d/">
+    baf047d646e055515148534f40edf38c833e857b
    </a>
   </td>
  </tr>
@@ -166,50 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/762406aca65eda2904bc1b7dc6b5dc8cd2eb0b16%5E">
-    fc732ebc0655957c8919af786bd6e5a0d0aab9b4
+   <a href="/chromium/src/+/0a19cc66c50c337316960533316d0c5e68cb6c4d%5E">
+    d50a9f0b4dfb949510faee77f6e012c8c5997de7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/762406aca65eda2904bc1b7dc6b5dc8cd2eb0b16%5E%21/">
+    <a href="/chromium/src/+/0a19cc66c50c337316960533316d0c5e68cb6c4d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Enable Microtask queues per WindowAgent."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Convert a bunch of static_cast&lt;T*&gt; to To&lt;T&gt; casts
 
-This reverts commit 01e7a24c56eff77a9bae20b4d6b75b4288c4d6b0.
+There should be no down-side to using To&lt;&gt; (and variants) - it will
+verify the cast during debug, and is shorter to boot. Thus also drop any
+redundant type-related DCHECKs.
 
-Reason for revert: http/tests/inspector-protocol/terminate-execution-with-fetch-callbacks.js failures; see <a href="https://crbug.com/1379155">https://crbug.com/1379155</a>
+In MathMLRowElement::ChildrenChanged, switch the loop to using the
+Traversal&lt;&gt; helper.
 
-Original change's description:
-&gt; Enable Microtask queues per WindowAgent.
-&gt;
-&gt; Each WindowAgent having its own microtask queue aligns with the
-&gt; specification. All code has been converted to use the EventLoop for
-&gt; queuing and running microtasks.
-&gt;
-&gt; BUG=961186
-&gt;
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id4477a6b5dbaa2b31cb748d4f71519895df6b748">Id4477a6b5dbaa2b31cb748d4f71519895df6b748</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3950090">https://chromium-review.googlesource.com/c/chromium/src/+/3950090</a>
-&gt; Commit-Queue: Dave Tapuska &lt;dtapuska@chromium.org&gt;
-&gt; Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1064473}
-
-Bug: 961186, 1379155
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifdfbaaa142407875491d9dcb965f94b6ca6432f4">Ifdfbaaa142407875491d9dcb965f94b6ca6432f4</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3991186">https://chromium-review.googlesource.com/c/chromium/src/+/3991186</a>
-Auto-Submit: Greg Thompson &lt;grt@chromium.org&gt;
-Owners-Override: Greg Thompson &lt;grt@google.com&gt;
-Commit-Queue: Greg Thompson &lt;grt@chromium.org&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1064815}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I77b7f87739c45e3f3f9e30e58beabe6efa895402">I77b7f87739c45e3f3f9e30e58beabe6efa895402</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3968757">https://chromium-review.googlesource.com/c/chromium/src/+/3968757</a>
+Reviewed-by: Frédéric Wang &lt;fwang@igalia.com&gt;
+Reviewed-by: Robert Flack &lt;flackr@chromium.org&gt;
+Reviewed-by: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
+Commit-Queue: Fredrik Söderquist &lt;fs@opera.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1064819}
 </pre>
 
 </body>
