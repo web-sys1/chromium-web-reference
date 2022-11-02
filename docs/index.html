@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1066347/"> 1066347</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/13a954e1c78e6369d1ee7e08dc9bc6d2b4c91e67">13a954e1c78e6369d1ee7e08dc9bc6d2b4c91e67</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1066355/"> 1066355</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/535ef866c5969502ee97a57662ab152d5de49c94">535ef866c5969502ee97a57662ab152d5de49c94</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1066344/">1066344</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   13a954e1c78e6369d1ee7e08dc9bc6d2b4c91e67
+   535ef866c5969502ee97a57662ab152d5de49c94
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/13a954e1c78e6369d1ee7e08dc9bc6d2b4c91e67">
+    <a href="/chromium/src/+log/535ef866c5969502ee97a57662ab152d5de49c94">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/13a954e1c78e6369d1ee7e08dc9bc6d2b4c91e67.tar.gz">
+    <a href="/chromium/src/+archive/535ef866c5969502ee97a57662ab152d5de49c94.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Clement Yan &lt;clamclamyan@google.com&gt;
+   chrome-weblayer-builder &lt;chrome-weblayer-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 02 06:13:46 2022
+   Wed Nov 02 07:14:31 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 02 06:13:46 2022
+   Wed Nov 02 07:14:31 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/13a954e1c78e6369d1ee7e08dc9bc6d2b4c91e67/">
-    cf1e5d5283b4b0e5a73b4bd4e423a8286e9b50ea
+   <a href="/chromium/src/+/535ef866c5969502ee97a57662ab152d5de49c94/">
+    9492d879a1853d12842172f47dc4bad6e59d7b3c
    </a>
   </td>
  </tr>
@@ -166,43 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/13a954e1c78e6369d1ee7e08dc9bc6d2b4c91e67%5E">
-    70262e3c978a6ffcbddc95f1af1668315ab8e4a0
+   <a href="/chromium/src/+/535ef866c5969502ee97a57662ab152d5de49c94%5E">
+    bccafc8cb5c00fc1269af457ce6b79e3efd723de
    </a>
    <span>
     [
-    <a href="/chromium/src/+/13a954e1c78e6369d1ee7e08dc9bc6d2b4c91e67%5E%21/">
+    <a href="/chromium/src/+/535ef866c5969502ee97a57662ab152d5de49c94%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[WebUI] Migrate slow ui to WebUIConfig
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[lacros skew tests] Refresh skew tests for M109
 
-Context:
+This CL updates the ash version ['109.0.5396.0'] for Lacros version skew testing.
+This cl only affect linux-lacros config builders like linux-lacros-tester-rel,
+linux-lacros-rel.
+This cl will certainly NOT affect Lacros on-device builders(lacros-amd64-generic-rel,
+lacros-amd64-generic-chrome-skylab, etc) or any other platforms.
+If this CL caused regressions, please revert and stop the autoroller
+at <a href="https://luci-scheduler.appspot.com/jobs/chrome/lacros-version-skew-roller">https://luci-scheduler.appspot.com/jobs/chrome/lacros-version-skew-roller</a>
+Also please file a bug to OS&gt;LaCrOS&gt;Partner, and CC svenzheng@chromium.org,
+yjt@google.com.
 
-Currently WebUI properties, e.g. CSPs, requesting schemes, host, mojo,
-etc. are stored in WebUIControllers themselves or in separate lists
-like IsWebUIAllowedToMakeNetworkRequests. The lifetime of a
-WebUIController is bound to the frame, which makes it hard to use for
-some use cases where the WebUIController hasn't been created yet. A
-non-dynamically allocated class where clients could query a WebUI's
-properties would be easier to use and audit.
+R=rubber-stamper@appspot.gserviceaccount.com
 
-WebUIConfig is a class that stores properties of WebUIs. For now the
-properties are 1. the WebUI's origin, 2. if the WebUI is enabled,
-and 3. GetURLDataSource() method for service worker initialization.
-In the future this class could include information like CSPs, if we
-should enable Mojo, if we should enable chrome.send(), if we should
-allow network requests, URLDataSource, etc.
-
-Bug: 1317510
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ieaad3eafc9e48100c450690329003534c93e607f">Ieaad3eafc9e48100c450690329003534c93e607f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3995892">https://chromium-review.googlesource.com/c/chromium/src/+/3995892</a>
-Reviewed-by: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
-Commit-Queue: Clement Yan &lt;clamclamyan@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1066347}
+Bug: None
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5b0210cb4ea55a87746797a72811642b5e514bb5">I5b0210cb4ea55a87746797a72811642b5e514bb5</a>
+Requires-Testing: True
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3998411">https://chromium-review.googlesource.com/c/chromium/src/+/3998411</a>
+Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Auto-Submit: chrome-weblayer-builder &lt;chrome-weblayer-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1066355}
 </pre>
 
 </body>
