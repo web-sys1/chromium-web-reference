@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1067088/"> 1067088</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c1669c6c8672acd515adf1dbdfe94f59a8bcd733">c1669c6c8672acd515adf1dbdfe94f59a8bcd733</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1067115/"> 1067115</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6aa3e464b4746f935c7e5655378908b7e0a34901">6aa3e464b4746f935c7e5655378908b7e0a34901</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1067051/">1067051</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c1669c6c8672acd515adf1dbdfe94f59a8bcd733
+   6aa3e464b4746f935c7e5655378908b7e0a34901
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c1669c6c8672acd515adf1dbdfe94f59a8bcd733">
+    <a href="/chromium/src/+log/6aa3e464b4746f935c7e5655378908b7e0a34901">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c1669c6c8672acd515adf1dbdfe94f59a8bcd733.tar.gz">
+    <a href="/chromium/src/+archive/6aa3e464b4746f935c7e5655378908b7e0a34901.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ilkin Safarli &lt;safarli@google.com&gt;
+   Rupert Ben Wiser &lt;bewise@chromium.org&gt;
   </td>
   <td>
-   Thu Nov 03 17:27:07 2022
+   Thu Nov 03 18:06:49 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Nov 03 17:27:07 2022
+   Thu Nov 03 18:06:49 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c1669c6c8672acd515adf1dbdfe94f59a8bcd733/">
-    0a3985f209c84efe7ce6e3002bcd3520932a354c
+   <a href="/chromium/src/+/6aa3e464b4746f935c7e5655378908b7e0a34901/">
+    70d3d121d6f1e9200b1ac63cf84068ecb58854a4
    </a>
   </td>
  </tr>
@@ -166,28 +166,58 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c1669c6c8672acd515adf1dbdfe94f59a8bcd733%5E">
-    672b1cef5624c3de6c906f2ab5e1ce124dc58a44
+   <a href="/chromium/src/+/6aa3e464b4746f935c7e5655378908b7e0a34901%5E">
+    676b3bc3ddd95e1c47a258273bc1af06121153c3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c1669c6c8672acd515adf1dbdfe94f59a8bcd733%5E%21/">
+    <a href="/chromium/src/+/6aa3e464b4746f935c7e5655378908b7e0a34901%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ambient] Implements a feature to preview screen savers.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">webview/nonembedded: Add reset experiments action
 
-Bug: b/174788534
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8772b23b37c1ff0d799306488351eef5be698e48">I8772b23b37c1ff0d799306488351eef5be698e48</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3953129">https://chromium-review.googlesource.com/c/chromium/src/+/3953129</a>
-Reviewed-by: Tao Wu &lt;wutao@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Reviewed-by: Yuki Awano &lt;yawano@google.com&gt;
-Commit-Queue: Ilkin Safarli &lt;safarli@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1067088}
+When a user enables any experimental flags in the
+dev UI, the developer UI service will become a
+foreground service and have a constant notification
+warning the user they have flags enabled that
+may cause issues.
+
+Adding an action that resets the flags
+so that users have a clear and easy way to do
+this.
+
+Resetting the flags could have issues with state
+if the flags fragment was already open because
+we'd need to sync up that state from the service.
+
+Using the same flags intent and adding a reset
+experiments intent so that the user also
+sees where this leads. This also deals with
+that state issue.
+
+Still letting the flags fragment control the resetting
+because if we managed the reset from the MainActivity,
+we'd need to wait for the service connection to finish
+before we could open the fragment which would block UI.
+We'd also be modifying flag state from more than one place
+would could be confusing.
+
+Decided to use the same flag icon for the action. This
+won't be visible from Android N but it could still show
+up in places. The flag seems like an appropriate icon for
+this.
+
+Test: Manually tested and added espresso test.
+Bug: 1026383
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3a932e9a8b9fd40630091ad1df6aae0352bfc9b3">I3a932e9a8b9fd40630091ad1df6aae0352bfc9b3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3996892">https://chromium-review.googlesource.com/c/chromium/src/+/3996892</a>
+Reviewed-by: Hazem Ashmawy &lt;hazems@chromium.org&gt;
+Commit-Queue: Rupert Wiser &lt;bewise@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1067115}
 </pre>
 
 </body>
