@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1067368/"> 1067368</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5e4c65555a173bf2bf2f6fac58531cc72e2134ab">5e4c65555a173bf2bf2f6fac58531cc72e2134ab</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1067393/"> 1067393</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f169a54f73926c36a76ca368e5833cd4f8732481">f169a54f73926c36a76ca368e5833cd4f8732481</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1067319/">1067319</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9d2b7eb3e76885477375858634fcff4db0ed7d61">9d2b7eb3e76885477375858634fcff4db0ed7d61</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1067369/">1067369</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d0a9757dad1b14678823a4e53d1e4256a6c598ce">d0a9757dad1b14678823a4e53d1e4256a6c598ce</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5e4c65555a173bf2bf2f6fac58531cc72e2134ab
+   f169a54f73926c36a76ca368e5833cd4f8732481
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5e4c65555a173bf2bf2f6fac58531cc72e2134ab">
+    <a href="/chromium/src/+log/f169a54f73926c36a76ca368e5833cd4f8732481">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5e4c65555a173bf2bf2f6fac58531cc72e2134ab.tar.gz">
+    <a href="/chromium/src/+archive/f169a54f73926c36a76ca368e5833cd4f8732481.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Cassie Wang &lt;cassiewang@google.com&gt;
+   Clement Yan &lt;clamclamyan@google.com&gt;
   </td>
   <td>
-   Fri Nov 04 01:45:38 2022
+   Fri Nov 04 03:45:46 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Nov 04 01:45:38 2022
+   Fri Nov 04 03:45:46 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5e4c65555a173bf2bf2f6fac58531cc72e2134ab/">
-    bce0fb86ae10ecd85d71e6fb4867aeec112f405f
+   <a href="/chromium/src/+/f169a54f73926c36a76ca368e5833cd4f8732481/">
+    e24cbc0fec220dd707aa13ec6ecd5e2b6be0c8c3
    </a>
   </td>
  </tr>
@@ -166,37 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5e4c65555a173bf2bf2f6fac58531cc72e2134ab%5E">
-    15334252da363b3df2ba98edc76239487bca097b
+   <a href="/chromium/src/+/f169a54f73926c36a76ca368e5833cd4f8732481%5E">
+    004a614b9faace63a02c86315a1636812f6253bf
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5e4c65555a173bf2bf2f6fac58531cc72e2134ab%5E%21/">
+    <a href="/chromium/src/+/f169a54f73926c36a76ca368e5833cd4f8732481%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">arc: net: Add ARC facade VPN metrics
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[WebUI] Migrate sys internals to webuiConfig
 
-When a host VPN is detected, ARC will try to start a facade VPN to
-reflect the VPN state inside Android. Log metrics when this facade VPN
-service is started, stopped, and any errors that might happen along the
-way.
+Context:
 
-ARC side patch: <a href="http://ag/20277867">http://ag/20277867</a>
+Currently WebUI properties, e.g. CSPs, requesting schemes, host, mojo,
+etc. are stored in WebUIControllers themselves or in separate lists
+like IsWebUIAllowedToMakeNetworkRequests. The lifetime of a
+WebUIController is bound to the frame, which makes it hard to use for
+some use cases where the WebUIController hasn't been created yet. A
+non-dynamically allocated class where clients could query a WebUI's
+properties would be easier to use and audit.
 
-BUG=b:147256449
-TEST=autoninja -C out/Default chrome
+WebUIConfig is a class that stores properties of WebUIs. For now the
+properties are 1. the WebUI's origin, 2. if the WebUI is enabled,
+and 3. GetURLDataSource() method for service worker initialization.
+In the future this class could include information like CSPs, if we
+should enable Mojo, if we should enable chrome.send(), if we should
+allow network requests, URLDataSource, etc.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I575777f2d095b35f85d2115c227ccea7769caca9">I575777f2d095b35f85d2115c227ccea7769caca9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3990234">https://chromium-review.googlesource.com/c/chromium/src/+/3990234</a>
-Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
-Reviewed-by: Hugo Benichi &lt;hugobenichi@google.com&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Commit-Queue: Cassie Wang &lt;cassiewang@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1067368}
+Bug: 1317510
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5aa8b8efcb7ab6ad9b5958a8914a7f1cd06ec5a4">I5aa8b8efcb7ab6ad9b5958a8914a7f1cd06ec5a4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3999097">https://chromium-review.googlesource.com/c/chromium/src/+/3999097</a>
+Reviewed-by: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
+Commit-Queue: Clement Yan &lt;clamclamyan@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1067393}
 </pre>
 
 </body>
