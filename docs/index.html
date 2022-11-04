@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1067550/"> 1067550</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9f50951b7d9268eebcc9bc33f6b7e6ec4f5c9616">9f50951b7d9268eebcc9bc33f6b7e6ec4f5c9616</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1067558/"> 1067558</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/75e95f693a96a9d51757e63a985aa0ec037bc41e">75e95f693a96a9d51757e63a985aa0ec037bc41e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1067515/">1067515</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/36d78d76c2b0236b48f808dd024d335d0285e8a2">36d78d76c2b0236b48f808dd024d335d0285e8a2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1067548/">1067548</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ad25b30173baa224efead600f491ec349980041e">ad25b30173baa224efead600f491ec349980041e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9f50951b7d9268eebcc9bc33f6b7e6ec4f5c9616
+   75e95f693a96a9d51757e63a985aa0ec037bc41e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9f50951b7d9268eebcc9bc33f6b7e6ec4f5c9616">
+    <a href="/chromium/src/+log/75e95f693a96a9d51757e63a985aa0ec037bc41e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9f50951b7d9268eebcc9bc33f6b7e6ec4f5c9616.tar.gz">
+    <a href="/chromium/src/+archive/75e95f693a96a9d51757e63a985aa0ec037bc41e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ashley Newson &lt;ashleynewson@chromium.org&gt;
+   Stephanie Kim &lt;kimstephanie@google.com&gt;
   </td>
   <td>
-   Fri Nov 04 15:40:57 2022
+   Fri Nov 04 16:06:13 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Nov 04 15:40:57 2022
+   Fri Nov 04 16:06:13 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9f50951b7d9268eebcc9bc33f6b7e6ec4f5c9616/">
-    bfcb51cacf3836b7ecbe3c718fd1c5c680c7e8a4
+   <a href="/chromium/src/+/75e95f693a96a9d51757e63a985aa0ec037bc41e/">
+    eab350340862c1fc4b960ad91c143855a9f86276
    </a>
   </td>
  </tr>
@@ -166,47 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9f50951b7d9268eebcc9bc33f6b7e6ec4f5c9616%5E">
-    f98409cda2629d4dc7cc5faf85d48ea7841c444b
+   <a href="/chromium/src/+/75e95f693a96a9d51757e63a985aa0ec037bc41e%5E">
+    0c75fc00eeca3932c8374bb82c93361f39452020
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9f50951b7d9268eebcc9bc33f6b7e6ec4f5c9616%5E%21/">
+    <a href="/chromium/src/+/75e95f693a96a9d51757e63a985aa0ec037bc41e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Amend usages of non-exported receivers
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Bump asan interactive_ui_tests and content_browsertests
 
-Receivers which were previously set up to listen for a mixture of
-protected broadcasts and non-protected self-targetting broadcasts have
-been split up into separate receivers, registered via the appropriate
-registerProtectedBroadcastReceiver or
-registerNonExportedBroadcastReceiver wrapper methods.
+interactive_ui_tests 6 -&gt; 12
+content_browsertests 12 -&gt; 24
 
-For non-exported receivers, IntentUtils's addTrustedIntentExtras and
-isTrustedIntentFromSelf have added to emulate the behaviour of
-non-exported receivers on pre-T devices. (Note that the more
-mainstream approach outside of chromium of using permissions cannot be
-used for WebView because that runs with the embedding app's
-permissions.)
+Expected to bring suites down to ~15 min at the cost of 10 bots
 
-setPackage() has also been added to avoid Intents being sent to other
-applications, including other instances of Chrome or WebView.
-
-Bug: 1374667
-Bug: 1377388
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibce49f3c3c52ade718f818a3dbacec5fa4d8f0d4">Ibce49f3c3c52ade718f818a3dbacec5fa4d8f0d4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3982200">https://chromium-review.googlesource.com/c/chromium/src/+/3982200</a>
-Reviewed-by: Richard Coles &lt;torne@chromium.org&gt;
-Reviewed-by: Reilly Grant &lt;reillyg@chromium.org&gt;
-Reviewed-by: Michael Thiessen &lt;mthiesse@chromium.org&gt;
-Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
-Commit-Queue: Ashley Newson &lt;ashleynewson@chromium.org&gt;
-Reviewed-by: David Trainor &lt;dtrainor@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1067550}
+Bug: 1379102
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I605517ee985e69e8cbda80de8143dccfbc6ac801">I605517ee985e69e8cbda80de8143dccfbc6ac801</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4004128">https://chromium-review.googlesource.com/c/chromium/src/+/4004128</a>
+Reviewed-by: Erik Staab &lt;estaab@chromium.org&gt;
+Commit-Queue: Stephanie Kim &lt;kimstephanie@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1067558}
 </pre>
 
 </body>
