@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1067393/"> 1067393</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f169a54f73926c36a76ca368e5833cd4f8732481">f169a54f73926c36a76ca368e5833cd4f8732481</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1067398/"> 1067398</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c745d6e6b560519045b08b03b8e7cd985f8b939f">c745d6e6b560519045b08b03b8e7cd985f8b939f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1067369/">1067369</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d0a9757dad1b14678823a4e53d1e4256a6c598ce">d0a9757dad1b14678823a4e53d1e4256a6c598ce</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1067384/">1067384</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6d8c1b3ba2df7f5f68491f14c8f2c62695498cf2">6d8c1b3ba2df7f5f68491f14c8f2c62695498cf2</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f169a54f73926c36a76ca368e5833cd4f8732481
+   c745d6e6b560519045b08b03b8e7cd985f8b939f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f169a54f73926c36a76ca368e5833cd4f8732481">
+    <a href="/chromium/src/+log/c745d6e6b560519045b08b03b8e7cd985f8b939f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f169a54f73926c36a76ca368e5833cd4f8732481.tar.gz">
+    <a href="/chromium/src/+archive/c745d6e6b560519045b08b03b8e7cd985f8b939f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Clement Yan &lt;clamclamyan@google.com&gt;
+   François Degros &lt;fdegros@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 04 03:45:46 2022
+   Fri Nov 04 04:22:10 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Nov 04 03:45:46 2022
+   Fri Nov 04 04:22:10 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f169a54f73926c36a76ca368e5833cd4f8732481/">
-    e24cbc0fec220dd707aa13ec6ecd5e2b6be0c8c3
+   <a href="/chromium/src/+/c745d6e6b560519045b08b03b8e7cd985f8b939f/">
+    c17b9b22a6e919a1d8148b0d306cf33386ee60df
    </a>
   </td>
  </tr>
@@ -166,43 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f169a54f73926c36a76ca368e5833cd4f8732481%5E">
-    004a614b9faace63a02c86315a1636812f6253bf
+   <a href="/chromium/src/+/c745d6e6b560519045b08b03b8e7cd985f8b939f%5E">
+    3b46291370da8f11d9483516593cb60d61f1e6c8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f169a54f73926c36a76ca368e5833cd4f8732481%5E%21/">
+    <a href="/chromium/src/+/c745d6e6b560519045b08b03b8e7cd985f8b939f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[WebUI] Migrate sys internals to webuiConfig
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Move Cors Taint check into DataSource, out of WMPI"
 
-Context:
+This reverts commit 7565e23835410252def991f210e8811ab8eb411d.
 
-Currently WebUI properties, e.g. CSPs, requesting schemes, host, mojo,
-etc. are stored in WebUIControllers themselves or in separate lists
-like IsWebUIAllowedToMakeNetworkRequests. The lifetime of a
-WebUIController is bound to the frame, which makes it hard to use for
-some use cases where the WebUIController hasn't been created yet. A
-non-dynamically allocated class where clients could query a WebUI's
-properties would be easier to use and audit.
+Reason for revert: Breaking <a href="https://ci.chromium.org/p/chrome/builders/ci/linux-chromeos-chrome">https://ci.chromium.org/p/chrome/builders/ci/linux-chromeos-chrome</a>
 
-WebUIConfig is a class that stores properties of WebUIs. For now the
-properties are 1. the WebUI's origin, 2. if the WebUI is enabled,
-and 3. GetURLDataSource() method for service worker initialization.
-In the future this class could include information like CSPs, if we
-should enable Mojo, if we should enable chrome.send(), if we should
-allow network requests, URLDataSource, etc.
 
-Bug: 1317510
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5aa8b8efcb7ab6ad9b5958a8914a7f1cd06ec5a4">I5aa8b8efcb7ab6ad9b5958a8914a7f1cd06ec5a4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3999097">https://chromium-review.googlesource.com/c/chromium/src/+/3999097</a>
-Reviewed-by: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
-Commit-Queue: Clement Yan &lt;clamclamyan@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1067393}
+Original change's description:
+&gt; Move Cors Taint check into DataSource, out of WMPI
+&gt;
+&gt; This removes a few more instances of |mb_data_source_|.
+&gt;
+&gt; Bug: 1377053
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I589aa72bab51481f7b9613f956da0f0fb57a4293">I589aa72bab51481f7b9613f956da0f0fb57a4293</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3988658">https://chromium-review.googlesource.com/c/chromium/src/+/3988658</a>
+&gt; Reviewed-by: Will Cassella &lt;cassew@chromium.org&gt;
+&gt; Commit-Queue: Ted (Chromium) Meyer &lt;tmathmeyer@chromium.org&gt;
+&gt; Reviewed-by: Matthew Wolenetz &lt;wolenetz@chromium.org&gt;
+&gt; Reviewed-by: Tommy Li &lt;tommycli@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1067340}
+
+Bug: 1377053
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ieadc2b51513099584552a7a9000c907eed2f725b">Ieadc2b51513099584552a7a9000c907eed2f725b</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4004956">https://chromium-review.googlesource.com/c/chromium/src/+/4004956</a>
+Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Owners-Override: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1067398}
 </pre>
 
 </body>
