@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1068024/"> 1068024</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1d998a17c6b2df4652b66904858300092551ec0f">1d998a17c6b2df4652b66904858300092551ec0f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1068037/"> 1068037</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2723145ac2210b82850e6ca7d210a4da4b90ecd8">2723145ac2210b82850e6ca7d210a4da4b90ecd8</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1068002/">1068002</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b5b3fd172e44de28fd670b42c454f2cf74e1bfda">b5b3fd172e44de28fd670b42c454f2cf74e1bfda</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1068024/">1068024</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1d998a17c6b2df4652b66904858300092551ec0f">1d998a17c6b2df4652b66904858300092551ec0f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1d998a17c6b2df4652b66904858300092551ec0f
+   2723145ac2210b82850e6ca7d210a4da4b90ecd8
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1d998a17c6b2df4652b66904858300092551ec0f">
+    <a href="/chromium/src/+log/2723145ac2210b82850e6ca7d210a4da4b90ecd8">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1d998a17c6b2df4652b66904858300092551ec0f.tar.gz">
+    <a href="/chromium/src/+archive/2723145ac2210b82850e6ca7d210a4da4b90ecd8.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
+   Steinar H. Gunderson &lt;sesse@chromium.org&gt;
   </td>
   <td>
-   Mon Nov 07 09:54:06 2022
+   Mon Nov 07 10:49:58 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Nov 07 09:54:06 2022
+   Mon Nov 07 10:49:58 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1d998a17c6b2df4652b66904858300092551ec0f/">
-    eaacbf75c997eac8ed20ede46e2beba91e5828a8
+   <a href="/chromium/src/+/2723145ac2210b82850e6ca7d210a4da4b90ecd8/">
+    5d746615a2031c827e372f6e2c5df2e12a5bcfa6
    </a>
   </td>
  </tr>
@@ -166,33 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1d998a17c6b2df4652b66904858300092551ec0f%5E">
-    f9eaf5c6644e8594de3f9daae757e5ba91948db8
+   <a href="/chromium/src/+/2723145ac2210b82850e6ca7d210a4da4b90ecd8%5E">
+    220c74594faf1bc071f93c6a1e506c68641fa720
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1d998a17c6b2df4652b66904858300092551ec0f%5E%21/">
+    <a href="/chromium/src/+/2723145ac2210b82850e6ca7d210a4da4b90ecd8%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add DanglingPointerDetector synthetic field trial.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Microoptimizations in property parsing.
 
-The dangling pointer depends on its own binary flag and a runtime flag.
-It also depends on BackupRefPointer, which has its own binary and
-runtime flag.
+A few microoptimizations that together help ~4% (10–15 ns) on slow-path
+property parsing:
 
-So, it can't really be enabled using only a field trial. Adding this
-synthetic one allows comparing two different binaries.
+ - A little strategic inlining of small constructors.
+ - More efficient testing of whether a numeric literal is a 0..255
+   integer.
+ - Make some bitfields in CSSValue into regular fields; the compiler
+   generally seems to think that if there are holes, it must do its
+   utmost to keep the data in them as-is.
+ - Send CSSParserTokenRange by value if we're going to make a copy of it
+   anyway (it's two pointers).
 
-Bug: 1341550
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I817f7766d24b5a28d3461e4e7a01b6a41a479963">I817f7766d24b5a28d3461e4e7a01b6a41a479963</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3971501">https://chromium-review.googlesource.com/c/chromium/src/+/3971501</a>
-Reviewed-by: Bartek Nowierski &lt;bartekn@chromium.org&gt;
-Commit-Queue: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1068024}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib92aec41f465e04fe4bb5eb6c35d64294e1eac0c">Ib92aec41f465e04fe4bb5eb6c35d64294e1eac0c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4004625">https://chromium-review.googlesource.com/c/chromium/src/+/4004625</a>
+Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
+Commit-Queue: Steinar H Gunderson &lt;sesse@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1068037}
 </pre>
 
 </body>
