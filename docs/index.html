@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1068497/"> 1068497</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/be98fec6dfce1239c9ecdbda2815f6a34d0f6a8f">be98fec6dfce1239c9ecdbda2815f6a34d0f6a8f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1068501/"> 1068501</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3f278308f61ab3e28806bdd381fd488912f263af">3f278308f61ab3e28806bdd381fd488912f263af</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1068454/">1068454</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a1e580a3a19567400e35d190c34846d4734dc975">a1e580a3a19567400e35d190c34846d4734dc975</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1068497/">1068497</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/be98fec6dfce1239c9ecdbda2815f6a34d0f6a8f">be98fec6dfce1239c9ecdbda2815f6a34d0f6a8f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   be98fec6dfce1239c9ecdbda2815f6a34d0f6a8f
+   3f278308f61ab3e28806bdd381fd488912f263af
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/be98fec6dfce1239c9ecdbda2815f6a34d0f6a8f">
+    <a href="/chromium/src/+log/3f278308f61ab3e28806bdd381fd488912f263af">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/be98fec6dfce1239c9ecdbda2815f6a34d0f6a8f.tar.gz">
+    <a href="/chromium/src/+archive/3f278308f61ab3e28806bdd381fd488912f263af.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yuzu Saijo &lt;yuzus@chromium.org&gt;
+   Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
   </td>
   <td>
-   Tue Nov 08 04:41:07 2022
+   Tue Nov 08 05:51:08 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Nov 08 04:41:07 2022
+   Tue Nov 08 05:51:08 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/be98fec6dfce1239c9ecdbda2815f6a34d0f6a8f/">
-    c636132ce4b9a5a9ae97558f13a8b3c8a9d255a2
+   <a href="/chromium/src/+/3f278308f61ab3e28806bdd381fd488912f263af/">
+    87fd950c5d07eb108670ab6128ee50698573e890
    </a>
   </td>
  </tr>
@@ -166,53 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/be98fec6dfce1239c9ecdbda2815f6a34d0f6a8f%5E">
-    d3238a13d395ba88ba1131f0935484c909661b0f
+   <a href="/chromium/src/+/3f278308f61ab3e28806bdd381fd488912f263af%5E">
+    b4187b61accb51f8e3b9be8c8760f8131f6de54d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/be98fec6dfce1239c9ecdbda2815f6a34d0f6a8f%5E%21/">
+    <a href="/chromium/src/+/3f278308f61ab3e28806bdd381fd488912f263af%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Improve logic to determine what profile to launch a PWA in on Mac."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">DOMMatrix.inverse() should not generate invalid 2D matrix
 
-This reverts commit bba3155e9a9eaf446836de5197748cbf074a5036.
+The bug was introduced in crrev.com/1045489 in which we removed the
+`if (is_2d_)` block from DOMMatrix::invertSelf().
+TransformationMatrix::GetInverse() may change a 2D matrix into non-2D
+due to floating point errors, while DOMMatrix.is2D is still true.
 
-Reason for revert: Compile error : <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/mac-arm64-on-arm64-rel/48368/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/mac-arm64-on-arm64-rel/48368/overview</a>
+We should let gfx::Transform::GetInverse() preserve 2D status to fix
+the root cause, but this CL just reverts DOMMatrix::invertSelf()
+because we need to merge this fix into M108.
 
-Original change's description:
-&gt; Improve logic to determine what profile to launch a PWA in on Mac.
-&gt;
-&gt; When a PWA is launched as file or protocol handler we should pick
-&gt; profiles where the PWA can actually handle the passed in files or urls
-&gt; over other profiles the PWA is installed in.
-&gt;
-&gt; As such, this CL looks at all the files or urls a PWA is launched
-&gt; with, compares them with all the profiles the PWA is installed in,
-&gt; and picks the profile that can handle the most of them to launch the
-&gt; PWA in.
-&gt;
-&gt; Include-Ci-Only-Tests: true
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id7473e7bf1b074e0355f0f7b9b1ca76be3ded58a">Id7473e7bf1b074e0355f0f7b9b1ca76be3ded58a</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3979981">https://chromium-review.googlesource.com/c/chromium/src/+/3979981</a>
-&gt; Commit-Queue: Marijn Kruisselbrink &lt;mek@chromium.org&gt;
-&gt; Reviewed-by: Daniel Murphy &lt;dmurph@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1068460}
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6fd44290977f9cb37b08ed72b43eebd5a1d11549">I6fd44290977f9cb37b08ed72b43eebd5a1d11549</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4012360">https://chromium-review.googlesource.com/c/chromium/src/+/4012360</a>
-Auto-Submit: Yuzu Saijo &lt;yuzus@chromium.org&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Owners-Override: Yuzu Saijo &lt;yuzus@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1068497}
+Bug: 1379529
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If3e280e34d1a66d2dd1b7f08bed3e6ef9b044d2a">If3e280e34d1a66d2dd1b7f08bed3e6ef9b044d2a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4010919">https://chromium-review.googlesource.com/c/chromium/src/+/4010919</a>
+Reviewed-by: David Baron &lt;dbaron@chromium.org&gt;
+Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
+Commit-Queue: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1068501}
 </pre>
 
 </body>
