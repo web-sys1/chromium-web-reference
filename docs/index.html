@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1069241/"> 1069241</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/124063790225c1a6798cb154de67b5a2253a3cf1">124063790225c1a6798cb154de67b5a2253a3cf1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1069264/"> 1069264</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1c229babeefa36e997dd3cb7ca06698f4cad11f7">1c229babeefa36e997dd3cb7ca06698f4cad11f7</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1069216/">1069216</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/82101a14c02839d3067ccd89aec4c825e0408ee5">82101a14c02839d3067ccd89aec4c825e0408ee5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1069251/">1069251</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/387e19416e02d7236da5f06d7de9e1e031d5557c">387e19416e02d7236da5f06d7de9e1e031d5557c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   124063790225c1a6798cb154de67b5a2253a3cf1
+   1c229babeefa36e997dd3cb7ca06698f4cad11f7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/124063790225c1a6798cb154de67b5a2253a3cf1">
+    <a href="/chromium/src/+log/1c229babeefa36e997dd3cb7ca06698f4cad11f7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/124063790225c1a6798cb154de67b5a2253a3cf1.tar.gz">
+    <a href="/chromium/src/+archive/1c229babeefa36e997dd3cb7ca06698f4cad11f7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Daniel Murphy &lt;dmurph@google.com&gt;
+   Steve Cho &lt;stevecho@google.com&gt;
   </td>
   <td>
-   Wed Nov 09 18:22:04 2022
+   Wed Nov 09 19:00:26 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 09 18:22:04 2022
+   Wed Nov 09 19:00:26 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/124063790225c1a6798cb154de67b5a2253a3cf1/">
-    2c3da154142ec8ba6ff9bb0c4ab158a56162d87c
+   <a href="/chromium/src/+/1c229babeefa36e997dd3cb7ca06698f4cad11f7/">
+    a2c2d720350da9af015aad4b9c93be6c0568c7a5
    </a>
   </td>
  </tr>
@@ -166,59 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/124063790225c1a6798cb154de67b5a2253a3cf1%5E">
-    ff6bc299620c5c9bfa12ce804bebf65bb869768f
+   <a href="/chromium/src/+/1c229babeefa36e997dd3cb7ca06698f4cad11f7%5E">
+    10767ac0a15bf970a1f3588b5ba774e2b023e5d4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/124063790225c1a6798cb154de67b5a2253a3cf1%5E%21/">
+    <a href="/chromium/src/+/1c229babeefa36e997dd3cb7ca06698f4cad11f7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[dPWA] Refactoring launches to always be async, pt 2.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media/gpu/v4l2: Fix AV1 frame params preparation
 
-Context:
-Reading information from the WebAppProvider system is often inherently
-racy (given all of our async data sources). Putting operations behind
-commands guarantees the the data read is not going to change across
-async calls (and that you aren't reading it in the middle of an
-operation like 'install', 'uninstall', etc).
+This CL fixes an issue where frame params except |global_motion| are not
+prepared correctly for |v4l2_ctrl_av1_frame|. Also, these functions are
+changed to return structs instead of having output parameter.
 
-This project protects 'launch' to make sure it doesn't happen during
-and 'uncommitted read' state.
-
-This change:
-* Modifies the launch methods in AppService &amp; related code to take
-  a callback
-* Modifies callers of those functions to provide a callback, often
-  hooking up an existing provided callback to complete the chain.
-* Fixes CommonAppsNavigationThrottle, which was closing a WebContents
-  before launching a new browser, which can cause the profile /
-  browser process to shut down prematurely by adding keep-alives.
-
-There is no functional change in this patch.
-If you want to see a patch with all test changes &amp; functionality
-changes, see:
-<a href="https://chromium-review.googlesource.com/c/chromium/src/+/3929017">https://chromium-review.googlesource.com/c/chromium/src/+/3929017</a>
-
-Bug: 1377102, 1378352, 1374116, b/242059352
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8b5a6493504fa6278ba7244ae40df580a6ddb519">I8b5a6493504fa6278ba7244ae40df580a6ddb519</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3961532">https://chromium-review.googlesource.com/c/chromium/src/+/3961532</a>
-Reviewed-by: Nicolas Ouellet-Payeur &lt;nicolaso@chromium.org&gt;
-Reviewed-by: Colin Blundell &lt;blundell@chromium.org&gt;
-Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
-Reviewed-by: Phillis Tang &lt;phillis@chromium.org&gt;
-Reviewed-by: Nancy Wang &lt;nancylingwang@chromium.org&gt;
-Reviewed-by: Maggie Cai &lt;mxcai@chromium.org&gt;
-Reviewed-by: Sammie Quon &lt;sammiequon@chromium.org&gt;
-Reviewed-by: Dibyajyoti Pal &lt;dibyapal@chromium.org&gt;
-Commit-Queue: Daniel Murphy &lt;dmurph@chromium.org&gt;
-Reviewed-by: Peter Kasting &lt;pkasting@chromium.org&gt;
-Reviewed-by: Yury Khmel &lt;khmel@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1069241}
+Bug: b:258276744
+TEST: video_decode_accelerator_tests 00000527_20210205.ivf 00000527_20210205.ivf.json --output_frames=all --gtest_filter=VideoDecoderTest.FlushAtEndOfStream -v=2
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If1ffd7836fec8d5ef835bb034e9cbbf2dce5f735">If1ffd7836fec8d5ef835bb034e9cbbf2dce5f735</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4014803">https://chromium-review.googlesource.com/c/chromium/src/+/4014803</a>
+Reviewed-by: Nathan Hebert &lt;nhebert@chromium.org&gt;
+Commit-Queue: Steve Cho &lt;stevecho@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1069264}
 </pre>
 
 </body>
