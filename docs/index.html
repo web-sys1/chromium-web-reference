@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1069429/"> 1069429</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7368e48c57e8414e7da4afb347c1165775bed1d5">7368e48c57e8414e7da4afb347c1165775bed1d5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1069553/"> 1069553</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c404a8563b80e1a9604dd63d18c11cc6caf7ea71">c404a8563b80e1a9604dd63d18c11cc6caf7ea71</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1069442/">1069442</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7368e48c57e8414e7da4afb347c1165775bed1d5
+   c404a8563b80e1a9604dd63d18c11cc6caf7ea71
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7368e48c57e8414e7da4afb347c1165775bed1d5">
+    <a href="/chromium/src/+log/c404a8563b80e1a9604dd63d18c11cc6caf7ea71">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7368e48c57e8414e7da4afb347c1165775bed1d5.tar.gz">
+    <a href="/chromium/src/+archive/c404a8563b80e1a9604dd63d18c11cc6caf7ea71.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jean-Philippe Gravel &lt;jpgravel@chromium.org&gt;
+   Luciano Pacheco &lt;lucmult@chromium.org&gt;
   </td>
   <td>
-   Wed Nov 09 23:23:20 2022
+   Thu Nov 10 03:04:09 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 09 23:23:20 2022
+   Thu Nov 10 03:04:09 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7368e48c57e8414e7da4afb347c1165775bed1d5/">
-    9314594e4ef9ce22869fc1150c2f0459ef1117e3
+   <a href="/chromium/src/+/c404a8563b80e1a9604dd63d18c11cc6caf7ea71/">
+    25c12a70502b19752928ff448917e2b40a158fdd
    </a>
   </td>
  </tr>
@@ -166,44 +166,50 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7368e48c57e8414e7da4afb347c1165775bed1d5%5E">
-    bcd70e9997e0c00e7be96e067f5b7db5d0506120
+   <a href="/chromium/src/+/c404a8563b80e1a9604dd63d18c11cc6caf7ea71%5E">
+    ea12e2ecbd50a9b0b5d23f30353828e99223c65d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7368e48c57e8414e7da4afb347c1165775bed1d5%5E%21/">
+    <a href="/chromium/src/+/c404a8563b80e1a9604dd63d18c11cc6caf7ea71%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make the PaintOp base classes uncopyable.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Enable MessagePumpEpoll by default"
 
-The PaintOp and PaintOpWithFlags base classes were copyable, although
-that operation was not valid. The following code for instance was
-compiling, but was leaving `base_op` in an invalid state, corrupting
-memory along the way:
+This reverts commit 81ade53a37e3273ff6b057fa0ac059b38b5169af.
 
-  SetMatrixOp matrix_op(SkM44::Scale(1, 2));
-  PaintOp base_op = matrix_op;
-  if (matrix_op == base_op) ...
+Reason for revert: Causing consistent failures on ASAN bots:
+<a href="https://bugs.chromium.org/p/chromium/issues/detail?id=1382988">https://bugs.chromium.org/p/chromium/issues/detail?id=1382988</a>
 
-That's because the PaintOp copy operator uses the `type` field to
-implement it's own virtual-table-like dispatch, which means that
-the SetMatrixOp's copy function as invoked and was writing the
-matrix data outside of the `base_op` object's memory range.
+Bug: 1382988
 
-This would have been caught with better test coverage in
-paint_op_buffer_unittest.cc (`ElementsAre` copies it's input as
-PaintOp objects, to match ASSERT_THAT's lhs), but the unit tests
-were only using ops having no associated data.
+Original change's description:
+&gt; Enable MessagePumpEpoll by default
+&gt;
+&gt; This has been on at 50% canary/dev/beta and 1% stable since M106.
+&gt;
+&gt; Bug: 1243354
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I56551c1ddb65a062a743b47318f92d5030732e9a">I56551c1ddb65a062a743b47318f92d5030732e9a</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3853515">https://chromium-review.googlesource.com/c/chromium/src/+/3853515</a>
+&gt; Reviewed-by: Francois Pierre Doray &lt;fdoray@chromium.org&gt;
+&gt; Commit-Queue: Ken Rockot &lt;rockot@google.com&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1069422}
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4e374d60d0d01a51e1fd694f68a783cf57616985">I4e374d60d0d01a51e1fd694f68a783cf57616985</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4016974">https://chromium-review.googlesource.com/c/chromium/src/+/4016974</a>
-Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
-Commit-Queue: Jean-Philippe Gravel &lt;jpgravel@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1069429}
+Bug: 1243354
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0fb07eabbed35bc3e9048ed2a562bd8e6a8f3579">I0fb07eabbed35bc3e9048ed2a562bd8e6a8f3579</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4019732">https://chromium-review.googlesource.com/c/chromium/src/+/4019732</a>
+Auto-Submit: Luciano Pacheco &lt;lucmult@chromium.org&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Owners-Override: Luciano Pacheco &lt;lucmult@chromium.org&gt;
+Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1069553}
 </pre>
 
 </body>
