@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1069411/"> 1069411</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a63a57771b146b74a1197705014f3957a8a0e45b">a63a57771b146b74a1197705014f3957a8a0e45b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1069429/"> 1069429</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7368e48c57e8414e7da4afb347c1165775bed1d5">7368e48c57e8414e7da4afb347c1165775bed1d5</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1069355/">1069355</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a63a57771b146b74a1197705014f3957a8a0e45b
+   7368e48c57e8414e7da4afb347c1165775bed1d5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a63a57771b146b74a1197705014f3957a8a0e45b">
+    <a href="/chromium/src/+log/7368e48c57e8414e7da4afb347c1165775bed1d5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a63a57771b146b74a1197705014f3957a8a0e45b.tar.gz">
+    <a href="/chromium/src/+archive/7368e48c57e8414e7da4afb347c1165775bed1d5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
+   Jean-Philippe Gravel &lt;jpgravel@chromium.org&gt;
   </td>
   <td>
-   Wed Nov 09 22:51:49 2022
+   Wed Nov 09 23:23:20 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 09 22:51:49 2022
+   Wed Nov 09 23:23:20 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a63a57771b146b74a1197705014f3957a8a0e45b/">
-    7f9ebd1e4310ec7baff765102af0ab40105e2204
+   <a href="/chromium/src/+/7368e48c57e8414e7da4afb347c1165775bed1d5/">
+    9314594e4ef9ce22869fc1150c2f0459ef1117e3
    </a>
   </td>
  </tr>
@@ -166,42 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a63a57771b146b74a1197705014f3957a8a0e45b%5E">
-    675074398d989c2e96f8c4afd759cec659d6c11c
+   <a href="/chromium/src/+/7368e48c57e8414e7da4afb347c1165775bed1d5%5E">
+    bcd70e9997e0c00e7be96e067f5b7db5d0506120
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a63a57771b146b74a1197705014f3957a8a0e45b%5E%21/">
+    <a href="/chromium/src/+/7368e48c57e8414e7da4afb347c1165775bed1d5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll clank/internal/apps from 2134212923ef to 20aa874a3155 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make the PaintOp base classes uncopyable.
 
-<a href="https://chrome-internal.googlesource.com/clank/internal/apps.git/+log/2134212923ef..20aa874a3155">https://chrome-internal.googlesource.com/clank/internal/apps.git/+log/2134212923ef..20aa874a3155</a>
+The PaintOp and PaintOpWithFlags base classes were copyable, although
+that operation was not valid. The following code for instance was
+compiling, but was leaving `base_op` in an invalid state, corrupting
+memory along the way:
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://skia-autoroll.corp.goog/r/clank-apps-chromium-autoroll">https://skia-autoroll.corp.goog/r/clank-apps-chromium-autoroll</a>
-Please CC skym@google.com on the revert to ensure that a human
-is aware of the problem.
+  SetMatrixOp matrix_op(SkM44::Scale(1, 2));
+  PaintOp base_op = matrix_op;
+  if (matrix_op == base_op) ...
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+That's because the PaintOp copy operator uses the `type` field to
+implement it's own virtual-table-like dispatch, which means that
+the SetMatrixOp's copy function as invoked and was writing the
+matrix data outside of the `base_op` object's memory range.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
+This would have been caught with better test coverage in
+paint_op_buffer_unittest.cc (`ElementsAre` copies it's input as
+PaintOp objects, to match ASSERT_THAT's lhs), but the unit tests
+were only using ops having no associated data.
 
-Bug: None
-Tbr: skym@google.com
-No-Try: true
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia03a148253ffddf106538f909a889c532b0810ab">Ia03a148253ffddf106538f909a889c532b0810ab</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4018229">https://chromium-review.googlesource.com/c/chromium/src/+/4018229</a>
-Commit-Queue: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1069411}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4e374d60d0d01a51e1fd694f68a783cf57616985">I4e374d60d0d01a51e1fd694f68a783cf57616985</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4016974">https://chromium-review.googlesource.com/c/chromium/src/+/4016974</a>
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Commit-Queue: Jean-Philippe Gravel &lt;jpgravel@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1069429}
 </pre>
 
 </body>
