@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1072240/"> 1072240</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6f9bc02df4f24da1d72842cb4e17fe13975d4f59">6f9bc02df4f24da1d72842cb4e17fe13975d4f59</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1072259/"> 1072259</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d80e95a3d2abd0a09acbcb0e57a5e5449743d7ff">d80e95a3d2abd0a09acbcb0e57a5e5449743d7ff</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1072231/">1072231</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6f9bc02df4f24da1d72842cb4e17fe13975d4f59
+   d80e95a3d2abd0a09acbcb0e57a5e5449743d7ff
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6f9bc02df4f24da1d72842cb4e17fe13975d4f59">
+    <a href="/chromium/src/+log/d80e95a3d2abd0a09acbcb0e57a5e5449743d7ff">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6f9bc02df4f24da1d72842cb4e17fe13975d4f59.tar.gz">
+    <a href="/chromium/src/+archive/d80e95a3d2abd0a09acbcb0e57a5e5449743d7ff.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Steinar H. Gunderson &lt;sesse@chromium.org&gt;
+   Christian Dullweber &lt;dullweber@chromium.org&gt;
   </td>
   <td>
-   Wed Nov 16 15:56:11 2022
+   Wed Nov 16 16:33:05 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 16 15:56:11 2022
+   Wed Nov 16 16:33:05 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6f9bc02df4f24da1d72842cb4e17fe13975d4f59/">
-    ea7bef53bf9ed64eb3dbb2a6bdf2f00c164ba151
+   <a href="/chromium/src/+/d80e95a3d2abd0a09acbcb0e57a5e5449743d7ff/">
+    ed7de9b80b07f0e356bab19881969926a2f39e4c
    </a>
   </td>
  </tr>
@@ -166,47 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6f9bc02df4f24da1d72842cb4e17fe13975d4f59%5E">
-    db75dce87792e27618290d537dffab734b2ef369
+   <a href="/chromium/src/+/d80e95a3d2abd0a09acbcb0e57a5e5449743d7ff%5E">
+    c29c74c176e624c3be181bc8bd0bd8e54b9c67ca
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6f9bc02df4f24da1d72842cb4e17fe13975d4f59%5E%21/">
+    <a href="/chromium/src/+/d80e95a3d2abd0a09acbcb0e57a5e5449743d7ff%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Optimize MutableCSSPropertyValueSet::Set*Property().
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Privacy Sandbox Settings: Create ThreeStateCookieSettingsPreference
 
-Several changes, with an eye towards improving the speed of presentation
-style attributes:
+Create copy of FourStateCookiePreference to be used by the new
+third-party cookies page.
 
- - Make a static bitset to check for logical properties, instead of
-   looking up the property by ID and asking it through virtual member
-   functions.
- - Demand that presentation style attributes are always longhands,
-   to skip shorthand expansion.
- - When checking the insertion point (for overwriting existing
-   properties), work with pointers instead of indexes when we can,
-   which means we don't need arithmetic to convert back and forth.
- - For SetProperty(), make the CSSPropertyName form call the
-   CSSPropertyID form instead of the other way round, which saves
-   constructing (and destroying) a CSSPropertyName when we don't need it.
- - Make SetLonghandProperty() take in CSSPropertyValue by value instead
-   of by reference, since we want to move it into the vector anyway.
- - Make a faster form of SetLonghandProperty() that can be used when
-   we know we have a property ID; again, saves some construction time
-   on CSSPropertyName (although the compiler unfortunately isn't
-   clever enough to remove the destructor completely), and also checking
-   for custom property code.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I96f903032f231c376ccbafe4ab33a8baf9307e42">I96f903032f231c376ccbafe4ab33a8baf9307e42</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4024749">https://chromium-review.googlesource.com/c/chromium/src/+/4024749</a>
-Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Commit-Queue: Steinar H Gunderson &lt;sesse@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1072240}
+Bug: 1378703, b/254415201
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I847b993554e73eed32b13b449275fe6b4741ab88">I847b993554e73eed32b13b449275fe6b4741ab88</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4030544">https://chromium-review.googlesource.com/c/chromium/src/+/4030544</a>
+Reviewed-by: Nicola Tommasi &lt;tommasin@chromium.org&gt;
+Auto-Submit: Christian Dullweber &lt;dullweber@chromium.org&gt;
+Commit-Queue: Christian Dullweber &lt;dullweber@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1072259}
 </pre>
 
 </body>
