@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1071905/"> 1071905</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7f28b068d62936c56bd3846fec401bbf55a0422c">7f28b068d62936c56bd3846fec401bbf55a0422c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1071968/"> 1071968</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/823737b81da049d9c2eaa2281be8c09a1af776b7">823737b81da049d9c2eaa2281be8c09a1af776b7</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1071906/">1071906</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/17751f1608afe8ed320e5c81981b6d030b9123bc">17751f1608afe8ed320e5c81981b6d030b9123bc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1071953/">1071953</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d5e1abe428a48a072d719691e728817993978e61">d5e1abe428a48a072d719691e728817993978e61</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7f28b068d62936c56bd3846fec401bbf55a0422c
+   823737b81da049d9c2eaa2281be8c09a1af776b7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7f28b068d62936c56bd3846fec401bbf55a0422c">
+    <a href="/chromium/src/+log/823737b81da049d9c2eaa2281be8c09a1af776b7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7f28b068d62936c56bd3846fec401bbf55a0422c.tar.gz">
+    <a href="/chromium/src/+archive/823737b81da049d9c2eaa2281be8c09a1af776b7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+   Mohsen Izadi &lt;mohsen@chromium.org&gt;
   </td>
   <td>
-   Tue Nov 15 23:32:11 2022
+   Wed Nov 16 01:30:01 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Nov 15 23:32:11 2022
+   Wed Nov 16 01:30:01 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7f28b068d62936c56bd3846fec401bbf55a0422c/">
-    b30ab1e0f3bfaf5a3b008dd2813e1cf4c6ba4478
+   <a href="/chromium/src/+/823737b81da049d9c2eaa2281be8c09a1af776b7/">
+    58c8633c0f2b57015a78438f58a77084d6c50c12
    </a>
   </td>
  </tr>
@@ -166,29 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7f28b068d62936c56bd3846fec401bbf55a0422c%5E">
-    a99061bd94312d823ba94ae51960308f56819a6d
+   <a href="/chromium/src/+/823737b81da049d9c2eaa2281be8c09a1af776b7%5E">
+    0d4774b767c2a249c258310ca454b39455d1fcb1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7f28b068d62936c56bd3846fec401bbf55a0422c%5E%21/">
+    <a href="/chromium/src/+/823737b81da049d9c2eaa2281be8c09a1af776b7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">DanglingPtr: Prevent ProtocolHandlerThrottle from having a dangling ptr
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix presentation callback in WidgetBase::ForceRedraw()
 
-This CL prevents ProtocolHandlerThrottle from having a dangling ptr to
-ProtocolHandlerRegistry by replacing raw_ptr with base::WeakPtr.
+`WidgetBase::ForceRedraw()` forces a redraw and then uses a presentation
+callback to determine when the redraw is completed by being presented on
+the screen. However, the callback it currently uses might be called even
+if the submitted frame fails to present successfully on the screen. This
+CL fixes it by using callbacks that are called after a frame is
+successfully presented on the screen.
 
-Bug: 1283546, 1291138
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I939525e99c79a16a221eb696357ddde8e86fc9a0">I939525e99c79a16a221eb696357ddde8e86fc9a0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4028756">https://chromium-review.googlesource.com/c/chromium/src/+/4028756</a>
-Reviewed-by: Javier Fernandez &lt;jfernandez@igalia.com&gt;
-Commit-Queue: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1071905}
+Bug: 1378612
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6b101b76b1299ca79885ce1f97f1e6aefdca8044">I6b101b76b1299ca79885ce1f97f1e6aefdca8044</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4025997">https://chromium-review.googlesource.com/c/chromium/src/+/4025997</a>
+Reviewed-by: Dave Tapuska &lt;dtapuska@chromium.org&gt;
+Commit-Queue: Mohsen Izadi &lt;mohsen@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1071968}
 </pre>
 
 </body>
