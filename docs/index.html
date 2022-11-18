@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1073254/"> 1073254</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4aba132b1a4083c2fade203f169332c361bc6b19">4aba132b1a4083c2fade203f169332c361bc6b19</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1073264/"> 1073264</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/05acd1250d25a2b57fd7ad2130de112d32c899aa">05acd1250d25a2b57fd7ad2130de112d32c899aa</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1073251/">1073251</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4aba132b1a4083c2fade203f169332c361bc6b19
+   05acd1250d25a2b57fd7ad2130de112d32c899aa
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4aba132b1a4083c2fade203f169332c361bc6b19">
+    <a href="/chromium/src/+log/05acd1250d25a2b57fd7ad2130de112d32c899aa">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4aba132b1a4083c2fade203f169332c361bc6b19.tar.gz">
+    <a href="/chromium/src/+archive/05acd1250d25a2b57fd7ad2130de112d32c899aa.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alexander Dunaev &lt;adunaev@igalia.com&gt;
+   Minoru Chikamune &lt;chikamune@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 18 08:00:47 2022
+   Fri Nov 18 08:39:45 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Nov 18 08:00:47 2022
+   Fri Nov 18 08:39:45 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4aba132b1a4083c2fade203f169332c361bc6b19/">
-    90b588d4f63528a4dbb69a52217d74769d006fd9
+   <a href="/chromium/src/+/05acd1250d25a2b57fd7ad2130de112d32c899aa/">
+    d182fe85b0a7f3814354c3b43ecaa8c1727216da
    </a>
   </td>
  </tr>
@@ -166,28 +166,53 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4aba132b1a4083c2fade203f169332c361bc6b19%5E">
-    9335654be849dcf4e5f4bc232a11fcd19c0ad7be
+   <a href="/chromium/src/+/05acd1250d25a2b57fd7ad2130de112d32c899aa%5E">
+    29014aa1db6c3b51f08951f6c69b2cf56672e4a6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4aba132b1a4083c2fade203f169332c361bc6b19%5E%21/">
+    <a href="/chromium/src/+/05acd1250d25a2b57fd7ad2130de112d32c899aa%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[linux/wayland] Fixed threading in wayland event source unit tests.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add kServiceWorkerStorageControlOnThreadPool feature (disabled by default)
 
-This patch converts the wayland event source unit tests into async ones.
+This CL adds kServiceWorkerStorageControlOnThreadPool feature.  Before
+this CL, ServiceWorkerStorageControl mojo receiver runs on UI thread on
+Desktop.  If kServiceWorkerStorageControlOnThreadPool is enabled,
+ServiceWorkerStorageControl mojo receiver runs on thread pool so that
+FindRegistrationForClientUrl() can run in parallel independent of
+the UI thread.
 
-Bug: 1365887
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia7c2e3a5e4c6739d7f7ae07a37493594f0830777">Ia7c2e3a5e4c6739d7f7ae07a37493594f0830777</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4030812">https://chromium-review.googlesource.com/c/chromium/src/+/4030812</a>
-Commit-Queue: Maksim Sisov &lt;msisov@igalia.com&gt;
-Reviewed-by: Maksim Sisov &lt;msisov@igalia.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1073254}
+IO thread v.s. Thread pool
+
+On Android, when kServiceWorkerStorageControlOnIOThread feature is
+enabled, ServiceWorkerStorageControl mojo receiver runs on IO
+thread. But nowadays running code on the IO thread is not
+recommended. So this CL uses thread pool instead. In the near future,
+after we confirmed that this CL doesn't break anything, we want to run
+ServiceWorkerStorageControl mojo receiver on thread pool on all of the
+platforms including Android.
+
+About ServiceWorkerContextWrapper::storage_control_
+
+This CL still keeps the storage_control_ field on
+ServiceWorkerContextWrapper. But I'll remove this field in a separated
+CL because this CL started to use SelfOwnedReceiver to manage
+ServiceWorkerStorageControl mojo receiver.
+
+Bug: 1375174
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id1b54ca14dd57e12e99ba868eb424795d047ba04">Id1b54ca14dd57e12e99ba868eb424795d047ba04</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4027802">https://chromium-review.googlesource.com/c/chromium/src/+/4027802</a>
+Reviewed-by: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
+Reviewed-by: Shunya Shishido &lt;sisidovski@chromium.org&gt;
+Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
+Reviewed-by: Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
+Commit-Queue: Minoru Chikamune &lt;chikamune@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1073264}
 </pre>
 
 </body>
