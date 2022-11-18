@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1073264/"> 1073264</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/05acd1250d25a2b57fd7ad2130de112d32c899aa">05acd1250d25a2b57fd7ad2130de112d32c899aa</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1073273/"> 1073273</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c99a868c26fb8921ed16e79835d2c43f23113e79">c99a868c26fb8921ed16e79835d2c43f23113e79</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1073251/">1073251</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   05acd1250d25a2b57fd7ad2130de112d32c899aa
+   c99a868c26fb8921ed16e79835d2c43f23113e79
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/05acd1250d25a2b57fd7ad2130de112d32c899aa">
+    <a href="/chromium/src/+log/c99a868c26fb8921ed16e79835d2c43f23113e79">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/05acd1250d25a2b57fd7ad2130de112d32c899aa.tar.gz">
+    <a href="/chromium/src/+archive/c99a868c26fb8921ed16e79835d2c43f23113e79.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Minoru Chikamune &lt;chikamune@chromium.org&gt;
+   Emmanuel Arias Soto &lt;eariassoto@google.com&gt;
   </td>
   <td>
-   Fri Nov 18 08:39:45 2022
+   Fri Nov 18 09:13:55 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Nov 18 08:39:45 2022
+   Fri Nov 18 09:13:55 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/05acd1250d25a2b57fd7ad2130de112d32c899aa/">
-    d182fe85b0a7f3814354c3b43ecaa8c1727216da
+   <a href="/chromium/src/+/c99a868c26fb8921ed16e79835d2c43f23113e79/">
+    bcb3408b3a9440865a75329107ed160d7a32f791
    </a>
   </td>
  </tr>
@@ -166,53 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/05acd1250d25a2b57fd7ad2130de112d32c899aa%5E">
-    29014aa1db6c3b51f08951f6c69b2cf56672e4a6
+   <a href="/chromium/src/+/c99a868c26fb8921ed16e79835d2c43f23113e79%5E">
+    952290ee6c66ce47f7b492b0d4e438a2aafeb0f7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/05acd1250d25a2b57fd7ad2130de112d32c899aa%5E%21/">
+    <a href="/chromium/src/+/c99a868c26fb8921ed16e79835d2c43f23113e79%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add kServiceWorkerStorageControlOnThreadPool feature (disabled by default)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CrOS Cellular] Add ModifyCustomApn in CrosNetworkConfig API
 
-This CL adds kServiceWorkerStorageControlOnThreadPool feature.  Before
-this CL, ServiceWorkerStorageControl mojo receiver runs on UI thread on
-Desktop.  If kServiceWorkerStorageControlOnThreadPool is enabled,
-ServiceWorkerStorageControl mojo receiver runs on thread pool so that
-FindRegistrationForClientUrl() can run in parallel independent of
-the UI thread.
+This new API replaces custom APNs entries by ID in the new APN UI revamp.
+If an entry is found, it replaces the APN and updates the ONC value
+"Cellular.UserAPNList", and the NetworkMetadataStore.
 
-IO thread v.s. Thread pool
+Bug: b:162365553
+Test: chromeos_unittests --gtest_filter=CrosNetworkConfigTest.*
 
-On Android, when kServiceWorkerStorageControlOnIOThread feature is
-enabled, ServiceWorkerStorageControl mojo receiver runs on IO
-thread. But nowadays running code on the IO thread is not
-recommended. So this CL uses thread pool instead. In the near future,
-after we confirmed that this CL doesn't break anything, we want to run
-ServiceWorkerStorageControl mojo receiver on thread pool on all of the
-platforms including Android.
-
-About ServiceWorkerContextWrapper::storage_control_
-
-This CL still keeps the storage_control_ field on
-ServiceWorkerContextWrapper. But I'll remove this field in a separated
-CL because this CL started to use SelfOwnedReceiver to manage
-ServiceWorkerStorageControl mojo receiver.
-
-Bug: 1375174
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id1b54ca14dd57e12e99ba868eb424795d047ba04">Id1b54ca14dd57e12e99ba868eb424795d047ba04</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4027802">https://chromium-review.googlesource.com/c/chromium/src/+/4027802</a>
-Reviewed-by: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
-Reviewed-by: Shunya Shishido &lt;sisidovski@chromium.org&gt;
-Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
-Reviewed-by: Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
-Commit-Queue: Minoru Chikamune &lt;chikamune@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1073264}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iffd176b6ba7ed0965cdb02436e8142c042c91581">Iffd176b6ba7ed0965cdb02436e8142c042c91581</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4020387">https://chromium-review.googlesource.com/c/chromium/src/+/4020387</a>
+Commit-Queue: Emmanuel Arias Soto &lt;eariassoto@google.com&gt;
+Reviewed-by: Gordon Seto &lt;gordonseto@google.com&gt;
+Reviewed-by: Chad Duffin &lt;chadduffin@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1073273}
 </pre>
 
 </body>
