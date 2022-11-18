@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1073172/"> 1073172</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0b37f61e99f75c615d7119d4acab9db58f9993c">f0b37f61e99f75c615d7119d4acab9db58f9993c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1073188/"> 1073188</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3d63a9bd854a94faed69693e2e7ebd726ba61100">3d63a9bd854a94faed69693e2e7ebd726ba61100</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1073151/">1073151</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f0b37f61e99f75c615d7119d4acab9db58f9993c
+   3d63a9bd854a94faed69693e2e7ebd726ba61100
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f0b37f61e99f75c615d7119d4acab9db58f9993c">
+    <a href="/chromium/src/+log/3d63a9bd854a94faed69693e2e7ebd726ba61100">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f0b37f61e99f75c615d7119d4acab9db58f9993c.tar.gz">
+    <a href="/chromium/src/+archive/3d63a9bd854a94faed69693e2e7ebd726ba61100.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Fumitoshi Ukai &lt;ukai@google.com&gt;
+   Leonid Baraz &lt;lbaraz@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 18 02:31:03 2022
+   Fri Nov 18 03:05:45 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Nov 18 02:31:03 2022
+   Fri Nov 18 03:05:45 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f0b37f61e99f75c615d7119d4acab9db58f9993c/">
-    df145954901019448861c24ffe3fb7045013f3f2
+   <a href="/chromium/src/+/3d63a9bd854a94faed69693e2e7ebd726ba61100/">
+    116cd75f50fdb45e16aa080c2f336998dba57514
    </a>
   </td>
  </tr>
@@ -166,31 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f0b37f61e99f75c615d7119d4acab9db58f9993c%5E">
-    ee7853cc9793cef0590a735851a63e1f2c645e76
+   <a href="/chromium/src/+/3d63a9bd854a94faed69693e2e7ebd726ba61100%5E">
+    8c9ea21f45b95b76b8d419fd68c4ce4784bb1518
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f0b37f61e99f75c615d7119d4acab9db58f9993c%5E%21/">
+    <a href="/chromium/src/+/3d63a9bd854a94faed69693e2e7ebd726ba61100%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">switch back from reclient to goma: chrome/win*-chrome
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix callback list check.
 
-We have not provisioned enough windows workers for reclient.
-Until workers become available, back to goma.
+(Sync up with missive)
 
-Bug: b/177903495, 1385629
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4400250ae68e807bcab2ef13dee6ccc103ff2a23">I4400250ae68e807bcab2ef13dee6ccc103ff2a23</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4036508">https://chromium-review.googlesource.com/c/chromium/src/+/4036508</a>
-Auto-Submit: Fumitoshi Ukai &lt;ukai@google.com&gt;
-Commit-Queue: Takuto Ikuta &lt;tikuta@chromium.org&gt;
-Commit-Queue: Fumitoshi Ukai &lt;ukai@google.com&gt;
-Reviewed-by: Takuto Ikuta &lt;tikuta@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1073172}
+Check fired when CallbackList was notifying subscribers while being
+deleted. We only had 2 places where the CallbackList was used, and did
+not need its full functionality.
+For that reason I am removing CallbackList altogether and replace it
+with vector of callbacks, guarded by sequence task runner and not
+needing CHECK protection from a colliding use.
+
+Also hardended test of RefCountedClosureList to more closely resemble
+its actual use: releasing the test-owned reference before workers
+complete and release it.
+
+Bug: b:259398982
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iada2be1a513a5a5212e68c980f40ac8dde460d41">Iada2be1a513a5a5212e68c980f40ac8dde460d41</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4036944">https://chromium-review.googlesource.com/c/chromium/src/+/4036944</a>
+Commit-Queue: Leonid Baraz &lt;lbaraz@chromium.org&gt;
+Reviewed-by: Hong Xu &lt;xuhong@google.com&gt;
+Auto-Submit: Leonid Baraz &lt;lbaraz@chromium.org&gt;
+Commit-Queue: Hong Xu &lt;xuhong@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1073188}
 </pre>
 
 </body>
