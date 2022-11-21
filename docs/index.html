@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1074239/"> 1074239</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/da6874df4a4a6bea1e8e640b386b97757d32e396">da6874df4a4a6bea1e8e640b386b97757d32e396</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1074259/"> 1074259</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e783be75d3d622838da61228150155c1cf864d4e">e783be75d3d622838da61228150155c1cf864d4e</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1074141/">1074141</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   da6874df4a4a6bea1e8e640b386b97757d32e396
+   e783be75d3d622838da61228150155c1cf864d4e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/da6874df4a4a6bea1e8e640b386b97757d32e396">
+    <a href="/chromium/src/+log/e783be75d3d622838da61228150155c1cf864d4e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/da6874df4a4a6bea1e8e640b386b97757d32e396.tar.gz">
+    <a href="/chromium/src/+archive/e783be75d3d622838da61228150155c1cf864d4e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Michael Thiessen &lt;mthiesse@chromium.org&gt;
+   Maksim Moskvitin &lt;mmoskvitin@google.com&gt;
   </td>
   <td>
-   Mon Nov 21 20:34:11 2022
+   Mon Nov 21 21:15:39 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Nov 21 20:34:11 2022
+   Mon Nov 21 21:15:39 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/da6874df4a4a6bea1e8e640b386b97757d32e396/">
-    adc31ad84ffedeb48a6b7a49e8f5a4e55d3c676e
+   <a href="/chromium/src/+/e783be75d3d622838da61228150155c1cf864d4e/">
+    c53e0782c39a2f7085a57295e7cb4c530d22523c
    </a>
   </td>
  </tr>
@@ -166,34 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/da6874df4a4a6bea1e8e640b386b97757d32e396%5E">
-    f5c2692df366849026eeda7d9381eb16152ce825
+   <a href="/chromium/src/+/e783be75d3d622838da61228150155c1cf864d4e%5E">
+    bef22e582d760b505bc8b5265e26b0c448925f74
    </a>
    <span>
     [
-    <a href="/chromium/src/+/da6874df4a4a6bea1e8e640b386b97757d32e396%5E%21/">
+    <a href="/chromium/src/+/e783be75d3d622838da61228150155c1cf864d4e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Don't cache observer iterator in WebContentsObserver.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Get rid of SyncTest::SetEncryptionPassphraseForClient() usages
 
-If a class that listens to a WebContentsObserver triggers another
-WebContentsObserver event (eg. by changing the focus of the WebContents)
-then any observers after that observer in the observerlist won't
-receive the first event at all.
+SetEncryptionPassphraseForClient() are overused and needs a lot of
+boilerplate code in SyncTest. In most (except one) cases tests can
+conveniently use SyncUserSettings interface and achieve the same.
 
-Fix this by not caching the iterator for the observers so it doesn't
-get reset when a new event is triggered.
+The actual difference between
+SyncTest::SetEncryptionPassphraseForClient() and
+SyncUserSettings::SetEncryptionPassphrase() is that former mimics
+passphrase being set during first sync setup, while the latter sets
+passphrase at the time of call, usually after SetupSync().
 
-Bug: 1385302
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7216da6c2a319528caa14a73e8effb5bb3667f97">I7216da6c2a319528caa14a73e8effb5bb3667f97</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4036825">https://chromium-review.googlesource.com/c/chromium/src/+/4036825</a>
-Reviewed-by: Yaron Friedman &lt;yfriedman@chromium.org&gt;
-Commit-Queue: Michael Thiessen &lt;mthiesse@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1074239}
+The only test that needed to SetEncryptionPassphraseForClient() is
+DoesNotLeakUnencryptedData, which verifies that if passphrase is set
+during the first sync setup server won't see unencrypted data at all.
+
+This CL rewrites DoesNotLeakUnencryptedData in a way it sets up sync
+on its own, without relying on SetupSync() logic - probably also making
+test expectations more explicit. Rest of the tests now call
+SetEncryptionPassphrase() after SetupSync().
+
+SyncTest is to be cleaned up in the follow up CL.
+
+Bug: 1338480
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iadf77cfe8cba5e1d5a9b110ff81f2a5e66be828f">Iadf77cfe8cba5e1d5a9b110ff81f2a5e66be828f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4036538">https://chromium-review.googlesource.com/c/chromium/src/+/4036538</a>
+Reviewed-by: Marc Treib &lt;treib@chromium.org&gt;
+Commit-Queue: Maksim Moskvitin &lt;mmoskvitin@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1074259}
 </pre>
 
 </body>
