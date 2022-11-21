@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1074141/"> 1074141</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7cc96742146445a5a5f64909c1bc02df6d479fd1">7cc96742146445a5a5f64909c1bc02df6d479fd1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1074239/"> 1074239</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/da6874df4a4a6bea1e8e640b386b97757d32e396">da6874df4a4a6bea1e8e640b386b97757d32e396</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1074141/">1074141</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7cc96742146445a5a5f64909c1bc02df6d479fd1
+   da6874df4a4a6bea1e8e640b386b97757d32e396
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7cc96742146445a5a5f64909c1bc02df6d479fd1">
+    <a href="/chromium/src/+log/da6874df4a4a6bea1e8e640b386b97757d32e396">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7cc96742146445a5a5f64909c1bc02df6d479fd1.tar.gz">
+    <a href="/chromium/src/+archive/da6874df4a4a6bea1e8e640b386b97757d32e396.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Michael Wilson &lt;mjwilson@chromium.org&gt;
+   Michael Thiessen &lt;mthiesse@chromium.org&gt;
   </td>
   <td>
-   Mon Nov 21 18:48:23 2022
+   Mon Nov 21 20:34:11 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Nov 21 18:48:23 2022
+   Mon Nov 21 20:34:11 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7cc96742146445a5a5f64909c1bc02df6d479fd1/">
-    60aaa92792e8bae7929e0133460535d9de78a17e
+   <a href="/chromium/src/+/da6874df4a4a6bea1e8e640b386b97757d32e396/">
+    adc31ad84ffedeb48a6b7a49e8f5a4e55d3c676e
    </a>
   </td>
  </tr>
@@ -166,36 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7cc96742146445a5a5f64909c1bc02df6d479fd1%5E">
-    757f9408fa8d54b79e2a51b9b65924cf8019df75
+   <a href="/chromium/src/+/da6874df4a4a6bea1e8e640b386b97757d32e396%5E">
+    f5c2692df366849026eeda7d9381eb16152ce825
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7cc96742146445a5a5f64909c1bc02df6d479fd1%5E%21/">
+    <a href="/chromium/src/+/da6874df4a4a6bea1e8e640b386b97757d32e396%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix WebAudio whitespace and include order issues
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Don't cache observer iterator in WebContentsObserver.
 
-This CL should cause no functional changes
+If a class that listens to a WebContentsObserver triggers another
+WebContentsObserver event (eg. by changing the focus of the WebContents)
+then any observers after that observer in the observerlist won't
+receive the first event at all.
 
-Coding style guide reference:
-<a href="https://google.github.io/styleguide/cppguide.html#Names_and_Order_of_Includes">https://google.github.io/styleguide/cppguide.html#Names_and_Order_of_Includes</a>
+Fix this by not caching the iterator for the observers so it doesn't
+get reset when a new event is triggered.
 
-This CL just moves the order of #include statements around and changes
-whitespace, except for the following:
-- oscillator_kernel_neon.cc and oscillator_kernel_sse2.cc were also
-  updated to include oscillator_handler.h instead of oscillator_node.h
-  as the related header
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifd0d4ba0d0dff3fb9cf073c6cd73c7b1dc3785f0">Ifd0d4ba0d0dff3fb9cf073c6cd73c7b1dc3785f0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4024142">https://chromium-review.googlesource.com/c/chromium/src/+/4024142</a>
-Reviewed-by: Alvin Ji &lt;alvinji@chromium.org&gt;
-Commit-Queue: Michael Wilson &lt;mjwilson@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1074141}
+Bug: 1385302
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7216da6c2a319528caa14a73e8effb5bb3667f97">I7216da6c2a319528caa14a73e8effb5bb3667f97</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4036825">https://chromium-review.googlesource.com/c/chromium/src/+/4036825</a>
+Reviewed-by: Yaron Friedman &lt;yfriedman@chromium.org&gt;
+Commit-Queue: Michael Thiessen &lt;mthiesse@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1074239}
 </pre>
 
 </body>
