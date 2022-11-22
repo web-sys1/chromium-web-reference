@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1074541/"> 1074541</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/faeb9423a9a5d58d49599d2c480b4dad5bc0c3bf">faeb9423a9a5d58d49599d2c480b4dad5bc0c3bf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1074579/"> 1074579</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ed2bf2c4c000f490e177966ef494aaf1916f06c3">ed2bf2c4c000f490e177966ef494aaf1916f06c3</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1074517/">1074517</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3a1e950a2dc091511a2e3a5c281f5f1dd6b75d0f">3a1e950a2dc091511a2e3a5c281f5f1dd6b75d0f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1074562/">1074562</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9fb6bc83355d64db42256e9a3d245eadb40fe5ab">9fb6bc83355d64db42256e9a3d245eadb40fe5ab</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   faeb9423a9a5d58d49599d2c480b4dad5bc0c3bf
+   ed2bf2c4c000f490e177966ef494aaf1916f06c3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/faeb9423a9a5d58d49599d2c480b4dad5bc0c3bf">
+    <a href="/chromium/src/+log/ed2bf2c4c000f490e177966ef494aaf1916f06c3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/faeb9423a9a5d58d49599d2c480b4dad5bc0c3bf.tar.gz">
+    <a href="/chromium/src/+archive/ed2bf2c4c000f490e177966ef494aaf1916f06c3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yoshifuim Inoue &lt;yosin@chromium.org&gt;
+   Tom Van Goethem &lt;tov@chromium.org&gt;
   </td>
   <td>
-   Tue Nov 22 11:03:23 2022
+   Tue Nov 22 12:12:13 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Nov 22 11:03:23 2022
+   Tue Nov 22 12:12:13 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/faeb9423a9a5d58d49599d2c480b4dad5bc0c3bf/">
-    5fe717d41dab6e55ad8d49685ba0ada4b5ec446e
+   <a href="/chromium/src/+/ed2bf2c4c000f490e177966ef494aaf1916f06c3/">
+    47073edffe2c91dd915b04e1972f47c8d9f9dd5e
    </a>
   </td>
  </tr>
@@ -166,52 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/faeb9423a9a5d58d49599d2c480b4dad5bc0c3bf%5E">
-    fe95db2d3d550ba3b352c7385f69fa22cd5daa68
+   <a href="/chromium/src/+/ed2bf2c4c000f490e177966ef494aaf1916f06c3%5E">
+    60a67f2383ec059a4cacaa85bd51f0d9ef91f0d7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/faeb9423a9a5d58d49599d2c480b4dad5bc0c3bf%5E%21/">
+    <a href="/chromium/src/+/ed2bf2c4c000f490e177966ef494aaf1916f06c3%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[editing] (1/4) Make ComparePositions() faster
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[SafetyCheck] Allow undo via ctrl+z for notification permission
 
-This patch is the first part of a series of patches to make
-`ComparePositions()` faster.
+Pressing ctrl+z (or meta+z on macOS) performs the same action as
+pressing the undo button.
 
-This patch moves `ComparePositions()` related functions into the new
-file "compare_positions.cc" to reduce the size of "editing_utilities.cc"
-and for ease of maintenance.
-
-The ideas of fast `ComparePositions()` are:
-  * Comparing child Nodes with the same parent can be faster
-    - Selecting many &lt;span&gt;’s with text can be faster.
-    - This is used for comparing children in common ancestors and
-      relative positions, aka before/after node, after children.
-  * Container + Child Before Node and Container + Child Index are
-    equivalent
-    - SelectAll commands, make range (container@0,
-      container@afterChildren), can be faster
-    - Utilize child nodes comparison for relative positions instead of
-      counting the number of children.
-
-The series is
-  1. <a href="https://crrev.com/c/4039247">https://crrev.com/c/4039247</a> Move to "compare_positions.cc"
-  2. <a href="https://crrev.com/c/4040525">https://crrev.com/c/4040525</a> Move logic to functions
-  3. <a href="https://crrev.com/c/4040521">https://crrev.com/c/4040521</a> CompareNodesInSameParent faster
-  4. <a href="https://crrev.com/c/4040842">https://crrev.com/c/4040842</a> Relative positions faster
-
-Bug: 1323777
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I34ae16657ac947070828edaf5ee8600d81dc7734">I34ae16657ac947070828edaf5ee8600d81dc7734</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4039247">https://chromium-review.googlesource.com/c/chromium/src/+/4039247</a>
-Auto-Submit: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
-Commit-Queue: Yoshifumi Inoue &lt;yosin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1074541}
+Bug: 1345920
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifa1fd364256cfc510a75d054978458d6e07aeec0">Ifa1fd364256cfc510a75d054978458d6e07aeec0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4037744">https://chromium-review.googlesource.com/c/chromium/src/+/4037744</a>
+Reviewed-by: Theodore Olsauskas-Warren &lt;sauski@google.com&gt;
+Reviewed-by: Side YILMAZ &lt;sideyilmaz@chromium.org&gt;
+Commit-Queue: Tom Van Goethem &lt;tov@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1074579}
 </pre>
 
 </body>
