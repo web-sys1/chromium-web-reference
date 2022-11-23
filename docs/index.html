@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075078/"> 1075078</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dd4381f762d4dce6816a8fa250e250b36c819b6a">dd4381f762d4dce6816a8fa250e250b36c819b6a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075085/"> 1075085</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7ace09ae6356119fd26aa3be7ee9bdaf6e9306fd">7ace09ae6356119fd26aa3be7ee9bdaf6e9306fd</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1075061/">1075061</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   dd4381f762d4dce6816a8fa250e250b36c819b6a
+   7ace09ae6356119fd26aa3be7ee9bdaf6e9306fd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/dd4381f762d4dce6816a8fa250e250b36c819b6a">
+    <a href="/chromium/src/+log/7ace09ae6356119fd26aa3be7ee9bdaf6e9306fd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/dd4381f762d4dce6816a8fa250e250b36c819b6a.tar.gz">
+    <a href="/chromium/src/+archive/7ace09ae6356119fd26aa3be7ee9bdaf6e9306fd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Eriko Kurimoto &lt;elkurin@chromium.org&gt;
+   Yongshun Liu &lt;yongshun@chromium.org&gt;
   </td>
   <td>
-   Wed Nov 23 09:59:45 2022
+   Wed Nov 23 10:31:48 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 23 09:59:45 2022
+   Wed Nov 23 10:31:48 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/dd4381f762d4dce6816a8fa250e250b36c819b6a/">
-    8dfe7b4cca5a06a1bf74ed5400f060bda11fd10d
+   <a href="/chromium/src/+/7ace09ae6356119fd26aa3be7ee9bdaf6e9306fd/">
+    8cf437b33a206ecbf671581340418b7a200330c3
    </a>
   </td>
  </tr>
@@ -166,34 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/dd4381f762d4dce6816a8fa250e250b36c819b6a%5E">
-    d0432e171d605c5bc7427d47b5029c5cd52b0579
+   <a href="/chromium/src/+/7ace09ae6356119fd26aa3be7ee9bdaf6e9306fd%5E">
+    48486f495ce3eb4addc888d8eb2ca39ec37dfd8d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/dd4381f762d4dce6816a8fa250e250b36c819b6a%5E%21/">
+    <a href="/chromium/src/+/7ace09ae6356119fd26aa3be7ee9bdaf6e9306fd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">LacrosTablet: Adjust bubble if offscreen for Lacros
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">cros: Make FocusChangeObserver checked observer
 
-This CL sets PlatformStyle::kAdjustBubbleIfOffscreen true on Lacros.
-If this is false, bubble position is not adjusted properly.
+This converts `FocusChangeObserver` into checked observers. With
+this, dangling pointers of `focus_observers_` in `FocusController` would
+be errored out more verbosely.
 
-For example, crbug.com/1362816 is caused by this issue.
-BubbleFrameView::GetUpdatedWindowBounds() didn't update the bounds to
-proper position so that Lacros textfield bubble window is positioned
-outside of the screen.
+There is also a dangling pointer in browser test
+`DefaultEnableFullRestoreAndGhostWindow`. The pointer is lost here
+because `exo::WMHelper` is released before the dtor of
+`CrostiniUnsupportedActionNotifier`(here for more context [1]). More
+specifically, `TearDownOnMainThread()` is called before dtor of
+`CrostiniUnsupportedActionNotifier`. The fix is to make the test fixture
+a `ash::ShellObserver` so than when `OnShellDestroying()`, it releases
+`exo::WMHelper`, and the focus observer can get unregistered.
 
-Bug: 1362816
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1cf125c9a5343ac97f225ebb29f1b002e5266f8e">I1cf125c9a5343ac97f225ebb29f1b002e5266f8e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4045529">https://chromium-review.googlesource.com/c/chromium/src/+/4045529</a>
-Reviewed-by: Thomas Lukaszewicz &lt;tluk@chromium.org&gt;
-Commit-Queue: Eriko Kurimoto &lt;elkurin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1075078}
+[1] <a href="https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/ash/crostini/crostini_unsupported_action_notifier.cc;l=210-212">https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/ash/crostini/crostini_unsupported_action_notifier.cc;l=210-212</a>
+
+Bug: b/259976092
+Test: All/FullRestorePolicyBrowserTest.DefaultEnableFullRestoreAndGhostWindow/*
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iccfd66b1ce085ee65d37f14d22d309fc36b436b2">Iccfd66b1ce085ee65d37f14d22d309fc36b436b2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4044064">https://chromium-review.googlesource.com/c/chromium/src/+/4044064</a>
+Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
+Reviewed-by: Sean Topping &lt;seantopping@chromium.org&gt;
+Reviewed-by: Eric Seckler &lt;eseckler@chromium.org&gt;
+Commit-Queue: Yongshun Liu &lt;yongshun@chromium.org&gt;
+Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1075085}
 </pre>
 
 </body>
