@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075493/"> 1075493</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/60b7ce184b33fabb338f77d17e43cde125d19a3a">60b7ce184b33fabb338f77d17e43cde125d19a3a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075508/"> 1075508</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ca88320ec814fa663f3de01f90624f94bfdbf366">ca88320ec814fa663f3de01f90624f94bfdbf366</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1075490/">1075490</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   60b7ce184b33fabb338f77d17e43cde125d19a3a
+   ca88320ec814fa663f3de01f90624f94bfdbf366
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/60b7ce184b33fabb338f77d17e43cde125d19a3a">
+    <a href="/chromium/src/+log/ca88320ec814fa663f3de01f90624f94bfdbf366">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/60b7ce184b33fabb338f77d17e43cde125d19a3a.tar.gz">
+    <a href="/chromium/src/+archive/ca88320ec814fa663f3de01f90624f94bfdbf366.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yuki Shiino &lt;yukishiino@chromium.org&gt;
+   Christian Flach &lt;cmfcmf@chromium.org&gt;
   </td>
   <td>
-   Thu Nov 24 06:09:05 2022
+   Thu Nov 24 07:06:37 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Nov 24 06:09:05 2022
+   Thu Nov 24 07:06:37 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/60b7ce184b33fabb338f77d17e43cde125d19a3a/">
-    aab42a0854729753825594bf9b3c95d9de226db1
+   <a href="/chromium/src/+/ca88320ec814fa663f3de01f90624f94bfdbf366/">
+    5cdf6e2abf4a244604327d21f5b84bb4bbc95ef7
    </a>
   </td>
  </tr>
@@ -166,55 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/60b7ce184b33fabb338f77d17e43cde125d19a3a%5E">
-    c1fd4f00abe3fdabeb4e58ebb640fa4e523d216b
+   <a href="/chromium/src/+/ca88320ec814fa663f3de01f90624f94bfdbf366%5E">
+    ed2d32be780d2859e162808bb86365fcae2bdfb3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/60b7ce184b33fabb338f77d17e43cde125d19a3a%5E%21/">
+    <a href="/chromium/src/+/ca88320ec814fa663f3de01f90624f94bfdbf366%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Fix crash in WaylandZAuraOutput."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">iwa: Check signatures once per Chrome session on all platforms
 
-This reverts commit 935a6085855766535860943bc5cb4182e789ab52.
+This CL updates the `IsolatedWebAppReaderRegistry` to check signatures
+once per Chrome session, even on ChromeOS. This is a temporary
+workaround until we have added an explicit signature checking step to
+the Isolated Web App installation process.
 
-Reason for revert: Suspicious about causing flaky test failures of:
-XdgVersionStableTest/WaylandWindowTest.ReattachesBackgroundOnShow
-XdgVersionStableTest/WaylandBufferManagerTest.CanSubmitBufferAfterChannelDestroyedAndInitialized
-since:
-<a href="https://ci.chromium.org/p/chromium/builders/ci/Linux%20Tests%20%28dbg%29%281%29/109465">https://ci.chromium.org/p/chromium/builders/ci/Linux%20Tests%20%28dbg%29%281%29/109465</a>
-(with low confidence)
+For reference, as documented in the design doc [1], we only want to
+check signatures during installation on ChromeOS, and not during every
+Chrome session. However, given that this is solely a performance
+optimization for lower-end hardware, we will defer this optimization for
+now.
 
-Original change's description:
-&gt; Fix crash in WaylandZAuraOutput.
-&gt;
-&gt; The activated wayland protocol method is not defined which causes a
-&gt; crash when the client receives the protocol message. This CL defines the
-&gt; method with an empty implementation.
-&gt;
-&gt; Bug: 1392572
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I09a922f36bd2e008b23db550475b77ccb7e7541e">I09a922f36bd2e008b23db550475b77ccb7e7541e</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4045250">https://chromium-review.googlesource.com/c/chromium/src/+/4045250</a>
-&gt; Reviewed-by: Kramer Ge &lt;fangzhoug@chromium.org&gt;
-&gt; Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-&gt; Commit-Queue: Erik Chen &lt;erikchen@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1075382}
+[1]: go/isolated-apps-when-to-verify-signatures
 
-Bug: 1392572
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7acc181c1a0f074d9341317fb8d788187b6632ae">I7acc181c1a0f074d9341317fb8d788187b6632ae</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4054445">https://chromium-review.googlesource.com/c/chromium/src/+/4054445</a>
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Owners-Override: Yuki Shiino &lt;yukishiino@chromium.org&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Auto-Submit: Yuki Shiino &lt;yukishiino@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1075493}
+Bug: 1366309
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I925aba5a9198d7e074e758ae5f7fc42bc078da8e">I925aba5a9198d7e074e758ae5f7fc42bc078da8e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4051065">https://chromium-review.googlesource.com/c/chromium/src/+/4051065</a>
+Commit-Queue: Christian Flach &lt;cmfcmf@chromium.org&gt;
+Reviewed-by: Oleksandr Peletskyi &lt;peletskyi@chromium.org&gt;
+Reviewed-by: Phillis Tang &lt;phillis@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1075508}
 </pre>
 
 </body>
