@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075444/"> 1075444</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/416779f44ca8901885c08f109b6807f94bde8ea2">416779f44ca8901885c08f109b6807f94bde8ea2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075458/"> 1075458</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cb40dde3d568f6d8f6591238fa17bb66c3f58600">cb40dde3d568f6d8f6591238fa17bb66c3f58600</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1075414/">1075414</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   416779f44ca8901885c08f109b6807f94bde8ea2
+   cb40dde3d568f6d8f6591238fa17bb66c3f58600
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/416779f44ca8901885c08f109b6807f94bde8ea2">
+    <a href="/chromium/src/+log/cb40dde3d568f6d8f6591238fa17bb66c3f58600">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/416779f44ca8901885c08f109b6807f94bde8ea2.tar.gz">
+    <a href="/chromium/src/+archive/cb40dde3d568f6d8f6591238fa17bb66c3f58600.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andrea Orru &lt;andreaorru@chromium.org&gt;
+   Keith Lee &lt;keithlee@chromium.org&gt;
   </td>
   <td>
-   Thu Nov 24 02:03:51 2022
+   Thu Nov 24 02:39:10 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Nov 24 02:03:51 2022
+   Thu Nov 24 02:39:10 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/416779f44ca8901885c08f109b6807f94bde8ea2/">
-    bab9fcb7fef469724c4ce308dd7fedadffbc80be
+   <a href="/chromium/src/+/cb40dde3d568f6d8f6591238fa17bb66c3f58600/">
+    28bc09c2060e3b533afb7dd9161c475037da2b06
    </a>
   </td>
  </tr>
@@ -166,41 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/416779f44ca8901885c08f109b6807f94bde8ea2%5E">
-    5750ae52e536e9453de68d3f3ebc0dea18b31b8b
+   <a href="/chromium/src/+/cb40dde3d568f6d8f6591238fa17bb66c3f58600%5E">
+    c7c37e5a6f7f63d44a9c17f337b4f0fe0e868e32
    </a>
    <span>
     [
-    <a href="/chromium/src/+/416779f44ca8901885c08f109b6807f94bde8ea2%5E%21/">
+    <a href="/chromium/src/+/cb40dde3d568f6d8f6591238fa17bb66c3f58600%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Launch Lacros at login screen] Ensure Lacros blocks where expected
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make the InputMethodSettings mojom object extensible
 
-This commit is part of a series, meant to provide the capability
-of pre-launching Lacros at login screen for performance reasons.
-Design doc: <a href="http://go/lacros-loginscreen-design">http://go/lacros-loginscreen-design</a>
+This is an attempt to essentially reland
+<a href="https://chromium-review.googlesource.com/c/chromium/src/+/4030016">https://chromium-review.googlesource.com/c/chromium/src/+/4030016</a>
+incrementally.
 
-Previous relevant CLs:
-- [1] <a href="http://crrev/c/3793529">http://crrev/c/3793529</a> (Pre-launch Lacros (under flag))
+The end goal of this change is to add the mojo API to fetch and send the
+Japanese settings in decoder initalization inside of the
+ConnectionFactory::ConnectToInputMethod function -
+<a href="https://crsrc.org/c/chromeos/ash/services/ime/public/mojom/connection_factory.mojom;drc=5406e4a6f8cec5d7fcdae10b1c71f8efd7cd4be7;l=20">https://crsrc.org/c/chromeos/ash/services/ime/public/mojom/connection_factory.mojom;drc=5406e4a6f8cec5d7fcdae10b1c71f8efd7cd4be7;l=20</a>
 
-Lacros's browser process can now block at login screen as soon as it
-tries to access initialization parameters that are only available
-post-login. For the purpose of clarity, we want that point to be
-easily recognizable.
+This CL avoids needing to create a new extensible InputMethodSettings and then
+replacing the old struct with the new struct.
 
-This commit ensure that the first access to post-login parameters
-is correctly and clearly specified.
+BUG=b/232341104
 
-Bug: 1363933
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4de4c6d16f5aaf7e66b92607d82370dcd3b7665e">I4de4c6d16f5aaf7e66b92607d82370dcd3b7665e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4045382">https://chromium-review.googlesource.com/c/chromium/src/+/4045382</a>
-Reviewed-by: Ken Rockot &lt;rockot@google.com&gt;
-Commit-Queue: Andrea Orru &lt;andreaorru@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1075444}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8982e363b13af8198e88514e9e903934fe569ef1">I8982e363b13af8198e88514e9e903934fe569ef1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4045844">https://chromium-review.googlesource.com/c/chromium/src/+/4045844</a>
+Auto-Submit: Keith Lee &lt;keithlee@chromium.org&gt;
+Reviewed-by: Darren Shen &lt;shend@chromium.org&gt;
+Commit-Queue: Keith Lee &lt;keithlee@chromium.org&gt;
+Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
+Commit-Queue: Darren Shen &lt;shend@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1075458}
 </pre>
 
 </body>
