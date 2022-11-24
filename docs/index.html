@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075469/"> 1075469</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b01fa769cbfa4683201f3be26905df41f523a297">b01fa769cbfa4683201f3be26905df41f523a297</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075471/"> 1075471</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/20b3fd84291a8b9fbad84c0003247323330913c4">20b3fd84291a8b9fbad84c0003247323330913c4</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1075468/">1075468</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b01fa769cbfa4683201f3be26905df41f523a297
+   20b3fd84291a8b9fbad84c0003247323330913c4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b01fa769cbfa4683201f3be26905df41f523a297">
+    <a href="/chromium/src/+log/20b3fd84291a8b9fbad84c0003247323330913c4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b01fa769cbfa4683201f3be26905df41f523a297.tar.gz">
+    <a href="/chromium/src/+archive/20b3fd84291a8b9fbad84c0003247323330913c4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chrome Release Bot (LUCI) &lt;chrome-official-brancher@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Lingqi Chi &lt;lingqi@chromium.org&gt;
   </td>
   <td>
-   Thu Nov 24 04:05:32 2022
+   Thu Nov 24 05:29:11 2022
   </td>
  </tr>
  <tr>
@@ -145,10 +145,10 @@ body{
    committer
   </th>
   <td>
-   Chrome Release Bot (LUCI) &lt;chrome-official-brancher@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Nov 24 04:05:32 2022
+   Thu Nov 24 05:29:11 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b01fa769cbfa4683201f3be26905df41f523a297/">
-    0e1fd1d3d89206354135dfd584a9bf9c83b53ab8
+   <a href="/chromium/src/+/20b3fd84291a8b9fbad84c0003247323330913c4/">
+    6347d3aadfdc37616a06dea24383f2baf406944a
    </a>
   </td>
  </tr>
@@ -166,28 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b01fa769cbfa4683201f3be26905df41f523a297%5E">
-    08e0b6487f5e7c79f13952d68621a492ec296869
+   <a href="/chromium/src/+/20b3fd84291a8b9fbad84c0003247323330913c4%5E">
+    3d32b0fa65329c301986f522e931be7dd2e43e7d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b01fa769cbfa4683201f3be26905df41f523a297%5E%21/">
+    <a href="/chromium/src/+/20b3fd84291a8b9fbad84c0003247323330913c4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Updating trunk VERSION from 5437.0 to 5438.0
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prerender: clean up the cancellation logic and remove exceptions
 
-* This is an automated release commit.
-* Do not revert without consulting chrome-pmo@google.com.
-NOAUTOREVERT=true
+As mentioned in <a href="https://chromium-review.googlesource.com/#/q/I7114929915fee7d03c74e891498a293caec615b4">I7114929915fee7d03c74e891498a293caec615b4</a>, I'd like
+to make prerender report cancellation reasons without relying on
+exception logic. See changes in `RecordPrerenderFinalStatus`.
+So this CL does the following things:
+1. Replace RecordFinalStatus with RecordFailedFinalStatus and
+   RecordActivation.
+2. For those nested cancellation reasons, pack the reasons into
+   PrerenderCancellationReason and report them to devtools.
+   This allows us to remove exceptions and patches for devtools.
+3. Move the activation logic into dedicated methods to simplify
+   the metrics recording, including UMA, UKM and devtools.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5854b375d0c6e5f1cf67ff27981cd3e1d8d67d94">I5854b375d0c6e5f1cf67ff27981cd3e1d8d67d94</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4053648">https://chromium-review.googlesource.com/c/chromium/src/+/4053648</a>
-Bot-Commit: Chrome Release Bot (LUCI) &lt;chrome-official-brancher@chops-service-accounts.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1075469}
+Bug: 1377230
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifbd6e2051e694610941c0db13751649a9c0db886">Ifbd6e2051e694610941c0db13751649a9c0db886</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4005619">https://chromium-review.googlesource.com/c/chromium/src/+/4005619</a>
+Reviewed-by: Rakina Zata Amni &lt;rakina@chromium.org&gt;
+Reviewed-by: Asami Doi &lt;asamidoi@chromium.org&gt;
+Commit-Queue: Lingqi Chi &lt;lingqi@chromium.org&gt;
+Reviewed-by: Huanpo Lin &lt;robertlin@chromium.org&gt;
+Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1075471}
 </pre>
 
 </body>
