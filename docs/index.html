@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075550/"> 1075550</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/81bad54301964fc2520363fee07f9424f01d32ca">81bad54301964fc2520363fee07f9424f01d32ca</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075553/"> 1075553</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a127f6f05f7d1b06860dc6d309da7eb1e1f338a9">a127f6f05f7d1b06860dc6d309da7eb1e1f338a9</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1075541/">1075541</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/27d5c5572b5ffd52400243556c55e93d5469ae61">27d5c5572b5ffd52400243556c55e93d5469ae61</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1075548/">1075548</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8a9aaca379553a235639fba2b039257f19a8b3ae">8a9aaca379553a235639fba2b039257f19a8b3ae</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   81bad54301964fc2520363fee07f9424f01d32ca
+   a127f6f05f7d1b06860dc6d309da7eb1e1f338a9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/81bad54301964fc2520363fee07f9424f01d32ca">
+    <a href="/chromium/src/+log/a127f6f05f7d1b06860dc6d309da7eb1e1f338a9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/81bad54301964fc2520363fee07f9424f01d32ca.tar.gz">
+    <a href="/chromium/src/+archive/a127f6f05f7d1b06860dc6d309da7eb1e1f338a9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ashley Newson &lt;ashleynewson@chromium.org&gt;
+   Danil Somsikov &lt;dsv@chromium.org&gt;
   </td>
   <td>
-   Thu Nov 24 12:21:36 2022
+   Thu Nov 24 12:43:37 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Nov 24 12:21:36 2022
+   Thu Nov 24 12:43:37 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/81bad54301964fc2520363fee07f9424f01d32ca/">
-    36597b7f191180613e46d5b686e7e5ed601ba43d
+   <a href="/chromium/src/+/a127f6f05f7d1b06860dc6d309da7eb1e1f338a9/">
+    9f9feda1f615538f3a06336a7609571693b64664
    </a>
   </td>
  </tr>
@@ -166,46 +166,25 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/81bad54301964fc2520363fee07f9424f01d32ca%5E">
-    d831054ff82f190c5b9179c06aa13128b9458556
+   <a href="/chromium/src/+/a127f6f05f7d1b06860dc6d309da7eb1e1f338a9%5E">
+    4d127149e4c380870570da9bdec8db5738cbcff2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/81bad54301964fc2520363fee07f9424f01d32ca%5E%21/">
+    <a href="/chromium/src/+/a127f6f05f7d1b06860dc6d309da7eb1e1f338a9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Implement heap OOM management for JavaScriptEngine
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add myself to the user handle mapping
 
-Prevent an OOMing isolate from bringing down the entire sandbox by
-freezing the thread before a crash.
-
-JavaScriptEngine runs on Android and thus uses a single process to host
-all V8 isolates and minimize impact on system health. The code which can
-be run in separate isolates may be totally unrelated and thus should not
-interfere with each other's execution.
-
-V8 is designed primarily for a multi-process architecture, where
-crashing the process would be a contained event. As such, its normal
-response to exceeding the heap limit is to abort the process, which is
-inappropriate for the shared-process architecture of JavaScriptEngine.
-
-Therefore, in order to minimise the impact on other isolates, we enter an idle loop in the misbehaving isolate's thread to avoid the crash.
-
-These changes are specifically for heap-based memory management.
-Memory management for Array Buffers will be addressed separately.
-
-Bug: 1347094
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6ae1a555809b6791c697530bff7b5fc7a99a46f7">I6ae1a555809b6791c697530bff7b5fc7a99a46f7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4047785">https://chromium-review.googlesource.com/c/chromium/src/+/4047785</a>
-Commit-Queue: Ashley Newson &lt;ashleynewson@chromium.org&gt;
-Reviewed-by: Gabriel Charette &lt;gab@chromium.org&gt;
-Reviewed-by: Matthew Denton &lt;mpdenton@chromium.org&gt;
-Reviewed-by: Peter Beverloo &lt;peter@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1075550}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I252aa9506187f1bf5e7dc1be6193a0e663cd33de">I252aa9506187f1bf5e7dc1be6193a0e663cd33de</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4055855">https://chromium-review.googlesource.com/c/chromium/src/+/4055855</a>
+Reviewed-by: Mathias Bynens &lt;mathias@chromium.org&gt;
+Commit-Queue: Danil Somsikov &lt;dsv@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1075553}
 </pre>
 
 </body>
