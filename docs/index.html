@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075693/"> 1075693</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a98b50b620c0182130fdeee50cb5af2b7a9c3bdc">a98b50b620c0182130fdeee50cb5af2b7a9c3bdc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075700/"> 1075700</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a751966a7bbd41cf0e2d070175cc7643040ae1bb">a751966a7bbd41cf0e2d070175cc7643040ae1bb</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1075671/">1075671</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7a716b4bdd56143478ed6feacb68c42194c7bb7f">7a716b4bdd56143478ed6feacb68c42194c7bb7f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1075687/">1075687</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d553be7578275e4082074ad4ec32da01519dd3b8">d553be7578275e4082074ad4ec32da01519dd3b8</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a98b50b620c0182130fdeee50cb5af2b7a9c3bdc
+   a751966a7bbd41cf0e2d070175cc7643040ae1bb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a98b50b620c0182130fdeee50cb5af2b7a9c3bdc">
+    <a href="/chromium/src/+log/a751966a7bbd41cf0e2d070175cc7643040ae1bb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a98b50b620c0182130fdeee50cb5af2b7a9c3bdc.tar.gz">
+    <a href="/chromium/src/+archive/a751966a7bbd41cf0e2d070175cc7643040ae1bb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kent Tamura &lt;tkent@chromium.org&gt;
+   Erik Chen &lt;erikchen@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 25 04:23:47 2022
+   Fri Nov 25 05:19:47 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Nov 25 04:23:47 2022
+   Fri Nov 25 05:19:47 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a98b50b620c0182130fdeee50cb5af2b7a9c3bdc/">
-    507309c99e69ff240a31754306a868c1723be814
+   <a href="/chromium/src/+/a751966a7bbd41cf0e2d070175cc7643040ae1bb/">
+    d6c2521e3d071216c5c4164db1531118a4e1edcb
    </a>
   </td>
  </tr>
@@ -166,54 +166,26 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a98b50b620c0182130fdeee50cb5af2b7a9c3bdc%5E">
-    22a864383abf73a8d5ea610fd3de3781a54cd04c
+   <a href="/chromium/src/+/a751966a7bbd41cf0e2d070175cc7643040ae1bb%5E">
+    0d6a1635701a55d2e9bd6643d8fa73b3e01ca6da
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a98b50b620c0182130fdeee50cb5af2b7a9c3bdc%5E%21/">
+    <a href="/chromium/src/+/a751966a7bbd41cf0e2d070175cc7643040ae1bb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">SVG: Ignore foreign-namespace elements even with display:contents
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove py2 from chromium.memory.star
 
-SVG containers such as &lt;svg&gt; and &lt;g&gt; drop subtrees in foreign-
-namespace elements. For example,
-
-&lt;svg&gt;
- &lt;div&gt;
-  &lt;rect/&gt;
- &lt;/div&gt;
- ...
-The &lt;div&gt; subtree is not used to render the &lt;svg&gt;.
-
-We should do it even for elements with display:contents.
-&lt;svg&gt;
- &lt;div style="display:contents"&gt;
-  &lt;rect/&gt;
- &lt;/div&gt;
- ...
-We failed to do it because the drop is handled with a LayoutObject
-tree. This CL fixes it by checking DOM nodes in IsChildAllowed().
-
-* Implementation
-- Introduce SVGContentContainer::IsChildAllowed() to share
-  the IsChildAllowed() logic in LayoutSVGModelObject and LayoutSVGRoot.
-  It reject SVG LayoutObject child if its parent element is not a SVG.
-
-- Update *CullRectUpdaterTest. svg1 doesn't have a LayoutObject
-  after this CL.
-
-Bug: 1393223
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6061b629fba2a0f45dcd8d902640be2aef75b168">I6061b629fba2a0f45dcd8d902640be2aef75b168</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4054303">https://chromium-review.googlesource.com/c/chromium/src/+/4054303</a>
-Auto-Submit: Kent Tamura &lt;tkent@chromium.org&gt;
-Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
-Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1075693}
+Bug: 1366967
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I716b7946a7da581422021476b6a2b97a0da3b810">I716b7946a7da581422021476b6a2b97a0da3b810</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4054295">https://chromium-review.googlesource.com/c/chromium/src/+/4054295</a>
+Reviewed-by: Takuto Ikuta &lt;tikuta@chromium.org&gt;
+Commit-Queue: Erik Chen &lt;erikchen@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1075700}
 </pre>
 
 </body>
