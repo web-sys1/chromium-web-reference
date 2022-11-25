@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075690/"> 1075690</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8f51efb558301e60b074825282884f10cc6d4714">8f51efb558301e60b074825282884f10cc6d4714</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075693/"> 1075693</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a98b50b620c0182130fdeee50cb5af2b7a9c3bdc">a98b50b620c0182130fdeee50cb5af2b7a9c3bdc</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1075671/">1075671</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8f51efb558301e60b074825282884f10cc6d4714
+   a98b50b620c0182130fdeee50cb5af2b7a9c3bdc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8f51efb558301e60b074825282884f10cc6d4714">
+    <a href="/chromium/src/+log/a98b50b620c0182130fdeee50cb5af2b7a9c3bdc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8f51efb558301e60b074825282884f10cc6d4714.tar.gz">
+    <a href="/chromium/src/+archive/a98b50b620c0182130fdeee50cb5af2b7a9c3bdc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chrome Release Bot (LUCI) &lt;chrome-official-brancher@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Kent Tamura &lt;tkent@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 25 04:06:12 2022
+   Fri Nov 25 04:23:47 2022
   </td>
  </tr>
  <tr>
@@ -145,10 +145,10 @@ body{
    committer
   </th>
   <td>
-   Chrome Release Bot (LUCI) &lt;chrome-official-brancher@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Nov 25 04:06:12 2022
+   Fri Nov 25 04:23:47 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8f51efb558301e60b074825282884f10cc6d4714/">
-    d7831bd3b09461697de51f9074bedaef5d24ea50
+   <a href="/chromium/src/+/a98b50b620c0182130fdeee50cb5af2b7a9c3bdc/">
+    507309c99e69ff240a31754306a868c1723be814
    </a>
   </td>
  </tr>
@@ -166,28 +166,54 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8f51efb558301e60b074825282884f10cc6d4714%5E">
-    54ff7004618fa3b4346b05cbfa8f8f6544c6e9b3
+   <a href="/chromium/src/+/a98b50b620c0182130fdeee50cb5af2b7a9c3bdc%5E">
+    22a864383abf73a8d5ea610fd3de3781a54cd04c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8f51efb558301e60b074825282884f10cc6d4714%5E%21/">
+    <a href="/chromium/src/+/a98b50b620c0182130fdeee50cb5af2b7a9c3bdc%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Updating trunk VERSION from 5439.0 to 5440.0
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">SVG: Ignore foreign-namespace elements even with display:contents
 
-* This is an automated release commit.
-* Do not revert without consulting chrome-pmo@google.com.
-NOAUTOREVERT=true
+SVG containers such as &lt;svg&gt; and &lt;g&gt; drop subtrees in foreign-
+namespace elements. For example,
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idf4487e2283100895dd1ffaaf1964c76d338961a">Idf4487e2283100895dd1ffaaf1964c76d338961a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4055024">https://chromium-review.googlesource.com/c/chromium/src/+/4055024</a>
-Bot-Commit: Chrome Release Bot (LUCI) &lt;chrome-official-brancher@chops-service-accounts.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1075690}
+&lt;svg&gt;
+ &lt;div&gt;
+  &lt;rect/&gt;
+ &lt;/div&gt;
+ ...
+The &lt;div&gt; subtree is not used to render the &lt;svg&gt;.
+
+We should do it even for elements with display:contents.
+&lt;svg&gt;
+ &lt;div style="display:contents"&gt;
+  &lt;rect/&gt;
+ &lt;/div&gt;
+ ...
+We failed to do it because the drop is handled with a LayoutObject
+tree. This CL fixes it by checking DOM nodes in IsChildAllowed().
+
+* Implementation
+- Introduce SVGContentContainer::IsChildAllowed() to share
+  the IsChildAllowed() logic in LayoutSVGModelObject and LayoutSVGRoot.
+  It reject SVG LayoutObject child if its parent element is not a SVG.
+
+- Update *CullRectUpdaterTest. svg1 doesn't have a LayoutObject
+  after this CL.
+
+Bug: 1393223
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6061b629fba2a0f45dcd8d902640be2aef75b168">I6061b629fba2a0f45dcd8d902640be2aef75b168</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4054303">https://chromium-review.googlesource.com/c/chromium/src/+/4054303</a>
+Auto-Submit: Kent Tamura &lt;tkent@chromium.org&gt;
+Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
+Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1075693}
 </pre>
 
 </body>
