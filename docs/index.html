@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075846/"> 1075846</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/04b0c316b8fa3d1017142592f171473f1eba9069">04b0c316b8fa3d1017142592f171473f1eba9069</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1075850/"> 1075850</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d77059427e19255a64f3bc5ef1da86409e6fce0e">d77059427e19255a64f3bc5ef1da86409e6fce0e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1075836/">1075836</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8cde3be859a4beee999f1d1d2222661987f5a4b2">8cde3be859a4beee999f1d1d2222661987f5a4b2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1075850/">1075850</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d77059427e19255a64f3bc5ef1da86409e6fce0e">d77059427e19255a64f3bc5ef1da86409e6fce0e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   04b0c316b8fa3d1017142592f171473f1eba9069
+   d77059427e19255a64f3bc5ef1da86409e6fce0e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/04b0c316b8fa3d1017142592f171473f1eba9069">
+    <a href="/chromium/src/+log/d77059427e19255a64f3bc5ef1da86409e6fce0e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/04b0c316b8fa3d1017142592f171473f1eba9069.tar.gz">
+    <a href="/chromium/src/+archive/d77059427e19255a64f3bc5ef1da86409e6fce0e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anthony Vallee-Dubois &lt;anthonyvd@chromium.org&gt;
+   Dominic Battre &lt;battre@chromium.org&gt;
   </td>
   <td>
-   Fri Nov 25 23:02:31 2022
+   Sat Nov 26 00:38:50 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Nov 25 23:02:31 2022
+   Sat Nov 26 00:38:50 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/04b0c316b8fa3d1017142592f171473f1eba9069/">
-    6377f9eda22cde77a05fbf2819f209c6f0c2b251
+   <a href="/chromium/src/+/d77059427e19255a64f3bc5ef1da86409e6fce0e/">
+    74624b14693c32a200fe5a70573fa13dc9a1bbd8
    </a>
   </td>
  </tr>
@@ -166,34 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/04b0c316b8fa3d1017142592f171473f1eba9069%5E">
-    e8a3cbce7c4b1f0cf445a3bb6986f31c8b906dac
+   <a href="/chromium/src/+/d77059427e19255a64f3bc5ef1da86409e6fce0e%5E">
+    137869c94ba151ab31b016709a68d407cefabd30
    </a>
    <span>
     [
-    <a href="/chromium/src/+/04b0c316b8fa3d1017142592f171473f1eba9069%5E%21/">
+    <a href="/chromium/src/+/d77059427e19255a64f3bc5ef1da86409e6fce0e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Avoid getting content settings on every navigation on Android
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revive some autocomplete histograms
 
-This may introduce scroll jank if there are same-document navigations
-during scroll. Android content settings may be expensive to request.
+This CL moves autocomplete histograms (in the sense of autocomplete
+for forms, not in the sense of omnibox autocomplete) next to autofill
+histograms. They were overseen because they were in a different place.
 
-This information is only used to prevent discarding a background page
-that can send notifications. On Android, Chrome doesn't decide what
-gets discarded so this information was not used anyway.
+The CL also revives two histograms that I would like to keep:
+- Autocomplete.DaysSinceLastUse
+- Autocomplete.Events
+It removes code for expired and unused histograms:
+- Autocomplete.Cleanup
+- Autofill.AutocompleteQuery
+- Autofill.AutocompleteSuggestions
 
-Bug: 1326521
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If1668b5a2a1c872e566cd3597ff152d76782ca13">If1668b5a2a1c872e566cd3597ff152d76782ca13</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4054063">https://chromium-review.googlesource.com/c/chromium/src/+/4054063</a>
-Reviewed-by: Yaron Friedman &lt;yfriedman@chromium.org&gt;
-Reviewed-by: Patrick Monette &lt;pmonette@chromium.org&gt;
-Commit-Queue: Anthony Vallée-Dubois &lt;anthonyvd@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1075846}
+The chante to validate_format.py is necessary because there is an
+Omnibox related histogram with prefix "Autocomplete." in
+others/histograms.xml.
+
+Fixed: 1384720
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6714fc162445aa1dff83295696f16e0e67f95081">I6714fc162445aa1dff83295696f16e0e67f95081</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4047295">https://chromium-review.googlesource.com/c/chromium/src/+/4047295</a>
+Commit-Queue: Dominic Battré &lt;battre@chromium.org&gt;
+Reviewed-by: Alexei Svitkine &lt;asvitkine@chromium.org&gt;
+Reviewed-by: Matthias Körber &lt;koerber@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1075850}
 </pre>
 
 </body>
