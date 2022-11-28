@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1076106/"> 1076106</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/24bdbb027db647ee4cc7fd9c0bcbf521110706af">24bdbb027db647ee4cc7fd9c0bcbf521110706af</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1076127/"> 1076127</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1eb625cf62522f6a1e19afbf1629809d2c14d307">1eb625cf62522f6a1e19afbf1629809d2c14d307</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1076092/">1076092</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   24bdbb027db647ee4cc7fd9c0bcbf521110706af
+   1eb625cf62522f6a1e19afbf1629809d2c14d307
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/24bdbb027db647ee4cc7fd9c0bcbf521110706af">
+    <a href="/chromium/src/+log/1eb625cf62522f6a1e19afbf1629809d2c14d307">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/24bdbb027db647ee4cc7fd9c0bcbf521110706af.tar.gz">
+    <a href="/chromium/src/+archive/1eb625cf62522f6a1e19afbf1629809d2c14d307.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
+   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
   </td>
   <td>
-   Mon Nov 28 09:25:47 2022
+   Mon Nov 28 10:38:32 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Nov 28 09:25:47 2022
+   Mon Nov 28 10:38:32 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/24bdbb027db647ee4cc7fd9c0bcbf521110706af/">
-    3a09b326b65c00b92574dba61ffeea146035df05
+   <a href="/chromium/src/+/1eb625cf62522f6a1e19afbf1629809d2c14d307/">
+    39b9b8db01d175a1231c084872027a25b24f252e
    </a>
   </td>
  </tr>
@@ -166,42 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/24bdbb027db647ee4cc7fd9c0bcbf521110706af%5E">
-    36632cc70361cb367d4fe6c089c1b7705d263c38
+   <a href="/chromium/src/+/1eb625cf62522f6a1e19afbf1629809d2c14d307%5E">
+    b8d2504523a0fa0c57350a90f1f291140e66a1c0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/24bdbb027db647ee4cc7fd9c0bcbf521110706af%5E%21/">
+    <a href="/chromium/src/+/1eb625cf62522f6a1e19afbf1629809d2c14d307%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll clank/internal/apps from e3cca139bc60 to ab420e476148 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Only cache known-exposed properties in CSSStyleDeclaration
 
-<a href="https://chrome-internal.googlesource.com/clank/internal/apps.git/+log/e3cca139bc60..ab420e476148">https://chrome-internal.googlesource.com/clank/internal/apps.git/+log/e3cca139bc60..ab420e476148</a>
+CSSStyleDeclaration has a cache which maps e.g. backgroundPositionY
+to its associated CSSPropertyID. This cache is static, and is never
+invalidated.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://skia-autoroll.corp.goog/r/clank-apps-chromium-autoroll">https://skia-autoroll.corp.goog/r/clank-apps-chromium-autoroll</a>
-Please CC roagarwal@google.com on the revert to ensure that a human
-is aware of the problem.
+The problem is that the cache is populated with information based on
+the ExecutionContext (and current runtime flags) used at the time we
+happen to access backgroundPositionY for the first time. This means
+that an ExecutionContext which enables a certain property via an
+origin trial can "leak" that enabling for the whole process.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+This CL fixes that by only adding known-exposed properties into the
+cache.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Bug: None
-Tbr: roagarwal@google.com
-No-Try: true
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2bf14a732dfd07183ddc6944b643fb6410ea0c09">I2bf14a732dfd07183ddc6944b643fb6410ea0c09</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4061526">https://chromium-review.googlesource.com/c/chromium/src/+/4061526</a>
-Commit-Queue: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1076106}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I40ed950b7b0201df9c3fd8d9dfb22ae0be31a759">I40ed950b7b0201df9c3fd8d9dfb22ae0be31a759</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4055560">https://chromium-review.googlesource.com/c/chromium/src/+/4055560</a>
+Reviewed-by: Steinar H Gunderson &lt;sesse@chromium.org&gt;
+Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1076127}
 </pre>
 
 </body>
