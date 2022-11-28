@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1076127/"> 1076127</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1eb625cf62522f6a1e19afbf1629809d2c14d307">1eb625cf62522f6a1e19afbf1629809d2c14d307</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1076138/"> 1076138</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/268598d7318bab9b86c6524eb4d87ddcac4ccac1">268598d7318bab9b86c6524eb4d87ddcac4ccac1</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1076092/">1076092</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f11c9a3b3939bb92d4313c587ebea9dbea52e452">f11c9a3b3939bb92d4313c587ebea9dbea52e452</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1076119/">1076119</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cbb5d6bab265b22e2f1e78cec48ceec62c11a0db">cbb5d6bab265b22e2f1e78cec48ceec62c11a0db</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1eb625cf62522f6a1e19afbf1629809d2c14d307
+   268598d7318bab9b86c6524eb4d87ddcac4ccac1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1eb625cf62522f6a1e19afbf1629809d2c14d307">
+    <a href="/chromium/src/+log/268598d7318bab9b86c6524eb4d87ddcac4ccac1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1eb625cf62522f6a1e19afbf1629809d2c14d307.tar.gz">
+    <a href="/chromium/src/+archive/268598d7318bab9b86c6524eb4d87ddcac4ccac1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+   Olivier Robin &lt;olivierrobin@google.com&gt;
   </td>
   <td>
-   Mon Nov 28 10:38:32 2022
+   Mon Nov 28 11:14:46 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Nov 28 10:38:32 2022
+   Mon Nov 28 11:14:46 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1eb625cf62522f6a1e19afbf1629809d2c14d307/">
-    39b9b8db01d175a1231c084872027a25b24f252e
+   <a href="/chromium/src/+/268598d7318bab9b86c6524eb4d87ddcac4ccac1/">
+    f4bfcb949cb7c067c990f19fa5c26d93d9b4f6a4
    </a>
   </td>
  </tr>
@@ -166,38 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1eb625cf62522f6a1e19afbf1629809d2c14d307%5E">
-    b8d2504523a0fa0c57350a90f1f291140e66a1c0
+   <a href="/chromium/src/+/268598d7318bab9b86c6524eb4d87ddcac4ccac1%5E">
+    76e9f001ef25f03e6b681119227540fd9cecadb5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1eb625cf62522f6a1e19afbf1629809d2c14d307%5E%21/">
+    <a href="/chromium/src/+/268598d7318bab9b86c6524eb4d87ddcac4ccac1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Only cache known-exposed properties in CSSStyleDeclaration
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make background dimming of TableViewTextButtonItem optional
 
-CSSStyleDeclaration has a cache which maps e.g. backgroundPositionY
-to its associated CSSPropertyID. This cache is static, and is never
-invalidated.
+The default behavior set alpha to 50% in disabled state, but
+this does not fit in every views.
+Make this feature optional. If it is disabled, disable state
+items will still use buttonTextColor and buttonBackgroundColor.
 
-The problem is that the cache is populated with information based on
-the ExecutionContext (and current runtime flags) used at the time we
-happen to access backgroundPositionY for the first time. This means
-that an ExecutionContext which enables a certain property via an
-origin trial can "leak" that enabling for the whole process.
+It is the responsibility of the Table VC to set these color
+before calling `configureCell:withStyler:`.
 
-This CL fixes that by only adding known-exposed properties into the
-cache.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I40ed950b7b0201df9c3fd8d9dfb22ae0be31a759">I40ed950b7b0201df9c3fd8d9dfb22ae0be31a759</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4055560">https://chromium-review.googlesource.com/c/chromium/src/+/4055560</a>
-Reviewed-by: Steinar H Gunderson &lt;sesse@chromium.org&gt;
-Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1076127}
+Fixed: 1393939
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iae7b435c059718f1fb7ac2b2d7b134fdf8c9c927">Iae7b435c059718f1fb7ac2b2d7b134fdf8c9c927</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4055530">https://chromium-review.googlesource.com/c/chromium/src/+/4055530</a>
+Reviewed-by: Gauthier Ambard &lt;gambard@chromium.org&gt;
+Commit-Queue: Olivier Robin &lt;olivierrobin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1076138}
 </pre>
 
 </body>
