@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1077586/"> 1077586</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/93ac62d2b38eb21ebfa0d79d656225410a3a383c">93ac62d2b38eb21ebfa0d79d656225410a3a383c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1077651/"> 1077651</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8">d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1077646/">1077646</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   93ac62d2b38eb21ebfa0d79d656225410a3a383c
+   d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/93ac62d2b38eb21ebfa0d79d656225410a3a383c">
+    <a href="/chromium/src/+log/d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/93ac62d2b38eb21ebfa0d79d656225410a3a383c.tar.gz">
+    <a href="/chromium/src/+archive/d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ashley Newson &lt;ashleynewson@chromium.org&gt;
+   Antonio Gomes &lt;tonikitoo@igalia.com&gt;
   </td>
   <td>
-   Wed Nov 30 18:31:02 2022
+   Wed Nov 30 21:29:10 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 30 18:31:02 2022
+   Wed Nov 30 21:29:10 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/93ac62d2b38eb21ebfa0d79d656225410a3a383c/">
-    cfc73b85843202b2f1c41dbf5536d35713c0edd8
+   <a href="/chromium/src/+/d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8/">
+    d5284eb668edf569b610981f8bacc4893b9e3fa0
    </a>
   </td>
  </tr>
@@ -166,29 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/93ac62d2b38eb21ebfa0d79d656225410a3a383c%5E">
-    e014d74617a30f6f3f3264cbdde4a07cce304d98
+   <a href="/chromium/src/+/d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8%5E">
+    432065fc80b1601827c329c27bd050a93644167d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/93ac62d2b38eb21ebfa0d79d656225410a3a383c%5E%21/">
+    <a href="/chromium/src/+/d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CodeHealth] Migrate to base::Value::Dict in LogPasswordForm
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Guard SnapControllerLacros from dereference null DesktopWindowTreeHostLacros
 
-Migrate from deprecated base::DictionaryValue to base::Value::Dict in
-BrowserSavePasswordProgressLogger::LogPasswordForm.
+... during window tear down.
 
-Bug: 1187025, 1187026, 1187028, 1187061
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic085367b9291d8b579307470c893f7c2513214f8">Ic085367b9291d8b579307470c893f7c2513214f8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4066920">https://chromium-review.googlesource.com/c/chromium/src/+/4066920</a>
-Reviewed-by: Vasilii Sukhanov &lt;vasilii@chromium.org&gt;
-Commit-Queue: Ashley Newson &lt;ashleynewson@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1077586}
+On the window tear down routine, Lacros calls out to
+SnapControllerLacros::CommitSnap(None) as an attempt to
+remove any left-over snapping preview window.
+
+Problem is that, by the time this method is called, the
+respective DesktopWindowTreeHostLacros instance can already be
+deleted/nulled out, and SnapControllerLacros dereferences
+unconditionally results in a crash.
+This CL protects against such crashes.
+
+BUG=1384340
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I961ccab4fd3e85a4ecd1bce3724b37695ee37f6e">I961ccab4fd3e85a4ecd1bce3724b37695ee37f6e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4057550">https://chromium-review.googlesource.com/c/chromium/src/+/4057550</a>
+Auto-Submit: Antonio Gomes &lt;tonikitoo@igalia.com&gt;
+Reviewed-by: Roland Bock &lt;rbock@google.com&gt;
+Commit-Queue: Antonio Gomes &lt;tonikitoo@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1077651}
 </pre>
 
 </body>
