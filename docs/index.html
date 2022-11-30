@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1077651/"> 1077651</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8">d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1077665/"> 1077665</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1cc25b9169a93315f915e556f0c5fdbadc70d9c7">1cc25b9169a93315f915e556f0c5fdbadc70d9c7</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1077646/">1077646</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1cc1b6192f7bd5a442f4682c78894ff3929fbaed">1cc1b6192f7bd5a442f4682c78894ff3929fbaed</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1077665/">1077665</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1cc25b9169a93315f915e556f0c5fdbadc70d9c7">1cc25b9169a93315f915e556f0c5fdbadc70d9c7</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8
+   1cc25b9169a93315f915e556f0c5fdbadc70d9c7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8">
+    <a href="/chromium/src/+log/1cc25b9169a93315f915e556f0c5fdbadc70d9c7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8.tar.gz">
+    <a href="/chromium/src/+archive/1cc25b9169a93315f915e556f0c5fdbadc70d9c7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Antonio Gomes &lt;tonikitoo@igalia.com&gt;
+   Peter Wen &lt;wnwen@chromium.org&gt;
   </td>
   <td>
-   Wed Nov 30 21:29:10 2022
+   Wed Nov 30 22:41:46 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 30 21:29:10 2022
+   Wed Nov 30 22:41:46 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8/">
-    d5284eb668edf569b610981f8bacc4893b9e3fa0
+   <a href="/chromium/src/+/1cc25b9169a93315f915e556f0c5fdbadc70d9c7/">
+    4936dc996a5f40b9b774ae0245d8303b8d81c873
    </a>
   </td>
  </tr>
@@ -166,40 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8%5E">
-    432065fc80b1601827c329c27bd050a93644167d
+   <a href="/chromium/src/+/1cc25b9169a93315f915e556f0c5fdbadc70d9c7%5E">
+    42bfc8a5cacd3cbe5f3e16b85723451dfb45d552
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d8ad71d71f35feec83ff6fabe3bc1b6e2192d8b8%5E%21/">
+    <a href="/chromium/src/+/1cc25b9169a93315f915e556f0c5fdbadc70d9c7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Guard SnapControllerLacros from dereference null DesktopWindowTreeHostLacros
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Android: Improve dependency_analysis for local dev
 
-... during window tear down.
+This CL focuses on improving the usage of dependency_analysis scripts as
+a local build-validation tool. Oftentimes when making build changes it
+is useful to visualize dep changes.
 
-On the window tear down routine, Lacros calls out to
-SnapControllerLacros::CommitSnap(None) as an attempt to
-remove any left-over snapping preview window.
+This CL removes assert failures if jars are missing. Some __compile_java
+targets (like bundle_module targets and test support targets exist in
+GN but do not generate a .jar as an output. These targets do not affect
+the correctness of the script and should simply be ignored.
 
-Problem is that, by the time this method is called, the
-respective DesktopWindowTreeHostLacros instance can already be
-deleted/nulled out, and SnapControllerLacros dereferences
-unconditionally results in a crash.
-This CL protects against such crashes.
+All relevant build targets (*__compile_java) are re-built each time the
+script is run. This adds a few seconds to the build but is necessary to
+ensure that the resulting dep graph is an accurate reflection of the
+current local state.
 
-BUG=1384340
+The dependency_analysis/{git_util,subprocess_util}.py scripts have been
+removed and other scripts migrated to use tools/android/python_utils.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I961ccab4fd3e85a4ecd1bce3724b37695ee37f6e">I961ccab4fd3e85a4ecd1bce3724b37695ee37f6e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4057550">https://chromium-review.googlesource.com/c/chromium/src/+/4057550</a>
-Auto-Submit: Antonio Gomes &lt;tonikitoo@igalia.com&gt;
-Reviewed-by: Roland Bock &lt;rbock@google.com&gt;
-Commit-Queue: Antonio Gomes &lt;tonikitoo@igalia.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1077651}
+Update docs for running dependency_analysis and the web front-end
+locally.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5b8108e66cba11484388c0b51db2eac64170fd4a">I5b8108e66cba11484388c0b51db2eac64170fd4a</a>
+Bug: 1392165
+Fixed: 1392165
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4052204">https://chromium-review.googlesource.com/c/chromium/src/+/4052204</a>
+Auto-Submit: Peter Wen &lt;wnwen@chromium.org&gt;
+Commit-Queue: Peter Wen &lt;wnwen@chromium.org&gt;
+Reviewed-by: Mohamed Heikal &lt;mheikal@chromium.org&gt;
+Reviewed-by: Henrique Nakashima &lt;hnakashima@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1077665}
 </pre>
 
 </body>
