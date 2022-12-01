@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1077792/"> 1077792</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5fbfc10601982ad17609e9e1d62d0fc61c9316e7">5fbfc10601982ad17609e9e1d62d0fc61c9316e7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1077830/"> 1077830</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d50aa06a2dafca9f17681b33b5dceb9f609a9b02">d50aa06a2dafca9f17681b33b5dceb9f609a9b02</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1077800/">1077800</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5fbfc10601982ad17609e9e1d62d0fc61c9316e7
+   d50aa06a2dafca9f17681b33b5dceb9f609a9b02
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5fbfc10601982ad17609e9e1d62d0fc61c9316e7">
+    <a href="/chromium/src/+log/d50aa06a2dafca9f17681b33b5dceb9f609a9b02">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5fbfc10601982ad17609e9e1d62d0fc61c9316e7.tar.gz">
+    <a href="/chromium/src/+archive/d50aa06a2dafca9f17681b33b5dceb9f609a9b02.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   wenyu zhang &lt;zhangwenyu@google.com&gt;
+   Mitsuru Oshima &lt;oshima@chromium.org&gt;
   </td>
   <td>
-   Thu Dec 01 02:23:41 2022
+   Thu Dec 01 03:03:05 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Dec 01 02:23:41 2022
+   Thu Dec 01 03:03:05 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5fbfc10601982ad17609e9e1d62d0fc61c9316e7/">
-    60e0e8562821e64ed034aa918e90cfccbb32d9d1
+   <a href="/chromium/src/+/d50aa06a2dafca9f17681b33b5dceb9f609a9b02/">
+    35a0211b92e41cc547e4d0c6d72196e6d67527b9
    </a>
   </td>
  </tr>
@@ -166,39 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5fbfc10601982ad17609e9e1d62d0fc61c9316e7%5E">
-    e5918851563f42534a10ee1d9aec6dc39bd5c346
+   <a href="/chromium/src/+/d50aa06a2dafca9f17681b33b5dceb9f609a9b02%5E">
+    65eabc57997a02522547d8d91fa31b2f2384dd81
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5fbfc10601982ad17609e9e1d62d0fc61c9316e7%5E%21/">
+    <a href="/chromium/src/+/d50aa06a2dafca9f17681b33b5dceb9f609a9b02%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">accelerators: Create AcceleratorTracker object in shell
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Lacros] Wait applying output until it is ready
 
-Create AcceleratorTracker object and add it to shell PreTargetHandler
-right before AcceleratorFilter. AcceleratorTracker allows stakeholders
-to capture user action metrics for any key combinations. Design doc:
-go/accelerator-tracker-dd.
+* when aura output is used, WaylandOutput becomes ready only after
+  the physical/logical size and display id becomes available.
+* Adds display when the output is ready
+* The window scale will be updated when the output_done is called if
+ the newly added output is not ready.
 
-Add several key combinations to the tracker per WM team. Deployed to DUT
-and tested in chrome://user-actions. See screenshot:
-<a href="http://screen/6k2a6TtwDSjQAUM.png">http://screen/6k2a6TtwDSjQAUM.png</a>
+* This also added xdg_output to test harness since aura_output requires xdg_output.
+* Use correct impl for TestZAuraOutput
 
-ash/accelerators/accelerator_tracker_unittest.cc
+Bug: 1383855
+Test: Updated unit tests so that display and scale are updated when ready when aura_shell is enabled.
 
-Bug: b/260237218
-Test: ash/shell_unittest.cc,
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic86a99d5613a534f0eec9e7a22dc362655fa0d57">Ic86a99d5613a534f0eec9e7a22dc362655fa0d57</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4064719">https://chromium-review.googlesource.com/c/chromium/src/+/4064719</a>
-Reviewed-by: Zentaro Kavanagh &lt;zentaro@chromium.org&gt;
-Reviewed-by: Ahmed Fakhry &lt;afakhry@chromium.org&gt;
-Commit-Queue: Wenyu Zhang &lt;zhangwenyu@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1077792}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia028a2fbac77805069cfe01a578312802c0fc3fb">Ia028a2fbac77805069cfe01a578312802c0fc3fb</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4049071">https://chromium-review.googlesource.com/c/chromium/src/+/4049071</a>
+Reviewed-by: Maksim Sisov &lt;msisov@igalia.com&gt;
+Commit-Queue: Mitsuru Oshima &lt;oshima@chromium.org&gt;
+Reviewed-by: Addison Luh &lt;aluh@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1077830}
 </pre>
 
 </body>
