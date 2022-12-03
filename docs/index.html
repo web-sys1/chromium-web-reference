@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1078901/"> 1078901</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c427644017baeb28d75d10b26ef0ac4eb3d46e7c">c427644017baeb28d75d10b26ef0ac4eb3d46e7c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1078904/"> 1078904</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d6adf3c085ee5a1485279c5066671d5068ee04bc">d6adf3c085ee5a1485279c5066671d5068ee04bc</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1078897/">1078897</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/de21652a47df0c0fb35e429df036e898a5d91fd8">de21652a47df0c0fb35e429df036e898a5d91fd8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1078903/">1078903</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/60ccb8e82b60bf3b509deb505424d05aec66b521">60ccb8e82b60bf3b509deb505424d05aec66b521</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c427644017baeb28d75d10b26ef0ac4eb3d46e7c
+   d6adf3c085ee5a1485279c5066671d5068ee04bc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c427644017baeb28d75d10b26ef0ac4eb3d46e7c">
+    <a href="/chromium/src/+log/d6adf3c085ee5a1485279c5066671d5068ee04bc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c427644017baeb28d75d10b26ef0ac4eb3d46e7c.tar.gz">
+    <a href="/chromium/src/+archive/d6adf3c085ee5a1485279c5066671d5068ee04bc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sida Zhu &lt;zhusida@bytedance.com&gt;
+   Jongmok Kim &lt;jongmok.kim@navercorp.com&gt;
   </td>
   <td>
-   Sat Dec 03 03:54:24 2022
+   Sat Dec 03 04:32:21 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Dec 03 03:54:24 2022
+   Sat Dec 03 04:32:21 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c427644017baeb28d75d10b26ef0ac4eb3d46e7c/">
-    7227114629440e214bd7706b523ac1dccb5614d0
+   <a href="/chromium/src/+/d6adf3c085ee5a1485279c5066671d5068ee04bc/">
+    24a562a5b45a6d764e3a96e0b09e48e9e3d16460
    </a>
   </td>
  </tr>
@@ -166,47 +166,26 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c427644017baeb28d75d10b26ef0ac4eb3d46e7c%5E">
-    d0b3f1d10cdd43c3a33fb177b0f4be08132cb7ec
+   <a href="/chromium/src/+/d6adf3c085ee5a1485279c5066671d5068ee04bc%5E">
+    60ccb8e82b60bf3b509deb505424d05aec66b521
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c427644017baeb28d75d10b26ef0ac4eb3d46e7c%5E%21/">
+    <a href="/chromium/src/+/d6adf3c085ee5a1485279c5066671d5068ee04bc%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Video: Support bitstream HDR metadata extraction for Windows
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove expired histograms Tabs.DesktopOffset*
 
-There are several places a HDR metadata may appears:
-1. Container 2. Bitstream 3. Both container and bitstream
-
-Our previous logic only use the HDR metadata extracted from
-the container, which is okey for VP9 since VP9 doesn't allow
-HDR metadata wrote to the bitstream, container is the only
-place. but for HEVC/AV1/H264, since the spec allow HDR metadata
-wrote to the bitstream, and some muxers choose only write the
-metadata to the bitstream, thus if it is the case, then we
-will miss the information.
-
-The H264/HEVC/AV1 spec doesn't specify which one should be
-preferred, and if both HDR metadata appears in the bitstream
-and container, then they should be the same value theoretically.
-
-The CL allow us extract HDR metadata from the bitstream, and
-prefer HDR metadata from the bitstream if it appears. Otherwise
-use HDR metadata from the container which will make sure we can
-get the information completely.
-
-Bug: 1386299
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3ca8c20bf4e964834163fb79b7f082bc8f3f18f1">I3ca8c20bf4e964834163fb79b7f082bc8f3f18f1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4066720">https://chromium-review.googlesource.com/c/chromium/src/+/4066720</a>
-Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
-Commit-Queue: 朱思达 &lt;zhusida@bytedance.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1078901}
+Bug: 1384781
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1aff897bee72eca8beb18abc12b5ae4c633002f9">I1aff897bee72eca8beb18abc12b5ae4c633002f9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4067405">https://chromium-review.googlesource.com/c/chromium/src/+/4067405</a>
+Reviewed-by: Dana Fried &lt;dfried@chromium.org&gt;
+Commit-Queue: jongmok kim &lt;johny.kimc@gmail.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1078904}
 </pre>
 
 </body>
