@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1079530/"> 1079530</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/da6d413b150d88fb4720fa3e754419d578657c94">da6d413b150d88fb4720fa3e754419d578657c94</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1079603/"> 1079603</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d9797d1175711730afe53755860d5dca52d61848">d9797d1175711730afe53755860d5dca52d61848</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1079553/">1079553</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   da6d413b150d88fb4720fa3e754419d578657c94
+   d9797d1175711730afe53755860d5dca52d61848
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/da6d413b150d88fb4720fa3e754419d578657c94">
+    <a href="/chromium/src/+log/d9797d1175711730afe53755860d5dca52d61848">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/da6d413b150d88fb4720fa3e754419d578657c94.tar.gz">
+    <a href="/chromium/src/+archive/d9797d1175711730afe53755860d5dca52d61848.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+   Abhishek Pandit-Subedi &lt;abhishekpandit@google.com&gt;
   </td>
   <td>
-   Mon Dec 05 23:41:34 2022
+   Tue Dec 06 02:05:04 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Dec 05 23:41:34 2022
+   Tue Dec 06 02:05:04 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/da6d413b150d88fb4720fa3e754419d578657c94/">
-    86bbef199acf95f186a1aff07e6c3f2745a38127
+   <a href="/chromium/src/+/d9797d1175711730afe53755860d5dca52d61848/">
+    ff47a7f0a2cac061ca075f3ba705b99071a4f12c
    </a>
   </td>
  </tr>
@@ -166,38 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/da6d413b150d88fb4720fa3e754419d578657c94%5E">
-    88111c4a3c69d11576eb36e9a608ab114e7d4751
+   <a href="/chromium/src/+/d9797d1175711730afe53755860d5dca52d61848%5E">
+    a89372e3b4ed37267d380a47479614a579fc4f25
    </a>
    <span>
     [
-    <a href="/chromium/src/+/da6d413b150d88fb4720fa3e754419d578657c94%5E%21/">
+    <a href="/chromium/src/+/d9797d1175711730afe53755860d5dca52d61848%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[results.html] Accept swarming task ids in SET_TASK_IDS() hook
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[floss] Fix flaky behavior in BluetoothSocketFloss
 
-The archive script appends the call to the end of full_results_jsonp.js
-with a list of swarming task ids of the web tests step. Results.html
-constructs invocations from the task ids when requesting QueryArtifacts
-to query artifacts of the web tests step.
+BluetoothSocketFloss will DCHECK if it is destructed in a different
+thread than where it is created (because it is originally kept as
+a scoped_refptr). Make sure both the successful and failing socket
+callbacks have a reference to the socket so the destructor runs in the
+ui thread.
 
-How to test:
-1. Download <a href="https://chromium-layout-test-archives.storage.googleapis.com/linux-rel/1217030/blink_web_tests%20%28with%20patch%29/full_results_jsonp.js">https://chromium-layout-test-archives.storage.googleapis.com/linux-rel/1217030/blink_web_tests%20%28with%20patch%29/full_results_jsonp.js</a>
-2. Append the following line to the end of the downloaded file:
-SET_TASK_IDS(['5edfc41c05116f11','5edfc419fc0ca611','5edfc418268f7f11','5edfc41601944811','5edfc413584e0611','5edfc41180a63111','5edfc40fa4fdc311','5edfc40e15d2a311']);
-3. Open results.html?json=&lt;full path of the downloaded file&gt; in the
-   browser.
+For listening sockets, we need to a bit more:
+* Keep a reference to the accepted socket on the listening socket (keeps
+  it from going out of scope while a socket thread is active).
+* Make the tasks on the socket thread cancelable and cancel tasks during
+  disconnect (again to keep the socket from going out of scope in the
+  socket thread).
 
-Bug: 1382949
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idfbba2b4afa9a18166f905153ee84e1efbac5fb7">Idfbba2b4afa9a18166f905153ee84e1efbac5fb7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4074250">https://chromium-review.googlesource.com/c/chromium/src/+/4074250</a>
-Commit-Queue: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
-Reviewed-by: Weizhong Xia &lt;weizhong@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1079530}
+There is still a race in listen even after these fixes but it is
+improved after this patch.
+
+BUG=b:243420879
+TEST=device_unittests --gtest_filter=BluetoothSocketFloss\*
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9196d0e36b4b11ca892a3aaa19b94dbfc4b0b187">I9196d0e36b4b11ca892a3aaa19b94dbfc4b0b187</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4060397">https://chromium-review.googlesource.com/c/chromium/src/+/4060397</a>
+Reviewed-by: Sonny Sasaka &lt;sonnysasaka@chromium.org&gt;
+Commit-Queue: Abhishek Pandit-Subedi &lt;abhishekpandit@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1079603}
 </pre>
 
 </body>
