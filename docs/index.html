@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1079628/"> 1079628</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/82201d1ee42962076c794f47d225147221e0adb4">82201d1ee42962076c794f47d225147221e0adb4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1079631/"> 1079631</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2fcc871f90f5de5bcd957dd95f48af927072917d">2fcc871f90f5de5bcd957dd95f48af927072917d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1079622/">1079622</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   82201d1ee42962076c794f47d225147221e0adb4
+   2fcc871f90f5de5bcd957dd95f48af927072917d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/82201d1ee42962076c794f47d225147221e0adb4">
+    <a href="/chromium/src/+log/2fcc871f90f5de5bcd957dd95f48af927072917d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/82201d1ee42962076c794f47d225147221e0adb4.tar.gz">
+    <a href="/chromium/src/+archive/2fcc871f90f5de5bcd957dd95f48af927072917d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Samuel Huang &lt;huangs@chromium.org&gt;
   </td>
   <td>
-   Tue Dec 06 04:45:52 2022
+   Tue Dec 06 05:21:23 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Dec 06 04:45:52 2022
+   Tue Dec 06 05:21:23 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/82201d1ee42962076c794f47d225147221e0adb4/">
-    f78a2a04e1027e744d53448ee704ea532742b795
+   <a href="/chromium/src/+/2fcc871f90f5de5bcd957dd95f48af927072917d/">
+    d18640673999014321b01d90fd5b43eb45370284
    </a>
   </td>
  </tr>
@@ -166,43 +166,64 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/82201d1ee42962076c794f47d225147221e0adb4%5E">
-    9bba8abcfbf6ba84d01669e1ae9fc72ae13238e7
+   <a href="/chromium/src/+/2fcc871f90f5de5bcd957dd95f48af927072917d%5E">
+    a05f3db2003cd28d95ce51bc7406180438b1800f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/82201d1ee42962076c794f47d225147221e0adb4%5E%21/">
+    <a href="/chromium/src/+/2fcc871f90f5de5bcd957dd95f48af927072917d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Win32 PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[SuperSize Viewer] Fix DEX string literal oddities.
 
-Roll Chrome Win32 PGO profile from chrome-win32-main-1670273966-7b4693b9296ea27089543796ea844d3449a577f0.profdata to chrome-win32-main-1670284583-50ec71df3dcf89120d11f166aadec7b1642dfffb.profdata
+This CL addresses 3 DEX sting literal symbol oddities found in SuperSize
+Viewer:
+1. The path for these had a redundant "class" layer consists of the
+   symbol's name again, e.g. 'path_to/Foo.java/"foo string"'
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-win32-chromium">https://autoroll.skia.org/r/pgo-win32-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+     path_to
+       Foo.java
+         "foo string" (as class)
+           "foo string"
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+   There might have been an omission in the .size / .sizediff data;
+   the literal was directly associated to the Java file while without
+   a class. We can fix this later -- but for now it suffices to get:
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+     path_to
+       Foo.java
+         "foo string"
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
+2. String literals with "." get truncated. E.g., '"Long_string[...]"'
+   becomes ']"'.
+3. String literals with " " get truncated. E.g., '"This has space"'
+   becomes '"This'.
 
-Cq-Include-Trybots: luci.chrome.try:win-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I28abd4c748e359d4a29a2cda39bba60a0acc85f8">I28abd4c748e359d4a29a2cda39bba60a0acc85f8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4080958">https://chromium-review.googlesource.com/c/chromium/src/+/4080958</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1079628}
+These oddities arise from Caspian processing DEX string literal as DEX
+"other", symbols, for which "." and " " have semantic meanings.
+
+Details:
+* (Refactoring) Add {BaseSymbol,Symbol.DeltaSymbol}.GroupingPath(), and
+  use it in TreeBuilder::Build() to produce input for GroupedPath.
+  * Also move |kNoPath| from tree_builder.cc to model.cc.
+* Symbol::DeriveNames(): Move IsStringLiteral() case before IsDex()
+  case so that DEX string literals are processed using existing string
+  literal logic.
+* TreeBuilder::JoinDexMethodClasses(): Main loop: Identify |child| as
+  string literals by checking whether |child-&gt;id_path.path| starts with
+  '"'.
+* Add TreeBuilderTest.TestJoinDexMethodClassesStringLiteral.
+
+Bug: 1270438
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic640125f862f1218be84cd16983c84d544e8c5d0">Ic640125f862f1218be84cd16983c84d544e8c5d0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4080859">https://chromium-review.googlesource.com/c/chromium/src/+/4080859</a>
+Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Commit-Queue: Samuel Huang &lt;huangs@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1079631}
 </pre>
 
 </body>
