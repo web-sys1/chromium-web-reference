@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1080140/"> 1080140</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6fd04689ebab95514a363e3213f911f14454dcb1">6fd04689ebab95514a363e3213f911f14454dcb1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1080145/"> 1080145</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c90d452aa71d5c6bf961b01847d4bf12ca13c9b3">c90d452aa71d5c6bf961b01847d4bf12ca13c9b3</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1080126/">1080126</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6fd04689ebab95514a363e3213f911f14454dcb1
+   c90d452aa71d5c6bf961b01847d4bf12ca13c9b3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6fd04689ebab95514a363e3213f911f14454dcb1">
+    <a href="/chromium/src/+log/c90d452aa71d5c6bf961b01847d4bf12ca13c9b3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6fd04689ebab95514a363e3213f911f14454dcb1.tar.gz">
+    <a href="/chromium/src/+archive/c90d452aa71d5c6bf961b01847d4bf12ca13c9b3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Juliet Levesque &lt;julietlevesque@google.com&gt;
   </td>
   <td>
-   Wed Dec 07 02:22:12 2022
+   Wed Dec 07 02:56:22 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 07 02:22:12 2022
+   Wed Dec 07 02:56:22 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6fd04689ebab95514a363e3213f911f14454dcb1/">
-    25a19209e62eec0f6155f1dfbe853bb4ff5f2d94
+   <a href="/chromium/src/+/c90d452aa71d5c6bf961b01847d4bf12ca13c9b3/">
+    836f4def88d9ee7d336e3401be22f28075dbbe12
    </a>
   </td>
  </tr>
@@ -166,43 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6fd04689ebab95514a363e3213f911f14454dcb1%5E">
-    af746d35f1497ff00a96146fcba3e87ace92b6ca
+   <a href="/chromium/src/+/c90d452aa71d5c6bf961b01847d4bf12ca13c9b3%5E">
+    d2f8b4332248deae4c47d420c60213aa4a0d8d28
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6fd04689ebab95514a363e3213f911f14454dcb1%5E%21/">
+    <a href="/chromium/src/+/c90d452aa71d5c6bf961b01847d4bf12ca13c9b3%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Mac PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Fast Pair] Extend timeout for same device found
 
-Roll Chrome Mac PGO profile from chrome-mac-main-1670327773-b32c76dc4dc038c5832ac6ba80cea64f73cb5567.profdata to chrome-mac-main-1670370789-da9e4792c3588a419512db991f5a16fb992a853e.profdata
+If the same device is discovered by the scanner, extend the notification
+timeout if it is the device for which the notification is already
+showing for. Adds logic to the Mediator to check if the device found by
+the FastPairScanners for initial or subsequent pairing or
+RetroactiveDeviceFound for retroactive pairing matches the stored device
+for the device corresponding to the notification currently shown to the
+user. If so, triggers showing the notification via the UiBroker. The
+FastPairNotificationController checks if there is already a timer
+running, and if so, this means that the notification is already shown
+(since the timer is stopped when the notification is closed) and we
+keep track of which device is for which notification in the Mediator to
+enforce first come first service notifications. If the timer is running,
+reset the timer to extend it.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-mac-chromium">https://autoroll.skia.org/r/pgo-mac-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+TESTED=Verified on DUT that if the device is found again by the
+scanners and is already being shown via a notification, the
+timeout is extended. Made sure the timeout didn't happen after the
+initial 12 seconds using JBL 125TWs.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:mac-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5741a69691121da350fda49c9b8bb201d864252c">I5741a69691121da350fda49c9b8bb201d864252c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4084366">https://chromium-review.googlesource.com/c/chromium/src/+/4084366</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1080140}
+Bug: b/249596355
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ief455a6d88078b6db945b031dd5c365a024678ba">Ief455a6d88078b6db945b031dd5c365a024678ba</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4048026">https://chromium-review.googlesource.com/c/chromium/src/+/4048026</a>
+Reviewed-by: Daniel Classon &lt;dclasson@google.com&gt;
+Commit-Queue: Juliet Lévesque &lt;julietlevesque@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1080145}
 </pre>
 
 </body>
