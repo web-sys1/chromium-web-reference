@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1081459/"> 1081459</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0248f22d8ef14662cda4dd422ec87482d31f446">f0248f22d8ef14662cda4dd422ec87482d31f446</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1081571/"> 1081571</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e9137131202521beddf246cdcb01a47aca11e394">e9137131202521beddf246cdcb01a47aca11e394</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1081541/">1081541</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f0248f22d8ef14662cda4dd422ec87482d31f446
+   e9137131202521beddf246cdcb01a47aca11e394
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f0248f22d8ef14662cda4dd422ec87482d31f446">
+    <a href="/chromium/src/+log/e9137131202521beddf246cdcb01a47aca11e394">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f0248f22d8ef14662cda4dd422ec87482d31f446.tar.gz">
+    <a href="/chromium/src/+archive/e9137131202521beddf246cdcb01a47aca11e394.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Colin Blundell &lt;blundell@chromium.org&gt;
+   chrome-weblayer-builder &lt;chrome-weblayer-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 09 15:04:53 2022
+   Fri Dec 09 18:45:37 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 09 15:04:53 2022
+   Fri Dec 09 18:45:37 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f0248f22d8ef14662cda4dd422ec87482d31f446/">
-    38f45fb02479f0b520ce0f84085ed16c6ab23c00
+   <a href="/chromium/src/+/e9137131202521beddf246cdcb01a47aca11e394/">
+    a6145e88f66e08ed03cb540adacb3184f4462bd4
    </a>
   </td>
  </tr>
@@ -166,52 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f0248f22d8ef14662cda4dd422ec87482d31f446%5E">
-    a6bf0c3e80f447c63dd0c9d0e60b78e37c728f32
+   <a href="/chromium/src/+/e9137131202521beddf246cdcb01a47aca11e394%5E">
+    767944d09bd7055293b67a98bcd1535d382989ee
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f0248f22d8ef14662cda4dd422ec87482d31f446%5E%21/">
+    <a href="/chromium/src/+/e9137131202521beddf246cdcb01a47aca11e394%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[GPU] Change EGLImageBacking to use ScopedEGLImage
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[lacros skew tests] Refresh skew tests for M110
 
-EGLImageBacking currently uses NativeImageBuffer to indirectly create
-and manipulate its EGLImage. This CL changes that usage to
-ScopedEGLImage, which is directly suited for this use case.
-Specifically:
+This CL updates the ash version ['110.0.5468.0'] for Lacros version skew testing.
+This cl only affect linux-lacros config builders like linux-lacros-tester-rel,
+linux-lacros-rel.
+This cl will certainly NOT affect Lacros on-device builders(lacros-amd64-generic-rel,
+lacros-amd64-generic-chrome-skylab, etc) or any other platforms.
+If this CL caused regressions, please revert and stop the autoroller
+at <a href="https://luci-scheduler.appspot.com/jobs/chrome/lacros-version-skew-roller">https://luci-scheduler.appspot.com/jobs/chrome/lacros-version-skew-roller</a>
+Also please file a bug to OS&gt;LaCrOS&gt;Partner, and CC svenzheng@chromium.org,
+yjt@google.com.
 
-- A ScopedEGLImage ivar now creates and holds the EGLImage, with its
-  creation params being specified to be identical to what
-  NativeImageBufferEGL::Create() previously did
-- The code of NativeImageBufferEGL::BindToTexture() is now inlined
-  into the callsite
-- ScopedEGLImage destroys the EGLImage in its own destructor, as
-  NativeImageBufferEGL does. One difference is that
-  NativeImageBufferEGL caches the EGLDisplay that it was passed on
-  construction (which was
-  gl::GLSurfaceEGL::GetGLDisplayEGL()-&gt;GetDisplay())
-  and uses that in the destructor, while ScopedEGLImage
-  calls gl::GLSurfaceEGL::GetGLDisplayEGL()-&gt;GetDisplay() again.
-  eglDestroyImageKHR() will fail if the EGLDisplay passed to it is
-  not the same one with which the image was created. Fortunately,
-  gl::GLSurfaceEGL::GetGLDisplayEGL() is set on the first call and
-  never subsequently changed, and GLDisplayEGL::GetDisplay() returns
-  a value that is set in GLDisplayEGL::InitializeDisplay() and never
-  subsequently changed.
+R=rubber-stamper@appspot.gserviceaccount.com
 
-This CL also deletes native_image_buffer.*, which now has no usage.
-
-Bug: 1332554
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9638838444b1538403726443303828ab2c797da9">I9638838444b1538403726443303828ab2c797da9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4090605">https://chromium-review.googlesource.com/c/chromium/src/+/4090605</a>
-Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
-Commit-Queue: Colin Blundell &lt;blundell@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1081459}
+Bug: None
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5c744da52b5847e0c43cc8c30685c365557a5a43">I5c744da52b5847e0c43cc8c30685c365557a5a43</a>
+Requires-Testing: True
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4092700">https://chromium-review.googlesource.com/c/chromium/src/+/4092700</a>
+Auto-Submit: chrome-weblayer-builder &lt;chrome-weblayer-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1081571}
 </pre>
 
 </body>
