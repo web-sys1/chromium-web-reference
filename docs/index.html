@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1081442/"> 1081442</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2315ec65464fd5141d92c1ebe27694409ca2e013">2315ec65464fd5141d92c1ebe27694409ca2e013</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1081459/"> 1081459</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0248f22d8ef14662cda4dd422ec87482d31f446">f0248f22d8ef14662cda4dd422ec87482d31f446</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1081434/">1081434</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2315ec65464fd5141d92c1ebe27694409ca2e013
+   f0248f22d8ef14662cda4dd422ec87482d31f446
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2315ec65464fd5141d92c1ebe27694409ca2e013">
+    <a href="/chromium/src/+log/f0248f22d8ef14662cda4dd422ec87482d31f446">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2315ec65464fd5141d92c1ebe27694409ca2e013.tar.gz">
+    <a href="/chromium/src/+archive/f0248f22d8ef14662cda4dd422ec87482d31f446.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+   Colin Blundell &lt;blundell@chromium.org&gt;
   </td>
   <td>
-   Fri Dec 09 14:26:59 2022
+   Fri Dec 09 15:04:53 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 09 14:26:59 2022
+   Fri Dec 09 15:04:53 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2315ec65464fd5141d92c1ebe27694409ca2e013/">
-    98ba590bf12a0075233c000d3bd49565f5ff6b51
+   <a href="/chromium/src/+/f0248f22d8ef14662cda4dd422ec87482d31f446/">
+    38f45fb02479f0b520ce0f84085ed16c6ab23c00
    </a>
   </td>
  </tr>
@@ -166,34 +166,52 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2315ec65464fd5141d92c1ebe27694409ca2e013%5E">
-    90a541ced80817f597ffb0063765072fd670cd4d
+   <a href="/chromium/src/+/f0248f22d8ef14662cda4dd422ec87482d31f446%5E">
+    a6bf0c3e80f447c63dd0c9d0e60b78e37c728f32
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2315ec65464fd5141d92c1ebe27694409ca2e013%5E%21/">
+    <a href="/chromium/src/+/f0248f22d8ef14662cda4dd422ec87482d31f446%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ios] Ensure FeedTopSectionMediator unregister its observer
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[GPU] Change EGLImageBacking to use ScopedEGLImage
 
-FeedTopSectionMediator creates and register an IdentityManager
-observer. It is unregistered in its -shutdown method, but this
-method was not called because -[FeedTopSectionCoordinator stop]
-was not called on the -[NewTabPageCoordinator stop].
+EGLImageBacking currently uses NativeImageBuffer to indirectly create
+and manipulate its EGLImage. This CL changes that usage to
+ScopedEGLImage, which is directly suited for this use case.
+Specifically:
 
-Calling -[FeedTopSectionCoordinator stop] should ensure that
-the observer is properly unregistered.
+- A ScopedEGLImage ivar now creates and holds the EGLImage, with its
+  creation params being specified to be identical to what
+  NativeImageBufferEGL::Create() previously did
+- The code of NativeImageBufferEGL::BindToTexture() is now inlined
+  into the callsite
+- ScopedEGLImage destroys the EGLImage in its own destructor, as
+  NativeImageBufferEGL does. One difference is that
+  NativeImageBufferEGL caches the EGLDisplay that it was passed on
+  construction (which was
+  gl::GLSurfaceEGL::GetGLDisplayEGL()-&gt;GetDisplay())
+  and uses that in the destructor, while ScopedEGLImage
+  calls gl::GLSurfaceEGL::GetGLDisplayEGL()-&gt;GetDisplay() again.
+  eglDestroyImageKHR() will fail if the EGLDisplay passed to it is
+  not the same one with which the image was created. Fortunately,
+  gl::GLSurfaceEGL::GetGLDisplayEGL() is set on the first call and
+  never subsequently changed, and GLDisplayEGL::GetDisplay() returns
+  a value that is set in GLDisplayEGL::InitializeDisplay() and never
+  subsequently changed.
 
-Fixed: 1395545
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1d10511d71125d92c166089c062d72f4dd4f2fa6">I1d10511d71125d92c166089c062d72f4dd4f2fa6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4092185">https://chromium-review.googlesource.com/c/chromium/src/+/4092185</a>
-Reviewed-by: David Roger &lt;droger@chromium.org&gt;
-Commit-Queue: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1081442}
+This CL also deletes native_image_buffer.*, which now has no usage.
+
+Bug: 1332554
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9638838444b1538403726443303828ab2c797da9">I9638838444b1538403726443303828ab2c797da9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4090605">https://chromium-review.googlesource.com/c/chromium/src/+/4090605</a>
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Commit-Queue: Colin Blundell &lt;blundell@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1081459}
 </pre>
 
 </body>
