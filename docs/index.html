@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1081588/"> 1081588</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/acff9346cb9fadbb4ee46a870f429417b5531611">acff9346cb9fadbb4ee46a870f429417b5531611</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1081595/"> 1081595</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/84d1712a0b0fb5acf34b9e6ededcfacde87bc636">84d1712a0b0fb5acf34b9e6ededcfacde87bc636</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1081582/">1081582</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   acff9346cb9fadbb4ee46a870f429417b5531611
+   84d1712a0b0fb5acf34b9e6ededcfacde87bc636
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/acff9346cb9fadbb4ee46a870f429417b5531611">
+    <a href="/chromium/src/+log/84d1712a0b0fb5acf34b9e6ededcfacde87bc636">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/acff9346cb9fadbb4ee46a870f429417b5531611.tar.gz">
+    <a href="/chromium/src/+archive/84d1712a0b0fb5acf34b9e6ededcfacde87bc636.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ella Ge &lt;eirage@chromium.org&gt;
+   Christian Flach &lt;cmfcmf@chromium.org&gt;
   </td>
   <td>
-   Fri Dec 09 19:33:49 2022
+   Fri Dec 09 20:10:55 2022
   </td>
  </tr>
  <tr>
@@ -145,10 +145,10 @@ body{
    committer
   </th>
   <td>
-   Xiaohan Wang &lt;xhwang@chromium.org&gt;
+   Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 09 19:33:49 2022
+   Fri Dec 09 20:10:55 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/acff9346cb9fadbb4ee46a870f429417b5531611/">
-    43cae2d5246e5233780fe4e457b204072952c210
+   <a href="/chromium/src/+/84d1712a0b0fb5acf34b9e6ededcfacde87bc636/">
+    b1a7149fb601749cfdbd9de36163b63bf429125c
    </a>
   </td>
  </tr>
@@ -166,116 +166,52 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/acff9346cb9fadbb4ee46a870f429417b5531611%5E">
-    d950d50d283f75cc5d8150ed2b29b498012d02d6
+   <a href="/chromium/src/+/84d1712a0b0fb5acf34b9e6ededcfacde87bc636%5E">
+    09ea7e50252e2c157332f414a24ec5a0d144708a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/acff9346cb9fadbb4ee46a870f429417b5531611%5E%21/">
+    <a href="/chromium/src/+/84d1712a0b0fb5acf34b9e6ededcfacde87bc636%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Fenced Frames: [1/N] Fledge `runAdAuction()` yields a FencedFrameConfig"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">iwa: Introduce `IsolatedWebAppTrustChecker`
 
-This reverts commit dc890a7fe32e2f7eeb4bb96d56582b9780d56c8f.
+This class is responsible for answering whether the browser trusts the
+public keys of the signatures of an Isolated Web App to run it.
+We only want to run Isolated Web Apps that are trusted, given the
+additional capabilities available to Isolated Web Apps. Trust for an
+Isolated Web App can be established in multiple ways:
+- An enterprise policy can configure trust. Currently, only the
+  IsolatedWebAppInstallForceList policy, which implicitly configures
+  trust for all Isolated Web Apps that it is trying to force-install,
+  does so.
+- If Isolated Web App developer mode is enabled, all apps are trusted.
+- [Later]: If an Isolated Web App is signed by a trusted distributor, we
+  trust it as well.
+- [Later]: If an Isolated Web App is on an allow-list of trusted apps,
+  we trust it as well.
 
-Reason for revert: cause compile failure
+The `IsolatedWebAppTrustChecker` is used to check trust as part of the
+Isolated Web App parsing and verification process:
+1. The Signed Web Bundle's Integrity Block is parsed and the public
+   key(s) contained in it that were used to sign it are extracted.
+2. The `IsolatedWebAppTrustChecker` is used to check that we trust the
+   public key(s).
+3. If we trust them, we verify that the file contents match the
+   signatures corresponding to these public keys.
+4. If the signatures match, we then continue parsing the Signed Web
+   Bundle's metadata, etc.
 
-Original change's description:
-&gt; Fenced Frames: [1/N] Fledge `runAdAuction()` yields a FencedFrameConfig
-&gt;
-&gt; In order to make `runAdAuction()` return a promise to a
-&gt; FencedFrameConfig object, we must make IPCs that land directly in Blink
-&gt; consume a `blink.mojom.FencedFrameConfig`, which is mapped to
-&gt; blink::FencedFrame::RedactedFencedFrameConfig.
-&gt;
-&gt; As-is, only the blink.mojom.FencedFrameConfig =&gt;
-&gt; RedactedFencedFrameConfig shared type mapping exists; all of the members
-&gt; rely on the auto-generated `Ptr` types, which try and use the Blink
-&gt; variants for IPCs that land in Blink. The type mapping is defined for
-&gt; the non-Blink variant types (i.e., usages of
-&gt; `blink::mojom::PotentiallyOpaqueFooPtr`, instead of
-&gt; `blink::mojom::blink::PotentiallyOpaqueFooPtr`) which does not work for
-&gt; auto-generated types that try and map themselves inside of Blink.
-&gt;
-&gt; The two solutions for this are:
-&gt;   1.) Typemap all sub-structs/unions/enums inside
-&gt;       blink.mojom.FencedFrameConfig all the way down
-&gt;   2.) Don't use shared type maps for RedactedFencedFrameConfig, and
-&gt;       instead generate one type map for the default Chromium types and
-&gt;       one for the Blink types
-&gt;
-&gt; (1) Feels slightly simpler, and has other performance benefits that will
-&gt; act as a good follow-up to comments in <a href="https://crrev.com/c/3862583.">https://crrev.com/c/3862583.</a>
-&gt;
-&gt; This involves type mapping many sub-types, which will be done over a
-&gt; series of CLs. This CL does several things:
-&gt;  - Moves fenced_frame_config.mojom to "mojo_platform" from "mojo_core",
-&gt;    in preparation for making ad_auction_service.mojom depend on it [1]
-&gt;  - Moves the blink.mojom.{ReportingDestination, FencedFrameReporting}
-&gt;    types into fenced_frame_config.mojom from fenced_frame.mojom, and
-&gt;    makes the former stop importing the latter
-&gt;  - Typemaps the ReportingDestination enum to
-&gt;    blink::FencedFrame::ReportingDestination
-&gt;  - Typemap the FencedFrameReporting struct to the exported
-&gt;    blink::FencedFrame::FencedFrameReporting struct
-&gt;  - Modify various places to use the type mapped values
-&gt;
-&gt; The typemappings above are "shared", and use the default Chromium types.
-&gt; Since we need to convert some of these types to Blink types before
-&gt; exposure to the Web Platform, this CL:
-&gt;
-&gt;  - Introduces blink::FencedFrameReporting, which is similar to
-&gt;    blink::FencedFrame::FencedFrameReporting but uses Blink types
-&gt;  - Make DocumentLoader::fenced_frame_reporting_ an
-&gt;    `absl::optional&lt;blink::FencedFrameReporting&gt;` instead of a
-&gt;    `blink::mojom::blink::FencedFrameReportingPtr`
-&gt;  - Removes WebFencedFrameReporting, and stores
-&gt;    blink::FencedFrame::FencedFrameReporting directly on
-&gt;    WebNavigationParams
-&gt;  - Converts from blink::FF::FFReporting &lt;=&gt; blink::FFReporting in
-&gt;    DocumentLoader &amp; FrameLoader as per usual
-&gt;
-&gt; Before this CL, we had:
-&gt;  - blink::mojom::blink::FencedFrameReportingPtr
-&gt;  - blink::WebFencedFrameReporting
-&gt;
-&gt; After this CL, we have:
-&gt;  - blink::FencedFrame::FencedFrameReporting
-&gt;  - blink::FencedFrameReporting
-&gt;
-&gt; Subsequent CLs will add type mappings for the other sub-types in
-&gt; preparation for making RedactedFencedFrameConfig able to be sent
-&gt; directly to Blink.
-&gt;
-&gt; [1]: Note that *eventually* fenced_frame_config.mojom will need to
-&gt;      import frame_policy.mojom, which is in "mojo_core". That's going to
-&gt;      be the driving factor to move all of the auction &amp; fenced frames
-&gt;      stuff back into core, but before the M110 branch date I want to
-&gt;      touch as few lines of code as possible, which is why I'm opting to
-&gt;      move fenced_frame_config.mojom to "platform" in the short-term.
-&gt;
-&gt; Bug: 1347953
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9a78e21514013f3581ab3c6635e6e5b149451f4d">I9a78e21514013f3581ab3c6635e6e5b149451f4d</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4081454">https://chromium-review.googlesource.com/c/chromium/src/+/4081454</a>
-&gt; Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-&gt; Owners-Override: Daniel Cheng &lt;dcheng@chromium.org&gt;
-&gt; Reviewed-by: Garrett Tanzer &lt;gtanzer@chromium.org&gt;
-&gt; Commit-Queue: Dominic Farolino &lt;dom@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1081583}
-
-Bug: 1347953
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I031a235282dd69b020712efc17383cd452f0f09f">I031a235282dd69b020712efc17383cd452f0f09f</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4093154">https://chromium-review.googlesource.com/c/chromium/src/+/4093154</a>
-Reviewed-by: Xiaohan Wang &lt;xhwang@chromium.org&gt;
-Owners-Override: Ella Ge &lt;eirage@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1081588}
+Bug: 1365852
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia58063de5cfc5ee37f4573a3a1f81668c0ca3788">Ia58063de5cfc5ee37f4573a3a1f81668c0ca3788</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3962990">https://chromium-review.googlesource.com/c/chromium/src/+/3962990</a>
+Commit-Queue: Christian Flach &lt;cmfcmf@chromium.org&gt;
+Reviewed-by: Phillis Tang &lt;phillis@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1081595}
 </pre>
 
 </body>
