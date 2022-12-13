@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1082290/"> 1082290</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/75b29aa043b95e0976e222f4ff03c2a92eadb85d">75b29aa043b95e0976e222f4ff03c2a92eadb85d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1082302/"> 1082302</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/814c33dd386b5240ebb3c4af73c58b3ff46c4c8f">814c33dd386b5240ebb3c4af73c58b3ff46c4c8f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1082284/">1082284</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   75b29aa043b95e0976e222f4ff03c2a92eadb85d
+   814c33dd386b5240ebb3c4af73c58b3ff46c4c8f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/75b29aa043b95e0976e222f4ff03c2a92eadb85d">
+    <a href="/chromium/src/+log/814c33dd386b5240ebb3c4af73c58b3ff46c4c8f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/75b29aa043b95e0976e222f4ff03c2a92eadb85d.tar.gz">
+    <a href="/chromium/src/+archive/814c33dd386b5240ebb3c4af73c58b3ff46c4c8f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Glen Robertson &lt;glenrob@chromium.org&gt;
+   Alexander Bolodurin &lt;alexbn@chromium.org&gt;
   </td>
   <td>
-   Tue Dec 13 05:09:33 2022
+   Tue Dec 13 05:44:19 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Dec 13 05:09:33 2022
+   Tue Dec 13 05:44:19 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/75b29aa043b95e0976e222f4ff03c2a92eadb85d/">
-    1a57776e159624d7e0a3dc6d7e0be8cd420c0028
+   <a href="/chromium/src/+/814c33dd386b5240ebb3c4af73c58b3ff46c4c8f/">
+    6f148de728bbad17c9e00fdb3946350ddc6db902
    </a>
   </td>
  </tr>
@@ -166,27 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/75b29aa043b95e0976e222f4ff03c2a92eadb85d%5E">
-    277cea27da796ec32357205c5996647e2fd61592
+   <a href="/chromium/src/+/814c33dd386b5240ebb3c4af73c58b3ff46c4c8f%5E">
+    47100e88429b4101dfc9da732e3c828b1c974a17
    </a>
    <span>
     [
-    <a href="/chromium/src/+/75b29aa043b95e0976e222f4ff03c2a92eadb85d%5E%21/">
+    <a href="/chromium/src/+/814c33dd386b5240ebb3c4af73c58b3ff46c4c8f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">CodeHealth: Replace DictionaryValue in daily_metrics_helper.cc
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">fileSystemProvider: refactor operation dispatching
 
-Bug: 1187061
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I751e81682698afb88adcb58d384c9eb06f10ddd8">I751e81682698afb88adcb58d384c9eb06f10ddd8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4100029">https://chromium-review.googlesource.com/c/chromium/src/+/4100029</a>
-Auto-Submit: Glen Robertson &lt;glenrob@chromium.org&gt;
-Commit-Queue: Glen Robertson &lt;glenrob@chromium.org&gt;
-Reviewed-by: Eric Willigers &lt;ericwilligers@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1082290}
+Break out Event dispatch functionality out of the Operation class into a
+separate EventDispatcher class (replaces Operation's callbacks),
+encapsulating EventRouter and Lacros-related details. The dispatcher is
+owned by ProvidedFileSystem and keeps a reference to the RequestManager
+associated with this ProvidedFileSystem, simplifying request cleanup if
+Lacros delivery fails.
+
+Operation unit tests no longer require a custom callback for every test:
+the tests calls now go through a stub dispatcher that's already
+implemented in test utils.
+
+Bug: b:255520330, b:249182641
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic0fcfce6e2d122a95d41bf15f4b5bdeff3578b5a">Ic0fcfce6e2d122a95d41bf15f4b5bdeff3578b5a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4060490">https://chromium-review.googlesource.com/c/chromium/src/+/4060490</a>
+Reviewed-by: Peter Marshall &lt;petermarshall@chromium.org&gt;
+Commit-Queue: Alexander Bolodurin &lt;alexbn@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1082302}
 </pre>
 
 </body>
