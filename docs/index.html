@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1083563/"> 1083563</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e8a7bfeba18864882c0ede3b6f3cab7740ec6b73">e8a7bfeba18864882c0ede3b6f3cab7740ec6b73</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1083574/"> 1083574</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6379324b7452265ba31fee1e63191d8be5443a07">6379324b7452265ba31fee1e63191d8be5443a07</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1083546/">1083546</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e8a7bfeba18864882c0ede3b6f3cab7740ec6b73
+   6379324b7452265ba31fee1e63191d8be5443a07
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e8a7bfeba18864882c0ede3b6f3cab7740ec6b73">
+    <a href="/chromium/src/+log/6379324b7452265ba31fee1e63191d8be5443a07">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e8a7bfeba18864882c0ede3b6f3cab7740ec6b73.tar.gz">
+    <a href="/chromium/src/+archive/6379324b7452265ba31fee1e63191d8be5443a07.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Xiaocheng Hu &lt;xiaochengh@chromium.org&gt;
   </td>
   <td>
-   Thu Dec 15 04:41:46 2022
+   Thu Dec 15 05:19:30 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Dec 15 04:41:46 2022
+   Thu Dec 15 05:19:30 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e8a7bfeba18864882c0ede3b6f3cab7740ec6b73/">
-    357459b46e52f9dbe9f365dd9af05dbba3b005c6
+   <a href="/chromium/src/+/6379324b7452265ba31fee1e63191d8be5443a07/">
+    a6ce4355d6d1fde95f7051737e893def848da123
    </a>
   </td>
  </tr>
@@ -166,43 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e8a7bfeba18864882c0ede3b6f3cab7740ec6b73%5E">
-    e9ff15b01854421474290e206c031962647f3036
+   <a href="/chromium/src/+/6379324b7452265ba31fee1e63191d8be5443a07%5E">
+    55b7c59d594bd5117dcee61560235182d6ad35ea
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e8a7bfeba18864882c0ede3b6f3cab7740ec6b73%5E%21/">
+    <a href="/chromium/src/+/6379324b7452265ba31fee1e63191d8be5443a07%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Win32 PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix delete character in password field with trailing white spaces
 
-Roll Chrome Win32 PGO profile from chrome-win32-main-1671051571-9ae193e475cceb4456158fc9c65a9352a6ab6915.profdata to chrome-win32-main-1671062375-ba00993dcf5cfe53ac01ba556e312f7804df2620.profdata
+When deleting a character, DeleteSelectionCommand uses
+DeleteInsignificantText for white space fixup, which in turn uses
+TextIterator to obtain the white-space-collapsed text of the text node.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-win32-chromium">https://autoroll.skia.org/r/pgo-win32-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+However, when working in a password field, TextIterator by default gets
+the rendered text, where all characters are replaced by bullets. Then
+the fixup code replaces a trailing white space by a bullet.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+Since in this case we need the original text, this patch sets
+EmitsOriginalText behavior, and also implements it in TextIterator to
+fix the bug.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+Note: TextIterator had a legacy code path that implements
+EmitsOriginalText, but we didn't implement it for NG because we couldn't
+find any case where this behavior makes a difference before this bug
+report. That's why we left a TODO there without implementing it.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:win-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1de7ff6ba68f2cee48990daddc8c6d14cfaf4f2c">I1de7ff6ba68f2cee48990daddc8c6d14cfaf4f2c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4109300">https://chromium-review.googlesource.com/c/chromium/src/+/4109300</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1083563}
+Fixed: 1400844
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7fa5a1372516894c3831e38deb97ed6e3c567ea0">I7fa5a1372516894c3831e38deb97ed6e3c567ea0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4109573">https://chromium-review.googlesource.com/c/chromium/src/+/4109573</a>
+Auto-Submit: Xiaocheng Hu &lt;xiaochengh@chromium.org&gt;
+Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
+Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1083574}
 </pre>
 
 </body>
