@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1083653/"> 1083653</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/720413a6f4974655a3d03eba1677d3830643fdc9">720413a6f4974655a3d03eba1677d3830643fdc9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1083663/"> 1083663</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5c4518633ea615a773b1e23dacc338cfc69d98d0">5c4518633ea615a773b1e23dacc338cfc69d98d0</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1083618/">1083618</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/29b62b01d4d532c8141bb3a4e20792dc9218813f">29b62b01d4d532c8141bb3a4e20792dc9218813f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1083637/">1083637</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0c09fde802852f484097d61309033a9a08fa3497">0c09fde802852f484097d61309033a9a08fa3497</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   720413a6f4974655a3d03eba1677d3830643fdc9
+   5c4518633ea615a773b1e23dacc338cfc69d98d0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/720413a6f4974655a3d03eba1677d3830643fdc9">
+    <a href="/chromium/src/+log/5c4518633ea615a773b1e23dacc338cfc69d98d0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/720413a6f4974655a3d03eba1677d3830643fdc9.tar.gz">
+    <a href="/chromium/src/+archive/5c4518633ea615a773b1e23dacc338cfc69d98d0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   yoshiki iguchi &lt;yoshiki@chromium.org&gt;
+   Maria Petrisor &lt;mpetrisor@chromium.org&gt;
   </td>
   <td>
-   Thu Dec 15 10:20:56 2022
+   Thu Dec 15 10:52:36 2022
   </td>
  </tr>
  <tr>
@@ -145,10 +145,10 @@ body{
    committer
   </th>
   <td>
-   Yoshiki Iguchi &lt;yoshiki@chromium.org&gt;
+   Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Dec 15 10:20:56 2022
+   Thu Dec 15 10:52:36 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/720413a6f4974655a3d03eba1677d3830643fdc9/">
-    c7291320903b553e5d1d84abac085523fc9435ca
+   <a href="/chromium/src/+/5c4518633ea615a773b1e23dacc338cfc69d98d0/">
+    77b639cf178f33d6a4c2649e1692a2a20bc29531
    </a>
   </td>
  </tr>
@@ -166,33 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/720413a6f4974655a3d03eba1677d3830643fdc9%5E">
-    25ac2eeb15b0f22286239bb819e1affa286bb880
+   <a href="/chromium/src/+/5c4518633ea615a773b1e23dacc338cfc69d98d0%5E">
+    467d57458c7f16b28b8e7afe56d89b61b0a90e9c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/720413a6f4974655a3d03eba1677d3830643fdc9%5E%21/">
+    <a href="/chromium/src/+/5c4518633ea615a773b1e23dacc338cfc69d98d0%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">chromeos: tast_control: Disable a11y.LiveCaption to unblock LKGM
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Don't show LoginCameraTimeoutView when login extension UI closes
 
-The fix is in CrOS side but it's not rolled to Chrome. This CL
-disables the test until the roll.
+LoginCameraTimeoutView is always created when there are no users on the login screen. It is focused when the OOBE dialog state changes to
+OobeDialogState::HIDDEN. The Imprivata login screen extension used to
+send OobeDialogState::HIDDEN signal when it was closed, which
+triggered the LoginCameraTimeoutView to be focused.
 
-*) fix: crrev.com/c/4110195
+Sending a OobeDialogState::HIDDEN notification when the login screen
+extension UI closes is risky because new features can depend on the
+HIDDEN notification and assume it comes from the OOBE dialog, not the
+extension UI (as it exactly happened with the LoginCameraTimeoutView).
 
-Bug: b/262649361
-Test: None
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6f52c64185a85aec24573a93725b2565ed996b29">I6f52c64185a85aec24573a93725b2565ed996b29</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4110090">https://chromium-review.googlesource.com/c/chromium/src/+/4110090</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: Yoshiki Iguchi &lt;yoshiki@chromium.org&gt;
-Auto-Submit: Yoshiki Iguchi &lt;yoshiki@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1083653}
+This CL adds a new OobeDialogState, EXTENSION_LOGIN_CLOSED, in order to differentiate between the extension closing its UI and the OOBE
+dialog being hidden. Using the new entry, we don't focus on the
+LoginCameraTimeoutView if the extension UI closed. The CL also adds
+EXTENSION_LOGIN_CLOSED to all the relevant places to show items when
+the extension gets closed (which used to happen "automatically" in the
+past when we were sending OobeDialogState::HIDDEN).
+
+Bug: b:258446799
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I715dbaabf6b1b61fa38cdf4f12c429efa08ce1bf">I715dbaabf6b1b61fa38cdf4f12c429efa08ce1bf</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4042982">https://chromium-review.googlesource.com/c/chromium/src/+/4042982</a>
+Reviewed-by: Renato Silva &lt;rrsilva@google.com&gt;
+Reviewed-by: Danila Kuzmin &lt;dkuzmin@google.com&gt;
+Commit-Queue: Maria Petrisor &lt;mpetrisor@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1083663}
 </pre>
 
 </body>
