@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1085386/"> 1085386</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/141e5a697990713b973d5b28234d8bf923f7e90b">141e5a697990713b973d5b28234d8bf923f7e90b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1085399/"> 1085399</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/79d96c4d87de7448d0a758cc6e2c78d1da6a3017">79d96c4d87de7448d0a758cc6e2c78d1da6a3017</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1085380/">1085380</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   141e5a697990713b973d5b28234d8bf923f7e90b
+   79d96c4d87de7448d0a758cc6e2c78d1da6a3017
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/141e5a697990713b973d5b28234d8bf923f7e90b">
+    <a href="/chromium/src/+log/79d96c4d87de7448d0a758cc6e2c78d1da6a3017">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/141e5a697990713b973d5b28234d8bf923f7e90b.tar.gz">
+    <a href="/chromium/src/+archive/79d96c4d87de7448d0a758cc6e2c78d1da6a3017.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Maria Kazinova &lt;kazinova@google.com&gt;
+   Christian Dullweber &lt;dullweber@chromium.org&gt;
   </td>
   <td>
-   Tue Dec 20 12:46:02 2022
+   Tue Dec 20 13:50:11 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Dec 20 12:46:02 2022
+   Tue Dec 20 13:50:11 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/141e5a697990713b973d5b28234d8bf923f7e90b/">
-    b910536a644fa2b6261dc0300a0506b5222f5b7d
+   <a href="/chromium/src/+/79d96c4d87de7448d0a758cc6e2c78d1da6a3017/">
+    4b1b608c951d511efe680790ea537c3a5a4310b9
    </a>
   </td>
  </tr>
@@ -166,49 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/141e5a697990713b973d5b28234d8bf923f7e90b%5E">
-    0aa0103e959b5135abe64391ef9b82dbacd46fd7
+   <a href="/chromium/src/+/79d96c4d87de7448d0a758cc6e2c78d1da6a3017%5E">
+    dea1dfffa92a7bf62ebdd5dcffd6c4aa6241e977
    </a>
    <span>
     [
-    <a href="/chromium/src/+/141e5a697990713b973d5b28234d8bf923f7e90b%5E%21/">
+    <a href="/chromium/src/+/79d96c4d87de7448d0a758cc6e2c78d1da6a3017%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Passwords] Refactor Password(Form)Manager::PresaveGeneratedPassword
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Safety check: Check for null RuleIterator
 
-This CL deletes an iOS-specific overrides of PresaveGeneratedPassword.
+The iterator can be null if the pref has no entries.
 
-Cross-platform PasswordFormManager::PresaveGeneratedPassword is to
-be used on all platforms.
-The iOS specific override was:
-1) updating *mutable_observed_form() - this is a simple operation
-making sense on all platforms, so I moved it to cross-platform code
-2) setting generation element and type - this was a redundancy, as
-it's called by SharedPasswordController::generatePasswordForFormId
-on all password generations anyway, so I removed it
-
-PasswordManager::OnPresaveGeneratedPassword is to be used instead of
-iOS-only PasswordManager::PresaveGeneratedPassword. It can be further
-simplified in follow-up CLs.
-
-This CL also deletes two PasswordManagerTests:
-1) SavingGeneratedPasswordOnIOS - not needed since there is no iOS-
-only method override anymore. Tests the same steps as
-PasswordManagerTest.GeneratedPasswordFormSubmitEmptyStore
-1) PasswordNoLongerGeneratedOnIOS - not needed since there is no iOS-
-only method override anymore. Tests the same steps (even fewer) as
-PasswordManagerTest.PasswordGenerationPresavePassword.
-
-Bug: 1399524
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8067c7d1bf26db8eaa814008efbd420be88b0a14">I8067c7d1bf26db8eaa814008efbd420be88b0a14</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4106569">https://chromium-review.googlesource.com/c/chromium/src/+/4106569</a>
-Reviewed-by: Mohamed Amir Yosef &lt;mamir@chromium.org&gt;
-Commit-Queue: Maria Kazinova &lt;kazinova@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1085386}
+Bug: 1401386
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic25b9f4735dc184a4a0ed7a794244446a676bca9">Ic25b9f4735dc184a4a0ed7a794244446a676bca9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4116579">https://chromium-review.googlesource.com/c/chromium/src/+/4116579</a>
+Reviewed-by: Side YILMAZ &lt;sideyilmaz@chromium.org&gt;
+Commit-Queue: Side YILMAZ &lt;sideyilmaz@chromium.org&gt;
+Auto-Submit: Christian Dullweber &lt;dullweber@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1085399}
 </pre>
 
 </body>
