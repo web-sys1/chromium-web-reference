@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1085380/"> 1085380</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1d315f5a1a8fa06ef18be7dc16b4479d8b016c84">1d315f5a1a8fa06ef18be7dc16b4479d8b016c84</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1085386/"> 1085386</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/141e5a697990713b973d5b28234d8bf923f7e90b">141e5a697990713b973d5b28234d8bf923f7e90b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1085366/">1085366</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1d315f5a1a8fa06ef18be7dc16b4479d8b016c84
+   141e5a697990713b973d5b28234d8bf923f7e90b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1d315f5a1a8fa06ef18be7dc16b4479d8b016c84">
+    <a href="/chromium/src/+log/141e5a697990713b973d5b28234d8bf923f7e90b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1d315f5a1a8fa06ef18be7dc16b4479d8b016c84.tar.gz">
+    <a href="/chromium/src/+archive/141e5a697990713b973d5b28234d8bf923f7e90b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+   Maria Kazinova &lt;kazinova@google.com&gt;
   </td>
   <td>
-   Tue Dec 20 12:03:11 2022
+   Tue Dec 20 12:46:02 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Dec 20 12:03:11 2022
+   Tue Dec 20 12:46:02 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1d315f5a1a8fa06ef18be7dc16b4479d8b016c84/">
-    892c4d444ba236575e3514973ea8759600c9c918
+   <a href="/chromium/src/+/141e5a697990713b973d5b28234d8bf923f7e90b/">
+    b910536a644fa2b6261dc0300a0506b5222f5b7d
    </a>
   </td>
  </tr>
@@ -166,32 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1d315f5a1a8fa06ef18be7dc16b4479d8b016c84%5E">
-    de67bfe0dab99f2160a8c3b2db01dec19ce80c3e
+   <a href="/chromium/src/+/141e5a697990713b973d5b28234d8bf923f7e90b%5E">
+    0aa0103e959b5135abe64391ef9b82dbacd46fd7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1d315f5a1a8fa06ef18be7dc16b4479d8b016c84%5E%21/">
+    <a href="/chromium/src/+/141e5a697990713b973d5b28234d8bf923f7e90b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[StyleBuilder] Set field_group:* overscroll-behavior-x/y
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Passwords] Refactor Password(Form)Manager::PresaveGeneratedPassword
 
-ComputedStyle has no more available bits, and we need to add a few
-new ones for the StyleBuilder project.
+This CL deletes an iOS-specific overrides of PresaveGeneratedPassword.
 
-This CL demotes overscroll-behavior-x/y to field_group:*, which frees
-up four bits.
+Cross-platform PasswordFormManager::PresaveGeneratedPassword is to
+be used on all platforms.
+The iOS specific override was:
+1) updating *mutable_observed_form() - this is a simple operation
+making sense on all platforms, so I moved it to cross-platform code
+2) setting generation element and type - this was a redundancy, as
+it's called by SharedPasswordController::generatePasswordForFormId
+on all password generations anyway, so I removed it
 
-Bug: 1377295
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If698e25a6a8055c3a29f852e5390e4f85aaa1ef9">If698e25a6a8055c3a29f852e5390e4f85aaa1ef9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4110775">https://chromium-review.googlesource.com/c/chromium/src/+/4110775</a>
-Reviewed-by: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
-Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1085380}
+PasswordManager::OnPresaveGeneratedPassword is to be used instead of
+iOS-only PasswordManager::PresaveGeneratedPassword. It can be further
+simplified in follow-up CLs.
+
+This CL also deletes two PasswordManagerTests:
+1) SavingGeneratedPasswordOnIOS - not needed since there is no iOS-
+only method override anymore. Tests the same steps as
+PasswordManagerTest.GeneratedPasswordFormSubmitEmptyStore
+1) PasswordNoLongerGeneratedOnIOS - not needed since there is no iOS-
+only method override anymore. Tests the same steps (even fewer) as
+PasswordManagerTest.PasswordGenerationPresavePassword.
+
+Bug: 1399524
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8067c7d1bf26db8eaa814008efbd420be88b0a14">I8067c7d1bf26db8eaa814008efbd420be88b0a14</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4106569">https://chromium-review.googlesource.com/c/chromium/src/+/4106569</a>
+Reviewed-by: Mohamed Amir Yosef &lt;mamir@chromium.org&gt;
+Commit-Queue: Maria Kazinova &lt;kazinova@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1085386}
 </pre>
 
 </body>
