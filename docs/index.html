@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1085823/"> 1085823</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/64320facf30c8cbee7b4b49aa86ffb08a8dd7b98">64320facf30c8cbee7b4b49aa86ffb08a8dd7b98</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1085832/"> 1085832</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/19e84d4eaa8fba5c1c31d4a023bbf8fdfe7122f2">19e84d4eaa8fba5c1c31d4a023bbf8fdfe7122f2</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1085817/">1085817</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   64320facf30c8cbee7b4b49aa86ffb08a8dd7b98
+   19e84d4eaa8fba5c1c31d4a023bbf8fdfe7122f2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/64320facf30c8cbee7b4b49aa86ffb08a8dd7b98">
+    <a href="/chromium/src/+log/19e84d4eaa8fba5c1c31d4a023bbf8fdfe7122f2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/64320facf30c8cbee7b4b49aa86ffb08a8dd7b98.tar.gz">
+    <a href="/chromium/src/+archive/19e84d4eaa8fba5c1c31d4a023bbf8fdfe7122f2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yi Xie &lt;yixie@chromium.org&gt;
+   Jaroslav Sevcik &lt;jarin@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 21 08:45:47 2022
+   Wed Dec 21 09:35:12 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 21 08:45:47 2022
+   Wed Dec 21 09:35:12 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/64320facf30c8cbee7b4b49aa86ffb08a8dd7b98/">
-    3f8c01804727cb0dd93111f93ae18d2b9abe6e1f
+   <a href="/chromium/src/+/19e84d4eaa8fba5c1c31d4a023bbf8fdfe7122f2/">
+    03951abeb5ac1598c4c426f8394163fda54946e1
    </a>
   </td>
  </tr>
@@ -166,38 +166,68 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/64320facf30c8cbee7b4b49aa86ffb08a8dd7b98%5E">
-    362a9848c82b6ecefb7ddbcd822c8fa3c2a02304
+   <a href="/chromium/src/+/19e84d4eaa8fba5c1c31d4a023bbf8fdfe7122f2%5E">
+    764bc7f8b5a8be48cefff7cd5154156c763efb2c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/64320facf30c8cbee7b4b49aa86ffb08a8dd7b98%5E%21/">
+    <a href="/chromium/src/+/19e84d4eaa8fba5c1c31d4a023bbf8fdfe7122f2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Skip splash screen timer when retrying Kiosk launch due to lost network
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "[inspector] Introduce a restricted instrumentation pause"
 
-When a Chrome app Kiosk attempts to launch, it will wait for 10s on the
-splash screen. If network is lost during this period, it will wait
-another 10s for the network to come back. If network is back during the
-second 10s period, we will restart Kiosk launch flow but not resetting
-the splash screen timer, as a result it will be stuck at splash screen
-forever.
+This is a reland of commit f96df25cdfcaff34c828612347532d9e8d672d9f
 
-By making Kiosk launcher skip splash screen timer whenever a retry
-happens it will launch the Chrome app immediately upon retry, fixing
-the issue mentioned above.
+Compared to crrev.com/c/3891025, this patch only disables the
+Devtools V8 session when the connection to the IO session is closed.
+This fixes the situation when the IO session was closed ona V8
+interrupt during painting debugger overlays and the devtools
+session object was disposed while still being on stack. With this
+patch, we only disable the v8 session during the v8 interrupt;
+the full devtools session cleanup is performed on a normal message
+loop handler.
 
-Bug: b:260758929
-Test: unit_tests and manual
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I760680d592b7061e9e086a367baa9a79e5494c9a">I760680d592b7061e9e086a367baa9a79e5494c9a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4116255">https://chromium-review.googlesource.com/c/chromium/src/+/4116255</a>
-Reviewed-by: Ben Franz &lt;bfranz@chromium.org&gt;
-Commit-Queue: Yi Xie &lt;yixie@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1085823}
+Original change's description:
+&gt; [inspector] Introduce a restricted instrumentation pause
+&gt;
+&gt; We introduce a new instrumentation pause state in the renderer.
+&gt; The instrumentation pause is entered on script creation
+&gt; if the instrumentation breakpoints are enabled with
+&gt; Debugger.setInstrumentationBreakpoint. The purpose of the pause
+&gt; is to give the debugger a chance to insert its breakpoints
+&gt; correctly before the script runs.
+&gt;
+&gt; In this patch, we restrict the messages that are handled during
+&gt; the instrumentation pause to the ones that are handled by the
+&gt; devtools IO session (those are mostly breakpoint management
+&gt; messages). Handling of other messages are postponed until the
+&gt; instrumentation pause resumes.
+&gt;
+&gt; Without this patch, the instrumentation pause behaves the same
+&gt; as the normal pause, causing some undesirable interactions
+&gt; with layouting, navigation, etc. (e.g., see crbug.com/1304095).
+&gt;
+&gt; Note that the instrumentation breakpoints/pauses are
+&gt; an experiment in DevTools,  currently off by default.
+&gt;
+&gt; Bug: crbug.com/1354043
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I44e9e8473fcb10a2868974aa8d20a07e9b00130d">I44e9e8473fcb10a2868974aa8d20a07e9b00130d</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3891025">https://chromium-review.googlesource.com/c/chromium/src/+/3891025</a>
+&gt; Commit-Queue: Jaroslav Sevcik &lt;jarin@chromium.org&gt;
+&gt; Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
+&gt; Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1079116}
+
+Bug: crbug.com/1354043
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9584b4699426e9f0392b8dba336a96f37f00d87f">I9584b4699426e9f0392b8dba336a96f37f00d87f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4110931">https://chromium-review.googlesource.com/c/chromium/src/+/4110931</a>
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Commit-Queue: Jaroslav Sevcik &lt;jarin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1085832}
 </pre>
 
 </body>
