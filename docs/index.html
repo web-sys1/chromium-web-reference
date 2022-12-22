@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1086318/"> 1086318</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c9484729c747e1e42bf33bab77f52e70c8a1d483">c9484729c747e1e42bf33bab77f52e70c8a1d483</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1086331/"> 1086331</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/87dd116d74003a49924af51ca58e41337281edf9">87dd116d74003a49924af51ca58e41337281edf9</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1086307/">1086307</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c9484729c747e1e42bf33bab77f52e70c8a1d483
+   87dd116d74003a49924af51ca58e41337281edf9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c9484729c747e1e42bf33bab77f52e70c8a1d483">
+    <a href="/chromium/src/+log/87dd116d74003a49924af51ca58e41337281edf9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c9484729c747e1e42bf33bab77f52e70c8a1d483.tar.gz">
+    <a href="/chromium/src/+archive/87dd116d74003a49924af51ca58e41337281edf9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Georg Neis &lt;neis@chromium.org&gt;
+   Monica Basta &lt;msalama@chromium.org&gt;
   </td>
   <td>
-   Thu Dec 22 13:35:50 2022
+   Thu Dec 22 14:13:24 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Dec 22 13:35:50 2022
+   Thu Dec 22 14:13:24 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c9484729c747e1e42bf33bab77f52e70c8a1d483/">
-    5f9fa04e4841b33cf9197cd586ca58c5ef6f9928
+   <a href="/chromium/src/+/87dd116d74003a49924af51ca58e41337281edf9/">
+    3746305f0fc8c953c17974248dcd157349a0a1ee
    </a>
   </td>
  </tr>
@@ -166,26 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c9484729c747e1e42bf33bab77f52e70c8a1d483%5E">
-    94833c42188611df2af6e915a3ea56e1d12f535d
+   <a href="/chromium/src/+/87dd116d74003a49924af51ca58e41337281edf9%5E">
+    1722b95f1897d2d4fec2a39db4210b154a8d2d9b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c9484729c747e1e42bf33bab77f52e70c8a1d483%5E%21/">
+    <a href="/chromium/src/+/87dd116d74003a49924af51ca58e41337281edf9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">crosapi: Remove unused window disposition support
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[BSC] Monitor primary account changes to decide if session is bound
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I74c0d49bc20d75936b12925d9c49ebba6cd9ab7c">I74c0d49bc20d75936b12925d9c49ebba6cd9ab7c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4119646">https://chromium-review.googlesource.com/c/chromium/src/+/4119646</a>
-Auto-Submit: Georg Neis &lt;neis@chromium.org&gt;
-Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
-Commit-Queue: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1086318}
+The session is assumed to be bound until proven otherwise. This is to
+mitigate the risk of missing adding SIDTS cookie in requests on startup.
+We can deterministically know that the session is bound when:
+- Sign in keys are loaded
+- Tokens are loaded
+This measn we slow down all users on startup even if they do not have a
+bound session. This can be fixed in various ways and will be looked at
+in future CLs.
+
+If at any point the session becomes unbound (e.g. User signs out, Cookie
+indicates the user is signed out), renderers are updated, any ongoing
+fetch is cancelled, all blocked requests are resumed.
+
+Bug: 1392135
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I552f4b67c779a9c7dfb14d99d205f61db057d22e">I552f4b67c779a9c7dfb14d99d205f61db057d22e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4066919">https://chromium-review.googlesource.com/c/chromium/src/+/4066919</a>
+Reviewed-by: Alex Ilin &lt;alexilin@chromium.org&gt;
+Commit-Queue: Monica Basta &lt;msalama@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1086331}
 </pre>
 
 </body>
