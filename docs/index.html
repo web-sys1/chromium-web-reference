@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1086331/"> 1086331</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/87dd116d74003a49924af51ca58e41337281edf9">87dd116d74003a49924af51ca58e41337281edf9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1086338/"> 1086338</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e1d0181aae5b812170b4b9ac5661dd7c33bb1abc">e1d0181aae5b812170b4b9ac5661dd7c33bb1abc</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1086307/">1086307</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7ff3863a4b1d8faea9394694fbda45d2d6e8400c">7ff3863a4b1d8faea9394694fbda45d2d6e8400c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1086332/">1086332</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0e37cb0b984c0cb489ef48c98e49a8b5c66ff8e9">0e37cb0b984c0cb489ef48c98e49a8b5c66ff8e9</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   87dd116d74003a49924af51ca58e41337281edf9
+   e1d0181aae5b812170b4b9ac5661dd7c33bb1abc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/87dd116d74003a49924af51ca58e41337281edf9">
+    <a href="/chromium/src/+log/e1d0181aae5b812170b4b9ac5661dd7c33bb1abc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/87dd116d74003a49924af51ca58e41337281edf9.tar.gz">
+    <a href="/chromium/src/+archive/e1d0181aae5b812170b4b9ac5661dd7c33bb1abc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Monica Basta &lt;msalama@chromium.org&gt;
+   Martin Kreichgauer &lt;martinkr@google.com&gt;
   </td>
   <td>
-   Thu Dec 22 14:13:24 2022
+   Thu Dec 22 14:48:13 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Dec 22 14:13:24 2022
+   Thu Dec 22 14:48:13 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/87dd116d74003a49924af51ca58e41337281edf9/">
-    3746305f0fc8c953c17974248dcd157349a0a1ee
+   <a href="/chromium/src/+/e1d0181aae5b812170b4b9ac5661dd7c33bb1abc/">
+    78a3befee68618d1834aee35bb9c01b5b9a44898
    </a>
   </td>
  </tr>
@@ -166,39 +166,50 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/87dd116d74003a49924af51ca58e41337281edf9%5E">
-    1722b95f1897d2d4fec2a39db4210b154a8d2d9b
+   <a href="/chromium/src/+/e1d0181aae5b812170b4b9ac5661dd7c33bb1abc%5E">
+    bd2b07c761554e041b600a4d42cc426072cce9aa
    </a>
    <span>
     [
-    <a href="/chromium/src/+/87dd116d74003a49924af51ca58e41337281edf9%5E%21/">
+    <a href="/chromium/src/+/e1d0181aae5b812170b4b9ac5661dd7c33bb1abc%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[BSC] Monitor primary account changes to decide if session is bound
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "extensions: integrate webAuthenticationProxy API with hosts policy"
 
-The session is assumed to be bound until proven otherwise. This is to
-mitigate the risk of missing adding SIDTS cookie in requests on startup.
-We can deterministically know that the session is bound when:
-- Sign in keys are loaded
-- Tokens are loaded
-This measn we slow down all users on startup even if they do not have a
-bound session. This can be fixed in various ways and will be looked at
-in future CLs.
+This reverts commit 2239d5e9716395c688774093b9d7cee38b459915.
 
-If at any point the session becomes unbound (e.g. User signs out, Cookie
-indicates the user is signed out), renderers are updated, any ongoing
-fetch is cancelled, all blocked requests are resumed.
+Reason for revert: Breaks <a href="https://ci.chromium.org/p/chromium/builders/ci/linux-ubsan-vptr">https://ci.chromium.org/p/chromium/builders/ci/linux-ubsan-vptr</a>
 
-Bug: 1392135
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I552f4b67c779a9c7dfb14d99d205f61db057d22e">I552f4b67c779a9c7dfb14d99d205f61db057d22e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4066919">https://chromium-review.googlesource.com/c/chromium/src/+/4066919</a>
-Reviewed-by: Alex Ilin &lt;alexilin@chromium.org&gt;
-Commit-Queue: Monica Basta &lt;msalama@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1086331}
+Original change's description:
+&gt; extensions: integrate webAuthenticationProxy API with hosts policy
+&gt;
+&gt; Make WebAuthenticationProxyService consider whether the origin of a
+&gt; WebAuthn request is blocked via the runtime_blocked_hosts /
+&gt; runtime_allowed_hosts enterprise policy.
+&gt;
+&gt; Fixed: 1322633
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib9e0d03f80d887d39fae4d6698a9ec82210fde81">Ib9e0d03f80d887d39fae4d6698a9ec82210fde81</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4021329">https://chromium-review.googlesource.com/c/chromium/src/+/4021329</a>
+&gt; Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+&gt; Commit-Queue: Martin Kreichgauer &lt;martinkr@google.com&gt;
+&gt; Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1086301}
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3f703bb91103e7a2ff6a9b83d419a53095822b52">I3f703bb91103e7a2ff6a9b83d419a53095822b52</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4120309">https://chromium-review.googlesource.com/c/chromium/src/+/4120309</a>
+Reviewed-by: Finnur Thorarinsson &lt;finnur@chromium.org&gt;
+Commit-Queue: Finnur Thorarinsson &lt;finnur@chromium.org&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Auto-Submit: Martin Kreichgauer &lt;martinkr@google.com&gt;
+Owners-Override: Finnur Thorarinsson &lt;finnur@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1086338}
 </pre>
 
 </body>
