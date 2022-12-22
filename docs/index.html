@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1086465/"> 1086465</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2cc5d9fe3d6b437d75136cbab1a09124e1e0e5ca">2cc5d9fe3d6b437d75136cbab1a09124e1e0e5ca</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1086556/"> 1086556</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9a9dd250cdd34addf15171c72bdd4a61d777ed4b">9a9dd250cdd34addf15171c72bdd4a61d777ed4b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1086534/">1086534</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2cc5d9fe3d6b437d75136cbab1a09124e1e0e5ca
+   9a9dd250cdd34addf15171c72bdd4a61d777ed4b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2cc5d9fe3d6b437d75136cbab1a09124e1e0e5ca">
+    <a href="/chromium/src/+log/9a9dd250cdd34addf15171c72bdd4a61d777ed4b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2cc5d9fe3d6b437d75136cbab1a09124e1e0e5ca.tar.gz">
+    <a href="/chromium/src/+archive/9a9dd250cdd34addf15171c72bdd4a61d777ed4b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Matt Wolenetz &lt;wolenetz@chromium.org&gt;
+   Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
   </td>
   <td>
-   Thu Dec 22 19:07:44 2022
+   Thu Dec 22 22:43:37 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Dec 22 19:07:44 2022
+   Thu Dec 22 22:43:37 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2cc5d9fe3d6b437d75136cbab1a09124e1e0e5ca/">
-    f0b6e5c1b13242664d64f2bc375fbb6f10af3820
+   <a href="/chromium/src/+/9a9dd250cdd34addf15171c72bdd4a61d777ed4b/">
+    308e2f1a5e0dbb92aa2c6c5e8ccca5e63f6cab1e
    </a>
   </td>
  </tr>
@@ -166,67 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2cc5d9fe3d6b437d75136cbab1a09124e1e0e5ca%5E">
-    e3cbf6f34347be7936a822c26a00c3b1a6d2edbf
+   <a href="/chromium/src/+/9a9dd250cdd34addf15171c72bdd4a61d777ed4b%5E">
+    ed773d6f759fa7a461387b4c0d659254f06bd050
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2cc5d9fe3d6b437d75136cbab1a09124e1e0e5ca%5E%21/">
+    <a href="/chromium/src/+/9a9dd250cdd34addf15171c72bdd4a61d777ed4b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[MSE] Let AppendToParseBuffer fail if StreamParser's allocation/copy fails
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Extensions] Add a few metrics for dNR + webRequest evaluation time
 
-Lets the synchronous "PrepareAppend" portion of
-SourceBuffer.appendBuffer() gracefully throw exception if the initial
-memory allocation fails. Previous CL [1] that removed an extra
-allocation and copy also removed detection of allocation failure for
-that extra copy, but did not fully enable graceful failure if allocation
-of space for the optimized copy of the appended bytes within
-AppendToParseBuffer() failed.
+Add some (more) metrics around the time taken to evaluate dNR rules
+and webRequest listeners.
 
-Also fixes an error introduced in that previous CL that would have
-fatally failed the MediaElement if AppendToParseBuffer failed; the app
-is instead allowed to actually get a QuotaExceeded error and retry when
-the underlying AppendToParseBuffer failed. That error was introduced
-when ChunkDemuxer::AppendData had been renamed to RunSegmentParserLoop
-and a preliminary AppendToParseBuffer method was pasted with incorrect
-append failure logic. Note that RunSegmentParserLoop() still correctly
-fatally fails the media element if the actual parse of previously
-appended data fails.
-
-During mp2t_stream_parser's flush of internal es_parser_h264, there's a
-pre-existing push of delimiter bytes required to emit potentially
-complete data from parse during that flush. That flush does not occur
-during AppendToParseBuffer, so there is a CHECK now to retain previous
-behavior if the delimiter bytes' push fails. Likewise, the ByteQueue
-constructor requires the initial backing `buffer_` be successfully
-allocated, and since that `buffer_` now is managed with
-UncheckedMalloc/UncheckedFree, the constructor contains a CHECK that the
-initial allocation succeeds. AppendToParseBuffer does not construct
-ByteQueue; it just pushes to one that is already constructed, so the
-CHECK doesn't conflict with the intent of this change.
-
-Finally, also note that the various TsSection parsers within the
-mp2t_stream_parser have ByteQueues that are pushed to during the Parse
-phase of the StreamParser (as noted already, there's a Flush edge case
-for es_parser_h264) and can now indicate parse failure to app for many
-of those pushes that would previously have failed due to OOM. Hence,
-this change may cause MSE parse error (decode error) increase on
-memory-constrained platforms with builds where enable_mse_mpeg2ts_stream_parser is true, but OOM may similarly drop
-there.
-
-[1] <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3362558">https://chromium-review.googlesource.com/c/chromium/src/+/3362558</a>
-
-Bug: 1395788,1286810,1266639
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iab324bf8d2a17369747ffb5fa8f33a5dded84cc1">Iab324bf8d2a17369747ffb5fa8f33a5dded84cc1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4112664">https://chromium-review.googlesource.com/c/chromium/src/+/4112664</a>
-Reviewed-by: Will Cassella &lt;cassew@chromium.org&gt;
-Commit-Queue: Matthew Wolenetz &lt;wolenetz@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1086465}
+Bug: None
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I436cf3ab9e5ae46b6ba415b52f0d53d8029a8462">I436cf3ab9e5ae46b6ba415b52f0d53d8029a8462</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4119590">https://chromium-review.googlesource.com/c/chromium/src/+/4119590</a>
+Auto-Submit: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Commit-Queue: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Reviewed-by: Kelvin Jiang &lt;kelvinjiang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1086556}
 </pre>
 
 </body>
