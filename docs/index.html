@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1086665/"> 1086665</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bc39adb2e710fbb9179c8f78f3b6e3fccfe8889a">bc39adb2e710fbb9179c8f78f3b6e3fccfe8889a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1086673/"> 1086673</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4cf64145d0e66ac3c75cd96eac5057af5236d7e5">4cf64145d0e66ac3c75cd96eac5057af5236d7e5</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1086644/">1086644</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0f19ba8cc4f3cabe5939fdd437e6dbe3fba8be6">f0f19ba8cc4f3cabe5939fdd437e6dbe3fba8be6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1086664/">1086664</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ac9dd441782250a5e03b2059ee70fbed62b7827a">ac9dd441782250a5e03b2059ee70fbed62b7827a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   bc39adb2e710fbb9179c8f78f3b6e3fccfe8889a
+   4cf64145d0e66ac3c75cd96eac5057af5236d7e5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/bc39adb2e710fbb9179c8f78f3b6e3fccfe8889a">
+    <a href="/chromium/src/+log/4cf64145d0e66ac3c75cd96eac5057af5236d7e5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/bc39adb2e710fbb9179c8f78f3b6e3fccfe8889a.tar.gz">
+    <a href="/chromium/src/+archive/4cf64145d0e66ac3c75cd96eac5057af5236d7e5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Moteva &lt;moteva@google.com&gt;
+   Fergal Daly &lt;fergal@chromium.org&gt;
   </td>
   <td>
-   Fri Dec 23 07:11:22 2022
+   Fri Dec 23 07:49:40 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 23 07:11:22 2022
+   Fri Dec 23 07:49:40 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/bc39adb2e710fbb9179c8f78f3b6e3fccfe8889a/">
-    3a15a1e491865424f74122fcf49676a247fd1875
+   <a href="/chromium/src/+/4cf64145d0e66ac3c75cd96eac5057af5236d7e5/">
+    3602abf7ac72cd6bfbc6be6f714afa2fc0ab993d
    </a>
   </td>
  </tr>
@@ -166,34 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/bc39adb2e710fbb9179c8f78f3b6e3fccfe8889a%5E">
-    ac9dd441782250a5e03b2059ee70fbed62b7827a
+   <a href="/chromium/src/+/4cf64145d0e66ac3c75cd96eac5057af5236d7e5%5E">
+    a05e348d4d4501d70ee69bcd794956e2fdd03942
    </a>
    <span>
     [
-    <a href="/chromium/src/+/bc39adb2e710fbb9179c8f78f3b6e3fccfe8889a%5E%21/">
+    <a href="/chromium/src/+/4cf64145d0e66ac3c75cd96eac5057af5236d7e5%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">CrOS Settings: Load HTML templates at runtime for os_people_page
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update callers to check return value of new TestNavigationManager::Wait*
 
-Uses html_to_wrapper() instead of html_to_js() for web component files
-to aid in loading HTML templates at runtime. This is done so that the
-line numbers of reported errors match the checked-in code.
+This is a no-op change to /content/browser/devtools to update all callers of WaitForFirstYieldAfterDidStartNavigation and WaitForNavigationFinished to check for success. Failure could be due to a test timeout or other error in which case we should stop the test. Proceeding further with the test will just produce confusing output.
 
-Bug: chromium:1292025
-TEST:
-1. Run `autoninja -C out/Default browser_tests &amp;&amp; DISPLAY=:20 out/Default/browser_tests  --gtest_filter="*PeoplePage*"`
-2. Manual UI Test
+The return values will be marked `[[nodiscard]]` in a follow-up change.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7446b664f8aca16587eef790b20f78ee875c567c">I7446b664f8aca16587eef790b20f78ee875c567c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4120842">https://chromium-review.googlesource.com/c/chromium/src/+/4120842</a>
-Reviewed-by: Wes Okuhara &lt;wesokuhara@google.com&gt;
-Commit-Queue: Nikki Moteva &lt;moteva@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1086665}
+This CL was uploaded by git cl split.
+
+R=yangguo@chromium.org
+
+Bug: 1403181
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie15341f2b78056d63243cf5bd7975a75a260a7cd">Ie15341f2b78056d63243cf5bd7975a75a260a7cd</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4118523">https://chromium-review.googlesource.com/c/chromium/src/+/4118523</a>
+Commit-Queue: Yang Guo &lt;yangguo@chromium.org&gt;
+Auto-Submit: Fergal Daly &lt;fergal@chromium.org&gt;
+Reviewed-by: Yang Guo &lt;yangguo@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1086673}
 </pre>
 
 </body>
