@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1086855/"> 1086855</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0b83bd93b95cefeb76f776d865965d845677867e">0b83bd93b95cefeb76f776d865965d845677867e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1086856/"> 1086856</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/33e6323636432acf6cd65b985aa50550b5d73702">33e6323636432acf6cd65b985aa50550b5d73702</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1086855/">1086855</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0b83bd93b95cefeb76f776d865965d845677867e
+   33e6323636432acf6cd65b985aa50550b5d73702
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0b83bd93b95cefeb76f776d865965d845677867e">
+    <a href="/chromium/src/+log/33e6323636432acf6cd65b985aa50550b5d73702">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0b83bd93b95cefeb76f776d865965d845677867e.tar.gz">
+    <a href="/chromium/src/+archive/33e6323636432acf6cd65b985aa50550b5d73702.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
   </td>
   <td>
-   Sat Dec 24 17:26:12 2022
+   Sat Dec 24 18:30:37 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Dec 24 17:26:12 2022
+   Sat Dec 24 18:30:37 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0b83bd93b95cefeb76f776d865965d845677867e/">
-    a621da7ecc65e849b4f46627ec4d54258049394a
+   <a href="/chromium/src/+/33e6323636432acf6cd65b985aa50550b5d73702/">
+    e2867988fd58776cdc02439aaffb153c786f0055
    </a>
   </td>
  </tr>
@@ -166,43 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0b83bd93b95cefeb76f776d865965d845677867e%5E">
-    5a890c829f151844a7cfbba0236c1494a6d2fa86
+   <a href="/chromium/src/+/33e6323636432acf6cd65b985aa50550b5d73702%5E">
+    0b83bd93b95cefeb76f776d865965d845677867e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0b83bd93b95cefeb76f776d865965d845677867e%5E%21/">
+    <a href="/chromium/src/+/33e6323636432acf6cd65b985aa50550b5d73702%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Win64 PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor SaveLayer and SaveLayerAlpha
 
-Roll Chrome Win64 PGO profile from chrome-win64-main-1671882168-95331e6d18d949b0c30704dd20bc51d055979fd2.profdata to chrome-win64-main-1671893191-bc226614c3af336b7c10afc4051919460eeb3923.profdata
+For cc::PaintCanvas::saveLayer[Alpha] and cc::SaveLayer[Alpha]Op,
+- Change const PaintFlags* parameter to const PaintFlags&amp;. Only one
+  production callsites passed nullptr.
+- Add a variant without the bounds parameter, and change the existing
+  variant to accept const SkRect&amp; for the bounds parameter.
+- Change GraphicsContext::BeginLayer() to be several variants,
+  without the bounds parameter. Previously only one caller passed the
+  bounds parameter where the bounds didn't matter.
+- Remove the branch checking alpha-only flags in RecordPaintCanvas::
+  saveLayer() because all important callers know when to call
+  saveLayerAlpha().
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-win64-chromium">https://autoroll.skia.org/r/pgo-win64-chromium</a>
-Please CC pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+This makes the callsites clearner, and allows temporary SkRect for
+the bounds parameter.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:win64-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If4c37b4bca4b29214a8c512012349d228e4a7d7a">If4c37b4bca4b29214a8c512012349d228e4a7d7a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4123442">https://chromium-review.googlesource.com/c/chromium/src/+/4123442</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1086855}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3d8c81ef17ed26ba26c72f6cfd2a5cc9bea693a8">I3d8c81ef17ed26ba26c72f6cfd2a5cc9bea693a8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4121362">https://chromium-review.googlesource.com/c/chromium/src/+/4121362</a>
+Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
+Commit-Queue: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Owners-Override: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1086856}
 </pre>
 
 </body>
