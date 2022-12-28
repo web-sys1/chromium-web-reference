@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1087383/"> 1087383</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a5bd18e21a13b46d1e262ec43ae9fd134c77c978">a5bd18e21a13b46d1e262ec43ae9fd134c77c978</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1087395/"> 1087395</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e55c111c5dca46b3a7d5cbc892acc6f1cfb3ebec">e55c111c5dca46b3a7d5cbc892acc6f1cfb3ebec</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1087372/">1087372</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a5bd18e21a13b46d1e262ec43ae9fd134c77c978
+   e55c111c5dca46b3a7d5cbc892acc6f1cfb3ebec
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a5bd18e21a13b46d1e262ec43ae9fd134c77c978">
+    <a href="/chromium/src/+log/e55c111c5dca46b3a7d5cbc892acc6f1cfb3ebec">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a5bd18e21a13b46d1e262ec43ae9fd134c77c978.tar.gz">
+    <a href="/chromium/src/+archive/e55c111c5dca46b3a7d5cbc892acc6f1cfb3ebec.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Moe Ahmadi &lt;mahmadi@chromium.org&gt;
+   Di Zhang &lt;dizhangg@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 28 18:59:29 2022
+   Wed Dec 28 19:36:44 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 28 18:59:29 2022
+   Wed Dec 28 19:36:44 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a5bd18e21a13b46d1e262ec43ae9fd134c77c978/">
-    dc37737d50f4f66626c582791c927f05d41a52de
+   <a href="/chromium/src/+/e55c111c5dca46b3a7d5cbc892acc6f1cfb3ebec/">
+    a3f116e670b7478567523de5621caa09d39d4e3b
    </a>
   </td>
  </tr>
@@ -166,54 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a5bd18e21a13b46d1e262ec43ae9fd134c77c978%5E">
-    e7c37f913f1667bb86517120726fb87d220e275b
+   <a href="/chromium/src/+/e55c111c5dca46b3a7d5cbc892acc6f1cfb3ebec%5E">
+    1db19c754551a2bde2159f525e3f38dab40b3a19
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a5bd18e21a13b46d1e262ec43ae9fd134c77c978%5E%21/">
+    <a href="/chromium/src/+/e55c111c5dca46b3a7d5cbc892acc6f1cfb3ebec%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Omnibox] Offer normalized search suggestions.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Change EventPath caching of size 1 to not use hash sets
 
-SearchProvider uses the original search term in the keyword_search_terms
-table as the query text and for inline autocompletion. With an exception
-of shortcuts search suggestions, all other search suggestions including
-the remote suggestions use normalized search terms (lowercase with extra
-whitespaces collapsed). Offering normalized search suggestions, is #1
-more consistent with the remote search suggestions, and #2 allows
-removing the original search term from the keyword_search_terms table,
-saving memory.
+Looking at the UMA results, there is a regression in the ARMs. This is
+likely due to the additional time searching in the cache hash maps to
+find the correct node. For building an EventPath, even the smallest
+operation can be costly as it is already very fast.
 
-In order to properly dedup the potentially mixedcase or uppercase
-shortcut suggestions with the other search suggestion, this change
-proactively sets a normalized `stripped_destination_url` on the
-shortcut suggestions without changing the query or inline
-autocompletion.
+Since one of the biggest use cases for this feature is for a sequence of
+mouse movements that targets the same node, only storing one node's
+event path should already show improvements and cover many cases. Further,
+that would avoid using the HeapHashMap.
 
-Note that the ShortcutsProvider already uses stripped_destination_url
-for deduping its suggestion. Therefore proactively setting that on the
-matches is safe and could even make deduping the ACController faster.
-
-All the changes are behind a kill switch.
-
-query: "TEST"
-before (uppercase): <a href="http://screenshot/BhxK2yRhUR5nvN8">http://screenshot/BhxK2yRhUR5nvN8</a>
-before (lowercase): <a href="http://screenshot/7DY4qYUAYcSmJ4G">http://screenshot/7DY4qYUAYcSmJ4G</a>
-after (uppercase): <a href="http://screenshot/BQiZcQvRQRHfmXp">http://screenshot/BQiZcQvRQRHfmXp</a>
-after (lowercase): <a href="http://screenshot/5Uq2HKWEG2hLDrX">http://screenshot/5Uq2HKWEG2hLDrX</a>
-
-Bug: 1119654
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I30859613e27aa7d04f6fea068cdb4d7ff9110ced">I30859613e27aa7d04f6fea068cdb4d7ff9110ced</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3629914">https://chromium-review.googlesource.com/c/chromium/src/+/3629914</a>
-Reviewed-by: Justin Donnelly &lt;jdonnelly@chromium.org&gt;
-Commit-Queue: Moe Ahmadi &lt;mahmadi@chromium.org&gt;
-Reviewed-by: manuk hovanesian &lt;manukh@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1087383}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifdd577daf9819197bb41cd88f61c72ea2d2463e8">Ifdd577daf9819197bb41cd88f61c72ea2d2463e8</a>
+Bug: 1394555
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4126821">https://chromium-review.googlesource.com/c/chromium/src/+/4126821</a>
+Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
+Commit-Queue: Di Zhang &lt;dizhangg@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1087395}
 </pre>
 
 </body>
