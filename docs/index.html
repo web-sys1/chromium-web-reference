@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1087370/"> 1087370</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e">837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1087383/"> 1087383</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a5bd18e21a13b46d1e262ec43ae9fd134c77c978">a5bd18e21a13b46d1e262ec43ae9fd134c77c978</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1087349/">1087349</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/65baacf3584c619c59023c0c7b65b28355906073">65baacf3584c619c59023c0c7b65b28355906073</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1087372/">1087372</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9a0a4140ce523cac5283b1d734accf8a9a6daaac">9a0a4140ce523cac5283b1d734accf8a9a6daaac</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e
+   a5bd18e21a13b46d1e262ec43ae9fd134c77c978
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e">
+    <a href="/chromium/src/+log/a5bd18e21a13b46d1e262ec43ae9fd134c77c978">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e.tar.gz">
+    <a href="/chromium/src/+archive/a5bd18e21a13b46d1e262ec43ae9fd134c77c978.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Youkichi Hosoi &lt;youkichihosoi@chromium.org&gt;
+   Moe Ahmadi &lt;mahmadi@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 28 18:19:38 2022
+   Wed Dec 28 18:59:29 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 28 18:19:38 2022
+   Wed Dec 28 18:59:29 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e/">
-    b8f8b13dc5b5e278894415ade5a7edfadea71c52
+   <a href="/chromium/src/+/a5bd18e21a13b46d1e262ec43ae9fd134c77c978/">
+    dc37737d50f4f66626c582791c927f05d41a52de
    </a>
   </td>
  </tr>
@@ -166,61 +166,54 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e%5E">
-    5164665de8f2ed095a89353ce20d0fe64a346082
+   <a href="/chromium/src/+/a5bd18e21a13b46d1e262ec43ae9fd134c77c978%5E">
+    e7c37f913f1667bb86517120726fb87d220e275b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e%5E%21/">
+    <a href="/chromium/src/+/a5bd18e21a13b46d1e262ec43ae9fd134c77c978%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "arc: Use Guest OS version of Play files when ARCVM is enabled"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Omnibox] Offer normalized search suggestions.
 
-This is a reland of commit dfedceb3a122880ea5233d2ecd5415792ac84adc
+SearchProvider uses the original search term in the keyword_search_terms
+table as the query text and for inline autocompletion. With an exception
+of shortcuts search suggestions, all other search suggestions including
+the remote suggestions use normalized search terms (lowercase with extra
+whitespaces collapsed). Offering normalized search suggestions, is #1
+more consistent with the remote search suggestions, and #2 allows
+removing the original search term from the keyword_search_terms table,
+saving memory.
 
-Reason for reland: The original change broke crostini.ShareMovies tests
-on chromeos-eve-chrome b/263448920 because the Android side change was
-not in ChromeOS LKGM. Now the Android side change is in LKGM. I locally
-ran the tests on eve and other boards, and confirmed that this change
-does not break them on LKGM.
+In order to properly dedup the potentially mixedcase or uppercase
+shortcut suggestions with the other search suggestion, this change
+proactively sets a normalized `stripped_destination_url` on the
+shortcut suggestions without changing the query or inline
+autocompletion.
 
-Original change's description:
-&gt; arc: Use Guest OS version of Play files when ARCVM is enabled
-&gt;
-&gt; Currently, the Guest OS version of Play files (Android files in the
-&gt; Files app) is enabled only when virtio-blk /data is enabled.
-&gt; Now we enable it on all ARCVM devices. This CL depends on an Android
-&gt; side change to start sftp-server regardless of the use of virtio-blk
-&gt; /data <a href="http://ag/20770033.">http://ag/20770033.</a>
-&gt;
-&gt; Bug: b:248151439, b:263204625
-&gt; Test: arc.PlayFiles.vm with CL:4113651
-&gt; Test: ArcSessionManagerTest
-&gt; Test: FileManagerPathUtilConvertUrlTest
-&gt; Test: GuestOs/FilesAppBrowserTest.Test/mountAndroidVolumeSuccess
-&gt; Test: QuickView/FilesAppBrowserTest.Test/openQuickViewAndroidGuestOs
-&gt;
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7b1a5eefcdcc270d977cc436afef36122df3cea7">I7b1a5eefcdcc270d977cc436afef36122df3cea7</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4113388">https://chromium-review.googlesource.com/c/chromium/src/+/4113388</a>
-&gt; Commit-Queue: Youkichi Hosoi &lt;youkichihosoi@chromium.org&gt;
-&gt; Reviewed-by: Ben Reich &lt;benreich@chromium.org&gt;
-&gt; Reviewed-by: Ryo Hashimoto &lt;hashimoto@chromium.org&gt;
-&gt; Reviewed-by: David Munro &lt;davidmunro@google.com&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1085440}
+Note that the ShortcutsProvider already uses stripped_destination_url
+for deduping its suggestion. Therefore proactively setting that on the
+matches is safe and could even make deduping the ACController faster.
 
-Bug: b:248151439, b:263204625
-Test: crostini.ShareMovies.(bullseye|buster)_stable_gaia
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifba37f660b746bb48914cf989ca5443cfa253137">Ifba37f660b746bb48914cf989ca5443cfa253137</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4122771">https://chromium-review.googlesource.com/c/chromium/src/+/4122771</a>
-Commit-Queue: Youkichi Hosoi &lt;youkichihosoi@chromium.org&gt;
-Reviewed-by: Ben Reich &lt;benreich@chromium.org&gt;
-Reviewed-by: David Munro &lt;davidmunro@google.com&gt;
-Reviewed-by: Josh Horwich &lt;jhorwich@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1087370}
+All the changes are behind a kill switch.
+
+query: "TEST"
+before (uppercase): <a href="http://screenshot/BhxK2yRhUR5nvN8">http://screenshot/BhxK2yRhUR5nvN8</a>
+before (lowercase): <a href="http://screenshot/7DY4qYUAYcSmJ4G">http://screenshot/7DY4qYUAYcSmJ4G</a>
+after (uppercase): <a href="http://screenshot/BQiZcQvRQRHfmXp">http://screenshot/BQiZcQvRQRHfmXp</a>
+after (lowercase): <a href="http://screenshot/5Uq2HKWEG2hLDrX">http://screenshot/5Uq2HKWEG2hLDrX</a>
+
+Bug: 1119654
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I30859613e27aa7d04f6fea068cdb4d7ff9110ced">I30859613e27aa7d04f6fea068cdb4d7ff9110ced</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3629914">https://chromium-review.googlesource.com/c/chromium/src/+/3629914</a>
+Reviewed-by: Justin Donnelly &lt;jdonnelly@chromium.org&gt;
+Commit-Queue: Moe Ahmadi &lt;mahmadi@chromium.org&gt;
+Reviewed-by: manuk hovanesian &lt;manukh@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1087383}
 </pre>
 
 </body>
