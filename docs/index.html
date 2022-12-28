@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1087313/"> 1087313</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b26ede01e7b780c6ff11866b2af23ac7345c3f45">b26ede01e7b780c6ff11866b2af23ac7345c3f45</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1087315/"> 1087315</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/aac6f24a9213ac09e87231ad6194093e271e915b">aac6f24a9213ac09e87231ad6194093e271e915b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1087301/">1087301</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d503e75e0fb4786a746b33025e1d43e381b904b4">d503e75e0fb4786a746b33025e1d43e381b904b4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1087312/">1087312</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5f5456778e4d4352707f1cc097672e74d3857299">5f5456778e4d4352707f1cc097672e74d3857299</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b26ede01e7b780c6ff11866b2af23ac7345c3f45
+   aac6f24a9213ac09e87231ad6194093e271e915b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b26ede01e7b780c6ff11866b2af23ac7345c3f45">
+    <a href="/chromium/src/+log/aac6f24a9213ac09e87231ad6194093e271e915b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b26ede01e7b780c6ff11866b2af23ac7345c3f45.tar.gz">
+    <a href="/chromium/src/+archive/aac6f24a9213ac09e87231ad6194093e271e915b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sayed Elabady &lt;elabadysayed@chromium.org&gt;
+   Anna Tsvirchkova &lt;atsvirchkova@google.com&gt;
   </td>
   <td>
-   Wed Dec 28 13:17:34 2022
+   Wed Dec 28 13:47:36 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 28 13:17:34 2022
+   Wed Dec 28 13:47:36 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b26ede01e7b780c6ff11866b2af23ac7345c3f45/">
-    88556e24ca1cf21ad0a104d6d065f1e1c2d17ee6
+   <a href="/chromium/src/+/aac6f24a9213ac09e87231ad6194093e271e915b/">
+    217c2b0e24b8aada1e7a258433e3f4a0035c995d
    </a>
   </td>
  </tr>
@@ -166,31 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b26ede01e7b780c6ff11866b2af23ac7345c3f45%5E">
-    5f5456778e4d4352707f1cc097672e74d3857299
+   <a href="/chromium/src/+/aac6f24a9213ac09e87231ad6194093e271e915b%5E">
+    0eada803b92f67c7248b262423e91ab8709c0fcf
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b26ede01e7b780c6ff11866b2af23ac7345c3f45%5E%21/">
+    <a href="/chromium/src/+/aac6f24a9213ac09e87231ad6194093e271e915b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prevent inializing drag without Content provider
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[TTFCC] Fix that keyboard accessory suggestions are not shown after BS
+dismissal
 
-Add null check to prevent any image drag operations without having
-content provider
+The problem is that the KA doesn't show the credit card suggestions
+after the user dismissed the bottom sheet.
+This happens because `touch_to_fill_delegate_-&gt;IsShowingTouchToFill()`
+stays true after bottom sheet dismissal without selection any action.
+Then here
+<a href="https://source.chromium.org/chromium/chromium/src/+/main:components/autofill/core/browser/browser_autofill_manager.cc;l=1206?q=browser_autofill&amp;ss=chromium%2Fchromium%2Fsrc">https://source.chromium.org/chromium/chromium/src/+/main:components/autofill/core/browser/browser_autofill_manager.cc;l=1206?q=browser_autofill&amp;ss=chromium%2Fchromium%2Fsrc</a>
+the autofill manager thinks that the bottom sheet is being shown and
+there is no need in KA suggestions.
 
-Bug: 1400603
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1f5bd5a05093b0e32efdfe7ab6946b5d104d0d54">I1f5bd5a05093b0e32efdfe7ab6946b5d104d0d54</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4100825">https://chromium-review.googlesource.com/c/chromium/src/+/4100825</a>
-Reviewed-by: Wenyu Fu &lt;wenyufu@chromium.org&gt;
-Reviewed-by: Peter Conn &lt;peconn@chromium.org&gt;
-Commit-Queue: Sayed Elabady &lt;elabadysayed@chromium.org&gt;
-Reviewed-by: Michael Bai &lt;michaelbai@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1087313}
+The solution: introduce the `OnDismissed` method into
+`TouchToFillDelegate` and call it from `TouchToFillCreditCardController`
+to notify the delegate that the BS is not being displayed any more.
+
+Bug: 1247698
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I80e462bcadd8ee6cd705e07ca0ff591d18254359">I80e462bcadd8ee6cd705e07ca0ff591d18254359</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4120279">https://chromium-review.googlesource.com/c/chromium/src/+/4120279</a>
+Reviewed-by: Maxim Kolosovskiy &lt;kolos@chromium.org&gt;
+Commit-Queue: Anna Tsvirchkova &lt;atsvirchkova@google.com&gt;
+Reviewed-by: Friedrich Horschig &lt;fhorschig@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1087315}
 </pre>
 
 </body>
