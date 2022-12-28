@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1087359/"> 1087359</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9c65ad1a0ceac79f5a076bd5618639ea25d005c1">9c65ad1a0ceac79f5a076bd5618639ea25d005c1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1087370/"> 1087370</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e">837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1087349/">1087349</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9c65ad1a0ceac79f5a076bd5618639ea25d005c1
+   837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9c65ad1a0ceac79f5a076bd5618639ea25d005c1">
+    <a href="/chromium/src/+log/837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9c65ad1a0ceac79f5a076bd5618639ea25d005c1.tar.gz">
+    <a href="/chromium/src/+archive/837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kelvin Jiang &lt;kelvinjiang@chromium.org&gt;
+   Youkichi Hosoi &lt;youkichihosoi@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 28 17:38:47 2022
+   Wed Dec 28 18:19:38 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 28 17:38:47 2022
+   Wed Dec 28 18:19:38 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9c65ad1a0ceac79f5a076bd5618639ea25d005c1/">
-    710d9203173a78408915499b035269a0d6cc997b
+   <a href="/chromium/src/+/837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e/">
+    b8f8b13dc5b5e278894415ade5a7edfadea71c52
    </a>
   </td>
  </tr>
@@ -166,42 +166,61 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9c65ad1a0ceac79f5a076bd5618639ea25d005c1%5E">
-    e31384a3183c7c173c523f3292fe8d60ad440966
+   <a href="/chromium/src/+/837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e%5E">
+    5164665de8f2ed095a89353ce20d0fe64a346082
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9c65ad1a0ceac79f5a076bd5618639ea25d005c1%5E%21/">
+    <a href="/chromium/src/+/837cd0b6e87ac230fa767dd3902c2cd2ed3a4f8e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Side Panel] GetEntryForKey looks at contextual then global registry
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "arc: Use Guest OS version of Play files when ARCVM is enabled"
 
-Change GetEntryForKey to look through the active contextual registry
-first, then the global registry as a fallback for the entry with the
-given key.
+This is a reland of commit dfedceb3a122880ea5233d2ecd5415792ac84adc
 
-This change is required to support tab-specific extension entries in the
-side panel, because extensions will be able to specify both global and
-tab specific entries, with tab specific entries taking precedence over
-global ones.
+Reason for reland: The original change broke crostini.ShareMovies tests
+on chromeos-eve-chrome b/263448920 because the Android side change was
+not in ChromeOS LKGM. Now the Android side change is in LKGM. I locally
+ran the tests on eve and other boards, and confirmed that this change
+does not break them on LKGM.
 
-This change also fixes a bug in SidePanelRegistry::Deregister()
-where only the active entry vs deregistered entry's id is compared.
-This should compare the SidePanelEntry::Key instead.
+Original change's description:
+&gt; arc: Use Guest OS version of Play files when ARCVM is enabled
+&gt;
+&gt; Currently, the Guest OS version of Play files (Android files in the
+&gt; Files app) is enabled only when virtio-blk /data is enabled.
+&gt; Now we enable it on all ARCVM devices. This CL depends on an Android
+&gt; side change to start sftp-server regardless of the use of virtio-blk
+&gt; /data <a href="http://ag/20770033.">http://ag/20770033.</a>
+&gt;
+&gt; Bug: b:248151439, b:263204625
+&gt; Test: arc.PlayFiles.vm with CL:4113651
+&gt; Test: ArcSessionManagerTest
+&gt; Test: FileManagerPathUtilConvertUrlTest
+&gt; Test: GuestOs/FilesAppBrowserTest.Test/mountAndroidVolumeSuccess
+&gt; Test: QuickView/FilesAppBrowserTest.Test/openQuickViewAndroidGuestOs
+&gt;
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7b1a5eefcdcc270d977cc436afef36122df3cea7">I7b1a5eefcdcc270d977cc436afef36122df3cea7</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4113388">https://chromium-review.googlesource.com/c/chromium/src/+/4113388</a>
+&gt; Commit-Queue: Youkichi Hosoi &lt;youkichihosoi@chromium.org&gt;
+&gt; Reviewed-by: Ben Reich &lt;benreich@chromium.org&gt;
+&gt; Reviewed-by: Ryo Hashimoto &lt;hashimoto@chromium.org&gt;
+&gt; Reviewed-by: David Munro &lt;davidmunro@google.com&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1085440}
 
-Context doc (internal):
-<a href="https://docs.google.com/document/d/1VkRaJ17vpjEcHMnuvz55wQe6tm8s7vyetw941E307IM/edit?usp=sharing&amp;resourcekey=0-LyJbbUCObtlrltN47iMYEQ">https://docs.google.com/document/d/1VkRaJ17vpjEcHMnuvz55wQe6tm8s7vyetw941E307IM/edit?usp=sharing&amp;resourcekey=0-LyJbbUCObtlrltN47iMYEQ</a>
-
-Bug: 1403745
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iff7763bc523565179712dba81c7789b675482db9">Iff7763bc523565179712dba81c7789b675482db9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4125525">https://chromium-review.googlesource.com/c/chromium/src/+/4125525</a>
-Commit-Queue: Kelvin Jiang &lt;kelvinjiang@chromium.org&gt;
-Reviewed-by: Caroline Rising &lt;corising@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1087359}
+Bug: b:248151439, b:263204625
+Test: crostini.ShareMovies.(bullseye|buster)_stable_gaia
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifba37f660b746bb48914cf989ca5443cfa253137">Ifba37f660b746bb48914cf989ca5443cfa253137</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4122771">https://chromium-review.googlesource.com/c/chromium/src/+/4122771</a>
+Commit-Queue: Youkichi Hosoi &lt;youkichihosoi@chromium.org&gt;
+Reviewed-by: Ben Reich &lt;benreich@chromium.org&gt;
+Reviewed-by: David Munro &lt;davidmunro@google.com&gt;
+Reviewed-by: Josh Horwich &lt;jhorwich@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1087370}
 </pre>
 
 </body>
