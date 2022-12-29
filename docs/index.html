@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1087547/"> 1087547</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a1051cd9ee32302ecf99a5a195d897458cc27e99">a1051cd9ee32302ecf99a5a195d897458cc27e99</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1087555/"> 1087555</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7ca5e47e24bfca59e65b0ca36e915f2c8af0e265">7ca5e47e24bfca59e65b0ca36e915f2c8af0e265</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1087546/">1087546</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a1051cd9ee32302ecf99a5a195d897458cc27e99
+   7ca5e47e24bfca59e65b0ca36e915f2c8af0e265
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a1051cd9ee32302ecf99a5a195d897458cc27e99">
+    <a href="/chromium/src/+log/7ca5e47e24bfca59e65b0ca36e915f2c8af0e265">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a1051cd9ee32302ecf99a5a195d897458cc27e99.tar.gz">
+    <a href="/chromium/src/+archive/7ca5e47e24bfca59e65b0ca36e915f2c8af0e265.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Olesia Marukhno &lt;olesiamarukhno@google.com&gt;
+   Markus Handell &lt;handellm@google.com&gt;
   </td>
   <td>
-   Thu Dec 29 11:55:14 2022
+   Thu Dec 29 12:37:23 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Dec 29 11:55:14 2022
+   Thu Dec 29 12:37:23 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a1051cd9ee32302ecf99a5a195d897458cc27e99/">
-    35749ebb033aae545e6ece2f65ef40efb84cb1bf
+   <a href="/chromium/src/+/7ca5e47e24bfca59e65b0ca36e915f2c8af0e265/">
+    af866c87ec0865778cdf3047ca4a265f3c9f04cb
    </a>
   </td>
  </tr>
@@ -166,28 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a1051cd9ee32302ecf99a5a195d897458cc27e99%5E">
-    4d0299d2e39f74ac9d04719444ea26f10fa2b7ca
+   <a href="/chromium/src/+/7ca5e47e24bfca59e65b0ca36e915f2c8af0e265%5E">
+    c2eb94a55bf1a67b1893cc598aeb962b60122def
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a1051cd9ee32302ecf99a5a195d897458cc27e99%5E%21/">
+    <a href="/chromium/src/+/7ca5e47e24bfca59e65b0ca36e915f2c8af0e265%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[fixit] Fix flaky SiteList test
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">VideoTrackAdapter: avoid odd-placed visible_rect().
 
-One of SiteList tests is flaking when checking the query paramaters after navigation. Add flushTasks to wait for the navigation to complete.
+Video frames getting cropped inside the VideoTrackAdapter are
+interpreted with a byteswapped UV plane from some consumers
+when the output frame's visible_rect()'s x() coordinate is odd
+and the source format is NV12.
 
-Bug: 929455
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib80d1044648af4dd03dc3025c6fa8ed29c25621f">Ib80d1044648af4dd03dc3025c6fa8ed29c25621f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4127300">https://chromium-review.googlesource.com/c/chromium/src/+/4127300</a>
-Reviewed-by: Theodore Olsauskas-Warren &lt;sauski@google.com&gt;
-Commit-Queue: Olesia Marukhno &lt;olesiamarukhno@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1087547}
+Fix this by rounding down the x coordinate to an even value.
+
+This CL additionally gets rid of GMB/Texture-only logic related to
+rounding width and height upwards to even, and also handles the less
+visible problem appearing when the y() coordinate is odd (it just shifts
+colors half a pixel.
+
+Fixed: 1307304
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If6301fbce9e57f1445ccafbdd545d582f44f0ae3">If6301fbce9e57f1445ccafbdd545d582f44f0ae3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4128038">https://chromium-review.googlesource.com/c/chromium/src/+/4128038</a>
+Auto-Submit: Markus Handell &lt;handellm@google.com&gt;
+Reviewed-by: Henrik Boström &lt;hbos@chromium.org&gt;
+Commit-Queue: Markus Handell &lt;handellm@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1087555}
 </pre>
 
 </body>
