@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1087606/"> 1087606</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d03bc50176e5bc30b6fe5974dc9168d584d7b056">d03bc50176e5bc30b6fe5974dc9168d584d7b056</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1087614/"> 1087614</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0ec927c81b11a94998840157e42daa2f508d4db1">0ec927c81b11a94998840157e42daa2f508d4db1</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1087603/">1087603</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d03bc50176e5bc30b6fe5974dc9168d584d7b056
+   0ec927c81b11a94998840157e42daa2f508d4db1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d03bc50176e5bc30b6fe5974dc9168d584d7b056">
+    <a href="/chromium/src/+log/0ec927c81b11a94998840157e42daa2f508d4db1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d03bc50176e5bc30b6fe5974dc9168d584d7b056.tar.gz">
+    <a href="/chromium/src/+archive/0ec927c81b11a94998840157e42daa2f508d4db1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Roman Arora &lt;romanarora@chromium.org&gt;
+   Joe DeBlasio &lt;jdeblasio@chromium.org&gt;
   </td>
   <td>
-   Thu Dec 29 17:35:59 2022
+   Thu Dec 29 18:05:55 2022
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Dec 29 17:35:59 2022
+   Thu Dec 29 18:05:55 2022
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d03bc50176e5bc30b6fe5974dc9168d584d7b056/">
-    bdb05fe228ee0c881f64ae085f7168fb438528a1
+   <a href="/chromium/src/+/0ec927c81b11a94998840157e42daa2f508d4db1/">
+    30d9fe877f874466db0b19eb826dfffdce41d19f
    </a>
   </td>
  </tr>
@@ -166,42 +166,52 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d03bc50176e5bc30b6fe5974dc9168d584d7b056%5E">
-    abed376550db48ee1c2a95f3f5ae6700e7eae730
+   <a href="/chromium/src/+/0ec927c81b11a94998840157e42daa2f508d4db1%5E">
+    f0539553369692ee993a3249ebe9bdb237322abf
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d03bc50176e5bc30b6fe5974dc9168d584d7b056%5E%21/">
+    <a href="/chromium/src/+/0ec927c81b11a94998840157e42daa2f508d4db1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[NTP CT] Cart image adjustments
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add support for insecure download blocking
 
-Adds a circular background to the chrome cart fallback image to ensure
-proper contrast against a user selected theme background color.
+This CL adds the implementation for insecure download blocking. When the
+previously-added flag is enabled, it will show a warning for all
+downloads that were not securely delivered. This warning must be
+explicitly ignored before the download will complete.
 
-Updates border color of cart image to match the module item background
-color.
+Insecure downloads can be insecure because of:
+ * the initiating page being insecure,
+ * the final file URL being insecure, or
+ * any redirect along the way being insecure.
 
-Before:
-<a href="https://drive.google.com/file/d/1hhAaq_dRwNYpBjiqPlUmIaBk8-6Pif5d/view?usp=sharing">https://drive.google.com/file/d/1hhAaq_dRwNYpBjiqPlUmIaBk8-6Pif5d/view?usp=sharing</a>
+This implementation is designed to let mixed download blocking behavior
+take precedence over insecure download blocking generally. That means
+that any download that's a mixed download is still blocked silently.
 
-After:
-<a href="https://drive.google.com/file/d/1UieO_CPiXdRcw1yyDwXcenkg5I_OE28K/view?usp=sharing">https://drive.google.com/file/d/1UieO_CPiXdRcw1yyDwXcenkg5I_OE28K/view?usp=sharing</a>
-<a href="https://drive.google.com/file/d/1qeNubf53fw1ZChR5LdaFSDRjF5hoIl-I/view?usp=sharing">https://drive.google.com/file/d/1qeNubf53fw1ZChR5LdaFSDRjF5hoIl-I/view?usp=sharing</a>
+That means that this implementation is slightly over-complicated for
+now -- since mixed downloads trigger on the final URL being insecure or
+any redirect along the way being insecure, the only time that insecure
+download blocking could trigger is if the initiating page is insecure.
+The logic below theoretically could capture all three cases, though,
+since I plan to widdle away the mixed downloads code soon, and it felt
+valuable to keep insecure download checking comprehensively defined.
 
-OS Dark (Default color):
-<a href="https://drive.google.com/file/d/1uBW6uqpd218WlzMO8kIDi5OJ0kFnLaah/view?usp=sharing">https://drive.google.com/file/d/1uBW6uqpd218WlzMO8kIDi5OJ0kFnLaah/view?usp=sharing</a>
+Future CLs will add metrics and clean up a lot of old mixed download
+stuff.
 
-Bug: 1399701, 1393192
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I518291a52184309354a674a1de69eb5dab199f21">I518291a52184309354a674a1de69eb5dab199f21</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4128577">https://chromium-review.googlesource.com/c/chromium/src/+/4128577</a>
-Commit-Queue: Roman Arora &lt;romanarora@chromium.org&gt;
-Reviewed-by: Paul Adedeji &lt;pauladedeji@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1087606}
+Bug: 1352598
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icaa3c7a099d83695bae3ef30ab1c10aca807e26c">Icaa3c7a099d83695bae3ef30ab1c10aca807e26c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4126471">https://chromium-review.googlesource.com/c/chromium/src/+/4126471</a>
+Reviewed-by: Mustafa Emre Acer &lt;meacer@chromium.org&gt;
+Reviewed-by: Min Qin &lt;qinmin@chromium.org&gt;
+Commit-Queue: Joe DeBlasio &lt;jdeblasio@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1087614}
 </pre>
 
 </body>
