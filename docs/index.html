@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1089068/"> 1089068</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bb948f4af6c58317cbf1ed53b33acfdf8dd613e8">bb948f4af6c58317cbf1ed53b33acfdf8dd613e8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1089080/"> 1089080</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ebd6469925ef4271d2b0dab6e4881cefd2e2d582">ebd6469925ef4271d2b0dab6e4881cefd2e2d582</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1089037/">1089037</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   bb948f4af6c58317cbf1ed53b33acfdf8dd613e8
+   ebd6469925ef4271d2b0dab6e4881cefd2e2d582
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/bb948f4af6c58317cbf1ed53b33acfdf8dd613e8">
+    <a href="/chromium/src/+log/ebd6469925ef4271d2b0dab6e4881cefd2e2d582">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/bb948f4af6c58317cbf1ed53b33acfdf8dd613e8.tar.gz">
+    <a href="/chromium/src/+archive/ebd6469925ef4271d2b0dab6e4881cefd2e2d582.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Daniel Rubery &lt;drubery@chromium.org&gt;
+   Mason Freed &lt;masonf@chromium.org&gt;
   </td>
   <td>
-   Thu Jan 05 01:47:57 2023
+   Thu Jan 05 02:29:58 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 05 01:47:57 2023
+   Thu Jan 05 02:29:58 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/bb948f4af6c58317cbf1ed53b33acfdf8dd613e8/">
-    9d0d6be71e2cff23033467f5c1e4af31107080b8
+   <a href="/chromium/src/+/ebd6469925ef4271d2b0dab6e4881cefd2e2d582/">
+    50eed69a1c8e63b1fadd001be993b24665f75219
    </a>
   </td>
  </tr>
@@ -166,29 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/bb948f4af6c58317cbf1ed53b33acfdf8dd613e8%5E">
-    f66f9a66f40617ee02f2ffe99785bd2da9b0bbc2
+   <a href="/chromium/src/+/ebd6469925ef4271d2b0dab6e4881cefd2e2d582%5E">
+    198f018a1ce16b86c928c9f2ed9cdff806ffacb5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/bb948f4af6c58317cbf1ed53b33acfdf8dd613e8%5E%21/">
+    <a href="/chromium/src/+/ebd6469925ef4271d2b0dab6e4881cefd2e2d582%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Skip log sanitization tests on Windows 8/8.1
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix focus traversal for self-referential invoker
 
-These tests are failing for the same reason as on Windows 7, so skip
-on more platforms.
+In the case that a popover contains an invoker that points back to that
+invoker, the tab navigation code used to get confused. E.g.:
 
-Bug: 1405033
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3bb7d2778fb8bfd1d6a462966c4bd0ca7e5c3be8">I3bb7d2778fb8bfd1d6a462966c4bd0ca7e5c3be8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4133962">https://chromium-review.googlesource.com/c/chromium/src/+/4133962</a>
-Commit-Queue: Daniel Rubery &lt;drubery@chromium.org&gt;
-Reviewed-by: Anunoy Ghosh &lt;anunoy@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1089068}
+```
+&lt;div id="menu" popover&gt;
+  &lt;button autofocus popoverhidetarget="menu"&gt;Button #1&lt;/button&gt;
+  &lt;button popoverhidetarget="menu"&gt;Button #2&lt;/button&gt;
+&lt;/div&gt;
+```
+
+In this case, trying to tab between the first and second button would
+break because the second button appeared to be an invoker for a new
+popover, when in reality it was an invoker for the same popover.
+
+Fixed: 1399601
+Bug: 1307772
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I276370d7c8eee0dd32f0c89da202a0d3777bf911">I276370d7c8eee0dd32f0c89da202a0d3777bf911</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4133482">https://chromium-review.googlesource.com/c/chromium/src/+/4133482</a>
+Commit-Queue: Mason Freed &lt;masonf@chromium.org&gt;
+Auto-Submit: Mason Freed &lt;masonf@chromium.org&gt;
+Commit-Queue: Joey Arhar &lt;jarhar@chromium.org&gt;
+Reviewed-by: Joey Arhar &lt;jarhar@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1089080}
 </pre>
 
 </body>
