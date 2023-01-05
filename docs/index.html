@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1089255/"> 1089255</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8f41326115007247e25d21a510cf4b51f72712b8">8f41326115007247e25d21a510cf4b51f72712b8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1089274/"> 1089274</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f529859d9d617d8da5abf7a0ee17b567cf97031a">f529859d9d617d8da5abf7a0ee17b567cf97031a</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1089230/">1089230</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8f41326115007247e25d21a510cf4b51f72712b8
+   f529859d9d617d8da5abf7a0ee17b567cf97031a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8f41326115007247e25d21a510cf4b51f72712b8">
+    <a href="/chromium/src/+log/f529859d9d617d8da5abf7a0ee17b567cf97031a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8f41326115007247e25d21a510cf4b51f72712b8.tar.gz">
+    <a href="/chromium/src/+archive/f529859d9d617d8da5abf7a0ee17b567cf97031a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Florian Leimgruber &lt;fleimgruber@google.com&gt;
+   Akihiro Ota &lt;akihiroota@chromium.org&gt;
   </td>
   <td>
-   Thu Jan 05 15:09:20 2023
+   Thu Jan 05 15:50:34 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 05 15:09:20 2023
+   Thu Jan 05 15:50:34 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8f41326115007247e25d21a510cf4b51f72712b8/">
-    68e27e490c29ab0b5aebcb5f387bb5985fe00e37
+   <a href="/chromium/src/+/f529859d9d617d8da5abf7a0ee17b567cf97031a/">
+    9c88a6f00df85787c70fb517f48338b675c35871
    </a>
   </td>
  </tr>
@@ -166,30 +166,56 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8f41326115007247e25d21a510cf4b51f72712b8%5E">
-    4b2527e7de0ac75b4360dcd098d8c482cab1edee
+   <a href="/chromium/src/+/f529859d9d617d8da5abf7a0ee17b567cf97031a%5E">
+    8f1b0f59358a8931ebf6257d016eed06ad7724a0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8f41326115007247e25d21a510cf4b51f72712b8%5E%21/">
+    <a href="/chromium/src/+/f529859d9d617d8da5abf7a0ee17b567cf97031a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove address import requirements for CS.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Dictation: Allow surrounding text info to be used for all editables"
 
-CS is the 2 letter country code for Serbia and Montenegro, a country
-that no longer exists.
+This reverts commit 7727ea4864cea5190edbf0e86d072d93c5209fd0.
 
-Bug: 1007974
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I55715590d95399e48a014d9f6f9430e058ebaff6">I55715590d95399e48a014d9f6f9430e058ebaff6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4116796">https://chromium-review.googlesource.com/c/chromium/src/+/4116796</a>
-Commit-Queue: Florian Leimgruber &lt;fleimgruber@google.com&gt;
-Auto-Submit: Florian Leimgruber &lt;fleimgruber@google.com&gt;
-Reviewed-by: Matthias Körber &lt;koerber@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1089255}
+Reason for revert: This change seems to be causing flaky behavior
+for many DictationRegexCommandsTests [1]. This change was merged on
+January 4 at 3:41 pm and flakes subsequently began appearing as early
+as January 4 at 5:15 pm. Since no other Dictation-related changes
+have landed in the last five days, this change is the most likely
+culprit.
+
+Confirmed locally that this revert fixes the flakes:
+
+out/linux-cros-rel/browser_tests --gtest_filter="*Network*Text*DictationRegex*.*SmartSelectBetween*" --gtest_repeat=70 --test-launcher-jobs=70
+
+[1] <a href="https://ci.chromium.org/p/chrome/builders/ci/linux-chromeos-chrome?limit=200">https://ci.chromium.org/p/chrome/builders/ci/linux-chromeos-chrome?limit=200</a>
+
+Original change's description:
+&gt; Dictation: Allow surrounding text info to be used for all editables
+&gt;
+&gt; AX-Relnotes: N/A
+&gt; Bug: N/A
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie57bec50d93c710654f21fda106a86ea072e4706">Ie57bec50d93c710654f21fda106a86ea072e4706</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4128721">https://chromium-review.googlesource.com/c/chromium/src/+/4128721</a>
+&gt; Reviewed-by: Anastasia Helfinstein &lt;anastasi@google.com&gt;
+&gt; Commit-Queue: Akihiro Ota &lt;akihiroota@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1088922}
+
+Bug: 1405140
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icc903138f97904300aa62a018f7cd3b9a60d6c14">Icc903138f97904300aa62a018f7cd3b9a60d6c14</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4138480">https://chromium-review.googlesource.com/c/chromium/src/+/4138480</a>
+Auto-Submit: Akihiro Ota &lt;akihiroota@chromium.org&gt;
+Reviewed-by: Katie Dektar &lt;katie@chromium.org&gt;
+Commit-Queue: Katie Dektar &lt;katie@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1089274}
 </pre>
 
 </body>
