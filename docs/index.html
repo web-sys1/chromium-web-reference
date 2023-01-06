@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1089669/"> 1089669</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2682764603ae514f363b0335f3b212aa36391594">2682764603ae514f363b0335f3b212aa36391594</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1089674/"> 1089674</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9fe71b36736fd6635e00162b6088cfb59c5bed6b">9fe71b36736fd6635e00162b6088cfb59c5bed6b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1089652/">1089652</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2682764603ae514f363b0335f3b212aa36391594
+   9fe71b36736fd6635e00162b6088cfb59c5bed6b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2682764603ae514f363b0335f3b212aa36391594">
+    <a href="/chromium/src/+log/9fe71b36736fd6635e00162b6088cfb59c5bed6b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2682764603ae514f363b0335f3b212aa36391594.tar.gz">
+    <a href="/chromium/src/+archive/9fe71b36736fd6635e00162b6088cfb59c5bed6b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   lin &lt;penglin22@huawei.com&gt;
+   Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
   </td>
   <td>
-   Fri Jan 06 10:34:07 2023
+   Fri Jan 06 11:14:33 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jan 06 10:34:07 2023
+   Fri Jan 06 11:14:33 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2682764603ae514f363b0335f3b212aa36391594/">
-    f7056ed4fa4dafbfd7c61e8213d624901d8751e7
+   <a href="/chromium/src/+/9fe71b36736fd6635e00162b6088cfb59c5bed6b/">
+    63e4782c893873df874f40cd56637b9491e9c8bd
    </a>
   </td>
  </tr>
@@ -166,30 +166,33 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2682764603ae514f363b0335f3b212aa36391594%5E">
-    a95f4733db22d5cc6c939cc877c91ccb9f7d50d9
+   <a href="/chromium/src/+/9fe71b36736fd6635e00162b6088cfb59c5bed6b%5E">
+    34ef05a9bb1a226ded61b3a013e6ef07de09387c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2682764603ae514f363b0335f3b212aa36391594%5E%21/">
+    <a href="/chromium/src/+/9fe71b36736fd6635e00162b6088cfb59c5bed6b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix DCHECK failure
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix dangling pointers in callback in WindowsSpellChecker
 
-Use 'DynamicTo&lt;LayoutBox&gt;' to replace 'To&lt;LayoutBox&gt;' when getting
-the nonanonymous ancestor layoutObject physical fragment to fix DCHECK
-failure.
+`metrics` was passed and used after free in a callback.
+It didn't crash, because the method where it was used could be made static, and `this` was not really dereferenced.
 
-Bug: 1404986
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3722bfb4bb546467b7630d71acdbb10daa7833f6">I3722bfb4bb546467b7630d71acdbb10daa7833f6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4136521">https://chromium-review.googlesource.com/c/chromium/src/+/4136521</a>
-Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
-Commit-Queue: lin peng &lt;penglin22@huawei.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1089669}
+This patch removes the argument, and turn the member function into a
+static one. This will prevent future folks doing UAF by using `this`.
+
+Bug: 1381426
+Fixed: 1381426
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I224ee9850cff81759791a17e01d59b21bcef70f9">I224ee9850cff81759791a17e01d59b21bcef70f9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4110823">https://chromium-review.googlesource.com/c/chromium/src/+/4110823</a>
+Reviewed-by: Guillaume Jenkins &lt;gujen@google.com&gt;
+Commit-Queue: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1089674}
 </pre>
 
 </body>
