@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1090247/"> 1090247</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b652e7092c3552e885d4713d54f0647327e33123">b652e7092c3552e885d4713d54f0647327e33123</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1090300/"> 1090300</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1a202474fa301a4d44e96083a8779dee6acdd07e">1a202474fa301a4d44e96083a8779dee6acdd07e</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1090281/">1090281</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b652e7092c3552e885d4713d54f0647327e33123
+   1a202474fa301a4d44e96083a8779dee6acdd07e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b652e7092c3552e885d4713d54f0647327e33123">
+    <a href="/chromium/src/+log/1a202474fa301a4d44e96083a8779dee6acdd07e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b652e7092c3552e885d4713d54f0647327e33123.tar.gz">
+    <a href="/chromium/src/+archive/1a202474fa301a4d44e96083a8779dee6acdd07e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Steinar H. Gunderson &lt;sesse@chromium.org&gt;
+   Daniil Sakhapov &lt;sakhapov@google.com&gt;
   </td>
   <td>
-   Mon Jan 09 10:40:59 2023
+   Mon Jan 09 14:19:19 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jan 09 10:40:59 2023
+   Mon Jan 09 14:19:19 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b652e7092c3552e885d4713d54f0647327e33123/">
-    0c7b89652a6cbde59246ef006922abf753e3be52
+   <a href="/chromium/src/+/1a202474fa301a4d44e96083a8779dee6acdd07e/">
+    7a8d4825c3e9ae959819494ff84a0563acc9e18e
    </a>
   </td>
  </tr>
@@ -166,41 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b652e7092c3552e885d4713d54f0647327e33123%5E">
-    19aee427bcdfb0b725732a877971e5787695e377
+   <a href="/chromium/src/+/1a202474fa301a4d44e96083a8779dee6acdd07e%5E">
+    d184ac026f6588ba3e22704d681f4a5048861bf3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b652e7092c3552e885d4713d54f0647327e33123%5E%21/">
+    <a href="/chromium/src/+/1a202474fa301a4d44e96083a8779dee6acdd07e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reorganize the hash tables in NthIndexCache.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add use counters for -webkit-background-clip values "border", "content",
+"padding".
 
-Right now, NthIndexCache has two hash tables; one for nth-child
-and one for nth-of-type. Both are keyed by the parent node,
-but the one for nth-of-type points to another hash table that
-is keyed further by tag name.
+It's needed to analyze their usage for unprefixing process.
+So, custom ApplyValue has been implemented for that and will be dropped
+afterwards.
 
-In the near future, we'll be adding a third type (for complex
-nth-of-child), so this starts becoming unwieldy. Thus, we change
-to single table, with a key that is the parent node plus optional
-tag name in a simple struct.
-
-Unfortunately, due to Oilpan, we need to wrap this key in a
-Member&lt;&gt;, which means we need to do some trait gymnastics to
-be able to compare it by value instead of by pointer. Apart from
-that, this is a fairly straightforward cleanup that regularizes
-the querying paths between the two cases a fair bit.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5c171feee548d93c62c9ac624223243c418aa559">I5c171feee548d93c62c9ac624223243c418aa559</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4142559">https://chromium-review.googlesource.com/c/chromium/src/+/4142559</a>
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id45497da9d9c416385944e2b7494f962c2b09d47">Id45497da9d9c416385944e2b7494f962c2b09d47</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4141885">https://chromium-review.googlesource.com/c/chromium/src/+/4141885</a>
+Commit-Queue: Daniil Sakhapov &lt;sakhapov@google.com&gt;
 Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Commit-Queue: Steinar H Gunderson &lt;sesse@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1090247}
+Cr-Commit-Position: refs/heads/main@{#1090300}
 </pre>
 
 </body>
