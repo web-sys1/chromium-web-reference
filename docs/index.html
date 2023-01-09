@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1090458/"> 1090458</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/01d4a5de27f7e9b8e9780be9f26cf5590846adec">01d4a5de27f7e9b8e9780be9f26cf5590846adec</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1090482/"> 1090482</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4c13d8c572d08b481628deaffa36b250373eb618">4c13d8c572d08b481628deaffa36b250373eb618</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1090384/">1090384</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/04c7ded4e947746be3c7a27075138009e17cde6a">04c7ded4e947746be3c7a27075138009e17cde6a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1090441/">1090441</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/65d1862ad28a603bc993c6c38c04e190e1f712a5">65d1862ad28a603bc993c6c38c04e190e1f712a5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   01d4a5de27f7e9b8e9780be9f26cf5590846adec
+   4c13d8c572d08b481628deaffa36b250373eb618
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/01d4a5de27f7e9b8e9780be9f26cf5590846adec">
+    <a href="/chromium/src/+log/4c13d8c572d08b481628deaffa36b250373eb618">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/01d4a5de27f7e9b8e9780be9f26cf5590846adec.tar.gz">
+    <a href="/chromium/src/+archive/4c13d8c572d08b481628deaffa36b250373eb618.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Hao Liu &lt;haoliuk@chromium.org&gt;
+   Sophie Chang &lt;sophiechang@chromium.org&gt;
   </td>
   <td>
-   Mon Jan 09 19:52:46 2023
+   Mon Jan 09 20:36:21 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jan 09 19:52:46 2023
+   Mon Jan 09 20:36:21 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/01d4a5de27f7e9b8e9780be9f26cf5590846adec/">
-    86c4496e0f3cf62b57829f17d163bf0c16130057
+   <a href="/chromium/src/+/4c13d8c572d08b481628deaffa36b250373eb618/">
+    3b3dcf9ad4eeecc4a833fcb2730c81a6369aa8a3
    </a>
   </td>
  </tr>
@@ -166,45 +166,26 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/01d4a5de27f7e9b8e9780be9f26cf5590846adec%5E">
-    1e0016bf339a6603ef70b13c84b792689fff7ee8
+   <a href="/chromium/src/+/4c13d8c572d08b481628deaffa36b250373eb618%5E">
+    c49d628caa69138935c13e1c45edf6db1b1a6e34
    </a>
    <span>
     [
-    <a href="/chromium/src/+/01d4a5de27f7e9b8e9780be9f26cf5590846adec%5E%21/">
+    <a href="/chromium/src/+/4c13d8c572d08b481628deaffa36b250373eb618%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">De-flake element-timing/image-src-change.html
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add feature that fetches all entity metadata in a batch in one thread hop rather than N
 
-The test was flaky for 2 reasons.
-1, By the time the beforeRender timestamp is taken, the image may
-already be rendered. The assertion that renderTime &gt;= beforeRender
-therefore could fail.
-
-A previous CL crrev.com/c/4118623 fixes this. But the 2nd flakiness
-cause is found.
-
-2, There was an assertion in the original test that the entryList of the
-performance observer callback should be of size 1. This assertion is
-carried over to the fix and is found to be causing flakiness as well.
-It is because the performance observer has buffered option.  At the
-invocation of observer.observe(..}), the observer picks up the previous
-entries and fires the observer callback. Then, if the callback is
-actually executed after the 2nd element timing entry is added, the
-entryList size would be 2. The assertion then fails.
-
-This CL fixes it by removing the buffered option.
-
-Bug: 1394227,1403318
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I58a9da6832bccd4377696c7d7f50508ef1254011">I58a9da6832bccd4377696c7d7f50508ef1254011</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4139461">https://chromium-review.googlesource.com/c/chromium/src/+/4139461</a>
-Reviewed-by: Ian Clelland &lt;iclelland@chromium.org&gt;
-Commit-Queue: Hao Liu &lt;haoliuk@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1090458}
+Bug: b/264887452
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id5b05e8145fc1b547f5c9fd307dd3ff0c4140ed6">Id5b05e8145fc1b547f5c9fd307dd3ff0c4140ed6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4147435">https://chromium-review.googlesource.com/c/chromium/src/+/4147435</a>
+Reviewed-by: Robert Ogden &lt;robertogden@chromium.org&gt;
+Commit-Queue: Sophie Chang &lt;sophiechang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1090482}
 </pre>
 
 </body>
