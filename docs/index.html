@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1090660/"> 1090660</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c9ec3e13113e061313cbf534eb55f8c7cdd17400">c9ec3e13113e061313cbf534eb55f8c7cdd17400</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1090672/"> 1090672</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bf3d175a7b9a7cae6fa134f9861f324b28a90b6a">bf3d175a7b9a7cae6fa134f9861f324b28a90b6a</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1090638/">1090638</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9fa91632a2e266f87b10f429e5546e30e0250d1e">9fa91632a2e266f87b10f429e5546e30e0250d1e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1090666/">1090666</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3f13f20e7c8a549c5ecd2c669a04528c4fbc9056">3f13f20e7c8a549c5ecd2c669a04528c4fbc9056</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c9ec3e13113e061313cbf534eb55f8c7cdd17400
+   bf3d175a7b9a7cae6fa134f9861f324b28a90b6a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c9ec3e13113e061313cbf534eb55f8c7cdd17400">
+    <a href="/chromium/src/+log/bf3d175a7b9a7cae6fa134f9861f324b28a90b6a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c9ec3e13113e061313cbf534eb55f8c7cdd17400.tar.gz">
+    <a href="/chromium/src/+archive/bf3d175a7b9a7cae6fa134f9861f324b28a90b6a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xiaocheng Hu &lt;xiaochengh@chromium.org&gt;
+   Nancy Wang &lt;nancylingwang@chromium.org&gt;
   </td>
   <td>
-   Tue Jan 10 02:33:12 2023
+   Tue Jan 10 03:12:19 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 10 02:33:12 2023
+   Tue Jan 10 03:12:19 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c9ec3e13113e061313cbf534eb55f8c7cdd17400/">
-    6092cd9acb981080f9c23f4d42ca361e2d1c7100
+   <a href="/chromium/src/+/bf3d175a7b9a7cae6fa134f9861f324b28a90b6a/">
+    323c3f8b4c2635f4210d4bfea24605f536dea4e7
    </a>
   </td>
  </tr>
@@ -166,48 +166,28 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c9ec3e13113e061313cbf534eb55f8c7cdd17400%5E">
-    fc429c0779a9021dedf44d413cf1ee9ed77dcc5b
+   <a href="/chromium/src/+/bf3d175a7b9a7cae6fa134f9861f324b28a90b6a%5E">
+    e577289b4cb7887bb34c61011536c29bdc594081
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c9ec3e13113e061313cbf534eb55f8c7cdd17400%5E%21/">
+    <a href="/chromium/src/+/bf3d175a7b9a7cae6fa134f9861f324b28a90b6a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[anchor-position] Always use compositor scroller ids for composited scrolling
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove the mojom app struct.
 
-The existing implementation for composited scrolling is problematic
-because if scrollers have changed in a style update, then it might
-access data that is stale or already gone in the subsequent paint
-property tree building.
+BUG=1253250
 
-This patch basically follows the outline in crbug.com/1401827#c2:
-- It changes Blink::AnchorScrollData to store CompositorElementId instead
-of PaintLayer for the relevant scroll containers, so that we don't
-need to access the snapshotted PaintLayer/PaintLayerScrollableArea in
-PrePaint and Paint, at which time they may have been stale
-- This also moves the job of scroller validation (i.e., whether there
-is a ScrollNode on cc side) completely to cc, which is much saner
-compared to the previous heuristic of checking HasOverflow() on the
-Blink side
-- This also fixes crbug.com/1400522, as we no longer create one cc
-TransformNode in the middle of creating another
-
-Note that unlike the outline, there's no AnchorScrollData validation
-at PrePaint on the Blink side. Since everything we pass to cc are just
-scroller ids, and scroller id validation is done completely by cc, further validation in Blink is unnecessary.
-
-Fixed: 1400522, 1401827
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ief68d18e4484cfbe8d4f1037f5d5cb6c6de9687f">Ief68d18e4484cfbe8d4f1037f5d5cb6c6de9687f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4137178">https://chromium-review.googlesource.com/c/chromium/src/+/4137178</a>
-Reviewed-by: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
-Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
-Commit-Queue: Xiaocheng Hu &lt;xiaochengh@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1090660}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6a961d766b12a911dab483bdd80ddb448c0a0ff8">I6a961d766b12a911dab483bdd80ddb448c0a0ff8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4145222">https://chromium-review.googlesource.com/c/chromium/src/+/4145222</a>
+Commit-Queue: Nancy Wang &lt;nancylingwang@chromium.org&gt;
+Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
+Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1090672}
 </pre>
 
 </body>
