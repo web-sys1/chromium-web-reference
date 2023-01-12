@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1091926/"> 1091926</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1ee9c4655c14414ae017bad00ddcb3b5fea947b0">1ee9c4655c14414ae017bad00ddcb3b5fea947b0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1091949/"> 1091949</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/22ff125de8f82dd3cfaa6737b7726be2c82180c3">22ff125de8f82dd3cfaa6737b7726be2c82180c3</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1091862/">1091862</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1ee9c4655c14414ae017bad00ddcb3b5fea947b0
+   22ff125de8f82dd3cfaa6737b7726be2c82180c3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1ee9c4655c14414ae017bad00ddcb3b5fea947b0">
+    <a href="/chromium/src/+log/22ff125de8f82dd3cfaa6737b7726be2c82180c3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1ee9c4655c14414ae017bad00ddcb3b5fea947b0.tar.gz">
+    <a href="/chromium/src/+archive/22ff125de8f82dd3cfaa6737b7726be2c82180c3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Cam Bickel &lt;cambickel@google.com&gt;
+   Andrew Grieve &lt;agrieve@chromium.org&gt;
   </td>
   <td>
-   Thu Jan 12 18:03:28 2023
+   Thu Jan 12 18:43:40 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 12 18:03:28 2023
+   Thu Jan 12 18:43:40 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1ee9c4655c14414ae017bad00ddcb3b5fea947b0/">
-    b8083aa2e744da1dc46d439df344ad9a9949c91c
+   <a href="/chromium/src/+/22ff125de8f82dd3cfaa6737b7726be2c82180c3/">
+    80ea8bd87fde5eeae23ff1f5de9bacece1121e9b
    </a>
   </td>
  </tr>
@@ -166,28 +166,52 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1ee9c4655c14414ae017bad00ddcb3b5fea947b0%5E">
-    061776481299ffb1fe13bea140f91a8e05c4969c
+   <a href="/chromium/src/+/22ff125de8f82dd3cfaa6737b7726be2c82180c3%5E">
+    546cd21a954e7389af4c4591c0b79b05ad35e564
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1ee9c4655c14414ae017bad00ddcb3b5fea947b0%5E%21/">
+    <a href="/chromium/src/+/22ff125de8f82dd3cfaa6737b7726be2c82180c3%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">shortcuts: Set tabindex based on read-only state of app
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Android: Consolidate v8 asset targets in //gin
 
-Bug: b:216049298
-Test: browser_tests ShortcutCustomizationApp*
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I53c8e76a30202130e2b5a4037c3167165ccef890">I53c8e76a30202130e2b5a4037c3167165ccef890</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4150108">https://chromium-review.googlesource.com/c/chromium/src/+/4150108</a>
-Reviewed-by: Jimmy Gong &lt;jimmyxgong@chromium.org&gt;
-Reviewed-by: Michael Checo &lt;michaelcheco@google.com&gt;
-Commit-Queue: Camden Bickel &lt;cambickel@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1091926}
+Before:
+* Primary ABI assets were taken from //v8
+  * Except when use_v8_context_snapshot=true they were taken
+    from //tools/v8_context_snapshot.
+* Secondary ABI assets were taken from //android_webview
+
+After:
+* Both primary and secondary abi asset targets live in //gin.
+  * //gin/v8_initializer.cc is what cares about the snapshot
+    filenames, so this package makes the most sense to hold the
+    android_asset targets.
+
+This removes duplication and makes it easier to refactor in future
+(e.g. this is a step towards using narrower deps for the snapshots,
+which I will do in a follow-up).
+
+This also removes assets from a couple of source_set targets, as
+they had no effect there.
+
+Bug: 1402705
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id87e161840809e0f538636c240a093549befc710">Id87e161840809e0f538636c240a093549befc710</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4119849">https://chromium-review.googlesource.com/c/chromium/src/+/4119849</a>
+Commit-Queue: Bo Liu &lt;boliu@chromium.org&gt;
+Auto-Submit: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Reviewed-by: Bo Liu &lt;boliu@chromium.org&gt;
+Cr-Original-Commit-Position: refs/heads/main@{#1086312}
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4156551">https://chromium-review.googlesource.com/c/chromium/src/+/4156551</a>
+Commit-Queue: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Reviewed-by: Jeremy Roman &lt;jbroman@chromium.org&gt;
+Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+Owners-Override: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1091949}
 </pre>
 
 </body>
