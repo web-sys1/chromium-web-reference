@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1091761/"> 1091761</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/93a301433c5f8eeeb7b42f17c7a03e2bc0c7d2a7">93a301433c5f8eeeb7b42f17c7a03e2bc0c7d2a7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1091774/"> 1091774</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7d8ef0a6a723acb03944821f2084fa748065e5d1">7d8ef0a6a723acb03944821f2084fa748065e5d1</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1091747/">1091747</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   93a301433c5f8eeeb7b42f17c7a03e2bc0c7d2a7
+   7d8ef0a6a723acb03944821f2084fa748065e5d1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/93a301433c5f8eeeb7b42f17c7a03e2bc0c7d2a7">
+    <a href="/chromium/src/+log/7d8ef0a6a723acb03944821f2084fa748065e5d1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/93a301433c5f8eeeb7b42f17c7a03e2bc0c7d2a7.tar.gz">
+    <a href="/chromium/src/+archive/7d8ef0a6a723acb03944821f2084fa748065e5d1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Rune Lillesveen &lt;futhark@chromium.org&gt;
+   Andrew Rayskiy &lt;greengrape@google.com&gt;
   </td>
   <td>
-   Thu Jan 12 10:42:08 2023
+   Thu Jan 12 11:19:29 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 12 10:42:08 2023
+   Thu Jan 12 11:19:29 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/93a301433c5f8eeeb7b42f17c7a03e2bc0c7d2a7/">
-    600b31fecf4fb4fdefb97707c92305e3d05b962a
+   <a href="/chromium/src/+/7d8ef0a6a723acb03944821f2084fa748065e5d1/">
+    18a6b25810d4c1a6ab530430635e75c888fdf4ab
    </a>
   </td>
  </tr>
@@ -166,58 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/93a301433c5f8eeeb7b42f17c7a03e2bc0c7d2a7%5E">
-    141281440218f66a5dc562f53f67e34dcc1380be
+   <a href="/chromium/src/+/7d8ef0a6a723acb03944821f2084fa748065e5d1%5E">
+    2965d6c41478aa44b4c9cfdc117c66cc048576cd
    </a>
    <span>
     [
-    <a href="/chromium/src/+/93a301433c5f8eeeb7b42f17c7a03e2bc0c7d2a7%5E%21/">
+    <a href="/chromium/src/+/7d8ef0a6a723acb03944821f2084fa748065e5d1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Initialize long task reporting for ScriptPromiseResolver"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "[DirectSockets] Remove Close() for DirectUDPSocket mojom."
 
-This reverts commit 7943977c5d425843c086abe84c326b7fb4145838.
+This is a reland of commit b31cc761b233f2832fa75c06227cdc705421467d
 
-Reason for revert: Possible culprit for failing longtask-timing tests
-
-See: <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/Linux%20Tests%20%28dbg%29%281%29/110615/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/Linux%20Tests%20(dbg)(1)/110615/overview</a>
+What changed: added a missing dependency on mojom:mojom_platform_blink_headers for unit_tests.
 
 Original change's description:
-&gt; Initialize long task reporting for ScriptPromiseResolver
+&gt; [DirectSockets] Remove Close() for DirectUDPSocket mojom.
 &gt;
-&gt; This tells the PerformanceMonitor to report longtasks
-&gt; in promise chains that were not started from a callback,
-&gt; e.g. fetch().then(() =&gt; {...long_task})
+&gt; This method is redundant since the corresponding remote gets reset right
+&gt; after calling it -- much easier to have it in the destructor.
 &gt;
-&gt; The PerformanceMonitor relies on different probes for "attribution": connecting a long task with one or more frames, to avoid reporting a long task to an unrelated frame tree that happens to be on the same thread.
-&gt;
-&gt; This design is a bit brittle, as we need to patch through all the things that can invoke a frame-attributed task into PerformanceMonitor.
-&gt;
-&gt; This CL doesn't attempt to solve this brittleness, in lack of a better solution, but rather to mitigate the particular issue with tasks invoked with a promise, by patching through ScriptPromiseResolver to PerformanceMonitor.
-&gt;
-&gt; Bug: 1251964
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I745780f834f9d1dfc8e8a5c8295326f06276cba6">I745780f834f9d1dfc8e8a5c8295326f06276cba6</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4129480">https://chromium-review.googlesource.com/c/chromium/src/+/4129480</a>
-&gt; Commit-Queue: Noam Rosenthal &lt;nrosenthal@chromium.org&gt;
-&gt; Reviewed-by: Jeremy Roman &lt;jbroman@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1091706}
+&gt; Bug: 1404938
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7dd1ee4397cd97c0581cb2b0a6febc8407f94016">I7dd1ee4397cd97c0581cb2b0a6febc8407f94016</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4136066">https://chromium-review.googlesource.com/c/chromium/src/+/4136066</a>
+&gt; Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
+&gt; Reviewed-by: Simon Hangl &lt;simonha@google.com&gt;
+&gt; Commit-Queue: Andrew Rayskiy &lt;greengrape@google.com&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1091285}
 
-Bug: 1251964
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2841851f39739cdcc65ca8044115173f97cd88da">I2841851f39739cdcc65ca8044115173f97cd88da</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4161792">https://chromium-review.googlesource.com/c/chromium/src/+/4161792</a>
-Owners-Override: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Auto-Submit: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1091761}
+Bug: 1404938
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I89bbd71edc8058116fd0fe06dbaedfc485c9a153">I89bbd71edc8058116fd0fe06dbaedfc485c9a153</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4155774">https://chromium-review.googlesource.com/c/chromium/src/+/4155774</a>
+Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
+Reviewed-by: Simon Hangl &lt;simonha@google.com&gt;
+Commit-Queue: Andrew Rayskiy &lt;greengrape@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1091774}
 </pre>
 
 </body>
