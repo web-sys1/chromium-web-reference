@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1093242/"> 1093242</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/41b276dc84ab64aabf9e99c95defc81878a94c24">41b276dc84ab64aabf9e99c95defc81878a94c24</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1093251/"> 1093251</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7f1f80833e9fca57717581ad6770c06858d6820a">7f1f80833e9fca57717581ad6770c06858d6820a</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1093242/">1093242</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   41b276dc84ab64aabf9e99c95defc81878a94c24
+   7f1f80833e9fca57717581ad6770c06858d6820a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/41b276dc84ab64aabf9e99c95defc81878a94c24">
+    <a href="/chromium/src/+log/7f1f80833e9fca57717581ad6770c06858d6820a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/41b276dc84ab64aabf9e99c95defc81878a94c24.tar.gz">
+    <a href="/chromium/src/+archive/7f1f80833e9fca57717581ad6770c06858d6820a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Bastian Kersting &lt;bkersting@google.com&gt;
+   Nancy Wang &lt;nancylingwang@chromium.org&gt;
   </td>
   <td>
-   Tue Jan 17 09:13:06 2023
+   Tue Jan 17 09:49:19 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 17 09:13:06 2023
+   Tue Jan 17 09:49:19 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/41b276dc84ab64aabf9e99c95defc81878a94c24/">
-    ee6283fadc6c418f2bd520fa6bf277315e8e24a1
+   <a href="/chromium/src/+/7f1f80833e9fca57717581ad6770c06858d6820a/">
+    123e9c3076b3d4e31ce5701ce30508d6134ef89a
    </a>
   </td>
  </tr>
@@ -166,38 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/41b276dc84ab64aabf9e99c95defc81878a94c24%5E">
-    84a065418366412f45e697b597ac81dd1ad0e59a
+   <a href="/chromium/src/+/7f1f80833e9fca57717581ad6770c06858d6820a%5E">
+    e99db8533a148498839193b0f2e44bc56e7ec8d4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/41b276dc84ab64aabf9e99c95defc81878a94c24%5E%21/">
+    <a href="/chromium/src/+/7f1f80833e9fca57717581ad6770c06858d6820a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">cros_healthd: Revisit fake Event API
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove the icon dir in AppService when the web app icon is updated.
 
-This change is related to crrev/c/4151907, which introduced
-a base::flat_map that holds the Mojo connections as values.
-Apparently the RemoteSet that holds the connections
-is neither movable, nor copyable, so in order to hold it in a
-flat_map it was wrapped in a std::unique_ptr. This change removes
-the std::unique_ptr and replaces the flat_map with a std::map.
-A std::map provides a faster insert and access (O(log n)), than the
-flat_map (O(n)) and only has a negative effect on the memory
-footprint if it contains a lot of elements. We only put
-five elements in the map, so this is arguably better than the
-std::unique_ptr hack.
+When OnWebAppManifestUpdated is called, the web app icon might be
+updated, so delete the app icon directory first, then publish the new
+web app info.
 
-Bug: None
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0fe49e964af7ae6d551ecca18cc8445031acd79e">I0fe49e964af7ae6d551ecca18cc8445031acd79e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4166967">https://chromium-review.googlesource.com/c/chromium/src/+/4166967</a>
-Commit-Queue: Bastian Kersting &lt;bkersting@google.com&gt;
-Reviewed-by: Kerker Yang &lt;kerker@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1093242}
+Add unit tests to verify the new icon can be loaded when the app icon is
+updated.
+
+The change for Lacros is done with a separate CL:4159817.
+
+BUG=1380608
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8a2d20ec4bf43829df925eb7f23ed0853c70a190">I8a2d20ec4bf43829df925eb7f23ed0853c70a190</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4158951">https://chromium-review.googlesource.com/c/chromium/src/+/4158951</a>
+Reviewed-by: Tim Sergeant &lt;tsergeant@chromium.org&gt;
+Commit-Queue: Nancy Wang &lt;nancylingwang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1093251}
 </pre>
 
 </body>
