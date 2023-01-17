@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1093237/"> 1093237</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c9b0bebe070209c122c91226a9a87b7dd60e6789">c9b0bebe070209c122c91226a9a87b7dd60e6789</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1093242/"> 1093242</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/41b276dc84ab64aabf9e99c95defc81878a94c24">41b276dc84ab64aabf9e99c95defc81878a94c24</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1093219/">1093219</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8996b5e0ab934eec1f49981230c090c69f6975a3">8996b5e0ab934eec1f49981230c090c69f6975a3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1093234/">1093234</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6a888b25f299d079ff692753fa72685ce0c3e9ba">6a888b25f299d079ff692753fa72685ce0c3e9ba</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c9b0bebe070209c122c91226a9a87b7dd60e6789
+   41b276dc84ab64aabf9e99c95defc81878a94c24
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c9b0bebe070209c122c91226a9a87b7dd60e6789">
+    <a href="/chromium/src/+log/41b276dc84ab64aabf9e99c95defc81878a94c24">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c9b0bebe070209c122c91226a9a87b7dd60e6789.tar.gz">
+    <a href="/chromium/src/+archive/41b276dc84ab64aabf9e99c95defc81878a94c24.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mitsuru Oshima &lt;oshima@chromium.org&gt;
+   Bastian Kersting &lt;bkersting@google.com&gt;
   </td>
   <td>
-   Tue Jan 17 08:33:51 2023
+   Tue Jan 17 09:13:06 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 17 08:33:51 2023
+   Tue Jan 17 09:13:06 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c9b0bebe070209c122c91226a9a87b7dd60e6789/">
-    5e34e776628861a440dd82635303213982682d82
+   <a href="/chromium/src/+/41b276dc84ab64aabf9e99c95defc81878a94c24/">
+    ee6283fadc6c418f2bd520fa6bf277315e8e24a1
    </a>
   </td>
  </tr>
@@ -166,28 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c9b0bebe070209c122c91226a9a87b7dd60e6789%5E">
-    7d1c36cbd1dbc0a42d65510d646fbc6927750bbe
+   <a href="/chromium/src/+/41b276dc84ab64aabf9e99c95defc81878a94c24%5E">
+    84a065418366412f45e697b597ac81dd1ad0e59a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c9b0bebe070209c122c91226a9a87b7dd60e6789%5E%21/">
+    <a href="/chromium/src/+/41b276dc84ab64aabf9e99c95defc81878a94c24%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Don't damage and commit NOT_DRAWN layer
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">cros_healthd: Revisit fake Event API
 
-Bug: 1405015
+This change is related to crrev/c/4151907, which introduced
+a base::flat_map that holds the Mojo connections as values.
+Apparently the RemoteSet that holds the connections
+is neither movable, nor copyable, so in order to hold it in a
+flat_map it was wrapped in a std::unique_ptr. This change removes
+the std::unique_ptr and replaces the flat_map with a std::map.
+A std::map provides a faster insert and access (O(log n)), than the
+flat_map (O(n)) and only has a negative effect on the memory
+footprint if it contains a lot of elements. We only put
+five elements in the map, so this is arguably better than the
+std::unique_ptr hack.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib96cac63c7b9895b1284ef7f35a9d3497ce0f2f8">Ib96cac63c7b9895b1284ef7f35a9d3497ce0f2f8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4141221">https://chromium-review.googlesource.com/c/chromium/src/+/4141221</a>
-Reviewed-by: Robert Flack &lt;flackr@chromium.org&gt;
-Reviewed-by: Jonathan Ross &lt;jonross@chromium.org&gt;
-Commit-Queue: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1093237}
+Bug: None
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0fe49e964af7ae6d551ecca18cc8445031acd79e">I0fe49e964af7ae6d551ecca18cc8445031acd79e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4166967">https://chromium-review.googlesource.com/c/chromium/src/+/4166967</a>
+Commit-Queue: Bastian Kersting &lt;bkersting@google.com&gt;
+Reviewed-by: Kerker Yang &lt;kerker@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1093242}
 </pre>
 
 </body>
