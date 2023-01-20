@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1095172/"> 1095172</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2e481082654aa893f34d447974fb15deea52edb9">2e481082654aa893f34d447974fb15deea52edb9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1095189/"> 1095189</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9ddedad58accb90bd53f528edb5edf05f46f34f2">9ddedad58accb90bd53f528edb5edf05f46f34f2</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1095169/">1095169</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2e481082654aa893f34d447974fb15deea52edb9
+   9ddedad58accb90bd53f528edb5edf05f46f34f2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2e481082654aa893f34d447974fb15deea52edb9">
+    <a href="/chromium/src/+log/9ddedad58accb90bd53f528edb5edf05f46f34f2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2e481082654aa893f34d447974fb15deea52edb9.tar.gz">
+    <a href="/chromium/src/+archive/9ddedad58accb90bd53f528edb5edf05f46f34f2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   James Shen &lt;zhiyuans@google.com&gt;
+   Dan H &lt;harringtond@chromium.org&gt;
   </td>
   <td>
-   Fri Jan 20 19:44:34 2023
+   Fri Jan 20 20:54:30 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jan 20 19:44:34 2023
+   Fri Jan 20 20:54:30 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2e481082654aa893f34d447974fb15deea52edb9/">
-    f7d875b87efd4a066cea5eccf05a66823af4ddc5
+   <a href="/chromium/src/+/9ddedad58accb90bd53f528edb5edf05f46f34f2/">
+    013038e463fbee0b5b6ae80eeb705b64c07f198c
    </a>
   </td>
  </tr>
@@ -166,36 +166,64 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2e481082654aa893f34d447974fb15deea52edb9%5E">
-    7813f6bdd242df37f485d8336e49ff84f7fe8993
+   <a href="/chromium/src/+/9ddedad58accb90bd53f528edb5edf05f46f34f2%5E">
+    c27e9ac8d73d7047b391c7a44721452e3198dd16
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2e481082654aa893f34d447974fb15deea52edb9%5E%21/">
+    <a href="/chromium/src/+/9ddedad58accb90bd53f528edb5edf05f46f34f2%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[py2 less] Turn on omit_python2= True on more CI builders.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "feed: ensure snackbar actions complete"
 
-Previously, it has been turned on android-12-x64-rel without issue in
-<a href="http://crrev/c/4134812">http://crrev/c/4134812</a>
+This reverts commit 231516e12966643d435b4544846927c5f0914d6d.
 
-These builders are turned on:
-android-10-arm64-rel
-android-nougat-x86-rel
-android-pie-arm64-rel
-android-pie-x86-rel
-android-11-x86-rel
+Reason for revert: need to wait until internal CL has been rolled
 
-Bug: 1366956
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1c96a9f7a539bc7f903171d6f5ab457829c2ad8e">I1c96a9f7a539bc7f903171d6f5ab457829c2ad8e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4182338">https://chromium-review.googlesource.com/c/chromium/src/+/4182338</a>
-Reviewed-by: Haiyang Pan &lt;hypan@google.com&gt;
-Commit-Queue: James Shen &lt;zhiyuans@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1095172}
+Original change's description:
+&gt; feed: ensure snackbar actions complete
+&gt;
+&gt; in-feed actions, like follow/unfollow, trigger snackbars.
+&gt; The follow/unfollow action doesn't actually take place until
+&gt; the snackbar is dismissed.
+&gt;
+&gt; Before this change, if the user uses pull to refresh,
+&gt; snackbar actions may not run until after the refresh request
+&gt; is sent to the server. Now, snackbars are dismissed prior
+&gt; to refresh, and we wait until any subsequent background operations
+&gt; are completed before starting the refresh.
+&gt;
+&gt; Because this change defers refresh until a bit later,
+&gt; I've update the refresh code to abort if the surface
+&gt; has already disconnected to avoid this new case.
+&gt;
+&gt; Note that this change does not resolve potential
+&gt; remaining background work when switching from main
+&gt; feed to following feed or vice-versa.
+&gt;
+&gt; Bug: b/264922318
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ida06870cfd38f5ef191b2c9fa5e4ed6d71fd361c">Ida06870cfd38f5ef191b2c9fa5e4ed6d71fd361c</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4182264">https://chromium-review.googlesource.com/c/chromium/src/+/4182264</a>
+&gt; Commit-Queue: Dan H &lt;harringtond@chromium.org&gt;
+&gt; Reviewed-by: Aishwarya Rajesh &lt;aishwaryarj@google.com&gt;
+&gt; Reviewed-by: Cathy Li &lt;chili@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1095187}
+
+Bug: b/264922318
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1d55d5b3fddaed879a951198c84e56bff9075da7">I1d55d5b3fddaed879a951198c84e56bff9075da7</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4185215">https://chromium-review.googlesource.com/c/chromium/src/+/4185215</a>
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Reviewed-by: Aishwarya Rajesh &lt;aishwaryarj@google.com&gt;
+Commit-Queue: Dan H &lt;harringtond@chromium.org&gt;
+Auto-Submit: Dan H &lt;harringtond@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1095189}
 </pre>
 
 </body>
