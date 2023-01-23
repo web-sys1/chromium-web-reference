@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1095504/"> 1095504</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/43fa53df54458c17754fd6cfdec640b45b80f5bb">43fa53df54458c17754fd6cfdec640b45b80f5bb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1095506/"> 1095506</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/597a9874623bbfca45218c041e87a449a7f16cad">597a9874623bbfca45218c041e87a449a7f16cad</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1095501/">1095501</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   43fa53df54458c17754fd6cfdec640b45b80f5bb
+   597a9874623bbfca45218c041e87a449a7f16cad
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/43fa53df54458c17754fd6cfdec640b45b80f5bb">
+    <a href="/chromium/src/+log/597a9874623bbfca45218c041e87a449a7f16cad">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/43fa53df54458c17754fd6cfdec640b45b80f5bb.tar.gz">
+    <a href="/chromium/src/+archive/597a9874623bbfca45218c041e87a449a7f16cad.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
+   Noel Gordon &lt;noel@chromium.org&gt;
   </td>
   <td>
-   Mon Jan 23 03:47:35 2023
+   Mon Jan 23 04:09:20 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jan 23 03:47:35 2023
+   Mon Jan 23 04:09:20 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/43fa53df54458c17754fd6cfdec640b45b80f5bb/">
-    07d90adc55d2149aea3d488d6d46a769b344caa4
+   <a href="/chromium/src/+/597a9874623bbfca45218c041e87a449a7f16cad/">
+    7ad2aaf99d35cd5584d0f85f242dbbfff7fadfbf
    </a>
   </td>
  </tr>
@@ -166,42 +166,50 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/43fa53df54458c17754fd6cfdec640b45b80f5bb%5E">
-    8259e966983062a1814fd51f17f0fbd82e89ae6c
+   <a href="/chromium/src/+/597a9874623bbfca45218c041e87a449a7f16cad%5E">
+    b67e428e44882a0759f42addf6d17cf4899ddd2d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/43fa53df54458c17754fd6cfdec640b45b80f5bb%5E%21/">
+    <a href="/chromium/src/+/597a9874623bbfca45218c041e87a449a7f16cad%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Fuchsia Internal Images from 11.20230122.2.1 to 11.20230122.3.1
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[conflict dialog] Update dialog for GAR4 ARIA conformance
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://skia-autoroll.corp.goog/r/fuchsia-internal-images-chromium">https://skia-autoroll.corp.goog/r/fuchsia-internal-images-chromium</a>
-Please CC chrome-fuchsia-gardener@grotations.appspotmail.com on the revert to ensure that a human
-is aware of the problem.
+Conflict dialog 1) has no title, and 2) uses a &lt;cr-dialog&gt; element
+which assumes there is a title, and will focus that title when the
+dialog is shown. ARIA announces the empty title because it has the
+initial focus as "Heading 2 Heading 2".
 
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+Fix this: remove &lt;cr-dialog&gt; #title element and all &lt;dialog&gt; aria-
+attributes that make ARIA tools read out irrelevant content.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+Instead, add tabindex="0" to the dialog #message element and focus
+it when the dialog is shown. On show, ARIA now reads out:
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
+  "Dialog A file named ... exists. Do you want to replace it
+   with the one you are moving?"
 
-Cq-Include-Trybots: luci.chrome.try:fuchsia-fyi-astro
-Tbr: chrome-fuchsia-gardener@grotations.appspotmail.com
-Disable-Retries: true
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I966df17fff390b6f10d2bc263deca5cf42077ba1">I966df17fff390b6f10d2bc263deca5cf42077ba1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4186700">https://chromium-review.googlesource.com/c/chromium/src/+/4186700</a>
-Commit-Queue: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1095504}
+Update the testDialogShowFocus test to check that the #message has
+the initial focus (ARIA announced on show), and check the &lt;dialog&gt;
+"aria-*" attributes are removed (block spurious announcements).
+
+Add an aria-modal="true" attribute to the &lt;dialog&gt; element per W3C
+ARIA role=dialog best-practice recommendations [1].
+
+[1] <a href="https://w3c.github.io/aria-practices/#dialog_roles_states_props">https://w3c.github.io/aria-practices/#dialog_roles_states_props</a>
+
+Bug: b:255264604
+Test: browser_tests --gtest_filter="FileManagerJsTest.XfConflictDialog*"
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9973b1da1554e06e2a959442b420f05924ae837b">I9973b1da1554e06e2a959442b420f05924ae837b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4179424">https://chromium-review.googlesource.com/c/chromium/src/+/4179424</a>
+Reviewed-by: Ben Reich &lt;benreich@chromium.org&gt;
+Commit-Queue: Noel Gordon &lt;noel@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1095506}
 </pre>
 
 </body>
