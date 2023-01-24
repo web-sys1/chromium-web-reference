@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1096021/"> 1096021</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e2dac23719c5ddca731a9e174899f71ad2339ed7">e2dac23719c5ddca731a9e174899f71ad2339ed7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1096049/"> 1096049</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ba370fb205cf38729215159dd727eb98318b73a7">ba370fb205cf38729215159dd727eb98318b73a7</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1096021/">1096021</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e2dac23719c5ddca731a9e174899f71ad2339ed7">e2dac23719c5ddca731a9e174899f71ad2339ed7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1096040/">1096040</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/191f3b11495c820a6852ef8498852fab53c544fd">191f3b11495c820a6852ef8498852fab53c544fd</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e2dac23719c5ddca731a9e174899f71ad2339ed7
+   ba370fb205cf38729215159dd727eb98318b73a7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e2dac23719c5ddca731a9e174899f71ad2339ed7">
+    <a href="/chromium/src/+log/ba370fb205cf38729215159dd727eb98318b73a7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e2dac23719c5ddca731a9e174899f71ad2339ed7.tar.gz">
+    <a href="/chromium/src/+archive/ba370fb205cf38729215159dd727eb98318b73a7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nancy Wang &lt;nancylingwang@chromium.org&gt;
+   Seth Brenith &lt;seth.brenith@microsoft.com&gt;
   </td>
   <td>
-   Tue Jan 24 04:59:40 2023
+   Tue Jan 24 06:58:37 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 24 04:59:40 2023
+   Tue Jan 24 06:58:37 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e2dac23719c5ddca731a9e174899f71ad2339ed7/">
-    b069360d4d8050d98f612f54fd22af7bd70416ab
+   <a href="/chromium/src/+/ba370fb205cf38729215159dd727eb98318b73a7/">
+    9752a910f06b0fd6956d597dbd8b5074949abfaa
    </a>
   </td>
  </tr>
@@ -166,36 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e2dac23719c5ddca731a9e174899f71ad2339ed7%5E">
-    772fe695dbca45997ed5ebc0e496b63bca273ba5
+   <a href="/chromium/src/+/ba370fb205cf38729215159dd727eb98318b73a7%5E">
+    9c4928bcdcd046a4a0cba1c2a3ce15e63e8f0c13
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e2dac23719c5ddca731a9e174899f71ad2339ed7%5E%21/">
+    <a href="/chromium/src/+/ba370fb205cf38729215159dd727eb98318b73a7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Read ARC icon data from the ARC folders for the migration scenario.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix speed regression in performance.getEntriesByName
 
-For the migration scenario, as ARC may take some time to startup after
-the user login, fetching the raw icon files from the ARC VM could fail.
+UserTiming already stores a map from name to a list of performance
+entries for both marks and measures. Instead of using that map,
+performance.getEntriesByName is currently fetching the whole lists of
+marks and measures and then filtering the result. This causes major
+slowdowns on sites that produce many marks and/or measures and which
+often call performance.getEntriesByName.
 
-Modify ArcAppListPrefs to call the callback function when failed
-requesting icons. And try to fetch the raw icon files from the ARC on-
-disk cache to migrate the icon files from the ARC directory to the
-AppService directory.
+In this change, I propose that Performance::GetEntriesForCurrentFrame
+and Performance::getEntriesByTypeInternal should produce lists which
+have already been filtered by name, if such filtering is required. In
+this way, they can benefit from the versions of UserTiming::GetMarks and
+UserTiming::GetMeasures which take a name parameter.
 
-BUG=1380608
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie35dccda383311393f792021ccc660133703d172">Ie35dccda383311393f792021ccc660133703d172</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4183745">https://chromium-review.googlesource.com/c/chromium/src/+/4183745</a>
-Reviewed-by: Tim Sergeant &lt;tsergeant@chromium.org&gt;
-Reviewed-by: Long Cheng &lt;lgcheng@google.com&gt;
-Commit-Queue: Nancy Wang &lt;nancylingwang@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1096021}
+Bug: chromium:1406736
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idbf97323daf69db71b14df6d8b47ee929325bf62">Idbf97323daf69db71b14df6d8b47ee929325bf62</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4183256">https://chromium-review.googlesource.com/c/chromium/src/+/4183256</a>
+Reviewed-by: Ian Clelland &lt;iclelland@chromium.org&gt;
+Reviewed-by: Yoav Weiss &lt;yoavweiss@chromium.org&gt;
+Commit-Queue: Yoav Weiss &lt;yoavweiss@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1096049}
 </pre>
 
 </body>
