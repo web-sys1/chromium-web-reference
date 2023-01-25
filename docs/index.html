@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1096587/"> 1096587</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/508589141cf85d2aa7b8e69a129037051b13affc">508589141cf85d2aa7b8e69a129037051b13affc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1096622/"> 1096622</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/36879cb7856ea0aff04b156b222aa3837a7db13d">36879cb7856ea0aff04b156b222aa3837a7db13d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1096601/">1096601</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   508589141cf85d2aa7b8e69a129037051b13affc
+   36879cb7856ea0aff04b156b222aa3837a7db13d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/508589141cf85d2aa7b8e69a129037051b13affc">
+    <a href="/chromium/src/+log/36879cb7856ea0aff04b156b222aa3837a7db13d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/508589141cf85d2aa7b8e69a129037051b13affc.tar.gz">
+    <a href="/chromium/src/+archive/36879cb7856ea0aff04b156b222aa3837a7db13d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tibor Goldschwendt &lt;tiborg@chromium.org&gt;
+   Anish Mishra &lt;anishmishra@microsoft.com&gt;
   </td>
   <td>
-   Wed Jan 25 02:59:20 2023
+   Wed Jan 25 04:52:41 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jan 25 02:59:20 2023
+   Wed Jan 25 04:52:41 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/508589141cf85d2aa7b8e69a129037051b13affc/">
-    8cacbae7248ec1fa50c62cf8ee21ea014ca70569
+   <a href="/chromium/src/+/36879cb7856ea0aff04b156b222aa3837a7db13d/">
+    454d3c3ce9a579281cfe3a3b038649bc419258f0
    </a>
   </td>
  </tr>
@@ -166,31 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/508589141cf85d2aa7b8e69a129037051b13affc%5E">
-    ccbc872bfb1605ad10c3a69c35df36ca50ee7835
+   <a href="/chromium/src/+/36879cb7856ea0aff04b156b222aa3837a7db13d%5E">
+    c3beb6d194760359aaa1d52535d3f1b59f1e65a3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/508589141cf85d2aa7b8e69a129037051b13affc%5E%21/">
+    <a href="/chromium/src/+/36879cb7856ea0aff04b156b222aa3837a7db13d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[cc-side-panel] Don't animate shortcuts and modules sections on open
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fixing Combobox Arrow button to show role as button in accessibility tree
 
-When first opening the side panel the sections shouldn't animate since
-they simply initialize with the current settings rather than visualizing
-a state change.
+Prob Description:
+The arrow control is reporting as a combobox, which is not aligned with W3's ARIA spec(link below).
+[<a href="https://w3c.github.io/aria/#combobox">https://w3c.github.io/aria/#combobox</a>]
 
-Fixed: 1402974
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9cb5992a5603af7886539adc60a57f9d3bccc792">I9cb5992a5603af7886539adc60a57f9d3bccc792</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4189959">https://chromium-review.googlesource.com/c/chromium/src/+/4189959</a>
-Reviewed-by: Paul Adedeji &lt;pauladedeji@google.com&gt;
-Commit-Queue: Paul Adedeji &lt;pauladedeji@google.com&gt;
-Auto-Submit: Tibor Goldschwendt &lt;tiborg@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1096587}
+
+In Windows the UIA tree structure convention states that the Arrow control should be a button in Combobox control(link below).
+[<a href="https://learn.microsoft.com/en-us/windows/win32/winauto/uiauto-supportcomboboxcontroltype#typical-tree-structure">https://learn.microsoft.com/en-us/windows/win32/winauto/uiauto-supportcomboboxcontroltype#typical-tree-structure</a>]
+
+
+Solution:
+In order to fix the issue we need to change the role of Arrow button in EditableCombobox from kComboBoxMenuButton to kButton.
+
+Bug: 1407068
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibda3add1a3bc4fe4bf0eb11c0fa30f305ed0fa5f">Ibda3add1a3bc4fe4bf0eb11c0fa30f305ed0fa5f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4176214">https://chromium-review.googlesource.com/c/chromium/src/+/4176214</a>
+Commit-Queue: Anish Mishra &lt;anishmishra@microsoft.com&gt;
+Reviewed-by: Elaine Chien &lt;elainechien@chromium.org&gt;
+Reviewed-by: Benjamin Beaudry &lt;benjamin.beaudry@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1096622}
 </pre>
 
 </body>
