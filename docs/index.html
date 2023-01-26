@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1097561/"> 1097561</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fa3d9b0c63e793ecb9addb3e37887ab00c2c0eaa">fa3d9b0c63e793ecb9addb3e37887ab00c2c0eaa</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1097655/"> 1097655</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fdb2eeb9146a5df81e5c465dd17a24f5248f320a">fdb2eeb9146a5df81e5c465dd17a24f5248f320a</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1097601/">1097601</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   fa3d9b0c63e793ecb9addb3e37887ab00c2c0eaa
+   fdb2eeb9146a5df81e5c465dd17a24f5248f320a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/fa3d9b0c63e793ecb9addb3e37887ab00c2c0eaa">
+    <a href="/chromium/src/+log/fdb2eeb9146a5df81e5c465dd17a24f5248f320a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/fa3d9b0c63e793ecb9addb3e37887ab00c2c0eaa.tar.gz">
+    <a href="/chromium/src/+archive/fdb2eeb9146a5df81e5c465dd17a24f5248f320a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andres Calderon Jaramillo &lt;andrescj@chromium.org&gt;
+   Geng Li &lt;ligeng@google.com&gt;
   </td>
   <td>
-   Thu Jan 26 20:12:29 2023
+   Thu Jan 26 22:42:17 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 26 20:12:29 2023
+   Thu Jan 26 22:42:17 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/fa3d9b0c63e793ecb9addb3e37887ab00c2c0eaa/">
-    10680492931ebda8cdc104e4cd2c3bff2bb49082
+   <a href="/chromium/src/+/fdb2eeb9146a5df81e5c465dd17a24f5248f320a/">
+    e1dd4c56be8e276e17bc35a604d395ad9c39c5ce
    </a>
   </td>
  </tr>
@@ -166,69 +166,26 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/fa3d9b0c63e793ecb9addb3e37887ab00c2c0eaa%5E">
-    26a02049228b923ce0511fe527b1bbaf2a2005f4
+   <a href="/chromium/src/+/fdb2eeb9146a5df81e5c465dd17a24f5248f320a%5E">
+    cacb1a126ffbf296a5481866136b9edba94a305b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/fa3d9b0c63e793ecb9addb3e37887ab00c2c0eaa%5E%21/">
+    <a href="/chromium/src/+/fdb2eeb9146a5df81e5c465dd17a24f5248f320a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">viz: Don't fill the supported video decoder profiles in GpuServiceImpl.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">use mock time test environment and add test for floating workspace v2
 
-This CL removes the code that fills the
-|video_decode_accelerator_supported_profiles| member of the gpu::GPUInfo
-struct during a call to GpuServiceImpl::UpdateGPUInfo() (which should
-run while the GPU process is starting up). The reason is that this
-startup query represents a bit of an obstacle for out-of-process video
-decoding: when this feature is enabled (eventually on Linux/ChromeOS),
-the query for supported video decoder profiles will be done in a utility
-process instead of the GPU process. When the GPU process is starting up,
-we don't have a connection to that utility process. It's better if the
-supported video decoder profiles are queried as needed.
-
-At the time of writing this CL, code search revealed the following
-usages of the |video_decode_accelerator_supported_profiles| member:
-
-- The SystemInfo domain from the DevTools protocol [1]: the getInfo()
-  API exposes the supported video decode accelerator profiles. However,
-  this API was introduced for testing which doesn't actually need the
-  supported video decoder profiles. Therefore, it's fine that after this
-  CL, this info won't be available (unless chrome://gpu is opened before
-  the SystemInfo.getInfo() method runs - in this case, the supported
-  video decode accelerator profiles will become available for
-  SystemInfo.getInfo() to access).
-
-- The chrome://gpu UI: this path already doesn't rely on the GPU process
-  startup query [2], and since it uses GpuDataManagerImpl, it already
-  knows how to deal with out-of-process video decoding.
-
-Note: before this CL, there was a comment in GpuServiceImpl suggesting
-that the startup query was needed for PPAPI/Flash [3]. However, code
-search did not reveal any current dependency of Pepper on the
-|video_decode_accelerator_supported_profiles| member, so that comment is
-obsolete.
-
-[1] <a href="https://chromedevtools.github.io/devtools-protocol/tot/SystemInfo/">https://chromedevtools.github.io/devtools-protocol/tot/SystemInfo/</a>
-[2] <a href="https://source.chromium.org/chromium/chromium/src/+/main:content/browser/gpu/gpu_internals_ui.cc;l=797-802;drc=85a8bf56bee1ca1bb95c781b30128beb8c73b35a">https://source.chromium.org/chromium/chromium/src/+/main:content/browser/gpu/gpu_internals_ui.cc;l=797-802;drc=85a8bf56bee1ca1bb95c781b30128beb8c73b35a</a>
-[3] <a href="https://source.chromium.org/chromium/chromium/src/+/main:components/viz/service/gl/gpu_service_impl.cc;l=288-289;drc=12be03159fe22cd4ef291e9561762531c2589539">https://source.chromium.org/chromium/chromium/src/+/main:components/viz/service/gl/gpu_service_impl.cc;l=288-289;drc=12be03159fe22cd4ef291e9561762531c2589539</a>
-
-Bug: b:195769334
-Test: ran SystemInfo.getInfo() on a ChromeOS device
-Test: ensured that chrome://gpu shows the supported video decoder profiles on a ChromeOS device
-Test: video.PepperVideoDecode.h264_hw on volteer (ChromeOS device)
-Test: video.PepperVideoDecode.h264_hw_mojovd on volteer (ChromeOS device)
-Test: video.PlayDRM.cencv3_h264_cbc on volteer (ChromeOS device)
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I40e745cd4dc2de4aebbaee9a2f3e77863352589b">I40e745cd4dc2de4aebbaee9a2f3e77863352589b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4193451">https://chromium-review.googlesource.com/c/chromium/src/+/4193451</a>
-Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
-Reviewed-by: Kenneth Russell &lt;kbr@chromium.org&gt;
-Commit-Queue: Andres Calderon Jaramillo &lt;andrescj@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1097561}
+Bug: b:266497248
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I024201774c07e6f636c1229f9ffb8fbec7c0760b">I024201774c07e6f636c1229f9ffb8fbec7c0760b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4198718">https://chromium-review.googlesource.com/c/chromium/src/+/4198718</a>
+Reviewed-by: Yanzhu Du &lt;yzd@google.com&gt;
+Commit-Queue: Geng Li &lt;ligeng@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1097655}
 </pre>
 
 </body>
