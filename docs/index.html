@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1097892/"> 1097892</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c79017d90aecfdbbfc5c6c5ab00f2153776857da">c79017d90aecfdbbfc5c6c5ab00f2153776857da</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1097902/"> 1097902</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3e8f4d1a3de7f49285eefacbb6732e4ce927e16e">3e8f4d1a3de7f49285eefacbb6732e4ce927e16e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1097872/">1097872</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e3370afd999431d305eec19afc8429eb982a23fe">e3370afd999431d305eec19afc8429eb982a23fe</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1097894/">1097894</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c765b833062d49b5821054689fa52356e96965a1">c765b833062d49b5821054689fa52356e96965a1</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c79017d90aecfdbbfc5c6c5ab00f2153776857da
+   3e8f4d1a3de7f49285eefacbb6732e4ce927e16e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c79017d90aecfdbbfc5c6c5ab00f2153776857da">
+    <a href="/chromium/src/+log/3e8f4d1a3de7f49285eefacbb6732e4ce927e16e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c79017d90aecfdbbfc5c6c5ab00f2153776857da.tar.gz">
+    <a href="/chromium/src/+archive/3e8f4d1a3de7f49285eefacbb6732e4ce927e16e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Christian Flach &lt;cmfcmf@chromium.org&gt;
+   Anna Tsvirchkova &lt;atsvirchkova@google.com&gt;
   </td>
   <td>
-   Fri Jan 27 14:35:44 2023
+   Fri Jan 27 15:11:39 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jan 27 14:35:44 2023
+   Fri Jan 27 15:11:39 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c79017d90aecfdbbfc5c6c5ab00f2153776857da/">
-    b2139de5739dba6bc6c6acfed9dac57cd5284eed
+   <a href="/chromium/src/+/3e8f4d1a3de7f49285eefacbb6732e4ce927e16e/">
+    98c228a85b4fc2c2f9fa83a522118ea6fb6dba47
    </a>
   </td>
  </tr>
@@ -166,36 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c79017d90aecfdbbfc5c6c5ab00f2153776857da%5E">
-    92e45cb92a339e1f2f0dcbde2cc01471c024b55d
+   <a href="/chromium/src/+/3e8f4d1a3de7f49285eefacbb6732e4ce927e16e%5E">
+    aa25040dcda6c039cb442b02bdb586fdd8452736
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c79017d90aecfdbbfc5c6c5ab00f2153776857da%5E%21/">
+    <a href="/chromium/src/+/3e8f4d1a3de7f49285eefacbb6732e4ce927e16e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">iwa: On ChromeOS, only verify signatures during installation
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[TTFCC] Fix flakiness of touch to fill for credit cards render tests
 
-This is essentially a revert of crrev.com/4051065. The explicit check
-during installation landed in <a href="https://crrev.com/c/4173793.">https://crrev.com/c/4173793.</a>
+The reason for the flakiness was the following: there are tests which
+take the full screenshot of Chrome browser app. They were needed to test
+that the bottom sheet height is correct in half-shown state. But the
+problem was that the progress bar of the Chrome app turned out to be in
+different states in the render tests, which caused failures. The fix is
+the following: we no longer take the screenshot of the full Chrome
+window for the test, instead we only screenshot the parent view group of
+the bottom sheet. This gives us all the necessary information to test
+the BS height not including the flaky progress bar.
 
-For reference, as documented in the design doc [1], we only want to
-check signatures during installation on ChromeOS, and not during every
-Chrome session.
-
-[1]: go/isolated-apps-when-to-verify-signatures
-
-Bug: 1366309
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7c55a10cebd08105ea858f9f48d9df828400cf5a">I7c55a10cebd08105ea858f9f48d9df828400cf5a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4180724">https://chromium-review.googlesource.com/c/chromium/src/+/4180724</a>
-Commit-Queue: Sonja Laurila &lt;laurila@google.com&gt;
-Auto-Submit: Christian Flach &lt;cmfcmf@chromium.org&gt;
-Reviewed-by: Sonja Laurila &lt;laurila@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1097892}
+Bug: 1247698, 1407272
+Fixed: 1407272
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ice53378975f0beaeabce360e71918615786e73e1">Ice53378975f0beaeabce360e71918615786e73e1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4196877">https://chromium-review.googlesource.com/c/chromium/src/+/4196877</a>
+Commit-Queue: Anna Tsvirchkova &lt;atsvirchkova@google.com&gt;
+Reviewed-by: Florian Leimgruber &lt;fleimgruber@google.com&gt;
+Reviewed-by: Mohamed Amir Yosef &lt;mamir@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1097902}
 </pre>
 
 </body>
