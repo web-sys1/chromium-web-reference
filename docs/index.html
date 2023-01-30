@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1098544/"> 1098544</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1f3555a77b89b9dc17c99fc7d78d8d69a3c3e5f9">1f3555a77b89b9dc17c99fc7d78d8d69a3c3e5f9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1098553/"> 1098553</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a8448a99b8a02f9f74859f1e3cfce9ea16717dde">a8448a99b8a02f9f74859f1e3cfce9ea16717dde</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1098532/">1098532</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1f3555a77b89b9dc17c99fc7d78d8d69a3c3e5f9
+   a8448a99b8a02f9f74859f1e3cfce9ea16717dde
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1f3555a77b89b9dc17c99fc7d78d8d69a3c3e5f9">
+    <a href="/chromium/src/+log/a8448a99b8a02f9f74859f1e3cfce9ea16717dde">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1f3555a77b89b9dc17c99fc7d78d8d69a3c3e5f9.tar.gz">
+    <a href="/chromium/src/+archive/a8448a99b8a02f9f74859f1e3cfce9ea16717dde.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Artem Sumaneev &lt;asumaneev@google.com&gt;
+   Ashley Newson &lt;ashleynewson@chromium.org&gt;
   </td>
   <td>
-   Mon Jan 30 12:48:27 2023
+   Mon Jan 30 13:20:21 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jan 30 12:48:27 2023
+   Mon Jan 30 13:20:21 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1f3555a77b89b9dc17c99fc7d78d8d69a3c3e5f9/">
-    6d8c0e8885bd644d7ac424b4b957ef92969f00a7
+   <a href="/chromium/src/+/a8448a99b8a02f9f74859f1e3cfce9ea16717dde/">
+    b350f1f6dafeeff7920171c6a1d0fb729fda68c6
    </a>
   </td>
  </tr>
@@ -166,62 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1f3555a77b89b9dc17c99fc7d78d8d69a3c3e5f9%5E">
-    71436038d40937f90282d9df06e345ef32f8e30a
+   <a href="/chromium/src/+/a8448a99b8a02f9f74859f1e3cfce9ea16717dde%5E">
+    f78359afebe8896ed6286dc4cf881db895177c8a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1f3555a77b89b9dc17c99fc7d78d8d69a3c3e5f9%5E%21/">
+    <a href="/chromium/src/+/a8448a99b8a02f9f74859f1e3cfce9ea16717dde%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "[Lacros] Load Lacros according to LacrosSelection policy."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Implement ArrayBuffer memory restrictions
 
-This is a reland of commit 42ced436972ed61f4dfe82e31231cd4edf64d9b0
+Implement an array buffer allocator which limits allocations to within a
+memory budget.
 
-In addition to the original commit, a new feature flag is added to
-ignore the policy: #lacros-selection-ignore.
+Update consumeNamedDataAsArrayBuffer and associated methods to support
+the allocation workflows which will potentially fail.
 
-Original change's description:
-&gt; [Lacros] Load Lacros according to LacrosSelection policy.
-&gt;
-&gt; go/lacros-selection-policy
-&gt;
-&gt; Use LacrosSelection policy to decide which Lacros binary to load: rootfs
-&gt; or stateful. If the policy is set to user_choice or unset, the user can
-&gt; decide which one to load with lacros-selection flag, or load the
-&gt; freshest binary version wise.
-&gt;
-&gt; If the policy is set to rootfs or stateful, the corresponding Lacros is
-&gt; loaded and lacros-selection flag is ignored and hidden.
-&gt;
-&gt; The effective policy value does not change during the user session. The
-&gt; cached value is used for decision making. If the policy changes during
-&gt; the session, the new value will be applied on the next login.
-&gt;
-&gt; Bug: chromium:1363880
-&gt; Test: manual on device
-&gt; Test: unit_tests --gtest_filter=BrowserUtilTest.*
-&gt; Test: unit_tests --gtest_filter=BrowserLoaderTest.*
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I561156913647e5658291321c8b9afa84c0855cfb">I561156913647e5658291321c8b9afa84c0855cfb</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4065943">https://chromium-review.googlesource.com/c/chromium/src/+/4065943</a>
-&gt; Commit-Queue: Artem Sumaneev &lt;asumaneev@google.com&gt;
-&gt; Reviewed-by: Stefan Kuhne &lt;skuhne@chromium.org&gt;
-&gt; Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1083416}
+Add additional testing for array buffer allocation and garbage
+collection.
 
-Bug: chromium:1363880
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If4baa42ed08b7aeacf0f312578dbab544005f36a">If4baa42ed08b7aeacf0f312578dbab544005f36a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4138031">https://chromium-review.googlesource.com/c/chromium/src/+/4138031</a>
-Commit-Queue: Artem Sumaneev &lt;asumaneev@google.com&gt;
-Reviewed-by: Julian Pastarmov &lt;pastarmovj@chromium.org&gt;
-Reviewed-by: Alex Ilin &lt;alexilin@chromium.org&gt;
-Reviewed-by: Victor-Gabriel Savu &lt;vsavu@google.com&gt;
-Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1098544}
+Bug: 1347094
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I01d690af915c4c667e70267b8fa02ea3ea400760">I01d690af915c4c667e70267b8fa02ea3ea400760</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4085426">https://chromium-review.googlesource.com/c/chromium/src/+/4085426</a>
+Reviewed-by: Richard Coles &lt;torne@chromium.org&gt;
+Commit-Queue: Ashley Newson &lt;ashleynewson@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1098553}
 </pre>
 
 </body>
