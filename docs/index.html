@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1099317/"> 1099317</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/51e6fc9d3c08f088b0d062f5d04c7d6b40ba7a0f">51e6fc9d3c08f088b0d062f5d04c7d6b40ba7a0f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1099385/"> 1099385</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cb5d1996974de8d9179b864d2157ca53deb4a3ba">cb5d1996974de8d9179b864d2157ca53deb4a3ba</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1099300/">1099300</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   51e6fc9d3c08f088b0d062f5d04c7d6b40ba7a0f
+   cb5d1996974de8d9179b864d2157ca53deb4a3ba
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/51e6fc9d3c08f088b0d062f5d04c7d6b40ba7a0f">
+    <a href="/chromium/src/+log/cb5d1996974de8d9179b864d2157ca53deb4a3ba">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/51e6fc9d3c08f088b0d062f5d04c7d6b40ba7a0f.tar.gz">
+    <a href="/chromium/src/+archive/cb5d1996974de8d9179b864d2157ca53deb4a3ba.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Bijan Choobineh &lt;bchoobineh@chromium.org&gt;
+   Samuel Huang &lt;huangs@chromium.org&gt;
   </td>
   <td>
-   Tue Jan 31 17:38:46 2023
+   Tue Jan 31 19:01:15 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 31 17:38:46 2023
+   Tue Jan 31 19:01:15 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/51e6fc9d3c08f088b0d062f5d04c7d6b40ba7a0f/">
-    771643da1ef58b246ec40b42edba6c659fb84f81
+   <a href="/chromium/src/+/cb5d1996974de8d9179b864d2157ca53deb4a3ba/">
+    88be29249839dad7cfcf3f715f773eb50aee8b19
    </a>
   </td>
  </tr>
@@ -166,58 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/51e6fc9d3c08f088b0d062f5d04c7d6b40ba7a0f%5E">
-    3ab74f2603840cfae91465ded76e30264e24808e
+   <a href="/chromium/src/+/cb5d1996974de8d9179b864d2157ca53deb4a3ba%5E">
+    5a344b9d63719b7dde21a1417109eb5d7913df06
    </a>
    <span>
     [
-    <a href="/chromium/src/+/51e6fc9d3c08f088b0d062f5d04c7d6b40ba7a0f%5E%21/">
+    <a href="/chromium/src/+/cb5d1996974de8d9179b864d2157ca53deb4a3ba%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media/gpu/v4l2/test: Implement and utilize Finish Frame function.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[SuperSize] Viewer: Fix 3 UI bugs related to keyboard navigation.
 
-The H264 Decoder had previously processed bitstreams without
-consideration to picture ordering. Additionally there was no prior logic
-for storing pictures in the DPB for long term references.
+The symbol tree view admits keyboard navigation, during which one item
+gains "keyboard focused" status shown by a black outline. This CL
+provides simple fixes to 3 UI bugs:
+1. Item hover highlight can obscure black outline of keyboard focused
+   neighbor: Use transparent color instead of solid color for highlight.
+2. Collapsing and re-expanding group ends keyboard navigation state if
+   the keyboard focused item is a descendant: Move highlight to a
+   group if it has a keyboard focused descendant.
+3. Cannot return to system tree view via Arrow keys after using Down
+   Arrow to navigate to "Metadata": Exclude "Metadata" from items that
+   can be reached via Arrow keys from symbol tree view.
 
-This update implements a FinishFrame() function which builds on the
-previously named SubmitSlice() function. This function will send the
-remaining control structs through EXT_CTRLS indicating the end of a
-frame. The function will additionally handles management of the DPB as
-well as transmitting slice data according to their pic order.
+Details:
+* Fix for (1): Change CSS of .node:hover.
+* Fix for (2): Handled in TreeUI._toggleTreeElement(), using
+  |groups.contains()| for descendant test.
+* Fix for (3): TreeUI CTOR: Use |this._symbolTree| instead of
+  |document| to assign |this._liveNodeList| for .node elements.
+* Also rename ids and variables for symbol tree view templates, and fix
+  misc. comments and orderings.
 
-This update also incorporates the FinishFrame() function into the
-ProcessNextFrame() function and makes the appropriate adjustments in
-that function to have logic flow based on the H264SliceMetadata instead
-of a H264SliceHeader.
-
-This update by itself will not result in any change to the decoding
-results due to a bug in the DPB implementation. This issue is currently
-addressed in CL:4177779. With this DPB bug fixed, this update will
-result in proper decoding in over half of the bitstreams in H264_baseline.
-
-For properly decoding all the other bitstreams, these are the next 3
-items that will need to be addressed/updated.
-1. Implement Picture Order Count logic for types 1 and 2 as specified in
-   H264 Specification 8.2.1.2 and 8.2.1.3.
-2. Implement logic for long term reference pictures.
-3. Handle Memory Mgmt operations as specified in specification 8.2.5.4.
-
-BUG=b:234752983
-TEST=v4l2_stateless_decoder --video=BA1_Sony_D.h264 --md5=checksums.log
-TEST=v4l2_stateless_decoder --video=BAMQ1_JVC_C.h264 --md5=checksums.log
-TEST=v4l2_stateless_decoder --video=CABA1_SVA_B.h264 --md5=checksums.log
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id6c89060039ddfe13c3efd4982fd2ac9fd51e766">Id6c89060039ddfe13c3efd4982fd2ac9fd51e766</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4178263">https://chromium-review.googlesource.com/c/chromium/src/+/4178263</a>
-Reviewed-by: Nathan Hebert &lt;nhebert@chromium.org&gt;
-Commit-Queue: Bijan Choobineh‎ &lt;bchoobineh@chromium.org&gt;
-Reviewed-by: Steve Cho &lt;stevecho@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1099317}
+Bug: 1411748
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I609975cb152c9b12df8a621508de9256c9b9edda">I609975cb152c9b12df8a621508de9256c9b9edda</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4210170">https://chromium-review.googlesource.com/c/chromium/src/+/4210170</a>
+Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Commit-Queue: Samuel Huang &lt;huangs@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1099385}
 </pre>
 
 </body>
