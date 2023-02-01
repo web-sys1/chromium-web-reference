@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1099738/"> 1099738</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/33dcf69fcc63050f70fe88db3ff90b2644ddd5a8">33dcf69fcc63050f70fe88db3ff90b2644ddd5a8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1099752/"> 1099752</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7e3dba8fb58bc2952088675804698027c298b9e1">7e3dba8fb58bc2952088675804698027c298b9e1</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1099720/">1099720</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   33dcf69fcc63050f70fe88db3ff90b2644ddd5a8
+   7e3dba8fb58bc2952088675804698027c298b9e1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/33dcf69fcc63050f70fe88db3ff90b2644ddd5a8">
+    <a href="/chromium/src/+log/7e3dba8fb58bc2952088675804698027c298b9e1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/33dcf69fcc63050f70fe88db3ff90b2644ddd5a8.tar.gz">
+    <a href="/chromium/src/+archive/7e3dba8fb58bc2952088675804698027c298b9e1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Stefano Duo &lt;stefanoduo@google.com&gt;
+   James Lee &lt;ljjlee@google.com&gt;
   </td>
   <td>
-   Wed Feb 01 10:14:45 2023
+   Wed Feb 01 10:54:39 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 01 10:14:45 2023
+   Wed Feb 01 10:54:39 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/33dcf69fcc63050f70fe88db3ff90b2644ddd5a8/">
-    f3ed7ac0d3a8a4dca6eb5b54638e99914a4082bb
+   <a href="/chromium/src/+/7e3dba8fb58bc2952088675804698027c298b9e1/">
+    e8ee3da67f472416c4bda5c0c48a4c68b9c9a0dd
    </a>
   </td>
  </tr>
@@ -166,44 +166,71 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/33dcf69fcc63050f70fe88db3ff90b2644ddd5a8%5E">
-    789aa7e8f218133101f4a343327822f90187fcfa
+   <a href="/chromium/src/+/7e3dba8fb58bc2952088675804698027c298b9e1%5E">
+    14ef5695aaed14b3c4187cd65c646a4517a70de1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/33dcf69fcc63050f70fe88db3ff90b2644ddd5a8%5E%21/">
+    <a href="/chromium/src/+/7e3dba8fb58bc2952088675804698027c298b9e1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Also bundle repackage_native_impl output
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Resubmit: Enable WebGPU for non-component Android builds"
 
-As things stand, both repackage_native and repackage_test_jars
-bundle org/chromium/base/natives/GEN_JNI.class. This causes issues
-downstream, where the one bundled in repackage_native is currently
-winning (for not well defined reasons). Winning in this context means
-that Java -&gt; C++ JNI calls will be resolved looked up inside
-GEN_JNI.class. This is a problem because repackage_native's GEN_JNI
-doesn't contain JNI defined by tests, so tests fails with
-java.lang.NoSuchMethodError: No static method
-org_chromium_net_NativeTestServer_startNativeTestServer
+This reverts commit 239e1dfd3989f1bb897d0c9533308fdc9f8cd0ce.
 
-This CL circumvent the issue by also bundling the output of
-repackage_native_impl. Its output is in fact exactly the same of
-repackage_native, modulo the stripping of GEN_JNI.class. This way
-the one bundled in repackage_test_jars will always win.
+Reason for revert: this causes test failures on the Nexus 5X builder as before: <a href="https://ci.chromium.org/ui/p/chrome/builders/ci/test-n-phone/15889/overview.">https://ci.chromium.org/ui/p/chrome/builders/ci/test-n-phone/15889/overview.</a>
 
-Rename repackage_native_impl to repackage_native_without_jni
-to better reflect its contents.
+Original change's description:
+&gt; Resubmit: Enable WebGPU for non-component Android builds
+&gt;
+&gt; Non-component Android builds were being blocked by ANGLE producing
+&gt; multiple .so files, but a previous Dawn change has temporarily
+&gt; disabled ANGLE in Dawn on Android, clearing the way for this change.
+&gt;
+&gt; Also activates the "Enable Unsafe WebGPU" and "WebGPU Developer
+&gt; Features" flags in about:flags.
+&gt;
+&gt; Previously reverted due to some failing gl_tests. Fixed in:
+&gt; <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4209568">https://chromium-review.googlesource.com/c/chromium/src/+/4209568</a>
+&gt;
+&gt; Additionally there were some Vulkan crashes that ocurred while it
+&gt; was enabled. Fixed in:
+&gt; <a href="https://dawn-review.googlesource.com/c/dawn/+/117594">https://dawn-review.googlesource.com/c/dawn/+/117594</a>
+&gt;
+&gt; This commit is expected to increase the binary size of Chrome on Android
+&gt; by about 1.5Mb. This is mostly due to the new inclusion of the Dawn
+&gt; library, which provides Chrome's cross-platform implementation of the
+&gt; WebGPU API. Because WebGPU is a large new feature a proportional size
+&gt; increase is to be expected. By comparison a roughly equivalent library,
+&gt; ANGLE, also adds approximately the same amount to the binary size.
+&gt;
+&gt; See <a href="https://groups.google.com/a/google.com/g/webgpu-developers/c/g2NB5rR2R2A/m/73b9HQC2AgAJ">https://groups.google.com/a/google.com/g/webgpu-developers/c/g2NB5rR2R2A/m/73b9HQC2AgAJ</a>
+&gt; for further discussion about the size impact.
+&gt;
+&gt; Bug: dawn:286
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia3a6a15aa23d90185d34a248aa5c6b2920bb44c3">Ia3a6a15aa23d90185d34a248aa5c6b2920bb44c3</a>
+&gt; Binary-Size: Added a new library to enable large feature.
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4206069">https://chromium-review.googlesource.com/c/chromium/src/+/4206069</a>
+&gt; Commit-Queue: Brandon Jones &lt;bajones@chromium.org&gt;
+&gt; Reviewed-by: Kenneth Russell &lt;kbr@chromium.org&gt;
+&gt; Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1099421}
 
-Bug: b:266917718, 1401015
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7509bab3761ca240ee1c0220fb179a15baee3d6a">I7509bab3761ca240ee1c0220fb179a15baee3d6a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4204647">https://chromium-review.googlesource.com/c/chromium/src/+/4204647</a>
-Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
-Commit-Queue: Stefano Duo &lt;stefanoduo@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1099738}
+Bug: dawn:286
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifdb0e24458479243a75eff15b55a114f0d8f696b">Ifdb0e24458479243a75eff15b55a114f0d8f696b</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4212588">https://chromium-review.googlesource.com/c/chromium/src/+/4212588</a>
+Auto-Submit: James Lee &lt;ljjlee@google.com&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Owners-Override: James Lee &lt;ljjlee@google.com&gt;
+Commit-Queue: James Lee &lt;ljjlee@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1099752}
 </pre>
 
 </body>
