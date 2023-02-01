@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1099705/"> 1099705</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/aad574c7a21556a73fc3c62d3a87e7c3243a33cc">aad574c7a21556a73fc3c62d3a87e7c3243a33cc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1099738/"> 1099738</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/33dcf69fcc63050f70fe88db3ff90b2644ddd5a8">33dcf69fcc63050f70fe88db3ff90b2644ddd5a8</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1099720/">1099720</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   aad574c7a21556a73fc3c62d3a87e7c3243a33cc
+   33dcf69fcc63050f70fe88db3ff90b2644ddd5a8
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/aad574c7a21556a73fc3c62d3a87e7c3243a33cc">
+    <a href="/chromium/src/+log/33dcf69fcc63050f70fe88db3ff90b2644ddd5a8">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/aad574c7a21556a73fc3c62d3a87e7c3243a33cc.tar.gz">
+    <a href="/chromium/src/+archive/33dcf69fcc63050f70fe88db3ff90b2644ddd5a8.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Camillo Bruni &lt;cbruni@chromium.org&gt;
+   Stefano Duo &lt;stefanoduo@google.com&gt;
   </td>
   <td>
-   Wed Feb 01 08:26:33 2023
+   Wed Feb 01 10:14:45 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 01 08:26:33 2023
+   Wed Feb 01 10:14:45 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/aad574c7a21556a73fc3c62d3a87e7c3243a33cc/">
-    08427983f5d599530188fbd9387d374afd4fa416
+   <a href="/chromium/src/+/33dcf69fcc63050f70fe88db3ff90b2644ddd5a8/">
+    f3ed7ac0d3a8a4dca6eb5b54638e99914a4082bb
    </a>
   </td>
  </tr>
@@ -166,34 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/aad574c7a21556a73fc3c62d3a87e7c3243a33cc%5E">
-    fdb765a118cceec5b0fe3b73139056f5bff9fc7d
+   <a href="/chromium/src/+/33dcf69fcc63050f70fe88db3ff90b2644ddd5a8%5E">
+    789aa7e8f218133101f4a343327822f90187fcfa
    </a>
    <span>
     [
-    <a href="/chromium/src/+/aad574c7a21556a73fc3c62d3a87e7c3243a33cc%5E%21/">
+    <a href="/chromium/src/+/33dcf69fcc63050f70fe88db3ff90b2644ddd5a8%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[vpython] include tabulate on all platforms for crossbench
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Also bundle repackage_native_impl output
 
-go/crossbench requires tabulate on all platforms. Previously this was
-only included on linux for pytype support.
+As things stand, both repackage_native and repackage_test_jars
+bundle org/chromium/base/natives/GEN_JNI.class. This causes issues
+downstream, where the one bundled in repackage_native is currently
+winning (for not well defined reasons). Winning in this context means
+that Java -&gt; C++ JNI calls will be resolved looked up inside
+GEN_JNI.class. This is a problem because repackage_native's GEN_JNI
+doesn't contain JNI defined by tests, so tests fails with
+java.lang.NoSuchMethodError: No static method
+org_chromium_net_NativeTestServer_startNativeTestServer
 
-Tabulate is platform independent according to
-<a href="https://chromium.googlesource.com/infra/infra/+/HEAD/infra/tools/dockerbuild/wheels.md#tabulate_py3">https://chromium.googlesource.com/infra/infra/+/HEAD/infra/tools/dockerbuild/wheels.md#tabulate_py3</a>
+This CL circumvent the issue by also bundling the output of
+repackage_native_impl. Its output is in fact exactly the same of
+repackage_native, modulo the stripping of GEN_JNI.class. This way
+the one bundled in repackage_test_jars will always win.
 
-Crossbench was added in <a href="https://crrev.com/c/4173776">https://crrev.com/c/4173776</a>
+Rename repackage_native_impl to repackage_native_without_jni
+to better reflect its contents.
 
-Bug: 1337229
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I41f8a126ef24eb3d24376dfcdf6adf5085a30972">I41f8a126ef24eb3d24376dfcdf6adf5085a30972</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4206768">https://chromium-review.googlesource.com/c/chromium/src/+/4206768</a>
-Reviewed-by: Ben Pastene &lt;bpastene@chromium.org&gt;
-Commit-Queue: Camillo Bruni &lt;cbruni@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1099705}
+Bug: b:266917718, 1401015
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7509bab3761ca240ee1c0220fb179a15baee3d6a">I7509bab3761ca240ee1c0220fb179a15baee3d6a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4204647">https://chromium-review.googlesource.com/c/chromium/src/+/4204647</a>
+Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Commit-Queue: Stefano Duo &lt;stefanoduo@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1099738}
 </pre>
 
 </body>
