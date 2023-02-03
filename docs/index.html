@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1101163/"> 1101163</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/92f2e58e446facdf73966e71a265b37e389e6a80">92f2e58e446facdf73966e71a265b37e389e6a80</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1101180/"> 1101180</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d8b1eaa44cda2b1d5aeb1336a8a822b8a485c4f8">d8b1eaa44cda2b1d5aeb1336a8a822b8a485c4f8</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1101159/">1101159</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   92f2e58e446facdf73966e71a265b37e389e6a80
+   d8b1eaa44cda2b1d5aeb1336a8a822b8a485c4f8
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/92f2e58e446facdf73966e71a265b37e389e6a80">
+    <a href="/chromium/src/+log/d8b1eaa44cda2b1d5aeb1336a8a822b8a485c4f8">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/92f2e58e446facdf73966e71a265b37e389e6a80.tar.gz">
+    <a href="/chromium/src/+archive/d8b1eaa44cda2b1d5aeb1336a8a822b8a485c4f8.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jeffrey Young &lt;cowmoo@google.com&gt;
+   Camillia Smith Barnes &lt;cammie@chromium.org&gt;
   </td>
   <td>
-   Fri Feb 03 20:17:35 2023
+   Fri Feb 03 20:52:55 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 03 20:17:35 2023
+   Fri Feb 03 20:52:55 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/92f2e58e446facdf73966e71a265b37e389e6a80/">
-    19979b83d07b95a4a91cf3386718052e3d3f3b0d
+   <a href="/chromium/src/+/d8b1eaa44cda2b1d5aeb1336a8a822b8a485c4f8/">
+    4f06d1a5511ea809758cce6e21097a5857d4a4b8
    </a>
   </td>
  </tr>
@@ -166,33 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/92f2e58e446facdf73966e71a265b37e389e6a80%5E">
-    603e4f7653e918e0dd86e317e47e6933b314d1fb
+   <a href="/chromium/src/+/d8b1eaa44cda2b1d5aeb1336a8a822b8a485c4f8%5E">
+    3aa3465df2fcbef2a4b61a5736db97bccd8610fa
    </a>
    <span>
     [
-    <a href="/chromium/src/+/92f2e58e446facdf73966e71a265b37e389e6a80%5E%21/">
+    <a href="/chromium/src/+/d8b1eaa44cda2b1d5aeb1336a8a822b8a485c4f8%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ambient: rm default-on feature ChromeOSAmbientMode
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Shared Storage: Change default value of IsSharedStorageAllowed
 
-Feature params with default values were used to control which art
-gallery options users were able to see. We never changed the options
-remotely, so hardcode them as true/false.
+We want to default `ContentBrowserClient::IsSharedStorageAllowed()` to
+false, but need to be able to override this value for tests.
 
-BUG=b:267525042
-TEST=ash_unittests --gtest_filter=*Ambient*
+Overriding is relatively straightforward to do for both browser tests
+and wpt_internal/ web tests (see PS 4), but the extra work needed for
+external/wpt/ tests is harder to justifying doing for the few web
+tests that would currently need it.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ied80194d970a969163fc97449a62af26c055e763">Ied80194d970a969163fc97449a62af26c055e763</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4215129">https://chromium-review.googlesource.com/c/chromium/src/+/4215129</a>
-Reviewed-by: Tao Wu &lt;wutao@chromium.org&gt;
-Commit-Queue: Jeffrey Young &lt;cowmoo@google.com&gt;
-Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1101163}
+So instead, we improve the status quo slightly by defaulting to false
+in `ContentBrowserClient` and making an override to true in
+`ShellContentBrowserClient`, for both the aforementioned method and
+its sister method `IsSharedStorageSelectURLAllowed()`.
+
+Bug: 1325103,1218540
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8fc95002da96a6255f09228def92434daf1392c2">I8fc95002da96a6255f09228def92434daf1392c2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4220158">https://chromium-review.googlesource.com/c/chromium/src/+/4220158</a>
+Reviewed-by: Yao Xiao &lt;yaoxia@chromium.org&gt;
+Commit-Queue: Cammie Smith Barnes &lt;cammie@chromium.org&gt;
+Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1101180}
 </pre>
 
 </body>
