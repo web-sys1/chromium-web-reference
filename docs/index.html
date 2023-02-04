@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1101344/"> 1101344</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/21becb063fe0546b05a9bf538749055e74bd5215">21becb063fe0546b05a9bf538749055e74bd5215</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1101345/"> 1101345</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/be65a32c6545e9f792652715ffc08a3ff3ecba13">be65a32c6545e9f792652715ffc08a3ff3ecba13</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1101339/">1101339</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   21becb063fe0546b05a9bf538749055e74bd5215
+   be65a32c6545e9f792652715ffc08a3ff3ecba13
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/21becb063fe0546b05a9bf538749055e74bd5215">
+    <a href="/chromium/src/+log/be65a32c6545e9f792652715ffc08a3ff3ecba13">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/21becb063fe0546b05a9bf538749055e74bd5215.tar.gz">
+    <a href="/chromium/src/+archive/be65a32c6545e9f792652715ffc08a3ff3ecba13.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Di Wu &lt;diwux@google.com&gt;
   </td>
   <td>
-   Sat Feb 04 09:44:40 2023
+   Sat Feb 04 10:00:04 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Feb 04 09:44:40 2023
+   Sat Feb 04 10:00:04 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/21becb063fe0546b05a9bf538749055e74bd5215/">
-    78b6de36610f8d7fc52167cbc2106fbdcedecded
+   <a href="/chromium/src/+/be65a32c6545e9f792652715ffc08a3ff3ecba13/">
+    f14b85c421d4447f3ad73bbf33b215c42925f5d1
    </a>
   </td>
  </tr>
@@ -166,43 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/21becb063fe0546b05a9bf538749055e74bd5215%5E">
-    9336a92c1bfcc6c0ec26fff4d22228cdfc92977e
+   <a href="/chromium/src/+/be65a32c6545e9f792652715ffc08a3ff3ecba13%5E">
+    21becb063fe0546b05a9bf538749055e74bd5215
    </a>
    <span>
     [
-    <a href="/chromium/src/+/21becb063fe0546b05a9bf538749055e74bd5215%5E%21/">
+    <a href="/chromium/src/+/be65a32c6545e9f792652715ffc08a3ff3ecba13%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Win64 PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Lacros] Flip can_release_capture_ flag for Lacros tab dragging
 
-Roll Chrome Win64 PGO profile from chrome-win64-main-1675435646-56355f6f8623fe55d6c3b7ad7b1ef2cfa236681f.profdata to chrome-win64-main-1675490311-da030011be347eac7faad831291d2b013457bc0b.profdata
+Please refer to this document (go/tab-drag-release-capture) for full manual test details and a close look at how `DraggingState` is modified along each step.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-win64-chromium">https://autoroll.skia.org/r/pgo-win64-chromium</a>
-Please CC chrome-brapp-engprod@google.com,pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+`can_release_capture_` is a flag inside `tab_drag_controller.cc` that dictates, at the moment when a tab/multiple tabs is dragged outside of a browser window, what the next DraggingState will become. The next DraggingState and its enclosing move loop (a special runloop that handles tab drag events outside of browser area) will further influence the subsequent tab dragging behavior.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+It is suspected that the current flag value, which is false, may cause edge cases such as the one discussed in <a href="http://go/crrv/c/4202947.">http://go/crrv/c/4202947.</a> By flipping this value to true for Lacros, we may be able to solve that issue and other relevant tab dragging bugs.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+Bug:1412284
+Test:full manual test details at go/tab-drag-release-capture
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:win64-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie9f27092d04799a809966deb722090434b7094e8">Ie9f27092d04799a809966deb722090434b7094e8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4222698">https://chromium-review.googlesource.com/c/chromium/src/+/4222698</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1101344}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I883d19af6cd175c6231086f929569f5dda638c2a">I883d19af6cd175c6231086f929569f5dda638c2a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4216075">https://chromium-review.googlesource.com/c/chromium/src/+/4216075</a>
+Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
+Commit-Queue: Di Wu &lt;diwux@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1101345}
 </pre>
 
 </body>
