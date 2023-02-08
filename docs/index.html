@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1102813/"> 1102813</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c5aee996555ae9311506c31b3cfa50085c352e2c">c5aee996555ae9311506c31b3cfa50085c352e2c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1102857/"> 1102857</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e3676ee8c6d8a782fcbff903d219ed762027529b">e3676ee8c6d8a782fcbff903d219ed762027529b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1102794/">1102794</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/70d0a3ec60aed451b2f992ee7b95d9795567c716">70d0a3ec60aed451b2f992ee7b95d9795567c716</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1102831/">1102831</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e0cd514158597485552d00e18c3dfa56be03f3ff">e0cd514158597485552d00e18c3dfa56be03f3ff</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c5aee996555ae9311506c31b3cfa50085c352e2c
+   e3676ee8c6d8a782fcbff903d219ed762027529b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c5aee996555ae9311506c31b3cfa50085c352e2c">
+    <a href="/chromium/src/+log/e3676ee8c6d8a782fcbff903d219ed762027529b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c5aee996555ae9311506c31b3cfa50085c352e2c.tar.gz">
+    <a href="/chromium/src/+archive/e3676ee8c6d8a782fcbff903d219ed762027529b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Menghan YANG &lt;myuu@google.com&gt;
+   Marc Treib &lt;treib@chromium.org&gt;
   </td>
   <td>
-   Wed Feb 08 18:26:33 2023
+   Wed Feb 08 19:37:45 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 08 18:26:33 2023
+   Wed Feb 08 19:37:45 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c5aee996555ae9311506c31b3cfa50085c352e2c/">
-    05cfd8604be608e3254145f0adb8f141175b1be9
+   <a href="/chromium/src/+/e3676ee8c6d8a782fcbff903d219ed762027529b/">
+    8a8f3bc257187095c3f91cb0d0d68a54d215fb27
    </a>
   </td>
  </tr>
@@ -166,31 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c5aee996555ae9311506c31b3cfa50085c352e2c%5E">
-    a9271f521d063a6126a763a6892c3d98a1249553
+   <a href="/chromium/src/+/e3676ee8c6d8a782fcbff903d219ed762027529b%5E">
+    652c5fffd808b4d9e789e4eb06e9c724b13eafb2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c5aee996555ae9311506c31b3cfa50085c352e2c%5E%21/">
+    <a href="/chromium/src/+/e3676ee8c6d8a782fcbff903d219ed762027529b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS] Cleanup buttons in FakeAuthActivityViewController
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Sync: Remove special-casing for commit-only types in the processor
 
-Remove unused _signInButton from FakeAuthActivityViewController
-and make the use of _cancelButton explicit (previously selected
-by hard-coded a11y label instead of a11y id in EG tests)
+ClientTagBasedModelTypeProcessor contains logic which, on startup,
+verifies that any persisted sync metadata is in a consistent state.
+One of the conditions is that if any metadata exists, then
+initial_sync_done should also be true.
+However, there used to be an exception for commit-only types:
+Historically (before M72, crrev.com/c/1136307), these didn't persist
+initial_sync_done, so it can legitimately happen that there's
+persisted metadata without initial_sync_done.
 
+As of M111 (crrev.com/c/4161698), such invalid metadata gets cleaned
+up (removed from disk), *except* for commit-only types.
+This CL removes that exception, so that commit-only types get the same
+cleanup logic as all other types.
 
-Fixed: 1400696
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibad6aa124277971be79a30227d025a27a77e5c92">Ibad6aa124277971be79a30227d025a27a77e5c92</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4231691">https://chromium-review.googlesource.com/c/chromium/src/+/4231691</a>
-Reviewed-by: Jérôme Lebel &lt;jlebel@chromium.org&gt;
-Commit-Queue: Menghan Yang &lt;myuu@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1102813}
+Note that such invalid metadata was never actually *used* (since at
+least M72), so in that sense, the actual behavior isn't changing.
+What's changing is just that we're now better at actually cleaning up
+the bad data, and as a side-effect, avoid hitting a DCHECK (see
+crbug.com/1413944)
+
+Bug: 1413944, 1414011
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I79437c69a5ce23b025708c68108f043f6324a778">I79437c69a5ce23b025708c68108f043f6324a778</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4231912">https://chromium-review.googlesource.com/c/chromium/src/+/4231912</a>
+Commit-Queue: Marc Treib &lt;treib@chromium.org&gt;
+Reviewed-by: Mikel Astiz &lt;mastiz@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1102857}
 </pre>
 
 </body>
