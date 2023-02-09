@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1103133/"> 1103133</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/658a4d09e7616cdb9ddf5ca3d9611431b3c30b78">658a4d09e7616cdb9ddf5ca3d9611431b3c30b78</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1103144/"> 1103144</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1c683d8acd6f7ad315030d95744c3a4c26811feb">1c683d8acd6f7ad315030d95744c3a4c26811feb</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1103118/">1103118</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/92dec6c3f103e0845de5d4645db119b3a84ae866">92dec6c3f103e0845de5d4645db119b3a84ae866</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1103138/">1103138</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f83ff7e3a90b97a039de44b8ae8e89354a940bfd">f83ff7e3a90b97a039de44b8ae8e89354a940bfd</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   658a4d09e7616cdb9ddf5ca3d9611431b3c30b78
+   1c683d8acd6f7ad315030d95744c3a4c26811feb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/658a4d09e7616cdb9ddf5ca3d9611431b3c30b78">
+    <a href="/chromium/src/+log/1c683d8acd6f7ad315030d95744c3a4c26811feb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/658a4d09e7616cdb9ddf5ca3d9611431b3c30b78.tar.gz">
+    <a href="/chromium/src/+archive/1c683d8acd6f7ad315030d95744c3a4c26811feb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Koji Ishii &lt;kojii@chromium.org&gt;
+   sisidovski &lt;sisidovski@chromium.org&gt;
   </td>
   <td>
-   Thu Feb 09 05:31:50 2023
+   Thu Feb 09 06:20:20 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Feb 09 05:31:50 2023
+   Thu Feb 09 06:20:20 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/658a4d09e7616cdb9ddf5ca3d9611431b3c30b78/">
-    b18a840f171cc21326c1a474ce2027f4930e6d2a
+   <a href="/chromium/src/+/1c683d8acd6f7ad315030d95744c3a4c26811feb/">
+    f3c3b66fb985c65477972335e72bdcaee07f621f
    </a>
   </td>
  </tr>
@@ -166,37 +166,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/658a4d09e7616cdb9ddf5ca3d9611431b3c30b78%5E">
-    b025f3d4fb9970faf4649457d66093bfd23ed289
+   <a href="/chromium/src/+/1c683d8acd6f7ad315030d95744c3a4c26811feb%5E">
+    5c1df110cdbe5bc3b2ef88c95267dc411b7bcd1e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/658a4d09e7616cdb9ddf5ca3d9611431b3c30b78%5E%21/">
+    <a href="/chromium/src/+/1c683d8acd6f7ad315030d95744c3a4c26811feb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[balance-text] Replace `WhiteSpace()` in `LayoutSVGInlineText`
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Store calculated service worker script checksums to the database
 
-This patch replaces `WhiteSpace()` with a semantics function
-`CollapseWhiteSpace()` to prepare for refactoring the
-`white-space` property to a shorthand.
+This CL adds the mechanism to save the chekcsum hash strings of service
+worker scripts, which are calculated while the service worker update
+check process. After this CL, if the user has the service worker script
+info in the database and its |sha256_checksum| is empty, the update
+checker returns the sha256 checksums for both main and sub scripts,
+regardless of the update check result.
 
-This logic was introduced in 2010[1]. This change may cause
-more calls to `ForceSetText` such as when `normal` is changed
-to `pre-wrap` or `pre-line`, but it should be more correct.
+Once the update check finished, the browser tries to update the script
+resource list and store it to the database with the newly calculated
+checksums.
 
-[1] <a href="https://chromium.googlesource.com/chromium/src/+/8a3844a5c71c228eba5a014917f032324af30f69%5E%21/third_party/WebKit/WebCore/rendering/svg/RenderSVGInlineText.cpp">https://chromium.googlesource.com/chromium/src/+/8a3844a5c71c228eba5a014917f032324af30f69%5E%21/third_party/WebKit/WebCore/rendering/svg/RenderSVGInlineText.cpp</a>
+We don't update the service worker version since the only updated thing
+is the |sha256_checksum| record in DB and that is no user visible
+change. However, this decision introduced more code changes, so using
+`StoreRegistration`, or adding the option not to create the new version
+to `StoreRegistration` may be another good option, at least in terms of
+the code complexitiy. Feedback is welcomed.
 
-Bug: 1251079
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1da6e6aae2b5324db1b4cf3d1b04c4c94b3ca96e">I1da6e6aae2b5324db1b4cf3d1b04c4c94b3ca96e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4235799">https://chromium-review.googlesource.com/c/chromium/src/+/4235799</a>
-Auto-Submit: Koji Ishii &lt;kojii@chromium.org&gt;
-Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
-Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1103133}
+Bug: 1371756
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie4cf2033c0f06407e41e7d35fae048ce9741877c">Ie4cf2033c0f06407e41e7d35fae048ce9741877c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4210875">https://chromium-review.googlesource.com/c/chromium/src/+/4210875</a>
+Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
+Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+Reviewed-by: Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
+Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Commit-Queue: Shunya Shishido &lt;sisidovski@chromium.org&gt;
+Reviewed-by: Minoru Chikamune &lt;chikamune@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1103144}
 </pre>
 
 </body>
