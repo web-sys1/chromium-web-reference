@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1103168/"> 1103168</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d5d53b5d6662ca22cef0aabfd1f171d1f0a7dd77">d5d53b5d6662ca22cef0aabfd1f171d1f0a7dd77</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1103172/"> 1103172</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f">fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1103156/">1103156</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d5d53b5d6662ca22cef0aabfd1f171d1f0a7dd77
+   fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d5d53b5d6662ca22cef0aabfd1f171d1f0a7dd77">
+    <a href="/chromium/src/+log/fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d5d53b5d6662ca22cef0aabfd1f171d1f0a7dd77.tar.gz">
+    <a href="/chromium/src/+archive/fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Roman Sorokin &lt;rsorokin@chromium.org&gt;
+   Morten Stenshorne &lt;mstensho@chromium.org&gt;
   </td>
   <td>
-   Thu Feb 09 08:26:43 2023
+   Thu Feb 09 08:41:40 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Feb 09 08:26:43 2023
+   Thu Feb 09 08:41:40 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d5d53b5d6662ca22cef0aabfd1f171d1f0a7dd77/">
-    d5361d8f961610cbdc63b00ea68c9350a8e7a01d
+   <a href="/chromium/src/+/fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f/">
+    dbee81f2d05d7b8a597d57bfc6ad30751c6cf377
    </a>
   </td>
  </tr>
@@ -166,37 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d5d53b5d6662ca22cef0aabfd1f171d1f0a7dd77%5E">
-    f0c76078f6f6467bdfba81ade0a697ea7b3d1c9a
+   <a href="/chromium/src/+/fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f%5E">
+    0ae237fb0d291373a8fa20674d41f1d850f3e345
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d5d53b5d6662ca22cef0aabfd1f171d1f0a7dd77%5E%21/">
+    <a href="/chromium/src/+/fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland of [policy presubmit] Merge two presubmits
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove DCHECK in RelayoutIgnoringChildScrollbarChanges().
 
-This is a reland of commit 357828e0f252efa2e36fa5ebe26a293ceb8e7c11
+We used to DCHECK that we didn't have layout_info_for_devtools_ set when
+re-laying out after a scrollbar change. But this situation seems
+harmless, and the DCHECK failure could be triggered quite easily. All we
+needed was a flex item with an auto scrollbar, and toggle the need for
+the scrollbar, while devtools was active.
 
-* Move components/policy/resources/PRESUBMIT.py on level up - so it's
-triggered also by the syntax checker changes
-* Run the syntax checker against the whole list of policy in case the
-checker has changed
-* Small refactoring of the constant paths
-* Change contacts for the presubmit
+NGFlexLayoutAlgorithm::NGFlexLayoutAlgorithm() will set up
+layout_info_for_devtools_ if needed. If we end up in
+RelayoutIgnoringChildScrollbarChanges(), we'll invoke another
+NGFlexLayoutAlgorithm, which will set up and populate
+layout_info_for_devtools_ again, transfer it to the fragment builder and
+store it in the layout result. The output from the original flex layout
+algorithm instance will be discarded and have no effect, on the other
+hand. This situation doesn't seem problematic at all to me.
 
-BUG=b:266377723
+Also remove an unused DevtoolsFlexInfo* parameter to
+NGFlexLayoutAlgorithm(), which in a way did suggest that it was bad to
+just drop the original layout_info_for_devtools_ on the floor.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I246ba87fe7261e543b33c994d3b7c0a61cbfbfc4">I246ba87fe7261e543b33c994d3b7c0a61cbfbfc4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4227079">https://chromium-review.googlesource.com/c/chromium/src/+/4227079</a>
-Reviewed-by: Yann Dago &lt;ydago@chromium.org&gt;
-Commit-Queue: Roman Sorokin &lt;rsorokin@google.com&gt;
-Auto-Submit: Roman Sorokin &lt;rsorokin@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1103168}
+Bug: 1395114
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I832ea0c59e0ad0fd09a7837f7ff798c03d32f304">I832ea0c59e0ad0fd09a7837f7ff798c03d32f304</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4231753">https://chromium-review.googlesource.com/c/chromium/src/+/4231753</a>
+Commit-Queue: Morten Stenshorne &lt;mstensho@chromium.org&gt;
+Reviewed-by: Alison Maher &lt;almaher@microsoft.com&gt;
+Reviewed-by: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1103172}
 </pre>
 
 </body>
