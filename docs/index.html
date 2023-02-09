@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1103172/"> 1103172</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f">fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1103185/"> 1103185</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0fbf7d4d66c1d635bf997aa69914077832aeb32e">0fbf7d4d66c1d635bf997aa69914077832aeb32e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1103156/">1103156</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6c30ad1fbb58d56094fb32189291b391ab048b53">6c30ad1fbb58d56094fb32189291b391ab048b53</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1103172/">1103172</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f">fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f
+   0fbf7d4d66c1d635bf997aa69914077832aeb32e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f">
+    <a href="/chromium/src/+log/0fbf7d4d66c1d635bf997aa69914077832aeb32e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f.tar.gz">
+    <a href="/chromium/src/+archive/0fbf7d4d66c1d635bf997aa69914077832aeb32e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Morten Stenshorne &lt;mstensho@chromium.org&gt;
+   Rushan Suleymanov &lt;rushans@google.com&gt;
   </td>
   <td>
-   Thu Feb 09 08:41:40 2023
+   Thu Feb 09 09:38:29 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Feb 09 08:41:40 2023
+   Thu Feb 09 09:38:29 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f/">
-    dbee81f2d05d7b8a597d57bfc6ad30751c6cf377
+   <a href="/chromium/src/+/0fbf7d4d66c1d635bf997aa69914077832aeb32e/">
+    f8e4fed9b807e53699b8ceed4e3a52b805bca3f3
    </a>
   </td>
  </tr>
@@ -166,46 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f%5E">
-    0ae237fb0d291373a8fa20674d41f1d850f3e345
+   <a href="/chromium/src/+/0fbf7d4d66c1d635bf997aa69914077832aeb32e%5E">
+    e961be2e1b82eab37c36bbe82ba70a467c8ce934
    </a>
    <span>
     [
-    <a href="/chromium/src/+/fb6149ea28a18c0a65859b2b5eb3fcd178f0e84f%5E%21/">
+    <a href="/chromium/src/+/0fbf7d4d66c1d635bf997aa69914077832aeb32e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove DCHECK in RelayoutIgnoringChildScrollbarChanges().
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[WIP] Re-enabled simulated keystroke clipboard tests on Macs"
 
-We used to DCHECK that we didn't have layout_info_for_devtools_ set when
-re-laying out after a scrollbar change. But this situation seems
-harmless, and the DCHECK failure could be triggered quite easily. All we
-needed was a flex item with an auto scrollbar, and toggle the need for
-the scrollbar, while devtools was active.
+This reverts commit a46a08e70849cfcec4e321f51decc62e7322de0e.
 
-NGFlexLayoutAlgorithm::NGFlexLayoutAlgorithm() will set up
-layout_info_for_devtools_ if needed. If we end up in
-RelayoutIgnoringChildScrollbarChanges(), we'll invoke another
-NGFlexLayoutAlgorithm, which will set up and populate
-layout_info_for_devtools_ again, transfer it to the fragment builder and
-store it in the layout result. The output from the original flex layout
-algorithm instance will be discarded and have no effect, on the other
-hand. This situation doesn't seem problematic at all to me.
+Reason for revert: Test fails on Mac: <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/mac12-arm64-rel-tests/5798/test-results?sortby=&amp;groupby=">https://ci.chromium.org/ui/p/chromium/builders/ci/mac12-arm64-rel-tests/5798/test-results?sortby=&amp;groupby=</a>
 
-Also remove an unused DevtoolsFlexInfo* parameter to
-NGFlexLayoutAlgorithm(), which in a way did suggest that it was bad to
-just drop the original layout_info_for_devtools_ on the floor.
+Original change's description:
+&gt; [WIP] Re-enabled simulated keystroke clipboard tests on Macs
+&gt;
+&gt; This CL explicitely grants clipboard read/write permissions which appears to reslove issues that cause the test to fail on Macs.
+&gt;
+&gt; Bug: 1414190
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id901552548e52e2b80a7dca00b6f0919b4b0a944">Id901552548e52e2b80a7dca00b6f0919b4b0a944</a>
+&gt; Cq-Include-Trybots: luci.chromium.try:mac12-tests
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4234828">https://chromium-review.googlesource.com/c/chromium/src/+/4234828</a>
+&gt; Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
+&gt; Commit-Queue: Peter Kvitek &lt;kvitekp@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1103114}
 
-Bug: 1395114
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I832ea0c59e0ad0fd09a7837f7ff798c03d32f304">I832ea0c59e0ad0fd09a7837f7ff798c03d32f304</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4231753">https://chromium-review.googlesource.com/c/chromium/src/+/4231753</a>
-Commit-Queue: Morten Stenshorne &lt;mstensho@chromium.org&gt;
-Reviewed-by: Alison Maher &lt;almaher@microsoft.com&gt;
-Reviewed-by: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1103172}
+Bug: 1414190
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaedeaf7dc7c9e60d731a5722ac14c796d719a6ac">Iaedeaf7dc7c9e60d731a5722ac14c796d719a6ac</a>
+Cq-Include-Trybots: luci.chromium.try:mac12-tests
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4234960">https://chromium-review.googlesource.com/c/chromium/src/+/4234960</a>
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Auto-Submit: Rushan Suleymanov &lt;rushans@google.com&gt;
+Owners-Override: Rushan Suleymanov &lt;rushans@google.com&gt;
+Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1103185}
 </pre>
 
 </body>
