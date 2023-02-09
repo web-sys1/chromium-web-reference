@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1103486/"> 1103486</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c6a0cea4bf60b102fdd8a3665edb9e4db5504e1a">c6a0cea4bf60b102fdd8a3665edb9e4db5504e1a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1103508/"> 1103508</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7def1ca21b59ca120259f79deaac8b18bb2c20ac">7def1ca21b59ca120259f79deaac8b18bb2c20ac</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1103424/">1103424</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c6a0cea4bf60b102fdd8a3665edb9e4db5504e1a
+   7def1ca21b59ca120259f79deaac8b18bb2c20ac
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c6a0cea4bf60b102fdd8a3665edb9e4db5504e1a">
+    <a href="/chromium/src/+log/7def1ca21b59ca120259f79deaac8b18bb2c20ac">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c6a0cea4bf60b102fdd8a3665edb9e4db5504e1a.tar.gz">
+    <a href="/chromium/src/+archive/7def1ca21b59ca120259f79deaac8b18bb2c20ac.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Brandon Fong &lt;bjfong@google.com&gt;
+   Nina Satragno &lt;nsatragno@chromium.org&gt;
   </td>
   <td>
-   Thu Feb 09 21:17:52 2023
+   Thu Feb 09 21:53:47 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Feb 09 21:17:52 2023
+   Thu Feb 09 21:53:47 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c6a0cea4bf60b102fdd8a3665edb9e4db5504e1a/">
-    b084546c818c55515cbefa1d7e93acbdbe3b8d79
+   <a href="/chromium/src/+/7def1ca21b59ca120259f79deaac8b18bb2c20ac/">
+    653550df599090b0abe14346d549becc34a6f86f
    </a>
   </td>
  </tr>
@@ -166,29 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c6a0cea4bf60b102fdd8a3665edb9e4db5504e1a%5E">
-    cbaedf66541a18506c4d2c482c8fddb1b331c186
+   <a href="/chromium/src/+/7def1ca21b59ca120259f79deaac8b18bb2c20ac%5E">
+    bbfd2b5287da953a36c8dfafbb2e178a6b7e7c2c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c6a0cea4bf60b102fdd8a3665edb9e4db5504e1a%5E%21/">
+    <a href="/chromium/src/+/7def1ca21b59ca120259f79deaac8b18bb2c20ac%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Code Health] Fix longpressing a tab check from being out of bounds
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[webauthn] Polish QR code first flow
 
-Add a check when longpressing to make sure that the selected tab index is within the bounds of the number of tabs in the tab model.
+An existing feature under the WebAuthenticationPasskeysUI flag changes the passkey flow to jump straight to the QR code for a handful of cases.
+This CL tweaks the feature. Chrome will jump to the QR code for:
+* A passkey request, which means:
+  * Get assertion with empty allow-list, OR
+  * Make credential with resident key NOT discouraged
+  AND
+* There are no paired phones AND
+* We are certain there are no usable matching platform credentials
 
-Fixed: 1414369
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6c78a7eb5b62d92378f41e3fb284c8068e248d5f">I6c78a7eb5b62d92378f41e3fb284c8068e248d5f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4236078">https://chromium-review.googlesource.com/c/chromium/src/+/4236078</a>
-Reviewed-by: Yue Zhang &lt;yuezhanggg@chromium.org&gt;
-Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Commit-Queue: Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1103486}
+Additionally, chrome will no longer jump to the internal authenticator
+for resident key discouraged make credential requests on mac. Instead,
+the mechanism selection screen will be shown for consistency with
+Windows.
+
+This CL will be followed up by an update to
+WinWebAuthnApiAuthenticator::GetCredentialInformationForRequest to
+convey that "unknown" platform credential status on Windows &lt;= 10.
+
+Bug: 1412877
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I700b3f35e4ff57f1ee4bdd2211783c27c4d0fac9">I700b3f35e4ff57f1ee4bdd2211783c27c4d0fac9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4220694">https://chromium-review.googlesource.com/c/chromium/src/+/4220694</a>
+Commit-Queue: Nina Satragno &lt;nsatragno@chromium.org&gt;
+Reviewed-by: Martin Kreichgauer &lt;martinkr@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1103508}
 </pre>
 
 </body>
