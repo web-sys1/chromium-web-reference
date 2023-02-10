@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1103986/"> 1103986</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/37eade05bcff02b43bce864f188d82391081512f">37eade05bcff02b43bce864f188d82391081512f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1104023/"> 1104023</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/670726be1c71a391b66cbcd0bacf22153cf135c4">670726be1c71a391b66cbcd0bacf22153cf135c4</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1103927/">1103927</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9cd7888f770fc28cde41dc8632f085cfc80cfa07">9cd7888f770fc28cde41dc8632f085cfc80cfa07</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1103994/">1103994</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/03340991b0c981252d4cae4d7fd69c1dc7225f75">03340991b0c981252d4cae4d7fd69c1dc7225f75</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   37eade05bcff02b43bce864f188d82391081512f
+   670726be1c71a391b66cbcd0bacf22153cf135c4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/37eade05bcff02b43bce864f188d82391081512f">
+    <a href="/chromium/src/+log/670726be1c71a391b66cbcd0bacf22153cf135c4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/37eade05bcff02b43bce864f188d82391081512f.tar.gz">
+    <a href="/chromium/src/+archive/670726be1c71a391b66cbcd0bacf22153cf135c4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ian Vollick &lt;vollick@chromium.org&gt;
+   Mason Freed &lt;masonf@chromium.org&gt;
   </td>
   <td>
-   Fri Feb 10 19:55:54 2023
+   Fri Feb 10 20:41:09 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 10 19:55:54 2023
+   Fri Feb 10 20:41:09 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/37eade05bcff02b43bce864f188d82391081512f/">
-    82a5ffb336707e22daab4d0c1c6bfcff09a6e900
+   <a href="/chromium/src/+/670726be1c71a391b66cbcd0bacf22153cf135c4/">
+    f11ec4370753a90eea6a74565dbd07f98db4a24f
    </a>
   </td>
  </tr>
@@ -166,52 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/37eade05bcff02b43bce864f188d82391081512f%5E">
-    7b9cbc058ed808ad2c315d22a3ba8c216b5bed4e
+   <a href="/chromium/src/+/670726be1c71a391b66cbcd0bacf22153cf135c4%5E">
+    f9a2eaf443f28e421f509e927325610d98af22d3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/37eade05bcff02b43bce864f188d82391081512f%5E%21/">
+    <a href="/chromium/src/+/670726be1c71a391b66cbcd0bacf22153cf135c4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ios] Switch to mach absolute time to align with mac
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add DOMParser.parseFromString use counter
 
-This updates TimeTicks in both base/time (and partition alloc's
-version of said machinery) to use mach absolute time as is done on
-mac if the correct build flags are set. To enable this behavior
-you can set the following gn args to true
-enable_mach_absolute_time_ticks, and
-partition_alloc_enable_mach_absolute_time_ticks.
+A use counter was added [1] for just the case where declarative
+shadow DOM is parsed. This CL adds a more general use counter for
+DOMParser.parseFromString.
 
-Alternatively, you can set use_blink = true and this will imply
-setting both of the previously mentioned gn args to to true.
+[1] <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4201192">https://chromium-review.googlesource.com/c/chromium/src/+/4201192</a>
 
-Additionally, this change also enables thread ticks on iOS and
-this is not gated on a buildflag.
-
-While there may be broader clock-related improvements coming
-(see crrev.com/c/4225015), this CL should ensure consistency on
-iOS in the short term and if there is something better in the
-long term, then the approach can be migrated along with mac
-(though dtapuska reminded me that absolute time and
-CLOCK_UPTIME_RAW are equivalent, so these plans seem aligned).
-
-credit: thanks to rohitrao@ for suggesting the buildflags approach
-and to dtapuska@ for suggesting assertions to ensure that use_blink
-makes sense wrt to these new flags.
-
-Bug: 1414153
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If2abc0f67ab2485ec1266bd63ae1da6d6a0f8744">If2abc0f67ab2485ec1266bd63ae1da6d6a0f8744</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4219334">https://chromium-review.googlesource.com/c/chromium/src/+/4219334</a>
-Commit-Queue: Ian Vollick &lt;vollick@chromium.org&gt;
-Reviewed-by: Mark Mentovai &lt;mark@chromium.org&gt;
-Reviewed-by: Francois Pierre Doray &lt;fdoray@chromium.org&gt;
-Reviewed-by: Dave Tapuska &lt;dtapuska@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1103986}
+Bug: 1379513
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I238927dacf85b48fca446f24c130e76434da36c9">I238927dacf85b48fca446f24c130e76434da36c9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4241859">https://chromium-review.googlesource.com/c/chromium/src/+/4241859</a>
+Commit-Queue: Mason Freed &lt;masonf@chromium.org&gt;
+Auto-Submit: Mason Freed &lt;masonf@chromium.org&gt;
+Commit-Queue: Joey Arhar &lt;jarhar@chromium.org&gt;
+Reviewed-by: Joey Arhar &lt;jarhar@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1104023}
 </pre>
 
 </body>
