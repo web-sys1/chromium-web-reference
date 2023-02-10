@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1103927/"> 1103927</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9cd7888f770fc28cde41dc8632f085cfc80cfa07">9cd7888f770fc28cde41dc8632f085cfc80cfa07</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1103906/"> 1103906</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9101246d8e4a2381a1d676bbecd3f0db0f4714e4">9101246d8e4a2381a1d676bbecd3f0db0f4714e4</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1103890/">1103890</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9cd7888f770fc28cde41dc8632f085cfc80cfa07
+   9101246d8e4a2381a1d676bbecd3f0db0f4714e4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9cd7888f770fc28cde41dc8632f085cfc80cfa07">
+    <a href="/chromium/src/+log/9101246d8e4a2381a1d676bbecd3f0db0f4714e4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9cd7888f770fc28cde41dc8632f085cfc80cfa07.tar.gz">
+    <a href="/chromium/src/+archive/9101246d8e4a2381a1d676bbecd3f0db0f4714e4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Etienne Pierre-doray &lt;etiennep@chromium.org&gt;
+   Jesse McKenna &lt;jessemckenna@google.com&gt;
   </td>
   <td>
-   Fri Feb 10 17:56:48 2023
+   Fri Feb 10 17:21:29 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 10 17:56:48 2023
+   Fri Feb 10 17:21:29 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9cd7888f770fc28cde41dc8632f085cfc80cfa07/">
-    def64e546b746cccb780307096bc56f8181018a3
+   <a href="/chromium/src/+/9101246d8e4a2381a1d676bbecd3f0db0f4714e4/">
+    9cfc452c6c4789f10681ac96cca8be4c20d7cc44
    </a>
   </td>
  </tr>
@@ -166,32 +166,71 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9cd7888f770fc28cde41dc8632f085cfc80cfa07%5E">
-    aaecb38ab7f538438c3ed7fafd9bed90aaeb29bb
+   <a href="/chromium/src/+/9101246d8e4a2381a1d676bbecd3f0db0f4714e4%5E">
+    3df3d034d009aadbfee11febce9e91fd655a2fc5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9cd7888f770fc28cde41dc8632f085cfc80cfa07%5E%21/">
+    <a href="/chromium/src/+/9101246d8e4a2381a1d676bbecd3f0db0f4714e4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Set FontServiceThread task runner USER_BLOCKING TaskPriority
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove out/.../enhanced_network_tts/ from gn data
 
-In MatchFamilyName, the main thread blocks on on MatchFamilyNameImpl
-running in the task runner. This indicates the task should run at USER_BLOCKING as to not block the main thread.
-A running experiment reducing priority of USER_VISIBLE task
-caused renderer hangs related to this function.
+mb.py enforces that BUILD.gn "data" sections should not point to
+subdirectories of the output directory [1].
 
-Bug: 1412667
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I144be16e6baf5739b2bafe04a1cf5f2df6dd3831">I144be16e6baf5739b2bafe04a1cf5f2df6dd3831</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4226973">https://chromium-review.googlesource.com/c/chromium/src/+/4226973</a>
-Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Commit-Queue: Etienne Pierre-Doray &lt;etiennep@chromium.org&gt;
-Reviewed-by: Dominik Röttsches &lt;drott@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1103927}
+This BUILD.gn file contains one such reference, which blocks the use of
+mb.py when building browser_tests for ChromeOS [2]. Specifically, mb.py
+shows the following error [3]:
+
+    error: gn `data` items may not list generated directories; list files in directory instead for:
+    //out/bug/resources/chromeos/accessibility/enhanced_network_tts/
+
+The recommended fix is to either list specific files that are needed
+(rather than an entire directory), or to simply remove the dependency if
+no longer needed.
+
+In this case, files in the directory seems to be depended on by
+enhanced_network_tts_e2e_test_base.js, so this change makes BUILD.gn
+refer to the specific files rather than the overall directory.
+
+[1] <a href="https://source.chromium.org/chromium/chromium/src/+/main:tools/mb/mb.py;l=1577?q=tools%2Fmb%2Fmb.py%20-file:third_party%2F%20-file:gen%2F%20-file:go%2F%20-file:v8%2F%20-file:buildtools%20-file:%5C.js%20-file:native_client%20-file:ppapi%20-file:%5C.html%20-file:%5C.java%20-file:.mojo">https://source.chromium.org/chromium/chromium/src/+/main:tools/mb/mb.py;l=1577?q=tools%2Fmb%2Fmb.py%20-file:third_party%2F%20-file:gen%2F%20-file:go%2F%20-file:v8%2F%20-file:buildtools%20-file:%5C.js%20-file:native_client%20-file:ppapi%20-file:%5C.html%20-file:%5C.java%20-file:.mojo</a>
+[2] GN arguments used when the issue was encountered:
+
+    is_chrome_branded = false
+    is_component_build = true
+    is_debug = true
+    symbol_level = 2
+    use_full_pdb_paths = true
+    use_goma = true
+    enable_nacl = false
+    blink_symbol_level = 0
+    v8_symbol_level = 0
+    is_official_build = false
+    target_os = "chromeos"
+[3] full output:
+     jessemckenna@jessemckenna-linux:~/chromium/src$ tools/run-swarmed.py out/bug browser_tests --swarming-os Ubuntu-18.04 -- --gtest_filter=*BreadcrumbManagerTabHelperBrowserTest.Download*
+    error: gn `data` items may not list generated directories; list files in directory instead for:
+    //out/bug/resources/chromeos/accessibility/enhanced_network_tts/
+    Traceback (most recent call last):
+    File "/usr/local/google/home/jessemckenna/chromium/src/tools/run-swarmed.py", line 354, in &lt;module&gt;
+        sys.exit(main())
+    File "/usr/local/google/home/jessemckenna/chromium/src/tools/run-swarmed.py", line 288, in main
+        subprocess.check_call(mb_cmd, shell=os.name == 'nt')
+    File "/usr/lib/python3.10/subprocess.py", line 369, in check_call
+        raise CalledProcessError(retcode, cmd)
+    subprocess.CalledProcessError: Command '['tools/mb/mb', 'isolate', '--no-build', '//out/bug', 'browser_tests']' returned non-zero exit status 1.
+
+Bug: 1002509, 1344663
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6c6e6256aa966fbe3d6b2065912aa3a06f5648fd">I6c6e6256aa966fbe3d6b2065912aa3a06f5648fd</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4234488">https://chromium-review.googlesource.com/c/chromium/src/+/4234488</a>
+Commit-Queue: Jesse McKenna &lt;jessemckenna@google.com&gt;
+Reviewed-by: Akihiro Ota &lt;akihiroota@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1103906}
 </pre>
 
 </body>
