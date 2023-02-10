@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1103529/"> 1103529</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/122936b6d20d16a0f117e1e87221b159fde40861">122936b6d20d16a0f117e1e87221b159fde40861</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1103565/"> 1103565</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/90041b947a0973c2cd2e16379008b3f7e0b9b4f9">90041b947a0973c2cd2e16379008b3f7e0b9b4f9</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1103490/">1103490</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c7ae9713ed1ca47350f3f6095b35e0740aa105ef">c7ae9713ed1ca47350f3f6095b35e0740aa105ef</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1103545/">1103545</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c9edadcc386b521b85e8f785ff339dce0e381f54">c9edadcc386b521b85e8f785ff339dce0e381f54</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   122936b6d20d16a0f117e1e87221b159fde40861
+   90041b947a0973c2cd2e16379008b3f7e0b9b4f9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/122936b6d20d16a0f117e1e87221b159fde40861">
+    <a href="/chromium/src/+log/90041b947a0973c2cd2e16379008b3f7e0b9b4f9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/122936b6d20d16a0f117e1e87221b159fde40861.tar.gz">
+    <a href="/chromium/src/+archive/90041b947a0973c2cd2e16379008b3f7e0b9b4f9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Peter Wen &lt;wnwen@chromium.org&gt;
+   Sangbaek Park &lt;sangbaekpark@chromium.org&gt;
   </td>
   <td>
-   Thu Feb 09 22:33:13 2023
+   Thu Feb 09 23:46:12 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Feb 09 22:33:13 2023
+   Thu Feb 09 23:46:12 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/122936b6d20d16a0f117e1e87221b159fde40861/">
-    1dc38b2f446301eef1c1ce7daafcdd62352b1b14
+   <a href="/chromium/src/+/90041b947a0973c2cd2e16379008b3f7e0b9b4f9/">
+    84397fc61b357467e7492dd19711bf81a2890e3a
    </a>
   </td>
  </tr>
@@ -166,35 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/122936b6d20d16a0f117e1e87221b159fde40861%5E">
-    54058bc6094f33f8fc08bbd21c3374b4a507e10d
+   <a href="/chromium/src/+/90041b947a0973c2cd2e16379008b3f7e0b9b4f9%5E">
+    b6982c4dcff8374b8143134776243cbbe560723f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/122936b6d20d16a0f117e1e87221b159fde40861%5E%21/">
+    <a href="/chromium/src/+/90041b947a0973c2cd2e16379008b3f7e0b9b4f9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "Android: Update play core library"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media: Media Foundation Clear Key CDM registration and load (part 1)
 
-Fixed:
-- Suppressed errorprone warnings from clang-build bot.
+- Registered Media Foundation Clear Key CDM (MFCKCDM) only if
+browser_tests for Windows is enabled
+- MFCKCDM key system name is "org.chromium.externalclearkey.mediafoundation"
+- `encrypted_media_browsertest.cc` enabled
+`switches::kMediaFoundationClearKeyCdmPathForTesting` feature for testing
+- Turned out no need to grant access for sandboxed LPAC process
+- Loading MFCKCDM works with/without `--no-sandbox` flag
 
-Also allow downstream to override the play core library.
+Build and run test commands:
+```
+autoninja -C out\Default browser_tests
+```
 
-Bug: 1411347, 1413741
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib47d8c2473aed4b54853482088e8c212651dadff">Ib47d8c2473aed4b54853482088e8c212651dadff</a>
-Binary-Size: Updated google play basement/libs.
-Cq-Include-Trybots: luci.chrome.try:android-internal-rel
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4233789">https://chromium-review.googlesource.com/c/chromium/src/+/4233789</a>
-Auto-Submit: Peter Wen &lt;wnwen@chromium.org&gt;
-Owners-Override: Peter Wen &lt;wnwen@chromium.org&gt;
-Commit-Queue: Andrew Grieve &lt;agrieve@chromium.org&gt;
-Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1103529}
+Bug: 1235887
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib563a26254f617f9edbda993a5691c2a3c110be4">Ib563a26254f617f9edbda993a5691c2a3c110be4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4102325">https://chromium-review.googlesource.com/c/chromium/src/+/4102325</a>
+Reviewed-by: Xiaohan Wang &lt;xhwang@chromium.org&gt;
+Reviewed-by: Joshua Bell &lt;jsbell@chromium.org&gt;
+Commit-Queue: Sangbaek Park &lt;sangbaekpark@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1103565}
 </pre>
 
 </body>
