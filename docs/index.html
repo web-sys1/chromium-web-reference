@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1104452/"> 1104452</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3084165ea6349a7ff8fb79d5cb25662852271e4c">3084165ea6349a7ff8fb79d5cb25662852271e4c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1104460/"> 1104460</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/964e72c4810cd02b5f6c43fa442d29324c9830cc">964e72c4810cd02b5f6c43fa442d29324c9830cc</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1104444/">1104444</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3084165ea6349a7ff8fb79d5cb25662852271e4c
+   964e72c4810cd02b5f6c43fa442d29324c9830cc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3084165ea6349a7ff8fb79d5cb25662852271e4c">
+    <a href="/chromium/src/+log/964e72c4810cd02b5f6c43fa442d29324c9830cc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3084165ea6349a7ff8fb79d5cb25662852271e4c.tar.gz">
+    <a href="/chromium/src/+archive/964e72c4810cd02b5f6c43fa442d29324c9830cc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tsuyoshi Horo &lt;horo@chromium.org&gt;
+   Fredrik Hernqvist &lt;fhernqvist@google.com&gt;
   </td>
   <td>
-   Mon Feb 13 13:17:28 2023
+   Mon Feb 13 13:58:05 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Feb 13 13:17:28 2023
+   Mon Feb 13 13:58:05 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3084165ea6349a7ff8fb79d5cb25662852271e4c/">
-    12990dd2d9c0be0f89616e9703c78bdb3d86cded
+   <a href="/chromium/src/+/964e72c4810cd02b5f6c43fa442d29324c9830cc/">
+    b45ce83cf61ddbe7a0f7e0a41bdfb817c0bebfde
    </a>
   </td>
  </tr>
@@ -166,39 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3084165ea6349a7ff8fb79d5cb25662852271e4c%5E">
-    0d4b241b6abc3044979132631605af29b46ca6f9
+   <a href="/chromium/src/+/964e72c4810cd02b5f6c43fa442d29324c9830cc%5E">
+    fe3973b035d61aea02ef11b2a7bbd9572c73cac8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3084165ea6349a7ff8fb79d5cb25662852271e4c%5E%21/">
+    <a href="/chromium/src/+/964e72c4810cd02b5f6c43fa442d29324c9830cc%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Stop creating WebURLLoaderFactory in content/
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add new audio metrics histograms covering AudioOutputDevice to OS.
 
-This CL does the following:
- 1. Delete Platform::WrapURLLoaderFactory() method.
+We are utilising the new info in
+<a href="https://source.chromium.org/chromium/chromium/src/+/main:media/base/audio_glitch_info.h">https://source.chromium.org/chromium/chromium/src/+/main:media/base/audio_glitch_info.h</a>
+to calculate these stats.
 
- 2. Make RenderThreadImpl::InitializeRenderer() call a new
-    blink::SetCorsExemptHeaderList() method which calls
-    blink::LoaderFactoryForFrame::SetCorsExemptHeaderList().
+The histogram stuff might look weird. It's to make it faster when
+logging it 200 times per second, see this discussion for an
+explanation:
+<a href="https://groups.google.com/a/google.com/g/uma-users/c/8IliQqP6UI4/m/LFX4qb_BDgAJ?utm_medium=email&amp;utm_source=footer">https://groups.google.com/a/google.com/g/uma-users/c/8IliQqP6UI4/m/LFX4qb_BDgAJ?utm_medium=email&amp;utm_source=footer</a>
 
- 3. blink::LoaderFactoryForFrame::CreateURLLoader() and
-    PrefetchedSignedExchangeManager will create a WebURLLoaderFactory
-    using a new blink::LoaderFactoryForFrame::GetCorsExemptHeaderList()
-    method.
-
-Bug: 1413912
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6a37e355ee5779878ad3b086b079a04e6f9ab64b">I6a37e355ee5779878ad3b086b079a04e6f9ab64b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4236209">https://chromium-review.googlesource.com/c/chromium/src/+/4236209</a>
-Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
-Commit-Queue: Tsuyoshi Horo &lt;horo@chromium.org&gt;
-Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1104452}
+Bug: 1384539
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4f01b82eee21b52ec3d4fafa6fde9d81bb039166">I4f01b82eee21b52ec3d4fafa6fde9d81bb039166</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4194273">https://chromium-review.googlesource.com/c/chromium/src/+/4194273</a>
+Reviewed-by: Robert Kaplow &lt;rkaplow@chromium.org&gt;
+Reviewed-by: Olga Sharonova &lt;olka@chromium.org&gt;
+Commit-Queue: Fredrik Hernqvist &lt;fhernqvist@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1104460}
 </pre>
 
 </body>
