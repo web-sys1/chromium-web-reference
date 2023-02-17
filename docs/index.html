@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1106587/"> 1106587</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9642aaf8ae88ec19dc5847d680c49d5b3c61c98d">9642aaf8ae88ec19dc5847d680c49d5b3c61c98d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1106608/"> 1106608</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/72d89b0bb832f2a7539a2469c592cdf589db8466">72d89b0bb832f2a7539a2469c592cdf589db8466</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1106583/">1106583</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9642aaf8ae88ec19dc5847d680c49d5b3c61c98d
+   72d89b0bb832f2a7539a2469c592cdf589db8466
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9642aaf8ae88ec19dc5847d680c49d5b3c61c98d">
+    <a href="/chromium/src/+log/72d89b0bb832f2a7539a2469c592cdf589db8466">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9642aaf8ae88ec19dc5847d680c49d5b3c61c98d.tar.gz">
+    <a href="/chromium/src/+archive/72d89b0bb832f2a7539a2469c592cdf589db8466.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Eriko Kurimoto &lt;elkurin@chromium.org&gt;
+   Scott Haseley &lt;shaseley@chromium.org&gt;
   </td>
   <td>
-   Fri Feb 17 02:21:39 2023
+   Fri Feb 17 03:29:25 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 17 02:21:39 2023
+   Fri Feb 17 03:29:25 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9642aaf8ae88ec19dc5847d680c49d5b3c61c98d/">
-    293cb1a2f227f3ed251f25a2d365091992116318
+   <a href="/chromium/src/+/72d89b0bb832f2a7539a2469c592cdf589db8466/">
+    559e842104d565c30c9e53d34021aefaac0e9215
    </a>
   </td>
  </tr>
@@ -166,29 +166,63 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9642aaf8ae88ec19dc5847d680c49d5b3c61c98d%5E">
-    9727df644c798626f715bd3f70d4fe299754e1a3
+   <a href="/chromium/src/+/72d89b0bb832f2a7539a2469c592cdf589db8466%5E">
+    56f688d37c4d9805fcdcd968cae8a6531374d836
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9642aaf8ae88ec19dc5847d680c49d5b3c61c98d%5E%21/">
+    <a href="/chromium/src/+/72d89b0bb832f2a7539a2469c592cdf589db8466%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">TooltipLacros: Enable rest of tooltip_controller_unittest on Lacros
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">SequenceManager: Make priorities configurable (yield API 1/n)
 
-This CL enables TooltipControllerTest3 and TooltipStateManagerTest on
-Lacros.
+This CL makes SequenceManager priorities configurable through a new
+SequenceManager::Settings option, with a single priority being
+configured as the default. This is being done in advance of adding new
+renderer-specific priorities to support `scheduler.yield()`, as well
+as experimenting with downshifting priorities in backgrounded agents.
 
-Bug: 1394914
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5e048760a82d00774cd806f845dfe584314a6dd7">I5e048760a82d00774cd806f845dfe584314a6dd7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4259430">https://chromium-review.googlesource.com/c/chromium/src/+/4259430</a>
-Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Commit-Queue: Eriko Kurimoto &lt;elkurin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1106587}
+Configurable priorities have a few advantages:
+ - Priority definitions are closer to where they're used, making it
+   clear what priority system is being used where. This also enables
+   better semantic (re)naming of priorities in the future, where it
+   makes sense.
+ - It prevents render-specific details from creeping into
+   SequenceManager
+ - It reduces data structure sizes for sequences that don't use
+   priorities (currently only renderer main thread, (blink) workers,
+   and browser UI thread).
+
+SequenceManager is already (mostly) set up to handle an arbitrary
+number of priorities; the main non-mechanical changes are:
+ - A few data structures need to be vectors instead of arrays (this
+   was cleaner and simpler than templating SequenceManager).
+ - Tracing needs to support multiple priority systems, which is
+   implemented with a configurable priority-to-proto-priority
+   conversion function, along with expanding the proto enum to be the
+   union of browser, renderer, and worker priorities.
+ - TaskEnvironment is updated to support configurable priorities in
+   its constructor, which BrowserTaskEnvironment uses to set up
+   the required settings for the browser task queues.
+ - The idle task priority is passed to IdleHelper along with the idle
+   queue since it differs between main and non-main renderer threads.
+   I'll try to set this set ahead of time in a follow-up, but this
+   would have increased the complexity of this CL because of how things
+   are constructed.
+
+Bug: 979020
+Low-Coverage-Reason: pure refactor / missing coverage predated this
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I06b47347838c992bcecfe1fe69518c5e8835cdc9">I06b47347838c992bcecfe1fe69518c5e8835cdc9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4114556">https://chromium-review.googlesource.com/c/chromium/src/+/4114556</a>
+Commit-Queue: Scott Haseley &lt;shaseley@chromium.org&gt;
+Reviewed-by: Francois Pierre Doray &lt;fdoray@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1106608}
 </pre>
 
 </body>
