@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1107123/"> 1107123</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9570f4682d08546f3dcb3a668959d65f514cb99b">9570f4682d08546f3dcb3a668959d65f514cb99b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1107126/"> 1107126</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b3218d33bbb61209e211e0285ee6f816f6758dc6">b3218d33bbb61209e211e0285ee6f816f6758dc6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1107116/">1107116</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9570f4682d08546f3dcb3a668959d65f514cb99b
+   b3218d33bbb61209e211e0285ee6f816f6758dc6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9570f4682d08546f3dcb3a668959d65f514cb99b">
+    <a href="/chromium/src/+log/b3218d33bbb61209e211e0285ee6f816f6758dc6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9570f4682d08546f3dcb3a668959d65f514cb99b.tar.gz">
+    <a href="/chromium/src/+archive/b3218d33bbb61209e211e0285ee6f816f6758dc6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
+   Ari Chivukula &lt;arichiv@chromium.org&gt;
   </td>
   <td>
-   Sat Feb 18 04:31:45 2023
+   Sat Feb 18 05:10:47 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Feb 18 04:31:45 2023
+   Sat Feb 18 05:10:47 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9570f4682d08546f3dcb3a668959d65f514cb99b/">
-    b4408fc95750c79786417124fb9e48e9debe6b7e
+   <a href="/chromium/src/+/b3218d33bbb61209e211e0285ee6f816f6758dc6/">
+    9158f5ccdb72d8421086f6796cc614fd7955285d
    </a>
   </td>
  </tr>
@@ -166,42 +166,54 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9570f4682d08546f3dcb3a668959d65f514cb99b%5E">
-    2a3142a1ead4347e11565e0a0b5e6f7f8ba8ecdf
+   <a href="/chromium/src/+/b3218d33bbb61209e211e0285ee6f816f6758dc6%5E">
+    810eb4c62851356704f4cfd731975f3728b5fb06
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9570f4682d08546f3dcb3a668959d65f514cb99b%5E%21/">
+    <a href="/chromium/src/+/b3218d33bbb61209e211e0285ee6f816f6758dc6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll clank/internal/apps from dd6af0bf81bb to 78e9a4afd5c8 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[StorageKey] (8) Define opaque origin behavior
 
-<a href="https://chrome-internal.googlesource.com/clank/internal/apps.git/+log/dd6af0bf81bb..78e9a4afd5c8">https://chrome-internal.googlesource.com/clank/internal/apps.git/+log/dd6af0bf81bb..78e9a4afd5c8</a>
+There's a need to keep StorageKey and BlinkStorageKey partial sync, but
+as each organically grew this has gotten lost. As we wrap up and launch
+storage partitioning, we should leave this code in a good state.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://skia-autoroll.corp.goog/r/clank-apps-chromium-autoroll">https://skia-autoroll.corp.goog/r/clank-apps-chromium-autoroll</a>
-Please CC chrome-brapp-engprod@google.com on the revert to ensure that a human
-is aware of the problem.
+We should only maintain storage key states that provide a meaningful
+distinction. Right now, there isn't a context in which we need to
+distinguish between an opaque origin with kCrossSite or kSameSite
+ancestor_chain_bits as there is no circumstance in which a nested opaque
+context could be identical to an outer context with some other context
+in between them. We should require that for any opaque origin kCrossSite
+must be set.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+This caps off a long set of CLs and *should* fully define StorageKey
+behavior.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
+This CL is part of a series:
+(1) Organize public functions and map work
+(2) Rename CreateFirstParty constructors
+(3) Rename CreateWithNonce constructors
+(4) Rename Create constructors
+(5) Organize private functions
+(6) Consolidate validation
+(7) Remove old test constructors
+(8) Define opaque origin behavior
 
-Bug: None
-Tbr: 
-No-Try: true
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic36112df6e29df686bd21e88f42a2d5aa2a8d712">Ic36112df6e29df686bd21e88f42a2d5aa2a8d712</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4265018">https://chromium-review.googlesource.com/c/chromium/src/+/4265018</a>
-Commit-Queue: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1107123}
+Bug: 1410254
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2c148b5865e591d6f56453f05fe2009ec94a4d95">I2c148b5865e591d6f56453f05fe2009ec94a4d95</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4261596">https://chromium-review.googlesource.com/c/chromium/src/+/4261596</a>
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Owners-Override: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Steven Bingler &lt;bingler@chromium.org&gt;
+Auto-Submit: Ari Chivukula &lt;arichiv@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1107126}
 </pre>
 
 </body>
