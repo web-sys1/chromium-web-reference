@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1107540/"> 1107540</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8e1b946de62c336faf2987b65f534708f1b767ab">8e1b946de62c336faf2987b65f534708f1b767ab</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1107545/"> 1107545</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5d111b12f803758b21be41bb8ac6655a457e8141">5d111b12f803758b21be41bb8ac6655a457e8141</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1107534/">1107534</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8e1b946de62c336faf2987b65f534708f1b767ab
+   5d111b12f803758b21be41bb8ac6655a457e8141
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8e1b946de62c336faf2987b65f534708f1b767ab">
+    <a href="/chromium/src/+log/5d111b12f803758b21be41bb8ac6655a457e8141">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8e1b946de62c336faf2987b65f534708f1b767ab.tar.gz">
+    <a href="/chromium/src/+archive/5d111b12f803758b21be41bb8ac6655a457e8141.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
+   Ken Rockot &lt;rockot@google.com&gt;
   </td>
   <td>
-   Mon Feb 20 21:30:32 2023
+   Mon Feb 20 22:22:46 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Feb 20 21:30:32 2023
+   Mon Feb 20 22:22:46 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8e1b946de62c336faf2987b65f534708f1b767ab/">
-    01d542c71b16cff1bb5646ff5948a0375d3a5aef
+   <a href="/chromium/src/+/5d111b12f803758b21be41bb8ac6655a457e8141/">
+    5750d1c85e3c30c16be101acefbabe7444bb8c34
    </a>
   </td>
  </tr>
@@ -166,45 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8e1b946de62c336faf2987b65f534708f1b767ab%5E">
-    06c02f070fe7b360ad7141b61dda4af630da270b
+   <a href="/chromium/src/+/5d111b12f803758b21be41bb8ac6655a457e8141%5E">
+    8843d9a0925234375e6643f2cfd6a70aa82927f9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8e1b946de62c336faf2987b65f534708f1b767ab%5E%21/">
+    <a href="/chromium/src/+/5d111b12f803758b21be41bb8ac6655a457e8141%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll devtools-internal from 77d4b215dce5 to ff5594a1bdc6 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">MojoIpcz: Fix more spurious data pipe trap events
 
-<a href="https://chrome-internal.googlesource.com/devtools/devtools-internal.git/+log/77d4b215dce5..ff5594a1bdc6">https://chrome-internal.googlesource.com/devtools/devtools-internal.git/+log/77d4b215dce5..ff5594a1bdc6</a>
+Recently r1107084 landed to address another kind of spurious data pipe
+trap event, but it introduced a new problem: a portal may now raise
+IPCZ_PORTAL_STATUS_DEAD without also raising
+IPCZ_PORTAL_STATUS_PEER_CLOSED. This can confuse data pipe trap arming
+logic, such that it may correctly fail to arm due to peer closure
+while incorrectly returning an impossible event to indicate that the
+pipe must be -- but is not -- readable.
 
-Also rolling transitive DEPS:
-  <a href="https://chromium.googlesource.com/devtools/devtools-frontend.git/+log/caeba0197155a7f73eb14c917f96c0a9da2d0794..e4fe4416b7e1f6a840f5b5d12419a5bc34e55e9f">https://chromium.googlesource.com/devtools/devtools-frontend.git/+log/caeba0197155a7f73eb14c917f96c0a9da2d0794..e4fe4416b7e1f6a840f5b5d12419a5bc34e55e9f</a>
+The fix here is to ensure that any time we set IPCZ_PORTAL_STATUS_DEAD,
+we also set IPCZ_PORTAL_STATUS_PEER_CLOSED (but not the other way
+around.)
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://skia-autoroll.corp.goog/r/devtools-internal-chromium">https://skia-autoroll.corp.goog/r/devtools-internal-chromium</a>
-Please CC devtools-waterfall-sheriff-onduty@grotations.appspotmail.com,liviurau@google.com on the revert to ensure that a human
-is aware of the problem.
+A regression test is added which can flakily reproduce the failure
+case without this fix applied.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Bug: None
-Tbr: devtools-waterfall-sheriff-onduty@grotations.appspotmail.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iee7a55907b8fe48d7859527ca8e9a163c02e08ba">Iee7a55907b8fe48d7859527ca8e9a163c02e08ba</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4272929">https://chromium-review.googlesource.com/c/chromium/src/+/4272929</a>
-Commit-Queue: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1107540}
+Bug: 1409259
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic33dbb66084e149530db112be3e9a97aa984675c">Ic33dbb66084e149530db112be3e9a97aa984675c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4273245">https://chromium-review.googlesource.com/c/chromium/src/+/4273245</a>
+Commit-Queue: Ken Rockot &lt;rockot@google.com&gt;
+Reviewed-by: Alex Gough &lt;ajgo@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1107545}
 </pre>
 
 </body>
