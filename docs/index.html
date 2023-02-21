@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1107676/"> 1107676</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b24666d708fc9b2c83b3187551ba2fc292b52f76">b24666d708fc9b2c83b3187551ba2fc292b52f76</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1107695/"> 1107695</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5f49142eb086b425f52bb63592ea0a1540e5b2ac">5f49142eb086b425f52bb63592ea0a1540e5b2ac</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1107651/">1107651</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b24666d708fc9b2c83b3187551ba2fc292b52f76
+   5f49142eb086b425f52bb63592ea0a1540e5b2ac
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b24666d708fc9b2c83b3187551ba2fc292b52f76">
+    <a href="/chromium/src/+log/5f49142eb086b425f52bb63592ea0a1540e5b2ac">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b24666d708fc9b2c83b3187551ba2fc292b52f76.tar.gz">
+    <a href="/chromium/src/+archive/5f49142eb086b425f52bb63592ea0a1540e5b2ac.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mariam Ali &lt;alimariam@google.com&gt;
+   Tommy Steimel &lt;steimel@chromium.org&gt;
   </td>
   <td>
-   Tue Feb 21 12:11:03 2023
+   Tue Feb 21 12:51:37 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 21 12:11:03 2023
+   Tue Feb 21 12:51:37 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b24666d708fc9b2c83b3187551ba2fc292b52f76/">
-    995175603863f877e3a40e265fe27f968e4ade1a
+   <a href="/chromium/src/+/5f49142eb086b425f52bb63592ea0a1540e5b2ac/">
+    4f5c9183a87d0852b41187e9204ba4a5f33e7c5e
    </a>
   </td>
  </tr>
@@ -166,26 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b24666d708fc9b2c83b3187551ba2fc292b52f76%5E">
-    1a6a10f74a581de657fa169241c5c420b22587ec
+   <a href="/chromium/src/+/5f49142eb086b425f52bb63592ea0a1540e5b2ac%5E">
+    534b86e4eadb0f265696618036a2dff0ecf917f3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b24666d708fc9b2c83b3187551ba2fc292b52f76%5E%21/">
+    <a href="/chromium/src/+/5f49142eb086b425f52bb63592ea0a1540e5b2ac%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Extend FPS Metrics histogram expiry date
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PiP 2.0: Ensure subsequent about:blank loads close the PiP window
 
-Bug: 1417805
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I688812d51dba35194cf8a0f90a127b19956f7229">I688812d51dba35194cf8a0f90a127b19956f7229</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4272282">https://chromium-review.googlesource.com/c/chromium/src/+/4272282</a>
-Reviewed-by: Sean Harrison &lt;harrisonsean@chromium.org&gt;
-Commit-Queue: Mariam Ali &lt;alimariam@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1107676}
+Document PiP windows should always close if navigated from the initial
+about:blank document. However, the logic allowed for about:blank
+navigations to allow the initial navigation to succeed. This opens up a
+couple of issues:
+
+1) Refreshing the PiP document breaks but does not close the document
+
+2) Setting the location of the PiP window to about:blank in JS would
+disconnect the PiP document from the original window and render it
+unusable.
+
+This CL changes that logic to only allow the initial synchronous about:blank navigation to succeed. However, this is insufficient for the
+second issue, since there was a race where if the navigation succeeded
+before the page closed, then the RenderFrameHostImpl would cancel the
+closing action. In order to fix this (and other issues with navigations
+canceling the close action), this CL also makes close requests from the
+browser side always close the page regardless of navigations.
+
+Bug: 1413919, 1406023, 1414124, 1414975
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib52875be2ad107ce3f33e2682b0b87f2c7bc6cbf">Ib52875be2ad107ce3f33e2682b0b87f2c7bc6cbf</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4242019">https://chromium-review.googlesource.com/c/chromium/src/+/4242019</a>
+Reviewed-by: Charlie Reis &lt;creis@chromium.org&gt;
+Commit-Queue: Tommy Steimel &lt;steimel@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1107695}
 </pre>
 
 </body>
