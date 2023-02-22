@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1108343/"> 1108343</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a3e55f8ee3249589ba418e89e195788b47fdf8c7">a3e55f8ee3249589ba418e89e195788b47fdf8c7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1108360/"> 1108360</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cab67d06307ebbd3954413dd887df893a9f59ba9">cab67d06307ebbd3954413dd887df893a9f59ba9</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1108316/">1108316</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a3e55f8ee3249589ba418e89e195788b47fdf8c7
+   cab67d06307ebbd3954413dd887df893a9f59ba9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a3e55f8ee3249589ba418e89e195788b47fdf8c7">
+    <a href="/chromium/src/+log/cab67d06307ebbd3954413dd887df893a9f59ba9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a3e55f8ee3249589ba418e89e195788b47fdf8c7.tar.gz">
+    <a href="/chromium/src/+archive/cab67d06307ebbd3954413dd887df893a9f59ba9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yang Guo &lt;yangguo@chromium.org&gt;
+   Xiaohan Wang &lt;xhwang@chromium.org&gt;
   </td>
   <td>
-   Wed Feb 22 15:30:21 2023
+   Wed Feb 22 16:05:01 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 22 15:30:21 2023
+   Wed Feb 22 16:05:01 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a3e55f8ee3249589ba418e89e195788b47fdf8c7/">
-    87cf9aa54d0e757ce9765701884cb677f09f4fbc
+   <a href="/chromium/src/+/cab67d06307ebbd3954413dd887df893a9f59ba9/">
+    ce16baef277422abb0e96dcecd8f9f7013dacca5
    </a>
   </td>
  </tr>
@@ -166,32 +166,61 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a3e55f8ee3249589ba418e89e195788b47fdf8c7%5E">
-    f7ea0a0629d7ba725a1f90c180ce4f6a1c2aa216
+   <a href="/chromium/src/+/cab67d06307ebbd3954413dd887df893a9f59ba9%5E">
+    aafe42bb26fc3a60b7b77c92d20f0dc2b9ff388a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a3e55f8ee3249589ba418e89e195788b47fdf8c7%5E%21/">
+    <a href="/chromium/src/+/cab67d06307ebbd3954413dd887df893a9f59ba9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make action in about://inspect keyboard accessible
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media: Add CdmEvent::kHardwareContextReset
 
-Replace previous usage of &lt;div&gt; with &lt;button&gt;, but style it in a way
-that the UI does not change.
+HardwareContextReset is supposed to happens during suspend/resume or
+GPU swap, which should NOT be treated as an error. Therefore, it's not
+included in the hardware secure decryption fallback logic.
 
-R=mathias@chromium.org
+However, we suspect that HardwareContextReset could happen without any
+suspend/resume or GPU swap. One of the symptoms is that
+HardwareContextReset happens on the first session creation or generate
+request, or without any playback.
 
-Fixed: 1411597
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iff548cb93eb5784c16eb9bb96559393743b546d4">Iff548cb93eb5784c16eb9bb96559393743b546d4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4278849">https://chromium-review.googlesource.com/c/chromium/src/+/4278849</a>
-Auto-Submit: Yang Guo &lt;yangguo@chromium.org&gt;
-Reviewed-by: Mathias Bynens &lt;mathias@chromium.org&gt;
-Commit-Queue: Yang Guo &lt;yangguo@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1108343}
+This CL makes the change that HardwareContextReset without any power
+or display change will be reported to MediaFoundationServiceMonitor
+and be included in the hardware secure decryption fallback logic.
+This is controlled under a feature param which is default to true.
+We can disable this feature if the assumption is wrong and we ended up
+disabling a lot of users. We may also run an experiment to see how it
+works.
+
+Manually tested by following these steps:
+1.  Launch chrome with
+    `--enable-features=HardwareSecureDecryptionFallback:on_hardware_context_reset/true`
+1a. Force HardwareContextReset in MediaFoundationCdm when updating
+    the session, and after a few playback attempts, hardware secure
+    decryption is disabled due to the fallback logic.
+1b. Sleep the device during playback and notice a playback error with
+    DRM_E_TEE_INVALID_HWDRM_STATE. This is ignored since it's after
+    a power change and therefore does not disable hardware secure
+    decryption.
+2.  Launch chrome with
+    `--enable-features=HardwareSecureDecryptionFallback:on_hardware_context_reset/false`
+    Repeat 1a and 1b and hardware secure decryption is never disabled.
+
+Bug: 1370844
+Test: Updated unit tests. See above for manual tests done.
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iabd4a4516ad9e66e5346a8fc3c762764b7ede1c1">Iabd4a4516ad9e66e5346a8fc3c762764b7ede1c1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4015369">https://chromium-review.googlesource.com/c/chromium/src/+/4015369</a>
+Auto-Submit: Xiaohan Wang &lt;xhwang@chromium.org&gt;
+Commit-Queue: Xiaohan Wang &lt;xhwang@chromium.org&gt;
+Reviewed-by: Emily Stark &lt;estark@chromium.org&gt;
+Reviewed-by: Frank Li &lt;frankli@microsoft.com&gt;
+Reviewed-by: John Rummell &lt;jrummell@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1108360}
 </pre>
 
 </body>
