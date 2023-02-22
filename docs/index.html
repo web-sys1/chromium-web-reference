@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1108024/"> 1108024</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/39ea7279709ec6982bc9829bc98bdb2209430319">39ea7279709ec6982bc9829bc98bdb2209430319</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1108069/"> 1108069</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ec6e7ba7efbe8c95f63858a39fc42ff8b2489b6e">ec6e7ba7efbe8c95f63858a39fc42ff8b2489b6e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1107974/">1107974</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/52d50438dbf962889d3c9d62b66c21bc079d15d4">52d50438dbf962889d3c9d62b66c21bc079d15d4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1108043/">1108043</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fa70e2d0366425ebac514dc5dd4df60e5f0f0e1f">fa70e2d0366425ebac514dc5dd4df60e5f0f0e1f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   39ea7279709ec6982bc9829bc98bdb2209430319
+   ec6e7ba7efbe8c95f63858a39fc42ff8b2489b6e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/39ea7279709ec6982bc9829bc98bdb2209430319">
+    <a href="/chromium/src/+log/ec6e7ba7efbe8c95f63858a39fc42ff8b2489b6e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/39ea7279709ec6982bc9829bc98bdb2209430319.tar.gz">
+    <a href="/chromium/src/+archive/ec6e7ba7efbe8c95f63858a39fc42ff8b2489b6e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Daoyuan Li &lt;daoyuanli@microsoft.com&gt;
   </td>
   <td>
-   Tue Feb 21 23:50:20 2023
+   Wed Feb 22 01:02:35 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 21 23:50:20 2023
+   Wed Feb 22 01:02:35 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/39ea7279709ec6982bc9829bc98bdb2209430319/">
-    441f9ed02f16cf2de58b9284dbb0a21fad4f5ffd
+   <a href="/chromium/src/+/ec6e7ba7efbe8c95f63858a39fc42ff8b2489b6e/">
+    fbfe692c7971dec28e9dda30c16e128d16f07c88
    </a>
   </td>
  </tr>
@@ -166,45 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/39ea7279709ec6982bc9829bc98bdb2209430319%5E">
-    eb572227c66adb999d25b1653523897672301b20
+   <a href="/chromium/src/+/ec6e7ba7efbe8c95f63858a39fc42ff8b2489b6e%5E">
+    8d506e7efaec5e912cec03f1c7ea9fa2d08d495d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/39ea7279709ec6982bc9829bc98bdb2209430319%5E%21/">
+    <a href="/chromium/src/+/ec6e7ba7efbe8c95f63858a39fc42ff8b2489b6e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Open Screen from 371a4520d207 to 64e8d9704045 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[MediaFoundation] Fix ERROR_FILE_NOT_FOUND
 
-<a href="https://chromium.googlesource.com/openscreen.git/+log/371a4520d207..64e8d9704045">https://chromium.googlesource.com/openscreen.git/+log/371a4520d207..64e8d9704045</a>
+OS: Win
+It is possible when ending a playback, ERROR_FILE_NOT_FOUND is
+propagated from Media Foundation. This scenario is found when Media
+Engine tries to create source while shutdown was called. The
+MediaEngineExtension::BeginCreateObject would return MF_E_SHUTDOWN
+during source creation, and MF would translate the error and
+eventually return ERROR_FILE_NOT_FOUND. The error is by design and
+should not propagate.
 
-2023-02-21 jophba@chromium.org [Infra] Update bots to use Bullseye
+The fix is to notify shutdown to MediaEngineNotifyImpl before passing
+the shutdown command to MFMediaEngineExtension so that
+MediaEngineNotifyImpl may just return S_OK when shutdown is called
+instead of the error.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/openscreen-chromium">https://autoroll.skia.org/r/openscreen-chromium</a>
-Please CC jophba@chromium.org on the revert to ensure that a human
-is aware of the problem.
-
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Bug: None
-Tbr: jophba@chromium.org
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6267fe4f16060d1edbe7bf72db2c7d180d0fd4b2">I6267fe4f16060d1edbe7bf72db2c7d180d0fd4b2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4277786">https://chromium-review.googlesource.com/c/chromium/src/+/4277786</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1108024}
+Bug: 1416688
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4fa89ad877b41e61b24ef93b62cb9fd17e1dad38">I4fa89ad877b41e61b24ef93b62cb9fd17e1dad38</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4258010">https://chromium-review.googlesource.com/c/chromium/src/+/4258010</a>
+Commit-Queue: Daoyuan Li &lt;daoyuanli@microsoft.com&gt;
+Reviewed-by: Xiaohan Wang &lt;xhwang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1108069}
 </pre>
 
 </body>
