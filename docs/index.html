@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1108830/"> 1108830</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/acf2fcf7e7a68054659c7d53a2ae0a18d313700b">acf2fcf7e7a68054659c7d53a2ae0a18d313700b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1108838/"> 1108838</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/64b35ef7d4e660af532f34f0a0fabb31ace38538">64b35ef7d4e660af532f34f0a0fabb31ace38538</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1108811/">1108811</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/93793c0a90cc3c873564a1a67bd468e644156677">93793c0a90cc3c873564a1a67bd468e644156677</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1108828/">1108828</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9043a49c62176957ec001940a249ca5e3636b669">9043a49c62176957ec001940a249ca5e3636b669</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   acf2fcf7e7a68054659c7d53a2ae0a18d313700b
+   64b35ef7d4e660af532f34f0a0fabb31ace38538
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/acf2fcf7e7a68054659c7d53a2ae0a18d313700b">
+    <a href="/chromium/src/+log/64b35ef7d4e660af532f34f0a0fabb31ace38538">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/acf2fcf7e7a68054659c7d53a2ae0a18d313700b.tar.gz">
+    <a href="/chromium/src/+archive/64b35ef7d4e660af532f34f0a0fabb31ace38538.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mikel Astiz &lt;mastiz@chromium.org&gt;
+   Irem Uguz &lt;iremuguz@google.com&gt;
   </td>
   <td>
-   Thu Feb 23 10:02:34 2023
+   Thu Feb 23 10:40:15 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Feb 23 10:02:34 2023
+   Thu Feb 23 10:40:15 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/acf2fcf7e7a68054659c7d53a2ae0a18d313700b/">
-    589ad9d2153addf0b1bf57add10711a3ac4c9788
+   <a href="/chromium/src/+/64b35ef7d4e660af532f34f0a0fabb31ace38538/">
+    da36e0ace587e651ad1dfbf46943ee657572d77a
    </a>
   </td>
  </tr>
@@ -166,38 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/acf2fcf7e7a68054659c7d53a2ae0a18d313700b%5E">
-    ee7a0cf76bcea6f1eb714ce90d5ea88d7a0f1b20
+   <a href="/chromium/src/+/64b35ef7d4e660af532f34f0a0fabb31ace38538%5E">
+    7181cde9fbd14add11bd86ad9c7cde9e7242a062
    </a>
    <span>
     [
-    <a href="/chromium/src/+/acf2fcf7e7a68054659c7d53a2ae0a18d313700b%5E%21/">
+    <a href="/chromium/src/+/64b35ef7d4e660af532f34f0a0fabb31ace38538%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[sync] Invoke new APIs in TrustedVaultClientBackend
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Combine success and failure callbacks to one in RemoteCommandJob
 
-This includes:
-1. ClearLocalData, as per pre-existing TODO.
-2. GetPublicKeyForIdentity, as part of registration verification.
-3. SetDeviceRegistrationPublicKeyVerifierForUMA, guarded behind
-   experiment toggle, to actually trigger registration verification.
+Introduce a ResultType enum class to RemoteCommandJob. Change
+ResultCallback signature in RemoteCommandJob to take ResultType enum
+and payload as argument and replace two callbacks in RunImpl with one
+ResultCallback. It will make it easier to add new RemoteCommandJob
+implementations that need to return other type of results
+(e.g. go/cros-admin-console-support-tool-design#bookmark=id.pr9qxuetolwh).
 
-The internal implementation of the APIs being invoked in this patch
-landed recently with <a href="https://crrev.com/i/5496191.">https://crrev.com/i/5496191.</a>
-
-The actual logic to verify the registration will be tackled in future
-patches as it is quite complex.
-
-Bug: 1416626, 1273080
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0c16aed7de2be3c63d1c213000e3f01b7da499ca">I0c16aed7de2be3c63d1c213000e3f01b7da499ca</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4275301">https://chromium-review.googlesource.com/c/chromium/src/+/4275301</a>
-Reviewed-by: Jérôme Lebel &lt;jlebel@chromium.org&gt;
-Commit-Queue: Mikel Astiz &lt;mastiz@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1108830}
+Bug: b:269245189
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1d7554807c68ade14dbb1aa2d337db932be3f19e">I1d7554807c68ade14dbb1aa2d337db932be3f19e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4249217">https://chromium-review.googlesource.com/c/chromium/src/+/4249217</a>
+Reviewed-by: Jeroen Dhollander &lt;jeroendh@google.com&gt;
+Reviewed-by: Pavol Marko &lt;pmarko@chromium.org&gt;
+Commit-Queue: Irem Uguz &lt;iremuguz@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1108838}
 </pre>
 
 </body>
