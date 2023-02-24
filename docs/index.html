@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1109555/"> 1109555</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/32f1aac9c31d5c314d3cbecc83362140040989d8">32f1aac9c31d5c314d3cbecc83362140040989d8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1109585/"> 1109585</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a724bf4bc32d6d2c864ad5b0f642d95ecd8ce4a3">a724bf4bc32d6d2c864ad5b0f642d95ecd8ce4a3</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1109559/">1109559</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   32f1aac9c31d5c314d3cbecc83362140040989d8
+   a724bf4bc32d6d2c864ad5b0f642d95ecd8ce4a3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/32f1aac9c31d5c314d3cbecc83362140040989d8">
+    <a href="/chromium/src/+log/a724bf4bc32d6d2c864ad5b0f642d95ecd8ce4a3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/32f1aac9c31d5c314d3cbecc83362140040989d8.tar.gz">
+    <a href="/chromium/src/+archive/a724bf4bc32d6d2c864ad5b0f642d95ecd8ce4a3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Mohamed Amir Yosef &lt;mamir@chromium.org&gt;
   </td>
   <td>
-   Fri Feb 24 14:44:21 2023
+   Fri Feb 24 16:00:04 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 24 14:44:21 2023
+   Fri Feb 24 16:00:04 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/32f1aac9c31d5c314d3cbecc83362140040989d8/">
-    fb2f559b458acf97c66fc0adf78c0e0e4d9131bc
+   <a href="/chromium/src/+/a724bf4bc32d6d2c864ad5b0f642d95ecd8ce4a3/">
+    0d7962732df7e5519a69495714c171eb823f1141
    </a>
   </td>
  </tr>
@@ -166,43 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/32f1aac9c31d5c314d3cbecc83362140040989d8%5E">
-    39158995410dcb9603cfabda669eeb62d37e3c82
+   <a href="/chromium/src/+/a724bf4bc32d6d2c864ad5b0f642d95ecd8ce4a3%5E">
+    9ac1d75d71391c82164b750eba6a788bf0de2f16
    </a>
    <span>
     [
-    <a href="/chromium/src/+/32f1aac9c31d5c314d3cbecc83362140040989d8%5E%21/">
+    <a href="/chromium/src/+/a724bf4bc32d6d2c864ad5b0f642d95ecd8ce4a3%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Mac PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Passwords] Switch user authentication to be async in Save bubble
 
-Roll Chrome Mac PGO profile from chrome-mac-main-1677218310-9115313c5163f20963758f416920b5dbc2d77079.profdata to chrome-mac-main-1677239935-af300b326c8d58e955edeabbe8e8080653baf754.profdata
+This CL changes the way user authentication is requested in the Save
+Password bubble.
+Before this CL:
+User authentication was done synchronously, and upon completion
+of the authentication, the result is stored in PasswordsModelDelegate
+and the bubble is reopened revealing the password.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-mac-chromium">https://autoroll.skia.org/r/pgo-mac-chromium</a>
-Please CC chrome-brapp-engprod@google.com,pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+After this CL:
+The user authentication is done asynchronously. The bubble remains open
+and upon completion of the authentication, the result is communicated
+back to the bubble controller which decides whether to reveal the
+password or not based on the authentication result.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+This is required for a couple of reasons:
+1- Unifies the API for old authentication and the new biometrics-based
+authentication to allow further unification (for example to have the
+timeout features) .
+2- Allows the same code to be used with the revamped manage password
+bubble.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:mac-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I74c55622dc4054e37ae2d315fffeb1be06f7c63b">I74c55622dc4054e37ae2d315fffeb1be06f7c63b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4288545">https://chromium-review.googlesource.com/c/chromium/src/+/4288545</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1109555}
+Bug: 1371026
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I48e632152822e46b54d32598d27cd4b6ee631c1a">I48e632152822e46b54d32598d27cd4b6ee631c1a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4272454">https://chromium-review.googlesource.com/c/chromium/src/+/4272454</a>
+Commit-Queue: Mohamed Amir Yosef &lt;mamir@chromium.org&gt;
+Reviewed-by: Vasilii Sukhanov &lt;vasilii@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1109585}
 </pre>
 
 </body>
