@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1109402/"> 1109402</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/70187b63bed1ac056e3358259ece76ef5bab644a">70187b63bed1ac056e3358259ece76ef5bab644a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1109422/"> 1109422</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/07ca7c5432d8a75098f2a49cd697cc011e2e946d">07ca7c5432d8a75098f2a49cd697cc011e2e946d</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1109384/">1109384</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3cefaf0de21c8e90ac70eb059f36dc27bf76cc24">3cefaf0de21c8e90ac70eb059f36dc27bf76cc24</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1109408/">1109408</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/909fdbcc3daaf834377d01f8895f7b540619a270">909fdbcc3daaf834377d01f8895f7b540619a270</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   70187b63bed1ac056e3358259ece76ef5bab644a
+   07ca7c5432d8a75098f2a49cd697cc011e2e946d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/70187b63bed1ac056e3358259ece76ef5bab644a">
+    <a href="/chromium/src/+log/07ca7c5432d8a75098f2a49cd697cc011e2e946d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/70187b63bed1ac056e3358259ece76ef5bab644a.tar.gz">
+    <a href="/chromium/src/+archive/07ca7c5432d8a75098f2a49cd697cc011e2e946d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Claudio DeSouza &lt;cdesouza@igalia.com&gt;
+   Hirthanan Subenderan &lt;hirthanan@google.com&gt;
   </td>
   <td>
-   Fri Feb 24 02:33:40 2023
+   Fri Feb 24 03:54:51 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 24 02:33:40 2023
+   Fri Feb 24 03:54:51 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/70187b63bed1ac056e3358259ece76ef5bab644a/">
-    5d02f168058f20ba6c76d680e22e8983a90d1be4
+   <a href="/chromium/src/+/07ca7c5432d8a75098f2a49cd697cc011e2e946d/">
+    1df7afad068538eaad7ba6cba0b9755c27191cac
    </a>
   </td>
  </tr>
@@ -166,39 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/70187b63bed1ac056e3358259ece76ef5bab644a%5E">
-    90cb3f50647740c61756e693a80c92a4cb8a4df3
+   <a href="/chromium/src/+/07ca7c5432d8a75098f2a49cd697cc011e2e946d%5E">
+    2bd15aebb037285b226aeea9706f5d88e8713ac4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/70187b63bed1ac056e3358259ece76ef5bab644a%5E%21/">
+    <a href="/chromium/src/+/07ca7c5432d8a75098f2a49cd697cc011e2e946d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Switch to simpler base::WriteFile() variants (22/N)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Persist churn observation data across restarts and powerwash
 
-This CL is part of a batch of CLs to replace the use of the less
-friendly base::WriteFile call with simpler variants, which are easier to
-read, and less prone to mistakes.
+Handle recovery of observation churn observation period status.
+Integrate local state and preserved files as layers of persistence of
+observation use case data.
 
-Changes in this particular CL address files under the path
-/chrome/browser/notifications.
+Since the observation use case reports strictly after the cohort use
+case, we can add persistence of the observation last pinged month based
+on the latest cohort active status value. The booleans for the previous
+3 months of whether a ping was sent can also be recovered based on the
+last ping month date. These 3 booleans are relative to the date the
+cohort last pinged.
 
-This CL was uploaded by git cl split.
+Adding this persistence helps avoid duplicate observation imports on
+restarts and powerwashes. The caveat here is that all cohort and
+observation data is lost after recovery. In the future, we plan to add
+check membership requests after recovery case to persist this data
+further.
 
-R=knollr@chromium.org
+BUG=chromium:1386189
 
-AX-Relnotes: n/a.
-Bug: 418837
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I725402eb2d1fa198db5547603329c087ffb53eaf">I725402eb2d1fa198db5547603329c087ffb53eaf</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4287035">https://chromium-review.googlesource.com/c/chromium/src/+/4287035</a>
-Auto-Submit: Claudio DeSouza &lt;cdesouza@igalia.com&gt;
-Reviewed-by: Thomas Anderson &lt;thomasanderson@chromium.org&gt;
-Commit-Queue: Thomas Anderson &lt;thomasanderson@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1109402}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7da620dae5861a2cf3238ee4e684ab2631f7600b">I7da620dae5861a2cf3238ee4e684ab2631f7600b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4283429">https://chromium-review.googlesource.com/c/chromium/src/+/4283429</a>
+Commit-Queue: Hirthanan Subenderan &lt;hirthanan@google.com&gt;
+Reviewed-by: Jong Ahn &lt;jongahn@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1109422}
 </pre>
 
 </body>
