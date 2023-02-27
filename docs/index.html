@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1110166/"> 1110166</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c114df483e867e221ac3c57e9dc8e44d01d54c5e">c114df483e867e221ac3c57e9dc8e44d01d54c5e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1110172/"> 1110172</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/022b9c79987a9afa2855c3ff023888742673fcae">022b9c79987a9afa2855c3ff023888742673fcae</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1110161/">1110161</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c114df483e867e221ac3c57e9dc8e44d01d54c5e
+   022b9c79987a9afa2855c3ff023888742673fcae
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c114df483e867e221ac3c57e9dc8e44d01d54c5e">
+    <a href="/chromium/src/+log/022b9c79987a9afa2855c3ff023888742673fcae">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c114df483e867e221ac3c57e9dc8e44d01d54c5e.tar.gz">
+    <a href="/chromium/src/+archive/022b9c79987a9afa2855c3ff023888742673fcae.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Zac Partridge &lt;zacpartridge@google.com&gt;
+   Yuzu Saijo &lt;yuzus@chromium.org&gt;
   </td>
   <td>
-   Mon Feb 27 03:45:33 2023
+   Mon Feb 27 04:20:26 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Feb 27 03:45:33 2023
+   Mon Feb 27 04:20:26 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c114df483e867e221ac3c57e9dc8e44d01d54c5e/">
-    1ed8dd0233a6e1aaf3decd1d50e4f6ce6d31b926
+   <a href="/chromium/src/+/022b9c79987a9afa2855c3ff023888742673fcae/">
+    3ae04cb01b281a4af3cdb84c1b00ad714cde47e9
    </a>
   </td>
  </tr>
@@ -166,26 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c114df483e867e221ac3c57e9dc8e44d01d54c5e%5E">
-    59acb4838ef1f405ff7a7ecc93b41052dd1d7e23
+   <a href="/chromium/src/+/022b9c79987a9afa2855c3ff023888742673fcae%5E">
+    0bb7667af31a5f21ff3042cb57ca93a3b2c26c48
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c114df483e867e221ac3c57e9dc8e44d01d54c5e%5E%21/">
+    <a href="/chromium/src/+/022b9c79987a9afa2855c3ff023888742673fcae%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Autocorrect: turning on Undo Learn More button for first 10 uses
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[bfcache] Queue readystatechange event if the page is in bfcache
 
-Bug: b:259856275
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I73924d8a4297b7f75e1df9d1be64e7c1bdac9313">I73924d8a4297b7f75e1df9d1be64e7c1bdac9313</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4236208">https://chromium-review.googlesource.com/c/chromium/src/+/4236208</a>
-Commit-Queue: Zac Partridge &lt;zacpartridge@google.com&gt;
-Reviewed-by: Darren Shen &lt;shend@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1110166}
+This CL stops dispatching readystatechange event when we are in the
+middle of document detach. This was problematic because readystatechange
+handler could run synchronously while the page in bfcache was evicted.
+Also this could have been used as a way to execute script after unload.
+
+This CL starts queueing the event instead. The cases we observed in the
+wild were all double eviction (eviction -&gt; readystate handler triggered)
+so we don't know if queueing makes sense here, but just in case.
+
+Bug: 1409740, 1379227
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If7a49eebc6fc1a609188bc56b63b772e9c4ca616">If7a49eebc6fc1a609188bc56b63b772e9c4ca616</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4190756">https://chromium-review.googlesource.com/c/chromium/src/+/4190756</a>
+Commit-Queue: Yuzu Saijo &lt;yuzus@chromium.org&gt;
+Reviewed-by: Fergal Daly &lt;fergal@chromium.org&gt;
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1110172}
 </pre>
 
 </body>
