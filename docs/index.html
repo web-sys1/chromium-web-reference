@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1111638/"> 1111638</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/539d958b2bfecdc374a25ff2f106004957f9b73e">539d958b2bfecdc374a25ff2f106004957f9b73e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1111705/"> 1111705</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6edf5d75bdee06406b8cb36b47457d5f4ceff719">6edf5d75bdee06406b8cb36b47457d5f4ceff719</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1111621/">1111621</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   539d958b2bfecdc374a25ff2f106004957f9b73e
+   6edf5d75bdee06406b8cb36b47457d5f4ceff719
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/539d958b2bfecdc374a25ff2f106004957f9b73e">
+    <a href="/chromium/src/+log/6edf5d75bdee06406b8cb36b47457d5f4ceff719">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/539d958b2bfecdc374a25ff2f106004957f9b73e.tar.gz">
+    <a href="/chromium/src/+archive/6edf5d75bdee06406b8cb36b47457d5f4ceff719.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   manukh &lt;manukh@chromium.org&gt;
+   Wenyu Fu &lt;wenyufu@chromium.org&gt;
   </td>
   <td>
-   Wed Mar 01 16:50:25 2023
+   Wed Mar 01 18:16:06 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 01 16:50:25 2023
+   Wed Mar 01 18:16:06 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/539d958b2bfecdc374a25ff2f106004957f9b73e/">
-    8be5693e99792b588f171b9c5f0b195fa3eb29b6
+   <a href="/chromium/src/+/6edf5d75bdee06406b8cb36b47457d5f4ceff719/">
+    321409ff66a961e52db6ca50749f784f86bb143a
    </a>
   </td>
  </tr>
@@ -166,83 +166,26 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/539d958b2bfecdc374a25ff2f106004957f9b73e%5E">
-    8779bec7ed5ea1c632dc2cc490bec9c14a18c164
+   <a href="/chromium/src/+/6edf5d75bdee06406b8cb36b47457d5f4ceff719%5E">
+    be4de1aa63b0251d53e1adf5871c6b150ca4aaa5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/539d958b2bfecdc374a25ff2f106004957f9b73e%5E%21/">
+    <a href="/chromium/src/+/6edf5d75bdee06406b8cb36b47457d5f4ceff719%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[omnibox][perf] Optimize navigation classifier calls.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add wenyufu as partnercustomization OWNER
 
-Omnibox navigation reverts the omnibox state (model &amp; popup), which
-invokes `AutocompleteClassifier::Classify()` 3 times, which adds
-non-negligible latency (3ms).
-
-It seems unnecessary to revert and updating the omnibox when it's about
-to be redone due to navigation. But it's actually necessary because
-a) sometimes the navigation isn't in the same tab (e.g. opening
-chrome://settings in incognito) or b) the navigation isn't immediate. So
-instead, this CL tries to reduce the time taken to do the revert.
-
-This CL adds 2 optimizations:
-
-a) tldr; when reverting the omnibox view, 1st revert the edit model then
-close the popup, instead of vice versa.
-
-Currently on revert, 1st the popup is closed, then the edit model is
-reverted. Closing the popup will stop the running autocomplete
-providers, which notifies autocomplete observers that autocomplete state
-has changed, which updates the location bar view. However, because the
-model hasn't yet been reverted, the location bar view thinks there's
-still input in progress, so it tries to autocomplete the temp text to
-determine the icons and text bolding. This results in 3 redundant
-`Classify()` calls (i.e. all calls are classifying the same temp text).
-To add insult to injury, this expensive update is immediately discarded
-when the edit model revert re-updates the location bar view.
-
-This CL flips the order, 1st reverting the model then closing the popup.
-This ensures that when the popup is closed, we know there is no temp
-text and don't need to run `Classify()`. We still update the location
-bar view twice though; I haven't looked into how expensive that is,
-since now at least it's being updated with the same text and icons so
-perhaps the views are smart enough to short circuit.
-
-b) tldr; fix the `current_match_` cache to not be almost always empty.
-
-`OmniboxController` has a `current_match_` that is intended to cache the
-current match. When it's unavailable, the edit model resorts to
-classifying the view text, which runs the sync autocomplete pass, which
-is expensive (1ms). This cached match is almost always empty. It's set
-only after the sync autocomplete pass, but it's cleared almost
-immediately afterwards.
-
-This CL sets `current_match_` on autocomplete change, selection change,
-and tab switch. And it's never cleared, instead being replacing with
-the new match; so its hit rate is now 100%.
-
-This CL also moves `current_match_` from the omnibox controller to the
-edit model since that's where it's both used and update.
-
-
-The touched code is convoluted. To ensure we don't introduce unwanted
-consequences, and to measure the improvements, these 2 changes are
-guarded by independent features.
-
-Also adds 3 timing histograms for `Classify()`, `RevertAll()`, and
-`OpenMatch()`.
-
-Bug: 806262, 1418490
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I08558b2269a43d6a2ddbd777de6403f6a561afa9">I08558b2269a43d6a2ddbd777de6403f6a561afa9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4273874">https://chromium-review.googlesource.com/c/chromium/src/+/4273874</a>
-Reviewed-by: Orin Jaworski &lt;orinj@chromium.org&gt;
-Commit-Queue: manuk hovanesian &lt;manukh@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1111638}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I630b43bc11343c8ba8258384dcaf1ea98e459af1">I630b43bc11343c8ba8258384dcaf1ea98e459af1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4300769">https://chromium-review.googlesource.com/c/chromium/src/+/4300769</a>
+Commit-Queue: Theresa Sullivan &lt;twellington@chromium.org&gt;
+Reviewed-by: Theresa Sullivan &lt;twellington@chromium.org&gt;
+Auto-Submit: Wenyu Fu &lt;wenyufu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1111705}
 </pre>
 
 </body>
