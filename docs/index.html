@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1112085/"> 1112085</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/55acbda0a78c738193eff6a3aa696436c34b5ca7">55acbda0a78c738193eff6a3aa696436c34b5ca7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1112098/"> 1112098</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/57cbb3b72ae7cf88caf2869cc16968c66c8482b6">57cbb3b72ae7cf88caf2869cc16968c66c8482b6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1112067/">1112067</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   55acbda0a78c738193eff6a3aa696436c34b5ca7
+   57cbb3b72ae7cf88caf2869cc16968c66c8482b6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/55acbda0a78c738193eff6a3aa696436c34b5ca7">
+    <a href="/chromium/src/+log/57cbb3b72ae7cf88caf2869cc16968c66c8482b6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/55acbda0a78c738193eff6a3aa696436c34b5ca7.tar.gz">
+    <a href="/chromium/src/+archive/57cbb3b72ae7cf88caf2869cc16968c66c8482b6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
+   Marcio Caroso &lt;msscaroso@gmail.com&gt;
   </td>
   <td>
-   Thu Mar 02 07:35:51 2023
+   Thu Mar 02 08:39:47 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 02 07:35:51 2023
+   Thu Mar 02 08:39:47 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/55acbda0a78c738193eff6a3aa696436c34b5ca7/">
-    34f20b21958d77e041847b9973f2dec0dc28ce08
+   <a href="/chromium/src/+/57cbb3b72ae7cf88caf2869cc16968c66c8482b6/">
+    a1e28d22428ef05a4fbefe45e73f0ba9223cb7a8
    </a>
   </td>
  </tr>
@@ -166,42 +166,58 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/55acbda0a78c738193eff6a3aa696436c34b5ca7%5E">
-    4242882f0730eef990b569bcd1cf544d0ea82b9e
+   <a href="/chromium/src/+/57cbb3b72ae7cf88caf2869cc16968c66c8482b6%5E">
+    5b6979c43621893d550e829e4e68ef13980a2415
    </a>
    <span>
     [
-    <a href="/chromium/src/+/55acbda0a78c738193eff6a3aa696436c34b5ca7%5E%21/">
+    <a href="/chromium/src/+/57cbb3b72ae7cf88caf2869cc16968c66c8482b6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll devtools-internal from 61da9803e604 to 6777da12a7ca (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">XHR defaults to text/xml if media type is invalid
 
-<a href="https://chrome-internal.googlesource.com/devtools/devtools-internal.git/+log/61da9803e604..6777da12a7ca">https://chrome-internal.googlesource.com/devtools/devtools-internal.git/+log/61da9803e604..6777da12a7ca</a>
+XMLHTTPRequest is expected to default to text/xml when the
+Content-Type fails to parse. But some web platform tests covering this
+expectation were failing (xhr/responsexml-media-type.htm). When the
+server returns a response with, for instance, 'Content-Type: bogus' or
+'Content-Type: application', chromium wasn't setting the correct
+default 'text/xml'. The issue is that XHR should have considered
+'bogus' and 'application' invalid MIME types. According to
+<a href="https://mimesniff.spec.whatwg.org/#parse-a-mime-type">https://mimesniff.spec.whatwg.org/#parse-a-mime-type</a> they are invalid.
+In fact, both FireFox and Safari are passing these WPT test cases.
+The chromium codebase has multiple MIME Type parsers with varying
+behaviors about what is and what isn't a valid MIME type. This is an
+interesting discussion about the subject
+<a href="https://github.com/whatwg/mimesniff/issues/30#issuecomment-330762896.">https://github.com/whatwg/mimesniff/issues/30#issuecomment-330762896.</a>
+The idea of this CL is to update the Content-Type parsing logic that
+happens in XHR to use one of the other existing parsers. I believe we
+should avoid creating a new one, since there are multiple already.
+Looking at the options, there's HttpUtil::ParseContentType which
+seems to be the one that best implements the spec. But it is often
+used in the context of request header parsing. In
+//net/base/mime_util there are two parsers that are used in
+the parsing of response content-type. The proposal here is to move
+//services/network/public/cpp/cors ExtractMIMETypeFromMediaType (which
+uses //net/base/mime_util) to //net/base/mime_util and use it
+from Blink's XHR. One caveat is that XHR is currently parsing multiple
+Content-Type values in the same string. It simply reads the value
+before the first comma. So I'm adding a flag to the moved
+net::ExtractMIMETypeFromMediaType to toggle this behavior on,
+but still leaving the other places without it, since it's
+not part of the spec.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://skia-autoroll.corp.goog/r/devtools-internal-chromium">https://skia-autoroll.corp.goog/r/devtools-internal-chromium</a>
-Please CC devtools-waterfall-sheriff-onduty@grotations.appspotmail.com,liviurau@google.com on the revert to ensure that a human
-is aware of the problem.
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Bug: None
-Tbr: devtools-waterfall-sheriff-onduty@grotations.appspotmail.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I805097ce2b5ce82ed4eb8debe584f7eb330f86f9">I805097ce2b5ce82ed4eb8debe584f7eb330f86f9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4299682">https://chromium-review.googlesource.com/c/chromium/src/+/4299682</a>
-Commit-Queue: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1112085}
+Bug: 1053973
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8b27712aea30e2365e84886ffe2f7d4b251a4acf">I8b27712aea30e2365e84886ffe2f7d4b251a4acf</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4241657">https://chromium-review.googlesource.com/c/chromium/src/+/4241657</a>
+Reviewed-by: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
+Reviewed-by: Yoav Weiss &lt;yoavweiss@chromium.org&gt;
+Commit-Queue: Yoav Weiss &lt;yoavweiss@chromium.org&gt;
+Commit-Queue: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1112098}
 </pre>
 
 </body>
