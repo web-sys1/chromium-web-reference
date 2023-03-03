@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1112634/"> 1112634</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0a262efc5780b540655cfeb06f71ff800f7347f3">0a262efc5780b540655cfeb06f71ff800f7347f3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1112643/"> 1112643</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5a935410663a0b134aab0015831b35ff56ab00d1">5a935410663a0b134aab0015831b35ff56ab00d1</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1112599/">1112599</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7f8a25ed7201c9394c28e66c71caf3bef7ddaaed">7f8a25ed7201c9394c28e66c71caf3bef7ddaaed</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1112631/">1112631</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7656edbc84b712ae5dc345be6c024d4d8a3fdc2a">7656edbc84b712ae5dc345be6c024d4d8a3fdc2a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0a262efc5780b540655cfeb06f71ff800f7347f3
+   5a935410663a0b134aab0015831b35ff56ab00d1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0a262efc5780b540655cfeb06f71ff800f7347f3">
+    <a href="/chromium/src/+log/5a935410663a0b134aab0015831b35ff56ab00d1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0a262efc5780b540655cfeb06f71ff800f7347f3.tar.gz">
+    <a href="/chromium/src/+archive/5a935410663a0b134aab0015831b35ff56ab00d1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alexander Bolodurin &lt;alexbn@chromium.org&gt;
+   Kent Tamura &lt;tkent@chromium.org&gt;
   </td>
   <td>
-   Fri Mar 03 03:38:25 2023
+   Fri Mar 03 04:13:22 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 03 03:38:25 2023
+   Fri Mar 03 04:13:22 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0a262efc5780b540655cfeb06f71ff800f7347f3/">
-    bdbee44001e4b1bfa037b9cb1259f5ad6206adb9
+   <a href="/chromium/src/+/5a935410663a0b134aab0015831b35ff56ab00d1/">
+    022b188cc3aa8a578ef475d9e41f293b97dc509d
    </a>
   </td>
  </tr>
@@ -166,53 +166,29 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0a262efc5780b540655cfeb06f71ff800f7347f3%5E">
-    b82bcfe389910d61dfe809c8e135fde6a1cb1995
+   <a href="/chromium/src/+/5a935410663a0b134aab0015831b35ff56ab00d1%5E">
+    48dade6cdcc8ac24dafcfb16b6b838015d7c09b2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0a262efc5780b540655cfeb06f71ff800f7347f3%5E%21/">
+    <a href="/chromium/src/+/5a935410663a0b134aab0015831b35ff56ab00d1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">chrome.identity.launchWebAuthFlow: handle JavaScript redirects
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">NoCopyBack: Fix null pointer dereference in UpdateGeometry()
 
-Previously, when the auth page is navigated to in non-interactive mode,
-we assumed that, if authentication was successful, it would redirect
-before the page load event. If the page finished loading without an
-immediate redirect, it was assumed that user interaction was required
-and the non-interactive flow would fail with an "interaction required"
-error.
+A LayoutObject associated to a NGPhysicalFragment can be destroyed at
+the timing of UpdateGeometry().
 
-This is not true for auth providers that use JavaScript to redirect some
-time after the auth page loads.
-
-Add new arguments to launchWebAuthFlow which allow the caller to specify
-behaviour to support auth providers that use JavaScript redirects:
-
-- abortOnLoadForNonInteractive: a boolean flag to indicate whether to
-  abort the non-interactive flow with the "interaction required" error
-  if the page stops loading and does not load the redirect URL.
-- timeoutMsForNonInteractive: in milliseconds, limit on the total
-  duration of the non-interactive flow (with or without
-  nonInteractiveAbortOnLoad being set to false).
-
-With auth providers using JavaScript, abortOnLoadForNonInteractive would
-be set to false, so that the flow only fails on timeout, instead of
-immediately failing on auth page load.
-
-Co-authored-by: Alexander Bolodurin &lt;alexbn@chromium.org&gt;
-Co-authored-by: Peter Marshall &lt;petermarshall@chromium.org&gt;
-Bug: b:252900393
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4ef060c4951633d15d26b48ba909ba476fd00b07">I4ef060c4951633d15d26b48ba909ba476fd00b07</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3996076">https://chromium-review.googlesource.com/c/chromium/src/+/3996076</a>
-Reviewed-by: Alex Ilin &lt;alexilin@chromium.org&gt;
-Commit-Queue: Alexander Bolodurin &lt;alexbn@chromium.org&gt;
-Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1112634}
+Bug: 1420201
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9a9ba86ebc1a714ad4b2aa96e34b353dbc2fcb9a">I9a9ba86ebc1a714ad4b2aa96e34b353dbc2fcb9a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4302330">https://chromium-review.googlesource.com/c/chromium/src/+/4302330</a>
+Commit-Queue: Kent Tamura &lt;tkent@chromium.org&gt;
+Reviewed-by: Morten Stenshorne &lt;mstensho@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1112643}
 </pre>
 
 </body>
