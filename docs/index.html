@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1113205/"> 1113205</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0872a48500d0431732d40745815e68f35d3b481">f0872a48500d0431732d40745815e68f35d3b481</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1113220/"> 1113220</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f528f826c19098d6cb5ce2c4033fb73bfe810371">f528f826c19098d6cb5ce2c4033fb73bfe810371</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1113152/">1113152</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/83027e2be8d88c36332d6f598ed6dadddfc5caaa">83027e2be8d88c36332d6f598ed6dadddfc5caaa</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1113206/">1113206</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2bb75bdbf7046ddffa0fd79e482a7ed42f3a7dad">2bb75bdbf7046ddffa0fd79e482a7ed42f3a7dad</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f0872a48500d0431732d40745815e68f35d3b481
+   f528f826c19098d6cb5ce2c4033fb73bfe810371
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f0872a48500d0431732d40745815e68f35d3b481">
+    <a href="/chromium/src/+log/f528f826c19098d6cb5ce2c4033fb73bfe810371">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f0872a48500d0431732d40745815e68f35d3b481.tar.gz">
+    <a href="/chromium/src/+archive/f528f826c19098d6cb5ce2c4033fb73bfe810371.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
+   Yan,Shaobo &lt;shaobo.yan@intel.com&gt;
   </td>
   <td>
-   Mon Mar 06 01:39:06 2023
+   Mon Mar 06 02:51:56 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Mar 06 01:39:06 2023
+   Mon Mar 06 02:51:56 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f0872a48500d0431732d40745815e68f35d3b481/">
-    1a6aae80c9b09b7acc05aac3a721b34cf53a7a74
+   <a href="/chromium/src/+/f528f826c19098d6cb5ce2c4033fb73bfe810371/">
+    a9cebe46047270d674a9d77a3821ae82b286ab75
    </a>
   </td>
  </tr>
@@ -166,44 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f0872a48500d0431732d40745815e68f35d3b481%5E">
-    556d2df40a545489aa98d1b4a3b4b422ec444861
+   <a href="/chromium/src/+/f528f826c19098d6cb5ce2c4033fb73bfe810371%5E">
+    44d27fcce8ccc8f44c38717d6a27343039ed9522
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f0872a48500d0431732d40745815e68f35d3b481%5E%21/">
+    <a href="/chromium/src/+/f528f826c19098d6cb5ce2c4033fb73bfe810371%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Projector App from a1cTqsrxVfikIzFTa... to Fb5tjjPwkq3HWaCY7...
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Workaround GPUExternalTexture color space issue in 1-copy path
 
-Release_Notes: <a href="http://go/projector_app-x20/relnotes/Main/projector_app_nightly_202303050100_RC00.html">http://go/projector_app-x20/relnotes/Main/projector_app_nightly_202303050100_RC00.html</a>
+Current 1-copy path of GPUExternalTexture uses intermediate cache to
+do conversion. It set color space parameter to null when getting canvas
+resource from cache. This means the canvas resource provider will be set
+to a default color space (for now, it is SRGB). But GPUExternalTexture
+internal shader has its own color space conversion logic. But due to issue crbug.com/1407112, chromium failed to execute color space conversion when paint video frame.
+This CL tries to workaround crbug.com/1407112 by setting the canvas
+resource provider color space to the video paint cache so that no
+color space conversion happens during paint video frame. And then
+pass video frame source color space and user dst color space to Dawn
+to do the conversion
 
-<a href="https://chrome-infra-packages.appspot.com/p/chromeos_internal/apps/projector_app/app/+/Fb5tjjPwkq3HWaCY7dHL0HkfRsOGzu_Rmtjl0v6hbd0C">https://chrome-infra-packages.appspot.com/p/chromeos_internal/apps/projector_app/app/+/Fb5tjjPwkq3HWaCY7dHL0HkfRsOGzu_Rmtjl0v6hbd0C</a>
+Bug:chromium:1396078, chromium:1395227
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://skia-autoroll.corp.goog/r/projector-app-chromium-autoroll">https://skia-autoroll.corp.goog/r/projector-app-chromium-autoroll</a>
-Please CC cros-projector-oncall@grotations.appspotmail.com,cros-projector@google.com on the revert to ensure that a human
-is aware of the problem.
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:chromeos-betty-pi-arc-chrome;luci.chrome.try:linux-chromeos-chrome
-Bug: b/271598850
-Tbr: cros-projector-oncall@grotations.appspotmail.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1952c7c11770cb5ce1b00551d00e2e04514384ce">I1952c7c11770cb5ce1b00551d00e2e04514384ce</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4310136">https://chromium-review.googlesource.com/c/chromium/src/+/4310136</a>
-Bot-Commit: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Commit-Queue: chromium-internal-autoroll &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1113205}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ieee94c30eca768fed85b918ed0555dbfc93b4fd6">Ieee94c30eca768fed85b918ed0555dbfc93b4fd6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4105762">https://chromium-review.googlesource.com/c/chromium/src/+/4105762</a>
+Reviewed-by: Corentin Wallez &lt;cwallez@chromium.org&gt;
+Commit-Queue: Shaobo Yan &lt;shaobo.yan@intel.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1113220}
 </pre>
 
 </body>
