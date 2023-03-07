@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1113834/"> 1113834</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/59b71501480a3f24a206669b390b8257b23dcfa0">59b71501480a3f24a206669b390b8257b23dcfa0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1113845/"> 1113845</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6">74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1113817/">1113817</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   59b71501480a3f24a206669b390b8257b23dcfa0
+   74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/59b71501480a3f24a206669b390b8257b23dcfa0">
+    <a href="/chromium/src/+log/74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/59b71501480a3f24a206669b390b8257b23dcfa0.tar.gz">
+    <a href="/chromium/src/+archive/74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Fredrik Söderquist &lt;fs@opera.com&gt;
+   Rune Lillesveen &lt;futhark@chromium.org&gt;
   </td>
   <td>
-   Tue Mar 07 09:39:50 2023
+   Tue Mar 07 10:24:33 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 07 09:39:50 2023
+   Tue Mar 07 10:24:33 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/59b71501480a3f24a206669b390b8257b23dcfa0/">
-    3f10d0e9ba0cd95f2574072085f6df60046d4cf5
+   <a href="/chromium/src/+/74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6/">
+    0c696e06e831f79c76df2b619dfb1b9059fbb291
    </a>
   </td>
  </tr>
@@ -166,29 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/59b71501480a3f24a206669b390b8257b23dcfa0%5E">
-    2821f7bf7cf2c806167b68e66174dc49415d8d1d
+   <a href="/chromium/src/+/74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6%5E">
+    c59a6f91be16688a6b4fefbbe1ccd44b788678cd
    </a>
    <span>
     [
-    <a href="/chromium/src/+/59b71501480a3f24a206669b390b8257b23dcfa0%5E%21/">
+    <a href="/chromium/src/+/74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Squelch GMock warnings for PrintContextTest.*LinkTarget* tests
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Properly invalidate for lang attribute changes
 
-These tests are not expecting onDrawRect() calls on the canvases, and
-does not appear to care about them either. Wrap their canvas objects in
-NiceMock&lt;&gt; to quiet the GTest output.
+Fixes two issues:
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8910b36270ab8c46cfb22a6901471fb46ba68d47">I8910b36270ab8c46cfb22a6901471fb46ba68d47</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4306811">https://chromium-review.googlesource.com/c/chromium/src/+/4306811</a>
-Reviewed-by: Morten Stenshorne &lt;mstensho@chromium.org&gt;
-Commit-Queue: Fredrik Söderquist &lt;fs@opera.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1113834}
+1. Changing the lang attribute of an element may change the :lang()
+   matching for any element in the subtree. There is no targeted
+   invalidation for this, but in the normal case where only the lang
+   attribute is used this works because the inherited -webkit-locale
+   will be propagated down the style tree through inheritance and make
+   sure all elements are updated.
+
+   That is however not the case if there is an author use of the non-
+   standard -webkit-locale property that does not match what the lang
+   attribute is set to.
+
+   The fix is to use a kSubtreeStyleChange to force all descendants to
+   be updated even if the inheritance propagation is stopped.
+
+2. xml_names::kLangAttr does not always match with == operator because
+   QualifiedName operator== compares instances and not nsURI +
+   localName. QualifiedName::Matches() has to be used to catch all
+   cases.
+
+Bug: 1408679
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib239a97afa2bf24b31c9650601af500b8c0caec8">Ib239a97afa2bf24b31c9650601af500b8c0caec8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4306742">https://chromium-review.googlesource.com/c/chromium/src/+/4306742</a>
+Reviewed-by: Fredrik Söderquist &lt;fs@opera.com&gt;
+Commit-Queue: Rune Lillesveen &lt;futhark@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1113845}
 </pre>
 
 </body>
