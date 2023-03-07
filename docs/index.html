@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1113845/"> 1113845</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6">74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1113863/"> 1113863</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1d423fba505bb5deff2c5d26ae448a7d539b1a17">1d423fba505bb5deff2c5d26ae448a7d539b1a17</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1113839/">1113839</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6
+   1d423fba505bb5deff2c5d26ae448a7d539b1a17
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6">
+    <a href="/chromium/src/+log/1d423fba505bb5deff2c5d26ae448a7d539b1a17">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6.tar.gz">
+    <a href="/chromium/src/+archive/1d423fba505bb5deff2c5d26ae448a7d539b1a17.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Rune Lillesveen &lt;futhark@chromium.org&gt;
+   Kenichi Ishibashi &lt;bashi@chromium.org&gt;
   </td>
   <td>
-   Tue Mar 07 10:24:33 2023
+   Tue Mar 07 10:56:21 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 07 10:24:33 2023
+   Tue Mar 07 10:56:21 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6/">
-    0c696e06e831f79c76df2b619dfb1b9059fbb291
+   <a href="/chromium/src/+/1d423fba505bb5deff2c5d26ae448a7d539b1a17/">
+    5384efeced3a291a7b0da2ce90990b7c995454c9
    </a>
   </td>
  </tr>
@@ -166,47 +166,30 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6%5E">
-    c59a6f91be16688a6b4fefbbe1ccd44b788678cd
+   <a href="/chromium/src/+/1d423fba505bb5deff2c5d26ae448a7d539b1a17%5E">
+    aac0e6bf139981243e38b4a25b0f22e267534ffc
    </a>
    <span>
     [
-    <a href="/chromium/src/+/74c5b3d45c81fcc9c5cd86213c8c265335e6e1a6%5E%21/">
+    <a href="/chromium/src/+/1d423fba505bb5deff2c5d26ae448a7d539b1a17%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Properly invalidate for lang attribute changes
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Change Net.DNS.* histograms owner
 
-Fixes two issues:
+horo@ kindly takes over the ownership of these histograms.
+Also update the expiry of Net.DNS.DnsConfig.Nsswitch.HostsFound.
 
-1. Changing the lang attribute of an element may change the :lang()
-   matching for any element in the subtree. There is no targeted
-   invalidation for this, but in the normal case where only the lang
-   attribute is used this works because the inherited -webkit-locale
-   will be propagated down the style tree through inheritance and make
-   sure all elements are updated.
-
-   That is however not the case if there is an author use of the non-
-   standard -webkit-locale property that does not match what the lang
-   attribute is set to.
-
-   The fix is to use a kSubtreeStyleChange to force all descendants to
-   be updated even if the inheritance propagation is stopped.
-
-2. xml_names::kLangAttr does not always match with == operator because
-   QualifiedName operator== compares instances and not nsURI +
-   localName. QualifiedName::Matches() has to be used to catch all
-   cases.
-
-Bug: 1408679
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib239a97afa2bf24b31c9650601af500b8c0caec8">Ib239a97afa2bf24b31c9650601af500b8c0caec8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4306742">https://chromium-review.googlesource.com/c/chromium/src/+/4306742</a>
-Reviewed-by: Fredrik Söderquist &lt;fs@opera.com&gt;
-Commit-Queue: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1113845}
+Bug: 1421827
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I636ecf60fe88ef651b1b3957a5bc907a2b2e8f81">I636ecf60fe88ef651b1b3957a5bc907a2b2e8f81</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4314281">https://chromium-review.googlesource.com/c/chromium/src/+/4314281</a>
+Commit-Queue: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
+Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Reviewed-by: Tsuyoshi Horo &lt;horo@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1113863}
 </pre>
 
 </body>
