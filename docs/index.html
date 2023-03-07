@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1113992/"> 1113992</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2e7316e5a456122e83c45ee3a2d771596e62d568">2e7316e5a456122e83c45ee3a2d771596e62d568</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1114029/"> 1114029</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8c9b9de4bc98347acaed14aa8247571a83b28d27">8c9b9de4bc98347acaed14aa8247571a83b28d27</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1113955/">1113955</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2e7316e5a456122e83c45ee3a2d771596e62d568
+   8c9b9de4bc98347acaed14aa8247571a83b28d27
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2e7316e5a456122e83c45ee3a2d771596e62d568">
+    <a href="/chromium/src/+log/8c9b9de4bc98347acaed14aa8247571a83b28d27">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2e7316e5a456122e83c45ee3a2d771596e62d568.tar.gz">
+    <a href="/chromium/src/+archive/8c9b9de4bc98347acaed14aa8247571a83b28d27.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Elie Maamari &lt;emaamari@google.com&gt;
   </td>
   <td>
-   Tue Mar 07 17:08:32 2023
+   Tue Mar 07 17:53:13 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 07 17:08:32 2023
+   Tue Mar 07 17:53:13 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2e7316e5a456122e83c45ee3a2d771596e62d568/">
-    fa498e252f7730f4220ec9bcd11da85d28f6ddfb
+   <a href="/chromium/src/+/8c9b9de4bc98347acaed14aa8247571a83b28d27/">
+    6c8d0cf6e1387d91085393070f99aa98ac645e0d
    </a>
   </td>
  </tr>
@@ -166,45 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2e7316e5a456122e83c45ee3a2d771596e62d568%5E">
-    f63cd07d77f40ad5885991356cfed90923f1be54
+   <a href="/chromium/src/+/8c9b9de4bc98347acaed14aa8247571a83b28d27%5E">
+    ec55e14c42de94c898c4227ec47fc7444460e858
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2e7316e5a456122e83c45ee3a2d771596e62d568%5E%21/">
+    <a href="/chromium/src/+/8c9b9de4bc98347acaed14aa8247571a83b28d27%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Open Screen from f55a255720a9 to a3d689dae21d (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">User directory integrity manager fixes
 
-<a href="https://chromium.googlesource.com/openscreen.git/+log/f55a255720a9..a3d689dae21d">https://chromium.googlesource.com/openscreen.git/+log/f55a255720a9..a3d689dae21d</a>
+This CL fixes some behaviors discovered during testing of misconfigured
+user removal.
 
-2023-03-07 davidben@chromium.org Do not pass EVP_PKEY by value
+- Even though we marked the user in local state as being misconfigured,
+and thus they don't show up on the login screen due to filtering in
+`user_manager`, the user's cryptohome was not being removed from disk.
+This is because the removal was triggered after returning from
+`ChromeSessionManager::Initialize`, and thus we were not going through
+that codepath at all. This CL moves the call site to before starting the
+session.
+- Instead of trying to clear prefs and remove user's cryptohome on our
+own, we instead call the code that is normally called as part of user
+removal, with some modifications to make sure that certain prefs are
+indeed cleared for misconfigured users.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/openscreen-chromium">https://autoroll.skia.org/r/openscreen-chromium</a>
-Please CC jophba@chromium.org on the revert to ensure that a human
-is aware of the problem.
-
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Bug: None
-Tbr: jophba@chromium.org
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If773f23df05af4ca7b557e14b29e4697eccb7fcf">If773f23df05af4ca7b557e14b29e4697eccb7fcf</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4316622">https://chromium-review.googlesource.com/c/chromium/src/+/4316622</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1113992}
+Bug: b:239420309
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icbb4a961124ba16c29f90af9a1ac2f484531d2ec">Icbb4a961124ba16c29f90af9a1ac2f484531d2ec</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4171843">https://chromium-review.googlesource.com/c/chromium/src/+/4171843</a>
+Reviewed-by: Denis Kuznetsov &lt;antrim@chromium.org&gt;
+Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
+Commit-Queue: Elie Maamari &lt;emaamari@google.com&gt;
+Reviewed-by: Maksim Ivanov &lt;emaxx@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1114029}
 </pre>
 
 </body>
