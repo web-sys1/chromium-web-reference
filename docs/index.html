@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1114386/"> 1114386</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f53be04b358fbe720b9285f9f0884694d2705356">f53be04b358fbe720b9285f9f0884694d2705356</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1114393/"> 1114393</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d1929d74c29f6af8a004e7b2fcef6278d19daa97">d1929d74c29f6af8a004e7b2fcef6278d19daa97</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1114379/">1114379</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f53be04b358fbe720b9285f9f0884694d2705356
+   d1929d74c29f6af8a004e7b2fcef6278d19daa97
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f53be04b358fbe720b9285f9f0884694d2705356">
+    <a href="/chromium/src/+log/d1929d74c29f6af8a004e7b2fcef6278d19daa97">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f53be04b358fbe720b9285f9f0884694d2705356.tar.gz">
+    <a href="/chromium/src/+archive/d1929d74c29f6af8a004e7b2fcef6278d19daa97.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Marcello Salomao &lt;msalomao@google.com&gt;
+   Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
   </td>
   <td>
-   Wed Mar 08 04:20:10 2023
+   Wed Mar 08 05:13:19 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 08 04:20:10 2023
+   Wed Mar 08 05:13:19 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f53be04b358fbe720b9285f9f0884694d2705356/">
-    75c6f25307243924bd30e4805d9149f8f8bba1ed
+   <a href="/chromium/src/+/d1929d74c29f6af8a004e7b2fcef6278d19daa97/">
+    3c15eef665a7ede426e429ecc947cde496bd5dc0
    </a>
   </td>
  </tr>
@@ -166,33 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f53be04b358fbe720b9285f9f0884694d2705356%5E">
-    51800878d25417359bb37e19fb061d2341a1af6e
+   <a href="/chromium/src/+/d1929d74c29f6af8a004e7b2fcef6278d19daa97%5E">
+    1423c3e6fe94fc9bbd67a98b525c1e70fe587baa
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f53be04b358fbe720b9285f9f0884694d2705356%5E%21/">
+    <a href="/chromium/src/+/d1929d74c29f6af8a004e7b2fcef6278d19daa97%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[MirrorSync] Flip is_upload to is_download
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Extensions] Remove bookmarkManagerPrivate permission
 
-Apparently, the default value of a boolean field in a struct
-that has been extended is always "false" unless both host and
-client are using the latest version of that struct (and it defaults
-to true).
+The bookmarkManagerPrivate permission was used by allowlisted extensions
+that used the API (such as the old bookmark manager component
+extension). These have since all been migrated to webui, and
+<a href="https://chromium-review.googlesource.com/c/chromium/src/+/1566269">https://chromium-review.googlesource.com/c/chromium/src/+/1566269</a>
+migrated tests to webui and removed the permission feature (since no
+extensions then used it). However, that CL missed removing the
+APIPermission entry and cleaning up the _api_features.json entries.
+This also results in triggering a DCHECK when encountering an API
+permission with no corresponding permission entry.
 
-Bug: None
-Test: Manual
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I52057cb4db4a34cd8632691bb530f3605c2839ad">I52057cb4db4a34cd8632691bb530f3605c2839ad</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4318484">https://chromium-review.googlesource.com/c/chromium/src/+/4318484</a>
-Reviewed-by: Dominick Ng &lt;dominickn@chromium.org&gt;
-Reviewed-by: Austin Tankiang &lt;austinct@chromium.org&gt;
-Commit-Queue: Marcello Salomao &lt;msalomao@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1114386}
+Clean these up by removing the API permission entry, marking the IDs
+as deleted, and remove the _api_features.json extension entry.
+
+Bug: 1343555
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I017e2bd890a9d81c19aa03238859c7e2f33877df">I017e2bd890a9d81c19aa03238859c7e2f33877df</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4310029">https://chromium-review.googlesource.com/c/chromium/src/+/4310029</a>
+Auto-Submit: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Reviewed-by: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
+Reviewed-by: Tim &lt;tjudkins@chromium.org&gt;
+Commit-Queue: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1114393}
 </pre>
 
 </body>
