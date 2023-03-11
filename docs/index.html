@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1116113/"> 1116113</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1d031022e7ff53746f482720cc9ccad0dbcac6cc">1d031022e7ff53746f482720cc9ccad0dbcac6cc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1116114/"> 1116114</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6c1f44372a912824e93da72eb4aafc37fe0fd62c">6c1f44372a912824e93da72eb4aafc37fe0fd62c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1116106/">1116106</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/38fb7aa31cc2ee28472552f7e3226900a55612e1">38fb7aa31cc2ee28472552f7e3226900a55612e1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1116112/">1116112</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4fda2cd39f96a9fc14547a857fe52b7873b057ee">4fda2cd39f96a9fc14547a857fe52b7873b057ee</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1d031022e7ff53746f482720cc9ccad0dbcac6cc
+   6c1f44372a912824e93da72eb4aafc37fe0fd62c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1d031022e7ff53746f482720cc9ccad0dbcac6cc">
+    <a href="/chromium/src/+log/6c1f44372a912824e93da72eb4aafc37fe0fd62c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1d031022e7ff53746f482720cc9ccad0dbcac6cc.tar.gz">
+    <a href="/chromium/src/+archive/6c1f44372a912824e93da72eb4aafc37fe0fd62c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Luc Nguyen &lt;lucnguyen@google.com&gt;
   </td>
   <td>
-   Sat Mar 11 22:06:22 2023
+   Sat Mar 11 22:39:00 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Mar 11 22:06:22 2023
+   Sat Mar 11 22:39:00 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1d031022e7ff53746f482720cc9ccad0dbcac6cc/">
-    ecd965c102b73976e02be322eb3851643b303445
+   <a href="/chromium/src/+/6c1f44372a912824e93da72eb4aafc37fe0fd62c/">
+    d2d2b542ec2dd2501430c8da4d17fd0ac60a79e6
    </a>
   </td>
  </tr>
@@ -166,43 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1d031022e7ff53746f482720cc9ccad0dbcac6cc%5E">
-    4fda2cd39f96a9fc14547a857fe52b7873b057ee
+   <a href="/chromium/src/+/6c1f44372a912824e93da72eb4aafc37fe0fd62c%5E">
+    1d031022e7ff53746f482720cc9ccad0dbcac6cc
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1d031022e7ff53746f482720cc9ccad0dbcac6cc%5E%21/">
+    <a href="/chromium/src/+/6c1f44372a912824e93da72eb4aafc37fe0fd62c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Mac PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Enable MetricsServiceAsyncCollection by default
 
-Roll Chrome Mac PGO profile from chrome-mac-main-1678535874-5ff4ddd549bdd463759db1ab5264dd2a397d8e5a.profdata to chrome-mac-main-1678556523-063b1102d7cd2669d1fddd1b04c238fceac7f21c.profdata
+Since now `metrics_service.cc` posts to `base::ThreadPool` by default,
+I had to adjust some unit tests. I.e., we are not allowed to use
+`base::TestSimpleTaskRunner` in the tests anymore, we have to use
+a `base::test::TaskEnvironment`, which is better and more accurate.
+For example, the former did not respect delays properly: if your code
+posted a task "A" to run in 5 seconds, and a task "B" to run
+immediately, when you did
+`base::TestSimpleTaskRunner::RunPendingTasks()`, it would just run
+all tasks regardless of their delay, i.e., it would run task A first
+and then task B. At least, that's what I understood from
+<a href="https://source.chromium.org/chromium/chromium/src/+/main:base/test/test_simple_task_runner.h">https://source.chromium.org/chromium/chromium/src/+/main:base/test/test_simple_task_runner.h</a>
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-mac-chromium">https://autoroll.skia.org/r/pgo-mac-chromium</a>
-Please CC chrome-brapp-engprod@google.com,pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+I also rewrote the `MetricsServiceTestWithFeatures.SplitRotation` test
+to be a lot more descriptive in what it's doing, and also more
+accurate in terms of timing.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:mac-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1eda1854070acf8e0f2506dd826d820e524bb35a">I1eda1854070acf8e0f2506dd826d820e524bb35a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4331799">https://chromium-review.googlesource.com/c/chromium/src/+/4331799</a>
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1116113}
+Bug: 1052796
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I310115db4fa3d7dd972d5ad923236da73c0b6b98">I310115db4fa3d7dd972d5ad923236da73c0b6b98</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4316968">https://chromium-review.googlesource.com/c/chromium/src/+/4316968</a>
+Reviewed-by: Robert Kaplow &lt;rkaplow@chromium.org&gt;
+Commit-Queue: Luc Nguyen &lt;lucnguyen@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1116114}
 </pre>
 
 </body>
