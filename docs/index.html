@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1116264/"> 1116264</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a225dbdaebaace495a85791585dac0eb3a28c025">a225dbdaebaace495a85791585dac0eb3a28c025</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1116268/"> 1116268</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4368f653a75d6a53b6abd8674dd9e7500f1e5168">4368f653a75d6a53b6abd8674dd9e7500f1e5168</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1116241/">1116241</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9f0fe12bd10a8aebd0ace2c6750acf7ccd2bf089">9f0fe12bd10a8aebd0ace2c6750acf7ccd2bf089</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1116257/">1116257</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a249251aba749ad4bbb0421cf58016e68b053394">a249251aba749ad4bbb0421cf58016e68b053394</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a225dbdaebaace495a85791585dac0eb3a28c025
+   4368f653a75d6a53b6abd8674dd9e7500f1e5168
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a225dbdaebaace495a85791585dac0eb3a28c025">
+    <a href="/chromium/src/+log/4368f653a75d6a53b6abd8674dd9e7500f1e5168">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a225dbdaebaace495a85791585dac0eb3a28c025.tar.gz">
+    <a href="/chromium/src/+archive/4368f653a75d6a53b6abd8674dd9e7500f1e5168.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
+   Marc Treib &lt;treib@chromium.org&gt;
   </td>
   <td>
-   Mon Mar 13 08:07:43 2023
+   Mon Mar 13 08:44:19 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Mar 13 08:07:43 2023
+   Mon Mar 13 08:44:19 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a225dbdaebaace495a85791585dac0eb3a28c025/">
-    4a8cf7b91169c811bb5f4f26d9510f4f49274804
+   <a href="/chromium/src/+/4368f653a75d6a53b6abd8674dd9e7500f1e5168/">
+    ded584bf53873e0209bf6699c7e2b3d317986594
    </a>
   </td>
  </tr>
@@ -166,33 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a225dbdaebaace495a85791585dac0eb3a28c025%5E">
-    fed2d65d4b359edf05a13b7778f47073474bef7f
+   <a href="/chromium/src/+/4368f653a75d6a53b6abd8674dd9e7500f1e5168%5E">
+    031021976a515cfb510798333ed39ffefbc52e71
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a225dbdaebaace495a85791585dac0eb3a28c025%5E%21/">
+    <a href="/chromium/src/+/4368f653a75d6a53b6abd8674dd9e7500f1e5168%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move Blink.MemoryCache.RevalidationPolicy.* metrics to histograms.xml.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Sync CTBMTP: Only log "metadata was cleared" if it was actually cleared
 
-Since histograms_suffixes_list.xml is deprecated, let me move the
-histograms to histograms.xml, which is recommended.
+ClientTagBasedModelTypeProcessor::CheckForInvalidPersistedMetadata()
+verifies the passed-in metadata is valid and consistent, and if not,
+clears it and returns false.
+However, there was one case where it returned false even if nothing was
+actually cleared, namely when `pending_clear_metadata_` was true. In
+practice, that happens on every browser startup if sync is disabled,
+causing some log spam.
 
-This is a follow up CL of:
-<a href="https://chromium-review.googlesource.com/c/chromium/src/+/4323638">https://chromium-review.googlesource.com/c/chromium/src/+/4323638</a>
+This CL fixes this by only returning "false" if data was actually
+cleared.
 
-Bug: 1419759
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iba6c08724b013a9d32870650019e6b217cad1aca">Iba6c08724b013a9d32870650019e6b217cad1aca</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4328932">https://chromium-review.googlesource.com/c/chromium/src/+/4328932</a>
-Reviewed-by: Minoru Chikamune &lt;chikamune@chromium.org&gt;
-Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
-Commit-Queue: Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1116264}
+While we're here, this also replaces some DCHECKs with CHECKs, per
+the latest guidance:
+<a href="https://chromium.googlesource.com/chromium/src/+/main/styleguide/c++/c++.md#check_dcheck_notreached_noreturn_and-notreached">https://chromium.googlesource.com/chromium/src/+/main/styleguide/c++/c++.md#check_dcheck_notreached_noreturn_and-notreached</a>
+
+Bug: 1423326
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id8bd518a5865e50b3333fa09dbbb2777c84d1da8">Id8bd518a5865e50b3333fa09dbbb2777c84d1da8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4328133">https://chromium-review.googlesource.com/c/chromium/src/+/4328133</a>
+Reviewed-by: Rushan Suleymanov &lt;rushans@google.com&gt;
+Commit-Queue: Marc Treib &lt;treib@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1116268}
 </pre>
 
 </body>
