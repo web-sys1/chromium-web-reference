@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1116765/"> 1116765</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7bb3e6fe9b00d61163ca9de2d6a85229b95a63da">7bb3e6fe9b00d61163ca9de2d6a85229b95a63da</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1116770/"> 1116770</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/309c78b4a14c770f2252ddb75d6d19d9e73d821b">309c78b4a14c770f2252ddb75d6d19d9e73d821b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1116739/">1116739</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7bb3e6fe9b00d61163ca9de2d6a85229b95a63da
+   309c78b4a14c770f2252ddb75d6d19d9e73d821b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7bb3e6fe9b00d61163ca9de2d6a85229b95a63da">
+    <a href="/chromium/src/+log/309c78b4a14c770f2252ddb75d6d19d9e73d821b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7bb3e6fe9b00d61163ca9de2d6a85229b95a63da.tar.gz">
+    <a href="/chromium/src/+archive/309c78b4a14c770f2252ddb75d6d19d9e73d821b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Fergal Daly &lt;fergal@chromium.org&gt;
+   Emilia Paz &lt;emiliapaz@chromium.org&gt;
   </td>
   <td>
-   Tue Mar 14 03:23:37 2023
+   Tue Mar 14 04:10:36 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 14 03:23:37 2023
+   Tue Mar 14 04:10:36 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7bb3e6fe9b00d61163ca9de2d6a85229b95a63da/">
-    e8d8c9882c406fa13580e2d540a076a58497e868
+   <a href="/chromium/src/+/309c78b4a14c770f2252ddb75d6d19d9e73d821b/">
+    135b15d112029097bc7ba0f1aae9e3a6bccb3872
    </a>
   </td>
  </tr>
@@ -166,33 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7bb3e6fe9b00d61163ca9de2d6a85229b95a63da%5E">
-    58d4959a0ebc7f0d235c54c2ae3eafeb60e16026
+   <a href="/chromium/src/+/309c78b4a14c770f2252ddb75d6d19d9e73d821b%5E">
+    d9bce52d5e2dd5611ce5a5f8bdc97e3fede672d7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7bb3e6fe9b00d61163ca9de2d6a85229b95a63da%5E%21/">
+    <a href="/chromium/src/+/309c78b4a14c770f2252ddb75d6d19d9e73d821b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reenable BackForwardCacheBrowserTest.NavigateToTwoPagesOnSameSite.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Extensions c2s] Move HasActiveTabAndCanAccess() to //extensions
 
-This test was flaky long ago, sometimes not having the expected page
-in BFCache. Now we have more useful debug logging in these tests, we
-can actually try to figure out why that happens.
+HasActiveTabAndCanAccess() is used to determine an extensions site
+access and site interaction. We want to compute this values in the
+//extensions layers, since permissions are not specific to //chrome.
+Thus, to move these site permissions computations we have to move
+from //chrome to //extensions:
 
-The failures don't repro locally, so I'm reenabling this.
+1. kDisableExtensionsFileAccessCheck switch
+2. AllowFileAccess() util
+and finally
+3. HasActiveTabAndCanAccess() from SitePermissionsHelper to
+PermissionsManager
 
-Bug: 1127979
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I828d4fcba601fbfde66223ec4769f4d0715cbd14">I828d4fcba601fbfde66223ec4769f4d0715cbd14</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4328918">https://chromium-review.googlesource.com/c/chromium/src/+/4328918</a>
-Reviewed-by: Ming-Ying Chung &lt;mych@chromium.org&gt;
-Commit-Queue: Ming-Ying Chung &lt;mych@chromium.org&gt;
-Auto-Submit: Fergal Daly &lt;fergal@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1116765}
+Next CL will move the site permission computations.
+
+Bug: 1289441
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7c015d8c0cf4f68ae56af2fc8e1fab44b448f73e">I7c015d8c0cf4f68ae56af2fc8e1fab44b448f73e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4305558">https://chromium-review.googlesource.com/c/chromium/src/+/4305558</a>
+Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Reviewed-by: Andrey Kosyakov &lt;caseq@chromium.org&gt;
+Commit-Queue: Emilia Paz &lt;emiliapaz@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1116770}
 </pre>
 
 </body>
