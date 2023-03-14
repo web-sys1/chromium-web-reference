@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1116798/"> 1116798</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f911853cd4c11648a05b5993f44c336ec4c2efd8">f911853cd4c11648a05b5993f44c336ec4c2efd8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1116808/"> 1116808</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ce6a8c2bfc282cc76ad7f4d8a518c35f86d48d6c">ce6a8c2bfc282cc76ad7f4d8a518c35f86d48d6c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1116788/">1116788</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f911853cd4c11648a05b5993f44c336ec4c2efd8
+   ce6a8c2bfc282cc76ad7f4d8a518c35f86d48d6c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f911853cd4c11648a05b5993f44c336ec4c2efd8">
+    <a href="/chromium/src/+log/ce6a8c2bfc282cc76ad7f4d8a518c35f86d48d6c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f911853cd4c11648a05b5993f44c336ec4c2efd8.tar.gz">
+    <a href="/chromium/src/+archive/ce6a8c2bfc282cc76ad7f4d8a518c35f86d48d6c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jason Zhang &lt;jiajunz@google.com&gt;
+   Georg Neis &lt;neis@chromium.org&gt;
   </td>
   <td>
-   Tue Mar 14 05:58:25 2023
+   Tue Mar 14 06:45:44 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 14 05:58:25 2023
+   Tue Mar 14 06:45:44 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f911853cd4c11648a05b5993f44c336ec4c2efd8/">
-    af68b00b501d23a7047315664a7b183a3c89534e
+   <a href="/chromium/src/+/ce6a8c2bfc282cc76ad7f4d8a518c35f86d48d6c/">
+    cab22c5c0f809274cb281473d0538d427ef16a40
    </a>
   </td>
  </tr>
@@ -166,32 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f911853cd4c11648a05b5993f44c336ec4c2efd8%5E">
-    d3af6fabdf24b6a940414b190ad0b6061e230916
+   <a href="/chromium/src/+/ce6a8c2bfc282cc76ad7f4d8a518c35f86d48d6c%5E">
+    e188f255dc179f2a3e102b9e6213bb289e10d107
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f911853cd4c11648a05b5993f44c336ec4c2efd8%5E%21/">
+    <a href="/chromium/src/+/ce6a8c2bfc282cc76ad7f4d8a518c35f86d48d6c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CrOS Hotspot] Add Hotspot.Usage.IsDeviceManaged metric
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refine ChromeContentBrowserClient::OpenExternally
 
-This CL adds the
-Network.Ash.Hotspot.Upstream.Cellular.Usage.IsDeviceManaged metric which
-measures and tracks the number of the hotspot being used on a managed
-device or not. This metric is emitted each time the hotspot starts
-successfully.
+See the tracking bug for general background.
 
-Bug: b/271364777
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I514445a0226ffe841eea2c3b709a23fb8439ea4b">I514445a0226ffe841eea2c3b709a23fb8439ea4b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4317666">https://chromium-review.googlesource.com/c/chromium/src/+/4317666</a>
-Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
-Commit-Queue: Jason Zhang &lt;jiajunz@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1116798}
+Some time has passed since the main automatic redirection of
+link opening from Ash to Lacros was added. This CL is a step towards
+cleaning it up and minimizing the exceptional cases.
+
+Insert various DumpWithoutCrash calls to better understand which
+special handling is still necessary. Also refactor and reorder the
+function to make more sense generally and to more naturally allow
+a catch-all handling at the end.
+
+This is meant as an intermediate step.
+
+Also widen the "TryLaunchOsUrlHandler" path to non-WebUI sources.
+I'm not aware of a current use case but conceptually it's
+the right thing to do and we might need it in the ChromeVox
+extension soon.
+
+Also make ChromeWebUIControllerFactory::CanHandleUrl sanitize its input
+to simplify call sites.
+
+Bug: chromium:1359920
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I699089be5f64232522561d4ea92a2faf47093871">I699089be5f64232522561d4ea92a2faf47093871</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4323459">https://chromium-review.googlesource.com/c/chromium/src/+/4323459</a>
+Commit-Queue: Georg Neis &lt;neis@chromium.org&gt;
+Reviewed-by: Stefan Kuhne &lt;skuhne@chromium.org&gt;
+Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
+Reviewed-by: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1116808}
 </pre>
 
 </body>
