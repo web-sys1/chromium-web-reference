@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1117064/"> 1117064</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/be4bdac5ccd636436c013bf838d65dca4cf30536">be4bdac5ccd636436c013bf838d65dca4cf30536</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1117127/"> 1117127</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e9d6b0f320891cdf55939547bb2266a20ae92e1d">e9d6b0f320891cdf55939547bb2266a20ae92e1d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1117015/">1117015</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   be4bdac5ccd636436c013bf838d65dca4cf30536
+   e9d6b0f320891cdf55939547bb2266a20ae92e1d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/be4bdac5ccd636436c013bf838d65dca4cf30536">
+    <a href="/chromium/src/+log/e9d6b0f320891cdf55939547bb2266a20ae92e1d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/be4bdac5ccd636436c013bf838d65dca4cf30536.tar.gz">
+    <a href="/chromium/src/+archive/e9d6b0f320891cdf55939547bb2266a20ae92e1d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jason Zhang &lt;jiajunz@google.com&gt;
+   Jonathan Lee &lt;jonathanjlee@google.com&gt;
   </td>
   <td>
-   Tue Mar 14 17:23:37 2023
+   Tue Mar 14 18:44:28 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 14 17:23:37 2023
+   Tue Mar 14 18:44:28 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/be4bdac5ccd636436c013bf838d65dca4cf30536/">
-    66b8ec8ce566858b76461c6266197b09c14a2043
+   <a href="/chromium/src/+/e9d6b0f320891cdf55939547bb2266a20ae92e1d/">
+    0f70c7b07feb268a08dc5fa4277706def6495584
    </a>
   </td>
  </tr>
@@ -166,36 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/be4bdac5ccd636436c013bf838d65dca4cf30536%5E">
-    cedbaf1e44755ab4ceb2347686fd3bb985d55028
+   <a href="/chromium/src/+/e9d6b0f320891cdf55939547bb2266a20ae92e1d%5E">
+    bc84c1ee93da3920fd37f60a8b37c16c50b3116d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/be4bdac5ccd636436c013bf838d65dca4cf30536%5E%21/">
+    <a href="/chromium/src/+/e9d6b0f320891cdf55939547bb2266a20ae92e1d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CrOS Hotspot] Prevent double triggering enable/disable hotspot
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[wptrunner] Always write text artifacts as Unicode
 
-Currently, both hotspot-subpage and hotspot-summary-item have toggle to
-enable/disable hotspot. If we enable the toggle in hotspot-subpage,
-it will also trigger the enable hotspot in hotspot-summary-item because
-once we turn on hotspot in hotspot-subpage, hotspot info will be updated
-and will trigger the onHotspotInfoChanged_ to set the
-isHotspotToggleOn_. Updating the isHotspotToggleOn_ will trigger the
-observer function and call enable hotspot again.
-This CL removes the observer and rely on `on-change` function to
-enable/disable hotspot.
+In crrev.com/c/3884237, the results processor was moved from a
+subprocess into an in-process thread, meaning `PYTHONUTF8` mode was no
+longer applied. On Windows, this meant that `open(...)`, which backs
+`typ.artifacts.Artifacts.CreateArtifact(..., write_as_text=True)`,
+could use a platform-dependent encoding [1].
 
-Bug: b/239477916
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic7274dc9c798f177073461ddcd8e70cac0f1898b">Ic7274dc9c798f177073461ddcd8e70cac0f1898b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4330380">https://chromium-review.googlesource.com/c/chromium/src/+/4330380</a>
-Reviewed-by: Wes Okuhara &lt;wesokuhara@google.com&gt;
-Commit-Queue: Jason Zhang &lt;jiajunz@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1117064}
+This change fixes this issue by manually encoding text artifacts with
+'utf-8', then writing to binary files. As `typ` still appears to support
+python2, where `str` is `bytes`, it's not easy to fix this from `typ`'s
+side currently.
+
+This change also broadens the exception caught for `process_event(...)`
+so that the auxiliary thread logs issues in general instead of crashing,
+which stops result reporting.
+
+[1]: <a href="https://docs.python.org/3/library/functions.html#open">https://docs.python.org/3/library/functions.html#open</a>
+
+Fixed: 1423697
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3a35107b082a88226c08dd2991e4371064f7b2a5">I3a35107b082a88226c08dd2991e4371064f7b2a5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4338275">https://chromium-review.googlesource.com/c/chromium/src/+/4338275</a>
+Reviewed-by: Weizhong Xia &lt;weizhong@google.com&gt;
+Commit-Queue: Jonathan Lee &lt;jonathanjlee@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1117127}
 </pre>
 
 </body>
