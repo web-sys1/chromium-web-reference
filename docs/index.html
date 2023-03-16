@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1118049/"> 1118049</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/46d973bb4beba300ed1fcdca233e18da18273ff9">46d973bb4beba300ed1fcdca233e18da18273ff9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1118057/"> 1118057</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/691b3f2dcf87d1fddb886a57db7dc5a40dc2bde4">691b3f2dcf87d1fddb886a57db7dc5a40dc2bde4</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1118014/">1118014</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c2a6e9209c597b9f8304b0af4aa4975ce4690a30">c2a6e9209c597b9f8304b0af4aa4975ce4690a30</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1118047/">1118047</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6ca3d2852acc3e3d7f50ed194a1c7c9b0c620836">6ca3d2852acc3e3d7f50ed194a1c7c9b0c620836</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   46d973bb4beba300ed1fcdca233e18da18273ff9
+   691b3f2dcf87d1fddb886a57db7dc5a40dc2bde4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/46d973bb4beba300ed1fcdca233e18da18273ff9">
+    <a href="/chromium/src/+log/691b3f2dcf87d1fddb886a57db7dc5a40dc2bde4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/46d973bb4beba300ed1fcdca233e18da18273ff9.tar.gz">
+    <a href="/chromium/src/+archive/691b3f2dcf87d1fddb886a57db7dc5a40dc2bde4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alexis Hétu &lt;sugoi@google.com&gt;
+   Jeroen Dhollander &lt;jeroendh@google.com&gt;
   </td>
   <td>
-   Thu Mar 16 12:37:14 2023
+   Thu Mar 16 13:13:32 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 16 12:37:14 2023
+   Thu Mar 16 13:13:32 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/46d973bb4beba300ed1fcdca233e18da18273ff9/">
-    3fde4e080e663b9567fc25a27f739b34cf99a751
+   <a href="/chromium/src/+/691b3f2dcf87d1fddb886a57db7dc5a40dc2bde4/">
+    191b638d2b281c8f6ff99dc079e0fa8ab81efe4e
    </a>
   </td>
  </tr>
@@ -166,51 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/46d973bb4beba300ed1fcdca233e18da18273ff9%5E">
-    8ef23ed393b7acb7c5833098ddc930ed815aff31
+   <a href="/chromium/src/+/691b3f2dcf87d1fddb886a57db7dc5a40dc2bde4%5E">
+    b4ff46264aa24af1c7ab7ea3c08f676a834bc09f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/46d973bb4beba300ed1fcdca233e18da18273ff9%5E%21/">
+    <a href="/chromium/src/+/691b3f2dcf87d1fddb886a57db7dc5a40dc2bde4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "webcodecs: Strict enforcement of requested bitrate mode in hw encoders"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix DCHECK in webrtc transport code
 
-This reverts commit 68eae4794a8538f4286c4e8aa26d6529c7af07b3.
+These DCHECKs fired when starting a CRD connection on ChromeOS,
+and were caused because RtpSenderInterface::SetParameters takes
+a semaphore (and this code ran on the IO thread where that is
+disallowed).
 
-Reason for revert: Breaks this bots:
-<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/Android%20FYI%20Release%20%28Pixel%206%29/5305/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/Android%20FYI%20Release%20(Pixel%206)/5305/overview</a>
-Also note that gold images will need to be updated for this bot:
-<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/Win10%20FYI%20x64%20Release%20%28Intel%29/1164">https://ci.chromium.org/ui/p/chromium/builders/ci/Win10%20FYI%20x64%20Release%20(Intel)/1164</a>
+I fixed this by using `ScopedAllowSyncPrimitivesForWebRtcTransport`
+which supresses these DCHECKs.
 
-Original change's description:
-&gt; webcodecs: Strict enforcement of requested bitrate mode in hw encoders
-&gt;
-&gt; Old Android encoders don't support VBR, that's why all tests that don't
-&gt; care about bitrate are switched to CBR.
-&gt;
-&gt; Bug: 1424874
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I96e4408639f84cb07fcc8bb07869cc03c3c8bb93">I96e4408639f84cb07fcc8bb07869cc03c3c8bb93</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4342603">https://chromium-review.googlesource.com/c/chromium/src/+/4342603</a>
-&gt; Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
-&gt; Commit-Queue: Eugene Zemtsov &lt;eugene@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1117908}
-
-Bug: 1424874
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie0474ef631aa7a6ff93fd49d0dbe2de11d27636c">Ie0474ef631aa7a6ff93fd49d0dbe2de11d27636c</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4345812">https://chromium-review.googlesource.com/c/chromium/src/+/4345812</a>
-Owners-Override: Alexis Hétu &lt;sugoi@google.com&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Auto-Submit: Alexis Hétu &lt;sugoi@google.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1118049}
+Fixed: b/264975455
+Test: Started CRD connection with DCHECKs enabled
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I92b681406c668ae707d1f74bb97951818f234d2d">I92b681406c668ae707d1f74bb97951818f234d2d</a>
+Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4151249">https://chromium-review.googlesource.com/c/chromium/src/+/4151249</a>
+Commit-Queue: Jeroen Dhollander &lt;jeroendh@google.com&gt;
+Auto-Submit: Jeroen Dhollander &lt;jeroendh@google.com&gt;
+Reviewed-by: Joe Downing &lt;joedow@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1118057}
 </pre>
 
 </body>
