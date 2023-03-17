@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1118506/"> 1118506</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3d4aab7a9e6d2e0d1f2ea0711edd873f307375bc">3d4aab7a9e6d2e0d1f2ea0711edd873f307375bc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1118520/"> 1118520</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/27975bd8a99b184f50a709e97cda5074ea9b0f94">27975bd8a99b184f50a709e97cda5074ea9b0f94</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1118471/">1118471</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/42513c0845a7dfed8438da292a6cbb88d684e01b">42513c0845a7dfed8438da292a6cbb88d684e01b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1118495/">1118495</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3be3e20d21fd0cc2d971cba1b49f9fa90e01aaa4">3be3e20d21fd0cc2d971cba1b49f9fa90e01aaa4</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3d4aab7a9e6d2e0d1f2ea0711edd873f307375bc
+   27975bd8a99b184f50a709e97cda5074ea9b0f94
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3d4aab7a9e6d2e0d1f2ea0711edd873f307375bc">
+    <a href="/chromium/src/+log/27975bd8a99b184f50a709e97cda5074ea9b0f94">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3d4aab7a9e6d2e0d1f2ea0711edd873f307375bc.tar.gz">
+    <a href="/chromium/src/+archive/27975bd8a99b184f50a709e97cda5074ea9b0f94.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Benjamin &lt;davidben@chromium.org&gt;
+   Ben Joyce &lt;bjoyce@google.com&gt;
   </td>
   <td>
-   Fri Mar 17 03:41:45 2023
+   Fri Mar 17 04:28:22 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 17 03:41:45 2023
+   Fri Mar 17 04:28:22 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3d4aab7a9e6d2e0d1f2ea0711edd873f307375bc/">
-    1f239996bc34d4d4dd5728210e440f59c0e12fe8
+   <a href="/chromium/src/+/27975bd8a99b184f50a709e97cda5074ea9b0f94/">
+    8dbc344f24db6147e9fa1bcc3c0e83a5ea5f4b62
    </a>
   </td>
  </tr>
@@ -166,63 +166,28 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3d4aab7a9e6d2e0d1f2ea0711edd873f307375bc%5E">
-    ac4b6ee92e7ae034f13e5a83b25d468fc6aa68fb
+   <a href="/chromium/src/+/27975bd8a99b184f50a709e97cda5074ea9b0f94%5E">
+    238149b66941f3bfcd7e19e88f50f518dbb68758
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3d4aab7a9e6d2e0d1f2ea0711edd873f307375bc%5E%21/">
+    <a href="/chromium/src/+/27975bd8a99b184f50a709e97cda5074ea9b0f94%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix race conditions in Watchdog subclasses
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add persistent shell arg to private_code_test.
 
-There were two suppressions for what seems to have been the same
-original cause. The suppressions prevent us from catching bugs when
-something else in the browser uses Watchdog.
+Arg is not used for .py tests, but for simplicity, is passed to all test suites on the bot, so suite needs to be able to deal with it.
 
-There were two race conditions, one of which actually impacts the entire
-Watchdog subclassing API, not just tests:
-
-First, both the watchdog thread and the test thread access
-alarm_counter. This can be fixed by just using an atomic.
-
-The second race condition is one that TSan seems to no longer notice
-once an atomic is used: until ~WatchDog() joins the thread, the watchdog
-thread may call Alarm(). But by then, the subclass has been destructed.
-That means it's possible to race the watchdog thread calling alarm with
-the subclass being destroyed. This can result in data races in both the
-subclass state and also the vtable pointer itself. (When ~Derived()
-hands off to ~Base(), the vtable pointer is rewired to Base's vtable, so
-that virtual method classes use the base class's version.)
-
-Instead, replace subclassing with a Delegate interface that can outlive
-the Watchdog. While I'm here, reduce unnecessary allocations and
-indirections in ShutdownWatcherHelper by flattening it. Also switch the
-ad-hoc thread-id DCHECKs to THREAD_CHECKER to avoid allocating space for
-it in release mode.
-
-Also remove the CustomThreadWatcher suppression. That class no
-longer exists, though based on the linked bug, it looks like it may
-have been another watchdog race.
-
-Finally, remove Disarm() classes to watchdogs that are going to be
-destroyed immediately afterwards anyway. Disarming the watchdog
-immediately before destroying it is redundant.
-
-Bug: 120808, 308590
-Cq-Include-Trybots: luci.chromium.try:linux_chromium_tsan_rel_ng
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I83dc4bf3d1a93de0cdfd4e870a254dfdd6d0c739">I83dc4bf3d1a93de0cdfd4e870a254dfdd6d0c739</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4335573">https://chromium-review.googlesource.com/c/chromium/src/+/4335573</a>
-Reviewed-by: Gabriel Charette &lt;gab@chromium.org&gt;
-Reviewed-by: Jamie Walch &lt;jamiewalch@chromium.org&gt;
-Reviewed-by: Daniel Rubery &lt;drubery@chromium.org&gt;
-Reviewed-by: Steven Holte &lt;holte@chromium.org&gt;
-Commit-Queue: David Benjamin &lt;davidben@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1118506}
+Bug: 1239300
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I62db7c1fda33f8859c371a5364e6906a82b28735">I62db7c1fda33f8859c371a5364e6906a82b28735</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4347822">https://chromium-review.googlesource.com/c/chromium/src/+/4347822</a>
+Reviewed-by: Bruce Dawson &lt;brucedawson@chromium.org&gt;
+Commit-Queue: Benjamin Joyce (Ben) &lt;bjoyce@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1118520}
 </pre>
 
 </body>
