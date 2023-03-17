@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1118578/"> 1118578</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6b7c92f50a826f324d88ede6785e4d96aeb815ce">6b7c92f50a826f324d88ede6785e4d96aeb815ce</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1118587/"> 1118587</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5717f6af2d29e4b80088db0ca801552ba8bf60ed">5717f6af2d29e4b80088db0ca801552ba8bf60ed</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1118575/">1118575</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6b7c92f50a826f324d88ede6785e4d96aeb815ce
+   5717f6af2d29e4b80088db0ca801552ba8bf60ed
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6b7c92f50a826f324d88ede6785e4d96aeb815ce">
+    <a href="/chromium/src/+log/5717f6af2d29e4b80088db0ca801552ba8bf60ed">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6b7c92f50a826f324d88ede6785e4d96aeb815ce.tar.gz">
+    <a href="/chromium/src/+archive/5717f6af2d29e4b80088db0ca801552ba8bf60ed.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Bastian Kersting &lt;bkersting@google.com&gt;
+   Maksim Sisov &lt;msisov@igalia.com&gt;
   </td>
   <td>
-   Fri Mar 17 10:11:06 2023
+   Fri Mar 17 10:52:46 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 17 10:11:06 2023
+   Fri Mar 17 10:52:46 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6b7c92f50a826f324d88ede6785e4d96aeb815ce/">
-    8c3a10490858a756d97f4e0cbb54c4e2e7c64b80
+   <a href="/chromium/src/+/5717f6af2d29e4b80088db0ca801552ba8bf60ed/">
+    aafb78734312f923bd466ded9adf40c87055df21
    </a>
   </td>
  </tr>
@@ -166,37 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6b7c92f50a826f324d88ede6785e4d96aeb815ce%5E">
-    2d33456861391a7317849740299f72a90ebba2f8
+   <a href="/chromium/src/+/5717f6af2d29e4b80088db0ca801552ba8bf60ed%5E">
+    beeb0869f0dca63ed6489d6580e85ca1a8b95451
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6b7c92f50a826f324d88ede6785e4d96aeb815ce%5E%21/">
+    <a href="/chromium/src/+/5717f6af2d29e4b80088db0ca801552ba8bf60ed%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Telemetry] Add event service interface definition
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ios] enable delegated compositing using RemoteLayerAPI.
 
-This CL adds a TelemetryEventService interface definition
-that is going to be part of crosapi.
-This also adds a new TelemetryExtensionException, which is
-a copy of cros_healthd's exception type that they plan to
-use in a multitude of interfaces.
+macOS' RemoteLayerAPI is based on availability of the contextWithCGSConnection ctor method in the CAContext. CGSConnection
+is macOS only think and iOS has something else.
 
-This is part of a bigger effort to add an event interface
-to the Telemetry Extension. For more context visit
-go/design-sketch-event-api.
+Checking WebKit, it was learnt that remoteContextWithOptions ctor
+method is available on iOS, which allows us to create a CAContext
+and use the same procedure as macOS uses (create a tree of CALayers,
+get the context id, create a CALayerHost on the browser process side
+and attach that context id).
 
-Bug: b/268125589
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib4c5eb99d69b76bc9ca9589a867ffd7f5951c9b7">Ib4c5eb99d69b76bc9ca9589a867ffd7f5951c9b7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4329537">https://chromium-review.googlesource.com/c/chromium/src/+/4329537</a>
-Reviewed-by: Oleh Lamzin &lt;lamzin@google.com&gt;
-Reviewed-by: Roland Bock &lt;rbock@google.com&gt;
-Commit-Queue: Bastian Kersting &lt;bkersting@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1118578}
+It was also required to avoid setting flipped geometry for the
+root layer as it's not required on iOS (see the comment there +
+the cl [1] that disabled a flipped layer, which is not needed on
+iOS).
+
+[1] <a href="https://crrev.com/c/4334544">https://crrev.com/c/4334544</a>
+
+Test: Verified CALayers are scheduled and quads are delegated.
+Bug: 1418775
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iab1863b32ebe4ecbd8a55380d1076fca510232a0">Iab1863b32ebe4ecbd8a55380d1076fca510232a0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4335299">https://chromium-review.googlesource.com/c/chromium/src/+/4335299</a>
+Reviewed-by: ccameron chromium &lt;ccameron@chromium.org&gt;
+Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
+Commit-Queue: Maksim Sisov &lt;msisov@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1118587}
 </pre>
 
 </body>
