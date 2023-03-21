@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1120088/"> 1120088</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3d68d61a27d07b255e8873b789c9ade3925d0d38">3d68d61a27d07b255e8873b789c9ade3925d0d38</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1120125/"> 1120125</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4239b437eeb8a7460059b9fbc9e903e178d494f6">4239b437eeb8a7460059b9fbc9e903e178d494f6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1120001/">1120001</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3d68d61a27d07b255e8873b789c9ade3925d0d38
+   4239b437eeb8a7460059b9fbc9e903e178d494f6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3d68d61a27d07b255e8873b789c9ade3925d0d38">
+    <a href="/chromium/src/+log/4239b437eeb8a7460059b9fbc9e903e178d494f6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3d68d61a27d07b255e8873b789c9ade3925d0d38.tar.gz">
+    <a href="/chromium/src/+archive/4239b437eeb8a7460059b9fbc9e903e178d494f6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Adrian Taylor &lt;adetaylor@chromium.org&gt;
+   Alex Cooper &lt;alcooper@chromium.org&gt;
   </td>
   <td>
-   Tue Mar 21 18:44:52 2023
+   Tue Mar 21 19:36:54 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 21 18:44:52 2023
+   Tue Mar 21 19:36:54 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3d68d61a27d07b255e8873b789c9ade3925d0d38/">
-    945729b60c299d931c25719ca4d049da8d25661a
+   <a href="/chromium/src/+/4239b437eeb8a7460059b9fbc9e903e178d494f6/">
+    54ad787676f0d4cacc64f16b95179106bf247d7b
    </a>
   </td>
  </tr>
@@ -166,29 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3d68d61a27d07b255e8873b789c9ade3925d0d38%5E">
-    f935f82d4a9bd699720b0646113fe26231357b02
+   <a href="/chromium/src/+/4239b437eeb8a7460059b9fbc9e903e178d494f6%5E">
+    01ad93c719d0eaec7285bc8a1bbaa3a02be0e6eb
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3d68d61a27d07b255e8873b789c9ade3925d0d38%5E%21/">
+    <a href="/chromium/src/+/4239b437eeb8a7460059b9fbc9e903e178d494f6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[rust] Fix building of proc macro unit tests
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Centralize Session Logic in XrSessionCoordinator
 
-Previously, building these was failing due to lack of --extern
-proc_macro.
+Removes some logic and indirection that was happening in XrDelegateImpl
+via ArDelegate and has XrDelegateImpl directly listen to
+XrSessionCoordinator. Updates XrSessionCoordinator to better manage
+and supply the state of the active session as well as its type. This
+has the side effect of rendering the ArDelegate unnecessary, now that
+the XrSessionCoordinator is always available to the XrDelegateImpl.
+This also moves the SessionType enum to the XrSessionCoordinator which
+is a more logical "source of truth". Note that much of this logic is
+handled via statics that are private to the XrSessionCoordinator class
+as each of the native runtimes will create their own
+XrSessionCoordinator.
 
-Bug: 1292038
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iafdbc2b121076cd6439d4e59c1e0e327d94394b0">Iafdbc2b121076cd6439d4e59c1e0e327d94394b0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4358019">https://chromium-review.googlesource.com/c/chromium/src/+/4358019</a>
-Commit-Queue: Adrian Taylor &lt;adetaylor@chromium.org&gt;
-Reviewed-by: danakj &lt;danakj@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1120088}
+In preparation for some of the pending Vr logic being added to
+XrSessionCoordinator, abstracts some useful shared logic to
+startSession and renames the existing startSession method to
+startArSession.
+
+Bug: 989117
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I744f2a0da3aa36bb2e1be622c641cf087eec5132">I744f2a0da3aa36bb2e1be622c641cf087eec5132</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4343101">https://chromium-review.googlesource.com/c/chromium/src/+/4343101</a>
+Reviewed-by: Piotr Bialecki &lt;bialpio@chromium.org&gt;
+Commit-Queue: Alexander Cooper &lt;alcooper@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1120125}
 </pre>
 
 </body>
