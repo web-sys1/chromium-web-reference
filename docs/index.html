@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1120333/"> 1120333</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/60d61519cb166eebaf9e4237f72289281515d236">60d61519cb166eebaf9e4237f72289281515d236</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1120355/"> 1120355</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/02be616c8fd8dab180b260594d9626e7768d91e7">02be616c8fd8dab180b260594d9626e7768d91e7</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1120314/">1120314</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c1d34cede7c0e87c9d9eafe07805f23cd7ad29eb">c1d34cede7c0e87c9d9eafe07805f23cd7ad29eb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1120338/">1120338</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/798b8b8d8b173d6e394d4b5cbd80172575c4981d">798b8b8d8b173d6e394d4b5cbd80172575c4981d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   60d61519cb166eebaf9e4237f72289281515d236
+   02be616c8fd8dab180b260594d9626e7768d91e7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/60d61519cb166eebaf9e4237f72289281515d236">
+    <a href="/chromium/src/+log/02be616c8fd8dab180b260594d9626e7768d91e7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/60d61519cb166eebaf9e4237f72289281515d236.tar.gz">
+    <a href="/chromium/src/+archive/02be616c8fd8dab180b260594d9626e7768d91e7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Guoxing Zhao &lt;charleszhao@chromium.org&gt;
+   Takashi Sakamoto &lt;tasak@google.com&gt;
   </td>
   <td>
-   Wed Mar 22 02:05:15 2023
+   Wed Mar 22 03:20:42 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 22 02:05:15 2023
+   Wed Mar 22 03:20:42 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/60d61519cb166eebaf9e4237f72289281515d236/">
-    1d573acfee9f277576e46f9ab89bd98b87fb40e2
+   <a href="/chromium/src/+/02be616c8fd8dab180b260594d9626e7768d91e7/">
+    ff19f1a5077e7251a1704e6c9ba9b1b1059d2a2b
    </a>
   </td>
  </tr>
@@ -166,48 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/60d61519cb166eebaf9e4237f72289281515d236%5E">
-    2394fb7be1ac4394a38b37c1c7fc846002e51378
+   <a href="/chromium/src/+/02be616c8fd8dab180b260594d9626e7768d91e7%5E">
+    eeae4eafc58ffc17228ca22a4c86d224a6a0dd06
    </a>
    <span>
     [
-    <a href="/chromium/src/+/60d61519cb166eebaf9e4237f72289281515d236%5E%21/">
+    <a href="/chromium/src/+/02be616c8fd8dab180b260594d9626e7768d91e7%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "[VC] Integration test 4."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make UserLevelMemoryPressureSignal not to dispatch any signals for inert intervals after loading is finished.
 
-This is a reland of commit e61c985e61e8d7e0161c81be2b7a9eb33d98ff46
+Add |inert_interval| finch parameter to the feature and modify the code
+to see RAILMode changes on render processes. If the current RAIL mode is
+loading or is just changed to be not loading, we will consider that the
+render process is running OnLoad or DOMContentLoaded event handler. The
+process requires memory to finish the event handlers. So wait inert
+interval after loading is finished and dispatch memory pressure signals
+if any requests are arrived during the inert interval.
 
-The original cl was reverted because a failing test.
-
-The ReturnToApp buttons are in random order for now, so we can't rely
-on that order for now.
-
-Original change's description:
-&gt; [VC] Integration test 4.
-&gt;
-&gt; (1) Test Multiple tabs are displaced with correct information.
-&gt;
-&gt; (2) Test ReturnToApp works with multiple tabs.
-&gt;
-&gt; Bug=b:266011653
-&gt; TEST="autoninja -C  out/Test chrome/test:browser_tests &amp;&amp; out/Test/browser_tests --gtest_filter=VideoConferenceIntegrationTest.*"
-&gt;
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic1349c6a635fb561b5e8a425668ab6a11f100dd8">Ic1349c6a635fb561b5e8a425668ab6a11f100dd8</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4349733">https://chromium-review.googlesource.com/c/chromium/src/+/4349733</a>
-&gt; Reviewed-by: CJ Huang &lt;chenjih@google.com&gt;
-&gt; Commit-Queue: Charles Zhao &lt;charleszhao@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1119717}
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3def513076f21a0fc76dc05f03d74760304bb878">I3def513076f21a0fc76dc05f03d74760304bb878</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4354738">https://chromium-review.googlesource.com/c/chromium/src/+/4354738</a>
-Commit-Queue: Charles Zhao &lt;charleszhao@chromium.org&gt;
-Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1120333}
+Bug: 1393283
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id12458659437b9ba74b038f9c1847c7799982672">Id12458659437b9ba74b038f9c1847c7799982672</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4333318">https://chromium-review.googlesource.com/c/chromium/src/+/4333318</a>
+Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Commit-Queue: Takashi Sakamoto &lt;tasak@google.com&gt;
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1120355}
 </pre>
 
 </body>
