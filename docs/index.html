@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1120580/"> 1120580</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/af04b0e0373bdf3adf64b03807e127971aeed382">af04b0e0373bdf3adf64b03807e127971aeed382</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1120610/"> 1120610</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0ccd76b84cb8a66de9ab8463514caa2c394b3d9f">0ccd76b84cb8a66de9ab8463514caa2c394b3d9f</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1120550/">1120550</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   af04b0e0373bdf3adf64b03807e127971aeed382
+   0ccd76b84cb8a66de9ab8463514caa2c394b3d9f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/af04b0e0373bdf3adf64b03807e127971aeed382">
+    <a href="/chromium/src/+log/0ccd76b84cb8a66de9ab8463514caa2c394b3d9f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/af04b0e0373bdf3adf64b03807e127971aeed382.tar.gz">
+    <a href="/chromium/src/+archive/0ccd76b84cb8a66de9ab8463514caa2c394b3d9f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kai Ninomiya &lt;kainino@chromium.org&gt;
+   Bartek Nowierski &lt;bartekn@chromium.org&gt;
   </td>
   <td>
-   Wed Mar 22 16:25:33 2023
+   Wed Mar 22 17:02:58 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 22 16:25:33 2023
+   Wed Mar 22 17:02:58 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/af04b0e0373bdf3adf64b03807e127971aeed382/">
-    4504d76602e8b08e2a124c79767ee3a892be7856
+   <a href="/chromium/src/+/0ccd76b84cb8a66de9ab8463514caa2c394b3d9f/">
+    c1e95fd4ff5c6a90fa6e6f42c519baa87d05cffa
    </a>
   </td>
  </tr>
@@ -166,41 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/af04b0e0373bdf3adf64b03807e127971aeed382%5E">
-    7c99a28427d20c9ad078da7d7895eff8b3146774
+   <a href="/chromium/src/+/0ccd76b84cb8a66de9ab8463514caa2c394b3d9f%5E">
+    5623ccc02ef82bd205b1b0536b30c2c804ade286
    </a>
    <span>
     [
-    <a href="/chromium/src/+/af04b0e0373bdf3adf64b03807e127971aeed382%5E%21/">
+    <a href="/chromium/src/+/0ccd76b84cb8a66de9ab8463514caa2c394b3d9f%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make GPUAdapter single-use
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make UnretainedWrapper::GetPtrType obey raw_ptr_traits::IsSupportedType
 
-The WebGPU spec changed to make GPUAdapter a single-use object: once it
-successfully creates a device, it cannot create more devices.
-<a href="https://github.com/gpuweb/gpuweb/pull/3936">https://github.com/gpuweb/gpuweb/pull/3936</a>
+GetPtrType shouldn't be raw_ptr&lt;T&gt;, when T isn't supported by raw_ptr.
+It simply won't compile.
 
-The spec returns an already-lost device, and this should be implemented
-in Dawn eventually, but as a first step for V1, we implement this as a
-requestDevice() rejection in Blink. We could inject a device loss (as
-the deleted code in this CL does), but an exception gives us more leeway
-to change the behavior/spec in a pseudo-non-breaking way.
+To be fair, those same cases wouldn't compile in the current code for
+another reason, but this adds clarity, which allows to strengthen
+a static_assert.
 
-Finally, the old GPUAdapter invalidation code is removed, because it's
-obsoleted by this change: the adapter is already necessarily invalidated
-by the time a device coming from it could be lost.
+Update comments while at it.
 
-Test: adapter_single_use.https.html
-Bug: 1234617
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8b68648bca415e067cafca01cc2572d6949f1c27">I8b68648bca415e067cafca01cc2572d6949f1c27</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4358569">https://chromium-review.googlesource.com/c/chromium/src/+/4358569</a>
-Reviewed-by: Austin Eng &lt;enga@chromium.org&gt;
-Commit-Queue: Kai Ninomiya &lt;kainino@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1120580}
+This document explains the allowed type combinations in the current
+implementation:
+<a href="https://docs.google.com/document/d/1dLM34aKqbNBfRdOYxxV_T-zQU4J5wjmXwIBJZr7JvZM/edit">https://docs.google.com/document/d/1dLM34aKqbNBfRdOYxxV_T-zQU4J5wjmXwIBJZr7JvZM/edit</a>
+
+Bug: 1404132
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6313f9bca64068af18ced6ca6ce9e060a73935f5">I6313f9bca64068af18ced6ca6ce9e060a73935f5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4351851">https://chromium-review.googlesource.com/c/chromium/src/+/4351851</a>
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Auto-Submit: Bartek Nowierski &lt;bartekn@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1120610}
 </pre>
 
 </body>
