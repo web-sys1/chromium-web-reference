@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1120610/"> 1120610</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0ccd76b84cb8a66de9ab8463514caa2c394b3d9f">0ccd76b84cb8a66de9ab8463514caa2c394b3d9f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1120653/"> 1120653</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d852e9b1190ff90a461fedf5508a44f78f152f25">d852e9b1190ff90a461fedf5508a44f78f152f25</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1120550/">1120550</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0ccd76b84cb8a66de9ab8463514caa2c394b3d9f
+   d852e9b1190ff90a461fedf5508a44f78f152f25
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0ccd76b84cb8a66de9ab8463514caa2c394b3d9f">
+    <a href="/chromium/src/+log/d852e9b1190ff90a461fedf5508a44f78f152f25">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0ccd76b84cb8a66de9ab8463514caa2c394b3d9f.tar.gz">
+    <a href="/chromium/src/+archive/d852e9b1190ff90a461fedf5508a44f78f152f25.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Bartek Nowierski &lt;bartekn@chromium.org&gt;
+   Yash Joshi &lt;yashjoshimail@gmail.com&gt;
   </td>
   <td>
-   Wed Mar 22 17:02:58 2023
+   Wed Mar 22 17:47:24 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 22 17:02:58 2023
+   Wed Mar 22 17:47:24 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0ccd76b84cb8a66de9ab8463514caa2c394b3d9f/">
-    c1e95fd4ff5c6a90fa6e6f42c519baa87d05cffa
+   <a href="/chromium/src/+/d852e9b1190ff90a461fedf5508a44f78f152f25/">
+    661d8abcb3cf3b3c44f515093fc84584250654e2
    </a>
   </td>
  </tr>
@@ -166,40 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0ccd76b84cb8a66de9ab8463514caa2c394b3d9f%5E">
-    5623ccc02ef82bd205b1b0536b30c2c804ade286
+   <a href="/chromium/src/+/d852e9b1190ff90a461fedf5508a44f78f152f25%5E">
+    8f2070f8e4467f3de480dc210bc0054f5c9fbf55
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0ccd76b84cb8a66de9ab8463514caa2c394b3d9f%5E%21/">
+    <a href="/chromium/src/+/d852e9b1190ff90a461fedf5508a44f78f152f25%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make UnretainedWrapper::GetPtrType obey raw_ptr_traits::IsSupportedType
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Migrate variations::GetVariationParamValueByFeature to base counterpart
 
-GetPtrType shouldn't be raw_ptr&lt;T&gt;, when T isn't supported by raw_ptr.
-It simply won't compile.
+API defined for variations::GetVariationParamValueByFeature in
+variations_associated_data.h/cc is just a wrapper over the equivalent
+base API and has been deprecated. [1]
+This CL attempts to migrate callers of GetVariationParamValueByFeature to
+base::GetFieldTrialParamValueByFeature() as a part of code clean up.
 
-To be fair, those same cases wouldn't compile in the current code for
-another reason, but this adds clarity, which allows to strengthen
-a static_assert.
+[1]: <a href="https://bugs.chromium.org/p/chromium/issues/detail?id=681160">https://bugs.chromium.org/p/chromium/issues/detail?id=681160</a>
 
-Update comments while at it.
-
-This document explains the allowed type combinations in the current
-implementation:
-<a href="https://docs.google.com/document/d/1dLM34aKqbNBfRdOYxxV_T-zQU4J5wjmXwIBJZr7JvZM/edit">https://docs.google.com/document/d/1dLM34aKqbNBfRdOYxxV_T-zQU4J5wjmXwIBJZr7JvZM/edit</a>
-
-Bug: 1404132
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6313f9bca64068af18ced6ca6ce9e060a73935f5">I6313f9bca64068af18ced6ca6ce9e060a73935f5</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4351851">https://chromium-review.googlesource.com/c/chromium/src/+/4351851</a>
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Auto-Submit: Bartek Nowierski &lt;bartekn@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1120610}
+Bug: 1418759
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie0c672f3dbdd386288005bc434e8cb89e07d3807">Ie0c672f3dbdd386288005bc434e8cb89e07d3807</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4357839">https://chromium-review.googlesource.com/c/chromium/src/+/4357839</a>
+Commit-Queue: Ted Choc &lt;tedchoc@chromium.org&gt;
+Reviewed-by: Ted Choc &lt;tedchoc@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1120653}
 </pre>
 
 </body>
