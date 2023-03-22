@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1120706/"> 1120706</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/00ee2c3acedb18d31a62aba3a6a535b17bc8cbe2">00ee2c3acedb18d31a62aba3a6a535b17bc8cbe2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1120732/"> 1120732</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c07af75cdb431e134f7c030addcb919f8400db14">c07af75cdb431e134f7c030addcb919f8400db14</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1120618/">1120618</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   00ee2c3acedb18d31a62aba3a6a535b17bc8cbe2
+   c07af75cdb431e134f7c030addcb919f8400db14
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/00ee2c3acedb18d31a62aba3a6a535b17bc8cbe2">
+    <a href="/chromium/src/+log/c07af75cdb431e134f7c030addcb919f8400db14">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/00ee2c3acedb18d31a62aba3a6a535b17bc8cbe2.tar.gz">
+    <a href="/chromium/src/+archive/c07af75cdb431e134f7c030addcb919f8400db14.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Loko Kung &lt;lokokung@google.com&gt;
+   Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
   </td>
   <td>
-   Wed Mar 22 19:06:04 2023
+   Wed Mar 22 19:50:15 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 22 19:06:04 2023
+   Wed Mar 22 19:50:15 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/00ee2c3acedb18d31a62aba3a6a535b17bc8cbe2/">
-    89243ea6b4cb38c75d16ba0f5bf065b3761673aa
+   <a href="/chromium/src/+/c07af75cdb431e134f7c030addcb919f8400db14/">
+    4347d2eaa7ac7950bf43f1a82ca5b14d90720b78
    </a>
   </td>
  </tr>
@@ -166,29 +166,75 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/00ee2c3acedb18d31a62aba3a6a535b17bc8cbe2%5E">
-    7dcff77045040cc00a383f26e8fe54e2be393125
+   <a href="/chromium/src/+/c07af75cdb431e134f7c030addcb919f8400db14%5E">
+    e7b221f562af74be899e8c411e6ced317d1046bc
    </a>
    <span>
     [
-    <a href="/chromium/src/+/00ee2c3acedb18d31a62aba3a6a535b17bc8cbe2%5E%21/">
+    <a href="/chromium/src/+/c07af75cdb431e134f7c030addcb919f8400db14%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Run flaky Mac Intel CTS tests in serial.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Reland][Extensions] Don't allow unregistration of extension service workers
 
-- Only the 16 byte formats seem to be flaky.
+This is a reland of
+<a href="https://chromium-review.googlesource.com/c/chromium/src/+/4257067.">https://chromium-review.googlesource.com/c/chromium/src/+/4257067.</a>
 
-Bug: dawn:1500
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1e5e61a6a48af86c57a95cd6c1710a46752c39bb">I1e5e61a6a48af86c57a95cd6c1710a46752c39bb</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4355885">https://chromium-review.googlesource.com/c/chromium/src/+/4355885</a>
-Commit-Queue: Loko Kung &lt;lokokung@google.com&gt;
-Reviewed-by: Austin Eng &lt;enga@chromium.org&gt;
-Reviewed-by: Kenneth Russell &lt;kbr@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1120706}
+--- Reland Notes ---
+The original version caused the browser test
+ServiceWorkerTestWithEarlyReadyMesssage.MissingRegistrationMitigated to
+be flaky.
+
+This wasn't entirely unexpected, since that CL relies on removing the
+SW registration, which this CL (intentionally) makes more difficult. In
+testing, the previous approach (immediately trying to remove the
+registration) consistently worked, but it seems it was not quite
+robust enough.
+
+Instead, add a test method to temporarily allow unregistering certain
+extension service workers.
+
+--- Original Description ---
+
+If an extension is service worker-based, the registration of its
+root-scope service worker (the extension's primary service worker) is
+critical to the extension's functionality; removing it results in the
+extension being in a broken state. Given this, we should not allow the
+unregistration of this service worker through "normal" means (such as
+the browsingData API). The extension service worker's registration
+should instead be tied to the extension's enabled state (registered
+as long as the extension is enabled). If a user or other party wants
+to unregister this worker, they should disable or remove the extension.
+
+This CL introduces a new method on ContentBrowserClient,
+`MayDeleteServiceWorkerRegistration()`, which allows embedders to
+indicate that a service worker registration cannot be deleted. Check
+this prior to deleting a service worker, and disallow deletion of any
+root-scope service workers associated with enabld service worker-based
+extensions.
+
+Add tests to cover both an example case that should now be impossible
+(deleting an extension service worker through the browsingData API), as
+well as other scenarios that should keep working (like updating and
+removing the extension) to ensure these flows are properly handled (and
+do allow deletion of the service worker).
+
+Known limitation: the button for "Unregister" in
+chrome://serviceworker-internals is still visible, but clicking it
+does nothing (but also, doesn't crash). A followup will remove the
+button from the UI.
+
+Bug: 1392498
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ife518812a8d9e2847d51a267724b2a0f7674e337">Ife518812a8d9e2847d51a267724b2a0f7674e337</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4354471">https://chromium-review.googlesource.com/c/chromium/src/+/4354471</a>
+Reviewed-by: David Bertoni &lt;dbertoni@chromium.org&gt;
+Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Commit-Queue: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Reviewed-by: Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1120732}
 </pre>
 
 </body>
