@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1120393/"> 1120393</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2444147bad134f026f60fdd1f491ca36691baca0">2444147bad134f026f60fdd1f491ca36691baca0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1120399/"> 1120399</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d2b14160731b5f7051349dab805c6c9093671a78">d2b14160731b5f7051349dab805c6c9093671a78</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1120377/">1120377</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/56c6479eb0840b5aa7ce75621e6484d8082c36ec">56c6479eb0840b5aa7ce75621e6484d8082c36ec</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1120391/">1120391</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/26b57af1ea4171d55e88e47fd1b5796cd18d134e">26b57af1ea4171d55e88e47fd1b5796cd18d134e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2444147bad134f026f60fdd1f491ca36691baca0
+   d2b14160731b5f7051349dab805c6c9093671a78
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2444147bad134f026f60fdd1f491ca36691baca0">
+    <a href="/chromium/src/+log/d2b14160731b5f7051349dab805c6c9093671a78">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2444147bad134f026f60fdd1f491ca36691baca0.tar.gz">
+    <a href="/chromium/src/+archive/d2b14160731b5f7051349dab805c6c9093671a78.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Michelle &lt;michellegc@google.com&gt;
+   Igor &lt;igorcov@chromium.org&gt;
   </td>
   <td>
-   Wed Mar 22 07:42:37 2023
+   Wed Mar 22 08:19:27 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 22 07:42:37 2023
+   Wed Mar 22 08:19:27 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2444147bad134f026f60fdd1f491ca36691baca0/">
-    537990ebe3c0f4f77c7d30d080a6d4a13cb2f285
+   <a href="/chromium/src/+/d2b14160731b5f7051349dab805c6c9093671a78/">
+    31c86f1f10898401ab7eae1e9154aeca55d01e60
    </a>
   </td>
  </tr>
@@ -166,45 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2444147bad134f026f60fdd1f491ca36691baca0%5E">
-    d226f98697e17f9861e403da983beb3a01de0971
+   <a href="/chromium/src/+/d2b14160731b5f7051349dab805c6c9093671a78%5E">
+    849e9202c28228d15d235f351ebe6c586f1fba1b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2444147bad134f026f60fdd1f491ca36691baca0%5E%21/">
+    <a href="/chromium/src/+/d2b14160731b5f7051349dab805c6c9093671a78%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Implement double press drag selection for views::Textfield.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">lacros: Fix the ash_metrics_managed flag passed to lacros
 
-Allows users to select text and adjust the selection in one double
-press and drag movement. On the second tap down, the closest word is
-selected. Then, starting a dragging movement (without lifting the
-second press) expands/shrinks the selection. This is a part of a
-planned ChromeOS feature (see design doc: go/cros-touch-text-editing).
+The old code was looking if the pref is managed. That was leading
+to incorrect results. Replaced with the function that was written
+to determine that.
 
-To do this, record tap_down_count for ET_GESTURE_TAP_DOWN events. We
-compute this using the same GestureDetector state variables as the
-existing tap_count of ET_GESTURE_TAP events, so that the tap_down_count
-and tap_count of corresponding TAP_DOWN and TAP events match.
+BUG=crbug:1424708
+TEST=Manual test on device
 
-Then, in Textfield, select text and update the selection dragging
-state based on the tap down count. The selection behaviour for taps
-should be similar to what is currently in Textfield::OnGestureEvent,
-except that double taps and triple taps will change the selection when
-the tap is pressed down, rather than when the tap is released.
-
-Bug: b:244116654, b:264824231
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2329018ed53e406e6031d3aa123d1718d72a64c9">I2329018ed53e406e6031d3aa123d1718d72a64c9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4296838">https://chromium-review.googlesource.com/c/chromium/src/+/4296838</a>
-Commit-Queue: Michelle Chen &lt;michellegc@google.com&gt;
-Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Reviewed-by: Robert Flack &lt;flackr@chromium.org&gt;
-Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1120393}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ieac83b1d58db52fa0a2cb3eebe9a882ff95f0646">Ieac83b1d58db52fa0a2cb3eebe9a882ff95f0646</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4355022">https://chromium-review.googlesource.com/c/chromium/src/+/4355022</a>
+Reviewed-by: Roland Bock &lt;rbock@google.com&gt;
+Commit-Queue: Igor &lt;igorcov@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1120399}
 </pre>
 
 </body>
