@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1121374/"> 1121374</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/db982f02193dba6801c7b8e8ceb0df5ac91d4b71">db982f02193dba6801c7b8e8ceb0df5ac91d4b71</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1121391/"> 1121391</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6319c4fd267ba07ffc3df01382c1aab4400e1db4">6319c4fd267ba07ffc3df01382c1aab4400e1db4</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1121348/">1121348</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   db982f02193dba6801c7b8e8ceb0df5ac91d4b71
+   6319c4fd267ba07ffc3df01382c1aab4400e1db4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/db982f02193dba6801c7b8e8ceb0df5ac91d4b71">
+    <a href="/chromium/src/+log/6319c4fd267ba07ffc3df01382c1aab4400e1db4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/db982f02193dba6801c7b8e8ceb0df5ac91d4b71.tar.gz">
+    <a href="/chromium/src/+archive/6319c4fd267ba07ffc3df01382c1aab4400e1db4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Marijn Kruisselbrink &lt;mek@chromium.org&gt;
+   Richard Zhang &lt;richardzh@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 23 20:39:21 2023
+   Thu Mar 23 21:14:28 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 23 20:39:21 2023
+   Thu Mar 23 21:14:28 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/db982f02193dba6801c7b8e8ceb0df5ac91d4b71/">
-    c01e957c9cc662c6f5823055e71cf783da769c52
+   <a href="/chromium/src/+/6319c4fd267ba07ffc3df01382c1aab4400e1db4/">
+    aab46e085fd48c3f9f6127dd8dd4157b9e86c902
    </a>
   </td>
  </tr>
@@ -166,31 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/db982f02193dba6801c7b8e8ceb0df5ac91d4b71%5E">
-    a43d8a447229aca20daa0da565f4e61b7d6a2385
+   <a href="/chromium/src/+/6319c4fd267ba07ffc3df01382c1aab4400e1db4%5E">
+    322c99bb586a92cb158a6e13c0f75694ae3de547
    </a>
    <span>
     [
-    <a href="/chromium/src/+/db982f02193dba6801c7b8e8ceb0df5ac91d4b71%5E%21/">
+    <a href="/chromium/src/+/6319c4fd267ba07ffc3df01382c1aab4400e1db4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Work around bug in NSRunningApplication runningApplicationWithProcessIdentifier.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Consolidate strong keepalive as a message port property
 
-Somehow this method sometimes doesn't return the application we're
-looking for even though it does exist. In these cases, fall back to
-iterating over all applications to find the one we're looking for
-instead, as that does seem to work.
+Current message port interface let callers indicate when to apply strong-keepalive. By having a strong-keepalive property, the message
+port exposes the flag setting, and encapsulates away when and how
+strong-keepalive is applied.
 
-Bug: 1426897
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3204076e41f443eb10a04e5f0bf8892b78a29d79">I3204076e41f443eb10a04e5f0bf8892b78a29d79</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4363105">https://chromium-review.googlesource.com/c/chromium/src/+/4363105</a>
-Commit-Queue: Marijn Kruisselbrink &lt;mek@chromium.org&gt;
-Reviewed-by: ccameron chromium &lt;ccameron@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1121374}
+This enables further SW lifetime behavior improvements. One specific
+upcoming change is that a long-lived message channel port should not
+keep the SW alive, unless it is to a native host, or in the allowed
+list from ExtendedBackgroundLifetimeForPortConnectionsToUrls policy.
+To implement the change, the port needs to know if it has the
+strong-keepalive property when closing.
+
+Bug: None
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3b0c6f34f1f3f4235cc10870a3a2a56aa19c6b01">I3b0c6f34f1f3f4235cc10870a3a2a56aa19c6b01</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4366031">https://chromium-review.googlesource.com/c/chromium/src/+/4366031</a>
+Reviewed-by: David Bertoni &lt;dbertoni@chromium.org&gt;
+Commit-Queue: Richard Zhang &lt;richardzh@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1121391}
 </pre>
 
 </body>
