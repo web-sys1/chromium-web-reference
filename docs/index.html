@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1122711/"> 1122711</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ff37be0a680f902f6b4755ece32e1e19090d1c31">ff37be0a680f902f6b4755ece32e1e19090d1c31</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1122732/"> 1122732</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/649ce3028e77f7f3bcbbaf504f72953d4c3d1732">649ce3028e77f7f3bcbbaf504f72953d4c3d1732</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1122616/">1122616</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/567113096dce0950572fc6f7cf02245e9bb1ec0f">567113096dce0950572fc6f7cf02245e9bb1ec0f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1122676/">1122676</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d1f0f20c1bdd7e38df04fbbd0f5ed6af27ab1f54">d1f0f20c1bdd7e38df04fbbd0f5ed6af27ab1f54</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ff37be0a680f902f6b4755ece32e1e19090d1c31
+   649ce3028e77f7f3bcbbaf504f72953d4c3d1732
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ff37be0a680f902f6b4755ece32e1e19090d1c31">
+    <a href="/chromium/src/+log/649ce3028e77f7f3bcbbaf504f72953d4c3d1732">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ff37be0a680f902f6b4755ece32e1e19090d1c31.tar.gz">
+    <a href="/chromium/src/+archive/649ce3028e77f7f3bcbbaf504f72953d4c3d1732.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jinsuk Kim &lt;jinsukkim@chromium.org&gt;
+   kylechar &lt;kylechar@chromium.org&gt;
   </td>
   <td>
-   Mon Mar 27 22:41:50 2023
+   Mon Mar 27 23:17:30 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Mar 27 22:41:50 2023
+   Mon Mar 27 23:17:30 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ff37be0a680f902f6b4755ece32e1e19090d1c31/">
-    392bc2d193a6957f4405ac59b24b72f0ceefe40f
+   <a href="/chromium/src/+/649ce3028e77f7f3bcbbaf504f72953d4c3d1732/">
+    8bc2e55f8bd1348169b5fa790c1477cffb492841
    </a>
   </td>
  </tr>
@@ -166,43 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ff37be0a680f902f6b4755ece32e1e19090d1c31%5E">
-    4d12d2b828f37458005015c00eb3cbd9deab38a1
+   <a href="/chromium/src/+/649ce3028e77f7f3bcbbaf504f72953d4c3d1732%5E">
+    3b5c067fd74beb421f6b80dd3a672bf7bfd40826
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ff37be0a680f902f6b4755ece32e1e19090d1c31%5E%21/">
+    <a href="/chromium/src/+/649ce3028e77f7f3bcbbaf504f72953d4c3d1732%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Pcct-SideSheet] Perform always custom close animation
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add SharedImageTestBase
 
-A logic performing the custom closing animation (side or bottom) was
-triggered only when a client app specifies the exit animation
-resource, the intention being that the animation will be overridden
-only when present, while just letting the system handle the default
-animation if not specified by the client app.
+Add test base class to initialize the necessary GL or Vulkan context
+state needed to run shared image tests. Also put some test helper
+functions into SharedImageTestBase to avoid duplication. Slight changes
+to Vulkan dependencies are needed since SharedImageTestBase will compile
+Vulkan code if ENABLE_VULKAN is true.
 
-This works for bottom sheet where the default animation was
-slide-down, but not for side sheet which has 2 options which should
-match the opening animation.
+Use the new test base with a few existing tests to make sure it's
+suitable as well.
 
-This CL simplifies the logic so the custom animation will always be
-performed regardless of the presence of the exit animation resource.
-Both bottom/side sheet will take care of the closing animation
-without delegating it to the system.
-
-Bug: 1427620
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia6db50d37d36583cd780ff879e7fb630e5682acc">Ia6db50d37d36583cd780ff879e7fb630e5682acc</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4375737">https://chromium-review.googlesource.com/c/chromium/src/+/4375737</a>
-Reviewed-by: Theresa Sullivan &lt;twellington@chromium.org&gt;
-Reviewed-by: Kevin Grosu &lt;kgrosu@google.com&gt;
-Commit-Queue: Jinsuk Kim &lt;jinsukkim@chromium.org&gt;
-Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1122711}
+Bug: 1416909
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I114de0823b3c1faa98b78704bb5f98b7feab69cb">I114de0823b3c1faa98b78704bb5f98b7feab69cb</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4371179">https://chromium-review.googlesource.com/c/chromium/src/+/4371179</a>
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Commit-Queue: Kyle Charbonneau &lt;kylechar@chromium.org&gt;
+Reviewed-by: Saifuddin Hitawala &lt;hitawala@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1122732}
 </pre>
 
 </body>
