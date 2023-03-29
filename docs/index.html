@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1123391/"> 1123391</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/91a4baded97900332708e6511879deee98689bcb">91a4baded97900332708e6511879deee98689bcb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1123423/"> 1123423</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c83c6e55dbb2fadc56b103c10c0951ef1ff72452">c83c6e55dbb2fadc56b103c10c0951ef1ff72452</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1123384/">1123384</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   91a4baded97900332708e6511879deee98689bcb
+   c83c6e55dbb2fadc56b103c10c0951ef1ff72452
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/91a4baded97900332708e6511879deee98689bcb">
+    <a href="/chromium/src/+log/c83c6e55dbb2fadc56b103c10c0951ef1ff72452">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/91a4baded97900332708e6511879deee98689bcb.tar.gz">
+    <a href="/chromium/src/+archive/c83c6e55dbb2fadc56b103c10c0951ef1ff72452.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Claudio DeSouza &lt;cdesouza@igalia.com&gt;
   </td>
   <td>
-   Wed Mar 29 00:46:45 2023
+   Wed Mar 29 02:58:45 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 29 00:46:45 2023
+   Wed Mar 29 02:58:45 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/91a4baded97900332708e6511879deee98689bcb/">
-    a4393a1d94d6ae1700f32d497c047b88a1380b12
+   <a href="/chromium/src/+/c83c6e55dbb2fadc56b103c10c0951ef1ff72452/">
+    cc02d4c1022d21abda033965ec00d664dd211525
    </a>
   </td>
  </tr>
@@ -166,43 +166,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/91a4baded97900332708e6511879deee98689bcb%5E">
-    eeeaa9196fa58017d16d4cb6bde92e668e462464
+   <a href="/chromium/src/+/c83c6e55dbb2fadc56b103c10c0951ef1ff72452%5E">
+    9b76f07e8e9100b4dfb67cda07a751347240f3e7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/91a4baded97900332708e6511879deee98689bcb%5E%21/">
+    <a href="/chromium/src/+/c83c6e55dbb2fadc56b103c10c0951ef1ff72452%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Win32 PGO Profile
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[json-schema-compiler] Use default init for enums
 
-Roll Chrome Win32 PGO profile from chrome-win32-main-1680026379-3b4de942e2d5ec96ac25dcd2ec7d14ccc2df7a3e.profdata to chrome-win32-main-1680037147-6139eb66b8f4991999d75b31cfb467f722a3e303.profdata
+This CL is making enum initialisation uniform, by having all enum
+members initialised with `()` in the initialisation list, mojo style. This
+makes it possible to initialise scoped, and non-scoped enums, without
+having to care about the subtleties of each case. Furthermore, `kNone`
+is being explicitly initialised to 0, to match the default underlying
+value.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-win32-chromium">https://autoroll.skia.org/r/pgo-win32-chromium</a>
-Please CC chrome-brapp-engprod@google.com,pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+For cases where we want to compare against the default, be it `kNone` or
+a `_NONE` suffixed key, we are for now using the type's default
+constructor (e.g. `T()`). This makes the reference to the default value
+uniform, rather than specific to the type of enum (e.g. `kNone`, or
+`_NONE`).
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+The function introduced to provide default initialisation, namely,
+`GetEnumDefaultValue`, will be useful in the future, when we remove the
+`kNone` key, as it will provide an appropriate place to decide if we
+should just default initialise (i.e. `T()`), or use `absl::nullopt`.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+Using default-init with enums removes the reliance on the propagation of
+compiler options to generate correct `kNone` keys, which has proven to
+be unreliable.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:win-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I249ad9df9f8360a596fa48c8dd2688680eae6240">I249ad9df9f8360a596fa48c8dd2688680eae6240</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4378681">https://chromium-review.googlesource.com/c/chromium/src/+/4378681</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1123391}
+Bug: 1421546
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0e203549b15b31fb5b666ee1dab27077bd12d356">I0e203549b15b31fb5b666ee1dab27077bd12d356</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4357715">https://chromium-review.googlesource.com/c/chromium/src/+/4357715</a>
+Commit-Queue: Claudio DeSouza &lt;cdesouza@igalia.com&gt;
+Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1123423}
 </pre>
 
 </body>
