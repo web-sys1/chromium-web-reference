@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1124166/"> 1124166</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e443906c7e4ddad41c38eb4d8ae55cdd65005872">e443906c7e4ddad41c38eb4d8ae55cdd65005872</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1124193/"> 1124193</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3431c86a5ce3e766d9438f8cd18b225c8787beb6">3431c86a5ce3e766d9438f8cd18b225c8787beb6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1124156/">1124156</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e443906c7e4ddad41c38eb4d8ae55cdd65005872
+   3431c86a5ce3e766d9438f8cd18b225c8787beb6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e443906c7e4ddad41c38eb4d8ae55cdd65005872">
+    <a href="/chromium/src/+log/3431c86a5ce3e766d9438f8cd18b225c8787beb6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e443906c7e4ddad41c38eb4d8ae55cdd65005872.tar.gz">
+    <a href="/chromium/src/+archive/3431c86a5ce3e766d9438f8cd18b225c8787beb6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Philip Pfaffe &lt;pfaffe@chromium.org&gt;
+   Colin Blundell &lt;blundell@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 30 13:39:49 2023
+   Thu Mar 30 14:17:21 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 30 13:39:49 2023
+   Thu Mar 30 14:17:21 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e443906c7e4ddad41c38eb4d8ae55cdd65005872/">
-    7186d21f976eef437377daeaf9793be40077ed47
+   <a href="/chromium/src/+/3431c86a5ce3e766d9438f8cd18b225c8787beb6/">
+    e93e1937bd4f8541cce5201fffc178bec4099e92
    </a>
   </td>
  </tr>
@@ -166,27 +166,42 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e443906c7e4ddad41c38eb4d8ae55cdd65005872%5E">
-    ad54c861efbc6afefec5980ea4256ed1513458cc
+   <a href="/chromium/src/+/3431c86a5ce3e766d9438f8cd18b225c8787beb6%5E">
+    471dfde3466239bb659fb62ef95f98f75951b9d2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e443906c7e4ddad41c38eb4d8ae55cdd65005872%5E%21/">
+    <a href="/chromium/src/+/3431c86a5ce3e766d9438f8cd18b225c8787beb6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make debugger tests resilient against more ticks during location mapping
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[WebView][ANGLE] Restore native state when releasing ANGLE context
 
-Bug: 1418938, 1414289
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I958c7b5b68515ed39af7fef87aa969f4ff649768">I958c7b5b68515ed39af7fef87aa969f4ff649768</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4368586">https://chromium-review.googlesource.com/c/chromium/src/+/4368586</a>
-Auto-Submit: Philip Pfaffe &lt;pfaffe@chromium.org&gt;
-Commit-Queue: Jaroslav Sevcik &lt;jarin@chromium.org&gt;
-Reviewed-by: Jaroslav Sevcik &lt;jarin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1124166}
+When WebView is using ANGLE, it is necessary to restore native state
+when releasing the ANGLE context. However, we are not currently setting
+the attrib that turns this on.
+
+This CL adds setting of this attrib. Presumably, this was added as a
+separate attrib from "create ANGLE from a native context" to allow us
+to optimize when HWUI is using Skia. However, this CL just turns it on
+unconditionally, as in the production code we save *some* state even
+when using Skia, and I haven't yet explored whether ANGLE is correctly
+doing that (I would guess not). I will explore that as followup
+optimization work.
+
+With this change and an ANGLE-side change to remove an overzealous
+ASSERT, the NestedOpensAndCloses test now passes locally on an N
+emulator \o/.
+
+Bug: 1168587
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I173df1759dbcd75552eebad3c510ae8b31b5f862">I173df1759dbcd75552eebad3c510ae8b31b5f862</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4382201">https://chromium-review.googlesource.com/c/chromium/src/+/4382201</a>
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Commit-Queue: Colin Blundell &lt;blundell@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1124193}
 </pre>
 
 </body>
