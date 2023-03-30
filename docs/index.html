@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1124061/"> 1124061</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9e11e944c9bb5381cd43edd638bc5d42eb1e7f9f">9e11e944c9bb5381cd43edd638bc5d42eb1e7f9f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1124069/"> 1124069</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e2b2277a00e374001f6392b95e2714d654cce8ac">e2b2277a00e374001f6392b95e2714d654cce8ac</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1124042/">1124042</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9e11e944c9bb5381cd43edd638bc5d42eb1e7f9f
+   e2b2277a00e374001f6392b95e2714d654cce8ac
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9e11e944c9bb5381cd43edd638bc5d42eb1e7f9f">
+    <a href="/chromium/src/+log/e2b2277a00e374001f6392b95e2714d654cce8ac">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9e11e944c9bb5381cd43edd638bc5d42eb1e7f9f.tar.gz">
+    <a href="/chromium/src/+archive/e2b2277a00e374001f6392b95e2714d654cce8ac.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chrome-weblayer-builder &lt;chrome-weblayer-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+   Koji Ishii &lt;kojii@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 30 07:23:09 2023
+   Thu Mar 30 08:02:05 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 30 07:23:09 2023
+   Thu Mar 30 08:02:05 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9e11e944c9bb5381cd43edd638bc5d42eb1e7f9f/">
-    c5cdb221170178920247134906f5f2b876c75575
+   <a href="/chromium/src/+/e2b2277a00e374001f6392b95e2714d654cce8ac/">
+    09adf37abf5b1a852200a5cae60796315f374553
    </a>
   </td>
  </tr>
@@ -166,41 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9e11e944c9bb5381cd43edd638bc5d42eb1e7f9f%5E">
-    26d556ca4c920820c61203b1b7a674176c2aad15
+   <a href="/chromium/src/+/e2b2277a00e374001f6392b95e2714d654cce8ac%5E">
+    4d2729943929d1a55e0827db458c031e9f1a83fa
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9e11e944c9bb5381cd43edd638bc5d42eb1e7f9f%5E%21/">
+    <a href="/chromium/src/+/e2b2277a00e374001f6392b95e2714d654cce8ac%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[lacros skew tests] Refresh skew tests for M114
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[white-space] Change DOM/HTML/SVG to set longhands of `white-space`
 
-This CL updates the ash version ['114.0.5684.0'] for Lacros version skew testing.
-This cl only affect linux-lacros config builders like
-linux-lacros-tester-rel, linux-lacros-rel.
-This cl will certainly NOT affect Lacros on-device builders
-(lacros-amd64-generic-rel, lacros-amd64-generic-chrome-skylab,
-etc) or any other platforms.
+This patch changes DOM/HTML/SVG that, when they set the
+`white-space` property implicitly, they should set longhands
+instead if the `white-space` property is a shorthand.
 
-If this CL caused regressions, please revert and stop the autoroller
-at <a href="https://luci-scheduler.appspot.com/jobs/chrome/lacros-version-skew-roller">https://luci-scheduler.appspot.com/jobs/chrome/lacros-version-skew-roller</a>
-Also please file a bug to OS&gt;LaCrOS&gt;Partner, and CC svenzheng@chromium.org.
+This is because they either:
+a. Call `SetLonghandProperty`, directly or through
+   `AddPropertyToPresentationAttributeStyle`, which doesn't
+   support expanding shorthands, or
+b. Call `SetProperty` but its simple logic to expand
+   shorthands do not use the customized logic for the
+   `white-space` property.
 
-R=rubber-stamper@appspot.gserviceaccount.com
+Currently the `CSSWhiteSpaceShorthand` flag is off. Test
+results with this patch and with the flag enabled for testing
+are at:
+<a href="https://chromium-review.googlesource.com/c/chromium/src/+/4381424?checksPatchset=7&amp;tab=checks">https://chromium-review.googlesource.com/c/chromium/src/+/4381424?checksPatchset=7&amp;tab=checks</a>
 
-Bug: None
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib2b9d56bdbe118f35d1f76adae9d887c044565ef">Ib2b9d56bdbe118f35d1f76adae9d887c044565ef</a>
-Requires-Testing: True
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4382608">https://chromium-review.googlesource.com/c/chromium/src/+/4382608</a>
-Auto-Submit: chrome-weblayer-builder &lt;chrome-weblayer-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1124061}
+This patch has no behavior changes as all changes are under
+the runtime flag.
+
+Bug: 1417543
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2d0c5b796d90567d6fee90139a5998f63574dfc7">I2d0c5b796d90567d6fee90139a5998f63574dfc7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4380498">https://chromium-review.googlesource.com/c/chromium/src/+/4380498</a>
+Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1124069}
 </pre>
 
 </body>
