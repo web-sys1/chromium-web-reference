@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1124193/"> 1124193</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3431c86a5ce3e766d9438f8cd18b225c8787beb6">3431c86a5ce3e766d9438f8cd18b225c8787beb6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1124219/"> 1124219</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bcbd3c0e263c308ad54df1ff09a737a74926d0f9">bcbd3c0e263c308ad54df1ff09a737a74926d0f9</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1124156/">1124156</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3431c86a5ce3e766d9438f8cd18b225c8787beb6
+   bcbd3c0e263c308ad54df1ff09a737a74926d0f9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3431c86a5ce3e766d9438f8cd18b225c8787beb6">
+    <a href="/chromium/src/+log/bcbd3c0e263c308ad54df1ff09a737a74926d0f9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3431c86a5ce3e766d9438f8cd18b225c8787beb6.tar.gz">
+    <a href="/chromium/src/+archive/bcbd3c0e263c308ad54df1ff09a737a74926d0f9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Colin Blundell &lt;blundell@chromium.org&gt;
+   luci-bisection@appspot.gserviceaccount.com &lt;luci-bisection@appspot.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 30 14:17:21 2023
+   Thu Mar 30 15:26:14 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 30 14:17:21 2023
+   Thu Mar 30 15:26:14 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3431c86a5ce3e766d9438f8cd18b225c8787beb6/">
-    e93e1937bd4f8541cce5201fffc178bec4099e92
+   <a href="/chromium/src/+/bcbd3c0e263c308ad54df1ff09a737a74926d0f9/">
+    49de0793406cc1feef59aa2c053f019acc28d25a
    </a>
   </td>
  </tr>
@@ -166,42 +166,50 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3431c86a5ce3e766d9438f8cd18b225c8787beb6%5E">
-    471dfde3466239bb659fb62ef95f98f75951b9d2
+   <a href="/chromium/src/+/bcbd3c0e263c308ad54df1ff09a737a74926d0f9%5E">
+    860c41aa6a6e4b2c6a345a98b285f1cc160e73d1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3431c86a5ce3e766d9438f8cd18b225c8787beb6%5E%21/">
+    <a href="/chromium/src/+/bcbd3c0e263c308ad54df1ff09a737a74926d0f9%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[WebView][ANGLE] Restore native state when releasing ANGLE context
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Adding proto for filling across affiliated websites response"
 
-When WebView is using ANGLE, it is necessary to restore native state
-when releasing the ANGLE context. However, we are not currently setting
-the attrib that turns this on.
+This reverts commit 8eb7daf2340753b306b29435731543c0a9ce4f27.
 
-This CL adds setting of this attrib. Presumably, this was added as a
-separate attrib from "create ANGLE from a native context" to allow us
-to optimize when HWUI is using Skia. However, this CL just turns it on
-unconditionally, as in the production code we save *some* state even
-when using Skia, and I haven't yet explored whether ANGLE is correctly
-doing that (I would guess not). I will explore that as followup
-optimization work.
+Reason for revert:
+LUCI Bisection identified this CL as the culprit of a build failure. See the analysis: <a href="https://luci-bisection.appspot.com/analysis/b/8785188785804970897">https://luci-bisection.appspot.com/analysis/b/8785188785804970897</a>
 
-With this change and an ANGLE-side change to remove an overzealous
-ASSERT, the NestedOpensAndCloses test now passes locally on an N
-emulator \o/.
+Sample failed build: <a href="https://ci.chromium.org/b/8785188785804970897">https://ci.chromium.org/b/8785188785804970897</a>
 
-Bug: 1168587
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I173df1759dbcd75552eebad3c510ae8b31b5f862">I173df1759dbcd75552eebad3c510ae8b31b5f862</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4382201">https://chromium-review.googlesource.com/c/chromium/src/+/4382201</a>
-Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
-Commit-Queue: Colin Blundell &lt;blundell@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1124193}
+If this is a false positive, please report it at <a href="https://bugs.chromium.org/p/chromium/issues/entry?comment=Analysis%3A+https%3A%2F%2Fluci-bisection.appspot.com%2Fanalysis%2Fb%2F8785188785804970897&amp;components=Tools%3ETest%3EFindit&amp;labels=LUCI-Bisection-Wrong%2CPri-3%2CType-Bug&amp;status=Available&amp;summary=Wrongly+blamed+https%3A%2F%2Fchromium-review.googlesource.com%2Fc%2Fchromium%2Fsrc%2F%2B%2F4373870">https://bugs.chromium.org/p/chromium/issues/entry?comment=Analysis%3A+https%3A%2F%2Fluci-bisection.appspot.com%2Fanalysis%2Fb%2F8785188785804970897&amp;components=Tools%3ETest%3EFindit&amp;labels=LUCI-Bisection-Wrong%2CPri-3%2CType-Bug&amp;status=Available&amp;summary=Wrongly+blamed+https%3A%2F%2Fchromium-review.googlesource.com%2Fc%2Fchromium%2Fsrc%2F%2B%2F4373870</a>
+
+Original change's description:
+&gt; Adding proto for filling across affiliated websites response
+&gt;
+&gt; Bug: 1428539
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5ab3c33f5bc76f9f04cf3c4677c0c673ed900474">I5ab3c33f5bc76f9f04cf3c4677c0c673ed900474</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4373870">https://chromium-review.googlesource.com/c/chromium/src/+/4373870</a>
+&gt; Reviewed-by: Vasilii Sukhanov &lt;vasilii@chromium.org&gt;
+&gt; Commit-Queue: Viktor Semeniuk &lt;vsemeniuk@google.com&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1124206}
+&gt;
+
+Bug: 1428539
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I91a4d6595d1cb9c6778499197b3f490fa3339fbb">I91a4d6595d1cb9c6778499197b3f490fa3339fbb</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4382696">https://chromium-review.googlesource.com/c/chromium/src/+/4382696</a>
+Commit-Queue: luci-bisection@appspot.gserviceaccount.com &lt;luci-bisection@appspot.gserviceaccount.com&gt;
+Owners-Override: luci-bisection@appspot.gserviceaccount.com &lt;luci-bisection@appspot.gserviceaccount.com&gt;
+Bot-Commit: luci-bisection@appspot.gserviceaccount.com &lt;luci-bisection@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1124219}
 </pre>
 
 </body>
