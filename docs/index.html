@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1124923/"> 1124923</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c175e865149c3d1d9a612defc71feb7c832f86e1">c175e865149c3d1d9a612defc71feb7c832f86e1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1124943/"> 1124943</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2afbe470f3bfd7414746dc416a33474ee6194f16">2afbe470f3bfd7414746dc416a33474ee6194f16</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1124888/">1124888</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c175e865149c3d1d9a612defc71feb7c832f86e1
+   2afbe470f3bfd7414746dc416a33474ee6194f16
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c175e865149c3d1d9a612defc71feb7c832f86e1">
+    <a href="/chromium/src/+log/2afbe470f3bfd7414746dc416a33474ee6194f16">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c175e865149c3d1d9a612defc71feb7c832f86e1.tar.gz">
+    <a href="/chromium/src/+archive/2afbe470f3bfd7414746dc416a33474ee6194f16.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Dave Tapuska &lt;dtapuska@chromium.org&gt;
+   David Padlipsky &lt;dpad@google.com&gt;
   </td>
   <td>
-   Fri Mar 31 21:57:57 2023
+   Fri Mar 31 22:40:38 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 31 21:57:57 2023
+   Fri Mar 31 22:40:38 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c175e865149c3d1d9a612defc71feb7c832f86e1/">
-    b8092eb323298111156778d7d869f89f456dce8a
+   <a href="/chromium/src/+/2afbe470f3bfd7414746dc416a33474ee6194f16/">
+    0f1fc6bdcc61914c0fe46629ef04812dc9969e4b
    </a>
   </td>
  </tr>
@@ -166,30 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c175e865149c3d1d9a612defc71feb7c832f86e1%5E">
-    e46085c07f4f23d9f8b3088d91b2078c1eda9904
+   <a href="/chromium/src/+/2afbe470f3bfd7414746dc416a33474ee6194f16%5E">
+    1d56976a8a67222def062e48b0ea33829249c9d8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c175e865149c3d1d9a612defc71feb7c832f86e1%5E%21/">
+    <a href="/chromium/src/+/2afbe470f3bfd7414746dc416a33474ee6194f16%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ukm] Fix weak_ptr not being checked in DelegatingUkmRecorder
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">mojo: Fix buffer size of maps to include 8 byte alignment
 
-Some blink_unittests are being retried on the bot slowing them
-down because of lack of WeakPtr checks. This improves runtime
-of the blink_unittests by 29% (or 114s) on the iOS bots.
+Maps in mojo are encoded as 2 arrays where the first array contains all
+keys and the second array contains all values. In the JS bindings, the
+size allocated for the buffer was incorrectly computed as both of the
+arrays which represent the map must be 8 byte aligned. This means that
+if the sizeof(key_array) &lt; (8*n) bytes, the buffer allocated to hold all
+of the data will be short by (8 - (sizeof(key_array) % 8) bytes.
 
-Bug: 1429612
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I824bcfddf513b17c60691346c8376d599de2c4d6">I824bcfddf513b17c60691346c8376d599de2c4d6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4385978">https://chromium-review.googlesource.com/c/chromium/src/+/4385978</a>
-Commit-Queue: Dave Tapuska &lt;dtapuska@chromium.org&gt;
-Reviewed-by: Robert Kaplow &lt;rkaplow@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1124923}
+This change includes alignment when calculating the size of the map for
+the key array portion of the encoding. The value array portion does not
+need to be aligned as the `allocate` function will align the size once
+the buffer is going to be allocated.
+
+Bug: b/241965700
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib129b24ca57a580d3300c9d4bd81c6afd975aed1">Ib129b24ca57a580d3300c9d4bd81c6afd975aed1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4385459">https://chromium-review.googlesource.com/c/chromium/src/+/4385459</a>
+Commit-Queue: David Padlipsky &lt;dpad@google.com&gt;
+Reviewed-by: Michael Checo &lt;michaelcheco@google.com&gt;
+Reviewed-by: Mustafa Emre Acer &lt;meacer@chromium.org&gt;
+Reviewed-by: Ken Rockot &lt;rockot@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1124943}
 </pre>
 
 </body>
