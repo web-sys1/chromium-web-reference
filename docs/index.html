@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1124609/"> 1124609</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7961832194360079e607aeba2038ce39214a81a8">7961832194360079e607aeba2038ce39214a81a8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1124615/"> 1124615</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c78caec933f997d731a2ef4559ac334d88c78520">c78caec933f997d731a2ef4559ac334d88c78520</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1124572/">1124572</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7fe63cb753f2366ae3543efb17e67ee03ea03fd4">7fe63cb753f2366ae3543efb17e67ee03ea03fd4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1124608/">1124608</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/96428e1875e9709f9ba802fc835fd2f8765cbfcd">96428e1875e9709f9ba802fc835fd2f8765cbfcd</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7961832194360079e607aeba2038ce39214a81a8
+   c78caec933f997d731a2ef4559ac334d88c78520
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7961832194360079e607aeba2038ce39214a81a8">
+    <a href="/chromium/src/+log/c78caec933f997d731a2ef4559ac334d88c78520">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7961832194360079e607aeba2038ce39214a81a8.tar.gz">
+    <a href="/chromium/src/+archive/c78caec933f997d731a2ef4559ac334d88c78520.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Rupert Ben Wiser &lt;bewise@chromium.org&gt;
+   luci-bisection@appspot.gserviceaccount.com &lt;luci-bisection@appspot.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 31 07:27:20 2023
+   Fri Mar 31 08:09:21 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 31 07:27:20 2023
+   Fri Mar 31 08:09:21 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7961832194360079e607aeba2038ce39214a81a8/">
-    c7336fc9cb357aceef1241a82bb94718f1bdbc22
+   <a href="/chromium/src/+/c78caec933f997d731a2ef4559ac334d88c78520/">
+    ccf2da5e751b6a73b86c801f2315934910817f67
    </a>
   </td>
  </tr>
@@ -166,42 +166,53 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7961832194360079e607aeba2038ce39214a81a8%5E">
-    96428e1875e9709f9ba802fc835fd2f8765cbfcd
+   <a href="/chromium/src/+/c78caec933f997d731a2ef4559ac334d88c78520%5E">
+    841f3c797e17fe3da1e8a85c562f4c07bc1ad667
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7961832194360079e607aeba2038ce39214a81a8%5E%21/">
+    <a href="/chromium/src/+/c78caec933f997d731a2ef4559ac334d88c78520%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">web-engine: Increase ExternalIntentsTest timeout
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[BRP] Enable clang plugin check for Linux"
 
-This test is flaking on some of our bots on CI because
-it doesn't have enough time to resolve the external intent
-so making this a much larger value.
+This reverts commit cb1754cef1a02f6a6270389acf4a67d4bfea03a5.
 
-It looks like the bots resolve over half the time so this
-should hopefully be enough to fix them all.
+Reason for revert:
+LUCI Bisection identified this CL as the culprit of a build failure. See the analysis: <a href="https://luci-bisection.appspot.com/analysis/b/8785126743392737233">https://luci-bisection.appspot.com/analysis/b/8785126743392737233</a>
 
-The test flaking is testOpensExternalIntents_shouldLaunch.
-It may be tempting to just try remove the time out from
-this test and leave it for testDisableExternalIntents_shouldNotLaunch
-but the problem is that if we could not launch in the timeout
-window, then the shouldNotLaunch test would mean less.
+Sample failed build: <a href="https://ci.chromium.org/b/8785126743392737233">https://ci.chromium.org/b/8785126743392737233</a>
 
-Bug: 1429402
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1cb15a95b59ac0a8f3b626466e8ebe1b2acf4d03">I1cb15a95b59ac0a8f3b626466e8ebe1b2acf4d03</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4388413">https://chromium-review.googlesource.com/c/chromium/src/+/4388413</a>
-Auto-Submit: Rupert Wiser &lt;bewise@chromium.org&gt;
-Reviewed-by: Rayan Kanso &lt;rayankans@chromium.org&gt;
-Quick-Run: Rupert Wiser &lt;bewise@chromium.org&gt;
-Commit-Queue: Rayan Kanso &lt;rayankans@chromium.org&gt;
-Commit-Queue: Rupert Wiser &lt;bewise@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1124609}
+If this is a false positive, please report it at <a href="https://bugs.chromium.org/p/chromium/issues/entry?comment=Analysis%3A+https%3A%2F%2Fluci-bisection.appspot.com%2Fanalysis%2Fb%2F8785126743392737233&amp;components=Tools%3ETest%3EFindit&amp;labels=LUCI-Bisection-Wrong%2CPri-3%2CType-Bug&amp;status=Available&amp;summary=Wrongly+blamed+https%3A%2F%2Fchromium-review.googlesource.com%2Fc%2Fchromium%2Fsrc%2F%2B%2F4379698">https://bugs.chromium.org/p/chromium/issues/entry?comment=Analysis%3A+https%3A%2F%2Fluci-bisection.appspot.com%2Fanalysis%2Fb%2F8785126743392737233&amp;components=Tools%3ETest%3EFindit&amp;labels=LUCI-Bisection-Wrong%2CPri-3%2CType-Bug&amp;status=Available&amp;summary=Wrongly+blamed+https%3A%2F%2Fchromium-review.googlesource.com%2Fc%2Fchromium%2Fsrc%2F%2B%2F4379698</a>
+
+Original change's description:
+&gt; [BRP] Enable clang plugin check for Linux
+&gt;
+&gt; clang will now show warnings where raw_ptr&lt;T&gt; could be used.
+&gt;
+&gt; Bug: 1273182
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I524774dbcf892180961151bc9dc7d8c1c711d383">I524774dbcf892180961151bc9dc7d8c1c711d383</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4379698">https://chromium-review.googlesource.com/c/chromium/src/+/4379698</a>
+&gt; Reviewed-by: Takuto Ikuta &lt;tikuta@chromium.org&gt;
+&gt; Reviewed-by: Bartek Nowierski &lt;bartekn@chromium.org&gt;
+&gt; Commit-Queue: Keishi Hattori &lt;keishi@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1124604}
+&gt;
+
+Bug: 1273182
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3cfd537466047a5ef85c8b02cc53a2beb8d14d90">I3cfd537466047a5ef85c8b02cc53a2beb8d14d90</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4388101">https://chromium-review.googlesource.com/c/chromium/src/+/4388101</a>
+Commit-Queue: luci-bisection@appspot.gserviceaccount.com &lt;luci-bisection@appspot.gserviceaccount.com&gt;
+Bot-Commit: luci-bisection@appspot.gserviceaccount.com &lt;luci-bisection@appspot.gserviceaccount.com&gt;
+Owners-Override: luci-bisection@appspot.gserviceaccount.com &lt;luci-bisection@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1124615}
 </pre>
 
 </body>
