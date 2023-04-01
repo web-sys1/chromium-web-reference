@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1124943/"> 1124943</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2afbe470f3bfd7414746dc416a33474ee6194f16">2afbe470f3bfd7414746dc416a33474ee6194f16</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1124970/"> 1124970</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/638f218aec41077121293a16b286b78588d28399">638f218aec41077121293a16b286b78588d28399</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1124888/">1124888</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9e6ac818f17e2885e70dd8c0caac72ca9e51a2ec">9e6ac818f17e2885e70dd8c0caac72ca9e51a2ec</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1124938/">1124938</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8f41619238fdfaed48dd5be5315131409f8d2cb5">8f41619238fdfaed48dd5be5315131409f8d2cb5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2afbe470f3bfd7414746dc416a33474ee6194f16
+   638f218aec41077121293a16b286b78588d28399
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2afbe470f3bfd7414746dc416a33474ee6194f16">
+    <a href="/chromium/src/+log/638f218aec41077121293a16b286b78588d28399">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2afbe470f3bfd7414746dc416a33474ee6194f16.tar.gz">
+    <a href="/chromium/src/+archive/638f218aec41077121293a16b286b78588d28399.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Padlipsky &lt;dpad@google.com&gt;
+   Sorin Jianu &lt;sorin@chromium.org&gt;
   </td>
   <td>
-   Fri Mar 31 22:40:38 2023
+   Fri Mar 31 23:53:15 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Mar 31 22:40:38 2023
+   Fri Mar 31 23:53:15 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2afbe470f3bfd7414746dc416a33474ee6194f16/">
-    0f1fc6bdcc61914c0fe46629ef04812dc9969e4b
+   <a href="/chromium/src/+/638f218aec41077121293a16b286b78588d28399/">
+    02c02796458253517fce9e404cfb575490960b26
    </a>
   </td>
  </tr>
@@ -166,40 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2afbe470f3bfd7414746dc416a33474ee6194f16%5E">
-    1d56976a8a67222def062e48b0ea33829249c9d8
+   <a href="/chromium/src/+/638f218aec41077121293a16b286b78588d28399%5E">
+    671c62a343bcade03a1f9705de4aa2dd1f90c681
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2afbe470f3bfd7414746dc416a33474ee6194f16%5E%21/">
+    <a href="/chromium/src/+/638f218aec41077121293a16b286b78588d28399%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">mojo: Fix buffer size of maps to include 8 byte alignment
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">updater: refactor writing of kRegValueUninstallCmdLine.
 
-Maps in mojo are encoded as 2 arrays where the first array contains all
-keys and the second array contains all values. In the JS bindings, the
-size allocated for the buffer was incorrectly computed as both of the
-arrays which represent the map must be 8 byte aligned. This means that
-if the sizeof(key_array) &lt; (8*n) bytes, the buffer allocated to hold all
-of the data will be short by (8 - (sizeof(key_array) % 8) bytes.
+This is a mechanical refactoring to make it easier to add other
+registry values to swap without defining helper functions.
 
-This change includes alignment when calculating the size of the map for
-the key array portion of the encoding. The value array portion does not
-need to be aligned as the `allocate` function will align the size once
-the buffer is going to be allocated.
-
-Bug: b/241965700
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib129b24ca57a580d3300c9d4bd81c6afd975aed1">Ib129b24ca57a580d3300c9d4bd81c6afd975aed1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4385459">https://chromium-review.googlesource.com/c/chromium/src/+/4385459</a>
-Commit-Queue: David Padlipsky &lt;dpad@google.com&gt;
-Reviewed-by: Michael Checo &lt;michaelcheco@google.com&gt;
-Reviewed-by: Mustafa Emre Acer &lt;meacer@chromium.org&gt;
-Reviewed-by: Ken Rockot &lt;rockot@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1124943}
+Bug: 1429755
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I429894e3797612ebb9e5bd8c0c90ae9bf2de5057">I429894e3797612ebb9e5bd8c0c90ae9bf2de5057</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4390624">https://chromium-review.googlesource.com/c/chromium/src/+/4390624</a>
+Commit-Queue: S Ganesh &lt;ganesh@chromium.org&gt;
+Commit-Queue: Sorin Jianu &lt;sorin@chromium.org&gt;
+Reviewed-by: S Ganesh &lt;ganesh@chromium.org&gt;
+Auto-Submit: Sorin Jianu &lt;sorin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1124970}
 </pre>
 
 </body>
