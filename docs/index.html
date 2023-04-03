@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1125161/"> 1125161</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0483a8e20c21d3a240eb881046f1603f85d78025">0483a8e20c21d3a240eb881046f1603f85d78025</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1125172/"> 1125172</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/390b3e68f50462916d9f2cc9f1b0432f553baa0a">390b3e68f50462916d9f2cc9f1b0432f553baa0a</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1125150/">1125150</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0483a8e20c21d3a240eb881046f1603f85d78025
+   390b3e68f50462916d9f2cc9f1b0432f553baa0a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0483a8e20c21d3a240eb881046f1603f85d78025">
+    <a href="/chromium/src/+log/390b3e68f50462916d9f2cc9f1b0432f553baa0a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0483a8e20c21d3a240eb881046f1603f85d78025.tar.gz">
+    <a href="/chromium/src/+archive/390b3e68f50462916d9f2cc9f1b0432f553baa0a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Eliot Courtney &lt;edcourtney@google.com&gt;
+   Yaroslav Shalivskyy &lt;yshalivskyy@microsoft.com&gt;
   </td>
   <td>
-   Mon Apr 03 02:34:21 2023
+   Mon Apr 03 03:06:37 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Apr 03 02:34:21 2023
+   Mon Apr 03 03:06:37 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0483a8e20c21d3a240eb881046f1603f85d78025/">
-    d5a8de59ca75006801d98e10f6620666cbc8faad
+   <a href="/chromium/src/+/390b3e68f50462916d9f2cc9f1b0432f553baa0a/">
+    3b6dde100531b693f0dc97e049ccf43248e7f88f
    </a>
   </td>
  </tr>
@@ -166,36 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0483a8e20c21d3a240eb881046f1603f85d78025%5E">
-    9a86cea6817cda88cec274de3556abcbadc1dc03
+   <a href="/chromium/src/+/390b3e68f50462916d9f2cc9f1b0432f553baa0a%5E">
+    5fa319735fe661e442e5257b0913f8761f8ffcc4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0483a8e20c21d3a240eb881046f1603f85d78025%5E%21/">
+    <a href="/chromium/src/+/390b3e68f50462916d9f2cc9f1b0432f553baa0a%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Return -1 from OnStateUpdate if no frame will be produced.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use system colors for painting scrollbar corner in forced colors mode
 
-Currently, this code returns the current parent sequence ID. But, we
-want to be able to immediately apply any state requests if no frame
-will be produced. The current behaviour will still need to wait for the
-next frame to apply the request.
+The CL fixes the painting of the scrollbar corner part in forced colors
+mode (e.g., high-contrast mode on Windows) by utilizing the system
+colors instead of custom colors used for painting light/dark scrollbars.
 
-This is needed for fixing the case where we need to ack a origin change
-in bounds in ozone/wayland, where no frame will be produced.
+List of changes:
+    - Use GetControlColor() instead of direct color initialization in
+NativeThemeAura. kColorScrollbarCorner color was added to the color
+piepline in the CL [1].
+    - Paint the scrollbar corner part with SystemThemeColor::kWindow if
+forced colors mode is enabled.
+    - Update web test expectations.
 
-Bug: 1427954
-Test: CQ
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5bb62ea7bec112644477c29f67ef91ac6c9a7693">I5bb62ea7bec112644477c29f67ef91ac6c9a7693</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4383765">https://chromium-review.googlesource.com/c/chromium/src/+/4383765</a>
-Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Reviewed-by: ccameron chromium &lt;ccameron@chromium.org&gt;
-Commit-Queue: Eliot Courtney &lt;edcourtney@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1125161}
+[1] <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3966310">https://chromium-review.googlesource.com/c/chromium/src/+/3966310</a>
+
+Bug: 1374573
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I36f0b487624876b4d73a758272fa325f97f279db">I36f0b487624876b4d73a758272fa325f97f279db</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4357095">https://chromium-review.googlesource.com/c/chromium/src/+/4357095</a>
+Commit-Queue: Yaroslav Shalivskyy &lt;yshalivskyy@microsoft.com&gt;
+Reviewed-by: Thomas Lukaszewicz &lt;tluk@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1125172}
 </pre>
 
 </body>
