@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1125210/"> 1125210</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/916547a124fdb63c0fde9599121348481d144785">916547a124fdb63c0fde9599121348481d144785</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1125219/"> 1125219</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b855718e133c61ef88c33afb5c1edeb96b0ce933">b855718e133c61ef88c33afb5c1edeb96b0ce933</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1125201/">1125201</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   916547a124fdb63c0fde9599121348481d144785
+   b855718e133c61ef88c33afb5c1edeb96b0ce933
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/916547a124fdb63c0fde9599121348481d144785">
+    <a href="/chromium/src/+log/b855718e133c61ef88c33afb5c1edeb96b0ce933">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/916547a124fdb63c0fde9599121348481d144785.tar.gz">
+    <a href="/chromium/src/+archive/b855718e133c61ef88c33afb5c1edeb96b0ce933.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
+   Koji Ishii &lt;kojii@chromium.org&gt;
   </td>
   <td>
-   Mon Apr 03 07:24:36 2023
+   Mon Apr 03 07:44:56 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Apr 03 07:24:36 2023
+   Mon Apr 03 07:44:56 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/916547a124fdb63c0fde9599121348481d144785/">
-    ccd65a37be3519e837d58f3f2a51d375186627f0
+   <a href="/chromium/src/+/b855718e133c61ef88c33afb5c1edeb96b0ce933/">
+    1ab57e60cefff4da60c72ae4b6f0868c7c1a493f
    </a>
   </td>
  </tr>
@@ -166,29 +166,55 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/916547a124fdb63c0fde9599121348481d144785%5E">
-    fd5e445fec7ed1aa96702556a0b9071e1dacf998
+   <a href="/chromium/src/+/b855718e133c61ef88c33afb5c1edeb96b0ce933%5E">
+    dceb15f0134a4d4bc642f3e67af9c6e83eff702d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/916547a124fdb63c0fde9599121348481d144785%5E%21/">
+    <a href="/chromium/src/+/b855718e133c61ef88c33afb5c1edeb96b0ce933%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[RemoveLegacy] Remove LayoutBoxModelObject::LocalQuads
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[white-space] Fix `EditingStyle`
 
-The code was required when we had continuations, but isn't required
-anymore.
+This patch fixes `EditingStyle` when the `white-space`
+property becomes a shorthand.
 
-Bug: 1229581
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I26bfef9c2400df427928066497f11ec7212c438f">I26bfef9c2400df427928066497f11ec7212c438f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4392942">https://chromium-review.googlesource.com/c/chromium/src/+/4392942</a>
-Commit-Queue: Morten Stenshorne &lt;mstensho@chromium.org&gt;
-Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1125210}
+This class computes styles for copy&amp;paste clipboard operations,
+or when elements are duplicated by inserting paragraphs. The
+`white-space` property is special that:
+* It needs to be copied even when the elements to copy don't
+  include it, because it affects how space characters are
+  represented.
+* When inserting a tabulation character, wrap it with a span
+  with the `white-space` property to preserve it.
+
+This patch fixes following tests when `CSSWhtieSpaceShorthand`
+runtime flag is enabled:
+```
+editing/pasteboard/dragstart-contains-default-content.html
+editing/pasteboard/onpaste-text-html.html
+fast/events/ondrop-text-html.html
+external/wpt/clipboard-apis/async-unsanitized-html-formats-write-read.tentative.https.html
+WebFrameTest.SmartClipData
+WebFrameTest.SmartClipDataWithPinchZoom
+```
+
+Note, changing the order of properties in
+`kStaticEditingProperties` affects the order of properties in
+expected style strings, so they are adjusted, but the set of
+CSS properties are not changed.
+
+Bug: 1417543
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0c9a75c61bcfcd777db9cbf5e5d75b6ef83610be">I0c9a75c61bcfcd777db9cbf5e5d75b6ef83610be</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4378117">https://chromium-review.googlesource.com/c/chromium/src/+/4378117</a>
+Auto-Submit: Koji Ishii &lt;kojii@chromium.org&gt;
+Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
+Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1125219}
 </pre>
 
 </body>
