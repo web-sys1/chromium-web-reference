@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1125826/"> 1125826</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a229230b31888eab02543ee548bd9bd68b5b24b2">a229230b31888eab02543ee548bd9bd68b5b24b2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1125835/"> 1125835</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/faaf346472774b52fe8766a4a7b0254282c1d023">faaf346472774b52fe8766a4a7b0254282c1d023</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1125821/">1125821</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a229230b31888eab02543ee548bd9bd68b5b24b2
+   faaf346472774b52fe8766a4a7b0254282c1d023
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a229230b31888eab02543ee548bd9bd68b5b24b2">
+    <a href="/chromium/src/+log/faaf346472774b52fe8766a4a7b0254282c1d023">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a229230b31888eab02543ee548bd9bd68b5b24b2.tar.gz">
+    <a href="/chromium/src/+archive/faaf346472774b52fe8766a4a7b0254282c1d023.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Rakina Zata Amni &lt;rakina@chromium.org&gt;
+   Claudio DeSouza &lt;cdesouza@igalia.com&gt;
   </td>
   <td>
-   Tue Apr 04 06:22:11 2023
+   Tue Apr 04 06:57:54 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 04 06:22:11 2023
+   Tue Apr 04 06:57:54 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a229230b31888eab02543ee548bd9bd68b5b24b2/">
-    1c55a44b46727e43c6a336a6241b302be27e380d
+   <a href="/chromium/src/+/faaf346472774b52fe8766a4a7b0254282c1d023/">
+    59a5e3fabca24f1fe0cbc8eb0b06ec8b9a043e97
    </a>
   </td>
  </tr>
@@ -166,48 +166,37 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a229230b31888eab02543ee548bd9bd68b5b24b2%5E">
-    307c1308847737e2a324a804dcfe8b078d00d281
+   <a href="/chromium/src/+/faaf346472774b52fe8766a4a7b0254282c1d023%5E">
+    923f43dbb7b7e0ef2090e6ea01c5466631cbd78e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a229230b31888eab02543ee548bd9bd68b5b24b2%5E%21/">
+    <a href="/chromium/src/+/faaf346472774b52fe8766a4a7b0254282c1d023%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move WebUI creation code from WebContentsImpl to NavigationRequest
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Replace base::GUID uses with base::Uuid (47/N)
 
-Currently WebUI creation goes from RFHM -&gt; RFH -&gt; WebContents. This
-means creation of WebUI depends on the existence of RFH, which won't
-work well if an RFH is created only after OnResponseStarted due to
-speculative RFH creation ban when a pending commit RFH exists, as
-WebUI creation is needed to get to OnResponseStarted on WebUI
-navigations.
+`base::GUID` has been renamed, and is set to be  removed. This CL is
+part of a batch of changes replacing all uses of `base::GUID`, with
+`base::Uuid`, and its associated counterparts.
 
-We want to decouple WebUI creation from speculative RFH creation,
-so that we can create a WebUI for a NavigationRequest and keep it in
-the NavigationRequest until a RFH has been picked (and created, if the
-RFH is a speculative RFH) for the navigation.
+Changes for path: /components/web_package
 
-This CL is the first step towards that, where we move the WebUI
-creation code from WebContentsImpl to NavigationRequest, and call the
-WebUI creator function directly from RenderFrameHostManager instead of
-through the RenderFrameHost. The created WebUI is currently still
-immediately set to be owned by the RenderFrameHost, to keep the
-changes in this CL small.
+This CL was uploaded by git cl split.
 
-See doc: <a href="https://docs.google.com/document/d/1ke5ZlCgQC5O0vt7FopVnOKW9asz-ZRFLl3XRpE8tLk8/edit#">https://docs.google.com/document/d/1ke5ZlCgQC5O0vt7FopVnOKW9asz-ZRFLl3XRpE8tLk8/edit#</a>
+R=cmfcmf@chromium.org
 
-Bug: 1220337, 1430336
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If829f7e26aed83b92087b90f9514871be93ce894">If829f7e26aed83b92087b90f9514871be93ce894</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4372600">https://chromium-review.googlesource.com/c/chromium/src/+/4372600</a>
-Reviewed-by: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
-Reviewed-by: Nasko Oskov &lt;nasko@chromium.org&gt;
-Commit-Queue: Rakina Zata Amni &lt;rakina@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1125826}
+Bug: 1428566
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I671acf996f98dd43262d004624839769f381b5df">I671acf996f98dd43262d004624839769f381b5df</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4394534">https://chromium-review.googlesource.com/c/chromium/src/+/4394534</a>
+Auto-Submit: Claudio DeSouza &lt;cdesouza@igalia.com&gt;
+Reviewed-by: Christian Flach &lt;cmfcmf@chromium.org&gt;
+Commit-Queue: Christian Flach &lt;cmfcmf@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1125835}
 </pre>
 
 </body>
