@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1126055/"> 1126055</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0e12647531df375a793f6b82bc10ce3b80b64002">0e12647531df375a793f6b82bc10ce3b80b64002</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1126093/"> 1126093</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f9bab970a0c6d8b81caf68519b15f408f70751fa">f9bab970a0c6d8b81caf68519b15f408f70751fa</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1125992/">1125992</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d6498f693d2cecd1b3630b8cfdf511c24f82a74d">d6498f693d2cecd1b3630b8cfdf511c24f82a74d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1126068/">1126068</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1fe91ecf8212c7ffc27db1e9dc27c4acd3a8e859">1fe91ecf8212c7ffc27db1e9dc27c4acd3a8e859</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0e12647531df375a793f6b82bc10ce3b80b64002
+   f9bab970a0c6d8b81caf68519b15f408f70751fa
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0e12647531df375a793f6b82bc10ce3b80b64002">
+    <a href="/chromium/src/+log/f9bab970a0c6d8b81caf68519b15f408f70751fa">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0e12647531df375a793f6b82bc10ce3b80b64002.tar.gz">
+    <a href="/chromium/src/+archive/f9bab970a0c6d8b81caf68519b15f408f70751fa.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   zauri &lt;zauri@google.com&gt;
+   Hao Liu &lt;haoliuk@chromium.org&gt;
   </td>
   <td>
-   Tue Apr 04 16:52:36 2023
+   Tue Apr 04 17:34:07 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 04 16:52:36 2023
+   Tue Apr 04 17:34:07 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0e12647531df375a793f6b82bc10ce3b80b64002/">
-    0a389337c96826b0ab703f977b32cc8459322bdf
+   <a href="/chromium/src/+/f9bab970a0c6d8b81caf68519b15f408f70751fa/">
+    a06e7455a9bb986a30deb501bf10c612dcc7df1a
    </a>
   </td>
  </tr>
@@ -166,47 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0e12647531df375a793f6b82bc10ce3b80b64002%5E">
-    2a1dcf70e2ea05db02927000c89ee2aa51929ecd
+   <a href="/chromium/src/+/f9bab970a0c6d8b81caf68519b15f408f70751fa%5E">
+    f906ddb7076409825d43094844cad5f598859522
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0e12647531df375a793f6b82bc10ce3b80b64002%5E%21/">
+    <a href="/chromium/src/+/f9bab970a0c6d8b81caf68519b15f408f70751fa%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Privacy Hub] Location - handle system components
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add test wait exiting condition to deflake
 
-As a part of the Privacy Hub efforts, This CL adds the location
-handling logic for the ChromeOS system components. Users can now control
-the system-level location permission that affects the whole system
-(similar to Android's location permission). This user preference is
-owned by the primary active user and is applied to the entire session.
+The test adds 3 image in turn. Each subsequent image is larger than the
+previous one. Hence there would be 3 LCP performance timeline entries
+emitted and the last one is the one that get recorded as the LCP.
 
-This CL adds support for this toggle for all system components, namely:
-WizardController, NightLightClient, GeolocationController and
-TimeZoneResolver.
-Currently the switch doesn't stop these clients to ping GLS when off,
-but prohibits sending the wifi and cellular signal data to limit the
-resolution to approximate-level (that is IP-based location).
+The cause of the test failure is probably when the recording to LCP
+happens, the last LCP candidate update IPC hasn’t reached the browser
+side yet.
 
-Bug: b:240921313
-TEST=out/Default/chromeos_unittests --gtest_filter=*SimpleGeolocation*
-TEST=testing/xvfb.py out/Default/unit_tests \
---gtest_filter=*NightLightClientTest*
-TEST=testing/xvfb.py out/Default/browser_tests \
---gtest_filter=*WizardControllerTest*
+This CL de-flakes the test by add test waiter expectations that it waits
+for 3 LCP updates each of which has the LCP value larger than the one in
+the previous update. This way, it ensures the last LCP update happens
+before the test waiter exits the waits.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic785dbc27c3e47b960d6b96fd979c83cde1ac978">Ic785dbc27c3e47b960d6b96fd979c83cde1ac978</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4061139">https://chromium-review.googlesource.com/c/chromium/src/+/4061139</a>
-Reviewed-by: Alex Newcomer &lt;newcomer@chromium.org&gt;
-Reviewed-by: Austin Sullivan &lt;asully@chromium.org&gt;
-Commit-Queue: Zauri Meshveliani‎ &lt;zauri@chromium.org&gt;
-Reviewed-by: Denis Kuznetsov &lt;antrim@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1126055}
+Bug: 1369012, 1426420
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I02ac06b84d0a6fe2b29c06f34483da7e430dd88d">I02ac06b84d0a6fe2b29c06f34483da7e430dd88d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4386875">https://chromium-review.googlesource.com/c/chromium/src/+/4386875</a>
+Commit-Queue: Hao Liu &lt;haoliuk@chromium.org&gt;
+Reviewed-by: Colin Blundell &lt;blundell@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1126093}
 </pre>
 
 </body>
