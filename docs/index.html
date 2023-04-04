@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1125934/"> 1125934</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4e3cb8fa1c78abb5fdb238e58adfd003bbf504b5">4e3cb8fa1c78abb5fdb238e58adfd003bbf504b5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1125962/"> 1125962</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/494b2a53645a4a84e1e7e24a9b2a59a09d7b128c">494b2a53645a4a84e1e7e24a9b2a59a09d7b128c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1125919/">1125919</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4e3cb8fa1c78abb5fdb238e58adfd003bbf504b5
+   494b2a53645a4a84e1e7e24a9b2a59a09d7b128c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4e3cb8fa1c78abb5fdb238e58adfd003bbf504b5">
+    <a href="/chromium/src/+log/494b2a53645a4a84e1e7e24a9b2a59a09d7b128c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4e3cb8fa1c78abb5fdb238e58adfd003bbf504b5.tar.gz">
+    <a href="/chromium/src/+archive/494b2a53645a4a84e1e7e24a9b2a59a09d7b128c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nick Diego Yamane &lt;nickdiego@igalia.com&gt;
+   luci-bisection@appspot.gserviceaccount.com &lt;luci-bisection@appspot.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 04 13:08:42 2023
+   Tue Apr 04 14:22:31 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 04 13:08:42 2023
+   Tue Apr 04 14:22:31 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4e3cb8fa1c78abb5fdb238e58adfd003bbf504b5/">
-    2620481fd607caaa27a5c8b81decfef554bf49ba
+   <a href="/chromium/src/+/494b2a53645a4a84e1e7e24a9b2a59a09d7b128c/">
+    9a62c9727e5ae05f9126babf66f54f0dd99862fd
    </a>
   </td>
  </tr>
@@ -166,48 +166,78 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4e3cb8fa1c78abb5fdb238e58adfd003bbf504b5%5E">
-    2c324eef76c40d3c2f58f0dae579bbd5c5dd6445
+   <a href="/chromium/src/+/494b2a53645a4a84e1e7e24a9b2a59a09d7b128c%5E">
+    add1c84acaba76d3757a65c53e2b24afcd7f415d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4e3cb8fa1c78abb5fdb238e58adfd003bbf504b5%5E%21/">
+    <a href="/chromium/src/+/494b2a53645a4a84e1e7e24a9b2a59a09d7b128c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">chrome/linux: support CHROME_EXTRA_FLAGS* env vars
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Reland "[ios] Add ios platform specific implementation for AudioManager""
 
-...to set additional command line switches and arguments to chrome
+This reverts commit bf0fd38e8b45948e1e6a5dd64eef9f9ce3d703b2.
 
-As of now, each distribution of Chrome/Chromium implements its own
-mechanism to support "configurable" user's command line switches, such
-as custom wrapper scripts [1], custom launchers to support a similar
-mechanism for flatpak'ed Chrome/Chromium [2], amongst others.
+Reason for revert:
+LUCI Bisection identified this CL as the culprit of a build failure. See the analysis: <a href="https://luci-bisection.appspot.com/analysis/b/8784738652224024833">https://luci-bisection.appspot.com/analysis/b/8784738652224024833</a>
 
-This aims to provide a standard system-wide mechanism to set these
-additional arguments to chrome via a set of environment variables which,
-in *nix world, is a well-known and widely used mechanism for use-cases
-like this.
+Sample failed build: <a href="https://ci.chromium.org/b/8784738652224024833">https://ci.chromium.org/b/8784738652224024833</a>
 
-- CHROME_EXTRA_FLAGS is appended regardless the release channel;
-- While CHROME_EXTRA_FLAGS_{CHANNEL} is used for chrome binary coming
-  from a specific channel. i.e: STABLE, BETA and DEV.
-- The value is assumed to be a plain string containing one or more
-  arguments/flags separated by whitespaces. Whereas, arguments
-  containing whitespaces in their value can be quoted using ' and ".
+If this is a false positive, please report it at <a href="https://bugs.chromium.org/p/chromium/issues/entry?comment=Analysis%3A+https%3A%2F%2Fluci-bisection.appspot.com%2Fanalysis%2Fb%2F8784738652224024833&amp;components=Tools%3ETest%3EFindit&amp;labels=LUCI-Bisection-Wrong%2CPri-3%2CType-Bug&amp;status=Available&amp;summary=Wrongly+blamed+https%3A%2F%2Fchromium-review.googlesource.com%2Fc%2Fchromium%2Fsrc%2F%2B%2F4380706">https://bugs.chromium.org/p/chromium/issues/entry?comment=Analysis%3A+https%3A%2F%2Fluci-bisection.appspot.com%2Fanalysis%2Fb%2F8784738652224024833&amp;components=Tools%3ETest%3EFindit&amp;labels=LUCI-Bisection-Wrong%2CPri-3%2CType-Bug&amp;status=Available&amp;summary=Wrongly+blamed+https%3A%2F%2Fchromium-review.googlesource.com%2Fc%2Fchromium%2Fsrc%2F%2B%2F4380706</a>
 
-[1] <a href="https://aur.archlinux.org/cgit/aur.git/tree/google-chrome-stable.sh?h=google-chrome#n7">https://aur.archlinux.org/cgit/aur.git/tree/google-chrome-stable.sh?h=google-chrome#n7</a>
-[2] <a href="https://github.com/refi64/cobalt#flags">https://github.com/refi64/cobalt#flags</a>
+Original change's description:
+&gt; Reland "[ios] Add ios platform specific implementation for AudioManager"
+&gt;
+&gt; This is a reland of commit fdff894c87df51a2e7a08593f16c21acdc21596f
+&gt;
+&gt; TEST:Manually tested on iPhone 13 device for getUserMedia audio
+&gt;      only webrtc sample
+&gt;      <a href="https://webrtc.github.io/samples/src/content/getusermedia/audio/">https://webrtc.github.io/samples/src/content/getusermedia/audio/</a>
+&gt;
+&gt; Original change's description:
+&gt; &gt; [ios] Add ios platform specific implementation for AudioManager
+&gt; &gt;
+&gt; &gt; This CL has introduced a new class named AudioSessionManagerIOS.
+&gt; &gt; This class is used by a AudioManagerIOS to access a real hardware
+&gt; &gt; information.
+&gt; &gt;
+&gt; &gt; AudioSessionManagerIOS uses a AVAudioSession[1] - object that
+&gt; &gt; communicates to the operating system — and, in turn, the underlying
+&gt; &gt; audio hardware.
+&gt; &gt;
+&gt; &gt; [1] <a href="https://developer.apple.com/documentation/avfaudio/avaudiosession">https://developer.apple.com/documentation/avfaudio/avaudiosession</a>
+&gt; &gt;
+&gt; &gt; Bug: 1413450
+&gt; &gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0c58f75a50516be365ed91d6fcccfb8d6c6cbf6e">I0c58f75a50516be365ed91d6fcccfb8d6c6cbf6e</a>
+&gt; &gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4351848">https://chromium-review.googlesource.com/c/chromium/src/+/4351848</a>
+&gt; &gt; Reviewed-by: Dave Tapuska &lt;dtapuska@chromium.org&gt;
+&gt; &gt; Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
+&gt; &gt; Commit-Queue: Abhijeet Kandalkar &lt;abhijeet@igalia.com&gt;
+&gt; &gt; Cr-Commit-Position: refs/heads/main@{#1122084}
+&gt;
+&gt; Bug: 1413450
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I05f7fd4afdcf6f311d37e2813eb8d2a28e28e556">I05f7fd4afdcf6f311d37e2813eb8d2a28e28e556</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4380706">https://chromium-review.googlesource.com/c/chromium/src/+/4380706</a>
+&gt; Commit-Queue: Abhijeet Kandalkar &lt;abhijeet@igalia.com&gt;
+&gt; Reviewed-by: Peter Beverloo &lt;peter@chromium.org&gt;
+&gt; Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1125959}
+&gt;
 
-Bug: 1426674
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib0e73a372ae7c143386d15233e91e83a35d6ca91">Ib0e73a372ae7c143386d15233e91e83a35d6ca91</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4359490">https://chromium-review.googlesource.com/c/chromium/src/+/4359490</a>
-Commit-Queue: Nick Yamane &lt;nickdiego@igalia.com&gt;
-Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1125934}
+Bug: 1413450
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iceb49a17ea719a8dd47d1746a33c3f34d620da53">Iceb49a17ea719a8dd47d1746a33c3f34d620da53</a>
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4395621">https://chromium-review.googlesource.com/c/chromium/src/+/4395621</a>
+Commit-Queue: luci-bisection@appspot.gserviceaccount.com &lt;luci-bisection@appspot.gserviceaccount.com&gt;
+Bot-Commit: luci-bisection@appspot.gserviceaccount.com &lt;luci-bisection@appspot.gserviceaccount.com&gt;
+Owners-Override: luci-bisection@appspot.gserviceaccount.com &lt;luci-bisection@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1125962}
 </pre>
 
 </body>
