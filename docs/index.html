@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1126883/"> 1126883</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5e51b71e82128464863225a5a40d41734423e64e">5e51b71e82128464863225a5a40d41734423e64e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1126919/"> 1126919</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0565e7962c8b3e53d4e6471903ddd044148b5dd">f0565e7962c8b3e53d4e6471903ddd044148b5dd</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1126832/">1126832</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5e51b71e82128464863225a5a40d41734423e64e
+   f0565e7962c8b3e53d4e6471903ddd044148b5dd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5e51b71e82128464863225a5a40d41734423e64e">
+    <a href="/chromium/src/+log/f0565e7962c8b3e53d4e6471903ddd044148b5dd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5e51b71e82128464863225a5a40d41734423e64e.tar.gz">
+    <a href="/chromium/src/+archive/f0565e7962c8b3e53d4e6471903ddd044148b5dd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kuan Huang &lt;kuanhuang@chromium.org&gt;
+   Javier Contreras Tenorio &lt;javiercon@microsoft.com&gt;
   </td>
   <td>
-   Wed Apr 05 22:33:40 2023
+   Wed Apr 05 23:50:54 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 05 22:33:40 2023
+   Wed Apr 05 23:50:54 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5e51b71e82128464863225a5a40d41734423e64e/">
-    6c474fd24170294fe074c46fe5364c9925b6fd50
+   <a href="/chromium/src/+/f0565e7962c8b3e53d4e6471903ddd044148b5dd/">
+    42ec060bf627d9f4f2190137596221647984395f
    </a>
   </td>
  </tr>
@@ -166,29 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5e51b71e82128464863225a5a40d41734423e64e%5E">
-    7deca662f296433cf8007b15bbc95e45cb421c9f
+   <a href="/chromium/src/+/f0565e7962c8b3e53d4e6471903ddd044148b5dd%5E">
+    d65c2aef4130f60513f92bf475a89324464c7f05
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5e51b71e82128464863225a5a40d41734423e64e%5E%21/">
+    <a href="/chromium/src/+/f0565e7962c8b3e53d4e6471903ddd044148b5dd%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Create try builder win-presubmit
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[a11y] Implement standardized kCollapse and kExpand for treeitem role
 
-Adding a presubmit builder to capture platform-dependent breaks for
-windows.
+This CL set out to fix a bug where UIA::Expand and UIA::Collapse
+were only sending click actions rather than actually expanding or
+collapsing an element.
 
-Bug: 1413914
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic1c96bd61310f4ba7c20107d63a6ef0942c9d3cf">Ic1c96bd61310f4ba7c20107d63a6ef0942c9d3cf</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4402403">https://chromium-review.googlesource.com/c/chromium/src/+/4402403</a>
-Commit-Queue: Kuan Huang &lt;kuanhuang@chromium.org&gt;
-Reviewed-by: Erik Staab &lt;estaab@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1126883}
+Since it's an ARIA best practice that `treeitems`
+should respond to a right arrow event to expand (if collapsed)
+and a left arrow event to collapse (if expanded), this CL changed
+the corresponding UIA APIs to now send a `kCollapse` or `kExpand`
+actions over to the renderer.
+<a href="https://www.w3.org/WAI/ARIA/apg/patterns/treeview/examples/treeview-1b/">https://www.w3.org/WAI/ARIA/apg/patterns/treeview/examples/treeview-1b/</a>
+
+However, these were not implemented yet in the renderer side so
+this CL adds implementation for these by simulating and sending
+the appropriate keydown keyboard event.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idb06974f19b5c7af5710deb8a99849ab71ce344f">Idb06974f19b5c7af5710deb8a99849ab71ce344f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4378838">https://chromium-review.googlesource.com/c/chromium/src/+/4378838</a>
+Reviewed-by: Benjamin Beaudry &lt;benjamin.beaudry@microsoft.com&gt;
+Commit-Queue: Benjamin Beaudry &lt;benjamin.beaudry@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1126919}
 </pre>
 
 </body>
