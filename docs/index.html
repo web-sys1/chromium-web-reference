@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1127134/"> 1127134</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d7b90f2c50cbdd57d1aedf699345f80290301bf9">d7b90f2c50cbdd57d1aedf699345f80290301bf9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1127147/"> 1127147</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9c82d2060c1509187b86537dee5d2a580e10b82b">9c82d2060c1509187b86537dee5d2a580e10b82b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1127098/">1127098</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d7b90f2c50cbdd57d1aedf699345f80290301bf9
+   9c82d2060c1509187b86537dee5d2a580e10b82b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d7b90f2c50cbdd57d1aedf699345f80290301bf9">
+    <a href="/chromium/src/+log/9c82d2060c1509187b86537dee5d2a580e10b82b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d7b90f2c50cbdd57d1aedf699345f80290301bf9.tar.gz">
+    <a href="/chromium/src/+archive/9c82d2060c1509187b86537dee5d2a580e10b82b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Rakina Zata Amni &lt;rakina@chromium.org&gt;
+   Olivier ROBIN &lt;olivierrobin@google.com&gt;
   </td>
   <td>
-   Thu Apr 06 12:56:40 2023
+   Thu Apr 06 13:36:01 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Apr 06 12:56:40 2023
+   Thu Apr 06 13:36:01 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d7b90f2c50cbdd57d1aedf699345f80290301bf9/">
-    272a05a6673169970361cc9dafcc0b6846b6cf5b
+   <a href="/chromium/src/+/9c82d2060c1509187b86537dee5d2a580e10b82b/">
+    033c22f70fc40d4ab0b522b3c2f2c47a873cfa6e
    </a>
   </td>
  </tr>
@@ -166,35 +166,35 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d7b90f2c50cbdd57d1aedf699345f80290301bf9%5E">
-    8126d7b7cfd2053b4e4790ec3644105139e67786
+   <a href="/chromium/src/+/9c82d2060c1509187b86537dee5d2a580e10b82b%5E">
+    f2c16773bc3d51843b09853d323d6780a782038b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d7b90f2c50cbdd57d1aedf699345f80290301bf9%5E%21/">
+    <a href="/chromium/src/+/9c82d2060c1509187b86537dee5d2a580e10b82b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move ResumeCommit() call in NavigationRequest destructor to the top
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Check CustomEditMenu flag when adding partial translate entry.
 
-It's currently possible to not get to the ResumeCommit()-calling code
-if the destructor returns early, which might lead to the queued
-navigation being queued forever. This CL moves the call to happen near
-the top of the destructor to prevent accidentally skipping it. Also
-renames ResumeCommit() to PostResumeCommitTask() to make it clear that
-the resuming is asynchronous.
+The flag was not checked, and the entry was always added in the lookup
+menu instead of being added at the end when the flag is disabled.
 
-Bug: 1220337
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7767b5a1d19c23b327b4d137ee53dc64f89fd75e">I7767b5a1d19c23b327b4d137ee53dc64f89fd75e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4402275">https://chromium-review.googlesource.com/c/chromium/src/+/4402275</a>
-Commit-Queue: Rakina Zata Amni &lt;rakina@chromium.org&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
-Reviewed-by: Mingyu Lei &lt;leimy@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1127134}
+This is due to 2 concurrent bugs:
+- flag not being checked
+- entry being added too early in the menu.
+
+Bug: 1430803
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5844b605c2522bc1695e09370bf5290c4af3fb8e">I5844b605c2522bc1695e09370bf5290c4af3fb8e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4401360">https://chromium-review.googlesource.com/c/chromium/src/+/4401360</a>
+Reviewed-by: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+Auto-Submit: Olivier Robin &lt;olivierrobin@chromium.org&gt;
+Reviewed-by: Quentin Pubert &lt;qpubert@google.com&gt;
+Commit-Queue: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1127147}
 </pre>
 
 </body>
