@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1127486/"> 1127486</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/31d7d66ebeef60cb18ce31acda7168ed545b37f3">31d7d66ebeef60cb18ce31acda7168ed545b37f3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1127500/"> 1127500</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c44391c854e0b839d50e087ad2d7518e32b9765e">c44391c854e0b839d50e087ad2d7518e32b9765e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1127471/">1127471</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7eeadb811dae6a24c0534bdef9edf6483597a7bc">7eeadb811dae6a24c0534bdef9edf6483597a7bc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1127486/">1127486</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/31d7d66ebeef60cb18ce31acda7168ed545b37f3">31d7d66ebeef60cb18ce31acda7168ed545b37f3</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   31d7d66ebeef60cb18ce31acda7168ed545b37f3
+   c44391c854e0b839d50e087ad2d7518e32b9765e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/31d7d66ebeef60cb18ce31acda7168ed545b37f3">
+    <a href="/chromium/src/+log/c44391c854e0b839d50e087ad2d7518e32b9765e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/31d7d66ebeef60cb18ce31acda7168ed545b37f3.tar.gz">
+    <a href="/chromium/src/+archive/c44391c854e0b839d50e087ad2d7518e32b9765e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alex Gimenez &lt;raging@google.com&gt;
+   Ted Meyer &lt;tmathmeyer@chromium.org&gt;
   </td>
   <td>
-   Fri Apr 07 02:06:08 2023
+   Fri Apr 07 02:38:54 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 07 02:06:08 2023
+   Fri Apr 07 02:38:54 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/31d7d66ebeef60cb18ce31acda7168ed545b37f3/">
-    f6e62b8c4acd79b87c338249d09b7b621ece1087
+   <a href="/chromium/src/+/c44391c854e0b839d50e087ad2d7518e32b9765e/">
+    f665467632216a7af2790f80682525a0f5586773
    </a>
   </td>
  </tr>
@@ -166,40 +166,34 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/31d7d66ebeef60cb18ce31acda7168ed545b37f3%5E">
-    f738b1614f795d939ccb695fe9a444bc8c1d74e5
+   <a href="/chromium/src/+/c44391c854e0b839d50e087ad2d7518e32b9765e%5E">
+    ff6100388f673a22064505a3a769c7c64ecf2b64
    </a>
    <span>
     [
-    <a href="/chromium/src/+/31d7d66ebeef60cb18ce31acda7168ed545b37f3%5E%21/">
+    <a href="/chromium/src/+/c44391c854e0b839d50e087ad2d7518e32b9765e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add support for window launch doze unblocking
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Wrap a ChunkDemuxer inside ManifestDemuxer and set up time keeping
 
-During the time between a launch request and a window popping up on the
-screen, we must not allow either of:
+ManifestDemuxer will operate by owning a ChunkDemuxer and controlling
+the access to it so that manifest parsers can add data. That means
+ManifestDemuxer will need to keep a state of pending seeks, playback
+rate, and current media time. This CL adds the inner ChunkDemuxer and
+the time keeping, which relies on the ChunkDemuxer's outputting of
+DecoderBuffers. A followup CL will add integration with the manifest
+parsers and the seek/data loop.
 
-a) doze mode (which would prevent window from showing
-b) CPU restriction (which would increase visual lag)
-
-TEST=manual feature test (doze mode enter/exit based on window behavior)
-
-Low-Coverage-Reason:Unit tests coming in later CLs (one in this chain)
-
-Bug: b:258072954
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifcdba0cb70e594cf373ccb87bb77d85860205e0c">Ifcdba0cb70e594cf373ccb87bb77d85860205e0c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4376007">https://chromium-review.googlesource.com/c/chromium/src/+/4376007</a>
-Reviewed-by: Yury Khmel &lt;khmel@chromium.org&gt;
-Auto-Submit: Alexandre Marciano Gimenez &lt;raging@google.com&gt;
-Quick-Run: Alexandre Marciano Gimenez &lt;raging@google.com&gt;
-Reviewed-by: Yuichiro Hanada &lt;yhanada@chromium.org&gt;
-Commit-Queue: Alexandre Marciano Gimenez &lt;raging@google.com&gt;
-Reviewed-by: Shengsong Tan &lt;sstan@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1127486}
+Bug: 1266991
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I60e5ecb30b55b52e55f8691100a1f50029d0fbd2">I60e5ecb30b55b52e55f8691100a1f50029d0fbd2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4405308">https://chromium-review.googlesource.com/c/chromium/src/+/4405308</a>
+Commit-Queue: Ted (Chromium) Meyer &lt;tmathmeyer@chromium.org&gt;
+Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1127500}
 </pre>
 
 </body>
