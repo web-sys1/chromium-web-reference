@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1128003/"> 1128003</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/76b57b03c7051cbf881be731327abedde82e8612">76b57b03c7051cbf881be731327abedde82e8612</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1128004/"> 1128004</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4fffc9852a27287e481bbb637d3a7d74d3741173">4fffc9852a27287e481bbb637d3a7d74d3741173</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1127999/">1127999</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   76b57b03c7051cbf881be731327abedde82e8612
+   4fffc9852a27287e481bbb637d3a7d74d3741173
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/76b57b03c7051cbf881be731327abedde82e8612">
+    <a href="/chromium/src/+log/4fffc9852a27287e481bbb637d3a7d74d3741173">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/76b57b03c7051cbf881be731327abedde82e8612.tar.gz">
+    <a href="/chromium/src/+archive/4fffc9852a27287e481bbb637d3a7d74d3741173.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Rakina Zata Amni &lt;rakina@chromium.org&gt;
   </td>
   <td>
-   Sun Apr 09 12:14:41 2023
+   Sun Apr 09 12:44:12 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Apr 09 12:14:41 2023
+   Sun Apr 09 12:44:12 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/76b57b03c7051cbf881be731327abedde82e8612/">
-    817816463761cc5e89ab4cc1bd5c7df910fdfefe
+   <a href="/chromium/src/+/4fffc9852a27287e481bbb637d3a7d74d3741173/">
+    39df62be4f204e541b5769556cf9759a74f84103
    </a>
   </td>
  </tr>
@@ -166,48 +166,48 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/76b57b03c7051cbf881be731327abedde82e8612%5E">
-    4d04663939fcc21c02b841189f4ac3dfe64de73f
+   <a href="/chromium/src/+/4fffc9852a27287e481bbb637d3a7d74d3741173%5E">
+    76b57b03c7051cbf881be731327abedde82e8612
    </a>
    <span>
     [
-    <a href="/chromium/src/+/76b57b03c7051cbf881be731327abedde82e8612%5E%21/">
+    <a href="/chromium/src/+/4fffc9852a27287e481bbb637d3a7d74d3741173%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Skia from 88a52ba41e94 to 20d8ddab2b13 (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Allow WebUIImpl creation without RenderFrameHost
 
-<a href="https://skia.googlesource.com/skia.git/+log/88a52ba41e94..20d8ddab2b13">https://skia.googlesource.com/skia.git/+log/88a52ba41e94..20d8ddab2b13</a>
+Currently when we create WebUIImpl objects when picking a RFH for a
+navigation, the constructor requires an RFH object. This means
+creation of WebUIImpl depends on the existence of an RFH for a
+navigation, which won't work well if the navigation's RFH is created
+only after OnResponseStarted due to speculative RFH creation ban when
+a pending commit RFH exists, as WebUIImpl creation is needed to get to
+OnResponseStarted on WebUI navigations.
 
-2023-04-09 skia-recreate-skps@skia-swarming-bots.iam.gserviceaccount.com Update SKP version
+This CL makes WebUIImpl constructor not take a RenderFrameHost, and
+creates a new SetRenderFrameHost function to be called sometime after
+construction when a RenderFrameHost has been picked for the
+navigation, allowing WebUIImpl creation without RFH creation.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/skia-autoroll">https://autoroll.skia.org/r/skia-autoroll</a>
-Please CC borenet@google.com,lovisolo@google.com on the revert to ensure that a human
-is aware of the problem.
+This CL also factors out the WebUI creation code in
+RenderFrameHostManager::GetFrameHostForNavigation() into a separate
+CreateWebUIForNavigationIfNeeded() function. The function creates a
+WebUI potentially before a speculative RenderFrameHost has been
+created for the navigation.
 
-To file a bug in Skia: <a href="https://bugs.chromium.org/p/skia/issues/entry">https://bugs.chromium.org/p/skia/issues/entry</a>
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+See doc: <a href="https://docs.google.com/document/d/1ke5ZlCgQC5O0vt7FopVnOKW9asz-ZRFLl3XRpE8tLk8/edit#">https://docs.google.com/document/d/1ke5ZlCgQC5O0vt7FopVnOKW9asz-ZRFLl3XRpE8tLk8/edit#</a>
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chromium.try:android_optional_gpu_tests_rel;luci.chromium.try:linux-blink-rel;luci.chromium.try:linux-chromeos-compile-dbg;luci.chromium.try:linux_optional_gpu_tests_rel;luci.chromium.try:mac_optional_gpu_tests_rel;luci.chromium.try:win_optional_gpu_tests_rel
-Cq-Do-Not-Cancel-Tryjobs: true
-Bug: None
-Tbr: lovisolo@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I137772ca4021c71bd4654a1f0c8c2be7a2ddb5d6">I137772ca4021c71bd4654a1f0c8c2be7a2ddb5d6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4411138">https://chromium-review.googlesource.com/c/chromium/src/+/4411138</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1128003}
+Bug: 1220337, 1430336
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I312a7de339fccb39f720a9fa14c85f7e90ea558c">I312a7de339fccb39f720a9fa14c85f7e90ea558c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4374497">https://chromium-review.googlesource.com/c/chromium/src/+/4374497</a>
+Reviewed-by: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
+Commit-Queue: Rakina Zata Amni &lt;rakina@chromium.org&gt;
+Reviewed-by: Nasko Oskov &lt;nasko@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1128004}
 </pre>
 
 </body>
