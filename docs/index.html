@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1128082/"> 1128082</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/80abbf4c73a720cedfda59686e834dc19a5913d2">80abbf4c73a720cedfda59686e834dc19a5913d2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1128087/"> 1128087</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8ae21b5d4bae8aba68679bdb079ae52ff46917c0">8ae21b5d4bae8aba68679bdb079ae52ff46917c0</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1128076/">1128076</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   80abbf4c73a720cedfda59686e834dc19a5913d2
+   8ae21b5d4bae8aba68679bdb079ae52ff46917c0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/80abbf4c73a720cedfda59686e834dc19a5913d2">
+    <a href="/chromium/src/+log/8ae21b5d4bae8aba68679bdb079ae52ff46917c0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/80abbf4c73a720cedfda59686e834dc19a5913d2.tar.gz">
+    <a href="/chromium/src/+archive/8ae21b5d4bae8aba68679bdb079ae52ff46917c0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Wei Lee &lt;wtlee@google.com&gt;
+   Fergal Daly &lt;fergal@chromium.org&gt;
   </td>
   <td>
-   Mon Apr 10 04:41:33 2023
+   Mon Apr 10 05:23:52 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Apr 10 04:41:33 2023
+   Mon Apr 10 05:23:52 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/80abbf4c73a720cedfda59686e834dc19a5913d2/">
-    fd55678cbab8d503b5654bf1e0c6ec911597df44
+   <a href="/chromium/src/+/8ae21b5d4bae8aba68679bdb079ae52ff46917c0/">
+    b7128c261c6259fa4ba4f998b7002876017b1b3d
    </a>
   </td>
  </tr>
@@ -166,29 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/80abbf4c73a720cedfda59686e834dc19a5913d2%5E">
-    0ebba26cf4aad8797006d8e1f21f5b8fc8f79d94
+   <a href="/chromium/src/+/8ae21b5d4bae8aba68679bdb079ae52ff46917c0%5E">
+    7908ad4ee603feac2e50a6a5e18cf7e8cde63195
    </a>
    <span>
     [
-    <a href="/chromium/src/+/80abbf4c73a720cedfda59686e834dc19a5913d2%5E%21/">
+    <a href="/chromium/src/+/8ae21b5d4bae8aba68679bdb079ae52ff46917c0%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">CCA: Add meaning for "Portrait" string
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Disable a lot of ozone_unittests that are failing under LSAN.
 
-Bug: b:262484300
-Test: None
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iac8170c73ed087794f91124ca713a6f0f4af559e">Iac8170c73ed087794f91124ca713a6f0f4af559e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4405605">https://chromium-review.googlesource.com/c/chromium/src/+/4405605</a>
-Reviewed-by: Kam Kwankajornkiet &lt;kamchonlathorn@chromium.org&gt;
-Commit-Queue: Kam Kwankajornkiet &lt;kamchonlathorn@chromium.org&gt;
-Commit-Queue: Wei Lee &lt;wtlee@chromium.org&gt;
-Auto-Submit: Wei Lee &lt;wtlee@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1128082}
+The LSAN bot had not actually been detecting
+leaks. <a href="https://crrev.com/c/4403323">https://crrev.com/c/4403323</a> caused it to start and found 86
+failures.
+
+This CL disables those failing tests when LEAK_SANITIZER is on. It
+actually over-disables because manually disabling them all is too much
+work. This is OK since these cases weren't actually being
+leak-tested at all a few days ago.
+
+In some cases I'm disabling whole test classes and those classes have
+references to the class name inside them, so it gets a bit messy.
+
+I can't select the bot to run as part of CQ but I can confirm that
+
+ASAN_OPTIONS="symbolize=1 handle_abort=1 detect_leaks=1 intercept_tls_get_addr=0" out/chromeos-lsan/ozone_unittests
+
+was failing locally before my change and is passing now.
+
+Bug: 1431767
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0b89af4af8ef915cc11f665a384a211f92ff317e">I0b89af4af8ef915cc11f665a384a211f92ff317e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4405323">https://chromium-review.googlesource.com/c/chromium/src/+/4405323</a>
+Commit-Queue: Takashi Sakamoto &lt;tasak@google.com&gt;
+Reviewed-by: Takashi Sakamoto &lt;tasak@google.com&gt;
+Owners-Override: Fergal Daly &lt;fergal@google.com&gt;
+Auto-Submit: Fergal Daly &lt;fergal@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1128087}
 </pre>
 
 </body>
