@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1128757/"> 1128757</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/43b60ea06f3cbc57a6a1f2f66c6cde8d0ec4b6da">43b60ea06f3cbc57a6a1f2f66c6cde8d0ec4b6da</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1128781/"> 1128781</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cabd1e92d2649d7853e74b35e35f02a40e45aa3e">cabd1e92d2649d7853e74b35e35f02a40e45aa3e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1128691/">1128691</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c6f63098841a1bfdeb0750b28ad90f78ecb2e683">c6f63098841a1bfdeb0750b28ad90f78ecb2e683</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1128771/">1128771</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/35d316d3a1610c13ebe5b419eecfad9bb353eef4">35d316d3a1610c13ebe5b419eecfad9bb353eef4</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   43b60ea06f3cbc57a6a1f2f66c6cde8d0ec4b6da
+   cabd1e92d2649d7853e74b35e35f02a40e45aa3e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/43b60ea06f3cbc57a6a1f2f66c6cde8d0ec4b6da">
+    <a href="/chromium/src/+log/cabd1e92d2649d7853e74b35e35f02a40e45aa3e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/43b60ea06f3cbc57a6a1f2f66c6cde8d0ec4b6da.tar.gz">
+    <a href="/chromium/src/+archive/cabd1e92d2649d7853e74b35e35f02a40e45aa3e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Dorwin &lt;ddorwin@chromium.org&gt;
+   Patrick Noland &lt;pnoland@google.com&gt;
   </td>
   <td>
-   Tue Apr 11 17:59:05 2023
+   Tue Apr 11 18:31:28 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 11 17:59:05 2023
+   Tue Apr 11 18:31:28 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/43b60ea06f3cbc57a6a1f2f66c6cde8d0ec4b6da/">
-    4487893dad4aed195b36ad7a1ad5f2a25c0a8e4a
+   <a href="/chromium/src/+/cabd1e92d2649d7853e74b35e35f02a40e45aa3e/">
+    c6f8a41464ad3f3b502f5979b94f9d59a8dd2a41
    </a>
   </td>
  </tr>
@@ -166,67 +166,32 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/43b60ea06f3cbc57a6a1f2f66c6cde8d0ec4b6da%5E">
-    03a462c2c5f9925d253cd0c8b884ca63c3a804c3
+   <a href="/chromium/src/+/cabd1e92d2649d7853e74b35e35f02a40e45aa3e%5E">
+    c76ad93d92c74d844f885a20157146d1c6a3b7c6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/43b60ea06f3cbc57a6a1f2f66c6cde8d0ec4b6da%5E%21/">
+    <a href="/chromium/src/+/cabd1e92d2649d7853e74b35e35f02a40e45aa3e%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Partially Revert "[fuchsia] Uses file_path_watcher_linux for Fuchsia implementation."
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Don't set selectable background if existing bg is already correct
 
-This partially reverts commit
-d2f9bef0ccb420f5485634a952a602b9ff007644.
+Using a cached ConstantState is faster than loading from scratch, but
+doing nothing at all is faster still.
 
-Reason for revert: Removing use of inotify on Fuchsia
-(<a href="https://crbug.com/1430566">https://crbug.com/1430566</a>).
+This was over twice as fast in local tracing and saved ~0.8ms per
+suggestion list layout (64ms saved / 75 layouts)
 
-This change restores the specification of the file watcher
-implementation to a Fuchsia-specific block but uses
-`file_path_watcher_stub.cc` instead of the deleted
-`file_path_watcher_fuchsia.cc` (see <a href="https://crrev.com/c/4400931">https://crrev.com/c/4400931</a>).
-Building the `FilePathWatcherTest` tests is once again disabled.
-
-The file renaming in the original CL and related cleanup in the
-original CL remains.
-
-Original change's description:
-&gt; [fuchsia] Uses file_path_watcher_linux for Fuchsia implementation.
-&gt;
-&gt; The Linux inotify based file path watcher client is used with the
-&gt; Fuchsia inotify implementation. The following tests currently pass:
-&gt;
-&gt; * NewFile
-&gt; * ModifiedFile
-&gt; * DeleteDuringNotify
-&gt; * DestroyWithPendingNotification
-&gt;
-&gt; Many other tests are still failing and are being investigated. The above
-&gt; set of cases are the most important scenarios.
-&gt;
-&gt; Bug: 851641
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If6d4226e47740ec29a82c669dfd333f0af92e081">If6d4226e47740ec29a82c669dfd333f0af92e081</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/3540915">https://chromium-review.googlesource.com/c/chromium/src/+/3540915</a>
-&gt; Reviewed-by: Kevin Marshall &lt;kmarshall@chromium.org&gt;
-&gt; Reviewed-by: danakj &lt;danakj@chromium.org&gt;
-&gt; Commit-Queue: Mason Bendixen &lt;masonben@chromium.org&gt;
-&gt; Auto-Submit: Mason Bendixen &lt;masonben@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#985555}
-
-Bug: 1430566
-Bug: 851641
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I05a6f67b59b26678d3770e2f5766b2c1d82719cb">I05a6f67b59b26678d3770e2f5766b2c1d82719cb</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4400932">https://chromium-review.googlesource.com/c/chromium/src/+/4400932</a>
-Commit-Queue: Wez &lt;wez@chromium.org&gt;
-Reviewed-by: danakj &lt;danakj@chromium.org&gt;
-Auto-Submit: David Dorwin &lt;ddorwin@chromium.org&gt;
-Reviewed-by: Wez &lt;wez@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1128757}
+Bug: 1430911
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I35043564f2636367b0ad4bea943b5852c6cfbe08">I35043564f2636367b0ad4bea943b5852c6cfbe08</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4408998">https://chromium-review.googlesource.com/c/chromium/src/+/4408998</a>
+Reviewed-by: Tomasz Wiszkowski &lt;ender@google.com&gt;
+Commit-Queue: Patrick Noland &lt;pnoland@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1128781}
 </pre>
 
 </body>
