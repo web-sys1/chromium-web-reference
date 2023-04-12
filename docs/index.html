@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1129111/"> 1129111</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/86be736f34ce556f80fee5360a917004d97060eb">86be736f34ce556f80fee5360a917004d97060eb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1129132/"> 1129132</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3388cdd910ea1f04b373412a49f420a50f530047">3388cdd910ea1f04b373412a49f420a50f530047</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1129111/">1129111</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   86be736f34ce556f80fee5360a917004d97060eb
+   3388cdd910ea1f04b373412a49f420a50f530047
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/86be736f34ce556f80fee5360a917004d97060eb">
+    <a href="/chromium/src/+log/3388cdd910ea1f04b373412a49f420a50f530047">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/86be736f34ce556f80fee5360a917004d97060eb.tar.gz">
+    <a href="/chromium/src/+archive/3388cdd910ea1f04b373412a49f420a50f530047.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sunggook Chue &lt;sunggch@microsoft.com&gt;
+   Mikel Astiz &lt;mastiz@chromium.org&gt;
   </td>
   <td>
-   Wed Apr 12 06:48:41 2023
+   Wed Apr 12 08:19:36 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 12 06:48:41 2023
+   Wed Apr 12 08:19:36 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/86be736f34ce556f80fee5360a917004d97060eb/">
-    53a66fc707d731c26fb78c74ec3c1cd45fd3a882
+   <a href="/chromium/src/+/3388cdd910ea1f04b373412a49f420a50f530047/">
+    dfce6c39c8ba4885132c40a5b3c546c27762f417
    </a>
   </td>
  </tr>
@@ -166,31 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/86be736f34ce556f80fee5360a917004d97060eb%5E">
-    986efb556824c13c079b4e0baa2c256a6b21d8ed
+   <a href="/chromium/src/+/3388cdd910ea1f04b373412a49f420a50f530047%5E">
+    95c82175f852a9508dca6c4fb3dae3233cb643f7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/86be736f34ce556f80fee5360a917004d97060eb%5E%21/">
+    <a href="/chromium/src/+/3388cdd910ea1f04b373412a49f420a50f530047%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Mp4 buffer that provide offset info for write data.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[sync] Improve accuracy for GetTypesWithPendingDownloadForInitialSync()
 
-It is buffer that will be used for writing MP4 muxer box.
-The writing callback what MediaRecorderHandler provides
-does not provide a offset info, but MP4 muxer needs offset
-info such as 'moof' box.
+Datatypes that already downloaded the initial data should not be listed
+as pending-initial-sync, even while the datatype manager is CONFIGURING.
 
-Bug: 1072056
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I507be6c91e0c64ee1bbdc1a57aa3b732a7427c1f">I507be6c91e0c64ee1bbdc1a57aa3b732a7427c1f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4411395">https://chromium-review.googlesource.com/c/chromium/src/+/4411395</a>
-Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
-Commit-Queue: Sunggook Chue &lt;sunggch@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1129111}
+To achieve so, this patch defers the update of `downloaded_types_`
+until the configuration cycle finishes, and the types are known to have
+been downloaded successfully.
+
+This change is otherwise considered harmless because
+`downloaded_types_` isn't actually consumed during a configuration
+cycle, so it shouldn't make a difference whether it gets updated in
+the beginning (optimistically) or upon success. At least under the
+assumption that the Sync engine reports success cases reliably, which
+appears to be the case.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1cefefcf2d2ae2310885b512bd3f11128325473f">I1cefefcf2d2ae2310885b512bd3f11128325473f</a>
+Bug: 1429600
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4401573">https://chromium-review.googlesource.com/c/chromium/src/+/4401573</a>
+Commit-Queue: Mikel Astiz &lt;mastiz@chromium.org&gt;
+Reviewed-by: Marc Treib &lt;treib@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1129132}
 </pre>
 
 </body>
