@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1129132/"> 1129132</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3388cdd910ea1f04b373412a49f420a50f530047">3388cdd910ea1f04b373412a49f420a50f530047</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1129144/"> 1129144</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f20c7d9683a23f66cb9f7da0b3d765c66a2608d6">f20c7d9683a23f66cb9f7da0b3d765c66a2608d6</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1129111/">1129111</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/86be736f34ce556f80fee5360a917004d97060eb">86be736f34ce556f80fee5360a917004d97060eb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1129137/">1129137</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4f372258a7e20888cad996bfe5afd467e988f47b">4f372258a7e20888cad996bfe5afd467e988f47b</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3388cdd910ea1f04b373412a49f420a50f530047
+   f20c7d9683a23f66cb9f7da0b3d765c66a2608d6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3388cdd910ea1f04b373412a49f420a50f530047">
+    <a href="/chromium/src/+log/f20c7d9683a23f66cb9f7da0b3d765c66a2608d6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3388cdd910ea1f04b373412a49f420a50f530047.tar.gz">
+    <a href="/chromium/src/+archive/f20c7d9683a23f66cb9f7da0b3d765c66a2608d6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mikel Astiz &lt;mastiz@chromium.org&gt;
+   Sergii Bykov &lt;sbykov@google.com&gt;
   </td>
   <td>
-   Wed Apr 12 08:19:36 2023
+   Wed Apr 12 09:06:28 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 12 08:19:36 2023
+   Wed Apr 12 09:06:28 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3388cdd910ea1f04b373412a49f420a50f530047/">
-    dfce6c39c8ba4885132c40a5b3c546c27762f417
+   <a href="/chromium/src/+/f20c7d9683a23f66cb9f7da0b3d765c66a2608d6/">
+    844a28d82aa315daa32fab5a371e1b748bb95b78
    </a>
   </td>
  </tr>
@@ -166,40 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3388cdd910ea1f04b373412a49f420a50f530047%5E">
-    95c82175f852a9508dca6c4fb3dae3233cb643f7
+   <a href="/chromium/src/+/f20c7d9683a23f66cb9f7da0b3d765c66a2608d6%5E">
+    b495659df6ebf73aa87feb2cc31a5151f268b647
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3388cdd910ea1f04b373412a49f420a50f530047%5E%21/">
+    <a href="/chromium/src/+/f20c7d9683a23f66cb9f7da0b3d765c66a2608d6%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[sync] Improve accuracy for GetTypesWithPendingDownloadForInitialSync()
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Code Health] Remove expired BubbleReshowsPerSession histograms
 
-Datatypes that already downloaded the initial data should not be listed
-as pending-initial-sync, even while the datatype manager is CONFIGURING.
+Removed ExclusiveAccess.BubbleReshowsPerSession histograms:
+KeyboardLock, KeyboardLockForced, Fullscreen, MouseLock.
+All expired as of M77.
 
-To achieve so, this patch defers the update of `downloaded_types_`
-until the configuration cycle finishes, and the types are known to have
-been downloaded successfully.
-
-This change is otherwise considered harmless because
-`downloaded_types_` isn't actually consumed during a configuration
-cycle, so it shouldn't make a difference whether it gets updated in
-the beginning (optimistically) or upon success. At least under the
-assumption that the Sync engine reports success cases reliably, which
-appears to be the case.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1cefefcf2d2ae2310885b512bd3f11128325473f">I1cefefcf2d2ae2310885b512bd3f11128325473f</a>
-Bug: 1429600
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4401573">https://chromium-review.googlesource.com/c/chromium/src/+/4401573</a>
-Commit-Queue: Mikel Astiz &lt;mastiz@chromium.org&gt;
-Reviewed-by: Marc Treib &lt;treib@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1129132}
+Bug: 1384828
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia168e63d59c6083cd9e284b3b7df3e73028bdbd5">Ia168e63d59c6083cd9e284b3b7df3e73028bdbd5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4414683">https://chromium-review.googlesource.com/c/chromium/src/+/4414683</a>
+Reviewed-by: Kyle Horimoto &lt;khorimoto@chromium.org&gt;
+Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+Commit-Queue: Sergii Bykov &lt;sbykov@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1129144}
 </pre>
 
 </body>
