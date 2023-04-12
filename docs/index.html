@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1129208/"> 1129208</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3f414e20c1a78ff66dec5208cd816d0bc401389e">3f414e20c1a78ff66dec5208cd816d0bc401389e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1129224/"> 1129224</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/67313bb21679217fc5080ecbc4809eec47a7d8e0">67313bb21679217fc5080ecbc4809eec47a7d8e0</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1129179/">1129179</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3f414e20c1a78ff66dec5208cd816d0bc401389e
+   67313bb21679217fc5080ecbc4809eec47a7d8e0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3f414e20c1a78ff66dec5208cd816d0bc401389e">
+    <a href="/chromium/src/+log/67313bb21679217fc5080ecbc4809eec47a7d8e0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3f414e20c1a78ff66dec5208cd816d0bc401389e.tar.gz">
+    <a href="/chromium/src/+archive/67313bb21679217fc5080ecbc4809eec47a7d8e0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Samar &lt;samarchehade@google.com&gt;
+   Vladimir Levin &lt;vmpstr@chromium.org&gt;
   </td>
   <td>
-   Wed Apr 12 12:57:55 2023
+   Wed Apr 12 13:42:50 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 12 12:57:55 2023
+   Wed Apr 12 13:42:50 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3f414e20c1a78ff66dec5208cd816d0bc401389e/">
-    da89cc4e620e07da6d6ed485f4c50d0c0d0194f7
+   <a href="/chromium/src/+/67313bb21679217fc5080ecbc4809eec47a7d8e0/">
+    5acda228d42e32efb5946a92d60feb4b286198e0
    </a>
   </td>
  </tr>
@@ -166,30 +166,39 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3f414e20c1a78ff66dec5208cd816d0bc401389e%5E">
-    1d7d42b734f59b4e0bbd110c46c98b22c6ae1bdc
+   <a href="/chromium/src/+/67313bb21679217fc5080ecbc4809eec47a7d8e0%5E">
+    9a977104d8869b7bf7356383c94d5174c162b3b4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3f414e20c1a78ff66dec5208cd816d0bc401389e%5E%21/">
+    <a href="/chromium/src/+/67313bb21679217fc5080ecbc4809eec47a7d8e0%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Signin][Android] Enable tinting for the signed-out identity disc.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">AX: Improve bounds calculation efficiency
 
-Code cleanup CL which shouldn't change anything to the identity disc
-appearance. Rather than creating a new color for the signed-out avatar,
-we just use the toolbar colors and tinting so that it matches other
-toolbar icons.
+This patch adds an outline rect collector with two subclasses: one
+that gathers the rects, and one that just unions them.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8c76b1cfcad45bd805a452c7e74af12306ee8c42">I8c76b1cfcad45bd805a452c7e74af12306ee8c42</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4410797">https://chromium-review.googlesource.com/c/chromium/src/+/4410797</a>
-Commit-Queue: Samar Chehade-Lepleux &lt;samarchehade@google.com&gt;
-Reviewed-by: Boris Sazonov &lt;bsazonov@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1129208}
+The latter is quicker when there are a lot of rects to gather. For AX,
+the code used to do OutlineRects followed by union, now it just uses
+the union outline collector.
+
+On an extremely heavy (gerrit) page with ~7000 line diff visible and
+AX enabled, the runtime of one of the bounds calls goes from about
+1.9sec to about 150ms.
+
+R=ikilpatrick@chromium.org, chrishtr@chromium.org
+
+Bug: 1430553
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib771e4cf57785de66ca4895d6bb401b8f0afb6e8">Ib771e4cf57785de66ca4895d6bb401b8f0afb6e8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4406715">https://chromium-review.googlesource.com/c/chromium/src/+/4406715</a>
+Reviewed-by: Chris Harrelson &lt;chrishtr@chromium.org&gt;
+Commit-Queue: Vladimir Levin &lt;vmpstr@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1129224}
 </pre>
 
 </body>
