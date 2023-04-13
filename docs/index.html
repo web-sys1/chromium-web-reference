@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1129770/"> 1129770</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/979621a70cf87c089947921f79b0f17e221d1ba3">979621a70cf87c089947921f79b0f17e221d1ba3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1129778/"> 1129778</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d67e6340af5f42d2c77c34b5252458e08bc8a25d">d67e6340af5f42d2c77c34b5252458e08bc8a25d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1129764/">1129764</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   979621a70cf87c089947921f79b0f17e221d1ba3
+   d67e6340af5f42d2c77c34b5252458e08bc8a25d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/979621a70cf87c089947921f79b0f17e221d1ba3">
+    <a href="/chromium/src/+log/d67e6340af5f42d2c77c34b5252458e08bc8a25d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/979621a70cf87c089947921f79b0f17e221d1ba3.tar.gz">
+    <a href="/chromium/src/+archive/d67e6340af5f42d2c77c34b5252458e08bc8a25d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Simon Hangl &lt;simonha@google.com&gt;
+   Mikel Astiz &lt;mastiz@chromium.org&gt;
   </td>
   <td>
-   Thu Apr 13 11:10:16 2023
+   Thu Apr 13 11:53:02 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Apr 13 11:10:16 2023
+   Thu Apr 13 11:53:02 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/979621a70cf87c089947921f79b0f17e221d1ba3/">
-    1397e29cfee0d3208afc8819ce320c05d53de09d
+   <a href="/chromium/src/+/d67e6340af5f42d2c77c34b5252458e08bc8a25d/">
+    6baccc5350f86573a1449f7ff36c55d66adcb703
    </a>
   </td>
  </tr>
@@ -166,32 +166,38 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/979621a70cf87c089947921f79b0f17e221d1ba3%5E">
-    3fe1a95333328b9d250967cdb085eebcb300f8aa
+   <a href="/chromium/src/+/d67e6340af5f42d2c77c34b5252458e08bc8a25d%5E">
+    c15bd965b3fec4108e0c90ec260d6b11bb8f8e72
    </a>
    <span>
     [
-    <a href="/chromium/src/+/979621a70cf87c089947921f79b0f17e221d1ba3%5E%21/">
+    <a href="/chromium/src/+/d67e6340af5f42d2c77c34b5252458e08bc8a25d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Adding tests for MediaStreamDispatcherHost for multi capture
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[sync] Modernize Android tests to avoid setting sync-requested to false
 
-The tests added in this CL test the different configurations that
-influence the return value of the CheckRequestAllScreensAllowed
-function.
+Outside tests, no Java code invokes SyncService.setSyncRequested() with
+false. This is because the UI only allows one joint operation, which is
+to disable sync and sign out.
 
-DD: go/multiscreencapture
-Bug: 1300883
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I019e5920d1e27d6dbe86ca007508401b69fbe8ed">I019e5920d1e27d6dbe86ca007508401b69fbe8ed</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4417933">https://chromium-review.googlesource.com/c/chromium/src/+/4417933</a>
-Reviewed-by: Andrew Rayskiy &lt;greengrape@google.com&gt;
-Reviewed-by: Olga Sharonova &lt;olka@chromium.org&gt;
-Commit-Queue: Simon Hangl &lt;simonha@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1129770}
+However, several tests exercise a different scenario, nowadays
+unreachable outside tests, which is the case where sync is turned off
+without signing out the user.
+
+In follow-up patches, the APIs that make this unrealistic flow
+possible are going away, so it is necessary to modernize the tests
+first.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia094a2db1611af2dffb157fae535f3b79a7e4e9b">Ia094a2db1611af2dffb157fae535f3b79a7e4e9b</a>
+Bug: 1291953
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4417682">https://chromium-review.googlesource.com/c/chromium/src/+/4417682</a>
+Commit-Queue: Mikel Astiz &lt;mastiz@chromium.org&gt;
+Reviewed-by: Boris Sazonov &lt;bsazonov@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1129778}
 </pre>
 
 </body>
