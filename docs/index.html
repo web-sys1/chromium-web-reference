@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1130244/"> 1130244</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cbc40435a80b06fa1abdb6072364d2928cebbaa9">cbc40435a80b06fa1abdb6072364d2928cebbaa9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1130250/"> 1130250</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a0c9fd1123a959f5eb44a59bd49fef15f55c4d28">a0c9fd1123a959f5eb44a59bd49fef15f55c4d28</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1130226/">1130226</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   cbc40435a80b06fa1abdb6072364d2928cebbaa9
+   a0c9fd1123a959f5eb44a59bd49fef15f55c4d28
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/cbc40435a80b06fa1abdb6072364d2928cebbaa9">
+    <a href="/chromium/src/+log/a0c9fd1123a959f5eb44a59bd49fef15f55c4d28">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/cbc40435a80b06fa1abdb6072364d2928cebbaa9.tar.gz">
+    <a href="/chromium/src/+archive/a0c9fd1123a959f5eb44a59bd49fef15f55c4d28.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ilkin Safarli &lt;safarli@google.com&gt;
+   Jun W &lt;jungoog@google.com&gt;
   </td>
   <td>
-   Fri Apr 14 01:19:53 2023
+   Fri Apr 14 01:50:30 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 14 01:19:53 2023
+   Fri Apr 14 01:50:30 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/cbc40435a80b06fa1abdb6072364d2928cebbaa9/">
-    87dc328e668075b55a7d64155d653cdfb88c1711
+   <a href="/chromium/src/+/a0c9fd1123a959f5eb44a59bd49fef15f55c4d28/">
+    f1a04b4cab0a6a07f588768e41bf796d15ce3c52
    </a>
   </td>
  </tr>
@@ -166,27 +166,45 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/cbc40435a80b06fa1abdb6072364d2928cebbaa9%5E">
-    b138b9049267542bbf9bee318d8fb4524a91cc1c
+   <a href="/chromium/src/+/a0c9fd1123a959f5eb44a59bd49fef15f55c4d28%5E">
+    7f96987073c47f883499cb247430a2f55ffcc36b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/cbc40435a80b06fa1abdb6072364d2928cebbaa9%5E%21/">
+    <a href="/chromium/src/+/a0c9fd1123a959f5eb44a59bd49fef15f55c4d28%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">CrOS Settings: Convert multidevice_smartlock_item browser test to TS
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[WebUI] Migrate EnterpriseReportingUI to WebUIConfig
 
-Bug: b:270728282
-Test: browser_tests --gtest_filter="OSSettingsMultidevicePageMultideviceSmartlockItem*"
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib690ed36f69cd19f6805196a31954ce762da17a1">Ib690ed36f69cd19f6805196a31954ce762da17a1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4416716">https://chromium-review.googlesource.com/c/chromium/src/+/4416716</a>
-Commit-Queue: Ilkin Safarli &lt;safarli@google.com&gt;
-Reviewed-by: Wes Okuhara &lt;wesokuhara@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1130244}
+
+Context:
+
+Currently WebUI properties, e.g. CSPs, requesting schemes, host, mojo,
+etc. are stored in WebUIControllers themselves or in separate lists
+like IsWebUIAllowedToMakeNetworkRequests. The lifetime of a
+WebUIController is bound to the frame, which makes it hard to use for
+some use cases where the WebUIController hasn't been created yet. A
+non-dynamically allocated class where clients could query a WebUI's
+properties would be easier to use and audit.
+
+WebUIConfig is a class that stores properties of WebUIs. For now the
+properties are 1. the WebUI's origin, 2. if the WebUI is enabled,
+and 3. GetURLDataSource() method for service worker initialization.
+In the future this class could include information like CSPs, if we
+should enable Mojo, if we should enable chrome.send(), if we should
+allow network requests, URLDataSource, etc.
+
+Bug: 1317510
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If7e34dc65e40da21bcb19238f1369291bc1c3aa8">If7e34dc65e40da21bcb19238f1369291bc1c3aa8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4412226">https://chromium-review.googlesource.com/c/chromium/src/+/4412226</a>
+Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Commit-Queue: Junguo (Jun) W. &lt;jungoog@google.com&gt;
+Reviewed-by: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1130250}
 </pre>
 
 </body>
