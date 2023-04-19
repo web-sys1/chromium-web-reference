@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1132313/"> 1132313</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9d929dd7335e3e6678b7ff729a3520fa45a8d81b">9d929dd7335e3e6678b7ff729a3520fa45a8d81b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1132320/"> 1132320</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/19258eb7cca14fac7052eac02c39eb4ba0dd820b">19258eb7cca14fac7052eac02c39eb4ba0dd820b</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1132300/">1132300</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9d929dd7335e3e6678b7ff729a3520fa45a8d81b
+   19258eb7cca14fac7052eac02c39eb4ba0dd820b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9d929dd7335e3e6678b7ff729a3520fa45a8d81b">
+    <a href="/chromium/src/+log/19258eb7cca14fac7052eac02c39eb4ba0dd820b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9d929dd7335e3e6678b7ff729a3520fa45a8d81b.tar.gz">
+    <a href="/chromium/src/+archive/19258eb7cca14fac7052eac02c39eb4ba0dd820b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   sisidovski &lt;sisidovski@chromium.org&gt;
   </td>
   <td>
-   Wed Apr 19 03:54:33 2023
+   Wed Apr 19 04:31:28 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 19 03:54:33 2023
+   Wed Apr 19 04:31:28 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9d929dd7335e3e6678b7ff729a3520fa45a8d81b/">
-    17d4786d0fac8c61d370bf3bb5a4879fa33e6fde
+   <a href="/chromium/src/+/19258eb7cca14fac7052eac02c39eb4ba0dd820b/">
+    97807dab873765631400b01006d27a5735b40d16
    </a>
   </td>
  </tr>
@@ -166,45 +166,46 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9d929dd7335e3e6678b7ff729a3520fa45a8d81b%5E">
-    6d2fcb1703379d5cde9102a483c068cca685a930
+   <a href="/chromium/src/+/19258eb7cca14fac7052eac02c39eb4ba0dd820b%5E">
+    eb6c8d2dd259f1940677d7881722f182c35d9d39
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9d929dd7335e3e6678b7ff729a3520fa45a8d81b%5E%21/">
+    <a href="/chromium/src/+/19258eb7cca14fac7052eac02c39eb4ba0dd820b%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Depot Tools from 9e36ef60d0b3 to 54762c22175e (1 revision)
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[BestEffortServiceWorker] Fix restarting request hits DCHECK
 
-<a href="https://chromium.googlesource.com/chromium/tools/depot_tools.git/+log/9e36ef60d0b3..54762c22175e">https://chromium.googlesource.com/chromium/tools/depot_tools.git/+log/9e36ef60d0b3..54762c22175e</a>
+This CL fixes a potential issue for RaceNetworkRequest for subresources.
 
-2023-04-19 sokcevic@chromium.org Handle 401 from gsutil
+There maybe the case that the fetch event originated from
+ServiceWorkerSubresourceLoader is restarted when the controller is
+dropped. In that case RaceNetworkRequest tries to dispatch again and
+hits DCHECK, specifically
+`DCHECK(!race_network_request_loader_client_);` in
+`MaybeStartRaceNetworkRequest()`.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/depot-tools-chromium-autoroll">https://autoroll.skia.org/r/depot-tools-chromium-autoroll</a>
-Please CC ajp@google.com,aravindvasudev@google.com,gavinmak@google.com,sokcevic@chromium.org on the revert to ensure that a human
-is aware of the problem.
+Rather than just removing DCHECKs, it would be simpler to disable
+RaceNetworkRequest when the restart happens.
 
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+Also, this CL checks and sets `fetch_response_from` if the connection
+close happened. By checking its value, we can avoid calling
+CommitComplete multiple times.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+We can revisit when we have to support the restart case.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Bug: chromium:1433494
-Tbr: ajp@google.com,aravindvasudev@google.com,gavinmak@google.com,sokcevic@chromium.org
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id3f73d0f45c532aac11a5f34bed7b1215be3cb6b">Id3f73d0f45c532aac11a5f34bed7b1215be3cb6b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4445310">https://chromium-review.googlesource.com/c/chromium/src/+/4445310</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1132313}
+Bug: 1420517
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5b1aeae1a65a4a8eaafb1303c1a24d204b3e3a9d">I5b1aeae1a65a4a8eaafb1303c1a24d204b3e3a9d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4417124">https://chromium-review.googlesource.com/c/chromium/src/+/4417124</a>
+Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Commit-Queue: Shunya Shishido &lt;sisidovski@chromium.org&gt;
+Reviewed-by: Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
+Reviewed-by: Minoru Chikamune &lt;chikamune@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1132320}
 </pre>
 
 </body>
