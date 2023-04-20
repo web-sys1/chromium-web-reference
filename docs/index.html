@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1132958/"> 1132958</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6d5192094a2265b3617cf388b98ed404aba458be">6d5192094a2265b3617cf388b98ed404aba458be</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1132963/"> 1132963</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c124749bad671af4ea38fb8c1f9865a1edddb31d">c124749bad671af4ea38fb8c1f9865a1edddb31d</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1132942/">1132942</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6d5192094a2265b3617cf388b98ed404aba458be
+   c124749bad671af4ea38fb8c1f9865a1edddb31d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6d5192094a2265b3617cf388b98ed404aba458be">
+    <a href="/chromium/src/+log/c124749bad671af4ea38fb8c1f9865a1edddb31d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6d5192094a2265b3617cf388b98ed404aba458be.tar.gz">
+    <a href="/chromium/src/+archive/c124749bad671af4ea38fb8c1f9865a1edddb31d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kent Tamura &lt;tkent@chromium.org&gt;
+   Tomasz Śniatowski &lt;tsniatowski@vewd.com&gt;
   </td>
   <td>
-   Thu Apr 20 07:10:51 2023
+   Thu Apr 20 07:50:30 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Apr 20 07:10:51 2023
+   Thu Apr 20 07:50:30 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6d5192094a2265b3617cf388b98ed404aba458be/">
-    cd49d6ec068ab734c535d67c775bf3ea4d549879
+   <a href="/chromium/src/+/c124749bad671af4ea38fb8c1f9865a1edddb31d/">
+    14caed315795e57bed2d42b6771ebae2c12a16f7
    </a>
   </td>
  </tr>
@@ -166,31 +166,47 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6d5192094a2265b3617cf388b98ed404aba458be%5E">
-    0252f207726e6cd6c0a2a7f34262a8ce2296b82f
+   <a href="/chromium/src/+/c124749bad671af4ea38fb8c1f9865a1edddb31d%5E">
+    33ab93c173f6677270a54969876d6c71eac7e7fd
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6d5192094a2265b3617cf388b98ed404aba458be%5E%21/">
+    <a href="/chromium/src/+/c124749bad671af4ea38fb8c1f9865a1edddb31d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[RemoveLegacy] Remove LineOrientationLayoutRectOutsetsWithFlippedLines()
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[compile hints] Fix deps around blink core
 
-It's not used.
-This CL has no behavior changes.
+The buildflag header added recently in blink/renderer/bindings takes
+part in some less obvious parts of the build, deps-wise, and made it
+so several compiles could flake in a clean build, such as:
+obj/third_party/blink/renderer/core/core_hot/document.o
+obj/third_party/blink/renderer/core/animation/animation/animation_timeline.o
+obj/third_party/blink/renderer/core/exported/exported/web_document.o
+(and more from core/core_hot, core/animation, core/exported).
 
-Bug: 1229581
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3750f0818a92945524474492c01786b3de8428b7">I3750f0818a92945524474492c01786b3de8428b7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4452151">https://chromium-review.googlesource.com/c/chromium/src/+/4452151</a>
-Auto-Submit: Kent Tamura &lt;tkent@chromium.org&gt;
-Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Commit-Queue: Koji Ishii &lt;kojii@chromium.org&gt;
-Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1132958}
+In the core_hot example, the error looks like this:
+In file included from ../../third_party/blink/renderer/core/dom/document.cc:129:
+In file included from ../../third_party/blink/renderer/core/dom/context_features.h:32:
+In file included from ../../third_party/blink/renderer/core/page/page.h:44:
+../../third_party/blink/renderer/bindings/core/v8/v8_compile_hints.h:8:10:
+fatal error: 'third_party/blink/renderer/bindings/buildflags.h' file not found
+
+Fix by (1) adding the dep in core_generated, which most relevant targets
+already depend on, and (2) adding the dep separately in core_hot,
+because that doesn't use core_generated and I'm not sure if it should,
+since it already reproduces other necessary deps directly.
+
+Bug: chromium:1406506
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I32fae863b3b207356c8914aa7abec7346b9b72c3">I32fae863b3b207356c8914aa7abec7346b9b72c3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4421956">https://chromium-review.googlesource.com/c/chromium/src/+/4421956</a>
+Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
+Commit-Queue: Tomasz Śniatowski &lt;tsniatowski@vewd.com&gt;
+Reviewed-by: Marja Hölttä &lt;marja@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1132963}
 </pre>
 
 </body>
