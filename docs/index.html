@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1132963/"> 1132963</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c124749bad671af4ea38fb8c1f9865a1edddb31d">c124749bad671af4ea38fb8c1f9865a1edddb31d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1132992/"> 1132992</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2041e10c2283285a240f8caa155b9c5100abd744">2041e10c2283285a240f8caa155b9c5100abd744</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1132966/">1132966</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c124749bad671af4ea38fb8c1f9865a1edddb31d
+   2041e10c2283285a240f8caa155b9c5100abd744
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c124749bad671af4ea38fb8c1f9865a1edddb31d">
+    <a href="/chromium/src/+log/2041e10c2283285a240f8caa155b9c5100abd744">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c124749bad671af4ea38fb8c1f9865a1edddb31d.tar.gz">
+    <a href="/chromium/src/+archive/2041e10c2283285a240f8caa155b9c5100abd744.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tomasz Śniatowski &lt;tsniatowski@vewd.com&gt;
+   Sergii Bykov &lt;sbykov@google.com&gt;
   </td>
   <td>
-   Thu Apr 20 07:50:30 2023
+   Thu Apr 20 09:05:47 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Apr 20 07:50:30 2023
+   Thu Apr 20 09:05:47 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c124749bad671af4ea38fb8c1f9865a1edddb31d/">
-    14caed315795e57bed2d42b6771ebae2c12a16f7
+   <a href="/chromium/src/+/2041e10c2283285a240f8caa155b9c5100abd744/">
+    1c9db895ba70434756d2d0305a5cb5cc6ff2c616
    </a>
   </td>
  </tr>
@@ -166,47 +166,27 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c124749bad671af4ea38fb8c1f9865a1edddb31d%5E">
-    33ab93c173f6677270a54969876d6c71eac7e7fd
+   <a href="/chromium/src/+/2041e10c2283285a240f8caa155b9c5100abd744%5E">
+    9e3e0f7cf036d631e873019974d3ae052dcad378
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c124749bad671af4ea38fb8c1f9865a1edddb31d%5E%21/">
+    <a href="/chromium/src/+/2041e10c2283285a240f8caa155b9c5100abd744%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[compile hints] Fix deps around blink core
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Code Health] Use base value v2 api in user_policies_manager_unittests
 
-The buildflag header added recently in blink/renderer/bindings takes
-part in some less obvious parts of the build, deps-wise, and made it
-so several compiles could flake in a clean build, such as:
-obj/third_party/blink/renderer/core/core_hot/document.o
-obj/third_party/blink/renderer/core/animation/animation/animation_timeline.o
-obj/third_party/blink/renderer/core/exported/exported/web_document.o
-(and more from core/core_hot, core/animation, core/exported).
-
-In the core_hot example, the error looks like this:
-In file included from ../../third_party/blink/renderer/core/dom/document.cc:129:
-In file included from ../../third_party/blink/renderer/core/dom/context_features.h:32:
-In file included from ../../third_party/blink/renderer/core/page/page.h:44:
-../../third_party/blink/renderer/bindings/core/v8/v8_compile_hints.h:8:10:
-fatal error: 'third_party/blink/renderer/bindings/buildflags.h' file not found
-
-Fix by (1) adding the dep in core_generated, which most relevant targets
-already depend on, and (2) adding the dep separately in core_hot,
-because that doesn't use core_generated and I'm not sure if it should,
-since it already reproduces other necessary deps directly.
-
-Bug: chromium:1406506
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I32fae863b3b207356c8914aa7abec7346b9b72c3">I32fae863b3b207356c8914aa7abec7346b9b72c3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4421956">https://chromium-review.googlesource.com/c/chromium/src/+/4421956</a>
-Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
-Commit-Queue: Tomasz Śniatowski &lt;tsniatowski@vewd.com&gt;
-Reviewed-by: Marja Hölttä &lt;marja@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1132963}
+Bug: 1303949
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I48fbab778907e2f8fbf91099e7962440a308134f">I48fbab778907e2f8fbf91099e7962440a308134f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4427973">https://chromium-review.googlesource.com/c/chromium/src/+/4427973</a>
+Reviewed-by: Alex Ilin &lt;alexilin@chromium.org&gt;
+Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Commit-Queue: Sergii Bykov &lt;sbykov@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1132992}
 </pre>
 
 </body>
