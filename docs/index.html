@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1133373/"> 1133373</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2f855f79bf0260fb7330f02a07fdafc9f2b76cad">2f855f79bf0260fb7330f02a07fdafc9f2b76cad</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1133402/"> 1133402</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6aee02b02aaab3a6ef5cc5ed883f766e87146f16">6aee02b02aaab3a6ef5cc5ed883f766e87146f16</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1133294/">1133294</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/990e236ed6f009217f689892f660d907a704a052">990e236ed6f009217f689892f660d907a704a052</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1133377/">1133377</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3c15a834d688b191a7a091b5ee351b0d4f2cab6b">3c15a834d688b191a7a091b5ee351b0d4f2cab6b</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2f855f79bf0260fb7330f02a07fdafc9f2b76cad
+   6aee02b02aaab3a6ef5cc5ed883f766e87146f16
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2f855f79bf0260fb7330f02a07fdafc9f2b76cad">
+    <a href="/chromium/src/+log/6aee02b02aaab3a6ef5cc5ed883f766e87146f16">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2f855f79bf0260fb7330f02a07fdafc9f2b76cad.tar.gz">
+    <a href="/chromium/src/+archive/6aee02b02aaab3a6ef5cc5ed883f766e87146f16.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Michele Fan &lt;michelefan@chromium.org&gt;
+   Joanmarie Diggs &lt;jdiggs@igalia.com&gt;
   </td>
   <td>
-   Thu Apr 20 21:15:30 2023
+   Thu Apr 20 21:58:25 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Apr 20 21:15:30 2023
+   Thu Apr 20 21:58:25 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2f855f79bf0260fb7330f02a07fdafc9f2b76cad/">
-    53b6bf3c46ffc3025ec6e695a7e95533669988e3
+   <a href="/chromium/src/+/6aee02b02aaab3a6ef5cc5ed883f766e87146f16/">
+    c12a7f7e55d226fdce461e2b0d8b5c1a0ec62efe
    </a>
   </td>
  </tr>
@@ -166,40 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2f855f79bf0260fb7330f02a07fdafc9f2b76cad%5E">
-    03ead5fbd01ac147845fc26907e651c7b67cd9b6
+   <a href="/chromium/src/+/6aee02b02aaab3a6ef5cc5ed883f766e87146f16%5E">
+    a066cf830783e068d612fdc4fda4593eddb38388
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2f855f79bf0260fb7330f02a07fdafc9f2b76cad%5E%21/">
+    <a href="/chromium/src/+/6aee02b02aaab3a6ef5cc5ed883f766e87146f16%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">snap-group: Revamp split view divider in tablet and clamshell
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Improve performance of HashMgr::InitHashEntry
 
-This CL revamps the split view divider Z order in tablet mode which
-is `kFloatingUIElement` and `kShellWindowId_AlwaysonTopContainer` to
-be on the same parent container of the top window. For the parent
-container, it will be set to the same parent container of the top window.
+Hunspell's HashMgr::InitHashEntry is called for every entry in the
+dictionary. Each time it is called, it initializes a FileMgr object.
+That FileMgr object is only used if there is a parser error. Should
+there be an error, it reports the line number. However, because the
+line number doesn't help identify the place which caused the parser
+error in a BDICT file, FileMgr::getlinenum() always returns 0. Since
+we don't actually need a unique FileMgr object in this scenario, make
+it static. This improves performance in instances where the dictionary
+is quite large (e.g. German).
 
-The stacking logic now is to always keep the split view divider right
-on top of the observed windows, both of which are under the split view
-divider.
-
-This CL also centralizes the stacking order update that happens in
-the split view to be in `SplitViewDivider`.
-
-Fixed: b/272365643
-Test: Manually + added + updated existing unit tests
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I11f50216e64813b72dcfc80acb471faa1162ef97">I11f50216e64813b72dcfc80acb471faa1162ef97</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4408268">https://chromium-review.googlesource.com/c/chromium/src/+/4408268</a>
-Reviewed-by: Ahmed Fakhry &lt;afakhry@chromium.org&gt;
-Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Commit-Queue: Michele Fan &lt;michelefan@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1133373}
+Bug: 1432579
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I05881b67df13430ca7613caef70d135f1fe63a71">I05881b67df13430ca7613caef70d135f1fe63a71</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4416960">https://chromium-review.googlesource.com/c/chromium/src/+/4416960</a>
+Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
+Commit-Queue: Joanmarie Diggs &lt;jdiggs@igalia.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1133402}
 </pre>
 
 </body>
