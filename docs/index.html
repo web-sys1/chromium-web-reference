@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1133402/"> 1133402</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6aee02b02aaab3a6ef5cc5ed883f766e87146f16">6aee02b02aaab3a6ef5cc5ed883f766e87146f16</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1133446/"> 1133446</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d3b5441b64853d4aeaa5307d17dc76170a0a433d">d3b5441b64853d4aeaa5307d17dc76170a0a433d</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1133377/">1133377</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3c15a834d688b191a7a091b5ee351b0d4f2cab6b">3c15a834d688b191a7a091b5ee351b0d4f2cab6b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1133420/">1133420</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e12348691b010c4136bee94dc95fbd10c8b6d91b">e12348691b010c4136bee94dc95fbd10c8b6d91b</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6aee02b02aaab3a6ef5cc5ed883f766e87146f16
+   d3b5441b64853d4aeaa5307d17dc76170a0a433d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6aee02b02aaab3a6ef5cc5ed883f766e87146f16">
+    <a href="/chromium/src/+log/d3b5441b64853d4aeaa5307d17dc76170a0a433d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6aee02b02aaab3a6ef5cc5ed883f766e87146f16.tar.gz">
+    <a href="/chromium/src/+archive/d3b5441b64853d4aeaa5307d17dc76170a0a433d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Joanmarie Diggs &lt;jdiggs@igalia.com&gt;
+   Claudio DeSouza &lt;cdesouza@igalia.com&gt;
   </td>
   <td>
-   Thu Apr 20 21:58:25 2023
+   Thu Apr 20 23:17:45 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Apr 20 21:58:25 2023
+   Thu Apr 20 23:17:45 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6aee02b02aaab3a6ef5cc5ed883f766e87146f16/">
-    c12a7f7e55d226fdce461e2b0d8b5c1a0ec62efe
+   <a href="/chromium/src/+/d3b5441b64853d4aeaa5307d17dc76170a0a433d/">
+    087540e9bed09255e9bcff9c65c6d53982b6d3ee
    </a>
   </td>
  </tr>
@@ -166,36 +166,40 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6aee02b02aaab3a6ef5cc5ed883f766e87146f16%5E">
-    a066cf830783e068d612fdc4fda4593eddb38388
+   <a href="/chromium/src/+/d3b5441b64853d4aeaa5307d17dc76170a0a433d%5E">
+    81c9cff0c7fe94adbdd2e9038c77a73bbba7f689
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6aee02b02aaab3a6ef5cc5ed883f766e87146f16%5E%21/">
+    <a href="/chromium/src/+/d3b5441b64853d4aeaa5307d17dc76170a0a433d%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Improve performance of HashMgr::InitHashEntry
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Replace base::GUID uses with base::Uuid (158/N)
 
-Hunspell's HashMgr::InitHashEntry is called for every entry in the
-dictionary. Each time it is called, it initializes a FileMgr object.
-That FileMgr object is only used if there is a parser error. Should
-there be an error, it reports the line number. However, because the
-line number doesn't help identify the place which caused the parser
-error in a BDICT file, FileMgr::getlinenum() always returns 0. Since
-we don't actually need a unique FileMgr object in this scenario, make
-it static. This improves performance in instances where the dictionary
-is quite large (e.g. German).
+`base::GUID` has been renamed, and is set to be  removed. This CL is
+part of a batch of changes replacing all uses of `base::GUID`, with
+`base::Uuid`, and its associated counterparts.
 
-Bug: 1432579
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I05881b67df13430ca7613caef70d135f1fe63a71">I05881b67df13430ca7613caef70d135f1fe63a71</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4416960">https://chromium-review.googlesource.com/c/chromium/src/+/4416960</a>
-Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
-Commit-Queue: Joanmarie Diggs &lt;jdiggs@igalia.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1133402}
+Additionally, deprecated functions in `base/uuid.h` are also also having
+their uses removed wherever they occur.
+
+Changes for path: /chrome/browser/policy
+
+This CL was uploaded by git cl split.
+
+R=ftirelo@chromium.org
+
+Bug: 1428566
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I470240cdee5f4a9742ca612f302a3e4342a1fb0d">I470240cdee5f4a9742ca612f302a3e4342a1fb0d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4454363">https://chromium-review.googlesource.com/c/chromium/src/+/4454363</a>
+Reviewed-by: Fabio Tirelo &lt;ftirelo@chromium.org&gt;
+Auto-Submit: Claudio DeSouza &lt;cdesouza@igalia.com&gt;
+Commit-Queue: Fabio Tirelo &lt;ftirelo@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1133446}
 </pre>
 
 </body>
