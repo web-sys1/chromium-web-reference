@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1134763/"> 1134763</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/88141b32836f65034f9efefb9aaeecbe1aaf0cd5">88141b32836f65034f9efefb9aaeecbe1aaf0cd5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1134787/"> 1134787</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8f3988a8e799e821754db7ad4fa1d4c6f103ae47">8f3988a8e799e821754db7ad4fa1d4c6f103ae47</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1134694/">1134694</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   88141b32836f65034f9efefb9aaeecbe1aaf0cd5
+   8f3988a8e799e821754db7ad4fa1d4c6f103ae47
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/88141b32836f65034f9efefb9aaeecbe1aaf0cd5">
+    <a href="/chromium/src/+log/8f3988a8e799e821754db7ad4fa1d4c6f103ae47">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/88141b32836f65034f9efefb9aaeecbe1aaf0cd5.tar.gz">
+    <a href="/chromium/src/+archive/8f3988a8e799e821754db7ad4fa1d4c6f103ae47.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yue Zhang &lt;yuezhanggg@google.com&gt;
+   Abigail Klein &lt;abigailbklein@google.com&gt;
   </td>
   <td>
-   Mon Apr 24 19:17:52 2023
+   Mon Apr 24 19:55:18 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Apr 24 19:17:52 2023
+   Mon Apr 24 19:55:18 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/88141b32836f65034f9efefb9aaeecbe1aaf0cd5/">
-    29839eea7bbb7b52c1dbc6867613e91b59c30696
+   <a href="/chromium/src/+/8f3988a8e799e821754db7ad4fa1d4c6f103ae47/">
+    59530751aafcd44946420ba287da48e17fed0abf
    </a>
   </td>
  </tr>
@@ -166,27 +166,44 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/88141b32836f65034f9efefb9aaeecbe1aaf0cd5%5E">
-    1521404c323f7fb2d8f0098b6490a86c1158990e
+   <a href="/chromium/src/+/8f3988a8e799e821754db7ad4fa1d4c6f103ae47%5E">
+    ccc68a050ec247be9d9c1c297c3c58cb4ca4a0d6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/88141b32836f65034f9efefb9aaeecbe1aaf0cd5%5E%21/">
+    <a href="/chromium/src/+/8f3988a8e799e821754db7ad4fa1d4c6f103ae47%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ChromeCart][Quest] Hook up discount chip data
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Read Anything] Test the Read Anything WebUI in a browsertest.
 
-Bug: 1431951
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I798eb91b06d995177362d363b56d0f6ab797ae7d">I798eb91b06d995177362d363b56d0f6ab797ae7d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4467575">https://chromium-review.googlesource.com/c/chromium/src/+/4467575</a>
-Commit-Queue: Yue Zhang &lt;yuezhanggg@chromium.org&gt;
-Reviewed-by: Roman Arora &lt;romanarora@chromium.org&gt;
+The webui test architecture was not designed to handle untrusted
+tests. This CL replaces the webui test read_anything_app_test.ts with
+a new browsertest, read_anything_app_browsertest.cc. It uses EvalJs
+to inject the scripts written in read_anything_app_test.ts. The
+trade-off is that this won’t check for untrusted sources being added.
+
+Alternatives explored:
+1. Migrate test to chrome-untrusted://. This would require upgrading
+the infrastructure which was explored in
+<a href="https://chromium-review.googlesource.com/c/chromium/src/+/4292217/">https://chromium-review.googlesource.com/c/chromium/src/+/4292217/</a>
+but which would need further design to land.
+2. Test in chrome:// with iframe of the chrome-untrusted:// UI. This
+requires handling communication across the iframe. Future debugging
+might be tricky.
+3. Serve webui as trusted just in test build. This means a diverging
+implementation and test.
+
+Bug: 1266555
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibe996fd85303310088b1cb52cd939c9c27664528">Ibe996fd85303310088b1cb52cd939c9c27664528</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4343530">https://chromium-review.googlesource.com/c/chromium/src/+/4343530</a>
 Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1134763}
+Commit-Queue: Abigail Klein &lt;abigailbklein@google.com&gt;
+Reviewed-by: David Tseng &lt;dtseng@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1134787}
 </pre>
 
 </body>
