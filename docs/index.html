@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1135089/"> 1135089</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cfb4410fe52d979e8687f3587466942bfd1b6c56">cfb4410fe52d979e8687f3587466942bfd1b6c56</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1135096/"> 1135096</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/af9f29bb6b2754a421fdf2a5495bc2197a04b478">af9f29bb6b2754a421fdf2a5495bc2197a04b478</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1135076/">1135076</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   cfb4410fe52d979e8687f3587466942bfd1b6c56
+   af9f29bb6b2754a421fdf2a5495bc2197a04b478
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/cfb4410fe52d979e8687f3587466942bfd1b6c56">
+    <a href="/chromium/src/+log/af9f29bb6b2754a421fdf2a5495bc2197a04b478">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/cfb4410fe52d979e8687f3587466942bfd1b6c56.tar.gz">
+    <a href="/chromium/src/+archive/af9f29bb6b2754a421fdf2a5495bc2197a04b478.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Liam Brady &lt;lbrady@google.com&gt;
+   Hao Wu &lt;haowoo@google.com&gt;
   </td>
   <td>
-   Tue Apr 25 08:15:43 2023
+   Tue Apr 25 08:51:12 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 25 08:15:43 2023
+   Tue Apr 25 08:51:12 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/cfb4410fe52d979e8687f3587466942bfd1b6c56/">
-    899c5e6a18faf33c484bd4da866a92fc58e6883e
+   <a href="/chromium/src/+/af9f29bb6b2754a421fdf2a5495bc2197a04b478/">
+    c460406aba4c9c0dc673334da38dc0c68edb8034
    </a>
   </td>
  </tr>
@@ -166,58 +166,26 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/cfb4410fe52d979e8687f3587466942bfd1b6c56%5E">
-    71069400136a1b2492ee16807b036bda87c67539
+   <a href="/chromium/src/+/af9f29bb6b2754a421fdf2a5495bc2197a04b478%5E">
+    f0378c0e540aab72a2d0161cb50b221c52788012
    </a>
    <span>
     [
-    <a href="/chromium/src/+/cfb4410fe52d979e8687f3587466942bfd1b6c56%5E%21/">
+    <a href="/chromium/src/+/af9f29bb6b2754a421fdf2a5495bc2197a04b478%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix permissions issue with iframes nested in fenced frames.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix http.py format.
 
-This CL fixes a bug related to permissions policies in iframes nested
-within fenced frames. For policies that are not explicitly disabled in a
-fenced frame, if the fenced frame's document response disallows a
-permissions policy, it is still allowed in the iframe nested within the
-fenced frame. It was first found with the Attribution Reporting API
-policy, but this bug applies to any permissions policy that can be set
-in a fenced frame.
-
-The bug occurred because iframes nested inside of fenced frames were
-always treated as fenced frames, and their permissions policies were set
-with `PermissionsPolicy::CreateForFencedFrame()`, which intentionally
-does not look at parent frames. While this was suitable when permissions
-policies were completely disabled in fenced frames, it became
-problematic when permissions started being allowed (including allowing
-a document to further restrict permissions), and child frames needed to
-access the embedding fenced frame's permissions policies to know which
-permissions to disable.
-
-After this fix, `PermissionsPolicy::CreateForFencedFrame()` will only
-be called on a fenced frame root. Subframes nested in fenced frames
-will now use the `PermissionsPolicy::CreateFromParentPolicy()` method
-the same way that subframes outside of fenced frame trees currently
-do.
-
-This CL adds WPTs to check that iframes nested in fenced frames have
-their permissions set as expected.
-
-This CL also fixes an issue with client hint code that was causing an
-iframe nested in a fenced frame to pull the permissions policy from the
-outermost main frame rather than its fenced frame root.
-
-Bug: 1428913
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I590425d59a8f19e37313bd3dedf0d56b35c87f80">I590425d59a8f19e37313bd3dedf0d56b35c87f80</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4377538">https://chromium-review.googlesource.com/c/chromium/src/+/4377538</a>
-Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Commit-Queue: Ari Chivukula &lt;arichiv@chromium.org&gt;
-Reviewed-by: Ari Chivukula &lt;arichiv@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1135089}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2bc6b4e3202cb2da9e471994233c4a27690f8857">I2bc6b4e3202cb2da9e471994233c4a27690f8857</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4470007">https://chromium-review.googlesource.com/c/chromium/src/+/4470007</a>
+Bot-Commit: Nishant Joshi &lt;nishantj@google.com&gt;
+Reviewed-by: Weilun Shi &lt;sweilun@chromium.org&gt;
+Commit-Queue: Weilun Shi &lt;sweilun@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1135096}
 </pre>
 
 </body>
