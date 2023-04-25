@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1135030/"> 1135030</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c4d7584a8aee9429af9ee8843f23785110f12713">c4d7584a8aee9429af9ee8843f23785110f12713</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1135040/"> 1135040</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/725ddad98f05f1f377d622355ea299269b17653c">725ddad98f05f1f377d622355ea299269b17653c</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1135025/">1135025</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c4d7584a8aee9429af9ee8843f23785110f12713
+   725ddad98f05f1f377d622355ea299269b17653c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c4d7584a8aee9429af9ee8843f23785110f12713">
+    <a href="/chromium/src/+log/725ddad98f05f1f377d622355ea299269b17653c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c4d7584a8aee9429af9ee8843f23785110f12713.tar.gz">
+    <a href="/chromium/src/+archive/725ddad98f05f1f377d622355ea299269b17653c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Miguel Casas &lt;mcasas@chromium.org&gt;
+   Yi Chou &lt;yich@google.com&gt;
   </td>
   <td>
-   Tue Apr 25 04:37:00 2023
+   Tue Apr 25 05:15:57 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 25 04:37:00 2023
+   Tue Apr 25 05:15:57 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c4d7584a8aee9429af9ee8843f23785110f12713/">
-    7377b041a53e17d76b1ce0bb0c82751dc0128154
+   <a href="/chromium/src/+/725ddad98f05f1f377d622355ea299269b17653c/">
+    20c80a380e7bc60f5cd710a76bd95467e853ec0f
    </a>
   </td>
  </tr>
@@ -166,63 +166,31 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c4d7584a8aee9429af9ee8843f23785110f12713%5E">
-    be9954d983400898933ebec017069d204cac8f6f
+   <a href="/chromium/src/+/725ddad98f05f1f377d622355ea299269b17653c%5E">
+    250eb9c6143057fa191a404d19f7baa5ebd84600
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c4d7584a8aee9429af9ee8843f23785110f12713%5E%21/">
+    <a href="/chromium/src/+/725ddad98f05f1f377d622355ea299269b17653c%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media/gpu: Support keyframeless VP9 resolution changes for testing
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add Platform.Bootlockbox.AvailabilityAtStart to UMA
 
-VP9 verification sets "frm_resize" and "sub8x8_sf" [1] change
-resolutions mid-stream without Key-frames. This is an arcane
-feature and rare in the wild, where the rule is to have keyframes
-to signal new resolutions.
+The ChromiumOS side CL: <a href="https://crrev.com/c/4453264">https://crrev.com/c/4453264</a>
 
-ToT VP9Decoder considers any resolution changes a kConfigChange,
-which causes the client to drop reference frames and reallocate
-surfaces and context(s). But VA-API VideoDecoders on Intel and
-AMD do support reusing the current context and surfaces for
-smaller resolutions; <a href="https://crrev.com/c/4032552">https://crrev.com/c/4032552</a> did just that,
-hence verifying the test vectors, but breaking DRM overlays ([2]),
-so it was reverted.
+This UMA would be recorded when bootlockboxd started.
 
-In the large scheme of things, though, we'd rather reallocate the
-context and surfaces when the resolution decreases (to have a
-smaller mem footprint, not to mention to keep DRM overlays working),
-rather than reusing things just to satisfy a theoretical concern.
+BUG=b:278959687
 
-So after a few tries at fixing this in code ([3,4] - ugly stuff),
-I decided to give up and take up the suggestion in [5] to make
-this a test only feature. With that, this CL adds a test flag and
-sets it from v_d_a_tests code.
-
-[1] <a href="https://www.webmproject.org/vp9/levels/#test-descriptions">https://www.webmproject.org/vp9/levels/#test-descriptions</a>
-[2] I dug into this for a while and I believe this was due to
-VAAPI reusing |coded_size| and reducing the visible area while
-the DRM API really needed both to be accurate. Maybe I'll dig
-some more and try to find a repro case to file a bug.
-Also note that FFmpeg+VA_API does support this non-reallocation
-mode but would have the same DRM overlays issue if it was to
-support them.
-[3] <a href="https://crrev.com/c/4409593">https://crrev.com/c/4409593</a>
-[4] <a href="https://crrev.com/c/4437095">https://crrev.com/c/4437095</a>
-[5] <a href="https://crrev.com/c/4409593/2/media/gpu/vaapi/vaapi_video_decoder.cc#1145">https://crrev.com/c/4409593/2/media/gpu/vaapi/vaapi_video_decoder.cc#1145</a>
-
-Bug: b:207057398
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idb920f9e8e12704148cacc68befd5c5fb480e0ca">Idb920f9e8e12704148cacc68befd5c5fb480e0ca</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4444189">https://chromium-review.googlesource.com/c/chromium/src/+/4444189</a>
-Commit-Queue: Miguel Casas-Sanchez &lt;mcasas@chromium.org&gt;
-Reviewed-by: Andres Calderon Jaramillo &lt;andrescj@chromium.org&gt;
-Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1135030}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I37ae00a345b4858c023f647fc2528ba9eeca0f73">I37ae00a345b4858c023f647fc2528ba9eeca0f73</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4464439">https://chromium-review.googlesource.com/c/chromium/src/+/4464439</a>
+Commit-Queue: Yi Chou &lt;yich@google.com&gt;
+Reviewed-by: Weilun Shi &lt;sweilun@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1135040}
 </pre>
 
 </body>
