@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1134986/"> 1134986</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3a06e758a5820009ee0f2590b08a311f00d76163">3a06e758a5820009ee0f2590b08a311f00d76163</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1134997/"> 1134997</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a7066c6ea204dc94590031e55437ccd4ac9efaeb">a7066c6ea204dc94590031e55437ccd4ac9efaeb</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1134952/">1134952</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3a06e758a5820009ee0f2590b08a311f00d76163
+   a7066c6ea204dc94590031e55437ccd4ac9efaeb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3a06e758a5820009ee0f2590b08a311f00d76163">
+    <a href="/chromium/src/+log/a7066c6ea204dc94590031e55437ccd4ac9efaeb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3a06e758a5820009ee0f2590b08a311f00d76163.tar.gz">
+    <a href="/chromium/src/+archive/a7066c6ea204dc94590031e55437ccd4ac9efaeb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Frank Liberato &lt;liberato@chromium.org&gt;
+   Peter Kasting &lt;pkasting@chromium.org&gt;
   </td>
   <td>
-   Tue Apr 25 01:58:33 2023
+   Tue Apr 25 02:39:31 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 25 01:58:33 2023
+   Tue Apr 25 02:39:31 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3a06e758a5820009ee0f2590b08a311f00d76163/">
-    d3cdc0418330b443356d4b4d355619755cda9c2c
+   <a href="/chromium/src/+/a7066c6ea204dc94590031e55437ccd4ac9efaeb/">
+    2480f77462829bd117d2ff711006ef7699d07fef
    </a>
   </td>
  </tr>
@@ -166,49 +166,36 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3a06e758a5820009ee0f2590b08a311f00d76163%5E">
-    0e1e018eb3d7951172c71d2bed78c3e04555fe8d
+   <a href="/chromium/src/+/a7066c6ea204dc94590031e55437ccd4ac9efaeb%5E">
+    8fa9b6d80bcab446213cdacc433cb146512ae0da
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3a06e758a5820009ee0f2590b08a311f00d76163%5E%21/">
+    <a href="/chromium/src/+/a7066c6ea204dc94590031e55437ccd4ac9efaeb%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Include client-drawn window decorations in aspect ratio.
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Misc. cleanup. No functional change.
 
-Widget::SetAspectRatio() should set the aspect ratio of the content
-area only, excluding the title bar and other decorations.  To do so,
-it assumes that the underlying platform window system ignores its
-own title bar and other decorations when enforcing the aspect ratio.
+* Shorten code.
+* Use `expected` monadic ops.
+* `+` is shorter than `base::StrCat` for simple cases.
+* Explicit `base::ok` not needed to return an `expected` of non-void.
+* Add a few missing #includes.
+* Use local lambdas to avoid code duplication on exit paths.
+* Remove dead code.
 
-Unfortunately, this doesn't work in those cases where chrome draws
-the decorations in the non-client area; the underlying window manager
-has no idea that these should be excluded, and the aspect ratio
-of the Widget's contents is now wrong.  This is visible in Picture
-in Picture windows, which have a (chrome-drawn) title bar, and which
-support aspect ratio lock.
-
-This CL allows a WidgetDelegate to specify an additional number of
-screen pixels to exclude from the aspect ratio calculation to take
-into account any chrome-drawn decorations.
-
-This CL includes the plumbing for the excluded margin, and an
-implementation for Windows.  Other implementations will follow in
-separate CLs.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I150a8c806d42a9a60b6710fe300671b6afe9ac8c">I150a8c806d42a9a60b6710fe300671b6afe9ac8c</a>
-Bug: 1407629
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4336172">https://chromium-review.googlesource.com/c/chromium/src/+/4336172</a>
-Reviewed-by: Elly Fong-Jones &lt;ellyjones@chromium.org&gt;
-Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Reviewed-by: Will Harris &lt;wfh@chromium.org&gt;
-Commit-Queue: Frank Liberato &lt;liberato@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1134986}
+Bug: none
+Low-Coverage-Reason: cleanup
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1f07a7bef062955f2a603d24e2f9124d74fe9d70">I1f07a7bef062955f2a603d24e2f9124d74fe9d70</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4464199">https://chromium-review.googlesource.com/c/chromium/src/+/4464199</a>
+Reviewed-by: Tommy Nyquist &lt;nyquist@chromium.org&gt;
+Commit-Queue: Peter Kasting &lt;pkasting@chromium.org&gt;
+Auto-Submit: Peter Kasting &lt;pkasting@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1134997}
 </pre>
 
 </body>
