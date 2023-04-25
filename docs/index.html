@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1135083/"> 1135083</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6786176555835c422b79cdbd69c9105bd6e9a0c3">6786176555835c422b79cdbd69c9105bd6e9a0c3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1135089/"> 1135089</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/cfb4410fe52d979e8687f3587466942bfd1b6c56">cfb4410fe52d979e8687f3587466942bfd1b6c56</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1135076/">1135076</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6786176555835c422b79cdbd69c9105bd6e9a0c3
+   cfb4410fe52d979e8687f3587466942bfd1b6c56
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6786176555835c422b79cdbd69c9105bd6e9a0c3">
+    <a href="/chromium/src/+log/cfb4410fe52d979e8687f3587466942bfd1b6c56">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6786176555835c422b79cdbd69c9105bd6e9a0c3.tar.gz">
+    <a href="/chromium/src/+archive/cfb4410fe52d979e8687f3587466942bfd1b6c56.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xiaocheng Hu &lt;xiaochengh@chromium.org&gt;
+   Liam Brady &lt;lbrady@google.com&gt;
   </td>
   <td>
-   Tue Apr 25 07:42:30 2023
+   Tue Apr 25 08:15:43 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 25 07:42:30 2023
+   Tue Apr 25 08:15:43 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6786176555835c422b79cdbd69c9105bd6e9a0c3/">
-    28b882ac57a9d71826d833bdf3b5e7bbd6d07df4
+   <a href="/chromium/src/+/cfb4410fe52d979e8687f3587466942bfd1b6c56/">
+    899c5e6a18faf33c484bd4da866a92fc58e6883e
    </a>
   </td>
  </tr>
@@ -166,42 +166,58 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6786176555835c422b79cdbd69c9105bd6e9a0c3%5E">
-    7a0ce206312c2f6c2d2ab33827158e5d929e3c32
+   <a href="/chromium/src/+/cfb4410fe52d979e8687f3587466942bfd1b6c56%5E">
+    71069400136a1b2492ee16807b036bda87c67539
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6786176555835c422b79cdbd69c9105bd6e9a0c3%5E%21/">
+    <a href="/chromium/src/+/cfb4410fe52d979e8687f3587466942bfd1b6c56%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[scoped-registry] Move construction stack to custom element constructors
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix permissions issue with iframes nested in fenced frames.
 
-This patch moves the construction stack from custom element definitions
-to constructors. There should not be any behavioral change (with
-detailed explanation in the code), and the only purpose is to support
-scoped custom element registries.
+This CL fixes a bug related to permissions policies in iframes nested
+within fenced frames. For policies that are not explicitly disabled in a
+fenced frame, if the fenced frame's document response disallows a
+permissions policy, it is still allowed in the iframe nested within the
+fenced frame. It was first found with the Attribution Reporting API
+policy, but this bug applies to any permissions policy that can be set
+in a fenced frame.
 
-To support unit tests, this patch also introduces
-CustomElementTestingScope, which ensures that every
-TestCustomElementDefinition also gets a mock constructor that can be
-used as a hash key but not callable.
+The bug occurred because iframes nested inside of fenced frames were
+always treated as fenced frames, and their permissions policies were set
+with `PermissionsPolicy::CreateForFencedFrame()`, which intentionally
+does not look at parent frames. While this was suitable when permissions
+policies were completely disabled in fenced frames, it became
+problematic when permissions started being allowed (including allowing
+a document to further restrict permissions), and child frames needed to
+access the embedding fenced frame's permissions policies to know which
+permissions to disable.
 
-See also:
-- Followup patch for scoped registries: crrev.com/c/4144367
-- Spec discussion: <a href="https://github.com/WICG/webcomponents/issues/969">https://github.com/WICG/webcomponents/issues/969</a>
+After this fix, `PermissionsPolicy::CreateForFencedFrame()` will only
+be called on a fenced frame root. Subframes nested in fenced frames
+will now use the `PermissionsPolicy::CreateFromParentPolicy()` method
+the same way that subframes outside of fenced frame trees currently
+do.
 
-Bug: 1304439
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2588212b32d05f03da3adbca7ee5f52529aa7fe1">I2588212b32d05f03da3adbca7ee5f52529aa7fe1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4444486">https://chromium-review.googlesource.com/c/chromium/src/+/4444486</a>
-Reviewed-by: Joey Arhar &lt;jarhar@chromium.org&gt;
-Commit-Queue: Xiaocheng Hu &lt;xiaochengh@chromium.org&gt;
+This CL adds WPTs to check that iframes nested in fenced frames have
+their permissions set as expected.
+
+This CL also fixes an issue with client hint code that was causing an
+iframe nested in a fenced frame to pull the permissions policy from the
+outermost main frame rather than its fenced frame root.
+
+Bug: 1428913
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I590425d59a8f19e37313bd3dedf0d56b35c87f80">I590425d59a8f19e37313bd3dedf0d56b35c87f80</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4377538">https://chromium-review.googlesource.com/c/chromium/src/+/4377538</a>
 Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Reviewed-by: Yuki Shiino &lt;yukishiino@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1135083}
+Commit-Queue: Ari Chivukula &lt;arichiv@chromium.org&gt;
+Reviewed-by: Ari Chivukula &lt;arichiv@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1135089}
 </pre>
 
 </body>
