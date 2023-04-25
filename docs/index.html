@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1135267/"> 1135267</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/369e3dd90fd7c7ad0d91d55a3719f3205eab5b63">369e3dd90fd7c7ad0d91d55a3719f3205eab5b63</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1135314/"> 1135314</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/70eed85c263a68d4ff64fa2ad50d7578e59cd9b4">70eed85c263a68d4ff64fa2ad50d7578e59cd9b4</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1135169/">1135169</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5d84836315c1f159d65646d12c62fa8aa3265fea">5d84836315c1f159d65646d12c62fa8aa3265fea</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1135201/">1135201</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/42c8b2bfcc569201ff303d6cb833f8340597dd94">42c8b2bfcc569201ff303d6cb833f8340597dd94</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   369e3dd90fd7c7ad0d91d55a3719f3205eab5b63
+   70eed85c263a68d4ff64fa2ad50d7578e59cd9b4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/369e3dd90fd7c7ad0d91d55a3719f3205eab5b63">
+    <a href="/chromium/src/+log/70eed85c263a68d4ff64fa2ad50d7578e59cd9b4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/369e3dd90fd7c7ad0d91d55a3719f3205eab5b63.tar.gz">
+    <a href="/chromium/src/+archive/70eed85c263a68d4ff64fa2ad50d7578e59cd9b4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ali Juma &lt;ajuma@chromium.org&gt;
+   Florian Leimgruber &lt;fleimgruber@google.com&gt;
   </td>
   <td>
-   Tue Apr 25 16:36:57 2023
+   Tue Apr 25 17:15:02 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 25 16:36:57 2023
+   Tue Apr 25 17:15:02 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/369e3dd90fd7c7ad0d91d55a3719f3205eab5b63/">
-    73431a47ff441f75329c0821b51a254b97f337b5
+   <a href="/chromium/src/+/70eed85c263a68d4ff64fa2ad50d7578e59cd9b4/">
+    b18e8c98db72c45d3c76a996336e438edb7163ac
    </a>
   </td>
  </tr>
@@ -166,31 +166,55 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/369e3dd90fd7c7ad0d91d55a3719f3205eab5b63%5E">
-    6f071ae35bd3263345254a24c0dc911108eceabc
+   <a href="/chromium/src/+/70eed85c263a68d4ff64fa2ad50d7578e59cd9b4%5E">
+    857b869a9a37503bacd7bf0a48858deca9a0d2b7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/369e3dd90fd7c7ad0d91d55a3719f3205eab5b63%5E%21/">
+    <a href="/chromium/src/+/70eed85c263a68d4ff64fa2ad50d7578e59cd9b4%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[CodeHealthRotation] Replace GC-unsafe fields in ServiceWorkerRegistration
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix manual testing importer.
 
-This replaces mojo::Associated{Remove,Receiver} fields in
-ServiceWorkerRegistration with their GC'd equivalent,
-HeapMojoAssociated{Remote,Receiver}.
+Originally, the manual testing importer only supported importing
+AutofillProfiles from a JSON file. crrev.com/c/4401107 added support
+for credit cards. The intention was that importing should fail if
+neither a "profiles" nor a "credit-cards" key specified in the JSON.
+However, due to a bug both are currently required:
+- DataModelsFromJSON&lt;T&gt;(json_array) receives the "profiles" or
+  "credit-cards" array extracted from the JSON. It returns an optional
+  vector of Ts. nullopt means that parsing failed.
+  If no key was specified and json_array is null, the intention was to
+  return an empty vector, indicating that parsing trivially succeeded.
+- Later, in SetData(), it is verified that parsing of profiles and
+  credit cards did not fail using CHECK(...profiles.has_value() &amp;&amp; ...
+  credit_cards.has_value()).
 
-Bug: 1432856
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I873a799637646652b8cbbac38becd48427b721a9">I873a799637646652b8cbbac38becd48427b721a9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4435309">https://chromium-review.googlesource.com/c/chromium/src/+/4435309</a>
+The bug is caused by the "return an empty vector":
+absl::optional&lt;std::vector&lt;T&gt;&gt; DataModelsFromJSON(
+   const base::Value::List* const json_array, ...) {
+  if (!json_array) {
+    return {};
+  }
+  ...
+}
+Here, "return {}" doesn't return an empty vector, but a default
+initialized absl::optional&lt;&gt;. It has value absl::nullopt.
+As a result, both a "profiles" and a "credit-cards" key is required.
+
+This CL fixes the problem by explicitly returning a vector.
+
+Bug: 1413177
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I903e5c3989a3ae9efb824357342eed3db2183b06">I903e5c3989a3ae9efb824357342eed3db2183b06</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4465972">https://chromium-review.googlesource.com/c/chromium/src/+/4465972</a>
 Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Reviewed-by: Ben Kelly &lt;wanderview@chromium.org&gt;
-Commit-Queue: Ali Juma &lt;ajuma@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1135267}
+Reviewed-by: Christoph Schwering &lt;schwering@google.com&gt;
+Commit-Queue: Florian Leimgruber &lt;fleimgruber@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1135314}
 </pre>
 
 </body>
