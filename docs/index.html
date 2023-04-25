@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1135186/"> 1135186</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/884a6a5e9bbcd697298d517c310205e5be1f3944">884a6a5e9bbcd697298d517c310205e5be1f3944</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1135196/"> 1135196</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4f76f929ad88b6f003ba2811c43a3a16221e6ce1">4f76f929ad88b6f003ba2811c43a3a16221e6ce1</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1135169/">1135169</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   884a6a5e9bbcd697298d517c310205e5be1f3944
+   4f76f929ad88b6f003ba2811c43a3a16221e6ce1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/884a6a5e9bbcd697298d517c310205e5be1f3944">
+    <a href="/chromium/src/+log/4f76f929ad88b6f003ba2811c43a3a16221e6ce1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/884a6a5e9bbcd697298d517c310205e5be1f3944.tar.gz">
+    <a href="/chromium/src/+archive/4f76f929ad88b6f003ba2811c43a3a16221e6ce1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Samuel Huang &lt;huangs@chromium.org&gt;
+   Ioana Pandele &lt;ioanap@chromium.org&gt;
   </td>
   <td>
-   Tue Apr 25 14:44:59 2023
+   Tue Apr 25 15:20:49 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 25 14:44:59 2023
+   Tue Apr 25 15:20:49 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/884a6a5e9bbcd697298d517c310205e5be1f3944/">
-    2a836a508c7e7ce62d6e5390ea43e17cfe213670
+   <a href="/chromium/src/+/4f76f929ad88b6f003ba2811c43a3a16221e6ce1/">
+    0a92b56986c8abccbc00f35bff9d91e8ac3bda89
    </a>
   </td>
  </tr>
@@ -166,60 +166,43 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/884a6a5e9bbcd697298d517c310205e5be1f3944%5E">
-    b184082642e5d9781b4f84a560e7be296f9c3ea8
+   <a href="/chromium/src/+/4f76f929ad88b6f003ba2811c43a3a16221e6ce1%5E">
+    e8224634d38fde2c0606335a555c991b82a54aad
    </a>
    <span>
     [
-    <a href="/chromium/src/+/884a6a5e9bbcd697298d517c310205e5be1f3944%5E%21/">
+    <a href="/chromium/src/+/4f76f929ad88b6f003ba2811c43a3a16221e6ce1%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Add `snap_action_source_` variable in WindowSnapWMEvent"
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ODPPC] Explicitly set the trigger_notification.. field on issues
 
-This reverts commit a780234499ef5f0c985ad6b7fab96dd2decec194.
+For now, all places in Chrome which compute password issues set this
+field to false. In order to avoid an large change, the
+InsecurityMetadata constructor had a default trigger_notification
+param.
 
-Reason for revert: Reverting this to resolve conflict for revert CL crrev.com/c/4475305.
+As of now, the trigger_notification field is only set to true outside of
+Chrome (e.g. by the proactive check on Android). Chrome only which syncs
+it down and persists it as-is. (That change was made in
+<a href="https://crrev.com/c/4414899">https://crrev.com/c/4414899</a>).
 
-Original change's description:
-&gt; Add `snap_action_source_` variable in WindowSnapWMEvent
-&gt;
-&gt; In this CL:
-&gt; - Move the `snap_action_source_` from WindowState to WindowSnapWMEvent.
-&gt; The `snap_action_source_` was a member variable in WindowState before,
-&gt; but WindowSnapWMEvent should be a better place since we can log the
-&gt; metrics more accurately when the WindowState handles the event and
-&gt; the window state changes to a snapped window state.
-&gt; - Add more different snap action sources so that the distribution is
-&gt; more accurate.
-&gt; - Note kSnapByWindowLayoutMenu and kLongPressCaptionButtonToSnap are
-&gt; used to record snap usage from the window layout menu and the caption
-&gt; snap buttons for ash browser window. Lacros window usage will be
-&gt; handled separately in a future CL.
-&gt;
-&gt; Bug: b/278761433
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I04ae80753a1f3c24d6c430379fae9cb843a1d9ea">I04ae80753a1f3c24d6c430379fae9cb843a1d9ea</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4447659">https://chromium-review.googlesource.com/c/chromium/src/+/4447659</a>
-&gt; Commit-Queue: Xiaoqian Dai &lt;xdai@chromium.org&gt;
-&gt; Reviewed-by: Yulun Wu &lt;yulunwu@chromium.org&gt;
-&gt; Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-&gt; Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-&gt; Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1135067}
+In order to prevent that this field is reset accidentally in the
+future, all places should set it explicitly.
 
-Bug: b/278761433
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I86300b1559800938fbc430fd02d3726d7d224de8">I86300b1559800938fbc430fd02d3726d7d224de8</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4475564">https://chromium-review.googlesource.com/c/chromium/src/+/4475564</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: Samuel Huang &lt;huangs@chromium.org&gt;
-Owners-Override: Samuel Huang &lt;huangs@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1135186}
+Bug: 1413209
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I86f35139209121bfc16dcbdc2af9826d95e682ba">I86f35139209121bfc16dcbdc2af9826d95e682ba</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4454583">https://chromium-review.googlesource.com/c/chromium/src/+/4454583</a>
+Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Reviewed-by: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+Reviewed-by: Vasilii Sukhanov &lt;vasilii@chromium.org&gt;
+Reviewed-by: Mohamed Amir Yosef &lt;mamir@chromium.org&gt;
+Commit-Queue: Vasilii Sukhanov &lt;vasilii@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1135196}
 </pre>
 
 </body>
