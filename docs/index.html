@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1135484/"> 1135484</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6e4474820699c9127319576f41123dda3cbeceb1">6e4474820699c9127319576f41123dda3cbeceb1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1135509/"> 1135509</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/86136bb4238ccec4df43a2b55873531fddfe7a57">86136bb4238ccec4df43a2b55873531fddfe7a57</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1135423/">1135423</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6e4474820699c9127319576f41123dda3cbeceb1
+   86136bb4238ccec4df43a2b55873531fddfe7a57
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6e4474820699c9127319576f41123dda3cbeceb1">
+    <a href="/chromium/src/+log/86136bb4238ccec4df43a2b55873531fddfe7a57">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6e4474820699c9127319576f41123dda3cbeceb1.tar.gz">
+    <a href="/chromium/src/+archive/86136bb4238ccec4df43a2b55873531fddfe7a57.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
+   Luc Nguyen &lt;lucnguyen@google.com&gt;
   </td>
   <td>
-   Tue Apr 25 19:53:34 2023
+   Tue Apr 25 20:31:51 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 25 19:53:34 2023
+   Tue Apr 25 20:31:51 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6e4474820699c9127319576f41123dda3cbeceb1/">
-    e7e81d13276c2405f3c792b2bc6189302cae58a7
+   <a href="/chromium/src/+/86136bb4238ccec4df43a2b55873531fddfe7a57/">
+    04ac51e091ca39c945bba92e928c328832757852
    </a>
   </td>
  </tr>
@@ -166,27 +166,49 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6e4474820699c9127319576f41123dda3cbeceb1%5E">
-    e47f41c8835171e880b9a050b9c74198ab401959
+   <a href="/chromium/src/+/86136bb4238ccec4df43a2b55873531fddfe7a57%5E">
+    b4de67595aff17e410cab0d49c2bd910aa20ae49
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6e4474820699c9127319576f41123dda3cbeceb1%5E%21/">
+    <a href="/chromium/src/+/86136bb4238ccec4df43a2b55873531fddfe7a57%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add basic WPT for multiple background attributionsrc requests
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Discard logs after failed upload if metrics server URLs not specified
 
-Bug: 1430194
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I86fd4585c0a8fb8d2ac40d216dba282b99d4e78d">I86fd4585c0a8fb8d2ac40d216dba282b99d4e78d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4476186">https://chromium-review.googlesource.com/c/chromium/src/+/4476186</a>
-Commit-Queue: Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
-Reviewed-by: Nan Lin &lt;linnan@chromium.org&gt;
-Quick-Run: Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1135484}
+This is in preparation of moving metrics server URLs to src-internal.
+
+Before this CL, if metrics server URLs are empty, Chrome will keep
+trying to re-send the same log (but will never succeed, obviously).
+This causes an accumulation of logs on disk (until a certain point,
+where they are trimmed).
+
+This CL changes the behaviour so that after the first attempt to send
+the log, if there are no metrics server URLs, discard the log.
+
+We still "attempt" to send the log once (even though we know it will
+fail) so as to keep the uploading codepath consistent, regardless of
+whether metrics server URLs exist or not. Otherwise, test coverage
+becomes trickier.
+
+This doesn't affect Android/WebView since logs are reported through
+a different mechanism.
+
+This CL also adds a "reason" string for when we discard logs (used
+in chrome://metrics-internals). I can pull this out in another CL
+but I thought it was small enough to include in this same CL.
+
+Bug: 1428677
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0b53e7575224706d411a243a5896677483ff94a8">I0b53e7575224706d411a243a5896677483ff94a8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4467648">https://chromium-review.googlesource.com/c/chromium/src/+/4467648</a>
+Reviewed-by: Robert Kaplow &lt;rkaplow@chromium.org&gt;
+Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Commit-Queue: Luc Nguyen &lt;lucnguyen@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1135509}
 </pre>
 
 </body>
