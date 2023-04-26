@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1135938/"> 1135938</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4de5f2b7f00a1f95d4438c4198d29cb43cf71e0c">4de5f2b7f00a1f95d4438c4198d29cb43cf71e0c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1135966/"> 1135966</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a34067d4dec9597efbb09ec77de13a791b8729a0">a34067d4dec9597efbb09ec77de13a791b8729a0</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1135910/">1135910</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4de5f2b7f00a1f95d4438c4198d29cb43cf71e0c
+   a34067d4dec9597efbb09ec77de13a791b8729a0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4de5f2b7f00a1f95d4438c4198d29cb43cf71e0c">
+    <a href="/chromium/src/+log/a34067d4dec9597efbb09ec77de13a791b8729a0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4de5f2b7f00a1f95d4438c4198d29cb43cf71e0c.tar.gz">
+    <a href="/chromium/src/+archive/a34067d4dec9597efbb09ec77de13a791b8729a0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Emmanuel Arias Soto &lt;eariassoto@google.com&gt;
+   Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
   </td>
   <td>
-   Wed Apr 26 15:58:24 2023
+   Wed Apr 26 16:35:28 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 26 15:58:24 2023
+   Wed Apr 26 16:35:28 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4de5f2b7f00a1f95d4438c4198d29cb43cf71e0c/">
-    205c20c4afa04db6111ccfea121ecb4e23c9b729
+   <a href="/chromium/src/+/a34067d4dec9597efbb09ec77de13a791b8729a0/">
+    d8d3be646365868eafac4ccc573b604815152cfa
    </a>
   </td>
  </tr>
@@ -166,39 +166,41 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4de5f2b7f00a1f95d4438c4198d29cb43cf71e0c%5E">
-    6388051b0ab4b4f709c47a6b5353637d7a080532
+   <a href="/chromium/src/+/a34067d4dec9597efbb09ec77de13a791b8729a0%5E">
+    ae2366cb60dafcf7be1389d0f40ebfbffe2f313f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4de5f2b7f00a1f95d4438c4198d29cb43cf71e0c%5E%21/">
+    <a href="/chromium/src/+/a34067d4dec9597efbb09ec77de13a791b8729a0%5E%21/">
      diff
     </a>
     ]
    </span>
   </td>
  </tr>
-</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ambient: Move policy handler code to ash ambient directory
+</table><hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Re-enable TabModelSelectorTabObserverTest tests
 
-This CL moves the code the code related to the managed screensaver out
-of the c/b/ash/policy directory. This directory should only contain policy core framework code.
+For some reason a change from January or earlier suddenly started
+flaking the TabModelSelectorTabObserverTest.
 
-A follow up CL will instantiate the policy handler service in Shell, along with the Ambient Controller.
+What appears to have occurred is that deferred tab registrations from
+the UI thread are racing with the test asserts which are happening on
+the instrumentation thread. The easiest solution is to just wait for
+the deferred operation to resolve.
 
-Bug: b:278873241
-Test: ./ash_unittests --gtest_filter=ScreensaverImagesPolicyHandlerTest.*
-Test: ./ash_unittests --gtest_filter=ScreensaverImageDownloaderTest.*
+In production this should never happen because all use of this observer
+should take place on the UI thread.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4267d7baabd2faa49b646d4d98aab0cec3edb398">I4267d7baabd2faa49b646d4d98aab0cec3edb398</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4474193">https://chromium-review.googlesource.com/c/chromium/src/+/4474193</a>
-Reviewed-by: Nicolas Ouellet-Payeur &lt;nicolaso@chromium.org&gt;
-Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Reviewed-by: Dominic Battre &lt;battre@chromium.org&gt;
-Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Reviewed-by: Roman Sorokin &lt;rsorokin@google.com&gt;
-Reviewed-by: Xiaohui Chen &lt;xiaohuic@chromium.org&gt;
-Commit-Queue: Emmanuel Arias Soto &lt;eariassoto@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1135938}
+Locally repeated 50 times with 0 flakes after this change it flaked
+40% of the time before.
+
+Bug: 1435130
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I05b1d372dc0f7c78b4a4e4f3bc1f3c4d8b0df1a0">I05b1d372dc0f7c78b4a4e4f3bc1f3c4d8b0df1a0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4476188">https://chromium-review.googlesource.com/c/chromium/src/+/4476188</a>
+Commit-Queue: Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
+Auto-Submit: Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
+Reviewed-by: Henrique Nakashima &lt;hnakashima@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1135966}
 </pre>
 
 </body>
