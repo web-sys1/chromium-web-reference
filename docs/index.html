@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1136506/"> 1136506</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7bb270983f251301bcca1ff60c6f0e158f4506f7">7bb270983f251301bcca1ff60c6f0e158f4506f7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1136609/"> 1136609</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f12c3bc9e7e929d7b29b057891fd1283201cefb4">f12c3bc9e7e929d7b29b057891fd1283201cefb4</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1136453/">1136453</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bf7eacb012af8460bb7df15d1ceb4be39a8176f1">bf7eacb012af8460bb7df15d1ceb4be39a8176f1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1136564/">1136564</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b6b1188a3b8ca5f786247a2ecda9375bb658ab95">b6b1188a3b8ca5f786247a2ecda9375bb658ab95</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7bb270983f251301bcca1ff60c6f0e158f4506f7
+   f12c3bc9e7e929d7b29b057891fd1283201cefb4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7bb270983f251301bcca1ff60c6f0e158f4506f7">
+    <a href="/chromium/src/+log/f12c3bc9e7e929d7b29b057891fd1283201cefb4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7bb270983f251301bcca1ff60c6f0e158f4506f7.tar.gz">
+    <a href="/chromium/src/+archive/f12c3bc9e7e929d7b29b057891fd1283201cefb4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Claudio DeSouza &lt;cdesouza@igalia.com&gt;
+   Jonathan Ross &lt;jonross@chromium.org&gt;
   </td>
   <td>
-   Thu Apr 27 14:34:16 2023
+   Thu Apr 27 17:11:04 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Apr 27 14:34:16 2023
+   Thu Apr 27 17:11:04 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7bb270983f251301bcca1ff60c6f0e158f4506f7/">
-    44e3e700ecc2a3742a392b2faf8726fac4c92b0e
+   <a href="/chromium/src/+/f12c3bc9e7e929d7b29b057891fd1283201cefb4/">
+    ca2d915fe57c64ca27e42793e3223c22515288f4
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7bb270983f251301bcca1ff60c6f0e158f4506f7%5E">
-    0e950e9dfdee04146a91ed41521515a96f2e58be
+   <a href="/chromium/src/+/f12c3bc9e7e929d7b29b057891fd1283201cefb4%5E">
+    7b5b3a0b8c5a14562035b7660b36aeb021cf98be
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7bb270983f251301bcca1ff60c6f0e158f4506f7%5E%21/">
+    <a href="/chromium/src/+/f12c3bc9e7e929d7b29b057891fd1283201cefb4%5E%21/">
      diff
     </a>
     ]
@@ -179,26 +179,24 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Replace base::GUID uses with base::Uuid (115/N)
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Allow late arriving Frame Acks to not be bundled
 
-`base::GUID` has been renamed, and is set to be removed. This CL is
-part of a batch of changes replacing all uses of `base::GUID`, with
-`base::Uuid`, and its associated counterparts.
+With features::kOnBeginFrameAcks we would always bundle all frame acks
+with the following OnBeginFrame.
 
-Additionally, deprecated functions in `base/uuid.h` are also having
-their uses removed wherever they occur.
+In some case a frame can arrive late, close enough to the OnBeginFrame
+that we are waiting for the Ack. The Ack often arrives close to the
+OnBeginFrame.
 
-Changes for path: /chrome/browser/android/bookmarks
+This introduces features::kOnBeginFrameAllowLateAcks which will allow
+these late Acks to be sent separately
 
-This CL was uploaded by git cl split.
-
-Bug: 1428566
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I751ab47f2e5a038d1f9880a0600a3ecbe1eaceb2">I751ab47f2e5a038d1f9880a0600a3ecbe1eaceb2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4456447">https://chromium-review.googlesource.com/c/chromium/src/+/4456447</a>
-Reviewed-by: Matthew Jones &lt;mdjones@chromium.org&gt;
-Commit-Queue: Matthew Jones &lt;mdjones@chromium.org&gt;
-Auto-Submit: Claudio DeSouza &lt;cdesouza@igalia.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1136506}
+Bug: 13998880
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I31a8c0bcaa6ed3782f8912e9015f289b89338382">I31a8c0bcaa6ed3782f8912e9015f289b89338382</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4436069">https://chromium-review.googlesource.com/c/chromium/src/+/4436069</a>
+Reviewed-by: Kyle Charbonneau &lt;kylechar@chromium.org&gt;
+Commit-Queue: Jonathan Ross &lt;jonross@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1136609}
 </pre>
 
 </body>
