@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1138280/"> 1138280</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5f2543cc42b42fe8f0c788dd15d21e3105014c51">5f2543cc42b42fe8f0c788dd15d21e3105014c51</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1138341/"> 1138341</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c0d39e1bcca0da0f3be1d77d10f21b7cf35c658e">c0d39e1bcca0da0f3be1d77d10f21b7cf35c658e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1138277/">1138277</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/26b4b2662dc3ef18ce00a00c1002ec8f5b753ab4">26b4b2662dc3ef18ce00a00c1002ec8f5b753ab4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1138322/">1138322</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/74215088870273b1be843aa744c4ed94960f476d">74215088870273b1be843aa744c4ed94960f476d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5f2543cc42b42fe8f0c788dd15d21e3105014c51
+   c0d39e1bcca0da0f3be1d77d10f21b7cf35c658e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5f2543cc42b42fe8f0c788dd15d21e3105014c51">
+    <a href="/chromium/src/+log/c0d39e1bcca0da0f3be1d77d10f21b7cf35c658e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5f2543cc42b42fe8f0c788dd15d21e3105014c51.tar.gz">
+    <a href="/chromium/src/+archive/c0d39e1bcca0da0f3be1d77d10f21b7cf35c658e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ben Reich &lt;benreich@chromium.org&gt;
+   Samuel Huang &lt;huangs@chromium.org&gt;
   </td>
   <td>
-   Tue May 02 12:03:57 2023
+   Tue May 02 14:34:05 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue May 02 12:03:57 2023
+   Tue May 02 14:34:05 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5f2543cc42b42fe8f0c788dd15d21e3105014c51/">
-    b8ee9e91a4406954b8b3019f7e502b36c43eb253
+   <a href="/chromium/src/+/c0d39e1bcca0da0f3be1d77d10f21b7cf35c658e/">
+    68d696523b3b1ecaf1854d17856b2bb6823c6e90
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5f2543cc42b42fe8f0c788dd15d21e3105014c51%5E">
-    762d3a4ce6279b1e884d677859b619ce7ca24efc
+   <a href="/chromium/src/+/c0d39e1bcca0da0f3be1d77d10f21b7cf35c658e%5E">
+    65eae534f51fa06600a57a3a36405a74e4305ea1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5f2543cc42b42fe8f0c788dd15d21e3105014c51%5E%21/">
+    <a href="/chromium/src/+/c0d39e1bcca0da0f3be1d77d10f21b7cf35c658e%5E%21/">
      diff
     </a>
     ]
@@ -179,30 +179,41 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[FilesBulkPinning] Expose kOkWithMoreResults drivefs result
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[SuperSize] Add ARSC Count Metrics.
 
-When searching for items, it's possible to hit the end of the locally
-available results but have some cloud results that are still potentially
-available. This is only really required when the QuerySource is
-`kLocalAndCloud` as it tries a local search first then defers to the
-cloud.
+This CL adds ARSC metrics data (counts of types for each ARSC file) to
+.size files, updates the Viewer to show them, and changes Metrics Tree
+subcategories from "SIZE metrics" / "COUNT metrics" to "Size" / "Count".
 
-Currently the logic is an empty page indicates the end of a query.
-However when using `kLocalAndCloud` this logic is incorrect. To avoid
-terminating the query at empty pages, provide another `FileError` called
-`kOkWithMoreResults` to indicate the local results have been exhausted
-and to try `GetNextPage` again to search the cloud. If the subsequent
-search returns `kOk` with an empty page, this is the final result.
+In the Metrics View, items were previously classified as "ELF" or "DEX"
+by checking whether or not the metric suffix (e.g., "SIZE/.text" =&gt;
+".text") has  "." (e.g., ".text" has "." =&gt; "ELF"). However, we're now
+adding "ARSC" to the mix, making the old scheme is obsolete.
 
-Bug: b:280240617, b:277018122
-Test: TBD
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1d435a814b8f87731f606a0b4b6fe76eebcc53b0">I1d435a814b8f87731f606a0b4b6fe76eebcc53b0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4495609">https://chromium-review.googlesource.com/c/chromium/src/+/4495609</a>
-Reviewed-by: François Degros &lt;fdegros@chromium.org&gt;
-Commit-Queue: Ben Reich &lt;benreich@chromium.org&gt;
-Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
-Reviewed-by: Sam McNally &lt;sammc@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1138280}
+The new classification scheme is to examine, for each metric item, the
+extensions of associated files (files shown as table rows). For Chrome,
+we consistently have ".so" =&gt; "ELF", ".dex"=&gt; "DEX", ".arsc" =&gt; "ARSC",
+allowing easy classification. To handle edge cases, we also assign empty
+extension =&gt; "ELF" and mixed / unknown extension =&gt; "OTHER".
+
+Details:
+* apk.py: CreateArscSymbols(): For each RES_TABLE_TYPE_TYPE chunk,
+  create count metrics entry, e.g., "COUNT/anim" -&gt; 100.
+* archive.py: _CreateContainerSymbols(): Add the above.
+* ui-base.js: Add helper getFileExtension().
+* state.js: Add metrics icon "arsc" and "other", reusing existing ones.
+* metrics-tree-ui.js: MetricsTreeModel:
+  * makeMetricNode(): Implement the new metric item classification
+    scheme via file extensions.
+  * extractAndStoreRoot(): Change subcategory names; create Sets of
+    associated extensions for each metric item for classification.
+
+Bug: 1064355
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I48b651c6e3dac87b1d8cdcb33617658c3db03653">I48b651c6e3dac87b1d8cdcb33617658c3db03653</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4497008">https://chromium-review.googlesource.com/c/chromium/src/+/4497008</a>
+Commit-Queue: Samuel Huang &lt;huangs@chromium.org&gt;
+Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1138341}
 </pre>
 
 </body>
