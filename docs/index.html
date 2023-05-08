@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1140888/"> 1140888</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a753fab4e45e6737d7ddcb7c56d47f540998dce0">a753fab4e45e6737d7ddcb7c56d47f540998dce0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1141045/"> 1141045</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb8310f8a7d569f82c51f380898aa31a82f0a67c">fb8310f8a7d569f82c51f380898aa31a82f0a67c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1140882/">1140882</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b232be7bfd34757c63c6cc34e62e87f107cb765b">b232be7bfd34757c63c6cc34e62e87f107cb765b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1141006/">1141006</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a1023a0f4efc8cbab38c8faac8cac856b95a378e">a1023a0f4efc8cbab38c8faac8cac856b95a378e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a753fab4e45e6737d7ddcb7c56d47f540998dce0
+   fb8310f8a7d569f82c51f380898aa31a82f0a67c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a753fab4e45e6737d7ddcb7c56d47f540998dce0">
+    <a href="/chromium/src/+log/fb8310f8a7d569f82c51f380898aa31a82f0a67c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a753fab4e45e6737d7ddcb7c56d47f540998dce0.tar.gz">
+    <a href="/chromium/src/+archive/fb8310f8a7d569f82c51f380898aa31a82f0a67c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tommy Martino &lt;tmartino@google.com&gt;
+   Toni Barzic &lt;tbarzic@chromium.org&gt;
   </td>
   <td>
-   Mon May 08 16:23:15 2023
+   Mon May 08 20:51:01 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon May 08 16:23:15 2023
+   Mon May 08 20:51:01 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a753fab4e45e6737d7ddcb7c56d47f540998dce0/">
-    b9262fe50b7950e9eb14639a7ea8e216c26f0b5c
+   <a href="/chromium/src/+/fb8310f8a7d569f82c51f380898aa31a82f0a67c/">
+    d1447731ea4cd35c2759194f0bb33bc1a96bc947
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a753fab4e45e6737d7ddcb7c56d47f540998dce0%5E">
-    7c658d3372eddcbf24d1fc1e535f94256ad2445f
+   <a href="/chromium/src/+/fb8310f8a7d569f82c51f380898aa31a82f0a67c%5E">
+    e75293a4b3c489262150c8e44d3b18ca906578d1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a753fab4e45e6737d7ddcb7c56d47f540998dce0%5E%21/">
+    <a href="/chromium/src/+/fb8310f8a7d569f82c51f380898aa31a82f0a67c%5E%21/">
      diff
     </a>
     ]
@@ -179,23 +179,24 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Disable some obsolete tests in AffiliationsPrefetcherTest
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Better handle layer recreation in app list
 
-This disables the "false" arm of AffiliationsPrefetcherTest (i.e., the
-version where kFillingAcrossAffiliatedWebsites is disabled) on Desktop
-and iOS, where that feature is already enabled by default.
+Updates search box focus ring layer to be a layer owner, so it
+handles layer recreation.
 
-This is necessary because these tests are blocking us from enabling
-kPasswordsGrouping by default on iOS. Rather than going in and figuring
-out why enabling kPasswordsGrouping breaks these tests, I opted to
-simply disable them. Since they're basically dead code on this platform
-anyway, I don't see any value in updating them.
+Makes AppListItem background layer explicitly handle RecreateLayer
+to remove the old layer icon view's "below" region, and add back
+the new layer. This is not automatically handled correctly, and was
+causing DCHECKS/crashes after rotation (in cases the rotation animation
+recreates layers).
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic775b209d44a37d3bd09388d02dd858bc331bc78">Ic775b209d44a37d3bd09388d02dd858bc331bc78</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4507604">https://chromium-review.googlesource.com/c/chromium/src/+/4507604</a>
-Reviewed-by: Viktor Semeniuk &lt;vsemeniuk@google.com&gt;
-Commit-Queue: Tommy Martino &lt;tmartino@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1140888}
+BUG=b:280741313
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idc2ca59229d07aae6a415be1f92b63f9188fb9be">Idc2ca59229d07aae6a415be1f92b63f9188fb9be</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4510060">https://chromium-review.googlesource.com/c/chromium/src/+/4510060</a>
+Reviewed-by: Matthew Mourgos &lt;mmourgos@chromium.org&gt;
+Commit-Queue: Toni Barzic &lt;tbarzic@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1141045}
 </pre>
 
 </body>
