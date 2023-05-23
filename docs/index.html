@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1147638/"> 1147638</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/847a0ab17cc855a7755013ac60fe36eeec2c4d6a">847a0ab17cc855a7755013ac60fe36eeec2c4d6a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1147677/"> 1147677</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b46e53ce557498b175447af99f6f050084eefeb4">b46e53ce557498b175447af99f6f050084eefeb4</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1147620/">1147620</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3172ea6a85089272db6fd175db3cfa294e900b56">3172ea6a85089272db6fd175db3cfa294e900b56</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1147675/">1147675</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4177694e7bfc37cba62da91b9add7a11845c0813">4177694e7bfc37cba62da91b9add7a11845c0813</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   847a0ab17cc855a7755013ac60fe36eeec2c4d6a
+   b46e53ce557498b175447af99f6f050084eefeb4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/847a0ab17cc855a7755013ac60fe36eeec2c4d6a">
+    <a href="/chromium/src/+log/b46e53ce557498b175447af99f6f050084eefeb4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/847a0ab17cc855a7755013ac60fe36eeec2c4d6a.tar.gz">
+    <a href="/chromium/src/+archive/b46e53ce557498b175447af99f6f050084eefeb4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Patti Lor &lt;patricialor@chromium.org&gt;
+   Momoko Hattori &lt;momohatt@google.com&gt;
   </td>
   <td>
-   Tue May 23 02:56:58 2023
+   Tue May 23 05:36:10 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue May 23 02:56:58 2023
+   Tue May 23 05:36:10 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/847a0ab17cc855a7755013ac60fe36eeec2c4d6a/">
-    ac76139aa291124ea0946c7d337dab159a5f4ca3
+   <a href="/chromium/src/+/b46e53ce557498b175447af99f6f050084eefeb4/">
+    4d58b2071d298a1654be4f50a3ab4740b622d49f
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/847a0ab17cc855a7755013ac60fe36eeec2c4d6a%5E">
-    1e65beef29eec6c6b26f0e5daed7f0f8363bf600
+   <a href="/chromium/src/+/b46e53ce557498b175447af99f6f050084eefeb4%5E">
+    fa998391287c4dd7a7b8433916381b924eeefe4f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/847a0ab17cc855a7755013ac60fe36eeec2c4d6a%5E%21/">
+    <a href="/chromium/src/+/b46e53ce557498b175447af99f6f050084eefeb4%5E%21/">
      diff
     </a>
     ]
@@ -179,31 +179,29 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "MediaApp: Enable PDF signature by default."
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">arc: Fix calculation of required free space for ARCVM /data migration
 
-This reverts commit a78c73fd77bc8c0a5f2e69939c577dd784aaa26b.
+ARCVM /data migration converts sparse files in the migration source into
+non-sparse files. As a result, the migrated /data will require more
+space than the space allocated for pre-migration /data when there are
+sparse files in the migration source, and the pre-migration free space
+check needs to take this into account as well. This CL fixes the
+calculation of required free space so that it additionally requires the
+space for the increase of /data size throughout the migration.
 
-Reason for revert: Launch approval was not obtained in time.
+BUG=b:280248293
+TEST=Manually create a large sparse file in the migration source and
+TEST=check the VLOG(1)s from arc_vm_data_migration_screen.
+TEST=ash_components_unittests --gtest_filter="ArcUtilTest.*"
+TEST=unit_tests --gtest_filter="ArcVmDataMigrationScreenTest.*"
 
-Original change's description:
-&gt; MediaApp: Enable PDF signature by default.
-&gt;
-&gt; Bug: b/238591080
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I57299968fc6688cf6dcc389678abcdfcf4231d81">I57299968fc6688cf6dcc389678abcdfcf4231d81</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4535490">https://chromium-review.googlesource.com/c/chromium/src/+/4535490</a>
-&gt; Commit-Queue: Zufeng Wang &lt;zufeng@google.com&gt;
-&gt; Auto-Submit: Patti Lor &lt;patricialor@chromium.org&gt;
-&gt; Reviewed-by: Zufeng Wang &lt;zufeng@google.com&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1145148}
-
-Bug: b/238591080
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3ba2b00cbf7fcb7416688558099d0f6ec4468fcc">I3ba2b00cbf7fcb7416688558099d0f6ec4468fcc</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4554556">https://chromium-review.googlesource.com/c/chromium/src/+/4554556</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Auto-Submit: Patti Lor &lt;patricialor@chromium.org&gt;
-Commit-Queue: Zufeng Wang &lt;zufeng@google.com&gt;
-Reviewed-by: Zufeng Wang &lt;zufeng@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1147638}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idab9da70132679b0449189b243f68c7bc815caf7">Idab9da70132679b0449189b243f68c7bc815caf7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4546952">https://chromium-review.googlesource.com/c/chromium/src/+/4546952</a>
+Commit-Queue: Momoko Hattori &lt;momohatt@chromium.org&gt;
+Reviewed-by: Youkichi Hosoi &lt;youkichihosoi@chromium.org&gt;
+Reviewed-by: Danila Kuzmin &lt;dkuzmin@google.com&gt;
+Reviewed-by: Yuichiro Hanada &lt;yhanada@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1147677}
 </pre>
 
 </body>
