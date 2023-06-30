@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1164481/"> 1164481</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ae16deeb25d3e869b4ee894b2229e4e88a8be715">ae16deeb25d3e869b4ee894b2229e4e88a8be715</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1164517/"> 1164517</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5fa6469cd0d6975b89aa9256eb59648fcd121d6f">5fa6469cd0d6975b89aa9256eb59648fcd121d6f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1164462/">1164462</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/85478513c7498d524281498b8132a01e80babae3">85478513c7498d524281498b8132a01e80babae3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1164509/">1164509</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b97bd382412384395bb1d80c9b41a718a4e77d78">b97bd382412384395bb1d80c9b41a718a4e77d78</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ae16deeb25d3e869b4ee894b2229e4e88a8be715
+   5fa6469cd0d6975b89aa9256eb59648fcd121d6f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ae16deeb25d3e869b4ee894b2229e4e88a8be715">
+    <a href="/chromium/src/+log/5fa6469cd0d6975b89aa9256eb59648fcd121d6f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ae16deeb25d3e869b4ee894b2229e4e88a8be715.tar.gz">
+    <a href="/chromium/src/+archive/5fa6469cd0d6975b89aa9256eb59648fcd121d6f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+   Miguel Casas &lt;mcasas@chromium.org&gt;
   </td>
   <td>
-   Fri Jun 30 02:27:30 2023
+   Fri Jun 30 05:34:24 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jun 30 02:27:30 2023
+   Fri Jun 30 05:34:24 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ae16deeb25d3e869b4ee894b2229e4e88a8be715/">
-    f6af840c13622b778710c19291893b3f0fb55b70
+   <a href="/chromium/src/+/5fa6469cd0d6975b89aa9256eb59648fcd121d6f/">
+    2c307d535fb6550d0f36f7009b5f4e9f1c246d78
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ae16deeb25d3e869b4ee894b2229e4e88a8be715%5E">
-    ee999244ebffa9c03842367840fd3b259c265259
+   <a href="/chromium/src/+/5fa6469cd0d6975b89aa9256eb59648fcd121d6f%5E">
+    4714a5b156537cdca68cb2e2f35ece3be4445a0e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ae16deeb25d3e869b4ee894b2229e4e88a8be715%5E%21/">
+    <a href="/chromium/src/+/5fa6469cd0d6975b89aa9256eb59648fcd121d6f%5E%21/">
      diff
     </a>
     ]
@@ -179,23 +179,29 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prerender UKM: Ensure LinkToText doesn't calls GetPageUkmSourceId
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">media/gpu/v4l2: Starting filling V4L2StatefulVideoDecoder::Decode()
 
-GetPageUkmSourceId doesn't expect it is called while prerendering, and
-returned ID will not be bound with any URL if it is called.
+This CL starts writing some code in said method, concretely to
+pass DecoderBuffers into the OUTPUT queue. This CL does not
+support H.264/5 (for that we'd need a fragment splitter, and that
+will be added later on). It also does not recycle queue slots.
+It does poke for events, concretely for V4L2_EVENT_SOURCE_CHANGE
+which will be used in later CLs to configure the CAPTURE queue.
 
-As LinkToText seems not being used while prerendering, we add CHECK
-to ensure the method is called only when the page is not in the
-prerendering state.
+A new test case is added to v_d_a_tests to exercise this simple
+functionality.
 
-Also convert existing DCHECK to follow the up-to-date guildelines.
+Tested on hana and trogdor via:
+/usr/local/libexec/chrome-binary-tests/video_decode_accelerator_tests /usr/local/share/tast/data_pushed/go.chromium.org/tast-tests/cros/local/bundles/cros/video/data/test-25fps.vp8 '--vmodule=*/media/gpu/v4l2/*=4' --gtest_filter=*.Decode --enable-features=V4L2FlatStatefulVideoDecoder
 
-Bug: 1245014
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ife67672b8d360784ddc14f18c40d2ba397007a09">Ife67672b8d360784ddc14f18c40d2ba397007a09</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4645050">https://chromium-review.googlesource.com/c/chromium/src/+/4645050</a>
-Commit-Queue: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
-Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1164481}
+-- also tested on cherry since this CL introduces a new test.
+
+Bug: b:279980150
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib313bd948b4170d6ff5cf2d63bfa7669013993b8">Ib313bd948b4170d6ff5cf2d63bfa7669013993b8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4651677">https://chromium-review.googlesource.com/c/chromium/src/+/4651677</a>
+Commit-Queue: Steve Cho &lt;stevecho@chromium.org&gt;
+Reviewed-by: Steve Cho &lt;stevecho@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1164517}
 </pre>
 
 </body>
