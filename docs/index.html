@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1165607/"> 1165607</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dc390d0d8d1962acb583026c5bb479cfeca137cc">dc390d0d8d1962acb583026c5bb479cfeca137cc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1165694/"> 1165694</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8595d5b652c2597b35ebefa15dc4844e138bd6e1">8595d5b652c2597b35ebefa15dc4844e138bd6e1</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1165606/">1165606</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/aac358c1bf019cbc7113ae6e9e6ff7a66adad4c1">aac358c1bf019cbc7113ae6e9e6ff7a66adad4c1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1165672/">1165672</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/edc3cb98a3778a008a88f3fc0abf3af03a797249">edc3cb98a3778a008a88f3fc0abf3af03a797249</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   dc390d0d8d1962acb583026c5bb479cfeca137cc
+   8595d5b652c2597b35ebefa15dc4844e138bd6e1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/dc390d0d8d1962acb583026c5bb479cfeca137cc">
+    <a href="/chromium/src/+log/8595d5b652c2597b35ebefa15dc4844e138bd6e1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/dc390d0d8d1962acb583026c5bb479cfeca137cc.tar.gz">
+    <a href="/chromium/src/+archive/8595d5b652c2597b35ebefa15dc4844e138bd6e1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Rune Lillesveen &lt;futhark@chromium.org&gt;
+   Dominique Fauteux-Chapleau &lt;domfc@chromium.org&gt;
   </td>
   <td>
-   Tue Jul 04 13:59:46 2023
+   Tue Jul 04 17:52:40 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jul 04 13:59:46 2023
+   Tue Jul 04 17:52:40 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/dc390d0d8d1962acb583026c5bb479cfeca137cc/">
-    2002500e2fe8404c996e78fa1161ecb029b7e8de
+   <a href="/chromium/src/+/8595d5b652c2597b35ebefa15dc4844e138bd6e1/">
+    3eff7fafaeb3b6345db86b5ca565f4f1320e9791
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/dc390d0d8d1962acb583026c5bb479cfeca137cc%5E">
-    aac358c1bf019cbc7113ae6e9e6ff7a66adad4c1
+   <a href="/chromium/src/+/8595d5b652c2597b35ebefa15dc4844e138bd6e1%5E">
+    ca4fc2e6a5118beef8815c98403a1b4c5ab26b8c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/dc390d0d8d1962acb583026c5bb479cfeca137cc%5E%21/">
+    <a href="/chromium/src/+/8595d5b652c2597b35ebefa15dc4844e138bd6e1%5E%21/">
      diff
     </a>
     ]
@@ -179,20 +179,26 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use parentElement for parent editing style, not parentNode
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Tweak GetOutermostWebContents usage in PrintIfAllowedByPolicy
 
-The existing code did not take shadow DOM into account. Using
-parentElement to not change any behaviors here.
+The fix in crrev.com/c/4651379 works for LCAC as all URLs are sent for
+scanning, but that might not be the case when cloud scanning uses this
+code. When that happens, the WebContents used by
+ContentAnalysisDelegate::IsEnabled also need to be the outermost one,
+otherwise the URL comparison to check if a scan should happen might be
+against the PDF reader's URL (aka chrome-extension://&lt;some_id&gt;), or
+any other embedded page.
 
-Part of preparing for only allowing CSSComputedStyleDeclaration for
-element nodes.
+This is fixed by simply moving the GetOutermostWebContents earlier in
+PrintIfAllowedByPolicy instead of later in ScanAndPrint.
 
-Bug: 1459564
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0a0679ac7f881b7e84d3431aece4f74c09b0a869">I0a0679ac7f881b7e84d3431aece4f74c09b0a869</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4660923">https://chromium-review.googlesource.com/c/chromium/src/+/4660923</a>
-Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Commit-Queue: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1165607}
+Bug: b/287055001
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I190949e0309df097756b871033a2e0c1de81febe">I190949e0309df097756b871033a2e0c1de81febe</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4665781">https://chromium-review.googlesource.com/c/chromium/src/+/4665781</a>
+Reviewed-by: Nancy Xiao &lt;nancylanxiao@google.com&gt;
+Commit-Queue: Dominique Fauteux-Chapleau &lt;domfc@chromium.org&gt;
+Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1165694}
 </pre>
 
 </body>
