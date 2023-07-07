@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1167311/"> 1167311</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/30219e34099a744ebf7ad8516c3c683965e389e0">30219e34099a744ebf7ad8516c3c683965e389e0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1167366/"> 1167366</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/22889ba3fcac547ae6495b79f9772753e2322497">22889ba3fcac547ae6495b79f9772753e2322497</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1167258/">1167258</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/60519acf407cc19e31b62cb0375644c75424a678">60519acf407cc19e31b62cb0375644c75424a678</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1167367/">1167367</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c38d04f5a9cfa2890fba18aa03a254e127d03097">c38d04f5a9cfa2890fba18aa03a254e127d03097</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   30219e34099a744ebf7ad8516c3c683965e389e0
+   22889ba3fcac547ae6495b79f9772753e2322497
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/30219e34099a744ebf7ad8516c3c683965e389e0">
+    <a href="/chromium/src/+log/22889ba3fcac547ae6495b79f9772753e2322497">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/30219e34099a744ebf7ad8516c3c683965e389e0.tar.gz">
+    <a href="/chromium/src/+archive/22889ba3fcac547ae6495b79f9772753e2322497.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anne Redulla &lt;aredulla@google.com&gt;
+   Mikel Astiz &lt;mastiz@chromium.org&gt;
   </td>
   <td>
-   Fri Jul 07 08:24:16 2023
+   Fri Jul 07 11:26:55 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jul 07 08:24:16 2023
+   Fri Jul 07 11:26:55 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/30219e34099a744ebf7ad8516c3c683965e389e0/">
-    362e4b35230b0ba2e7183dd508cb1dcc1a9594cc
+   <a href="/chromium/src/+/22889ba3fcac547ae6495b79f9772753e2322497/">
+    784e00df9f7000da9d419c1301991f1d256ad96f
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/30219e34099a744ebf7ad8516c3c683965e389e0%5E">
-    5558f010eace03387dec59428ca33d49d800b887
+   <a href="/chromium/src/+/22889ba3fcac547ae6495b79f9772753e2322497%5E">
+    b549a59fa14652d1bd099ff680a161110f192367
    </a>
    <span>
     [
-    <a href="/chromium/src/+/30219e34099a744ebf7ad8516c3c683965e389e0%5E%21/">
+    <a href="/chromium/src/+/22889ba3fcac547ae6495b79f9772753e2322497%5E%21/">
      diff
     </a>
     ]
@@ -179,24 +179,38 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ssci] Add Shipped field to READMEs
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PDM: Consider wallet integration disabled in OTR and guest profiles
 
-This CL adds the Shipped field and updates the
-License File field in Chromium READMEs within the
-directory /third_party/android_deps/libs/com_google_errorprone_error_prone_type_annotations.
+SyncService doesn't exist in off-the-record or guest, so wallet import
+is effectively disabled, regardless of what the preference holds. It
+seems more appropriate that
+PersonalDataManager::IsAutofillWalletImportEnabled() returns false in
+such cases, which is precisely the behavioral change in this patch.
 
-See the LSC doc at go/lsc-chrome-metadata.
+Note however that some of the autofill flows use the regular PDM
+instance even from incognito, and autofill works normally. This patch
+doesn't change the behavior for these cases, as the regular PDM
+instance's behavior doesn't change (it uses a non-null SyncService
+before and after this patch).
 
-This CL was uploaded by git cl split.
+The change is done in preparation for kAutofillWalletImportEnabled
+moving fully into SyncService, which also means that the preference
+cannot be evaluated if SyncService doesn't exist.
 
-R=pkotwicz@chromium.org
+Many unit-tests need updating because they now required injectinng a
+non-null SyncService, simply because they rely on
+IsAutofillWalletImportEnabled() returning true.
 
-Bug: b:285450740
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4991ac8cba5f1b0cd7d2863f14665d078f1da476">I4991ac8cba5f1b0cd7d2863f14665d078f1da476</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4663720">https://chromium-review.googlesource.com/c/chromium/src/+/4663720</a>
-Commit-Queue: Anne Redulla &lt;aredulla@google.com&gt;
-Reviewed-by: Peter Kotwicz &lt;pkotwicz@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1167311}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I192c3e342e9cf792127c309480b5e8e9605cd7a7">I192c3e342e9cf792127c309480b5e8e9605cd7a7</a>
+Bug: 1459963
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4668786">https://chromium-review.googlesource.com/c/chromium/src/+/4668786</a>
+Reviewed-by: Florian Leimgruber &lt;fleimgruber@google.com&gt;
+Quick-Run: Mikel Astiz &lt;mastiz@chromium.org&gt;
+Commit-Queue: Mikel Astiz &lt;mastiz@chromium.org&gt;
+Reviewed-by: Marc Treib &lt;treib@chromium.org&gt;
+Reviewed-by: Olivier Robin &lt;olivierrobin@chromium.org&gt;
+Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1167366}
 </pre>
 
 </body>
