@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1170263/"> 1170263</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9e1d8572bc77c40b90cba9ab767942efe0ae9d08">9e1d8572bc77c40b90cba9ab767942efe0ae9d08</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1170301/"> 1170301</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/73db3811238c692152bac756ddff1aebd2b41109">73db3811238c692152bac756ddff1aebd2b41109</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1170199/">1170199</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b159efa9965b6a23279560962801188f2f758117">b159efa9965b6a23279560962801188f2f758117</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1170258/">1170258</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9b5e3df9e46fad45c0b810dbfa1c7a011c4d5155">9b5e3df9e46fad45c0b810dbfa1c7a011c4d5155</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9e1d8572bc77c40b90cba9ab767942efe0ae9d08
+   73db3811238c692152bac756ddff1aebd2b41109
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9e1d8572bc77c40b90cba9ab767942efe0ae9d08">
+    <a href="/chromium/src/+log/73db3811238c692152bac756ddff1aebd2b41109">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9e1d8572bc77c40b90cba9ab767942efe0ae9d08.tar.gz">
+    <a href="/chromium/src/+archive/73db3811238c692152bac756ddff1aebd2b41109.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Adam Norberg &lt;norberg@google.com&gt;
+   v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jul 14 00:42:17 2023
+   Fri Jul 14 02:19:07 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jul 14 00:42:17 2023
+   Fri Jul 14 02:19:07 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9e1d8572bc77c40b90cba9ab767942efe0ae9d08/">
-    077af57b82eda8e8399c09b57bdf2cf8bde5663d
+   <a href="/chromium/src/+/73db3811238c692152bac756ddff1aebd2b41109/">
+    203ae8752464452f0b18c0ca7577cfcba4dbac18
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9e1d8572bc77c40b90cba9ab767942efe0ae9d08%5E">
-    89fd461bbee7921a70f1d295bd7fbcbe11ee033f
+   <a href="/chromium/src/+/73db3811238c692152bac756ddff1aebd2b41109%5E">
+    8ad61f9c781e87d3e82ca32dccc3d1ec3164b2f5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9e1d8572bc77c40b90cba9ab767942efe0ae9d08%5E%21/">
+    <a href="/chromium/src/+/73db3811238c692152bac756ddff1aebd2b41109%5E%21/">
      diff
     </a>
     ]
@@ -179,24 +179,32 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix same-version overinstalls on Mac.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update V8 to version 11.7.188.
 
-OverinstallBroken exercises this codepath. It fails without this patch, which is intended to fix the issues revealed by this test:
+Summary of changes available at:
+<a href="https://chromium.googlesource.com/v8/v8/+log/8d737d85..f2ce37b3">https://chromium.googlesource.com/v8/v8/+log/8d737d85..f2ce37b3</a>
 
-* CopyDir fails if the bundle already exists. Removing the version directory first avoids this (and cleans up any other unexpected state in the destination).
-* Failed update service proxy objects did not totally reset state on failure -- it could think it was still trying to connect after the connection attempt failed. Tracking connection-ness state separately from bound-ness of the mojo::Remote is unnecessary; removing tracking the "connecting" state gets rid of the unintended state reached here.
-* After trying to change which update service exists and is active, it's a bit weird to expect the (previously failed) UpdateServiceProxy to keep working as intended. It does, but it feels conceptually weird. After a WakeCandidate, rebuild update_service_ to clean this up.
+Please follow these instructions for assigning/CC'ing issues:
+<a href="https://v8.dev/docs/triage-issues">https://v8.dev/docs/triage-issues</a>
 
-Also cleans up an IWYU violation on scoped_refptr.h
+Please close rolling in case of a roll revert:
+<a href="https://v8-roll.appspot.com/">https://v8-roll.appspot.com/</a>
+This only works with a Google account.
 
-Bug: 1456556
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib9d31c2e2d3ce71185bf068e20ca675d77ec7bca">Ib9d31c2e2d3ce71185bf068e20ca675d77ec7bca</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4642123">https://chromium-review.googlesource.com/c/chromium/src/+/4642123</a>
-Reviewed-by: S Ganesh &lt;ganesh@chromium.org&gt;
-Reviewed-by: Sorin Jianu &lt;sorin@chromium.org&gt;
-Commit-Queue: Adam Norberg &lt;norberg@google.com&gt;
-Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1170263}
+CQ_INCLUDE_TRYBOTS=luci.chromium.try:linux-blink-rel
+CQ_INCLUDE_TRYBOTS=luci.chromium.try:linux_optional_gpu_tests_rel
+CQ_INCLUDE_TRYBOTS=luci.chromium.try:mac_optional_gpu_tests_rel
+CQ_INCLUDE_TRYBOTS=luci.chromium.try:win_optional_gpu_tests_rel
+CQ_INCLUDE_TRYBOTS=luci.chromium.try:android_optional_gpu_tests_rel
+CQ_INCLUDE_TRYBOTS=luci.chromium.try:dawn-linux-x64-deps-rel
+
+R=hablich@chromium.org,vahl@chromium.org,v8-waterfall-sheriff@grotations.appspotmail.com
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9c0468c5fd937d5471d3842fbecb40915aa835f2">I9c0468c5fd937d5471d3842fbecb40915aa835f2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4684971">https://chromium-review.googlesource.com/c/chromium/src/+/4684971</a>
+Bot-Commit: v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+Commit-Queue: v8-ci-autoroll-builder &lt;v8-ci-autoroll-builder@chops-service-accounts.iam.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1170301}
 </pre>
 
 </body>
