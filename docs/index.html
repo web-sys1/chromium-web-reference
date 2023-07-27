@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1175912/"> 1175912</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/838736355c8bd5088c669e9f05ba9975547adc2e">838736355c8bd5088c669e9f05ba9975547adc2e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1175981/"> 1175981</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6cb4ee960fbc07591122f447464f267732a29198">6cb4ee960fbc07591122f447464f267732a29198</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1175914/">1175914</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/75777fc5dd15b24fc9cabfe004be612d39609177">75777fc5dd15b24fc9cabfe004be612d39609177</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1175952/">1175952</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/58ad8b692589de2e9d753d86c6cf3cd39c6eb59a">58ad8b692589de2e9d753d86c6cf3cd39c6eb59a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   838736355c8bd5088c669e9f05ba9975547adc2e
+   6cb4ee960fbc07591122f447464f267732a29198
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/838736355c8bd5088c669e9f05ba9975547adc2e">
+    <a href="/chromium/src/+log/6cb4ee960fbc07591122f447464f267732a29198">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/838736355c8bd5088c669e9f05ba9975547adc2e.tar.gz">
+    <a href="/chromium/src/+archive/6cb4ee960fbc07591122f447464f267732a29198.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Florian Leimgruber &lt;fleimgruber@google.com&gt;
+   Zaina Al-Mashni &lt;zalmashni@google.com&gt;
   </td>
   <td>
-   Thu Jul 27 07:46:01 2023
+   Thu Jul 27 11:54:00 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jul 27 07:46:01 2023
+   Thu Jul 27 11:54:00 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/838736355c8bd5088c669e9f05ba9975547adc2e/">
-    e0c241f355c40f59009a967e6d4d11b090127755
+   <a href="/chromium/src/+/6cb4ee960fbc07591122f447464f267732a29198/">
+    b425d4e742fe87e0751abf7b88c766ea83c48fde
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/838736355c8bd5088c669e9f05ba9975547adc2e%5E">
-    818633752a47fd6066f81a6a151bae9c24efc0a6
+   <a href="/chromium/src/+/6cb4ee960fbc07591122f447464f267732a29198%5E">
+    4a8cceac4064862f4b7e20f40d4448cc0d96d5e7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/838736355c8bd5088c669e9f05ba9975547adc2e%5E%21/">
+    <a href="/chromium/src/+/6cb4ee960fbc07591122f447464f267732a29198%5E%21/">
      diff
     </a>
     ]
@@ -179,42 +179,18 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix AutofillTable::MigrateToVersion113...().
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Quick Delete: Clean up existing animation
 
-Database migration logic should generally not depend on functions that
-might change in the future. For example:
-- MigrateToVersion113...() is run when the database schema is still in
-  version 112 and should be migrated to version 113.
-- Assume the implementation uses a function f() that inserts some data
-  into some table T.
-- A few versions later, a new column is added to T and f() is changed
-  to insert a value into this new column as well.
-In this case, MigrateToVersion113...() will suddenly start failing,
-because the new SQL query in f() references a column that doesn't
-exists in the version 112/113 schema.
+Remove the existing animations code since the UX propsal has changed.
 
-Exactly this happened in the MigrateToVersion113...() logic - f() is
-AddAutofillProfileToTable() in this case.
-
-Currently, for the ProfileTokenQuality project, a new column needs to
-be added to the contact_info_type_tokens and local_addresses_type_tokens
-tables, which are exactly the tables AddAutofillProfileToTable() reads
-from.
-Fortunately, the WebDatabase migration unit tests caught this bug
-before any new column could be added.
-
-This CL fixes the problem by creating a new function
-AddAutofillProfileToTableVersion113(), which represents the state
-of AddAutofillProfileToTable(), back when the migration logic was
-written.
-
-Bug: 1443393
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I320c6eca3e209dce71ef75fbbe0e87b77ac44051">I320c6eca3e209dce71ef75fbbe0e87b77ac44051</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4721049">https://chromium-review.googlesource.com/c/chromium/src/+/4721049</a>
-Reviewed-by: Jihad Hanna &lt;jihadghanna@google.com&gt;
-Commit-Queue: Florian Leimgruber &lt;fleimgruber@google.com&gt;
+Bug: 1412087, b/293262949
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I15ee1486b57266c4606534e5f5951725a5a6a1df">I15ee1486b57266c4606534e5f5951725a5a6a1df</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4721385">https://chromium-review.googlesource.com/c/chromium/src/+/4721385</a>
+Reviewed-by: Theresa Sullivan &lt;twellington@chromium.org&gt;
+Commit-Queue: Zaina Al-Mashni &lt;zalmashni@google.com&gt;
+Reviewed-by: Ehimare Okoyomon &lt;eokoyomon@chromium.org&gt;
 Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1175912}
+Cr-Commit-Position: refs/heads/main@{#1175981}
 </pre>
 
 </body>
