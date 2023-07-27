@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1175866/"> 1175866</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cfcbc442a36baefc733e06f60f3b358a85260497">cfcbc442a36baefc733e06f60f3b358a85260497</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1175912/"> 1175912</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/838736355c8bd5088c669e9f05ba9975547adc2e">838736355c8bd5088c669e9f05ba9975547adc2e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1175850/">1175850</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f2c4fcf95f0a007dd8b0343ceb2e1127e7292634">f2c4fcf95f0a007dd8b0343ceb2e1127e7292634</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1175914/">1175914</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/75777fc5dd15b24fc9cabfe004be612d39609177">75777fc5dd15b24fc9cabfe004be612d39609177</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   cfcbc442a36baefc733e06f60f3b358a85260497
+   838736355c8bd5088c669e9f05ba9975547adc2e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/cfcbc442a36baefc733e06f60f3b358a85260497">
+    <a href="/chromium/src/+log/838736355c8bd5088c669e9f05ba9975547adc2e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/cfcbc442a36baefc733e06f60f3b358a85260497.tar.gz">
+    <a href="/chromium/src/+archive/838736355c8bd5088c669e9f05ba9975547adc2e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Florian Leimgruber &lt;fleimgruber@google.com&gt;
   </td>
   <td>
-   Thu Jul 27 05:21:01 2023
+   Thu Jul 27 07:46:01 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jul 27 05:21:01 2023
+   Thu Jul 27 07:46:01 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/cfcbc442a36baefc733e06f60f3b358a85260497/">
-    2d508c2dcc2b010fda75fe6e602e5f720e7f0caa
+   <a href="/chromium/src/+/838736355c8bd5088c669e9f05ba9975547adc2e/">
+    e0c241f355c40f59009a967e6d4d11b090127755
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/cfcbc442a36baefc733e06f60f3b358a85260497%5E">
-    d983576368abbc8ec9223a2782ae74ac2c4e9a90
+   <a href="/chromium/src/+/838736355c8bd5088c669e9f05ba9975547adc2e%5E">
+    818633752a47fd6066f81a6a151bae9c24efc0a6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/cfcbc442a36baefc733e06f60f3b358a85260497%5E%21/">
+    <a href="/chromium/src/+/838736355c8bd5088c669e9f05ba9975547adc2e%5E%21/">
      diff
     </a>
     ]
@@ -179,31 +179,42 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Mac Arm PGO Profile
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix AutofillTable::MigrateToVersion113...().
 
-Roll Chrome Mac Arm PGO profile from chrome-mac-arm-main-1690422603-d5c0a94735dcd1d8846d2a85d215fac94e3da4e3.profdata to chrome-mac-arm-main-1690429994-6d0c3d5803cacd236f1ae86826bc02e4a7b4d38b.profdata
+Database migration logic should generally not depend on functions that
+might change in the future. For example:
+- MigrateToVersion113...() is run when the database schema is still in
+  version 112 and should be migrated to version 113.
+- Assume the implementation uses a function f() that inserts some data
+  into some table T.
+- A few versions later, a new column is added to T and f() is changed
+  to insert a value into this new column as well.
+In this case, MigrateToVersion113...() will suddenly start failing,
+because the new SQL query in f() references a column that doesn't
+exists in the version 112/113 schema.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-mac-arm-chromium">https://autoroll.skia.org/r/pgo-mac-arm-chromium</a>
-Please CC chrome-brapp-engprod@google.com,pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+Exactly this happened in the MigrateToVersion113...() logic - f() is
+AddAutofillProfileToTable() in this case.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+Currently, for the ProfileTokenQuality project, a new column needs to
+be added to the contact_info_type_tokens and local_addresses_type_tokens
+tables, which are exactly the tables AddAutofillProfileToTable() reads
+from.
+Fortunately, the WebDatabase migration unit tests caught this bug
+before any new column could be added.
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug">https://bugs.chromium.org/p/skia/issues/entry?template=Autoroller+Bug</a>
+This CL fixes the problem by creating a new function
+AddAutofillProfileToTableVersion113(), which represents the state
+of AddAutofillProfileToTable(), back when the migration logic was
+written.
 
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:mac-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9739613d568aa6d58878b5a3eddb7d10bf1b441c">I9739613d568aa6d58878b5a3eddb7d10bf1b441c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4723478">https://chromium-review.googlesource.com/c/chromium/src/+/4723478</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1175866}
+Bug: 1443393
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I320c6eca3e209dce71ef75fbbe0e87b77ac44051">I320c6eca3e209dce71ef75fbbe0e87b77ac44051</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4721049">https://chromium-review.googlesource.com/c/chromium/src/+/4721049</a>
+Reviewed-by: Jihad Hanna &lt;jihadghanna@google.com&gt;
+Commit-Queue: Florian Leimgruber &lt;fleimgruber@google.com&gt;
+Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1175912}
 </pre>
 
 </body>
