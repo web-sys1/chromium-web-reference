@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1176447/"> 1176447</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8dee9710597870d5ba8bce8bed8c3e03bc163ed8">8dee9710597870d5ba8bce8bed8c3e03bc163ed8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1176491/"> 1176491</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8899e207c450681ebf3346cbad439b34d5fd89ed">8899e207c450681ebf3346cbad439b34d5fd89ed</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1176429/">1176429</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/150fd8edb044188147d3156429c13cd8d064d283">150fd8edb044188147d3156429c13cd8d064d283</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1176482/">1176482</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a219718b35e6b79148d304feaee90ce3f5ca8c9c">a219718b35e6b79148d304feaee90ce3f5ca8c9c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8dee9710597870d5ba8bce8bed8c3e03bc163ed8
+   8899e207c450681ebf3346cbad439b34d5fd89ed
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8dee9710597870d5ba8bce8bed8c3e03bc163ed8">
+    <a href="/chromium/src/+log/8899e207c450681ebf3346cbad439b34d5fd89ed">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8dee9710597870d5ba8bce8bed8c3e03bc163ed8.tar.gz">
+    <a href="/chromium/src/+archive/8899e207c450681ebf3346cbad439b34d5fd89ed.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tim Sergeant &lt;tsergeant@chromium.org&gt;
+   Florian Leimgruber &lt;fleimgruber@google.com&gt;
   </td>
   <td>
-   Fri Jul 28 05:49:02 2023
+   Fri Jul 28 08:45:22 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jul 28 05:49:02 2023
+   Fri Jul 28 08:45:22 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8dee9710597870d5ba8bce8bed8c3e03bc163ed8/">
-    77d148a2449519af0424caafd109b2423f740347
+   <a href="/chromium/src/+/8899e207c450681ebf3346cbad439b34d5fd89ed/">
+    24e13adef1593e80f90449ad198b265dfb05b086
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8dee9710597870d5ba8bce8bed8c3e03bc163ed8%5E">
-    7244feaa0fc3efd085a7b6dc39f6c312ca7293c4
+   <a href="/chromium/src/+/8899e207c450681ebf3346cbad439b34d5fd89ed%5E">
+    9b45d73755160ce5ad005f022c8681a99e42b7eb
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8dee9710597870d5ba8bce8bed8c3e03bc163ed8%5E%21/">
+    <a href="/chromium/src/+/8899e207c450681ebf3346cbad439b34d5fd89ed%5E%21/">
      diff
     </a>
     ]
@@ -179,36 +179,25 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Default Apps: Support stylus capability check on Lacros
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rename manual fallback ExplicitlyTriggered metric.
 
-The Cursive app preload on ChromeOS is currently restricted to devices
-with stylus-enabled touchscreens. This restriction is implemented by
-checking ui::DeviceDataManager to determine what touchscreens are
-available.
+It was decided to change the name of the metric slightly, see [1].
 
-On Lacros, ui::DeviceDataManager is populated by Wayland, and does not
-have the full information needed to implement this check. Instead, we
-perform the check on Ash side and pass it through DeviceProperties on
-crosapi (which already has similar values for other preload properties).
+It's generally not recommended to rename metrics. However, this
+particular metric was only implemented recently (crrev.com/c/4660421)
+and is only relevant for a feature that hasn't started rolling out yet.
+(The feature being AutofillShowManualFallbackInContextMenu)
 
-As DeviceDataManager is populated asynchronously, there is a chance that
-it might not be ready by the time Lacros starts. I have never seen this
-happen in local testing, but we already have UMA in place to detect if
-this happens. We could adjust behavior on the Lacros side to not modify
-the current preload state if stylus capability is unknown.
+[1] <a href="https://docs.google.com/document/d/1Lb346eaee6GfQ6iDbPH44hz_VwyPcpj9Pj-2O2TK9vE/edit?resourcekey=0-hW0oTZZhhiGLiQEu81ptfA">https://docs.google.com/document/d/1Lb346eaee6GfQ6iDbPH44hz_VwyPcpj9Pj-2O2TK9vE/edit?resourcekey=0-hW0oTZZhhiGLiQEu81ptfA</a>
 
-In the medium-to-long term, we hope to remove the stylus-only
-restriction on the Cursive preload, which would remove the need for this
-crosapi parameter.
-
-Bug: 1360294
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I85cf6401d03b10d2e97831d0f11f85bcdccef91a">I85cf6401d03b10d2e97831d0f11f85bcdccef91a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4706205">https://chromium-review.googlesource.com/c/chromium/src/+/4706205</a>
-Reviewed-by: Alan Cutter &lt;alancutter@chromium.org&gt;
-Reviewed-by: Erik Chen &lt;erikchen@chromium.org&gt;
-Commit-Queue: Tim Sergeant &lt;tsergeant@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1176447}
+Bug: 1446318
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia5e9a8a92cba5b861502ad276ae2c6c7824d9b8a">Ia5e9a8a92cba5b861502ad276ae2c6c7824d9b8a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4724883">https://chromium-review.googlesource.com/c/chromium/src/+/4724883</a>
+Commit-Queue: Florian Leimgruber &lt;fleimgruber@google.com&gt;
+Reviewed-by: Mohamed Amir Yosef &lt;mamir@chromium.org&gt;
+Reviewed-by: Jihad Hanna &lt;jihadghanna@google.com&gt;
+Code-Coverage: Findit &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1176491}
 </pre>
 
 </body>
