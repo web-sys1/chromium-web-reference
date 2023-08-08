@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1180620/"> 1180620</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9459dddc2f7b234746f7a80d92d8fecdb91362aa">9459dddc2f7b234746f7a80d92d8fecdb91362aa</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1180648/"> 1180648</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b108bb5010101502326b74a5afc57642908e6a42">b108bb5010101502326b74a5afc57642908e6a42</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1180610/">1180610</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2d09c83634f519e67b8e18aeb02f99f793555192">2d09c83634f519e67b8e18aeb02f99f793555192</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1180635/">1180635</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fc9842cd0269e3703b435d0fbdf65d5a34f251cc">fc9842cd0269e3703b435d0fbdf65d5a34f251cc</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9459dddc2f7b234746f7a80d92d8fecdb91362aa
+   b108bb5010101502326b74a5afc57642908e6a42
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9459dddc2f7b234746f7a80d92d8fecdb91362aa">
+    <a href="/chromium/src/+log/b108bb5010101502326b74a5afc57642908e6a42">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9459dddc2f7b234746f7a80d92d8fecdb91362aa.tar.gz">
+    <a href="/chromium/src/+archive/b108bb5010101502326b74a5afc57642908e6a42.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ben Reich &lt;benreich@chromium.org&gt;
+   Kelvin Jiang &lt;kelvinjiang@chromium.org&gt;
   </td>
   <td>
-   Tue Aug 08 00:41:34 2023
+   Tue Aug 08 02:07:00 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 08 00:41:34 2023
+   Tue Aug 08 02:07:00 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9459dddc2f7b234746f7a80d92d8fecdb91362aa/">
-    3bb3dd37155a47b6d23e6c5e66b1fb8745ff932d
+   <a href="/chromium/src/+/b108bb5010101502326b74a5afc57642908e6a42/">
+    4c6391dd1bcb2da1f7c751811e1635aaba0b9d25
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9459dddc2f7b234746f7a80d92d8fecdb91362aa%5E">
-    c8135592579b5f69d22fe12e332e36d8725a6bbe
+   <a href="/chromium/src/+/b108bb5010101502326b74a5afc57642908e6a42%5E">
+    13c59579a7f9dd9c9cffafcf58ba349fdb1de585
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9459dddc2f7b234746f7a80d92d8fecdb91362aa%5E%21/">
+    <a href="/chromium/src/+/b108bb5010101502326b74a5afc57642908e6a42%5E%21/">
      diff
     </a>
     ]
@@ -179,24 +179,26 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[FilesBulkPinning] Update max queue size to 5
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Extensions UI] Fix count discrepancy for allSites page and dialog
 
-As part of our ongoing investigation into CPU and power consumption with
-the bulk pinning feature, it was identified that a queue size of 5 would
-be ideal to launch with. Then we should experiment with the queue size
-being updated via a finch feature param.
+This CL fixes the extensions count discrepancy between the allSites page
+and the edit site permissions dialog for the "customize per extension"
+option.
 
-This pref was introduced in M117 so currently has only rolled out to
-dev / canary. So far folks using this pref have been limited to the
-Files team testing the queue size functionality.
+It achieves this by:
+ - only counting enabled extensions in both places
+ - Changing the GetExtensionGrantedPermissions method to look at
+   active permissions for policy installed extensions instead of
+   looking in extensions prefs for granted permissions
+ - Using GetExtensionGrantedPermissions in the dialog, for consistency
 
-Bug: b:282858214
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7df8ef11206dbe41341c90fddaaa1033995b747d">I7df8ef11206dbe41341c90fddaaa1033995b747d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4756226">https://chromium-review.googlesource.com/c/chromium/src/+/4756226</a>
-Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
-Reviewed-by: François Degros &lt;fdegros@chromium.org&gt;
-Commit-Queue: François Degros &lt;fdegros@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1180620}
+Bug: 1468142
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I73470aca41266d533548aa74db5de3374fd7bdd4">I73470aca41266d533548aa74db5de3374fd7bdd4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4718499">https://chromium-review.googlesource.com/c/chromium/src/+/4718499</a>
+Commit-Queue: Kelvin Jiang &lt;kelvinjiang@chromium.org&gt;
+Reviewed-by: Emilia Paz &lt;emiliapaz@chromium.org&gt;
+Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1180648}
 </pre>
 
 </body>
