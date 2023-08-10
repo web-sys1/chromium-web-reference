@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1181670/"> 1181670</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e989b53bf2b49d76052ebee91ec9e183a8748f3b">e989b53bf2b49d76052ebee91ec9e183a8748f3b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1181803/"> 1181803</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/dbf58c92a7bbc184d831afde39ac93cc8ff493bc">dbf58c92a7bbc184d831afde39ac93cc8ff493bc</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1181637/">1181637</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2163b51a249dbe2bc61931406189cc9c7722b955">2163b51a249dbe2bc61931406189cc9c7722b955</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1181749/">1181749</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/38a33899954a39079c9ccfd657f1e50ffa98ec4c">38a33899954a39079c9ccfd657f1e50ffa98ec4c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e989b53bf2b49d76052ebee91ec9e183a8748f3b
+   dbf58c92a7bbc184d831afde39ac93cc8ff493bc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e989b53bf2b49d76052ebee91ec9e183a8748f3b">
+    <a href="/chromium/src/+log/dbf58c92a7bbc184d831afde39ac93cc8ff493bc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e989b53bf2b49d76052ebee91ec9e183a8748f3b.tar.gz">
+    <a href="/chromium/src/+archive/dbf58c92a7bbc184d831afde39ac93cc8ff493bc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   S. Ganesh &lt;ganesh@chromium.org&gt;
+   Mason Freed &lt;masonf@chromium.org&gt;
   </td>
   <td>
-   Wed Aug 09 20:23:54 2023
+   Thu Aug 10 00:51:23 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 09 20:23:54 2023
+   Thu Aug 10 00:51:23 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e989b53bf2b49d76052ebee91ec9e183a8748f3b/">
-    5c12aec0c3b33114d11299b0f8770036e6771784
+   <a href="/chromium/src/+/dbf58c92a7bbc184d831afde39ac93cc8ff493bc/">
+    86696e803bc52ba85bfc86040f45e9b6aca2ddb8
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e989b53bf2b49d76052ebee91ec9e183a8748f3b%5E">
-    2ef91cadc43448b48fe103321aff618fdb7e1fab
+   <a href="/chromium/src/+/dbf58c92a7bbc184d831afde39ac93cc8ff493bc%5E">
+    e77bf0a980537d28b9d2ee617df5c2e3440fa7b1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e989b53bf2b49d76052ebee91ec9e183a8748f3b%5E%21/">
+    <a href="/chromium/src/+/dbf58c92a7bbc184d831afde39ac93cc8ff493bc%5E%21/">
      diff
     </a>
     ]
@@ -179,45 +179,40 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Preliminary functionality: create MSI installers from offline installers
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">DOM Parts speed optimization patch 3/N
 
-MSI installers package an offline/standalone installer, and can be built
-using `msi_from_standalone.py` in this CL. This is a work in progress.
+This CL revamps several larger parts of DOM Parts:
+ - The PartRoot no longer maintains a list of unsorted parts. It
+   maintains a cache which is in sorted order, if it exists. If the
+   cache is dirty, then a call to getParts() will walk the full
+   sub-tree and collect the cached Parts.
+ - Several techniques are used to maintain the cache and keep it from
+   getting dirty:
+     1. A NodeMoveScope is used to maintain state during DOM tree moves
+        such as AppendNode or InsertBefore.
+     2. As Nodes are moved, if they can be removed from old PartRoots
+        or added to new PartRoots while maintaining the cache
+        correctness, that will be done. This uses information from
+        the NodeMoveScope.
+     3. This process is now also used to maintain the cache during a
+        Clone.
+     4. When walking the tree to re-collect Parts, each PartRoot now
+        returns a FirstIncludedChildNode and LastIncludedChildNode so
+        that the walk can be scoped to this sub-tree.
+     5. The cached Part list is now stored as a HeapDeque rather than
+        a HeapHashSet, and DCHECKs ensure that we don't ever need to
+        search the cache for a Part, so the HashSet isn't needed.
+     6. getParts() now returns a reference rather than a copy.
 
-`msi_from_standalone.py` builds an MSI around the supplied standalone
-installer. This MSI installer is intended to enable enterprise
-installation scenarios while being as close to a normal install as
-possible.
+These changes are covered by the existing basic-dom-part-objects.tentative.html test.
 
-This method only works for application installers that do not use MSI.
-
-For example, to create `GoogleChromeBetaStandaloneEnterprise.msi` from
-`ChromeBetaOfflineSetup.exe`:
-```
-python3 chrome/updater/win/signing/msi_from_standalone.py
-    --candle_path ../third_party/wix/v3_8_1128/files/candle.exe
-    --light_path ../third_party/wix/v3_8_1128/files/light.exe
-    --product_name "Google Chrome Beta"
-    --product_version "110.0.5478.0"
-    --appid {8237E44A-0054-442C-B6B6-EA0509993955}
-    --product_custom_params "&amp;brand=GCEA"
-    --product_uninstaller_additional_args=--force-uninstall
-    --product_installer_data "%7B%22dis%22%3A%7B%22msi%22%3Atrue%7D%7D"
-    --standalone_installer_path ChromeBetaOfflineSetup.exe
-    --custom_action_dll_path out/Default/msi_custom_action.dll
-    --msi_base_name GoogleChromeBetaStandaloneEnterprise
-    --enterprise_installer_dir chrome/updater/win/signing
-    --output_dir out/Default
-```
-
-Bug: 1465914
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1381294fb34f2916c35c11787e125bebc0284b4d">I1381294fb34f2916c35c11787e125bebc0284b4d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4765215">https://chromium-review.googlesource.com/c/chromium/src/+/4765215</a>
-Commit-Queue: Xiaoling Bao &lt;xiaolingbao@chromium.org&gt;
-Auto-Submit: S Ganesh &lt;ganesh@chromium.org&gt;
-Commit-Queue: S Ganesh &lt;ganesh@chromium.org&gt;
-Reviewed-by: Xiaoling Bao &lt;xiaolingbao@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1181670}
+Bug: 1453291
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I49f027e48485165f48719dc1f8d54cd21b23fa20">I49f027e48485165f48719dc1f8d54cd21b23fa20</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4764270">https://chromium-review.googlesource.com/c/chromium/src/+/4764270</a>
+Auto-Submit: Mason Freed &lt;masonf@chromium.org&gt;
+Reviewed-by: Joey Arhar &lt;jarhar@chromium.org&gt;
+Commit-Queue: Mason Freed &lt;masonf@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1181803}
 </pre>
 
 </body>
