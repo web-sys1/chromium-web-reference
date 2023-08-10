@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1181803/"> 1181803</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dbf58c92a7bbc184d831afde39ac93cc8ff493bc">dbf58c92a7bbc184d831afde39ac93cc8ff493bc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1181841/"> 1181841</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c1e7dd1bfa491c977f51d9b05c0a34133762913a">c1e7dd1bfa491c977f51d9b05c0a34133762913a</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1181749/">1181749</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/38a33899954a39079c9ccfd657f1e50ffa98ec4c">38a33899954a39079c9ccfd657f1e50ffa98ec4c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1181805/">1181805</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/52ab7079c4f280ddcd17e67e06520144a835a9b6">52ab7079c4f280ddcd17e67e06520144a835a9b6</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   dbf58c92a7bbc184d831afde39ac93cc8ff493bc
+   c1e7dd1bfa491c977f51d9b05c0a34133762913a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/dbf58c92a7bbc184d831afde39ac93cc8ff493bc">
+    <a href="/chromium/src/+log/c1e7dd1bfa491c977f51d9b05c0a34133762913a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/dbf58c92a7bbc184d831afde39ac93cc8ff493bc.tar.gz">
+    <a href="/chromium/src/+archive/c1e7dd1bfa491c977f51d9b05c0a34133762913a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mason Freed &lt;masonf@chromium.org&gt;
+   Jun Zou &lt;junzou@chromium.org&gt;
   </td>
   <td>
-   Thu Aug 10 00:51:23 2023
+   Thu Aug 10 02:24:52 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Aug 10 00:51:23 2023
+   Thu Aug 10 02:24:52 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/dbf58c92a7bbc184d831afde39ac93cc8ff493bc/">
-    86696e803bc52ba85bfc86040f45e9b6aca2ddb8
+   <a href="/chromium/src/+/c1e7dd1bfa491c977f51d9b05c0a34133762913a/">
+    cc45d1e6514ca1bf0546756ff7c569e1babf8e15
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/dbf58c92a7bbc184d831afde39ac93cc8ff493bc%5E">
-    e77bf0a980537d28b9d2ee617df5c2e3440fa7b1
+   <a href="/chromium/src/+/c1e7dd1bfa491c977f51d9b05c0a34133762913a%5E">
+    ddee58b15295c49d196b035cb040a07d322a19e3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/dbf58c92a7bbc184d831afde39ac93cc8ff493bc%5E%21/">
+    <a href="/chromium/src/+/c1e7dd1bfa491c977f51d9b05c0a34133762913a%5E%21/">
      diff
     </a>
     ]
@@ -179,40 +179,21 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">DOM Parts speed optimization patch 3/N
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Omnibox][ML] Add sync TFLite ML model execution API.
 
-This CL revamps several larger parts of DOM Parts:
- - The PartRoot no longer maintains a list of unsorted parts. It
-   maintains a cache which is in sorted order, if it exists. If the
-   cache is dirty, then a call to getParts() will walk the full
-   sub-tree and collect the cached Parts.
- - Several techniques are used to maintain the cache and keep it from
-   getting dirty:
-     1. A NodeMoveScope is used to maintain state during DOM tree moves
-        such as AppendNode or InsertBefore.
-     2. As Nodes are moved, if they can be removed from old PartRoots
-        or added to new PartRoots while maintaining the cache
-        correctness, that will be done. This uses information from
-        the NodeMoveScope.
-     3. This process is now also used to maintain the cache during a
-        Clone.
-     4. When walking the tree to re-collect Parts, each PartRoot now
-        returns a FirstIncludedChildNode and LastIncludedChildNode so
-        that the walk can be scoped to this sub-tree.
-     5. The cached Part list is now stored as a HeapDeque rather than
-        a HeapHashSet, and DCHECKs ensure that we don't ever need to
-        search the cache for a Part, so the HashSet isn't needed.
-     6. getParts() now returns a reference rather than a copy.
+- Add sync batch model execution API.
+- Add a dedicated background thread for model file loading.
+- Update the existing async model execution to load model on the background thread if not loaded, and execute model on the model execution thread.
+- Enable sync url suggestion scoring in autocomplete controller.
 
-These changes are covered by the existing basic-dom-part-objects.tentative.html test.
-
-Bug: 1453291
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I49f027e48485165f48719dc1f8d54cd21b23fa20">I49f027e48485165f48719dc1f8d54cd21b23fa20</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4764270">https://chromium-review.googlesource.com/c/chromium/src/+/4764270</a>
-Auto-Submit: Mason Freed &lt;masonf@chromium.org&gt;
-Reviewed-by: Joey Arhar &lt;jarhar@chromium.org&gt;
-Commit-Queue: Mason Freed &lt;masonf@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1181803}
+Bug: 1468407, b/294133650
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I61fa3711411cf9a9e59f88a01ff03ed27747dc81">I61fa3711411cf9a9e59f88a01ff03ed27747dc81</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4726969">https://chromium-review.googlesource.com/c/chromium/src/+/4726969</a>
+Commit-Queue: Jun Zou &lt;junzou@google.com&gt;
+Reviewed-by: manuk hovanesian &lt;manukh@chromium.org&gt;
+Reviewed-by: Angela Yoeurng &lt;yoangela@chromium.org&gt;
+Reviewed-by: Robert Ogden &lt;robertogden@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1181841}
 </pre>
 
 </body>
