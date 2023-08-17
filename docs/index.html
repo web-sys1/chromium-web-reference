@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1184642/"> 1184642</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ba5ca054067777bfd5a4f0b964d68bc31330544d">ba5ca054067777bfd5a4f0b964d68bc31330544d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1184702/"> 1184702</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e191ca094a962d57241bc7d816a5d8bf9572668a">e191ca094a962d57241bc7d816a5d8bf9572668a</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1184639/">1184639</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6ca7bc09ae78253a63bb57015f31f135214a2f53">6ca7bc09ae78253a63bb57015f31f135214a2f53</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1184678/">1184678</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f7e351fb5b6dd2cba1bc4cfaaf781e2e83adbcf9">f7e351fb5b6dd2cba1bc4cfaaf781e2e83adbcf9</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ba5ca054067777bfd5a4f0b964d68bc31330544d
+   e191ca094a962d57241bc7d816a5d8bf9572668a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ba5ca054067777bfd5a4f0b964d68bc31330544d">
+    <a href="/chromium/src/+log/e191ca094a962d57241bc7d816a5d8bf9572668a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ba5ca054067777bfd5a4f0b964d68bc31330544d.tar.gz">
+    <a href="/chromium/src/+archive/e191ca094a962d57241bc7d816a5d8bf9572668a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jan Keitel &lt;jkeitel@google.com&gt;
+   Norge Vizcay &lt;vizcay@google.com&gt;
   </td>
   <td>
-   Thu Aug 17 11:12:04 2023
+   Thu Aug 17 14:14:54 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Aug 17 11:12:04 2023
+   Thu Aug 17 14:14:54 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ba5ca054067777bfd5a4f0b964d68bc31330544d/">
-    8b755db1abc5b357779b8498acbc53fc0ecde70a
+   <a href="/chromium/src/+/e191ca094a962d57241bc7d816a5d8bf9572668a/">
+    d8bba7fa987805563de212fa0c05216b6241b6de
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ba5ca054067777bfd5a4f0b964d68bc31330544d%5E">
-    4403ea20f4c24779c71095eb2f71c78cb81f67f3
+   <a href="/chromium/src/+/e191ca094a962d57241bc7d816a5d8bf9572668a%5E">
+    667a80e9b15b3683f9e5faa28ffcfbcf00c40b1f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ba5ca054067777bfd5a4f0b964d68bc31330544d%5E%21/">
+    <a href="/chromium/src/+/e191ca094a962d57241bc7d816a5d8bf9572668a%5E%21/">
      diff
     </a>
     ]
@@ -179,32 +179,19 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Avoid dangling pointers in CreditCardFidoAuthenticator.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[AutofillDataModel] Add parsing for address overflow fields.
 
-This CL addresses a dangling pointer that can occur outside of tests as
-follows:
-- CreditCardAccessManager owns a CreditCard and a
-  CreditCardFidoAuthenticator.
-- CreditCardFidoAuthenticator stores a raw pointer to the CreditCard
-  when CreditCardFidoAuthenticator::Authenticate is called.
-- CreditCardFidoAuthenticator owns a FullCardRequest, which, on
-  completion or failure, calls CreditCardFidoAuthenticator::OnFido*.
-  This, in turn, calls
-  CreditCardAccessManager::OnFIDOAuthenticationComplete, which calls
-  CreditCardAccessManager::Reset that deletes the CreditCard, to which
-  the CreditCardFidoAuthenticator still has a raw pointer.
+The CL adds type field parsing for address overflow fields. The parsing logic is implemented behind kAutofillEnableSupportForAddressOverflow flag.
 
-This CL resolves this by keeping a copy of the CreditCard instead of
-maintaining a pointer.
+It also moves the token "complemento" from address line 2 parsing
+expression into address overflow.
 
-Bug: 1468967
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id1bdcfcc3430a663040cfad908316519870dbd71">Id1bdcfcc3430a663040cfad908316519870dbd71</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4777249">https://chromium-review.googlesource.com/c/chromium/src/+/4777249</a>
-Reviewed-by: Olivia Saul &lt;jsaul@google.com&gt;
-Commit-Queue: Jan Keitel &lt;jkeitel@google.com&gt;
+Bug: 1441904
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I38cbcc12f78103b943c2c910c684f41466301804">I38cbcc12f78103b943c2c910c684f41466301804</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4783769">https://chromium-review.googlesource.com/c/chromium/src/+/4783769</a>
+Commit-Queue: Norge Vizcay &lt;vizcay@google.com&gt;
 Reviewed-by: Florian Leimgruber &lt;fleimgruber@google.com&gt;
-Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1184642}
+Cr-Commit-Position: refs/heads/main@{#1184702}
 </pre>
 
 </body>
