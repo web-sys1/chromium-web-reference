@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1185747/"> 1185747</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0ce5de122756cd5ea10018bfd520fb911177d80">f0ce5de122756cd5ea10018bfd520fb911177d80</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1185798/"> 1185798</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/88a2b594979b5592a7df4afd410123e661f512d7">88a2b594979b5592a7df4afd410123e661f512d7</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1185747/">1185747</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0ce5de122756cd5ea10018bfd520fb911177d80">f0ce5de122756cd5ea10018bfd520fb911177d80</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1185795/">1185795</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/620d5ca09f8584f57f32ed026fe7ad0c6e527d98">620d5ca09f8584f57f32ed026fe7ad0c6e527d98</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f0ce5de122756cd5ea10018bfd520fb911177d80
+   88a2b594979b5592a7df4afd410123e661f512d7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f0ce5de122756cd5ea10018bfd520fb911177d80">
+    <a href="/chromium/src/+log/88a2b594979b5592a7df4afd410123e661f512d7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f0ce5de122756cd5ea10018bfd520fb911177d80.tar.gz">
+    <a href="/chromium/src/+archive/88a2b594979b5592a7df4afd410123e661f512d7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Florian Leimgruber &lt;fleimgruber@google.com&gt;
+   Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
   </td>
   <td>
-   Mon Aug 21 08:40:31 2023
+   Mon Aug 21 11:39:57 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 21 08:40:31 2023
+   Mon Aug 21 11:39:57 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f0ce5de122756cd5ea10018bfd520fb911177d80/">
-    e7e989de996bb220d3b5724a65406a25933c404b
+   <a href="/chromium/src/+/88a2b594979b5592a7df4afd410123e661f512d7/">
+    04ec591e99d73a9ef325edba4fafa5e52cd6d367
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f0ce5de122756cd5ea10018bfd520fb911177d80%5E">
-    a975dabc5141fe2fe9dc490e66688478f5f62a43
+   <a href="/chromium/src/+/88a2b594979b5592a7df4afd410123e661f512d7%5E">
+    ab775005ab34a1cbcce8987e0dfe3204a109d6f4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f0ce5de122756cd5ea10018bfd520fb911177d80%5E%21/">
+    <a href="/chromium/src/+/88a2b594979b5592a7df4afd410123e661f512d7%5E%21/">
      diff
     </a>
     ]
@@ -179,33 +179,22 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rename metrics-only APIs related to sync sign-in state.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Introduce Cache source.
 
-For the sync deprecation, the Sync team is auditing all calls to their
-APIs. This CL simplifies their job by marking metrics-only usages
-around the sync sign-in state as such. No behavior changes.
-This CL is a fork of crrev.com/c/4750260. See the description of that
-CL for additional reasons why this is desirable.
+To support the cache source in <a href="https://github.com/yoshisatoyanagisawa/service-worker-static-routing-api/blob/main/final-form.md,">https://github.com/yoshisatoyanagisawa/service-worker-static-routing-api/blob/main/final-form.md,</a>
+we need to have a data structure in mojo and database.
+This CL adds them so that we can implement the core part of the cache
+source support later.
 
-Specifically, this CL does the following:
-- Renames the very generic PDM::GetSyncSigninState() to
-  GetPaymentsSigninStateForMetrics(). It turns out that almost all calls
-  are for metrics purposes - modulo the exceptions explained below.
-  This is the majority of this CL's delta.
-- Moves AutofillSyncSigninState from sync_utils to
-  AutofillMetrics::PaymentsSigninState.
-- Adds PDM::IsPaymentsWalletSyncTransportEnabled(). Turns out that all
-  non-metrics uses of PDM::GetSyncSigninState() are checking if
-  wallet is running in transport mode. There are only three uses of this
-  function, which the Sync team can audit separately.
-
-Bug: 1462286
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I29d7783a265bf6b17929908249268dd48253b5a0">I29d7783a265bf6b17929908249268dd48253b5a0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4783433">https://chromium-review.googlesource.com/c/chromium/src/+/4783433</a>
-Reviewed-by: Olivia Saul &lt;jsaul@google.com&gt;
-Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Commit-Queue: Florian Leimgruber &lt;fleimgruber@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1185747}
+Bug: 1371756
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1bd39457f6b9c5fad2a9350d5b27ffdb219ab1f4">I1bd39457f6b9c5fad2a9350d5b27ffdb219ab1f4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4788631">https://chromium-review.googlesource.com/c/chromium/src/+/4788631</a>
+Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
+Reviewed-by: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
+Reviewed-by: Minoru Chikamune &lt;chikamune@chromium.org&gt;
+Commit-Queue: Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
+Reviewed-by: Shunya Shishido &lt;sisidovski@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1185798}
 </pre>
 
 </body>
