@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1185709/"> 1185709</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ea1ad5d87b9605969600b0808850e072d713385c">ea1ad5d87b9605969600b0808850e072d713385c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1185747/"> 1185747</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0ce5de122756cd5ea10018bfd520fb911177d80">f0ce5de122756cd5ea10018bfd520fb911177d80</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1185708/">1185708</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/197094eadeee285b86dd86c296e7620d438be83c">197094eadeee285b86dd86c296e7620d438be83c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1185747/">1185747</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0ce5de122756cd5ea10018bfd520fb911177d80">f0ce5de122756cd5ea10018bfd520fb911177d80</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ea1ad5d87b9605969600b0808850e072d713385c
+   f0ce5de122756cd5ea10018bfd520fb911177d80
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ea1ad5d87b9605969600b0808850e072d713385c">
+    <a href="/chromium/src/+log/f0ce5de122756cd5ea10018bfd520fb911177d80">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ea1ad5d87b9605969600b0808850e072d713385c.tar.gz">
+    <a href="/chromium/src/+archive/f0ce5de122756cd5ea10018bfd520fb911177d80.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jenny Zhang &lt;jennyz@chromium.org&gt;
+   Florian Leimgruber &lt;fleimgruber@google.com&gt;
   </td>
   <td>
-   Mon Aug 21 05:39:37 2023
+   Mon Aug 21 08:40:31 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 21 05:39:37 2023
+   Mon Aug 21 08:40:31 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ea1ad5d87b9605969600b0808850e072d713385c/">
-    87c392877ec2ffe1d28c8db038b6d29bf5d8ec95
+   <a href="/chromium/src/+/f0ce5de122756cd5ea10018bfd520fb911177d80/">
+    e7e989de996bb220d3b5724a65406a25933c404b
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ea1ad5d87b9605969600b0808850e072d713385c%5E">
-    197094eadeee285b86dd86c296e7620d438be83c
+   <a href="/chromium/src/+/f0ce5de122756cd5ea10018bfd520fb911177d80%5E">
+    a975dabc5141fe2fe9dc490e66688478f5f62a43
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ea1ad5d87b9605969600b0808850e072d713385c%5E%21/">
+    <a href="/chromium/src/+/f0ce5de122756cd5ea10018bfd520fb911177d80%5E%21/">
      diff
     </a>
     ]
@@ -179,39 +179,33 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Lacros Test: Add support to verify/close web based UIs in ash.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rename metrics-only APIs related to sync sign-in state.
 
-One of the annoying issues with lacros browser tests running
-with shared ash is that some tests may open a UI in Ash (some
-times by accident) and it will fail the tests running after
-it, which makes the tests flaky and is hard to catch the culprit.
+For the sync deprecation, the Sync team is auditing all calls to their
+APIs. This CL simplifies their job by marking metrics-only usages
+around the sync sign-in state as such. No behavior changes.
+This CL is a fork of crrev.com/c/4750260. See the description of that
+CL for additional reasons why this is desirable.
 
-This cl adds the following support in InProcessBrowserTest for
-lacros browser tests running with ash to prevent such issues:
+Specifically, this CL does the following:
+- Renames the very generic PDM::GetSyncSigninState() to
+  GetPaymentsSigninStateForMetrics(). It turns out that almost all calls
+  are for metrics purposes - modulo the exceptions explained below.
+  This is the majority of this CL's delta.
+- Moves AutofillSyncSigninState from sync_utils to
+  AutofillMetrics::PaymentsSigninState.
+- Adds PDM::IsPaymentsWalletSyncTransportEnabled(). Turns out that all
+  non-metrics uses of PDM::GetSyncSigninState() are checking if
+  wallet is running in transport mode. There are only three uses of this
+  function, which the Sync team can audit separately.
 
-1. Verify that there is no ash browser based UI such as SWA,
-web UI. etc open before the test starts and after the test finishes.
-
-2. Provide API to close all ash browser windows from lacros
-browser tests.
-
-The test should be responsible for managing the
-browser windows it opens in ash, and making sure they are cleaned
-up before the test tears down. Otherwise, InProcessBrowserTest will
-catch the problem and fail the test.
-
-Note this cl only fixes the issue with the web based UI. Some UI generated in ash are not web based, for example, a dialog derived
-from DialogDelegateView. We will fix these UI later.
-
-Bug: 1473375,1446083,1473402
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If2d8dd6496ae47f61a21174328953d30b9a69fd8">If2d8dd6496ae47f61a21174328953d30b9a69fd8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4757644">https://chromium-review.googlesource.com/c/chromium/src/+/4757644</a>
-Reviewed-by: Sven Zheng &lt;svenzheng@chromium.org&gt;
-Reviewed-by: Yuzhu Shen &lt;yzshen@chromium.org&gt;
-Reviewed-by: Georg Neis &lt;neis@chromium.org&gt;
-Reviewed-by: David Roger &lt;droger@chromium.org&gt;
-Commit-Queue: Jenny Zhang &lt;jennyz@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1185709}
+Bug: 1462286
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I29d7783a265bf6b17929908249268dd48253b5a0">I29d7783a265bf6b17929908249268dd48253b5a0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4783433">https://chromium-review.googlesource.com/c/chromium/src/+/4783433</a>
+Reviewed-by: Olivia Saul &lt;jsaul@google.com&gt;
+Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Commit-Queue: Florian Leimgruber &lt;fleimgruber@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1185747}
 </pre>
 
 </body>
