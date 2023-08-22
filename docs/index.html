@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1186353/"> 1186353</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b98c18ec53e4840458a8e8d06b38550bff73da35">b98c18ec53e4840458a8e8d06b38550bff73da35</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1186416/"> 1186416</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/25df5f66530816f7466f5a50c4491207595652d4">25df5f66530816f7466f5a50c4491207595652d4</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1186319/">1186319</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/788b6fc091d75c1438c91f0f6c9a67fbce90152f">788b6fc091d75c1438c91f0f6c9a67fbce90152f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1186384/">1186384</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/714a88a203fdb915be641c82c159d86b9db486a1">714a88a203fdb915be641c82c159d86b9db486a1</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b98c18ec53e4840458a8e8d06b38550bff73da35
+   25df5f66530816f7466f5a50c4491207595652d4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b98c18ec53e4840458a8e8d06b38550bff73da35">
+    <a href="/chromium/src/+log/25df5f66530816f7466f5a50c4491207595652d4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b98c18ec53e4840458a8e8d06b38550bff73da35.tar.gz">
+    <a href="/chromium/src/+archive/25df5f66530816f7466f5a50c4491207595652d4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Rupert Ben Wiser &lt;bewise@chromium.org&gt;
+   Simon Zünd &lt;szuend@chromium.org&gt;
   </td>
   <td>
-   Tue Aug 22 08:41:26 2023
+   Tue Aug 22 11:34:20 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 22 08:41:26 2023
+   Tue Aug 22 11:34:20 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b98c18ec53e4840458a8e8d06b38550bff73da35/">
-    349455f42124ca44eefed88fdfd8f8031fd45142
+   <a href="/chromium/src/+/25df5f66530816f7466f5a50c4491207595652d4/">
+    a781a3d5c3e9d6a6d279f0da26bcf7b434326445
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b98c18ec53e4840458a8e8d06b38550bff73da35%5E">
-    6cb552b2c29ee58059de69608e0a044430071372
+   <a href="/chromium/src/+/25df5f66530816f7466f5a50c4491207595652d4%5E">
+    3ba26a2f636b0dab1577989c641ccfcdd22abb1a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b98c18ec53e4840458a8e8d06b38550bff73da35%5E%21/">
+    <a href="/chromium/src/+/25df5f66530816f7466f5a50c4491207595652d4%5E%21/">
      diff
     </a>
     ]
@@ -179,42 +179,19 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">webview(metrics): Fix host package information in SDK runtime
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[devtools] Temporarily disable two 'reveal' web tests
 
-The context we retrieve for the SDK runtime is a generic
-sdksandbox context. This results in our metrics and minidumps
-reporting a generic package name that won't help
-for investigating issues.
+The CL <a href="https://crrev.com/c/4798444">https://crrev.com/c/4798444</a> changes a method signature these 2
+tests rely on.
 
-The good news is that the uid for the SDK sandbox
-process does belong to the host app and there is a deterministic
-relationship between the SDK process and the host app
-so we can get the host apps information from it.
-
-The one tricky bit is that this trick doesn't apply to the
-render process because it is an isolated process and so
-doesn't have this same relationship.
-We settled on feeding this through as a command line
-switch.
-
-I unfortunately haven't added tests because we don't
-have any instrumentation tests for the SDK runtime
-and this behavior is wildly environment specific.
-I just tested it manually with a shell app that contains
-a WebView and also confirmed that the mini dumps show
-correctly in the dev UI when I induce a crash with
-chrome://crash. I have also tested this against staging
-crashpad and confirmed that the crashes show up there.
-
-Low-Coverage-Reason: We don't have Rb infrastructure for tests
-Bug: 1464923
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifa063299caeed57679d99febe90b2e95cbb09ee8">Ifa063299caeed57679d99febe90b2e95cbb09ee8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4720129">https://chromium-review.googlesource.com/c/chromium/src/+/4720129</a>
-Commit-Queue: Rupert Wiser &lt;bewise@chromium.org&gt;
-Reviewed-by: Alexander Timin &lt;altimin@chromium.org&gt;
-Reviewed-by: Richard Coles &lt;torne@chromium.org&gt;
-Reviewed-by: Luc Nguyen &lt;lucnguyen@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1186353}
+Bug: 1468875
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I519207134be345bec7290f7f0daa662e588e5bfb">I519207134be345bec7290f7f0daa662e588e5bfb</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4798607">https://chromium-review.googlesource.com/c/chromium/src/+/4798607</a>
+Commit-Queue: Simon Zünd &lt;szuend@chromium.org&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Auto-Submit: Simon Zünd &lt;szuend@chromium.org&gt;
+Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1186416}
 </pre>
 
 </body>
