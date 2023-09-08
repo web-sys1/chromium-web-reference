@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1193899/"> 1193899</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0d90b1f8ede2b5dbbc733db5ffcd9b0a8891a36">f0d90b1f8ede2b5dbbc733db5ffcd9b0a8891a36</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1193935/"> 1193935</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0bb32c96ae8528ecf1cf44495e60fc0d1cb02173">0bb32c96ae8528ecf1cf44495e60fc0d1cb02173</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1193891/">1193891</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8ad10997a96f92e47347e3d87fc21da467b63e38">8ad10997a96f92e47347e3d87fc21da467b63e38</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1193931/">1193931</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fda2b859bf5350e3ead4d3415bbb9424ea50529c">fda2b859bf5350e3ead4d3415bbb9424ea50529c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f0d90b1f8ede2b5dbbc733db5ffcd9b0a8891a36
+   0bb32c96ae8528ecf1cf44495e60fc0d1cb02173
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f0d90b1f8ede2b5dbbc733db5ffcd9b0a8891a36">
+    <a href="/chromium/src/+log/0bb32c96ae8528ecf1cf44495e60fc0d1cb02173">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f0d90b1f8ede2b5dbbc733db5ffcd9b0a8891a36.tar.gz">
+    <a href="/chromium/src/+archive/0bb32c96ae8528ecf1cf44495e60fc0d1cb02173.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tom Anderson &lt;thomasanderson@chromium.org&gt;
+   Vinny Persky &lt;vinnypersky@google.com&gt;
   </td>
   <td>
-   Fri Sep 08 02:53:27 2023
+   Fri Sep 08 05:54:08 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Sep 08 02:53:27 2023
+   Fri Sep 08 05:54:08 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f0d90b1f8ede2b5dbbc733db5ffcd9b0a8891a36/">
-    6fd52defdd1959962864200e3a4b5e160a14b8d8
+   <a href="/chromium/src/+/0bb32c96ae8528ecf1cf44495e60fc0d1cb02173/">
+    8eb2cc65b88dd7953d119736aa7a177d3ba0c113
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f0d90b1f8ede2b5dbbc733db5ffcd9b0a8891a36%5E">
-    107bc3816654c089ce4192194ab26d64c7606508
+   <a href="/chromium/src/+/0bb32c96ae8528ecf1cf44495e60fc0d1cb02173%5E">
+    3c5ab0b165687842a813fb99f1bdb5d9a7334ac8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f0d90b1f8ede2b5dbbc733db5ffcd9b0a8891a36%5E%21/">
+    <a href="/chromium/src/+/0bb32c96ae8528ecf1cf44495e60fc0d1cb02173%5E%21/">
      diff
     </a>
     ]
@@ -179,23 +179,48 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[X11] Fix std::vector OOB access in XDisplayManager::GetPrimaryDisplay()
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove Form Card Matching In Mandatory Reauth Opt-In Flow (CL 1 of 3)
 
-This is a (speculative) fix for bug 1475176.  I suspect the issue is
-that some codepaths that call into GetFallbackDisplayList() don't
-also set `primary_display_index_` when they should.  To prevent this,
-GetFallbackDisplayList() is refactored to set `primary_display_index_`,
-even though all it does is set it to 0.
+The old behavior here was that if the user autofilled a card via non-
+interactive authentication (green path), and then deleted the card in
+the form and manually typed in a different card, we would do a matching
+check to make sure that the card in the form matched the most recently
+filled card before we offer re-auth opt-in.
 
-trigger in testing to meet coverage
+With this CL, we will remove the matching check. Instead, with this CL,
+we will offer re-auth opt-in if the user's most recent autofill moment
+was a non-interactive authentication (green path).
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2cc1020ea01e8b5e7b29e34174e7fec4b5c0fcf7">I2cc1020ea01e8b5e7b29e34174e7fec4b5c0fcf7</a>
-Bug: 1475176
-Low-Coverage-Reason: Difficult to get the fallback codepath to
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4846821">https://chromium-review.googlesource.com/c/chromium/src/+/4846821</a>
-Commit-Queue: Thomas Anderson &lt;thomasanderson@chromium.org&gt;
-Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1193899}
+The difference in functionality with this CL will be that in the case
+where a user green paths a card, then deletes the card and manually
+types in a different card in the form, we will now offer re-auth opt-in.
+Before this CL, in this scenario, we would not offer re-auth opt-in.
+
+After discussing this case within engineering and with product, we
+realized that it is an extremely rare edge cased based on the UMA data.
+Handling it adds a lot of complexity in the code, and not offering re-
+auth opt-in might actually not be the ideal user journey from a product
+perspective. It is possible if a user went through non-interactive
+authentication but then manually typed in a different card, they
+actually disliked the non-interactive authentication and wanted to use a
+different card. Offering to always authenticate can actually make a lot
+of sense in this use-case.
+
+CL #2 in this chain will update the associated histograms and enums to
+match this refactor.
+
+CL #3 in this chain will move the class variable that denotes the most
+recent payments autofill was a non-interactive authentication into
+CreditCardAccessManager.
+
+Bug: 1478907
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6e1fbf35487335290086964b410e8de4bdf01283">I6e1fbf35487335290086964b410e8de4bdf01283</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4836921">https://chromium-review.googlesource.com/c/chromium/src/+/4836921</a>
+Reviewed-by: Dominic Battre &lt;battre@chromium.org&gt;
+Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Reviewed-by: Olivia Saul &lt;jsaul@google.com&gt;
+Commit-Queue: Vinny Persky &lt;vinnypersky@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1193935}
 </pre>
 
 </body>
