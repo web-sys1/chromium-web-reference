@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1195324/"> 1195324</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bc0d423a163c84de9a02d4c0757fb25038bf8bc4">bc0d423a163c84de9a02d4c0757fb25038bf8bc4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1195378/"> 1195378</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9e0979b73d0b3d337b41f30a1b9f1b43ce59f7b0">9e0979b73d0b3d337b41f30a1b9f1b43ce59f7b0</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1195302/">1195302</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/83ea140364977dc094f0d273ff91be9109f044e6">83ea140364977dc094f0d273ff91be9109f044e6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1195338/">1195338</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5802c51ed79ef41ee8447dd916734313dd89a78e">5802c51ed79ef41ee8447dd916734313dd89a78e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   bc0d423a163c84de9a02d4c0757fb25038bf8bc4
+   9e0979b73d0b3d337b41f30a1b9f1b43ce59f7b0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/bc0d423a163c84de9a02d4c0757fb25038bf8bc4">
+    <a href="/chromium/src/+log/9e0979b73d0b3d337b41f30a1b9f1b43ce59f7b0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/bc0d423a163c84de9a02d4c0757fb25038bf8bc4.tar.gz">
+    <a href="/chromium/src/+archive/9e0979b73d0b3d337b41f30a1b9f1b43ce59f7b0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sergei Glazunov &lt;glazunov@google.com&gt;
+   Ernesto Izquierdo Clua &lt;eic@google.com&gt;
   </td>
   <td>
-   Tue Sep 12 11:58:29 2023
+   Tue Sep 12 14:30:35 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 12 11:58:29 2023
+   Tue Sep 12 14:30:35 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/bc0d423a163c84de9a02d4c0757fb25038bf8bc4/">
-    afdf4f53fb5008b2154e0d6280f32f03a7ea60b0
+   <a href="/chromium/src/+/9e0979b73d0b3d337b41f30a1b9f1b43ce59f7b0/">
+    47bc555980ac1f59ae18fd7568fae1b61d3de511
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/bc0d423a163c84de9a02d4c0757fb25038bf8bc4%5E">
-    ed354d00aeda84693611b14baa56a287557a26b5
+   <a href="/chromium/src/+/9e0979b73d0b3d337b41f30a1b9f1b43ce59f7b0%5E">
+    c892a3c95d6296015a3cab1d606479f66a9a9cac
    </a>
    <span>
     [
-    <a href="/chromium/src/+/bc0d423a163c84de9a02d4c0757fb25038bf8bc4%5E%21/">
+    <a href="/chromium/src/+/9e0979b73d0b3d337b41f30a1b9f1b43ce59f7b0%5E%21/">
      diff
     </a>
     ]
@@ -179,26 +179,19 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[GWP-ASan] Switch to a faster PRNG
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove expired histogram for font provider
 
-Currently, GWP-ASan utilizes a random number generator that fetches
-entropy from the operating system for each call. This approach is
-computationally intensive and exceeds the needs of GWP-ASan's specific
-use case.
+Removed monitoring histogram after verifying that the custom font
+returned by the font provider always loads successfully.
 
-This CL introduces a more efficient XorShift PRNG, which maintains its
-state in a thread-local variable, leveraging the existing thread-local
-storage code from the `SamplingState` class.
+OBSOLETE_HISTOGRAM[IOS.FontProvider.ProductSansRegular.LoadSuccess]=Monitoring histogram no longer needed.
 
-Local tests show a 2x speed improvement in
-`RecordLightweightDeallocation`, and a 1.22x speedup in a pair of
-`GPA::Allocate` and `GPA::Deallocate` calls.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I948003583a3ce6ee283745fa829f2888fc17b6e5">I948003583a3ce6ee283745fa829f2888fc17b6e5</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4839261">https://chromium-review.googlesource.com/c/chromium/src/+/4839261</a>
-Reviewed-by: Matthew Denton &lt;mpdenton@chromium.org&gt;
-Commit-Queue: Sergei Glazunov &lt;glazunov@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1195324}
+Bug: 1472785
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I342f6274f8845def370ecc49127e1f0ee4f9b646">I342f6274f8845def370ecc49127e1f0ee4f9b646</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4854205">https://chromium-review.googlesource.com/c/chromium/src/+/4854205</a>
+Commit-Queue: Ernesto Izquierdo Clua &lt;eic@google.com&gt;
+Reviewed-by: Sebastien Seguin-Gagnon &lt;sebsg@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1195378}
 </pre>
 
 </body>
