@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1198466/"> 1198466</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a8665f9b2c7333c36712dc6db2e06faa4afaf25a">a8665f9b2c7333c36712dc6db2e06faa4afaf25a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1198593/"> 1198593</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6a1cfd9dadbcb427bdbb558cc493ea31284dfefc">6a1cfd9dadbcb427bdbb558cc493ea31284dfefc</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1198427/">1198427</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/df2c7d88e0e49134e3fd197febf9ea2d1f9aa9ad">df2c7d88e0e49134e3fd197febf9ea2d1f9aa9ad</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1198585/">1198585</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/eddf061993411f5e6d51402ec345f6299a55bf76">eddf061993411f5e6d51402ec345f6299a55bf76</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a8665f9b2c7333c36712dc6db2e06faa4afaf25a
+   6a1cfd9dadbcb427bdbb558cc493ea31284dfefc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a8665f9b2c7333c36712dc6db2e06faa4afaf25a">
+    <a href="/chromium/src/+log/6a1cfd9dadbcb427bdbb558cc493ea31284dfefc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a8665f9b2c7333c36712dc6db2e06faa4afaf25a.tar.gz">
+    <a href="/chromium/src/+archive/6a1cfd9dadbcb427bdbb558cc493ea31284dfefc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Aaron Leventhal &lt;aleventhal@google.com&gt;
+   Ernesto Izquierdo Clua &lt;eic@google.com&gt;
   </td>
   <td>
-   Tue Sep 19 17:32:47 2023
+   Tue Sep 19 20:47:59 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Sep 19 17:32:47 2023
+   Tue Sep 19 20:47:59 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a8665f9b2c7333c36712dc6db2e06faa4afaf25a/">
-    a42944bd00c7a6e85c33b7638cd8f3e274747a30
+   <a href="/chromium/src/+/6a1cfd9dadbcb427bdbb558cc493ea31284dfefc/">
+    50d9688ce71b51e2378e55c0f1d82040ca32e8fb
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a8665f9b2c7333c36712dc6db2e06faa4afaf25a%5E">
-    f44de3298600a0ca9edab5a9e22427ecb6116537
+   <a href="/chromium/src/+/6a1cfd9dadbcb427bdbb558cc493ea31284dfefc%5E">
+    08ec6a50a588ae7cffce1a232c114204707d78a0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a8665f9b2c7333c36712dc6db2e06faa4afaf25a%5E%21/">
+    <a href="/chromium/src/+/6a1cfd9dadbcb427bdbb558cc493ea31284dfefc%5E%21/">
      diff
     </a>
     ]
@@ -179,32 +179,22 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[A11y] Fix errors when content-visibility causes node to be attached
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ios][auth-on-entry2] Password Settings Auth on Entry
 
-Fix for test SidePanelBookmarksTest.List (browser_tests suite) when it
-is run with a11y on.
+This CL requires Local Authentication when opening Password Settings
+from outside the Password Manager Main Page. It also requires auth
+after backgrounding/foregrounding chrome with Password Settings opened.
 
-Problem:
-The content-visibility CSS causes a node to be attached to the layout
-tree, and we update the children of the node with content-visibility.
-However, even though the node has new children, it's cached
-children aren't updated, leading to the serializer running into
-a bad child.
+Low-Coverage-Reason: Renamed method in password mediator.
 
-Fix:
-Call ChildrenChanged() when NodeIsAttached() is called with a
-content-visibility subtree.
-
-Also add an additional check to AXObjectCacheImpl::CheckTreeIsUpdated(),
-so that future similar problems are flagged before they hit the
-serializer.
-
-Bug: 1422755
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8db820a9753eb17b149381ba10ac9f18bf744be2">I8db820a9753eb17b149381ba10ac9f18bf744be2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4875038">https://chromium-review.googlesource.com/c/chromium/src/+/4875038</a>
-Commit-Queue: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
-Reviewed-by: Chris Harrelson &lt;chrishtr@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1198466}
+Bug: 1462419
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I37b51c037b64321c7edf26dff8183b7bc13d00f7">I37b51c037b64321c7edf26dff8183b7bc13d00f7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4869478">https://chromium-review.googlesource.com/c/chromium/src/+/4869478</a>
+Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Commit-Queue: Ernesto Izquierdo Clua &lt;eic@google.com&gt;
+Reviewed-by: Sebastien Seguin-Gagnon &lt;sebsg@chromium.org&gt;
+Commit-Queue: Sebastien Seguin-Gagnon &lt;sebsg@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1198593}
 </pre>
 
 </body>
