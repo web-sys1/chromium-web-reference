@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1202236/"> 1202236</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/528fda065e5d638252bf4db8752b8bdeeb3a2f13">528fda065e5d638252bf4db8752b8bdeeb3a2f13</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1202329/"> 1202329</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5f5b97460a7fcd6fc7538e82da2aed6d3e54b6bf">5f5b97460a7fcd6fc7538e82da2aed6d3e54b6bf</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1202151/">1202151</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/080404b059ceec26f8b621e81fdc229f2c4e5c99">080404b059ceec26f8b621e81fdc229f2c4e5c99</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1202274/">1202274</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f8ca9704572f96662279a2bebd43d8c56fe4af84">f8ca9704572f96662279a2bebd43d8c56fe4af84</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   528fda065e5d638252bf4db8752b8bdeeb3a2f13
+   5f5b97460a7fcd6fc7538e82da2aed6d3e54b6bf
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/528fda065e5d638252bf4db8752b8bdeeb3a2f13">
+    <a href="/chromium/src/+log/5f5b97460a7fcd6fc7538e82da2aed6d3e54b6bf">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/528fda065e5d638252bf4db8752b8bdeeb3a2f13.tar.gz">
+    <a href="/chromium/src/+archive/5f5b97460a7fcd6fc7538e82da2aed6d3e54b6bf.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Dustin J. Mitchell &lt;djmitche@chromium.org&gt;
+   Fiona Macintosh &lt;fmacintosh@google.com&gt;
   </td>
   <td>
-   Thu Sep 28 02:13:51 2023
+   Thu Sep 28 05:13:39 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Sep 28 02:13:51 2023
+   Thu Sep 28 05:13:39 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/528fda065e5d638252bf4db8752b8bdeeb3a2f13/">
-    a5b6856fa3d35c92deb04df7c885eec825816d4a
+   <a href="/chromium/src/+/5f5b97460a7fcd6fc7538e82da2aed6d3e54b6bf/">
+    adbe592a7a3f7d663311bf65c2d8e38ff07ee5ec
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/528fda065e5d638252bf4db8752b8bdeeb3a2f13%5E">
-    f2d7dc16b307fe98958c7b16bfbde5887dfb6376
+   <a href="/chromium/src/+/5f5b97460a7fcd6fc7538e82da2aed6d3e54b6bf%5E">
+    59d9f35bbc7288b8401140689a933faa386c4977
    </a>
    <span>
     [
-    <a href="/chromium/src/+/528fda065e5d638252bf4db8752b8bdeeb3a2f13%5E%21/">
+    <a href="/chromium/src/+/5f5b97460a7fcd6fc7538e82da2aed6d3e54b6bf%5E%21/">
      diff
     </a>
     ]
@@ -179,25 +179,18 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Parse JSON on Android just like other platforms
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Set FirstPartySetsPolicyService pref_enabled_ in 3PCD experiment
 
-Android's strategy for parsing untrusted JSON has been to "sanitize" the
-JSON by round-tripping it through a Java (memory-safe) parser, and then
-parsing it with the in-process JSON parser. This is to avoid spawning a
-service process as is done on other platforms.
+For 3PCD we are removing the FPS toggle and instead setting FPS based on the block all cookies state (see PRD for 3PCD here: go/3pcd-ux-prd#bookmark=kix.2vuldcylitkd). If the FPS setting becomes enterprise
+managed we will be removing the user from the 3PCD experiment.
 
-With the advent of the Rust parser, controlled both by build and runtime
-flags, we want to use that on Android when enabled.
-
-This refactors the #ifdef's to be more intelligible and avoid
-duplicating code.
-
-Bug: 1476100
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id2d99b36043602745350c6ae339c47bca19e77d4">Id2d99b36043602745350c6ae339c47bca19e77d4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4889056">https://chromium-review.googlesource.com/c/chromium/src/+/4889056</a>
-Reviewed-by: Robert Sesek &lt;rsesek@chromium.org&gt;
-Commit-Queue: Dustin Mitchell &lt;djmitche@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1202236}
+Fixed: b:302367561
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idd4655135720ae855a02024e7b9e3c945d45c646">Idd4655135720ae855a02024e7b9e3c945d45c646</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4879959">https://chromium-review.googlesource.com/c/chromium/src/+/4879959</a>
+Reviewed-by: Chris Fredrickson &lt;cfredric@chromium.org&gt;
+Auto-Submit: Fiona Macintosh &lt;fmacintosh@google.com&gt;
+Commit-Queue: Fiona Macintosh &lt;fmacintosh@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1202329}
 </pre>
 
 </body>
