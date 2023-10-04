@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1204915/"> 1204915</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9a88f18d8dc5da756c99c1f10d315783981aa27d">9a88f18d8dc5da756c99c1f10d315783981aa27d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1204996/"> 1204996</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bace90088f099de3352ed2a186ac6036d358c112">bace90088f099de3352ed2a186ac6036d358c112</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1204915/">1204915</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9a88f18d8dc5da756c99c1f10d315783981aa27d">9a88f18d8dc5da756c99c1f10d315783981aa27d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1205004/">1205004</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8f5131dafff8cd419df25b2901af5f4077413be0">8f5131dafff8cd419df25b2901af5f4077413be0</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9a88f18d8dc5da756c99c1f10d315783981aa27d
+   bace90088f099de3352ed2a186ac6036d358c112
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9a88f18d8dc5da756c99c1f10d315783981aa27d">
+    <a href="/chromium/src/+log/bace90088f099de3352ed2a186ac6036d358c112">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9a88f18d8dc5da756c99c1f10d315783981aa27d.tar.gz">
+    <a href="/chromium/src/+archive/bace90088f099de3352ed2a186ac6036d358c112.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yue Zhang &lt;yuezhanggg@chromium.org&gt;
+   dpapad &lt;dpapad@chromium.org&gt;
   </td>
   <td>
-   Tue Oct 03 22:56:05 2023
+   Wed Oct 04 01:51:19 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Oct 03 22:56:05 2023
+   Wed Oct 04 01:51:19 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9a88f18d8dc5da756c99c1f10d315783981aa27d/">
-    2df95ab683195346d27761b1b3cb5518ca4e0497
+   <a href="/chromium/src/+/bace90088f099de3352ed2a186ac6036d358c112/">
+    56b6314333ec32f8d375b5f069dfbad057512e13
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9a88f18d8dc5da756c99c1f10d315783981aa27d%5E">
-    d755afc89c6fbebae39296ec4979bd313e060f60
+   <a href="/chromium/src/+/bace90088f099de3352ed2a186ac6036d358c112%5E">
+    8a506359e4f30aa44e5735b02197366c315095b4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9a88f18d8dc5da756c99c1f10d315783981aa27d%5E%21/">
+    <a href="/chromium/src/+/bace90088f099de3352ed2a186ac6036d358c112%5E%21/">
      diff
     </a>
     ]
@@ -179,55 +179,27 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "android: Allow Paint Preview to happen with native"
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Modernize chrome://system UI implementation.
 
-This reverts commit 6903f41bab9ece614e30a8d19126fd2cdcb78661.
+ - Use web components and Polymer
+ - Leverage dom-repeat and Polymer data bindings to render the UI
+ - Use the BrowserProxy pattern, paving the way for adding tests
+ - Simplify spinner logic (use throbber_small.svg instead of custom CSS
+   animation).
 
-Reason for revert: Causing consistent failure in StartupPaintPreviewHelperTest. For more details please see 
-<a href="https://bugs.chromium.org/p/chromium/issues/detail?id=1471136#c31">https://bugs.chromium.org/p/chromium/issues/detail?id=1471136#c31</a>
+This is mostly a complete rewrite with the exception of porting over
+some old styles, and the logic for parsing external log files.
 
-Original change's description:
-&gt; android: Allow Paint Preview to happen with native
-&gt;
-&gt; The decision whether to display the Paint Preview depends on the
-&gt; heuristic detecting cold start: the start is considered _not_ cold (i.e.
-&gt; warm) when the native library has already been loaded and initialized.
-&gt;
-&gt; We hypothesize that recently the library started becoming initialized
-&gt; very early in the process lifetime. One of the causes for it is
-&gt; asynchronous library loading on a separate thread.
-&gt;
-&gt; As a result of recent changes, the volume of UMA samples for
-&gt; "Browser.PaintPreview.TabbedPlayer.TimeToFirstBitmap" has dropped
-&gt; dramatically, leading to Paint Preview becoming less useful.
-&gt;
-&gt; This change attempts to use another heuristic for a cold start:
-&gt; 1. the app process creation is caused by an activity
-&gt; 2. no activity is paused prior to pre-inflation of the tabbed activity
-&gt;
-&gt; The (1) uses a new "process creation reason" trick available on P+
-&gt; devices and falls back to time-based detection for older devices.
-&gt;
-&gt; Bug: 1471136
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3cdd6adc13212890619b2242ce2bfadd0d23fa3f">I3cdd6adc13212890619b2242ce2bfadd0d23fa3f</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4874028">https://chromium-review.googlesource.com/c/chromium/src/+/4874028</a>
-&gt; Reviewed-by: Michael Thiessen &lt;mthiesse@chromium.org&gt;
-&gt; Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-&gt; Commit-Queue: Egor Pasko &lt;pasko@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1204729}
+Also, c/b/r/about_sys/about_sys.css was previously shared between
+chrome://system and chrome://feedback, and is now moved to
+c/b/r/feedback/ since it is only used there.
 
-Bug: 1471136
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id15d75cb9860d8556652fcc20b0dbb340fcfdebf">Id15d75cb9860d8556652fcc20b0dbb340fcfdebf</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4908846">https://chromium-review.googlesource.com/c/chromium/src/+/4908846</a>
-Auto-Submit: Yue Zhang &lt;yuezhanggg@chromium.org&gt;
-Commit-Queue: Mei Liang &lt;meiliang@chromium.org&gt;
-Reviewed-by: Mei Liang &lt;meiliang@chromium.org&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Owners-Override: Yue Zhang &lt;yuezhanggg@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1204915}
+Bug: 1488053
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I73e152f4162dc713539183de073a96afe2734c4c">I73e152f4162dc713539183de073a96afe2734c4c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4906365">https://chromium-review.googlesource.com/c/chromium/src/+/4906365</a>
+Reviewed-by: John Lee &lt;johntlee@chromium.org&gt;
+Commit-Queue: Demetrios Papadopoulos &lt;dpapad@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1204996}
 </pre>
 
 </body>
