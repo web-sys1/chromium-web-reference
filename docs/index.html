@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1205164/"> 1205164</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e7111e6a56cd15bc74c51e478267ab88e923364e">e7111e6a56cd15bc74c51e478267ab88e923364e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1205234/"> 1205234</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4e7d48c116014221581cb2571a6c6ed105f8e171">4e7d48c116014221581cb2571a6c6ed105f8e171</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1205145/">1205145</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c68e286320863a6e8655fc30fe95a6929e52368b">c68e286320863a6e8655fc30fe95a6929e52368b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1205221/">1205221</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/34733a35b32b172cc9d57748781831ae521bf2a0">34733a35b32b172cc9d57748781831ae521bf2a0</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e7111e6a56cd15bc74c51e478267ab88e923364e
+   4e7d48c116014221581cb2571a6c6ed105f8e171
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e7111e6a56cd15bc74c51e478267ab88e923364e">
+    <a href="/chromium/src/+log/4e7d48c116014221581cb2571a6c6ed105f8e171">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e7111e6a56cd15bc74c51e478267ab88e923364e.tar.gz">
+    <a href="/chromium/src/+archive/4e7d48c116014221581cb2571a6c6ed105f8e171.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ivana Žužić &lt;izuzic@google.com&gt;
+   Stefano Duo &lt;stefanoduo@google.com&gt;
   </td>
   <td>
-   Wed Oct 04 11:20:59 2023
+   Wed Oct 04 14:34:45 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Oct 04 11:20:59 2023
+   Wed Oct 04 14:34:45 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e7111e6a56cd15bc74c51e478267ab88e923364e/">
-    fbfbc3673f6719b56eaefdff43cbb22434b6babc
+   <a href="/chromium/src/+/4e7d48c116014221581cb2571a6c6ed105f8e171/">
+    2858c7a1ee27714e2314ba8ca55bf1438f43c13d
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e7111e6a56cd15bc74c51e478267ab88e923364e%5E">
-    c1b78e98264ac9023f0731eb853de0781ec6929a
+   <a href="/chromium/src/+/4e7d48c116014221581cb2571a6c6ed105f8e171%5E">
+    8f9cf72af3e15bb6249c4d0d440056768e4e5ea9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e7111e6a56cd15bc74c51e478267ab88e923364e%5E%21/">
+    <a href="/chromium/src/+/4e7d48c116014221581cb2571a6c6ed105f8e171%5E%21/">
      diff
     </a>
     ]
@@ -179,40 +179,23 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Gardener] Revert "Refactor some WebAppFrameToolbarBrowserTest methods"
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make waitForStatus do what it's supposed to do
 
-This reverts commit 27a3c51aaeab1f8db15366452ff1b528d11b0775.
+The expectation for waitForStatus is to block until a certain state is
+reached. Confusingly, UrlRequest.StatusListener gets called only once.
+This means that waitForStatus would unblock only if we managed to
+luckily call UrlRequest#getStatus at the right point in time (i.e. when
+it would return the state we're waiting for).
 
-Reason for revert: The CL seems to be breaking
-BorderlessIsolatedWebAppBrowserTest.PopupToAnyOtherOriginIsNotBorderless
-(crbug.com/1489217).
+To circumvent that, the listener registered by waitForStatus has to
+re-register itself whenever it doesn't receive the expected state.
 
-Original change's description:
-&gt; Refactor some WebAppFrameToolbarBrowserTest methods
-&gt;
-&gt; - Move `GrantWindowManagementPermission` to the helper class to be able
-&gt; to use it in the upcoming AWC tests and make it static.
-&gt; - Also make `OpenPopup` static and refactor some existing test code to
-&gt; use it to reduce duplication.
-&gt;
-&gt; Bug: None
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6dd14582da8b86f03277ef2eb52e3f99f1f9604d">I6dd14582da8b86f03277ef2eb52e3f99f1f9604d</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4905402">https://chromium-review.googlesource.com/c/chromium/src/+/4905402</a>
-&gt; Auto-Submit: Sonja Laurila &lt;laurila@google.com&gt;
-&gt; Reviewed-by: Peter Kasting &lt;pkasting@chromium.org&gt;
-&gt; Commit-Queue: Sonja Laurila &lt;laurila@google.com&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1205121}
-
-Bug: 1489217
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I35926d4dcf5a2ba8004c851ddf1c02d1e3669620">I35926d4dcf5a2ba8004c851ddf1c02d1e3669620</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4905458">https://chromium-review.googlesource.com/c/chromium/src/+/4905458</a>
-Owners-Override: Ivana Žužić &lt;izuzic@google.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Reviewed-by: Sonja Laurila &lt;laurila@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1205164}
+Bug: b:290583020
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I15bbe8e76139ff09915c61d3ceda2272a8ba6b3b">I15bbe8e76139ff09915c61d3ceda2272a8ba6b3b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4900709">https://chromium-review.googlesource.com/c/chromium/src/+/4900709</a>
+Reviewed-by: Chidera Olibie &lt;colibie@google.com&gt;
+Commit-Queue: Stefano Duo &lt;stefanoduo@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1205234}
 </pre>
 
 </body>
