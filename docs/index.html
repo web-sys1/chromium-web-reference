@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1209795/"> 1209795</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/81642de12d34c1901362d09c1d35b1119caaf780">81642de12d34c1901362d09c1d35b1119caaf780</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1209802/"> 1209802</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/70abb619deaf5a4d53e8c3e68cece04e6ae06e64">70abb619deaf5a4d53e8c3e68cece04e6ae06e64</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1209793/">1209793</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0c1e554f95953c7a1e2e79c1593e18786121cf02">0c1e554f95953c7a1e2e79c1593e18786121cf02</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1209802/">1209802</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/70abb619deaf5a4d53e8c3e68cece04e6ae06e64">70abb619deaf5a4d53e8c3e68cece04e6ae06e64</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   81642de12d34c1901362d09c1d35b1119caaf780
+   70abb619deaf5a4d53e8c3e68cece04e6ae06e64
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/81642de12d34c1901362d09c1d35b1119caaf780">
+    <a href="/chromium/src/+log/70abb619deaf5a4d53e8c3e68cece04e6ae06e64">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/81642de12d34c1901362d09c1d35b1119caaf780.tar.gz">
+    <a href="/chromium/src/+archive/70abb619deaf5a4d53e8c3e68cece04e6ae06e64.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Omer Katz &lt;omerkatz@chromium.org&gt;
   </td>
   <td>
-   Sat Oct 14 08:42:56 2023
+   Sat Oct 14 11:45:38 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Oct 14 08:42:56 2023
+   Sat Oct 14 11:45:38 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/81642de12d34c1901362d09c1d35b1119caaf780/">
-    3544e63e506b375af5e2e7116dbfb4d5977a6c69
+   <a href="/chromium/src/+/70abb619deaf5a4d53e8c3e68cece04e6ae06e64/">
+    df0b725c1e5f9517f35b082d5c2316917211f7ee
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/81642de12d34c1901362d09c1d35b1119caaf780%5E">
-    8a2efddb5a7c67c24cbb943831d29f8e75503624
+   <a href="/chromium/src/+/70abb619deaf5a4d53e8c3e68cece04e6ae06e64%5E">
+    16f02fb0b28ad34b224f366bc9095016b9457889
    </a>
    <span>
     [
-    <a href="/chromium/src/+/81642de12d34c1901362d09c1d35b1119caaf780%5E%21/">
+    <a href="/chromium/src/+/70abb619deaf5a4d53e8c3e68cece04e6ae06e64%5E%21/">
      diff
     </a>
     ]
@@ -179,31 +179,21 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Linux PGO Profile
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix data race in NGPhysicalFragment
 
-Roll Chrome Linux PGO profile from chrome-linux-main-1697219501-f9a569593d232cc44db1e6ea4462bf97286b16c3.profdata to chrome-linux-main-1697262689-4acbc4d48bceb716f9e82c78f21af27f37c9dfae.profdata
+TSan reports a race between
+`blink::NGPhysicalFragment::SetChildrenInvalid()` and
+`NGPhysicalFragment::Type` [1]. The `type_` is const, but is part of a
+bitfield, and so reading it is racing with updates to other fields.
+Fix by moving `type_` out of the bitfield.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-linux-chromium">https://autoroll.skia.org/r/pgo-linux-chromium</a>
-Please CC chrome-brapp-engprod@google.com,pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+[1] <a href="https://luci-milo.appspot.com/ui/inv/task-chromium-swarm.appspot.com-6541a5eaaa567e11/test-results?q=ExactID%3Aninja%3A%2F%2Fcontent%2Ftest%3Acontent_browsertests%2FNavigationControllerBrowserTest.ErrorPageReplacement%2FAll.RDCrashedFrame_BFCacheEnabled+VHash%3A9e749fb4b167a644">https://luci-milo.appspot.com/ui/inv/task-chromium-swarm.appspot.com-6541a5eaaa567e11/test-results?q=ExactID%3Aninja%3A%2F%2Fcontent%2Ftest%3Acontent_browsertests%2FNavigationControllerBrowserTest.ErrorPageReplacement%2FAll.RDCrashedFrame_BFCacheEnabled+VHash%3A9e749fb4b167a644</a>
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://issues.skia.org/issues/new?component=1389291&amp;template=1850622">https://issues.skia.org/issues/new?component=1389291&amp;template=1850622</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Cq-Include-Trybots: luci.chrome.try:linux-chrome
-Tbr: pgo-profile-sheriffs@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic5cfffb70f7c7ae6a1136300c163d596332875c6">Ic5cfffb70f7c7ae6a1136300c163d596332875c6</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4938898">https://chromium-review.googlesource.com/c/chromium/src/+/4938898</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1209795}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I129f36e4e56c8b88670c14e5b71dcc85025738f7">I129f36e4e56c8b88670c14e5b71dcc85025738f7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4935821">https://chromium-review.googlesource.com/c/chromium/src/+/4935821</a>
+Commit-Queue: Omer Katz &lt;omerkatz@chromium.org&gt;
+Reviewed-by: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1209802}
 </pre>
 
 </body>
