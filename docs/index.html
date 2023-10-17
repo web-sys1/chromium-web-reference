@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1210402/"> 1210402</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/489b8d530a3ce6010097ab72be50795674840870">489b8d530a3ce6010097ab72be50795674840870</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1210548/"> 1210548</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f6c21b93927c8dff0d6a35ad0d4000991c73361e">f6c21b93927c8dff0d6a35ad0d4000991c73361e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1210386/">1210386</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f1cb82e2774db476867015f4411a1fe258df40b0">f1cb82e2774db476867015f4411a1fe258df40b0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1210533/">1210533</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ee73933ffdd8b706708dc779d3d0d58b783b949d">ee73933ffdd8b706708dc779d3d0d58b783b949d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   489b8d530a3ce6010097ab72be50795674840870
+   f6c21b93927c8dff0d6a35ad0d4000991c73361e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/489b8d530a3ce6010097ab72be50795674840870">
+    <a href="/chromium/src/+log/f6c21b93927c8dff0d6a35ad0d4000991c73361e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/489b8d530a3ce6010097ab72be50795674840870.tar.gz">
+    <a href="/chromium/src/+archive/f6c21b93927c8dff0d6a35ad0d4000991c73361e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andy Paicu &lt;andypaicu@chromium.org&gt;
+   Mark Polner &lt;polner@google.com&gt;
   </td>
   <td>
-   Mon Oct 16 20:49:55 2023
+   Tue Oct 17 00:30:04 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Oct 16 20:49:55 2023
+   Tue Oct 17 00:30:04 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/489b8d530a3ce6010097ab72be50795674840870/">
-    8833c295b7154bec18bacaf5e79ae980a14c2204
+   <a href="/chromium/src/+/f6c21b93927c8dff0d6a35ad0d4000991c73361e/">
+    04c2a51d107621314cb2185f2cea09ed6a0cee7f
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/489b8d530a3ce6010097ab72be50795674840870%5E">
-    a35ef42bd267d064083a6140040e97f7f5115ac5
+   <a href="/chromium/src/+/f6c21b93927c8dff0d6a35ad0d4000991c73361e%5E">
+    f47909da61a6d644f31bd6283225c50be729209d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/489b8d530a3ce6010097ab72be50795674840870%5E%21/">
+    <a href="/chromium/src/+/f6c21b93927c8dff0d6a35ad0d4000991c73361e%5E%21/">
      diff
     </a>
     ]
@@ -179,23 +179,27 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PEPC] Rework the priority queue to always put PEPC requests first
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Nearby] Add GetPublicCredentials on NearbyPresenceCredentialStorage
 
-Define a 3rd type of priority for requests to corresponds to PEPC requests.
+GetPublicCredentials returns stored Nearby Presence shared
+credentials from the specified database (local or remote). The
+platform implementation of the Nearby library, hosted in the a
+sandboxed utility process, will call this method to retrieve
+shared credentials that were previously saved to the user's
+database by a call to the existing SaveCredentials method.
 
-In order to simplify the complicated logic on the queue, reworked it
-to always be front-to-back. `Pop` and `Peek` will always return the front request. The `Push` function will decide whether to push requests to the front or back instead.
+A full design doc is located at
+go/cros-nearby-presence-credential-storage.
 
-Rework the PRM logic that decides the current request fate to always
-allow PEPC requests to preempt the current request (if it's not also a
-PEPC request).
-
-Bug: 1462930
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icaa695be1e35beb2f4806ed5b3ae1d1c2dd3b894">Icaa695be1e35beb2f4806ed5b3ae1d1c2dd3b894</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4915775">https://chromium-review.googlesource.com/c/chromium/src/+/4915775</a>
-Reviewed-by: Thomas Nguyen &lt;tungnh@chromium.org&gt;
-Commit-Queue: Andy Paicu &lt;andypaicu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1210402}
+Test: Added unit tests.
+Bug: b:287334195, b:287333989
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1875fc3f63d1a2c05fddb541b3e48bd2b3f99a25">I1875fc3f63d1a2c05fddb541b3e48bd2b3f99a25</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4849931">https://chromium-review.googlesource.com/c/chromium/src/+/4849931</a>
+Reviewed-by: Emily Stark &lt;estark@chromium.org&gt;
+Reviewed-by: Juliet Lévesque &lt;julietlevesque@google.com&gt;
+Reviewed-by: Ryan Hansberry &lt;hansberry@chromium.org&gt;
+Commit-Queue: Mark Polner &lt;polner@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1210548}
 </pre>
 
 </body>
