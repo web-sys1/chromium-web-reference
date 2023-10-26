@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1215501/"> 1215501</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bbbcef0fd5821181da6374a6c3d28394c21083a0">bbbcef0fd5821181da6374a6c3d28394c21083a0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1215568/"> 1215568</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/55b4344edfb41dda980d197743f25a2841d498a4">55b4344edfb41dda980d197743f25a2841d498a4</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1215495/">1215495</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/afab0bdacce73708c20053382c3f303218621d50">afab0bdacce73708c20053382c3f303218621d50</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1215562/">1215562</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c8588bb27518bb0c41bd6f916b14a8bd8e09013c">c8588bb27518bb0c41bd6f916b14a8bd8e09013c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   bbbcef0fd5821181da6374a6c3d28394c21083a0
+   55b4344edfb41dda980d197743f25a2841d498a4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/bbbcef0fd5821181da6374a6c3d28394c21083a0">
+    <a href="/chromium/src/+log/55b4344edfb41dda980d197743f25a2841d498a4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/bbbcef0fd5821181da6374a6c3d28394c21083a0.tar.gz">
+    <a href="/chromium/src/+archive/55b4344edfb41dda980d197743f25a2841d498a4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Michael Ludwig &lt;michaelludwig@google.com&gt;
+   Andrew Grieve &lt;agrieve@chromium.org&gt;
   </td>
   <td>
-   Thu Oct 26 14:33:00 2023
+   Thu Oct 26 16:33:46 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Oct 26 14:33:00 2023
+   Thu Oct 26 16:33:46 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/bbbcef0fd5821181da6374a6c3d28394c21083a0/">
-    91207a7588ad7694e4407aa52ccdcb291a5c9f6b
+   <a href="/chromium/src/+/55b4344edfb41dda980d197743f25a2841d498a4/">
+    5575112a44e5668a45d09abcf748c8bae587005d
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/bbbcef0fd5821181da6374a6c3d28394c21083a0%5E">
-    e731a3c0e048b58b4326899757be83ed9a5c142b
+   <a href="/chromium/src/+/55b4344edfb41dda980d197743f25a2841d498a4%5E">
+    bb8f52a6fa978f1bd5523fa8ea9d4233817fc4a4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/bbbcef0fd5821181da6374a6c3d28394c21083a0%5E%21/">
+    <a href="/chromium/src/+/55b4344edfb41dda980d197743f25a2841d498a4%5E%21/">
      diff
     </a>
     ]
@@ -179,53 +179,18 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Improve backdrop filter calculations in SkiaRenderer
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Android: Remove org.robolectric:shadows-multidex from //third_party/android_deps
 
-Pulls all of the bounds analysis for how to clip the output and input
-of a backdrop filter into the CalculateRPDQParams function. Improves
-the calculations for the `filter_bounds` value to be tighter for
-backdrop filters since their output is always restricted.
+Turns out the entry is a no-op anyways, as we already have no
+corresponding library in //third_party/android_deps/BUILD.gn
 
-Optimizes more cases to have backdrop output restricted by just a
-clip instead of introducing an image filter node at the end. Switches
-the input cropping node from a no-op Offset(0,0) to a proper `Crop`
-that can define the boundary tilemode to apply (kClamp). This
-actually fixes the behavior in the backdrop-offset unit test. It also
-makes it possible to easily experiment with using mirror tiling for
-content that is off screen.
-
-Re-organizes some of the logic for clipping or clearing the backdrop
-bounds into helper functions in RPDQParams so that
-PrepareCanvasForRPDQ is more readable.
-
-The backdrop logic to determine if an input crop is needed or not
-used to have a bug (exposed when removing the staging flag
-SK_USE_LEGACY_CONTENT_BOUNDS_PROPAGATION). The input bounds
-calculation needs to use a null src rect so that the returned value
-has no additional content restriction. If it *still* matches the
-target output bounds, then we know it's not a pixel-moving backdrop
-filter. I confirmed that the backdrop boundary layout tests work
-correctly with and without the above staging flag.
-
-Updates the conversion of FilterOperations to PaintFilter to define
-the tiling geometry, so that clamp, mirror, and repeat explicitly
-apply to the edges of a layer (instead of previously just the edge
-of whatever image size happened to come through the pipeline). This
-currently is only taken advantage of in SkiaRenderer,
-SoftwareRenderer continues to use the legacy (less stable/defined)
-tiling behavior.
-
-Bug: b/40040615
-Bug: chromium:978031
-Bug: chromium:1473071
-Bug: chromium:1451898
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I65aef30266129b2b76cb7c9d38a38e8444c6789a">I65aef30266129b2b76cb7c9d38a38e8444c6789a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4936570">https://chromium-review.googlesource.com/c/chromium/src/+/4936570</a>
-Commit-Queue: Michael Ludwig &lt;michaelludwig@google.com&gt;
-Reviewed-by: Kyle Charbonneau &lt;kylechar@chromium.org&gt;
-Reviewed-by: Andrew Xu &lt;andrewxu@chromium.org&gt;
-Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1215501}
+Bug: None
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie5a2e8041baf5a061cf9ccf449cdda9dce20fea4">Ie5a2e8041baf5a061cf9ccf449cdda9dce20fea4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4908495">https://chromium-review.googlesource.com/c/chromium/src/+/4908495</a>
+Commit-Queue: Peter Wen &lt;wnwen@chromium.org&gt;
+Auto-Submit: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Reviewed-by: Peter Wen &lt;wnwen@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1215568}
 </pre>
 
 </body>
