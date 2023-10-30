@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1216784/"> 1216784</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4d35a57f427816daa76f671107a78cd1133b1fe5">4d35a57f427816daa76f671107a78cd1133b1fe5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1216818/"> 1216818</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1d0bffe0b722d982b2bb4f062ac3fb8775746fa9">1d0bffe0b722d982b2bb4f062ac3fb8775746fa9</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1216784/">1216784</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4d35a57f427816daa76f671107a78cd1133b1fe5">4d35a57f427816daa76f671107a78cd1133b1fe5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1216824/">1216824</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9a822976f826084205a72c46322c485d8e9bf48d">9a822976f826084205a72c46322c485d8e9bf48d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4d35a57f427816daa76f671107a78cd1133b1fe5
+   1d0bffe0b722d982b2bb4f062ac3fb8775746fa9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4d35a57f427816daa76f671107a78cd1133b1fe5">
+    <a href="/chromium/src/+log/1d0bffe0b722d982b2bb4f062ac3fb8775746fa9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4d35a57f427816daa76f671107a78cd1133b1fe5.tar.gz">
+    <a href="/chromium/src/+archive/1d0bffe0b722d982b2bb4f062ac3fb8775746fa9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Fergal Daly &lt;fergal@chromium.org&gt;
+   Nicola Tommasi &lt;tommasin@chromium.org&gt;
   </td>
   <td>
-   Mon Oct 30 05:36:43 2023
+   Mon Oct 30 08:12:21 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Oct 30 05:36:43 2023
+   Mon Oct 30 08:12:21 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4d35a57f427816daa76f671107a78cd1133b1fe5/">
-    a0c72b11d977dbb71d7e264fd7507e5b762cce75
+   <a href="/chromium/src/+/1d0bffe0b722d982b2bb4f062ac3fb8775746fa9/">
+    fdb3111a06da9b668ce1232b35410e7b20c4fde5
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4d35a57f427816daa76f671107a78cd1133b1fe5%5E">
-    6ef2fe4c0bc6cc42bbc57b674baa936768597053
+   <a href="/chromium/src/+/1d0bffe0b722d982b2bb4f062ac3fb8775746fa9%5E">
+    03f8a71830c2dc7dcf085916e6c7fdd71a645d3f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4d35a57f427816daa76f671107a78cd1133b1fe5%5E%21/">
+    <a href="/chromium/src/+/1d0bffe0b722d982b2bb4f062ac3fb8775746fa9%5E%21/">
      diff
     </a>
     ]
@@ -179,22 +179,39 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Support adding iframes with srcdoc attributes in remote context helper.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "Tracking Protections: Use the new ON_FULLY_VISIBLE callback"
 
-This makes executor-window.py a bit smarter
-- have it pass the UUID when starting the executor.
-- move extra-script handling for the window executor into the python
-- move extracting `startOn` param into the python
+This is a reland of commit 278f5aecd1d1e6d9006a2bf15471efd64744da51
 
-This makes it possible to just put the whole thing into the srcdoc attribute (after fixing some URL generating code to handle srcdocs).
+onPageLoadFinished and onObservingDifferentTab can emit at different
+times based on the page load duration and this leads to flaky tests.
+For the showing notice logic it doesn't make any difference which
+one emits first, I refactored the test to fix this flakyness.
 
+Original change's description:
+&gt; Tracking Protections: Use the new ON_FULLY_VISIBLE callback
+&gt;
+&gt; We were temporarily reporting a shown action when there was an
+&gt; interaction with the notice message. With this CL we start using the
+&gt; new ON_FULLY_VISIBLE callback to properly report a message shown
+&gt; action.
+&gt;
+&gt; Bug: b:295927778
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1251d8b2300faf044154b7dea4cd74722a61bd9b">I1251d8b2300faf044154b7dea4cd74722a61bd9b</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4977317">https://chromium-review.googlesource.com/c/chromium/src/+/4977317</a>
+&gt; Auto-Submit: Nicola Tommasi &lt;tommasin@chromium.org&gt;
+&gt; Reviewed-by: Andrey Zaytsev &lt;andzaytsev@google.com&gt;
+&gt; Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+&gt; Commit-Queue: Andrey Zaytsev &lt;andzaytsev@google.com&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1215726}
 
-Bug: 1491597
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib4825ad7f117fd9db04a4203315989ec1c26412c">Ib4825ad7f117fd9db04a4203315989ec1c26412c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4979845">https://chromium-review.googlesource.com/c/chromium/src/+/4979845</a>
-Reviewed-by: Domenic Denicola &lt;domenic@chromium.org&gt;
-Commit-Queue: Fergal Daly &lt;fergal@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1216784}
+Bug: b:295927778
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I89b23289d980684726b3cb6df5766266a07571c6">I89b23289d980684726b3cb6df5766266a07571c6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4983726">https://chromium-review.googlesource.com/c/chromium/src/+/4983726</a>
+Commit-Queue: Nicola Tommasi &lt;tommasin@chromium.org&gt;
+Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Reviewed-by: Andrey Zaytsev &lt;andzaytsev@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1216818}
 </pre>
 
 </body>
