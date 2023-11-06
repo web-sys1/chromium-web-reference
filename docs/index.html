@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1220362/"> 1220362</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3935b5842a62972c5ffb3ee29a979b32665eba82">3935b5842a62972c5ffb3ee29a979b32665eba82</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1220467/"> 1220467</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/eda98739dcf0b9e7267ad9254196c321f22ac0b8">eda98739dcf0b9e7267ad9254196c321f22ac0b8</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1220348/">1220348</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8c02074a66c25ac864a33752d3a89bc7f41671ba">8c02074a66c25ac864a33752d3a89bc7f41671ba</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1220474/">1220474</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5622b6a220ba6d029d01615debd8906e285c9235">5622b6a220ba6d029d01615debd8906e285c9235</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3935b5842a62972c5ffb3ee29a979b32665eba82
+   eda98739dcf0b9e7267ad9254196c321f22ac0b8
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3935b5842a62972c5ffb3ee29a979b32665eba82">
+    <a href="/chromium/src/+log/eda98739dcf0b9e7267ad9254196c321f22ac0b8">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3935b5842a62972c5ffb3ee29a979b32665eba82.tar.gz">
+    <a href="/chromium/src/+archive/eda98739dcf0b9e7267ad9254196c321f22ac0b8.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Benjamin Keen &lt;bkeen@google.com&gt;
+   dpapad &lt;dpapad@chromium.org&gt;
   </td>
   <td>
-   Mon Nov 06 17:36:04 2023
+   Mon Nov 06 20:05:58 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Nov 06 17:36:04 2023
+   Mon Nov 06 20:05:58 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3935b5842a62972c5ffb3ee29a979b32665eba82/">
-    d8bccb52e604e9d0d9f120909425581cde059636
+   <a href="/chromium/src/+/eda98739dcf0b9e7267ad9254196c321f22ac0b8/">
+    a2785b326a9f037f200ab6abbe755893cad22304
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3935b5842a62972c5ffb3ee29a979b32665eba82%5E">
-    0e5b94a14009c1888bcac5f32959d17c0fafe2ca
+   <a href="/chromium/src/+/eda98739dcf0b9e7267ad9254196c321f22ac0b8%5E">
+    c4b89ab7a59bb6b2478f88188c1ba9aa838c37ec
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3935b5842a62972c5ffb3ee29a979b32665eba82%5E%21/">
+    <a href="/chromium/src/+/eda98739dcf0b9e7267ad9254196c321f22ac0b8%5E%21/">
      diff
     </a>
     ]
@@ -179,27 +179,23 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Ensure that NativeWidgetMac respects Widget z order level
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use structuredClone() instead of JSON.parse(JSON.stringify())
 
-Currently, on Mac, menus that are created using the |MenuHost| are displayed under floating windows (while also still receiving input events). This is due to the underlying widget having an incorrect z-order.
+It is common to perform deep copy of JS objects by
+const clone = JSON.parse(JSON.stringify(myObj));
 
-The issue here is that when Widgets are created we try to determine the |EffectiveZOrderLevel| [1]. However, on Mac (under certain circumstances) we override the Widget z-order [2], which does not take into account the |EffectiveZOrderLevel|.
+A native structuredClone() API has been introduced and should be
+preferred. It also results in better TypeScript type checking.
 
-This change updates NativeWidgetMac to use |EffectiveZOrderLevel| so that the z order level is set appropriately according to the Widget InitParams Type.
+This is in preparation of enforcing this guidance using ESLint during
+presubmit checks.
 
-Also added a MenuController test to prevent future regressions.
-
-[1]: <a href="https://source.chromium.org/chromium/chromium/src/+/main:ui/views/widget/widget.cc;l=170;drc=430c7ea2e0a2e29142869f6efb112a7979ab605a">https://source.chromium.org/chromium/chromium/src/+/main:ui/views/widget/widget.cc;l=170;drc=430c7ea2e0a2e29142869f6efb112a7979ab605a</a>
-
-[2]: <a href="https://source.chromium.org/chromium/chromium/src/+/main:ui/views/widget/native_widget_mac.mm;l=233-241;drc=2c0bf8de5f1d574313db8794907f1cefcb3f301a">https://source.chromium.org/chromium/chromium/src/+/main:ui/views/widget/native_widget_mac.mm;l=233-241;drc=2c0bf8de5f1d574313db8794907f1cefcb3f301a</a>
-
-Bug: 1493030
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib683e0854588b1f5ef42a8e6bc2d1d545aa7cb55">Ib683e0854588b1f5ef42a8e6bc2d1d545aa7cb55</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5001926">https://chromium-review.googlesource.com/c/chromium/src/+/5001926</a>
-Reviewed-by: Keren Zhu &lt;kerenzhu@chromium.org&gt;
-Reviewed-by: Elaine Chien &lt;elainechien@chromium.org&gt;
-Commit-Queue: Benjamin Keen &lt;bkeen@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1220362}
+Bug: 1491559
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I460aed3ee6e2c3030f95e18bb3aa90f24fa21237">I460aed3ee6e2c3030f95e18bb3aa90f24fa21237</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5005542">https://chromium-review.googlesource.com/c/chromium/src/+/5005542</a>
+Reviewed-by: Rebekah Potter &lt;rbpotter@chromium.org&gt;
+Commit-Queue: Demetrios Papadopoulos &lt;dpapad@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1220467}
 </pre>
 
 </body>
