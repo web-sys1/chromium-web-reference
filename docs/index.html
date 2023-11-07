@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1220993/"> 1220993</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/25d12b0cdfb2ef0adae4f460f5585b2b335c65c4">25d12b0cdfb2ef0adae4f460f5585b2b335c65c4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1221134/"> 1221134</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/26b9199095b547ea7242e8361d0114f59f43fe00">26b9199095b547ea7242e8361d0114f59f43fe00</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1220994/">1220994</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/119ead78175e93012b77badadb3808d8c9f1ed0c">119ead78175e93012b77badadb3808d8c9f1ed0c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1221116/">1221116</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c6f924710ced0e449614d0d5949806a6a27d5a16">c6f924710ced0e449614d0d5949806a6a27d5a16</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   25d12b0cdfb2ef0adae4f460f5585b2b335c65c4
+   26b9199095b547ea7242e8361d0114f59f43fe00
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/25d12b0cdfb2ef0adae4f460f5585b2b335c65c4">
+    <a href="/chromium/src/+log/26b9199095b547ea7242e8361d0114f59f43fe00">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/25d12b0cdfb2ef0adae4f460f5585b2b335c65c4.tar.gz">
+    <a href="/chromium/src/+archive/26b9199095b547ea7242e8361d0114f59f43fe00.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   adamta &lt;adamta@google.com&gt;
+   Sam Davis Omekara (from Dev Box) &lt;samomekarajr@microsoft.com&gt;
   </td>
   <td>
-   Tue Nov 07 17:18:17 2023
+   Tue Nov 07 20:07:46 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Nov 07 17:18:17 2023
+   Tue Nov 07 20:07:46 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/25d12b0cdfb2ef0adae4f460f5585b2b335c65c4/">
-    72e9013237f734836f7f1d46b2bd5d72274dd918
+   <a href="/chromium/src/+/26b9199095b547ea7242e8361d0114f59f43fe00/">
+    7ffb241f4c2d101daa73c7f995d133bc82adc507
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/25d12b0cdfb2ef0adae4f460f5585b2b335c65c4%5E">
-    15943c9596077db74a4f243654344c1db1186cb4
+   <a href="/chromium/src/+/26b9199095b547ea7242e8361d0114f59f43fe00%5E">
+    4a482b897fc10dfc69444884586743da3d1a5de2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/25d12b0cdfb2ef0adae4f460f5585b2b335c65c4%5E%21/">
+    <a href="/chromium/src/+/26b9199095b547ea7242e8361d0114f59f43fe00%5E%21/">
      diff
     </a>
     ]
@@ -179,25 +179,44 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS] Match all Home module widths
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor Renderer ColorProvider instances to exist in blink::Page
 
-Ensures that the width of the visible Magic Stack collection view, and
-the module on top of it (if present) matches the width of the feed
-module. The visible module within the Magic Stack becomes left aligned,
-since we don't want it to take the entire width to allow for some of the
-next module to peek out (The visible module width will be addressed in a
-follow-up CL to avoid any text from the peeking module to show).
+This CL aims to change the way ColorProvider objects are stored and
+accessed in Blink. Currently, ColorProvider instances exist in
+Blink::WebThemeEngine which exists per renderer process. This can cause
+unexpected behavior when multiple WebContents instances share a single
+renderer.
 
-Also renames all instances of `ntpDelegate` to `NTPDelegate` as drive-by
-refactoring.
+This CL stores ColorProvider objects in blink::Page, which is
+associated with each WebContents instance. This ensures that Blink uses
+the correct ColorProvider for each WebContents, and does not rely on
+the global NativeTheme web instance.
 
-Bug: 1491830
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I69060466c555a08d86f583f72d0a2c9a4a4b8c1c">I69060466c555a08d86f583f72d0a2c9a4a4b8c1c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5001226">https://chromium-review.googlesource.com/c/chromium/src/+/5001226</a>
-Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Commit-Queue: Adam Arcaro &lt;adamta@google.com&gt;
-Reviewed-by: Scott Yoder &lt;scottyoder@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1220993}
+This is a step towards deprecating the use of NativeTheme as a color
+source and moving towards having all color access routed through
+ColorProvider instances (regardless if the color is a "native" or
+"browser" color).
+
+This refactor will also enable us support a block list for the
+PageColors feature, which will allow users override forced colors
+state via a browser setting.
+
+This CL adds the ColorProviderColors mojo type map to allow
+sharing of the type between Blink and content and avoid needless
+marshaling back and forth between types.
+
+ColorProviderColors are propagated to the renderer's Page class in
+the following cases:
+  1. When the RenderView is first created.
+  2. When the ColorProvider associated with the WebContents changes.
+
+Bug: 1430181
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8003d93224b21785771d19b45826b1c4fc108843">I8003d93224b21785771d19b45826b1c4fc108843</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4898493">https://chromium-review.googlesource.com/c/chromium/src/+/4898493</a>
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Commit-Queue: Sam Davis Omekara &lt;samomekarajr@microsoft.com&gt;
+Reviewed-by: Alison Maher &lt;almaher@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1221134}
 </pre>
 
 </body>
