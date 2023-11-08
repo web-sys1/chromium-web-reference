@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1221134/"> 1221134</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/26b9199095b547ea7242e8361d0114f59f43fe00">26b9199095b547ea7242e8361d0114f59f43fe00</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1221297/"> 1221297</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c2ec8a726fe3a9238b438c82f668e5c9dc0c1ca1">c2ec8a726fe3a9238b438c82f668e5c9dc0c1ca1</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1221116/">1221116</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c6f924710ced0e449614d0d5949806a6a27d5a16">c6f924710ced0e449614d0d5949806a6a27d5a16</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1221242/">1221242</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/235f30bff10aff22cc859c50ce157e48334fc582">235f30bff10aff22cc859c50ce157e48334fc582</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   26b9199095b547ea7242e8361d0114f59f43fe00
+   c2ec8a726fe3a9238b438c82f668e5c9dc0c1ca1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/26b9199095b547ea7242e8361d0114f59f43fe00">
+    <a href="/chromium/src/+log/c2ec8a726fe3a9238b438c82f668e5c9dc0c1ca1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/26b9199095b547ea7242e8361d0114f59f43fe00.tar.gz">
+    <a href="/chromium/src/+archive/c2ec8a726fe3a9238b438c82f668e5c9dc0c1ca1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sam Davis Omekara (from Dev Box) &lt;samomekarajr@microsoft.com&gt;
+   Jie Sheng &lt;jiesheng@google.com&gt;
   </td>
   <td>
-   Tue Nov 07 20:07:46 2023
+   Wed Nov 08 00:33:25 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Nov 07 20:07:46 2023
+   Wed Nov 08 00:33:25 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/26b9199095b547ea7242e8361d0114f59f43fe00/">
-    7ffb241f4c2d101daa73c7f995d133bc82adc507
+   <a href="/chromium/src/+/c2ec8a726fe3a9238b438c82f668e5c9dc0c1ca1/">
+    bc8473c163c35c972c0c09bd404dfecb8d4d9dff
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/26b9199095b547ea7242e8361d0114f59f43fe00%5E">
-    4a482b897fc10dfc69444884586743da3d1a5de2
+   <a href="/chromium/src/+/c2ec8a726fe3a9238b438c82f668e5c9dc0c1ca1%5E">
+    92fb29b42e3d7144e57b6c0ae376664c6af350ea
    </a>
    <span>
     [
-    <a href="/chromium/src/+/26b9199095b547ea7242e8361d0114f59f43fe00%5E%21/">
+    <a href="/chromium/src/+/c2ec8a726fe3a9238b438c82f668e5c9dc0c1ca1%5E%21/">
      diff
     </a>
     ]
@@ -179,44 +179,14 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor Renderer ColorProvider instances to exist in blink::Page
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Suppress tests that block wpt importer
 
-This CL aims to change the way ColorProvider objects are stored and
-accessed in Blink. Currently, ColorProvider instances exist in
-Blink::WebThemeEngine which exists per renderer process. This can cause
-unexpected behavior when multiple WebContents instances share a single
-renderer.
-
-This CL stores ColorProvider objects in blink::Page, which is
-associated with each WebContents instance. This ensures that Blink uses
-the correct ColorProvider for each WebContents, and does not rely on
-the global NativeTheme web instance.
-
-This is a step towards deprecating the use of NativeTheme as a color
-source and moving towards having all color access routed through
-ColorProvider instances (regardless if the color is a "native" or
-"browser" color).
-
-This refactor will also enable us support a block list for the
-PageColors feature, which will allow users override forced colors
-state via a browser setting.
-
-This CL adds the ColorProviderColors mojo type map to allow
-sharing of the type between Blink and content and avoid needless
-marshaling back and forth between types.
-
-ColorProviderColors are propagated to the renderer's Page class in
-the following cases:
-  1. When the RenderView is first created.
-  2. When the ColorProvider associated with the WebContents changes.
-
-Bug: 1430181
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8003d93224b21785771d19b45826b1c4fc108843">I8003d93224b21785771d19b45826b1c4fc108843</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4898493">https://chromium-review.googlesource.com/c/chromium/src/+/4898493</a>
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Commit-Queue: Sam Davis Omekara &lt;samomekarajr@microsoft.com&gt;
-Reviewed-by: Alison Maher &lt;almaher@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1221134}
+Bug: 626703
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I86d78653cba1f757e2a982e4c7232ccb78bfdfca">I86d78653cba1f757e2a982e4c7232ccb78bfdfca</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5011575">https://chromium-review.googlesource.com/c/chromium/src/+/5011575</a>
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Commit-Queue: Jie Sheng &lt;jiesheng@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1221297}
 </pre>
 
 </body>
