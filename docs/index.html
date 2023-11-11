@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1223115/"> 1223115</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f92b060ccd2bd19520c27b1b55696d1e149c9e5e">f92b060ccd2bd19520c27b1b55696d1e149c9e5e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1223211/"> 1223211</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/48a8f214f527dcbae50f9bdd7690d27bae2add34">48a8f214f527dcbae50f9bdd7690d27bae2add34</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1223067/">1223067</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2d7b459c6bd8e03a204afc17888431d41eab08e2">2d7b459c6bd8e03a204afc17888431d41eab08e2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1223169/">1223169</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6046d9cbb62ae9ccf3ea2c427e6909e10a564a83">6046d9cbb62ae9ccf3ea2c427e6909e10a564a83</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f92b060ccd2bd19520c27b1b55696d1e149c9e5e
+   48a8f214f527dcbae50f9bdd7690d27bae2add34
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f92b060ccd2bd19520c27b1b55696d1e149c9e5e">
+    <a href="/chromium/src/+log/48a8f214f527dcbae50f9bdd7690d27bae2add34">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f92b060ccd2bd19520c27b1b55696d1e149c9e5e.tar.gz">
+    <a href="/chromium/src/+archive/48a8f214f527dcbae50f9bdd7690d27bae2add34.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   manukh &lt;manukh@chromium.org&gt;
+   Michael Tang &lt;tangm@microsoft.com&gt;
   </td>
   <td>
-   Fri Nov 10 20:36:34 2023
+   Fri Nov 10 23:53:05 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Nov 10 20:36:34 2023
+   Fri Nov 10 23:53:05 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f92b060ccd2bd19520c27b1b55696d1e149c9e5e/">
-    9360d03369f6662f7cb71f65e71bfe1bad314084
+   <a href="/chromium/src/+/48a8f214f527dcbae50f9bdd7690d27bae2add34/">
+    fb6b5580aa93af6444ab3c8dbe381f8659ff081f
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f92b060ccd2bd19520c27b1b55696d1e149c9e5e%5E">
-    f9e451b8d2feef9395d2afcf7af4667751409305
+   <a href="/chromium/src/+/48a8f214f527dcbae50f9bdd7690d27bae2add34%5E">
+    b322d4b774abb63697f10098fa670d7c0fd878cd
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f92b060ccd2bd19520c27b1b55696d1e149c9e5e%5E%21/">
+    <a href="/chromium/src/+/48a8f214f527dcbae50f9bdd7690d27bae2add34%5E%21/">
      diff
     </a>
     ]
@@ -179,66 +179,18 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[omnibox][ml] Redistribute shortcut boosting
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">cc: test: Minor PixelTest refactor
 
-ML scoring redistribute the traditional scores of the ML-scored
-suggestions. The goal was to keep the balance between ML-scored and
-non-ML-scored suggestions and avoid search regressions.
+Refactor `cc::PixelTest` to deduplicate logic to render and readback the
+target render pass. Previously the code was mostly the same between
+reference file and reference color codepaths. This change makes room
+for an eventual SkiaGold comparison mode.
 
-This CL makes ML scoring also redistribute the `shortcut_boosted` field
-to the highest ML scored suggestions. The goal is the same; since this
-field also affects ranking, we want to keep the same before/after
-balance.
-
-E.g., if we had this traditional ranking:
-- shortcut 1, 1416 boosted defaultable
-- shortcut 2, 1415 boosted defaultable
-- search 1,   1300         defaultable
-- search 2,   800
-- url 3,      1414         defaultable
-- url 4,      1200
-- url 5,      600
-
-Then before this CL, ML might give:
-- url 3,      1414         defaultable
-- search 1,   1300         defaultable
-- shortcut 1, 1200 boosted defaultable
-- search 2,   800
-- shortcut 2, 600  boosted defaultable
-- url 4,      1400
-- url 5,      1416
-
-That's bad because a) we broke search grouping, and b) search ranking
-wasn't held constant. Also, in other examples, c) we might be changing
-the default suggestion from a shortcut to a search.
-
-With this CL, ML would instead give:
-- url 3,      1414 boosted defaultable
-- url 5,      1416 boosted
-- search 1,   1300         defaultable
-- search 2,   800
-- url 4,      1400
-- shortcut 1, 1200         defaultable
-- shortcut 2, 600          defaultable
-
-This keeps the same search v non-search rankings in this example.
-
-This isn't a complete solution. There's still cases (both with and
-without shortcut boosting) where ML will change the default suggestion
-from non-search to search or vice versa or increase the # of URLs
-grouped above searches. See the test for examples. That's an issue
-regardless of shortcut boosting. We'll do a more robust fix as a
-followup.
-
-Bug: 1405555
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0caea96ffdb01899d987ba13e19ef996ec51b013">I0caea96ffdb01899d987ba13e19ef996ec51b013</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5018417">https://chromium-review.googlesource.com/c/chromium/src/+/5018417</a>
-Reviewed-by: Angela Yoeurng &lt;yoangela@chromium.org&gt;
-Commit-Queue: Angela Yoeurng &lt;yoangela@chromium.org&gt;
-Auto-Submit: manuk hovanesian &lt;manukh@chromium.org&gt;
-Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Commit-Queue: manuk hovanesian &lt;manukh@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1223115}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I749383dcef06afd23f6d25d33117efedffb2cbb2">I749383dcef06afd23f6d25d33117efedffb2cbb2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5018995">https://chromium-review.googlesource.com/c/chromium/src/+/5018995</a>
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Commit-Queue: Michael Tang &lt;tangm@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1223211}
 </pre>
 
 </body>
