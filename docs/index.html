@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1224097/"> 1224097</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9c24252975031cec1b29fc69987348559fb0efd3">9c24252975031cec1b29fc69987348559fb0efd3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1224141/"> 1224141</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9416f1fecebffa15241f171387c46d035eecf71b">9416f1fecebffa15241f171387c46d035eecf71b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1224083/">1224083</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6c3843d6c119ad1ccb5bb85b15c6a627982e3e89">6c3843d6c119ad1ccb5bb85b15c6a627982e3e89</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1224138/">1224138</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fe7e3aa28ca86874a35d5f79695bb368e3be81aa">fe7e3aa28ca86874a35d5f79695bb368e3be81aa</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9c24252975031cec1b29fc69987348559fb0efd3
+   9416f1fecebffa15241f171387c46d035eecf71b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9c24252975031cec1b29fc69987348559fb0efd3">
+    <a href="/chromium/src/+log/9416f1fecebffa15241f171387c46d035eecf71b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9c24252975031cec1b29fc69987348559fb0efd3.tar.gz">
+    <a href="/chromium/src/+archive/9416f1fecebffa15241f171387c46d035eecf71b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Takashi Sakamoto &lt;tasak@google.com&gt;
+   Edman Anjos &lt;edmanp@google.com&gt;
   </td>
   <td>
-   Tue Nov 14 05:24:34 2023
+   Tue Nov 14 08:38:59 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Nov 14 05:24:34 2023
+   Tue Nov 14 08:38:59 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9c24252975031cec1b29fc69987348559fb0efd3/">
-    2e53a6ef127edd88f7e515a310f107265482bb7c
+   <a href="/chromium/src/+/9416f1fecebffa15241f171387c46d035eecf71b/">
+    7f473a2c570a5c1a9504efc57111f6d566cf5563
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9c24252975031cec1b29fc69987348559fb0efd3%5E">
-    84d3ac3ae24e3deb1a3d8d6c4b3fa7f869116286
+   <a href="/chromium/src/+/9416f1fecebffa15241f171387c46d035eecf71b%5E">
+    9e5cd4282a2580d42ae621021e00255c66ec9dc8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9c24252975031cec1b29fc69987348559fb0efd3%5E%21/">
+    <a href="/chromium/src/+/9416f1fecebffa15241f171387c46d035eecf71b%5E%21/">
      diff
     </a>
     ]
@@ -179,34 +179,20 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland: [PA] Add BUILDFLAG() guard to allocator_shim header and source code"
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">kiosk: Limit enterprise.kioskInput access to allowlist
 
-This CL is a reland of crrev.com/c/5009212. The reason why the CL was
-reverted is that
-allocator_shim_default_dispatch_to_linker_wrapped_symbols.cc was not
-guarded by BUILDFLAG(USE_ALLOCATOR_SHIM). To avoid such a mistake,
-add shim_headers and shim_sources to source_set("allocator_shim") and
-apply the following way to initialize its sources:
+The allowlist contains the relevant trusted tester partners and the
+extension used in tests implemented at
+chrome/test/data/extensions/api_test/enterprise_kiosk_input.
 
-   shim_headers = [ "*.h" ]
-   shim_sources = [ "*.cc", "*.mm" ]
-   sources = shim_headers
-   if (use_allocator_shim) sources += shim_sources
-
-This crrev.com/c/5020203 also fixes Android's all_dependent_configs,
-i.e. wrap_malloc_symbols, and Apple's configs, i.e.
-mac_no_default_new_delete_symbols and enable_arc. The configs needs
-"if (use_allocator_shim)".
-
-PS1 = the same as crrev.com/c/5009212.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I95dc51eaf17189c8261d7a7447ba31f3f3066f14">I95dc51eaf17189c8261d7a7447ba31f3f3066f14</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5020203">https://chromium-review.googlesource.com/c/chromium/src/+/5020203</a>
-Reviewed-by: Erik Chen &lt;erikchen@chromium.org&gt;
-Reviewed-by: Will Harris &lt;wfh@chromium.org&gt;
-Commit-Queue: Takashi Sakamoto &lt;tasak@google.com&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1224097}
+Bug: b:303379761
+Test: testing/xvfb.py tools/autotest.py -C out_/Default --run_all chrome/browser/ash/login/app_mode/test/kiosk_enterprise_input_api_browsertest.cc
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I41647e4573b1fc79f15829789b7d2b853ad05310">I41647e4573b1fc79f15829789b7d2b853ad05310</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5009539">https://chromium-review.googlesource.com/c/chromium/src/+/5009539</a>
+Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
+Commit-Queue: Edman Anjos &lt;edman@chromium.org&gt;
+Reviewed-by: Ben Franz &lt;bfranz@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1224141}
 </pre>
 
 </body>
