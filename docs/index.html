@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1224059/"> 1224059</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/efd0967e96c5e6e25d53bd1fd11783f7760db3c8">efd0967e96c5e6e25d53bd1fd11783f7760db3c8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1224097/"> 1224097</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9c24252975031cec1b29fc69987348559fb0efd3">9c24252975031cec1b29fc69987348559fb0efd3</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1224049/">1224049</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8af19032cfc0bc3e5d8701217d0e44ed2393c606">8af19032cfc0bc3e5d8701217d0e44ed2393c606</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1224083/">1224083</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6c3843d6c119ad1ccb5bb85b15c6a627982e3e89">6c3843d6c119ad1ccb5bb85b15c6a627982e3e89</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   efd0967e96c5e6e25d53bd1fd11783f7760db3c8
+   9c24252975031cec1b29fc69987348559fb0efd3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/efd0967e96c5e6e25d53bd1fd11783f7760db3c8">
+    <a href="/chromium/src/+log/9c24252975031cec1b29fc69987348559fb0efd3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/efd0967e96c5e6e25d53bd1fd11783f7760db3c8.tar.gz">
+    <a href="/chromium/src/+archive/9c24252975031cec1b29fc69987348559fb0efd3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ben Reich &lt;benreich@chromium.org&gt;
+   Takashi Sakamoto &lt;tasak@google.com&gt;
   </td>
   <td>
-   Tue Nov 14 03:01:22 2023
+   Tue Nov 14 05:24:34 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Nov 14 03:01:22 2023
+   Tue Nov 14 05:24:34 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/efd0967e96c5e6e25d53bd1fd11783f7760db3c8/">
-    45b33bc9e70a7557bbc0870e7b05fb781c958a4e
+   <a href="/chromium/src/+/9c24252975031cec1b29fc69987348559fb0efd3/">
+    2e53a6ef127edd88f7e515a310f107265482bb7c
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/efd0967e96c5e6e25d53bd1fd11783f7760db3c8%5E">
-    0f23482014c48b89a93a3f99194de3614d8ef6aa
+   <a href="/chromium/src/+/9c24252975031cec1b29fc69987348559fb0efd3%5E">
+    84d3ac3ae24e3deb1a3d8d6c4b3fa7f869116286
    </a>
    <span>
     [
-    <a href="/chromium/src/+/efd0967e96c5e6e25d53bd1fd11783f7760db3c8%5E%21/">
+    <a href="/chromium/src/+/9c24252975031cec1b29fc69987348559fb0efd3%5E%21/">
      diff
     </a>
     ]
@@ -179,35 +179,34 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[js-code-coverage] Enable coverage for shared and service workers
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland: [PA] Add BUILDFLAG() guard to allocator_shim header and source code"
 
-DevToolsAgentHost's extend base::RefCounted, when they are spawned for
-non-worker types the places they are spawned grab a reference which
-ensures the host is kept alive for the duration of the test.
+This CL is a reland of crrev.com/c/5009212. The reason why the CL was
+reverted is that
+allocator_shim_default_dispatch_to_linker_wrapped_symbols.cc was not
+guarded by BUILDFLAG(USE_ALLOCATOR_SHIM). To avoid such a mistake,
+add shim_headers and shim_sources to source_set("allocator_shim") and
+apply the following way to initialize its sources:
 
-However when a worker type is spawned the callee doesn't get a reference
-to the host, this means after attaching the client to the host all
-references are lost and the host gets destroyed. This leaves a race
-condition where the host gets created, attached and destroyed THEN the
-DevtoolsListener tries to start code coverage, however, the host has
-been destroyed.
+   shim_headers = [ "*.h" ]
+   shim_sources = [ "*.cc", "*.mm" ]
+   sources = shim_headers
+   if (use_allocator_shim) sources += shim_sources
 
-To avoid this race, let's grab a scoped_refptr to the DevToolsAgentHost
-to ensure it doesn't get destroyed immediately. Along with this, let's
-extend the DevToolsAgentCoverageObserver to log out the destroyed
-lifecycle event.
+This crrev.com/c/5020203 also fixes Android's all_dependent_configs,
+i.e. wrap_malloc_symbols, and Apple's configs, i.e.
+mac_no_default_new_delete_symbols and enable_arc. The configs needs
+"if (use_allocator_shim)".
 
-There are a number of tests which have been disabled due to this
-functionality, this test also enables all these tests.
+PS1 = the same as crrev.com/c/5009212.
 
-Fixed: b/310521014
-Bug: 1500351, b/280457934, b/280457934
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I40cfb0cf453b1a250b3f95b8c4386c33495a4985">I40cfb0cf453b1a250b3f95b8c4386c33495a4985</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5018572">https://chromium-review.googlesource.com/c/chromium/src/+/5018572</a>
-Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
-Reviewed-by: Tibor Goldschwendt &lt;tiborg@chromium.org&gt;
-Commit-Queue: Ben Reich &lt;benreich@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1224059}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I95dc51eaf17189c8261d7a7447ba31f3f3066f14">I95dc51eaf17189c8261d7a7447ba31f3f3066f14</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5020203">https://chromium-review.googlesource.com/c/chromium/src/+/5020203</a>
+Reviewed-by: Erik Chen &lt;erikchen@chromium.org&gt;
+Reviewed-by: Will Harris &lt;wfh@chromium.org&gt;
+Commit-Queue: Takashi Sakamoto &lt;tasak@google.com&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1224097}
 </pre>
 
 </body>
