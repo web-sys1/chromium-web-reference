@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1233876/"> 1233876</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/92e5ec30a3797c380660ea3d39819cebceb7a9fd">92e5ec30a3797c380660ea3d39819cebceb7a9fd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1233916/"> 1233916</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c221a527c8d601d0592e82cd2add2a8cb262a490">c221a527c8d601d0592e82cd2add2a8cb262a490</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1233869/">1233869</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ff80bb139e6eb32a86234a3cae5f3e2b6fa851cf">ff80bb139e6eb32a86234a3cae5f3e2b6fa851cf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1233908/">1233908</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ab46b31a18378c6e1f67d13a7a8e5fe646e6f981">ab46b31a18378c6e1f67d13a7a8e5fe646e6f981</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   92e5ec30a3797c380660ea3d39819cebceb7a9fd
+   c221a527c8d601d0592e82cd2add2a8cb262a490
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/92e5ec30a3797c380660ea3d39819cebceb7a9fd">
+    <a href="/chromium/src/+log/c221a527c8d601d0592e82cd2add2a8cb262a490">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/92e5ec30a3797c380660ea3d39819cebceb7a9fd.tar.gz">
+    <a href="/chromium/src/+archive/c221a527c8d601d0592e82cd2add2a8cb262a490.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Timofey Chudakov &lt;tchudakov@google.com&gt;
+   David Bienvenu &lt;davidbienvenu@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 06 12:03:21 2023
+   Wed Dec 06 14:24:58 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 06 12:03:21 2023
+   Wed Dec 06 14:24:58 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/92e5ec30a3797c380660ea3d39819cebceb7a9fd/">
-    28f82959e91450ffeee06541172dcf59796a415d
+   <a href="/chromium/src/+/c221a527c8d601d0592e82cd2add2a8cb262a490/">
+    fdda6451ad01cee541d3a09565caa9f101de2b45
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/92e5ec30a3797c380660ea3d39819cebceb7a9fd%5E">
-    54417e9e0d8ac51b0c52190df2cbd85638f9c1bc
+   <a href="/chromium/src/+/c221a527c8d601d0592e82cd2add2a8cb262a490%5E">
+    c72f45175e5b5bbd1033bbf9e48bcfe4c50254e6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/92e5ec30a3797c380660ea3d39819cebceb7a9fd%5E%21/">
+    <a href="/chromium/src/+/c221a527c8d601d0592e82cd2add2a8cb262a490%5E%21/">
      diff
     </a>
     ]
@@ -179,26 +179,32 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[mullet m3] Remove trigger source for AED::DidSelectSuggestion.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">test: fix ProfileKeyedService tests in branded builds
 
-AutofillSuggestionTriggerSource (ASTS) defines what triggered the
-suggestions (i.e. a form field click, manual fallback, etc.). There
-can be only 1 popup with suggestions at a given time. Thus, the trigger
-source can't change between 2 calls to AED::OnQuery.
+in OptimizationGuideKeyedService::Initialize() , in branded builds,
+optimization_guide_fetching_enabled is true, eventually
+KAnonymityServiceFactory creates the service, which the test doesn't
+expect. In non-branded builds, this code path isn't taken.
 
-This change removes trigger source from AED::DidSelectSuggestion by
-using the trigger source stored inside the AED.
+This CL adds an expectation for KAnonymityServiceFactory in branded
+builds for
+ProfileKeyedServiceBrowserTest.GuestProfileOTR_NeededServices and
+ProfileKeyedServiceBrowserTest.GuestProfileParent_NeededServices.
 
-Next steps: remove trigger source from AED::DidAcceptSuggestion.
+KAnonymityService is required by the Protected Audience API to
+to determine which ads are k-anonymous enough to be shown to the user,
+for both guest and OTR profiles.
 
-Bug: 1493361
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I93efec7ffdea8efa43254b4bef1240d6f1a23b15">I93efec7ffdea8efa43254b4bef1240d6f1a23b15</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5087912">https://chromium-review.googlesource.com/c/chromium/src/+/5087912</a>
-Reviewed-by: Mohamed Amir Yosef &lt;mamir@chromium.org&gt;
-Reviewed-by: Florian Leimgruber &lt;fleimgruber@google.com&gt;
-Commit-Queue: Timofey Chudakov &lt;tchudakov@google.com&gt;
-Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1233876}
+The CL also removes a TODO for crbug.com/1418376.
+
+Bug: 1506961, 1418376
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I648924005efd697ccb4a72d135af63a716d78495">I648924005efd697ccb4a72d135af63a716d78495</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5085710">https://chromium-review.googlesource.com/c/chromium/src/+/5085710</a>
+Reviewed-by: Mihai Sardarescu &lt;msarda@chromium.org&gt;
+Commit-Queue: David Bienvenu &lt;davidbienvenu@chromium.org&gt;
+Reviewed-by: Ryan Sultanem &lt;rsult@google.com&gt;
+Reviewed-by: Russ Hamilton &lt;behamilton@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1233916}
 </pre>
 
 </body>
