@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1235586/"> 1235586</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b446385610b75a3a98d726b07ec91d8f30194eef">b446385610b75a3a98d726b07ec91d8f30194eef</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1235629/"> 1235629</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b08e745c12f61397d6fc92d1026fd7ae39416124">b08e745c12f61397d6fc92d1026fd7ae39416124</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1235578/">1235578</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b446385610b75a3a98d726b07ec91d8f30194eef
+   b08e745c12f61397d6fc92d1026fd7ae39416124
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b446385610b75a3a98d726b07ec91d8f30194eef">
+    <a href="/chromium/src/+log/b08e745c12f61397d6fc92d1026fd7ae39416124">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b446385610b75a3a98d726b07ec91d8f30194eef.tar.gz">
+    <a href="/chromium/src/+archive/b08e745c12f61397d6fc92d1026fd7ae39416124.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ningxin Hu &lt;ningxin.hu@intel.com&gt;
+   junwei &lt;junwei.fu@intel.com&gt;
   </td>
   <td>
-   Mon Dec 11 05:05:02 2023
+   Mon Dec 11 08:56:25 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Dec 11 05:05:02 2023
+   Mon Dec 11 08:56:25 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b446385610b75a3a98d726b07ec91d8f30194eef/">
-    b41b4b0a394e283abd337a6060e5fee68a42591b
+   <a href="/chromium/src/+/b08e745c12f61397d6fc92d1026fd7ae39416124/">
+    f475274f8e8186f46a5d5029f16e36f0ee8ee134
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b446385610b75a3a98d726b07ec91d8f30194eef%5E">
-    203c30248db0dc01c52429ea2664a139396f2203
+   <a href="/chromium/src/+/b08e745c12f61397d6fc92d1026fd7ae39416124%5E">
+    7f1a03254d5fac1a1d93525f1b895a8540f014e0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b446385610b75a3a98d726b07ec91d8f30194eef%5E%21/">
+    <a href="/chromium/src/+/b08e745c12f61397d6fc92d1026fd7ae39416124%5E%21/">
      diff
     </a>
     ]
@@ -179,28 +179,23 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">WebNN: Fix UBSan failure for XNNPACK reshape to scalar test case
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[WebNN][CrOS]: Change feature status to experimental
 
-When XNNPACK backend reshapes to 0-D scalar where the new shape is
-empty, there is an UndefinedBehaviorSanitizer (UBSan) failure, for
-example [1]. The previous implementation uses a `WTF::Vector` to
-represent the new shape. `WTF::Vector` doesn’t allocate a buffer for an
-empty vector. That causes `new_shape.data()` to return nullptr which is
-passed to XNNPACK and used as the source address for `memcpy`.
+WebNN Element-wise binary, softmax and reshape operators have been
+supported on CrOS platform with the CL-5003613 [1], so we change the
+runtime flag status to experimental for allowing web developers to try
+WebNN on CrOS platform.
 
-This CL fixes this issue by using a stack-allocated array to represent
-the new shape instead. Its address would be valid even when the array is
-empty.
+[1]: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5003613">https://chromium-review.googlesource.com/c/chromium/src/+/5003613</a>
 
-[1]: <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/linux-ubsan-fyi-rel/1272/test-results?sortby=&amp;groupby=&amp;q=xnnpack">https://ci.chromium.org/ui/p/chromium/builders/ci/linux-ubsan-fyi-rel/1272/test-results?sortby=&amp;groupby=&amp;q=xnnpack</a>
-
-Bug: 1510304,1273291
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifa72c81aa7c8d02d33e3a59ab2a264c5aec24a16">Ifa72c81aa7c8d02d33e3a59ab2a264c5aec24a16</a>
-Cq-Include-Trybots: luci.chromium.try:linux-ubsan-fyi-rel
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5108299">https://chromium-review.googlesource.com/c/chromium/src/+/5108299</a>
+Bug: 1273291
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I46371c93b116b5600069dad5afffc8c5f0ddad6c">I46371c93b116b5600069dad5afffc8c5f0ddad6c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5082062">https://chromium-review.googlesource.com/c/chromium/src/+/5082062</a>
+Commit-Queue: Junwei Fu &lt;junwei.fu@intel.com&gt;
 Reviewed-by: Jiewei Qian &lt;qjw@chromium.org&gt;
-Commit-Queue: ningxin hu &lt;ningxin.hu@intel.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1235586}
+Reviewed-by: ningxin hu &lt;ningxin.hu@intel.com&gt;
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1235629}
 </pre>
 
 </body>
