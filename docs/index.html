@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1235564/"> 1235564</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1bdb8d0f4ef1ecb97551055ab72383b388cd9c03">1bdb8d0f4ef1ecb97551055ab72383b388cd9c03</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1235586/"> 1235586</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b446385610b75a3a98d726b07ec91d8f30194eef">b446385610b75a3a98d726b07ec91d8f30194eef</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1235559/">1235559</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/246ea3c7e3a9b7c24a6e6a06de08f69bba06cf30">246ea3c7e3a9b7c24a6e6a06de08f69bba06cf30</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1235578/">1235578</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f221a44e69a2bcfe29a68551c67e777d7002bad6">f221a44e69a2bcfe29a68551c67e777d7002bad6</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1bdb8d0f4ef1ecb97551055ab72383b388cd9c03
+   b446385610b75a3a98d726b07ec91d8f30194eef
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1bdb8d0f4ef1ecb97551055ab72383b388cd9c03">
+    <a href="/chromium/src/+log/b446385610b75a3a98d726b07ec91d8f30194eef">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1bdb8d0f4ef1ecb97551055ab72383b388cd9c03.tar.gz">
+    <a href="/chromium/src/+archive/b446385610b75a3a98d726b07ec91d8f30194eef.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nancy Wang &lt;nancylingwang@chromium.org&gt;
+   Ningxin Hu &lt;ningxin.hu@intel.com&gt;
   </td>
   <td>
-   Mon Dec 11 02:37:50 2023
+   Mon Dec 11 05:05:02 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Dec 11 02:37:50 2023
+   Mon Dec 11 05:05:02 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1bdb8d0f4ef1ecb97551055ab72383b388cd9c03/">
-    ac549de604bc1b845f5ae8fd7fb1747eff600cbd
+   <a href="/chromium/src/+/b446385610b75a3a98d726b07ec91d8f30194eef/">
+    b41b4b0a394e283abd337a6060e5fee68a42591b
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1bdb8d0f4ef1ecb97551055ab72383b388cd9c03%5E">
-    2c830a13575be0d2b38632edba5a08ae0edc3cb6
+   <a href="/chromium/src/+/b446385610b75a3a98d726b07ec91d8f30194eef%5E">
+    203c30248db0dc01c52429ea2664a139396f2203
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1bdb8d0f4ef1ecb97551055ab72383b388cd9c03%5E%21/">
+    <a href="/chromium/src/+/b446385610b75a3a98d726b07ec91d8f30194eef%5E%21/">
      diff
     </a>
     ]
@@ -179,55 +179,28 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "device selection: Do not special case multi-node changes"
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">WebNN: Fix UBSan failure for XNNPACK reshape to scalar test case
 
-This reverts commit 1ce1705dae28d3d7f56182f66f731aa78292e3d5.
+When XNNPACK backend reshapes to 0-D scalar where the new shape is
+empty, there is an UndefinedBehaviorSanitizer (UBSan) failure, for
+example [1]. The previous implementation uses a `WTF::Vector` to
+represent the new shape. `WTF::Vector` doesn’t allocate a buffer for an
+empty vector. That causes `new_shape.data()` to return nullptr which is
+passed to XNNPACK and used as the source address for `memcpy`.
 
-Reason for revert:
-Break tests:
-<a href="https://ci.chromium.org/old/p/chromium/builders/ci/Linux%20ChromiumOS%20MSan%20Tests/40053">https://ci.chromium.org/old/p/chromium/builders/ci/Linux%20ChromiumOS%20MSan%20Tests/40053</a>
+This CL fixes this issue by using a stack-allocated array to represent
+the new shape instead. Its address would be valid even when the array is
+empty.
 
+[1]: <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/linux-ubsan-fyi-rel/1272/test-results?sortby=&amp;groupby=&amp;q=xnnpack">https://ci.chromium.org/ui/p/chromium/builders/ci/linux-ubsan-fyi-rel/1272/test-results?sortby=&amp;groupby=&amp;q=xnnpack</a>
 
-Original change's description:
-&gt; device selection: Do not special case multi-node changes
-&gt;
-&gt; Merge the logic of HandleHotPlugDevice and HandleNonHotplugNodesChange:
-&gt; When multiple audio devices are plugged, treat as if they are plugged
-&gt; one by one. The device selection algorithm is expected to handle
-&gt; scenarios like this well. This would also be more robust on reboots,
-&gt; where it is likely not all audio devices are probed at once and
-&gt; SwitchToPreviousActiveDeviceIfAvailable cannot work reliably.
-&gt;
-&gt; Test fixes:
-&gt; -   The new algorithm expects the active device has the highest
-&gt;     priority among all connected devices for restoration to work.
-&gt;     Update SetupCrasAudioHandlerWithActiveNodeInPref to set the
-&gt;     user priority.
-&gt; -   Remove uses of kHeadphone. It is special cased to always be
-&gt;     selected when plugged.
-&gt; -   Explicitly set the active device in
-&gt;     ChangeOutputVolumeFromNonChromeSourceNonActiveDevice.
-&gt;
-&gt; Bug: b:304834020
-&gt; Test: autoninja -C out/Default/ chromeos_unittests &amp;&amp; out/Default/chromeos_unittests
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic30d5f7c2c2126e7c03b2888ed97c1b4be6fec2b">Ic30d5f7c2c2126e7c03b2888ed97c1b4be6fec2b</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5082362">https://chromium-review.googlesource.com/c/chromium/src/+/5082362</a>
-&gt; Reviewed-by: Wenyu Zhang &lt;zhangwenyu@google.com&gt;
-&gt; Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
-&gt; Reviewed-by: Jiaming Cheng &lt;jiamingc@chromium.org&gt;
-&gt; Commit-Queue: Li-Yu Yu &lt;aaronyu@google.com&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1235532}
-
-Bug: b:304834020
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iac4f5f83bb7345e212e0227d08cabc5cc5ab38fb">Iac4f5f83bb7345e212e0227d08cabc5cc5ab38fb</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5109236">https://chromium-review.googlesource.com/c/chromium/src/+/5109236</a>
-Owners-Override: Nancy Wang &lt;nancylingwang@chromium.org&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: Nancy Wang &lt;nancylingwang@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1235564}
+Bug: 1510304,1273291
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifa72c81aa7c8d02d33e3a59ab2a264c5aec24a16">Ifa72c81aa7c8d02d33e3a59ab2a264c5aec24a16</a>
+Cq-Include-Trybots: luci.chromium.try:linux-ubsan-fyi-rel
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5108299">https://chromium-review.googlesource.com/c/chromium/src/+/5108299</a>
+Reviewed-by: Jiewei Qian &lt;qjw@chromium.org&gt;
+Commit-Queue: ningxin hu &lt;ningxin.hu@intel.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1235586}
 </pre>
 
 </body>
