@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1236526/"> 1236526</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a3c1eacbd11b2e7eecefcafd145da7d8ee15031d">a3c1eacbd11b2e7eecefcafd145da7d8ee15031d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1236677/"> 1236677</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1470ed764897d0a2a0315a5850e379c78ab25fcb">1470ed764897d0a2a0315a5850e379c78ab25fcb</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1236508/">1236508</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/00d4a1121cd9c183fc111937f9334a0f35f6dc78">00d4a1121cd9c183fc111937f9334a0f35f6dc78</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1236684/">1236684</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/514ea1e3d45d368dcbc128ed5bf8d48389f67bf4">514ea1e3d45d368dcbc128ed5bf8d48389f67bf4</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a3c1eacbd11b2e7eecefcafd145da7d8ee15031d
+   1470ed764897d0a2a0315a5850e379c78ab25fcb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a3c1eacbd11b2e7eecefcafd145da7d8ee15031d">
+    <a href="/chromium/src/+log/1470ed764897d0a2a0315a5850e379c78ab25fcb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a3c1eacbd11b2e7eecefcafd145da7d8ee15031d.tar.gz">
+    <a href="/chromium/src/+archive/1470ed764897d0a2a0315a5850e379c78ab25fcb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   ginnnnnnny &lt;ginnyhuang@chromium.org&gt;
+   Orin Jaworski &lt;orinj@google.com&gt;
   </td>
   <td>
-   Tue Dec 12 20:14:17 2023
+   Wed Dec 13 00:22:10 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Dec 12 20:14:17 2023
+   Wed Dec 13 00:22:10 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a3c1eacbd11b2e7eecefcafd145da7d8ee15031d/">
-    99558e7143e6a85ae32f4985af4d371faaf80cfa
+   <a href="/chromium/src/+/1470ed764897d0a2a0315a5850e379c78ab25fcb/">
+    2f53a78d45950a4c31bb21d23c6b0351dcee431d
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a3c1eacbd11b2e7eecefcafd145da7d8ee15031d%5E">
-    3f28ddb3a2d050c7abfdce3101e2ce46f091f64a
+   <a href="/chromium/src/+/1470ed764897d0a2a0315a5850e379c78ab25fcb%5E">
+    d814e955c1fa63fc66311a176d124ac0e64127af
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a3c1eacbd11b2e7eecefcafd145da7d8ee15031d%5E%21/">
+    <a href="/chromium/src/+/1470ed764897d0a2a0315a5850e379c78ab25fcb%5E%21/">
      diff
     </a>
     ]
@@ -179,33 +179,24 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS] Only re-open NTP when app comes to foreground from background
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[omnibox] Change OpenMatch disposition for tab switch action, for metric
 
-There are a lot of scenarios when the NTP reopens automatically before
-the user puts the app, including but not limited to
+This fixes the broken Omnibox.SuggestionUsed.SelectedTabMatch selected
+state. It was not being captured due to using the match/action opening
+disposition instead of SWITCH_TO_TAB as required specially for this
+action and histogram. We were faithfully plumbing the disposition based
+on whether user held keyboard modifiers when selecting the action (and
+this is useful for other actions like pedals) but an early override
+is needed for metrics in this case.
 
-1. User takes a tour to the app switcher without really opening other
-apps or go back to the home screen
-2. (This is the most disturbing) User opens split window in iPad
-3. User slides over the window
-
-In all these cases, the scene leaves "foreground active" state while
-never reaches the "background" state, but the app conditionally opens
-NTP on each transition to the foreground. This CL adds a flag that is
-TRUE when the scene enters background and FALSE when the scene is
-activated, so on activation (before we update the flag) it can be known
-whether this transition originates from the background or a temporary
-inactivation.
-
-Fixed: 1356995
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If3bd04bd0f1d4733e30b4d9aa8f89199294026c3">If3bd04bd0f1d4733e30b4d9aa8f89199294026c3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5100671">https://chromium-review.googlesource.com/c/chromium/src/+/5100671</a>
-Reviewed-by: Mark Cogan &lt;marq@chromium.org&gt;
+Fixed: 1510621
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id5420b2823e204039e6ce977d170a0968ae58c9c">Id5420b2823e204039e6ce977d170a0968ae58c9c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5118065">https://chromium-review.googlesource.com/c/chromium/src/+/5118065</a>
+Reviewed-by: Moe Ahmadi &lt;mahmadi@chromium.org&gt;
 Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Auto-Submit: Ginny Huang &lt;ginnyhuang@chromium.org&gt;
-Commit-Queue: Ginny Huang &lt;ginnyhuang@chromium.org&gt;
-Reviewed-by: Chris Lu &lt;thegreenfrog@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1236526}
+Commit-Queue: Orin Jaworski &lt;orinj@chromium.org&gt;
+Reviewed-by: Orin Jaworski &lt;orinj@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1236677}
 </pre>
 
 </body>
