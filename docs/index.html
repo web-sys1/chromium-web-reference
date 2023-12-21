@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1239845/"> 1239845</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8d8e272267db9c1be6499c42e69986b199a35f5c">8d8e272267db9c1be6499c42e69986b199a35f5c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1239960/"> 1239960</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/90eb0c5151873c8b8e281e826ed177faa532a7e6">90eb0c5151873c8b8e281e826ed177faa532a7e6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1239879/">1239879</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8d8e272267db9c1be6499c42e69986b199a35f5c
+   90eb0c5151873c8b8e281e826ed177faa532a7e6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8d8e272267db9c1be6499c42e69986b199a35f5c">
+    <a href="/chromium/src/+log/90eb0c5151873c8b8e281e826ed177faa532a7e6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8d8e272267db9c1be6499c42e69986b199a35f5c.tar.gz">
+    <a href="/chromium/src/+archive/90eb0c5151873c8b8e281e826ed177faa532a7e6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Henrique Nakashima &lt;hnakashima@chromium.org&gt;
+   Lukasz Anforowicz &lt;lukasza@chromium.org&gt;
   </td>
   <td>
-   Wed Dec 20 22:30:50 2023
+   Thu Dec 21 02:08:52 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 20 22:30:50 2023
+   Thu Dec 21 02:08:52 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8d8e272267db9c1be6499c42e69986b199a35f5c/">
-    fddac42c2260a196e31bdd04ac37a5bff124e0bc
+   <a href="/chromium/src/+/90eb0c5151873c8b8e281e826ed177faa532a7e6/">
+    bd6fa5dfd7b940eebd3e01a3abde973f0c20cb69
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8d8e272267db9c1be6499c42e69986b199a35f5c%5E">
-    deb04292809448bad1cf756536f6a411fa2a215b
+   <a href="/chromium/src/+/90eb0c5151873c8b8e281e826ed177faa532a7e6%5E">
+    65c11c247e83900ecfc2209365ddb53386a696b6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8d8e272267db9c1be6499c42e69986b199a35f5c%5E%21/">
+    <a href="/chromium/src/+/90eb0c5151873c8b8e281e826ed177faa532a7e6%5E%21/">
      diff
     </a>
     ]
@@ -179,20 +179,23 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Android] Cleanup kOfflinePagesDescriptive(Fail|Pending)StatusFeature
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make destructor of `WTF::SharedBuffer` private (friend of `RefCounted`)
 
-- kOfflinePagesDescriptiveFailStatusFeature is disabled by default and
-  unused
-- kOfflinePagesDescriptivePendingStatusFeature is enabled by default
+This CL helps to ensure that `WTF::SharedBuffer` can only be destructed
+via `base::RefCounted` (e.g. that `SharedBuffer` cannot be
+stack-allocated).
 
-Bug: 1385901
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8bb182a7e18d753a7e5a90022ee71140f44c393d">I8bb182a7e18d753a7e5a90022ee71140f44c393d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5123017">https://chromium-review.googlesource.com/c/chromium/src/+/5123017</a>
-Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Reviewed-by: Min Qin &lt;qinmin@chromium.org&gt;
-Reviewed-by: Cathy Li &lt;chili@chromium.org&gt;
-Commit-Queue: Henrique Nakashima &lt;hnakashima@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1239845}
+One motivation for this CL is a future, hypothetical Rust interop, which
+may need to provide an explicit comment with a justification of why an
+`unsafe impl RefCounted for wtf::SharedBuffer` won't undermine Rust
+memory safety.
+
+Bug: 1471546
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3c678d1655f2e3877cbac582371c57183ec355fd">I3c678d1655f2e3877cbac582371c57183ec355fd</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5142289">https://chromium-review.googlesource.com/c/chromium/src/+/5142289</a>
+Reviewed-by: Kentaro Hara &lt;haraken@chromium.org&gt;
+Commit-Queue: Łukasz Anforowicz &lt;lukasza@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1239960}
 </pre>
 
 </body>
