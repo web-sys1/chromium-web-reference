@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1240419/"> 1240419</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4e8bbc02482bd80fe1b454b637f4cea4ee259209">4e8bbc02482bd80fe1b454b637f4cea4ee259209</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1240462/"> 1240462</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d8102d2800d44bd75d281ac05ca5f82e7c867047">d8102d2800d44bd75d281ac05ca5f82e7c867047</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1240415/">1240415</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c09c0504d481d9e750586dade71132a2787dd24a">c09c0504d481d9e750586dade71132a2787dd24a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1240439/">1240439</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/00257a0eacf0d4ac994bf59ce464d962752d866c">00257a0eacf0d4ac994bf59ce464d962752d866c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4e8bbc02482bd80fe1b454b637f4cea4ee259209
+   d8102d2800d44bd75d281ac05ca5f82e7c867047
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4e8bbc02482bd80fe1b454b637f4cea4ee259209">
+    <a href="/chromium/src/+log/d8102d2800d44bd75d281ac05ca5f82e7c867047">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4e8bbc02482bd80fe1b454b637f4cea4ee259209.tar.gz">
+    <a href="/chromium/src/+archive/d8102d2800d44bd75d281ac05ca5f82e7c867047.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Hiroki Sato &lt;hirokisato@google.com&gt;
+   Ted Meyer &lt;tmathmeyer@chromium.org&gt;
   </td>
   <td>
-   Fri Dec 22 02:14:46 2023
+   Fri Dec 22 05:54:36 2023
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 22 02:14:46 2023
+   Fri Dec 22 05:54:36 2023
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4e8bbc02482bd80fe1b454b637f4cea4ee259209/">
-    f0dfc94c1da604223db052c264df5df10f31f7bd
+   <a href="/chromium/src/+/d8102d2800d44bd75d281ac05ca5f82e7c867047/">
+    646141c702ff2ea6c4075def532a2cf5983ed9a3
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4e8bbc02482bd80fe1b454b637f4cea4ee259209%5E">
-    a5b65897a4d7dd9da1e168fc57bf42bab6b1d16d
+   <a href="/chromium/src/+/d8102d2800d44bd75d281ac05ca5f82e7c867047%5E">
+    408f00ef5f24057401bd5cb1828effb49f0c3d64
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4e8bbc02482bd80fe1b454b637f4cea4ee259209%5E%21/">
+    <a href="/chromium/src/+/d8102d2800d44bd75d281ac05ca5f82e7c867047%5E%21/">
      diff
     </a>
     ]
@@ -179,45 +179,18 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "Don't send IME Candidate selection a11y event in autocomplete suggestion"
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add Tracing macros to the HLS demuxer implementation
 
-This is a reland of commit ce14d426ba259a9fb5c2c5b4b3fb6e7c50a13b7a
+I've been using these for a bit, and they're a bit more digestable than
+LOG(ERROR) for debugging. Submitting them means I've got fewer patches
+to apply when debugging locally.
 
-See the diff between patchset 1 and 2 for the fix for msan failure.
-
-Original change's description:
-&gt; Don't send IME Candidate selection a11y event in autocomplete suggestion
-&gt;
-&gt; Sending an event when showing autocomplete suggestion will distrupt
-&gt; user's typing for ChromeVox users.
-&gt;
-&gt; This change:
-&gt; - Adds |is_user_selecting| flag to CandidateWindow.
-&gt; - Let our binding to infer the flag for now. TODO is to plumb it from
-&gt;   the extension.
-&gt; - Makes CandidateView and CandidateWindowView dispatch an accessibility
-&gt;   event only when user is actually choosing item from the candidates.
-&gt;
-&gt; This is a part of <a href="http://go/chromevox-jp-ime.">http://go/chromevox-jp-ime.</a>
-&gt;
-&gt; Bug: b:259380284, b:259379909, b:300576550
-&gt; Test: CandidateWindowViewTest, InputMethodEngineTest, SpokenFeedbackWithCandidateWindowTest
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I64ddab961ea1612b3e8804c752537468f15c1e50">I64ddab961ea1612b3e8804c752537468f15c1e50</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4884639">https://chromium-review.googlesource.com/c/chromium/src/+/4884639</a>
-&gt; Reviewed-by: Akihiro Ota &lt;akihiroota@chromium.org&gt;
-&gt; Commit-Queue: Hiroki Sato &lt;hirokisato@chromium.org&gt;
-&gt; Reviewed-by: Darren Shen &lt;shend@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1239903}
-
-Bug: b:259380284, b:259379909, b:300576550
-Fixed: 1513611
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia5a34e31f1aba1c4516d1c81fb8e3ea3697545ce">Ia5a34e31f1aba1c4516d1c81fb8e3ea3697545ce</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5144092">https://chromium-review.googlesource.com/c/chromium/src/+/5144092</a>
-Commit-Queue: Hiroki Sato &lt;hirokisato@chromium.org&gt;
-Reviewed-by: Akihiro Ota &lt;akihiroota@chromium.org&gt;
-Reviewed-by: Yuichiro Hanada &lt;yhanada@chromium.org&gt;
-Auto-Submit: Hiroki Sato &lt;hirokisato@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1240419}
+Bug: 1266991
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibe2c34d81de85ef6044595f2fceec7bf546c8e13">Ibe2c34d81de85ef6044595f2fceec7bf546c8e13</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5142952">https://chromium-review.googlesource.com/c/chromium/src/+/5142952</a>
+Commit-Queue: Ted (Chromium) Meyer &lt;tmathmeyer@chromium.org&gt;
+Reviewed-by: Eugene Zemtsov &lt;eugene@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1240462}
 </pre>
 
 </body>
