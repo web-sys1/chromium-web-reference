@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1243410/"> 1243410</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9585b65e984e3a9b1d40558b0349db083f204cfa">9585b65e984e3a9b1d40558b0349db083f204cfa</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1243488/"> 1243488</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/89444859387e378eb70d8f273ff497fa2c8b5609">89444859387e378eb70d8f273ff497fa2c8b5609</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1243399/">1243399</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/90beef92e8fdca22bfcc60089a2063922f18ca21">90beef92e8fdca22bfcc60089a2063922f18ca21</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1243470/">1243470</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c9603547d8aa399b6f3c519c0b9611133531f6b0">c9603547d8aa399b6f3c519c0b9611133531f6b0</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9585b65e984e3a9b1d40558b0349db083f204cfa
+   89444859387e378eb70d8f273ff497fa2c8b5609
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9585b65e984e3a9b1d40558b0349db083f204cfa">
+    <a href="/chromium/src/+log/89444859387e378eb70d8f273ff497fa2c8b5609">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9585b65e984e3a9b1d40558b0349db083f204cfa.tar.gz">
+    <a href="/chromium/src/+archive/89444859387e378eb70d8f273ff497fa2c8b5609.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nick Diego Yamane &lt;nickdiego@igalia.com&gt;
+   Arthur Milchior &lt;arthurmilchior@chromium.org&gt;
   </td>
   <td>
-   Fri Jan 05 14:42:11 2024
+   Fri Jan 05 17:56:07 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jan 05 14:42:11 2024
+   Fri Jan 05 17:56:07 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9585b65e984e3a9b1d40558b0349db083f204cfa/">
-    17e61f1c77d4639bc8a21638432aff8f8fa0b9f4
+   <a href="/chromium/src/+/89444859387e378eb70d8f273ff497fa2c8b5609/">
+    a95af1be8e6c61bd1ab32f312d88b596b5ce8a83
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9585b65e984e3a9b1d40558b0349db083f204cfa%5E">
-    4a798e8eb39b2d269efa646b5b95702f7889d389
+   <a href="/chromium/src/+/89444859387e378eb70d8f273ff497fa2c8b5609%5E">
+    586d9e059d27bfbe85c8df737882821e7b68929d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9585b65e984e3a9b1d40558b0349db083f204cfa%5E%21/">
+    <a href="/chromium/src/+/89444859387e378eb70d8f273ff497fa2c8b5609%5E%21/">
      diff
     </a>
     ]
@@ -179,30 +179,22 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">wayland: dnd: move data fetching out of main thread
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Implements the non-deprecated builder.
 
-So far, in incoming data drag sessions - ie: when drag is originated
-in external clients other than the ozone/wayland embedder - the data for
-each offered mime type is incrementally fetched in the main/ui thread
-using wl_display.sync callbacks. i.e: several wayland roundtrips
-potentially required to "announce" the drag enter to the upper layers.
-That is sub-optimal and has some side effects related to event
-propagation which has been the source of subtle and sometime hard to
-diagnose issues.
+Any class inheriting `BrowserContextKeyedServiceFactory` should
+implements either `BuildServiceInstanceForBrowserContext` or
+`BuildServiceInstanceFor`. The second one being deprecated,
+this CL replaces it by the first one.
 
-With this change, the data reading is offloaded to a separate thread and
-related tests are updated accordingly. For now, DragEnter keeps coupled
-to DataFetchCompleted. That will be addressed in a separate CL.
+This also ensures that, instead of applying `WrapUnique` to a `new` raw
+ptr, it directly uses `make_unique`.
 
-Design/Explainer: <a href="https://github.com/nickdiego/chromium-docs/blob/main/wl-dnd-data-fetch/explainer.md">https://github.com/nickdiego/chromium-docs/blob/main/wl-dnd-data-fetch/explainer.md</a>
-
-Bug: 1487784
-Test: relevant ozone_unittests updated accordingly.
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6ff692f2d6364091fb45c14034b2e839a3ab8e49">I6ff692f2d6364091fb45c14034b2e839a3ab8e49</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5039167">https://chromium-review.googlesource.com/c/chromium/src/+/5039167</a>
-Reviewed-by: Antonio Gomes &lt;tonikitoo@igalia.com&gt;
-Commit-Queue: Nick Yamane &lt;nickdiego@igalia.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1243410}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If275f477ee3ad42f6a729b3edc665d8adaffb5ea">If275f477ee3ad42f6a729b3edc665d8adaffb5ea</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4798157">https://chromium-review.googlesource.com/c/chromium/src/+/4798157</a>
+Reviewed-by: Mark Schillaci &lt;mschillaci@google.com&gt;
+Reviewed-by: Ramin Halavati &lt;rhalavati@chromium.org&gt;
+Commit-Queue: Arthur Milchior &lt;arthurmilchior@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1243488}
 </pre>
 
 </body>
