@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1246418/"> 1246418</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0e664035d22cddc4cab8fdf7809b7cbc62a31a78">0e664035d22cddc4cab8fdf7809b7cbc62a31a78</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1246476/"> 1246476</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6a4655a60ab4dea152dcbc3728748216baeb1320">6a4655a60ab4dea152dcbc3728748216baeb1320</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1246428/">1246428</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f544a73ab12535acd5f7b1cbbe39f0b6e4661e97">f544a73ab12535acd5f7b1cbbe39f0b6e4661e97</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1246496/">1246496</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e8a58ac2426265eb91ce380fa45aeb0b5cb356f8">e8a58ac2426265eb91ce380fa45aeb0b5cb356f8</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0e664035d22cddc4cab8fdf7809b7cbc62a31a78
+   6a4655a60ab4dea152dcbc3728748216baeb1320
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0e664035d22cddc4cab8fdf7809b7cbc62a31a78">
+    <a href="/chromium/src/+log/6a4655a60ab4dea152dcbc3728748216baeb1320">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0e664035d22cddc4cab8fdf7809b7cbc62a31a78.tar.gz">
+    <a href="/chromium/src/+archive/6a4655a60ab4dea152dcbc3728748216baeb1320.tar.gz">
      tgz
     </a>
     ]
@@ -137,7 +137,7 @@ body{
    Christian Xu &lt;christianxu@google.com&gt;
   </td>
   <td>
-   Fri Jan 12 13:43:12 2024
+   Fri Jan 12 16:21:16 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jan 12 13:43:12 2024
+   Fri Jan 12 16:21:16 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0e664035d22cddc4cab8fdf7809b7cbc62a31a78/">
-    db9ef249de8dc0b2f8aea40fa4750ef70d7e8254
+   <a href="/chromium/src/+/6a4655a60ab4dea152dcbc3728748216baeb1320/">
+    9d6529c13695cf885da20a11e9524a557e2cef63
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0e664035d22cddc4cab8fdf7809b7cbc62a31a78%5E">
-    b6809b1b51239217721660e9c371b0350aa26287
+   <a href="/chromium/src/+/6a4655a60ab4dea152dcbc3728748216baeb1320%5E">
+    0f2a5624d1dcc15a2432333ac643a1aa9be91d58
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0e664035d22cddc4cab8fdf7809b7cbc62a31a78%5E%21/">
+    <a href="/chromium/src/+/6a4655a60ab4dea152dcbc3728748216baeb1320%5E%21/">
      diff
     </a>
     ]
@@ -179,22 +179,31 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS][OmniboxPosition] Don't show the promo to new users
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS][FadeTruncatingLabel] Remove head truncating mode
 
-Add a delay to show the app-launch promo. The promo is only registered when the user is no longer considered new.
+Currently, there is some confusion about truncating mode head and tail.
+The truncating mode should mean:
+- Head for beginning of the string.
+- Tail for trailing end of the string.
+However, the implementation uses:
+- Head for left edge of the UILabel.
+- Tail for right edge of the UILabel.
+The user of FadeTruncatingLabel then switches between head and tail depending on text direction (RTL/LTR).
 
-This CL:
-- Uses IsFirstRunRecent to limit the promo apparition.
-- Adds FirstRunRecency experimental flag to force a first run recency.
+This CL moves the text direction logic inside of FadeTruncatingLabel and removes FadeTruncatingMode as it's always tail of the string.
+Also:
+- Introduces textAlignmentFollowTextDirection that is used in popup row
+  cell to keep the current behavior.
+- Fixes an edge case where the gradient should not be applied.
 
 Bug: None
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia78c96b1d8071a1d0f8b1809061480127ba0d80c">Ia78c96b1d8071a1d0f8b1809061480127ba0d80c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5176938">https://chromium-review.googlesource.com/c/chromium/src/+/5176938</a>
-Commit-Queue: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
-Auto-Submit: Christian Xu &lt;christianxu@chromium.org&gt;
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib2cb9ec0f6b4fb6f7691178fc828c30a6960aeba">Ib2cb9ec0f6b4fb6f7691178fc828c30a6960aeba</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5190108">https://chromium-review.googlesource.com/c/chromium/src/+/5190108</a>
+Commit-Queue: Mark Cogan &lt;marq@chromium.org&gt;
 Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Reviewed-by: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1246418}
+Auto-Submit: Christian Xu &lt;christianxu@chromium.org&gt;
+Reviewed-by: Mark Cogan &lt;marq@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1246476}
 </pre>
 
 </body>
