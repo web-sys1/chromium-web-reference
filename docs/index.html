@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1250893/"> 1250893</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2d4aba427a7b39a8cf88164dd666bcf287a8fa89">2d4aba427a7b39a8cf88164dd666bcf287a8fa89</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1250997/"> 1250997</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/741175f07377065a0477d3b9e291878417b410ad">741175f07377065a0477d3b9e291878417b410ad</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1250894/">1250894</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9686b1aad9a828bc6aec0b123ebc90973c7e40c9">9686b1aad9a828bc6aec0b123ebc90973c7e40c9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1250983/">1250983</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/65501ab6fdf5b42dfe833c1d1751cd3a1b02bf9d">65501ab6fdf5b42dfe833c1d1751cd3a1b02bf9d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2d4aba427a7b39a8cf88164dd666bcf287a8fa89
+   741175f07377065a0477d3b9e291878417b410ad
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2d4aba427a7b39a8cf88164dd666bcf287a8fa89">
+    <a href="/chromium/src/+log/741175f07377065a0477d3b9e291878417b410ad">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2d4aba427a7b39a8cf88164dd666bcf287a8fa89.tar.gz">
+    <a href="/chromium/src/+archive/741175f07377065a0477d3b9e291878417b410ad.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andres Ricardo Perez &lt;andresrperez@chromium.org&gt;
+   David Tseng &lt;dtseng@google.com&gt;
   </td>
   <td>
-   Tue Jan 23 17:15:42 2024
+   Tue Jan 23 20:02:21 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 23 17:15:42 2024
+   Tue Jan 23 20:02:21 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2d4aba427a7b39a8cf88164dd666bcf287a8fa89/">
-    f46f7729d00e13c17a06c948862e6c5a98367186
+   <a href="/chromium/src/+/741175f07377065a0477d3b9e291878417b410ad/">
+    71cdf01b99fd6a0619272adc8a23b99bed431460
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2d4aba427a7b39a8cf88164dd666bcf287a8fa89%5E">
-    358a94f407c7c185db594fcdb05487743e91f494
+   <a href="/chromium/src/+/741175f07377065a0477d3b9e291878417b410ad%5E">
+    5a2871c85c803771d8ad1ceb11ef9b8ec22d40b2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2d4aba427a7b39a8cf88164dd666bcf287a8fa89%5E%21/">
+    <a href="/chromium/src/+/741175f07377065a0477d3b9e291878417b410ad%5E%21/">
      diff
     </a>
     ]
@@ -179,32 +179,29 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Throw exceptions for malformed operations while layers are opened
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[chromevox]: directly control vertical and horizontal spacing for multi-line braille
 
-Since layers are only filtered and composited into their parent bitmap
-once the layer is closed, operations that access bitmap pixels are
-malformed if there are layers open.
+This change makes it minimally viable to test image to braille work on a
+multiline display. More work to come[1].
 
-This can happen when reading the pixels from the canvas (for example
-with `getImageData`) or directly overwriting pixels (with
-`putImageData`).
+Specifically:
+- PanStrategy now introduces spacing into braille output for non-word
+wrapped braille
+- spacing is fixed to 2 dot rows horizontally and 1 dot column
+  vertically.
+- word wrapped spacing to come in a follow up
 
-With this change, exceptions are thrown for these operations when used
-with open layers. Promises also fail in the case of `createImageBitmap`
-and `convertToBlob`. Some APIs already had this behavior, but this CL
-extends that logic to all APIs accessing bitmap pixels.
+1. See go/cros-image-to-braille for more details.
+2. depends on <a href="https://chromium-review.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/5225591">https://chromium-review.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/5225591</a>
+which removes spacing in the underlying driver
+Bug: b/267511603
+Test: manual (on device)
 
-The existing tests for unclosed layers had to be moved to manual, since
-for the offscreen and worker cases the generator uses methods that now
-throw exceptions.
-
-Bug: 1396372
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3e187c9ae4f68135219a6178adf079616c470f9b">I3e187c9ae4f68135219a6178adf079616c470f9b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5075139">https://chromium-review.googlesource.com/c/chromium/src/+/5075139</a>
-Reviewed-by: Jean-Philippe Gravel &lt;jpgravel@chromium.org&gt;
-Commit-Queue: Andres Ricardo Perez Rojas &lt;andresrperez@chromium.org&gt;
-Reviewed-by: Aaron Krajeski &lt;aaronhk@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1250893}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic4cd457cdbcb1ac501ba9d8c387794922f305c9a">Ic4cd457cdbcb1ac501ba9d8c387794922f305c9a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5225527">https://chromium-review.googlesource.com/c/chromium/src/+/5225527</a>
+Reviewed-by: Kyungjun Lee &lt;kyungjunlee@google.com&gt;
+Commit-Queue: David Tseng &lt;dtseng@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1250997}
 </pre>
 
 </body>
