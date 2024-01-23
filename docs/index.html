@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1250660/"> 1250660</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d8c82440d4c1fc87aeaf25a8b322773cc07a0daf">d8c82440d4c1fc87aeaf25a8b322773cc07a0daf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1250687/"> 1250687</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f49823a303055640367935b92f6fdc98105b4435">f49823a303055640367935b92f6fdc98105b4435</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1250652/">1250652</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ee3c91092b0f0775869129818195d98fbfb2ea22">ee3c91092b0f0775869129818195d98fbfb2ea22</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1250687/">1250687</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f49823a303055640367935b92f6fdc98105b4435">f49823a303055640367935b92f6fdc98105b4435</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d8c82440d4c1fc87aeaf25a8b322773cc07a0daf
+   f49823a303055640367935b92f6fdc98105b4435
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d8c82440d4c1fc87aeaf25a8b322773cc07a0daf">
+    <a href="/chromium/src/+log/f49823a303055640367935b92f6fdc98105b4435">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d8c82440d4c1fc87aeaf25a8b322773cc07a0daf.tar.gz">
+    <a href="/chromium/src/+archive/f49823a303055640367935b92f6fdc98105b4435.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Archie &lt;apusaka@google.com&gt;
+   Marc Treib &lt;treib@chromium.org&gt;
   </td>
   <td>
-   Tue Jan 23 05:33:53 2024
+   Tue Jan 23 08:33:26 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 23 05:33:53 2024
+   Tue Jan 23 08:33:26 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d8c82440d4c1fc87aeaf25a8b322773cc07a0daf/">
-    4c58f893037b419695a1d4c306f15ec1a825ae85
+   <a href="/chromium/src/+/f49823a303055640367935b92f6fdc98105b4435/">
+    c659a7c92666f535c6c77f0bc6ef66d1d7a12feb
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d8c82440d4c1fc87aeaf25a8b322773cc07a0daf%5E">
-    04f3938dc951883bdf0fcba43ff0493c9f820f83
+   <a href="/chromium/src/+/f49823a303055640367935b92f6fdc98105b4435%5E">
+    42237df806dd272c4c5886c14273d322d103ead8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d8c82440d4c1fc87aeaf25a8b322773cc07a0daf%5E%21/">
+    <a href="/chromium/src/+/f49823a303055640367935b92f6fdc98105b4435%5E%21/">
      diff
     </a>
     ]
@@ -179,25 +179,21 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Floss] Fix device removal logic when clearing found device
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Sync prefs: Make kCommonSyncablePrefsAllowlist constexpr
 
-When clearing found devices (triggered by freshness check), we don't
-remove devices which are paired. However, we still tell the observers
-that those device are removed.
+Before this CL, kCommonSyncablePrefsAllowlist was created via
+MakeFixedFlatMapNonConsteval, which is discouraged since it does
+sorting at runtime. Instead, MakeFixedFlatMap should be used which
+does the sorting at compile time, but requires all the inputs to be
+constexpr. That was done in various precursor CLs to this one, so now
+we can switch to MakeFixedFlatMap.
 
-This CL fixes the inconsistency to not tell the observers if we don't
-actually remove the device.
-
-      invocation to let the freshness check take place.
-
-Bug: b/319162138
-Test: pass CTSV BLE Secure Test, but wait 1 minutes for every subtest
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I893d9b5f27a3d3e754d9b1e4bd09d60785b6d1bb">I893d9b5f27a3d3e754d9b1e4bd09d60785b6d1bb</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5223640">https://chromium-review.googlesource.com/c/chromium/src/+/5223640</a>
-Reviewed-by: Ying Hsu &lt;yinghsu@chromium.org&gt;
-Commit-Queue: Archie Pusaka &lt;apusaka@chromium.org&gt;
-Reviewed-by: Katherine Lai &lt;laikatherine@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1250660}
+Bug: 1512537
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2f52c410c7096525d94f231e4991e4526504e889">I2f52c410c7096525d94f231e4991e4526504e889</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5130063">https://chromium-review.googlesource.com/c/chromium/src/+/5130063</a>
+Commit-Queue: Marc Treib &lt;treib@chromium.org&gt;
+Reviewed-by: Ankush Singh &lt;ankushkush@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1250687}
 </pre>
 
 </body>
