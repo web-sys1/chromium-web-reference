@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1253836/"> 1253836</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2589422e674d554f5beab6abd7476f025ea8f3c4">2589422e674d554f5beab6abd7476f025ea8f3c4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1253884/"> 1253884</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ed24de7484625cf4f68a1bee69c76f82c14507c2">ed24de7484625cf4f68a1bee69c76f82c14507c2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1253836/">1253836</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2589422e674d554f5beab6abd7476f025ea8f3c4">2589422e674d554f5beab6abd7476f025ea8f3c4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1253878/">1253878</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/65285d39fef4f8dbdde212d9ec1cb41643a93010">65285d39fef4f8dbdde212d9ec1cb41643a93010</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2589422e674d554f5beab6abd7476f025ea8f3c4
+   ed24de7484625cf4f68a1bee69c76f82c14507c2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2589422e674d554f5beab6abd7476f025ea8f3c4">
+    <a href="/chromium/src/+log/ed24de7484625cf4f68a1bee69c76f82c14507c2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2589422e674d554f5beab6abd7476f025ea8f3c4.tar.gz">
+    <a href="/chromium/src/+archive/ed24de7484625cf4f68a1bee69c76f82c14507c2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Florian Leimgruber &lt;fleimgruber@google.com&gt;
+   Kevin Ellis &lt;kevers@google.com&gt;
   </td>
   <td>
-   Tue Jan 30 11:34:39 2024
+   Tue Jan 30 14:22:25 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 30 11:34:39 2024
+   Tue Jan 30 14:22:25 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2589422e674d554f5beab6abd7476f025ea8f3c4/">
-    309bcc3aa1dd2c8a55cd2d7cbf0d8b2d248b1243
+   <a href="/chromium/src/+/ed24de7484625cf4f68a1bee69c76f82c14507c2/">
+    02aa319400ac5b97b2ceeb2e51951f05dbc57e49
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2589422e674d554f5beab6abd7476f025ea8f3c4%5E">
-    eae0cce1737cbf14f8e12fedd6d58d4b342e5006
+   <a href="/chromium/src/+/ed24de7484625cf4f68a1bee69c76f82c14507c2%5E">
+    4a6542b0f555776f148ff83252ddfd6513699e3c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2589422e674d554f5beab6abd7476f025ea8f3c4%5E%21/">
+    <a href="/chromium/src/+/ed24de7484625cf4f68a1bee69c76f82c14507c2%5E%21/">
      diff
     </a>
     ]
@@ -179,32 +179,14 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Don't load non-stored types from AddressAutofillTable
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix StyleColor::UnresolvedColorMix::operator==
 
-When writing an address to the database, it is persisted as a list of
-(type, value) pairs, for every types in
-GetDatabaseStoredTypesOfAutofillProfile().
-
-When reading a profile, an address is constructed by calling
-SetRawInfo() for every type found in the database, independently of
-what GetDatabaseStoredTypesOfAutofillProfile() is.
-Since GetDatabaseStoredTypesOfAutofillProfile() is not explicitly
-checked, the code might call loading code downstream with non-stored
-types. This can in turn lead to CHECK() failures, crashing Chrome on
-startup [1]. This is possible e.g. when the database was tampered with
-by external means, or when a stored type becomes non-stored.
-
-This CL checks that if the loaded types are stored types and discards
-the others.
-
-[1] <a href="https://source.chromium.org/chromium/chromium/src/+/main:components/autofill/core/browser/profile_token_quality.cc;l=299;drc=bf39f1210258bfe98ab635146d3417f537518842">https://source.chromium.org/chromium/chromium/src/+/main:components/autofill/core/browser/profile_token_quality.cc;l=299;drc=bf39f1210258bfe98ab635146d3417f537518842</a>
-
-Bug: 1522955
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3ecadb468946d90e4f7b08082166439d680ccca0">I3ecadb468946d90e4f7b08082166439d680ccca0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5246007">https://chromium-review.googlesource.com/c/chromium/src/+/5246007</a>
-Reviewed-by: Jihad Hanna &lt;jihadghanna@google.com&gt;
-Commit-Queue: Florian Leimgruber &lt;fleimgruber@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1253836}
+Bug: 1522095
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib9b41c8b865aeb72ac1881503639231faaf68c40">Ib9b41c8b865aeb72ac1881503639231faaf68c40</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5245748">https://chromium-review.googlesource.com/c/chromium/src/+/5245748</a>
+Commit-Queue: Kevin Ellis &lt;kevers@chromium.org&gt;
+Reviewed-by: Aaron Krajeski &lt;aaronhk@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1253884}
 </pre>
 
 </body>
