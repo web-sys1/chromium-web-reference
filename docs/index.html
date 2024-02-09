@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1258443/"> 1258443</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2bb7ed58f2e2c5e60a44e0f7203228a94c6d67bd">2bb7ed58f2e2c5e60a44e0f7203228a94c6d67bd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1258479/"> 1258479</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9c84166b919a35d5bf023c2f0eb73414bb9dd6a2">9c84166b919a35d5bf023c2f0eb73414bb9dd6a2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1258438/">1258438</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0d45c463e5f27c321d65cd6528544dc8461b242b">0d45c463e5f27c321d65cd6528544dc8461b242b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1258487/">1258487</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4f8b553c831db904a3ed546e9f0985f85d181c08">4f8b553c831db904a3ed546e9f0985f85d181c08</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2bb7ed58f2e2c5e60a44e0f7203228a94c6d67bd
+   9c84166b919a35d5bf023c2f0eb73414bb9dd6a2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2bb7ed58f2e2c5e60a44e0f7203228a94c6d67bd">
+    <a href="/chromium/src/+log/9c84166b919a35d5bf023c2f0eb73414bb9dd6a2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2bb7ed58f2e2c5e60a44e0f7203228a94c6d67bd.tar.gz">
+    <a href="/chromium/src/+archive/9c84166b919a35d5bf023c2f0eb73414bb9dd6a2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sparik Hayrapetyan &lt;ust@google.com&gt;
+   Andrew Rayskiy &lt;greengrape@google.com&gt;
   </td>
   <td>
-   Fri Feb 09 11:34:22 2024
+   Fri Feb 09 14:07:05 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 09 11:34:22 2024
+   Fri Feb 09 14:07:05 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2bb7ed58f2e2c5e60a44e0f7203228a94c6d67bd/">
-    3406b0429dd1780602d0136bf707941c21e31c64
+   <a href="/chromium/src/+/9c84166b919a35d5bf023c2f0eb73414bb9dd6a2/">
+    51fd936b2c44329c86aa60706b2d0f42bb9979e7
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2bb7ed58f2e2c5e60a44e0f7203228a94c6d67bd%5E">
-    e4724763a9663a4857d4f7ccca6d6fd5341d5a9d
+   <a href="/chromium/src/+/9c84166b919a35d5bf023c2f0eb73414bb9dd6a2%5E">
+    fa4720b8cc33a07b0c687c426913f05dafec11dc
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2bb7ed58f2e2c5e60a44e0f7203228a94c6d67bd%5E%21/">
+    <a href="/chromium/src/+/9c84166b919a35d5bf023c2f0eb73414bb9dd6a2%5E%21/">
      diff
     </a>
     ]
@@ -179,26 +179,37 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix passing component policy from Ash to Lacros
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Printing] Enrich CupsPrintingNotification for Web Printing API jobs
 
-Component policy (i.e. policy for extensions) should be passed to
-Lacros at first launch. This is currently not happening because at the
-time of initializing launch parameters for Lacros, component policy is
-not set in EnvironmentProvider yet. This is because BrowserManager
-starts observing ComponentPolicyService then continues on to
-initializing Lacros launch parameters, while the notification from
-ComponentPolicyService happens asynchronously.
-This CL fixes this issue by caching the component policy in
-ComponentPolicyService and fetching it synchronously when preparing
-policies for Lacros, in addition to observing changes in the policy.
+Jobs initiated by Isolated Web Apps (IWAs) via the Web Printing API do
+not require a print dialog which allows these apps to print silently.
+To keep the user aware of what is actually happening, it's necessary to
+augment the existing printing notification with a few important details:
+* The name of the initiating IWA;
+* An option to revoke the IWA's permission to print.
 
-Bug: b/40912274
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I296a5c4b3fb5aeeedf658ead0b80102d8b77796b">I296a5c4b3fb5aeeedf658ead0b80102d8b77796b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5190330">https://chromium-review.googlesource.com/c/chromium/src/+/5190330</a>
-Reviewed-by: Sergey Poromov &lt;poromov@chromium.org&gt;
-Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
-Commit-Queue: Sparik Hayrapetyan &lt;ust@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1258443}
+To achieve the latter while preserving the existing behavior (open the
+print management app on click), the notification is now equipped with
+two buttons: one brings the user to the content settings page, and the
+other opens the print management app as before.
+
+Note that these changes only apply to jobs submitted via the Web
+Printing API; for all others notifications follow the existing model.
+
+On top of that, a few messages are updated to align with the modern
+UX guidance:
+* Printing started -&gt; Printing...
+* Printing complete -&gt; Done
+
+See go/advanced-printer-features-wd for details on wordsmithing.
+
+Bug: b/302505962
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie2c62ae1f9c271070a352a0d4f11cc5a00f7cafa">Ie2c62ae1f9c271070a352a0d4f11cc5a00f7cafa</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5224206">https://chromium-review.googlesource.com/c/chromium/src/+/5224206</a>
+Commit-Queue: Andrew Rayskiy &lt;greengrape@google.com&gt;
+Reviewed-by: Dana Fried &lt;dfried@chromium.org&gt;
+Reviewed-by: Benjamin Gordon &lt;bmgordon@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1258479}
 </pre>
 
 </body>
