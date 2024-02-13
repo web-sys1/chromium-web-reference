@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1259759/"> 1259759</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/44b8c255399e8b4f61cd2300f28a8cc54f248c09">44b8c255399e8b4f61cd2300f28a8cc54f248c09</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1259816/"> 1259816</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5ef401eae7558b076b50e8c8036915df1bfc8719">5ef401eae7558b076b50e8c8036915df1bfc8719</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1259758/">1259758</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/899ad2bf348b636a7f48e429f1cc57acca9b6ff7">899ad2bf348b636a7f48e429f1cc57acca9b6ff7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1259799/">1259799</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4eb44215b57db08b39103b45812b7de624744007">4eb44215b57db08b39103b45812b7de624744007</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   44b8c255399e8b4f61cd2300f28a8cc54f248c09
+   5ef401eae7558b076b50e8c8036915df1bfc8719
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/44b8c255399e8b4f61cd2300f28a8cc54f248c09">
+    <a href="/chromium/src/+log/5ef401eae7558b076b50e8c8036915df1bfc8719">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/44b8c255399e8b4f61cd2300f28a8cc54f248c09.tar.gz">
+    <a href="/chromium/src/+archive/5ef401eae7558b076b50e8c8036915df1bfc8719.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Etienne Dechamps &lt;edechamps@google.com&gt;
+   Helmut Januschka &lt;helmut@januschka.com&gt;
   </td>
   <td>
-   Tue Feb 13 11:25:38 2024
+   Tue Feb 13 14:27:26 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 13 11:25:38 2024
+   Tue Feb 13 14:27:26 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/44b8c255399e8b4f61cd2300f28a8cc54f248c09/">
-    d645bc4248fc37a836258678cd8a80d46b47c005
+   <a href="/chromium/src/+/5ef401eae7558b076b50e8c8036915df1bfc8719/">
+    bed9cfac18ffb93a116849b5f1fa7c305439199c
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/44b8c255399e8b4f61cd2300f28a8cc54f248c09%5E">
-    899ad2bf348b636a7f48e429f1cc57acca9b6ff7
+   <a href="/chromium/src/+/5ef401eae7558b076b50e8c8036915df1bfc8719%5E">
+    0d812eba17c1e77d1c2b4ae677071361063e8550
    </a>
    <span>
     [
-    <a href="/chromium/src/+/44b8c255399e8b4f61cd2300f28a8cc54f248c09%5E%21/">
+    <a href="/chromium/src/+/5ef401eae7558b076b50e8c8036915df1bfc8719%5E%21/">
      diff
     </a>
     ]
@@ -179,37 +179,15 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Share Cronet telemetry code between API and impl
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">input_method: base::StringPiece -&gt; std::string_view
 
-IMPORTANT: this CL has breaking implications for downstream Cronet
-release channels and requires dependency structure adjustments for
-consumers (e.g. internal Google repo, Maven). The new "shared" JAR will
-need to be shipped to consumers as a dependency of *both* API and impl
-JARs.
-
-This CL introduces a new Cronet distribution JAR,
-"cronet_shared_java.jar", which holds code that is shared between all
-Cronet code, i.e. the API *and* implementations. Such code is reusable
-from anywhere inside the Cronet codebase.
-
-The main distinction between "API" code and "shared" code is that
-implementations do not necessarily ship with the API code. The textbook
-example of that is the Cronet impl in Google Play Services, which uses
-the API classes from the calling app instead of having its own copy.
-In contrast, implementations always ship with shared code, such that if
-the API code and impl code are loaded from different sources (which
-implies potentially different build/version), each side will end up with
-its own private copy of the shared classes, thus sidestepping any ABI
-compatibility concerns. The downside is that references to these classes
-can't cross the Cronet API/impl ABI boundary, but that's fine for what
-we want to use this for.
-
-Bug: b:313418339
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6d3293cdb41f4182c005c7176ba0ac49ce053c6d">I6d3293cdb41f4182c005c7176ba0ac49ce053c6d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5094199">https://chromium-review.googlesource.com/c/chromium/src/+/5094199</a>
-Reviewed-by: Stefano Duo &lt;stefanoduo@google.com&gt;
-Commit-Queue: Etienne Dechamps &lt;edechamps@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1259759}
+Bug: 691162
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idf44982ad7b545fbf5db7d73ff3a73e1888d8493">Idf44982ad7b545fbf5db7d73ff3a73e1888d8493</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5274753">https://chromium-review.googlesource.com/c/chromium/src/+/5274753</a>
+Reviewed-by: Yuichiro Hanada &lt;yhanada@chromium.org&gt;
+Reviewed-by: Curtis McMullan &lt;curtismcmullan@chromium.org&gt;
+Commit-Queue: Helmut Januschka &lt;helmut@januschka.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1259816}
 </pre>
 
 </body>
