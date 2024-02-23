@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1264454/"> 1264454</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0cdb5e55e108d9287ed0aeb5a5e2bfe17566114b">0cdb5e55e108d9287ed0aeb5a5e2bfe17566114b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1264487/"> 1264487</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6995de67487811b5eaa8aec2c451929f809be451">6995de67487811b5eaa8aec2c451929f809be451</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1264431/">1264431</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b54ff9b1d5ede0814c68585f6c9f63f6ec11d73e">b54ff9b1d5ede0814c68585f6c9f63f6ec11d73e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1264482/">1264482</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5d5108ef93d4ad0cb0a799d9bdfed16ceb5f7dfa">5d5108ef93d4ad0cb0a799d9bdfed16ceb5f7dfa</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0cdb5e55e108d9287ed0aeb5a5e2bfe17566114b
+   6995de67487811b5eaa8aec2c451929f809be451
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0cdb5e55e108d9287ed0aeb5a5e2bfe17566114b">
+    <a href="/chromium/src/+log/6995de67487811b5eaa8aec2c451929f809be451">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0cdb5e55e108d9287ed0aeb5a5e2bfe17566114b.tar.gz">
+    <a href="/chromium/src/+archive/6995de67487811b5eaa8aec2c451929f809be451.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jihad Hanna &lt;jihadghanna@google.com&gt;
+   Dominic Battre &lt;battre@chromium.org&gt;
   </td>
   <td>
-   Fri Feb 23 08:43:33 2024
+   Fri Feb 23 11:43:14 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 23 08:43:33 2024
+   Fri Feb 23 11:43:14 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0cdb5e55e108d9287ed0aeb5a5e2bfe17566114b/">
-    5e81dd877ad721e7dbfd66ba67e7e12b86d69392
+   <a href="/chromium/src/+/6995de67487811b5eaa8aec2c451929f809be451/">
+    2952631be18dad125efd2bafd85557d8892a4ff6
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0cdb5e55e108d9287ed0aeb5a5e2bfe17566114b%5E">
-    e02391a1043606e148ab5f2ec5b768360e4a4487
+   <a href="/chromium/src/+/6995de67487811b5eaa8aec2c451929f809be451%5E">
+    3930db1b897ca4559076abefed3e6e4ff3f121b8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0cdb5e55e108d9287ed0aeb5a5e2bfe17566114b%5E%21/">
+    <a href="/chromium/src/+/6995de67487811b5eaa8aec2c451929f809be451%5E%21/">
      diff
     </a>
     ]
@@ -179,69 +179,51 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Update last interacted form when JS modifies a field's value"
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove separate suffix parsing and support new &lt;ac&gt; - &lt;phone&gt; rule.
 
-This reverts commit 05c6be3dfec78f091d537673fbf65605f7a41776.
+The PhoneFieldParser::Parse searches for phone number fields based on
+grammars. These grammars may contain FIELD_SUFFIX entries, which
+corresponds to the zzz in a US phone number of format "(xxx) yyyy zzzz".
+After processing all grammars, the function took another attempt at
+discovering a phone suffix. This extra attempt succeeded in 0.03% of
+phone number fields (i.e. 3 in 10.000). I tried incorpoating this as new
+grammar rules but I am concerned about negative side effects. The only
+rules that carried some traffic were:
+- Area Code: &lt;ac&gt; Phone: &lt;phone&gt;
+- Phone: &lt;phone&gt;
 
-Reason for revert: Speedometer2 regressions. I will reupload another CL
-that tries to achieve the same result with possibly no regressions
+I have replaced suffix handling for the first rule with new grammars:
+```
+      // Area Code: &lt;ac&gt; Phone: &lt;phone&gt; - &lt;suffix&gt;
+      {{REGEX_AREA, FIELD_AREA_CODE},
+       {REGEX_PHONE, FIELD_PHONE},
+       {REGEX_SUFFIX_SEPARATOR, FIELD_SUFFIX}},
+      // Area Code: &lt;ac&gt; Phone: &lt;phone&gt; Suffix &lt;suffix&gt;
+      {{REGEX_AREA, FIELD_AREA_CODE},
+       {REGEX_PHONE, FIELD_PHONE},
+       {REGEX_SUFFIX, FIELD_SUFFIX}},
+```
 
-Original change's description:
-&gt; Update last interacted form when JS modifies a field's value
-&gt;
-&gt; Autofill is currently working on replacing the observer it uses for
-&gt; disappearing elements by a direct blink connection notifying of removals
-&gt; and hiding of elements.
-&gt;
-&gt; Some notification about hidden elements are provided to Autofill during
-&gt; style recalc (e.g. changing visibility attribute to 'hidden') and during
-&gt; this Autofill is not allowed to query the focusability of a node.
-&gt;
-&gt; This causes a problem for Autofill: When submission is inferred,
-&gt; Autofill tries to extract the form of the element it was tracking, and
-&gt; part of this is querying the focusability of fields. Which means that
-&gt; if submission is inferred from a notification sent during style recalc,
-&gt; Autofill is not allowed to extract a form at submission time.
-&gt;
-&gt; The alternative is to use the provisionally saved form, which is a form
-&gt; that Autofill updates on autofill operations and user edits. In this
-&gt; context, form means either an HTML &lt;form&gt; tagged section or the
-&gt; collection of all unowned control elements.
-&gt;
-&gt; This CL tries to make the provisionally saved form approach the state of
-&gt; the extracted form at submission time (should we have extracted it)
-&gt; by also updating it on JS changes. To achieve that, we modify the signal
-&gt; JavaScriptModifiedAutofilledValue to JavaScriptModifiedValue.
-&gt;
-&gt; Note that this update is only performed if JS modifies the form that is
-&gt; already tracked by autofill. Which means that only user edits and
-&gt; autofill (also user triggered) have permission to change the form
-&gt; tracked by autofill from one form to another, but JS only has permission
-&gt; to update the currently tracked form.
-&gt;
-&gt; The CL also adds logic to default to the provisionally save form
-&gt; unconditionally at submission time instead of extraction.
-&gt;
-&gt; All behavior changes are gated behind a feature flag.
-&gt;
-&gt; Bug: 1483242
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I34635ddbe88dc49aeb31e23f2999e7bca95952bb">I34635ddbe88dc49aeb31e23f2999e7bca95952bb</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5238376">https://chromium-review.googlesource.com/c/chromium/src/+/5238376</a>
-&gt; Reviewed-by: Dominic Battre &lt;battre@chromium.org&gt;
-&gt; Reviewed-by: Christoph Schwering &lt;schwering@google.com&gt;
-&gt; Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-&gt; Commit-Queue: Jihad Hanna &lt;jihadghanna@google.com&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1257853}
+I have not introduced a rule
+```
+      // Phone: &lt;phone&gt; - &lt;suffix&gt;
+      {{REGEX_PHONE, FIELD_PHONE}, {REGEX_SUFFIX_SEPARATOR, FIELD_SUFFIX}},
+```
+because I believe that such a construct should be interpreted as
+```
+      // Phone: &lt;ac&gt; - &lt;phone&gt;
+      {{REGEX_PHONE, FIELD_AREA_CODE}, {REGEX_PREFIX_SEPARATOR, FIELD_PHONE}},
+```
 
-Bug: 1483242
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia641dfeb7d22cf8ec89804876febe6bb1a256f24">Ia641dfeb7d22cf8ec89804876febe6bb1a256f24</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5310179">https://chromium-review.googlesource.com/c/chromium/src/+/5310179</a>
-Reviewed-by: Mason Freed &lt;masonf@chromium.org&gt;
-Reviewed-by: Dominic Battre &lt;battre@chromium.org&gt;
-Reviewed-by: Christoph Schwering &lt;schwering@google.com&gt;
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Commit-Queue: Jihad Hanna &lt;jihadghanna@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1264454}
+I am not rolling this out behind a finch gate because these rules trigger very
+rarely. They don't trigger on my end-to-end tests.
+
+Bug: 40100455,40233246
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I685f44b9330dbbae81cb5e84bf5a8f327527b010">I685f44b9330dbbae81cb5e84bf5a8f327527b010</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5307496">https://chromium-review.googlesource.com/c/chromium/src/+/5307496</a>
+Commit-Queue: Dominic Battre &lt;battre@chromium.org&gt;
+Reviewed-by: Florian Leimgruber &lt;fleimgruber@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1264487}
 </pre>
 
 </body>
