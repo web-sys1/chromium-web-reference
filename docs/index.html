@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1265874/"> 1265874</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dddb1f76c1da947e815cdfa2aa5c6c7cc1a11bc8">dddb1f76c1da947e815cdfa2aa5c6c7cc1a11bc8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1266031/"> 1266031</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a5987538ee7210a2d313efd156102ee0ae820dff">a5987538ee7210a2d313efd156102ee0ae820dff</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1265864/">1265864</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/569c01f6e22852817a35e507bf73739e6f4649c4">569c01f6e22852817a35e507bf73739e6f4649c4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1266034/">1266034</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b46fadd958b824bb6e3cedbf3c2415d6bec3b5f6">b46fadd958b824bb6e3cedbf3c2415d6bec3b5f6</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   dddb1f76c1da947e815cdfa2aa5c6c7cc1a11bc8
+   a5987538ee7210a2d313efd156102ee0ae820dff
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/dddb1f76c1da947e815cdfa2aa5c6c7cc1a11bc8">
+    <a href="/chromium/src/+log/a5987538ee7210a2d313efd156102ee0ae820dff">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/dddb1f76c1da947e815cdfa2aa5c6c7cc1a11bc8.tar.gz">
+    <a href="/chromium/src/+archive/a5987538ee7210a2d313efd156102ee0ae820dff.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Menghan Yang &lt;myuu@google.com&gt;
+   Florian Leimgruber &lt;fleimgruber@google.com&gt;
   </td>
   <td>
-   Tue Feb 27 17:24:23 2024
+   Tue Feb 27 20:31:52 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 27 17:24:23 2024
+   Tue Feb 27 20:31:52 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/dddb1f76c1da947e815cdfa2aa5c6c7cc1a11bc8/">
-    c90f282b9e78e2d5c37eddd26d9c0ccd995c1474
+   <a href="/chromium/src/+/a5987538ee7210a2d313efd156102ee0ae820dff/">
+    6e39bc2419716320df32fc2d457dabb457728dda
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/dddb1f76c1da947e815cdfa2aa5c6c7cc1a11bc8%5E">
-    888f393d4d58cec5c4a6d945a88c98106a14eeb4
+   <a href="/chromium/src/+/a5987538ee7210a2d313efd156102ee0ae820dff%5E">
+    d2d7b02140383390663bacfc79c3288ffa08120e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/dddb1f76c1da947e815cdfa2aa5c6c7cc1a11bc8%5E%21/">
+    <a href="/chromium/src/+/a5987538ee7210a2d313efd156102ee0ae820dff%5E%21/">
      diff
     </a>
     ]
@@ -179,27 +179,33 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Signin][Android] Fix restore metric &amp; use bool for "recorded" status
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move WebDataServiceFactory into subdirectory
 
-In <a href="https://crrev.com/c/5191994,">https://crrev.com/c/5191994,</a> the magic value of the enum value
-RestoreStatus.RESTORE_STATUS_RECORDED has been changed. Since it was
-saved to prefs, and used to prevent additional histogram recording.
+web_data_service_factory.(cc|h) is responsible for creating the
+WebDataServiceWrapper, defined in components/webdata_services/.
+The factory is contained in chrome/browser, rather than a
+webdata_services subdirectory, like the components/ counterpart.
 
-It has broken the restore metrics Android.RestoreResult, since devices
-having old prefs and with the status already recorded consider that
-the restore status has not been recorded yet, and records the status
-histogram again.
+This CL moves the files into a subdirectory and gives ownership to
+components/webdata_services/OWNERS. A DIR_METADATA file matching
+components/webdata_services/DIR_METADATA is created as well.
 
-This CL uses a new value for the sign-in timed out metric since the old one is polluted, and introduces a boolean pref used to indicate whether
-the restore status has been recorded, to limit similar accident in the future.
+Renaming was done using
+  git mv chrome/browser/web_data_service_factory.*
+         chrome/browser/webdata_services/
+  ./tools/git/mass-rename.py
+  git cl format
 
-Bug: 40075135
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3d8addc1e394029af8d9023c2bb2cebb0e3a06fb">I3d8addc1e394029af8d9023c2bb2cebb0e3a06fb</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5321726">https://chromium-review.googlesource.com/c/chromium/src/+/5321726</a>
-Reviewed-by: Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
-Reviewed-by: Boris Sazonov &lt;bsazonov@chromium.org&gt;
-Commit-Queue: Menghan Yang &lt;myuu@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1265874}
+The include_rules from chrome/browser/DEPS can likely be simplified now,
+but this is not attempted by this CL.
+
+Bug: b/322147254
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icb6e41be1c4314ad062550f74b2958f2dad3a1c2">Icb6e41be1c4314ad062550f74b2958f2dad3a1c2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5317648">https://chromium-review.googlesource.com/c/chromium/src/+/5317648</a>
+Reviewed-by: Marc Treib &lt;treib@chromium.org&gt;
+Commit-Queue: Peter Kasting &lt;pkasting@chromium.org&gt;
+Reviewed-by: Peter Kasting &lt;pkasting@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1266031}
 </pre>
 
 </body>
