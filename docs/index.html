@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1266399/"> 1266399</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e8dfe66ab927584787831c0f14176d4542f32156">e8dfe66ab927584787831c0f14176d4542f32156</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1266461/"> 1266461</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1f2517b39550c9df7c4722d381dd94a62671e0dd">1f2517b39550c9df7c4722d381dd94a62671e0dd</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1266381/">1266381</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/eb1a3fad8d14cdeda53ba1af838c598e82bf445f">eb1a3fad8d14cdeda53ba1af838c598e82bf445f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1266442/">1266442</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/186d0d4b04895e5e6c44160276d8ab8dbe628c8f">186d0d4b04895e5e6c44160276d8ab8dbe628c8f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e8dfe66ab927584787831c0f14176d4542f32156
+   1f2517b39550c9df7c4722d381dd94a62671e0dd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e8dfe66ab927584787831c0f14176d4542f32156">
+    <a href="/chromium/src/+log/1f2517b39550c9df7c4722d381dd94a62671e0dd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e8dfe66ab927584787831c0f14176d4542f32156.tar.gz">
+    <a href="/chromium/src/+archive/1f2517b39550c9df7c4722d381dd94a62671e0dd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Keren Zhu &lt;kerenzhu@chromium.org&gt;
+   Seth Brenith &lt;seth.brenith@microsoft.com&gt;
   </td>
   <td>
-   Wed Feb 28 14:42:31 2024
+   Wed Feb 28 16:48:42 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 28 14:42:31 2024
+   Wed Feb 28 16:48:42 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e8dfe66ab927584787831c0f14176d4542f32156/">
-    1897f46cdc10b3c7091e84e117ea4bb8c05ac58e
+   <a href="/chromium/src/+/1f2517b39550c9df7c4722d381dd94a62671e0dd/">
+    a3cc76143283627c49b3e467bfe6e9839588e7cc
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e8dfe66ab927584787831c0f14176d4542f32156%5E">
-    d0b5b34332693aa7f2f37dc4802a87f91e65f561
+   <a href="/chromium/src/+/1f2517b39550c9df7c4722d381dd94a62671e0dd%5E">
+    f6edb5117455e9701c30ea0bcffd2c4bcd1c3788
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e8dfe66ab927584787831c0f14176d4542f32156%5E%21/">
+    <a href="/chromium/src/+/1f2517b39550c9df7c4722d381dd94a62671e0dd%5E%21/">
      diff
     </a>
     ]
@@ -179,49 +179,32 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Reland "[fieldtrial_testing_config] Enable IdentifiabilityStudyMetaExperiment""
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Start Isolate in foreground mode for mimehandler processes
 
-This reverts commit 13621267e1e35d70b52a5f00b078b24932f1503a.
+In Edge, we've seen a regression in the time to load a PDF document when
+the feature V8EfficiencyModeTiering is enabled. I'm not sure how much
+code is shared between Chrome and Edge regarding PDF rendering, but I
+believe at least the overall architecture matches: there is an extension
+renderer process (the "mimehandler") which needs to run some script.
+This renderer process is initializing its V8 Isolate in background mode,
+which causes a slower overall load. As described at [1], extension
+processes start their Isolates in background mode because they might not
+have any way to detect visibility. However, the PDF mimehandler process
+does in fact get notified when its visibility changes, so it can safely
+start up in foreground mode.
 
-Reason for revert: Causes test failures on ChromeOS bots.
-<a href="https://ci.chromium.org/ui/p/chrome/builders/ci/linux-chromeos-chrome/39704">https://ci.chromium.org/ui/p/chrome/builders/ci/linux-chromeos-chrome/39704</a>
-<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/linux-chromeos-rel/74398">https://ci.chromium.org/ui/p/chromium/builders/ci/linux-chromeos-rel/74398</a>
+In this CL, I propose adding another command-line switch so that the
+browser process can indicate that the renderer should start its Isolate
+in foreground mode.
 
-Original change's description:
-&gt; Reland "[fieldtrial_testing_config] Enable IdentifiabilityStudyMetaExperiment"
-&gt;
-&gt; This is a reland of commit 416136ed0d74af8db680d05d2ceda1ac669bd93c
-&gt;
-&gt; Original change's description:
-&gt; &gt; [fieldtrial_testing_config] Enable IdentifiabilityStudyMetaExperiment
-&gt; &gt;
-&gt; &gt; This CL adds a new entry to the fieldtrial_testing_config for enabling
-&gt; &gt; the IdentifiablityStudyMetaExperiment feature.
-&gt; &gt;
-&gt; &gt; Bug: 324271182
-&gt; &gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3f676943b5ac181f83b3e5b6b210648728649175">I3f676943b5ac181f83b3e5b6b210648728649175</a>
-&gt; &gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5315258">https://chromium-review.googlesource.com/c/chromium/src/+/5315258</a>
-&gt; &gt; Reviewed-by: Mike West &lt;mkwst@chromium.org&gt;
-&gt; &gt; Commit-Queue: Antonio Sartori &lt;antoniosartori@chromium.org&gt;
-&gt; &gt; Cr-Commit-Position: refs/heads/main@{#1263923}
-&gt;
-&gt; Bug: 324271182
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9aefaad7e4376d7e94618be590123d992c4b8a1d">I9aefaad7e4376d7e94618be590123d992c4b8a1d</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5318252">https://chromium-review.googlesource.com/c/chromium/src/+/5318252</a>
-&gt; Commit-Queue: Antonio Sartori &lt;antoniosartori@chromium.org&gt;
-&gt; Reviewed-by: Mike West &lt;mkwst@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1266360}
+[1] <a href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/bindings/core/v8/v8_initializer.cc;drc=7477a270035df963ba48d3f7ea4d8b384bce770c;l=951">https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/bindings/core/v8/v8_initializer.cc;drc=7477a270035df963ba48d3f7ea4d8b384bce770c;l=951</a>
 
-Bug: 324271182
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I145fc9f95afeb0ac7e185798cd666df6dc6f985d">I145fc9f95afeb0ac7e185798cd666df6dc6f985d</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5332130">https://chromium-review.googlesource.com/c/chromium/src/+/5332130</a>
-Commit-Queue: Keren Zhu &lt;kerenzhu@chromium.org&gt;
-Owners-Override: Keren Zhu &lt;kerenzhu@google.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1266399}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibedb3fd8e80168e515394804805a5b7fcf44ba49">Ibedb3fd8e80168e515394804805a5b7fcf44ba49</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5304236">https://chromium-review.googlesource.com/c/chromium/src/+/5304236</a>
+Reviewed-by: David Bertoni &lt;dbertoni@chromium.org&gt;
+Commit-Queue: Seth Brenith &lt;seth.brenith@microsoft.com&gt;
+Reviewed-by: Dave Tapuska &lt;dtapuska@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1266461}
 </pre>
 
 </body>
