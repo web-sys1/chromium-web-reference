@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1275146/"> 1275146</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/134be097369800e6923ce6a8b7565eee1aef7f45">134be097369800e6923ce6a8b7565eee1aef7f45</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1275325/"> 1275325</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1833aa05613f59b5e302ac9a0c7359fe0be4589d">1833aa05613f59b5e302ac9a0c7359fe0be4589d</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1275157/">1275157</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b891d32dd2cf20faaa63ca78f19aa288647896e1">b891d32dd2cf20faaa63ca78f19aa288647896e1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1275263/">1275263</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a204b59d954ca3dea01d40c513ad2b6f41222035">a204b59d954ca3dea01d40c513ad2b6f41222035</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   134be097369800e6923ce6a8b7565eee1aef7f45
+   1833aa05613f59b5e302ac9a0c7359fe0be4589d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/134be097369800e6923ce6a8b7565eee1aef7f45">
+    <a href="/chromium/src/+log/1833aa05613f59b5e302ac9a0c7359fe0be4589d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/134be097369800e6923ce6a8b7565eee1aef7f45.tar.gz">
+    <a href="/chromium/src/+archive/1833aa05613f59b5e302ac9a0c7359fe0be4589d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Dale Curtis &lt;dalecurtis@chromium.org&gt;
+   cassycc &lt;cassycc@google.com&gt;
   </td>
   <td>
-   Tue Mar 19 20:21:45 2024
+   Wed Mar 20 00:45:27 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 19 20:21:45 2024
+   Wed Mar 20 00:45:27 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/134be097369800e6923ce6a8b7565eee1aef7f45/">
-    aadc7974687c66fd22d56f8308d8ef4e6fbb82b2
+   <a href="/chromium/src/+/1833aa05613f59b5e302ac9a0c7359fe0be4589d/">
+    abd4f12e745245186ca7d546687c2efa5ae99584
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/134be097369800e6923ce6a8b7565eee1aef7f45%5E">
-    82ba36d9ea9193212c0514e21426785d5f45223f
+   <a href="/chromium/src/+/1833aa05613f59b5e302ac9a0c7359fe0be4589d%5E">
+    ec4ea930dad4525ece06a86961da2fa76b0a9087
    </a>
    <span>
     [
-    <a href="/chromium/src/+/134be097369800e6923ce6a8b7565eee1aef7f45%5E%21/">
+    <a href="/chromium/src/+/1833aa05613f59b5e302ac9a0c7359fe0be4589d%5E%21/">
      diff
     </a>
     ]
@@ -179,40 +179,22 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Add ScreenCaptureLocation policy test."
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[FspCache] Introduce OpenedCloudFile accessible by file_handle
 
-This reverts commit 72f8da58041cf8defe0742aadedc4b6f70e9b28c.
+Introduce the struct OpenedCloudFile to keep track of information which
+will be needed to access the file from a cache. This is created upon
+an OpenFile success. The CloudFileSystem will store a map of
+OpenedCloudFile where each is accessed by the associated file_handle.
 
-Reason for revert: Test is flaky, <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/linux-chromeos-rel/75091/overview">https://ci.chromium.org/ui/p/chromium/builders/ci/linux-chromeos-rel/75091/overview</a>
+Upon CloseFile completion, remove the mapping. Introduce
+OnCloseFileCompleted to intercept the CloseFile completion.
 
-Original change's description:
-&gt; Add ScreenCaptureLocation policy test.
-&gt;
-&gt; The new test sets the policy and checks that the
-&gt; screencaptures (both image and video) are saved there.
-&gt;
-&gt; Also moving some ScreenCapture browser tests around to
-&gt; not setup DLP infra if not needed.
-&gt;
-&gt; Bug: b/323146997
-&gt; Test: autoninja -C out/Default browser_tests &amp;&amp; out/Default/browser_tests --gtest_filter=*CaptureMode*Location*
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I628efa79c4ca95cafb83d1c697d3c7aed525d46f">I628efa79c4ca95cafb83d1c697d3c7aed525d46f</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5307529">https://chromium-review.googlesource.com/c/chromium/src/+/5307529</a>
-&gt; Reviewed-by: Sean Kau &lt;skau@chromium.org&gt;
-&gt; Commit-Queue: Sergey Poromov &lt;poromov@chromium.org&gt;
-&gt; Reviewed-by: Ahmed Fakhry &lt;afakhry@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1274957}
-
-Bug: b/323146997
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I01f191544a6ae3509b2f4d4414747fef5a0793f2">I01f191544a6ae3509b2f4d4414747fef5a0793f2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5379468">https://chromium-review.googlesource.com/c/chromium/src/+/5379468</a>
-Auto-Submit: Dale Curtis &lt;dalecurtis@chromium.org&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: Dale Curtis &lt;dalecurtis@chromium.org&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Owners-Override: Dale Curtis &lt;dalecurtis@chromium.org&gt;
-Reviewed-by: Sean Kau &lt;skau@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1275146}
+Bug: b/330262353
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia76e7d51aa542174c8f2b69d164db3008817b656">Ia76e7d51aa542174c8f2b69d164db3008817b656</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5374232">https://chromium-review.googlesource.com/c/chromium/src/+/5374232</a>
+Commit-Queue: Cassy Chun-Crogan &lt;cassycc@google.com&gt;
+Reviewed-by: Ben Reich &lt;benreich@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1275325}
 </pre>
 
 </body>
