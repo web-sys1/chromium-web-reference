@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1276134/"> 1276134</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c85d4bdda360cfd1d77e4e06539f80ddaf3c047c">c85d4bdda360cfd1d77e4e06539f80ddaf3c047c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1276212/"> 1276212</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5d439fa888139c9a4456948e9c0a40e0584f3b4a">5d439fa888139c9a4456948e9c0a40e0584f3b4a</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1276125/">1276125</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/68fd8b5ffb7b90fba89a053b27084847458a0562">68fd8b5ffb7b90fba89a053b27084847458a0562</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1276195/">1276195</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b8666e76ac252353e15d2d8bd4ce95f6d639847d">b8666e76ac252353e15d2d8bd4ce95f6d639847d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c85d4bdda360cfd1d77e4e06539f80ddaf3c047c
+   5d439fa888139c9a4456948e9c0a40e0584f3b4a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c85d4bdda360cfd1d77e4e06539f80ddaf3c047c">
+    <a href="/chromium/src/+log/5d439fa888139c9a4456948e9c0a40e0584f3b4a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c85d4bdda360cfd1d77e4e06539f80ddaf3c047c.tar.gz">
+    <a href="/chromium/src/+archive/5d439fa888139c9a4456948e9c0a40e0584f3b4a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
+   Jacob Stanley &lt;jacobstanley@google.com&gt;
   </td>
   <td>
-   Thu Mar 21 11:35:21 2024
+   Thu Mar 21 14:50:15 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 21 11:35:21 2024
+   Thu Mar 21 14:50:15 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c85d4bdda360cfd1d77e4e06539f80ddaf3c047c/">
-    29a2becfdaf30b9f4d57620507f07c3af246a6fc
+   <a href="/chromium/src/+/5d439fa888139c9a4456948e9c0a40e0584f3b4a/">
+    bb43e0dd776eccd8f4a4e3c103aca612a9838a68
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c85d4bdda360cfd1d77e4e06539f80ddaf3c047c%5E">
-    6054c9294a13538f6337abc355c873e0ad84c61f
+   <a href="/chromium/src/+/5d439fa888139c9a4456948e9c0a40e0584f3b4a%5E">
+    7cda6ca1096942f02e6626a0938bc88492e3f8aa
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c85d4bdda360cfd1d77e4e06539f80ddaf3c047c%5E%21/">
+    <a href="/chromium/src/+/5d439fa888139c9a4456948e9c0a40e0584f3b4a%5E%21/">
      diff
     </a>
     ]
@@ -179,34 +179,14 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[anchor] Don't scope inline container anchor references.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Adding pixel tests to the integration tests for PTB
 
-Previously we'd scope anchor references to those contained by the
-inline container. However this is incorrect, and instead should allow
-everything at the containing-block level.
-
-For example:
-
-&lt;div id="a" style="position: static;"&gt;
-  &lt;span style="position: relative;"&gt;
-    &lt;div id="b" style="position: absolute; anchor-name: --b"&gt;&lt;/div&gt;
-  &lt;/span&gt;
-  &lt;span style="position: relative;"&gt;
-    &lt;div id="c" style="position: absolute; top: anchor(--b top);"&gt;&lt;/div&gt;
-  &lt;/span&gt;
-&lt;/div&gt;
-
-In the above example the containing-*block* is "a". Previously "c"
-couldn't anchor to "b", however upon discussion with Tab we should
-allow this.
-
-Bug: 41490536
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I282b61be5dc22d79baeae947fa2be8215c561ff7">I282b61be5dc22d79baeae947fa2be8215c561ff7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5381759">https://chromium-review.googlesource.com/c/chromium/src/+/5381759</a>
-Commit-Queue: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
-Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1276134}
+Bug: 326286372
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8fc17fb50718ab184d0e81500f16905b5da084c4">I8fc17fb50718ab184d0e81500f16905b5da084c4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5374645">https://chromium-review.googlesource.com/c/chromium/src/+/5374645</a>
+Commit-Queue: Jacob Stanley &lt;jacobstanley@google.com&gt;
+Reviewed-by: Abe Boujane &lt;boujane@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1276212}
 </pre>
 
 </body>
