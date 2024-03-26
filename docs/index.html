@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1278373/"> 1278373</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7e7b5936788300cdf1f9bd31eda7096ddbb64173">7e7b5936788300cdf1f9bd31eda7096ddbb64173</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1278554/"> 1278554</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9af39fd658c348190f5d16433fc549cc190ac3fa">9af39fd658c348190f5d16433fc549cc190ac3fa</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1278392/">1278392</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c93e9463e66dfb4dfa8dc9ea09fc80bbd30f19ad">c93e9463e66dfb4dfa8dc9ea09fc80bbd30f19ad</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1278542/">1278542</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0ff2a265adedfc78ea77e060c5e154781676ecf9">0ff2a265adedfc78ea77e060c5e154781676ecf9</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7e7b5936788300cdf1f9bd31eda7096ddbb64173
+   9af39fd658c348190f5d16433fc549cc190ac3fa
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7e7b5936788300cdf1f9bd31eda7096ddbb64173">
+    <a href="/chromium/src/+log/9af39fd658c348190f5d16433fc549cc190ac3fa">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7e7b5936788300cdf1f9bd31eda7096ddbb64173.tar.gz">
+    <a href="/chromium/src/+archive/9af39fd658c348190f5d16433fc549cc190ac3fa.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Liam Brady &lt;lbrady@google.com&gt;
+   Fiona Macintosh &lt;fmacintosh@google.com&gt;
   </td>
   <td>
-   Tue Mar 26 16:26:48 2024
+   Tue Mar 26 20:07:31 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 26 16:26:48 2024
+   Tue Mar 26 20:07:31 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7e7b5936788300cdf1f9bd31eda7096ddbb64173/">
-    81a641927f3bdd0988edc007a8147a10f2f757cc
+   <a href="/chromium/src/+/9af39fd658c348190f5d16433fc549cc190ac3fa/">
+    ef82970f34e65ba4a41ee83a2358d781227776f0
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7e7b5936788300cdf1f9bd31eda7096ddbb64173%5E">
-    60ae845a431c60962352ec621f65bd85fc1a28d0
+   <a href="/chromium/src/+/9af39fd658c348190f5d16433fc549cc190ac3fa%5E">
+    ef33d507156004c943a7f2422e88bcad83c96069
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7e7b5936788300cdf1f9bd31eda7096ddbb64173%5E%21/">
+    <a href="/chromium/src/+/9af39fd658c348190f5d16433fc549cc190ac3fa%5E%21/">
      diff
     </a>
     ]
@@ -179,34 +179,16 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fenced frame: fix CSP tests and CSP check in can load API.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Update NetworkContextConfigurationBrowserTest to pass in 3PCD
 
-The navigator.canLoadAdAuctionFencedFrame() API currently doesn't
-properly handle the case when calling it in a document whose content
-security policy is "fenced-frame-src: https:". This is because the API
-isn't explicitly checking for that specific case. This CL modifies the
-function to match the checks in `CheckCSPSource()` in `csp_source.cc`.
+Rather than disabling 3PCD, use an exception as a long-term fix
 
-This would've been caught by the CSP WPTs, but those have a bug that
-makes them ineffective in catching corner cases. When adding a CSP with
-the &lt;meta&gt; tag, that is a strictly additive operation, and removing the
-tag will have no effect on the document's CSP. Since the same page is
-re-used through all the promise_tests in the file, each subsequent test
-will load with all of the CSPs set in the prior tests. This CL fixes
-that by having each test create a subframe that gets the CSP, and
-running the test in that subframe.
-
-This CL also refactors canLoadAdAuctionFencedFrame() to move the CSP
-related checks into a helper function in the renderer's
-ContentSecurityPolicy class.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iea3238cc2b515976468f957ae808277df8c5adc9">Iea3238cc2b515976468f957ae808277df8c5adc9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5378803">https://chromium-review.googlesource.com/c/chromium/src/+/5378803</a>
-Reviewed-by: Caleb Raitto &lt;caraitto@chromium.org&gt;
-Reviewed-by: Garrett Tanzer &lt;gtanzer@chromium.org&gt;
-Reviewed-by: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
-Commit-Queue: Liam Brady &lt;lbrady@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1278373}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaf79de9e052fcbf61e25f03cf11f3585dceb2115">Iaf79de9e052fcbf61e25f03cf11f3585dceb2115</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5391887">https://chromium-review.googlesource.com/c/chromium/src/+/5391887</a>
+Auto-Submit: Fiona Macintosh &lt;fmacintosh@google.com&gt;
+Commit-Queue: Maks Orlovich &lt;morlovich@chromium.org&gt;
+Reviewed-by: Maks Orlovich &lt;morlovich@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1278554}
 </pre>
 
 </body>
