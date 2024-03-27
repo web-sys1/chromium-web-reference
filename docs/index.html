@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1278706/"> 1278706</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9e806ef8dddb3b30b822db8471d18418760ad696">9e806ef8dddb3b30b822db8471d18418760ad696</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1278791/"> 1278791</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d2730017e9abee4576f4a02e27f4d8d766eeecdd">d2730017e9abee4576f4a02e27f4d8d766eeecdd</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1278705/">1278705</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e4d636d64723d41ef9c711bd78736f936ea2b513">e4d636d64723d41ef9c711bd78736f936ea2b513</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1278785/">1278785</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5a55e7a92be53f3893d55bc0ff4c1b49f07567fb">5a55e7a92be53f3893d55bc0ff4c1b49f07567fb</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9e806ef8dddb3b30b822db8471d18418760ad696
+   d2730017e9abee4576f4a02e27f4d8d766eeecdd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9e806ef8dddb3b30b822db8471d18418760ad696">
+    <a href="/chromium/src/+log/d2730017e9abee4576f4a02e27f4d8d766eeecdd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9e806ef8dddb3b30b822db8471d18418760ad696.tar.gz">
+    <a href="/chromium/src/+archive/d2730017e9abee4576f4a02e27f4d8d766eeecdd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Dirk Pranke &lt;dpranke@google.com&gt;
+   Alan Screen &lt;awscreen@chromium.org&gt;
   </td>
   <td>
-   Wed Mar 27 02:34:18 2024
+   Wed Mar 27 05:37:24 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Mar 27 02:34:18 2024
+   Wed Mar 27 05:37:24 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9e806ef8dddb3b30b822db8471d18418760ad696/">
-    d9babff52cd383f8b2dea51b8d62c7210ab921f6
+   <a href="/chromium/src/+/d2730017e9abee4576f4a02e27f4d8d766eeecdd/">
+    2c1714833c0c772f4192b638f980754eebf62e04
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9e806ef8dddb3b30b822db8471d18418760ad696%5E">
-    e4d636d64723d41ef9c711bd78736f936ea2b513
+   <a href="/chromium/src/+/d2730017e9abee4576f4a02e27f4d8d766eeecdd%5E">
+    661f3f2d0498096bb7a5f7caa734894ba40274d0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9e806ef8dddb3b30b822db8471d18418760ad696%5E%21/">
+    <a href="/chromium/src/+/d2730017e9abee4576f4a02e27f4d8d766eeecdd%5E%21/">
      diff
     </a>
     ]
@@ -179,40 +179,23 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert the instrumented_libraries -&gt; instrumented_libs changes.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Cleanup printing preferences files
 
-We needed to revert the CL that moved the MSAN libraries to
-a dependency, because the new repo w/ the dependency didn't
-have the right ACLs.
+Update prefs_util files so that they only contain functions that
+directly read preferences.  Move wrapper functions which encapsulate
+feature helpers for out-of-process printing for checking both feature
+flags and policies into new oop_features files.
 
-  Revert "[Instrumented libraries] Pull instrumented_libraries via recursedeps"
-  <a href="https://crrev.com/c/5368675">https://crrev.com/c/5368675</a> (this is the main commit)
-  This reverts commit ce4370776df055cc4a23ed74f1d909a27bf4fc49.
+Expose the previously encapsulated CheckOopPolicy() function from
+prefs_util.h.  Update its signature to return an optional, so that
+callers can distinguish explicit preference values from no preference
+specified.
 
-  Reverting this needed to be done by hand because there were
-  two CLs landed after the change that depended on it:
-
-  Revert "[Instrumented libraries] Fix archive file extension in doc"
-  <a href="https://crrev.com/c/5393429">https://crrev.com/c/5393429</a> (this was the second of the 3 CLs)
-  This reverts commit 858556121ff4e276b1d6853caa9703a1e4a1290e.
-
-  Revert "Remove instrumented_libs from recusedeps in DEPS."
-  <a href="https://crrev.com/c/5398599">https://crrev.com/c/5398599</a> (this was the third of the 3 CLs)
-  This reverts commit c110f341e57cb8e8fc5d09fead94b15c4cb76e7f.
-
-Bug: 331365997
-No-Tree-Checks: true
-No-Try: true
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9356e7abb8cebc21ea5e6ab186fe03bddc574145">I9356e7abb8cebc21ea5e6ab186fe03bddc574145</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5399365">https://chromium-review.googlesource.com/c/chromium/src/+/5399365</a>
-Reviewed-by: Keybo Qian &lt;keybo@google.com&gt;
-Commit-Queue: Ben Pastene &lt;bpastene@chromium.org&gt;
-Reviewed-by: Xinan Lin &lt;linxinan@chromium.org&gt;
-Owners-Override: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
-Reviewed-by: Thomas Anderson &lt;thomasanderson@chromium.org&gt;
-Owners-Override: Xinan Lin &lt;linxinan@chromium.org&gt;
-Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1278706}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1c44e25972ac206f5d43ec351a31afb5196a0bc1">I1c44e25972ac206f5d43ec351a31afb5196a0bc1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5386875">https://chromium-review.googlesource.com/c/chromium/src/+/5386875</a>
+Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
+Commit-Queue: Alan Screen &lt;awscreen@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1278791}
 </pre>
 
 </body>
