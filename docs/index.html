@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1281742/"> 1281742</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0">d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1281826/"> 1281826</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/af09fe24615c053787017c92479a38b727f6a306">af09fe24615c053787017c92479a38b727f6a306</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1281756/">1281756</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8a975fbe3d89f8522cf611e54d8cca98149d9810">8a975fbe3d89f8522cf611e54d8cca98149d9810</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1281815/">1281815</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e541883253b855c4538ca759dde5d11a3d923591">e541883253b855c4538ca759dde5d11a3d923591</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0
+   af09fe24615c053787017c92479a38b727f6a306
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0">
+    <a href="/chromium/src/+log/af09fe24615c053787017c92479a38b727f6a306">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0.tar.gz">
+    <a href="/chromium/src/+archive/af09fe24615c053787017c92479a38b727f6a306.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Dominic Battre &lt;battre@chromium.org&gt;
+   Mikel Astiz &lt;mastiz@chromium.org&gt;
   </td>
   <td>
-   Wed Apr 03 10:00:49 2024
+   Wed Apr 03 14:43:55 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 03 10:00:49 2024
+   Wed Apr 03 14:43:55 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0/">
-    9387f14ff142ed00928c051413868a03a64b3bcd
+   <a href="/chromium/src/+/af09fe24615c053787017c92479a38b727f6a306/">
+    18a17dd8e8b91c2a1eac4929dff4995cef280e13
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0%5E">
-    59e95a8da7925fac3c877c44374dcda27d64b062
+   <a href="/chromium/src/+/af09fe24615c053787017c92479a38b727f6a306%5E">
+    ffa5e403f002c62ce553b02a301f4aa67a8dcf60
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0%5E%21/">
+    <a href="/chromium/src/+/af09fe24615c053787017c92479a38b727f6a306%5E%21/">
      diff
     </a>
     ]
@@ -179,36 +179,22 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix PasswordAutofillAgent::ShowSuggestionsForDomain
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[sync] Ensure ModelType is included in crash dumps involving processor
 
-The contract for PasswordAutofillAgent::ShowSuggestionsForDomain is to
-"return true if any suggestions were shown, false otherwise". This
-contract was violated in case
-```
-   !element.IsTextField() || !IsElementEditable(element) ||
-   (!password_element.IsNull() &amp;&amp; !IsElementEditable(password_element))
-```
-evaluated to true. In this case the function returned `true` without
-showing password suggestions.
+The precise model type involved in a crash report is often insightful to
+debug the crasher. However, before this patch, minidumps rarely include
+ModelType, which makes investigations hard.
 
-As a result of that, also the autofill fallback for email addresses for
-the field was blocked.
+In this patch, `base::debug::Alias()` is used to ensure that a copy of
+`ClientTagBasedModelTypeProcessor::type_` exists in the stack and
+included in crash reports.
 
-This broke autofilling an email on the <a href="https://www.lufthansa.com/">https://www.lufthansa.com/</a> -&gt;
-"Login &amp; Registration" page.
-
-After this CL the password manager is still unable to suggest a username
-but the autofill fallback works again. It is up to the password manager
-team to decide whether to relax the constraint that the non-focused
-field (password or username) needs to be editable.
-
-Low-Coverage-Reason: HARD_TO_TEST This should be tested but we don't have a test framework for PasswordAutofillAgent in place that would make it easy to test at the moment.
-Bug: 331345447
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I234bdb6cf222edf7a1c435b75f5d611d05b178e5">I234bdb6cf222edf7a1c435b75f5d611d05b178e5</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5412803">https://chromium-review.googlesource.com/c/chromium/src/+/5412803</a>
-Commit-Queue: Dominic Battre &lt;battre@chromium.org&gt;
-Reviewed-by: Vasilii Sukhanov &lt;vasilii@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1281742}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia3a169a3d87cdd58b64df14e267ae00e67d29b67">Ia3a169a3d87cdd58b64df14e267ae00e67d29b67</a>
+Bug: 331868173
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5419133">https://chromium-review.googlesource.com/c/chromium/src/+/5419133</a>
+Commit-Queue: Mikel Astiz &lt;mastiz@chromium.org&gt;
+Reviewed-by: Mahmoud Rashad &lt;mmrashad@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1281826}
 </pre>
 
 </body>
