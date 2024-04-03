@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1281700/"> 1281700</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b5c973c0910420b497a24345fa9e260e3ce6e318">b5c973c0910420b497a24345fa9e260e3ce6e318</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1281742/"> 1281742</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0">d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1281717/">1281717</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/38f345052c02915f0e81e22f7a0821194b0c1adf">38f345052c02915f0e81e22f7a0821194b0c1adf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1281756/">1281756</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8a975fbe3d89f8522cf611e54d8cca98149d9810">8a975fbe3d89f8522cf611e54d8cca98149d9810</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b5c973c0910420b497a24345fa9e260e3ce6e318
+   d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b5c973c0910420b497a24345fa9e260e3ce6e318">
+    <a href="/chromium/src/+log/d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b5c973c0910420b497a24345fa9e260e3ce6e318.tar.gz">
+    <a href="/chromium/src/+archive/d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kent Tamura &lt;tkent@chromium.org&gt;
+   Dominic Battre &lt;battre@chromium.org&gt;
   </td>
   <td>
-   Wed Apr 03 07:46:57 2024
+   Wed Apr 03 10:00:49 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 03 07:46:57 2024
+   Wed Apr 03 10:00:49 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b5c973c0910420b497a24345fa9e260e3ce6e318/">
-    ca8ad0433b7bd4f5ce4d27032d217d9dd0f891a0
+   <a href="/chromium/src/+/d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0/">
+    9387f14ff142ed00928c051413868a03a64b3bcd
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b5c973c0910420b497a24345fa9e260e3ce6e318%5E">
-    06e342f8945b62eaf09710b410982ee47c9935ed
+   <a href="/chromium/src/+/d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0%5E">
+    59e95a8da7925fac3c877c44374dcda27d64b062
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b5c973c0910420b497a24345fa9e260e3ce6e318%5E%21/">
+    <a href="/chromium/src/+/d7ad878d54ff6cf20ed4a263ebdb3703817ee7d0%5E%21/">
      diff
     </a>
     ]
@@ -179,26 +179,36 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">RubyLB: Create LogicalLineItems for ruby annotations
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix PasswordAutofillAgent::ShowSuggestionsForDomain
 
-* LogicalLineBuilder::PlaceRubyAnnotation() converts an annotation
-  LineInfo to a LogicalLineItems with a new InlineLayoutStateStack
-  and a new LogicalLineBuilder.
+The contract for PasswordAutofillAgent::ShowSuggestionsForDomain is to
+"return true if any suggestions were shown, false otherwise". This
+contract was violated in case
+```
+   !element.IsTextField() || !IsElementEditable(element) ||
+   (!password_element.IsNull() &amp;&amp; !IsElementEditable(password_element))
+```
+evaluated to true. In this case the function returned `true` without
+showing password suggestions.
 
-* Its result is stored in a LogicalRubyColumn.
+As a result of that, also the autofill fallback for email addresses for
+the field was blocked.
 
-* The top-level line creation determines inline positions of all
-  LogicalRubyColumns.
+This broke autofilling an email on the <a href="https://www.lufthansa.com/">https://www.lufthansa.com/</a> -&gt;
+"Login &amp; Registration" page.
 
-This CL has no behavior changes due to a disabled runtime flag.
+After this CL the password manager is still unable to suggest a username
+but the autofill fallback works again. It is up to the password manager
+team to decide whether to relax the constraint that the non-focused
+field (password or username) needs to be editable.
 
-Bug: 324111880
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0254fc9c89eb1955343c569a5ee99d724fe1aa67">I0254fc9c89eb1955343c569a5ee99d724fe1aa67</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5418133">https://chromium-review.googlesource.com/c/chromium/src/+/5418133</a>
-Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Commit-Queue: Kent Tamura &lt;tkent@chromium.org&gt;
-Auto-Submit: Kent Tamura &lt;tkent@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1281700}
+Low-Coverage-Reason: HARD_TO_TEST This should be tested but we don't have a test framework for PasswordAutofillAgent in place that would make it easy to test at the moment.
+Bug: 331345447
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I234bdb6cf222edf7a1c435b75f5d611d05b178e5">I234bdb6cf222edf7a1c435b75f5d611d05b178e5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5412803">https://chromium-review.googlesource.com/c/chromium/src/+/5412803</a>
+Commit-Queue: Dominic Battre &lt;battre@chromium.org&gt;
+Reviewed-by: Vasilii Sukhanov &lt;vasilii@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1281742}
 </pre>
 
 </body>
