@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1286404/"> 1286404</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0287b8c6319a59e44b8f9f7e7777f30a72204357">0287b8c6319a59e44b8f9f7e7777f30a72204357</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1286456/"> 1286456</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b2f0828c377bc8fd39748c92392cacc0b26a48fe">b2f0828c377bc8fd39748c92392cacc0b26a48fe</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1286402/">1286402</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f1b936287f89fd6a1f394c117fe729a4e7232f41">f1b936287f89fd6a1f394c117fe729a4e7232f41</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1286471/">1286471</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1ea6505e1ee255f96d7c39862bec8c0eb699fd32">1ea6505e1ee255f96d7c39862bec8c0eb699fd32</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0287b8c6319a59e44b8f9f7e7777f30a72204357
+   b2f0828c377bc8fd39748c92392cacc0b26a48fe
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0287b8c6319a59e44b8f9f7e7777f30a72204357">
+    <a href="/chromium/src/+log/b2f0828c377bc8fd39748c92392cacc0b26a48fe">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0287b8c6319a59e44b8f9f7e7777f30a72204357.tar.gz">
+    <a href="/chromium/src/+archive/b2f0828c377bc8fd39748c92392cacc0b26a48fe.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Osama Fathy &lt;osamafathy@google.com&gt;
+   Simon Hangl &lt;simonha@google.com&gt;
   </td>
   <td>
-   Fri Apr 12 11:33:09 2024
+   Fri Apr 12 14:02:33 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 12 11:33:09 2024
+   Fri Apr 12 14:02:33 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0287b8c6319a59e44b8f9f7e7777f30a72204357/">
-    a98cb085e07b8f2e6d3d194d6e80fae4168388ce
+   <a href="/chromium/src/+/b2f0828c377bc8fd39748c92392cacc0b26a48fe/">
+    2e44328ef49761dac9dc038ce8071e1822dcdde3
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0287b8c6319a59e44b8f9f7e7777f30a72204357%5E">
-    5a70e0ecd6f71b2f6758354c3f8747ceee28f289
+   <a href="/chromium/src/+/b2f0828c377bc8fd39748c92392cacc0b26a48fe%5E">
+    f763f41dd3f035e0b1b34416e428c392c3e1ae73
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0287b8c6319a59e44b8f9f7e7777f30a72204357%5E%21/">
+    <a href="/chromium/src/+/b2f0828c377bc8fd39748c92392cacc0b26a48fe%5E%21/">
      diff
     </a>
     ]
@@ -179,34 +179,33 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "snap-group: Do not show snap groups in partial overview"
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add MultiScreenCaptureAllowedForUrls for Lacros
 
-This reverts commit c117db0157f74b38957ce387f2345f6d9a8ac9c9.
+In a previous CL, the same policy was introduced on Ash. This CL
+implements the `IsGetAllScreensMediaAllowed` oracle for Lacros.
+In order to do so, the signature of `IsGetAllScreensMediaAllowed`
+needs to be changed to accept a result-callback instead of returning
+a boolean.
 
-Reason for revert: SnapGroupTest.DoNotShowSnapGroupsInPartialOverview test is consistently failing on some builders b/302212786
+tests as we cannot make the Ash binary start up with a certain policy
+value. This would be required for a complete end2end test as the policy
+value is only cached at Ash startup. Adding a test interface to set
+the policy on the Ash side would defeat the purpose of an end2end test.
+We have covered that the Ash side works properly as we have end2end
+test for Ash, which also go through the crosapi interface (not IPC).
 
-Original change's description:
-&gt; snap-group: Do not show snap groups in partial overview
-&gt;
-&gt; Demo: <a href="http://b/302212786#comment2">http://b/302212786#comment2</a>
-&gt; Fixed: b/302212786
-&gt; Test: Added new unit test + manually
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icc1fa537551cc046535cb39b2165757af9f29185">Icc1fa537551cc046535cb39b2165757af9f29185</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5446305">https://chromium-review.googlesource.com/c/chromium/src/+/5446305</a>
-&gt; Reviewed-by: Sammie Quon &lt;sammiequon@chromium.org&gt;
-&gt; Commit-Queue: Michele Fan &lt;michelefan@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1286086}
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib2dbe864ea3fdc4879f409aab30cbf2b341f3e54">Ib2dbe864ea3fdc4879f409aab30cbf2b341f3e54</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5447119">https://chromium-review.googlesource.com/c/chromium/src/+/5447119</a>
-Auto-Submit: Osama Fathy &lt;osamafathy@google.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Owners-Override: Osama Fathy &lt;osamafathy@google.com&gt;
-Commit-Queue: Osama Fathy &lt;osamafathy@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1286404}
+Bug: b/40216442
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4b17e63c73df9cc1c0c9d10a93b01f2dfc044d20">I4b17e63c73df9cc1c0c9d10a93b01f2dfc044d20</a>
+Design: go/multiscreencapture-iwa-policy
+Low-Coverage-Reason: HARD_TO_TEST We are mocking the crosapi for system
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5398120">https://chromium-review.googlesource.com/c/chromium/src/+/5398120</a>
+Reviewed-by: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
+Reviewed-by: Rakina Zata Amni &lt;rakina@chromium.org&gt;
+Reviewed-by: Guido Urdaneta &lt;guidou@chromium.org&gt;
+Reviewed-by: Thomas Lukaszewicz &lt;tluk@chromium.org&gt;
+Reviewed-by: Elad Alon &lt;eladalon@chromium.org&gt;
+Commit-Queue: Simon Hangl &lt;simonha@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1286456}
 </pre>
 
 </body>
