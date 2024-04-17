@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1288835/"> 1288835</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f298e90a8f45c17f022583a0b011ad2669760597">f298e90a8f45c17f022583a0b011ad2669760597</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1288964/"> 1288964</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/673f0f63a31987a769f940228ed70559e820a559">673f0f63a31987a769f940228ed70559e820a559</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1288790/">1288790</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e5efc708812ab5141b0592439765c06acc8ad260">e5efc708812ab5141b0592439765c06acc8ad260</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1288956/">1288956</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a6b1791285976737faf5389b5e387caacdb268c4">a6b1791285976737faf5389b5e387caacdb268c4</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f298e90a8f45c17f022583a0b011ad2669760597
+   673f0f63a31987a769f940228ed70559e820a559
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f298e90a8f45c17f022583a0b011ad2669760597">
+    <a href="/chromium/src/+log/673f0f63a31987a769f940228ed70559e820a559">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f298e90a8f45c17f022583a0b011ad2669760597.tar.gz">
+    <a href="/chromium/src/+archive/673f0f63a31987a769f940228ed70559e820a559.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Hirthanan Subenderan &lt;hirthanan@google.com&gt;
+   Nicolás Peña &lt;npm@chromium.org&gt;
   </td>
   <td>
-   Wed Apr 17 18:01:05 2024
+   Wed Apr 17 20:51:32 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Apr 17 18:01:05 2024
+   Wed Apr 17 20:51:32 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f298e90a8f45c17f022583a0b011ad2669760597/">
-    ba52f07f2b97966ac0dd2f74fb0f27e1e076fd88
+   <a href="/chromium/src/+/673f0f63a31987a769f940228ed70559e820a559/">
+    7edd934afb5d75ac354252055bea3bc552b12371
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f298e90a8f45c17f022583a0b011ad2669760597%5E">
-    b6b08341eb71ad8b51f06f94256c3f60dc5d047b
+   <a href="/chromium/src/+/673f0f63a31987a769f940228ed70559e820a559%5E">
+    9b957c3cccc29bf06bb14de44c08a989635fb247
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f298e90a8f45c17f022583a0b011ad2669760597%5E%21/">
+    <a href="/chromium/src/+/673f0f63a31987a769f940228ed70559e820a559%5E%21/">
      diff
     </a>
     ]
@@ -179,40 +179,19 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Decouple CrOS secondary user UMA consent from device owner consent.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Disable LensOverlayControllerBrowserTest.DelayPermissionsPrompt
 
-This change ensures that regardless of the Device Owner's UMA enabled
-state, secondary users can manage their UMA consent (during OOBE, or
-from chrome://settings toggle).
+Flaky on linux-lacros-asan-lsan-rel
 
-During the OOBE consent flow, secondary users will continue to
-be opt-in by default.
-
-The scope of this change is for unmanaged ChromeOS devices. Managed
-devices do not allow users to change consent, as it is managed by the
-admins enterprise policy.
-
-Prior to this change, the OOBE flow was confusing. For example,
-if the Device Owner turns off UMA, subsequent users didn't have the
-option to enable consent. When the Device Owner consents to UMA,
-secondary users have the ability to toggle their consent.
-
-This previous behaviour was confusing because a user with
-multiple profiles on the same CrOS device might incorrectly think that
-turning off UMA for their secondary profile will turn off UMA for
-everyone on the device.
-
-Test plan &amp; new OOBE flows: go/cros-per-user-consent-flow-changes
-
-BUG=b/283174830
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ife60d6f2fb0fe7961038006c6bf9a417a515d3fd">Ife60d6f2fb0fe7961038006c6bf9a417a515d3fd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5297698">https://chromium-review.googlesource.com/c/chromium/src/+/5297698</a>
-Reviewed-by: Osama Fathy &lt;osamafathy@google.com&gt;
-Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
-Commit-Queue: Hirthanan Subenderan &lt;hirthanan@google.com&gt;
-Reviewed-by: Jong Ahn &lt;jongahn@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1288835}
+Bug: 335477339
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0987423a4df16b89240f6a2903ebfecff8b10a7a">I0987423a4df16b89240f6a2903ebfecff8b10a7a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5464061">https://chromium-review.googlesource.com/c/chromium/src/+/5464061</a>
+Owners-Override: Nicolás Peña &lt;npm@chromium.org&gt;
+Reviewed-by: Christian Biesinger &lt;cbiesinger@chromium.org&gt;
+Commit-Queue: Christian Biesinger &lt;cbiesinger@chromium.org&gt;
+Auto-Submit: Nicolás Peña &lt;npm@chromium.org&gt;
+Commit-Queue: Nicolás Peña &lt;npm@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1288964}
 </pre>
 
 </body>
