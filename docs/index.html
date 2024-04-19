@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1289734/"> 1289734</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/af3c0d2eee33988fbb11cb29ad9975be45ac1743">af3c0d2eee33988fbb11cb29ad9975be45ac1743</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1289771/"> 1289771</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8d0d2ba92a375542913f2b9259fbdcda8aa036b4">8d0d2ba92a375542913f2b9259fbdcda8aa036b4</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1289713/">1289713</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ec94716da1017bd02e260511d32e9b6ef71e105d">ec94716da1017bd02e260511d32e9b6ef71e105d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1289765/">1289765</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4b983674b1de6c6e8f324ea78c9e1fb6915127c0">4b983674b1de6c6e8f324ea78c9e1fb6915127c0</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   af3c0d2eee33988fbb11cb29ad9975be45ac1743
+   8d0d2ba92a375542913f2b9259fbdcda8aa036b4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/af3c0d2eee33988fbb11cb29ad9975be45ac1743">
+    <a href="/chromium/src/+log/8d0d2ba92a375542913f2b9259fbdcda8aa036b4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/af3c0d2eee33988fbb11cb29ad9975be45ac1743.tar.gz">
+    <a href="/chromium/src/+archive/8d0d2ba92a375542913f2b9259fbdcda8aa036b4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   weidongliu &lt;weidongliu@chromium.org&gt;
+   John Stiles &lt;johnstiles@google.com&gt;
   </td>
   <td>
-   Fri Apr 19 02:46:53 2024
+   Fri Apr 19 05:36:10 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 19 02:46:53 2024
+   Fri Apr 19 05:36:10 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/af3c0d2eee33988fbb11cb29ad9975be45ac1743/">
-    b3fbc1882d2823f4b4c1eed9710cfeaa51542663
+   <a href="/chromium/src/+/8d0d2ba92a375542913f2b9259fbdcda8aa036b4/">
+    b611664917e340d9410e5bd56ec0e5a00587ab33
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/af3c0d2eee33988fbb11cb29ad9975be45ac1743%5E">
-    4ba051613dd5621bc5dd3ff8e4403f2375271ce5
+   <a href="/chromium/src/+/8d0d2ba92a375542913f2b9259fbdcda8aa036b4%5E">
+    7bb7f2fb854d5f5b9c65cbdf488a9c3e56030cbe
    </a>
    <span>
     [
-    <a href="/chromium/src/+/af3c0d2eee33988fbb11cb29ad9975be45ac1743%5E%21/">
+    <a href="/chromium/src/+/8d0d2ba92a375542913f2b9259fbdcda8aa036b4%5E%21/">
      diff
     </a>
     ]
@@ -179,32 +179,22 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "use CalculatePreferredSize(SizeBounds) in //ui/views"
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Restrict fuzzer images to 16 million pixels.
 
-Because TabbedPaneTab has LayoutManager, it will use
-LayoutManager::GetPreferredHeightForWidth by default, so can't delete
-GetHeightForWidth now.
+The fuzzer is able to make astronomically large bitmaps (30000x30000)
+from very small inputs. Images this large can take several seconds to
+decode. In a build instrumented for fuzzing, this time can balloon to
+over a minute. To avoid timeouts, we limit the fuzzer to 16 million
+pixels. We don't reject very wide or very tall images, as long as the
+image is reasonably small on the other axis.
 
-Original change's description:
-&gt; use CalculatePreferredSize(SizeBounds) in //ui/views
-&gt;
-&gt; In order to ensure implementation consistency and avoid oversights, we
-&gt; should unify CalculatePreferredSize() and GetHeightForWidth(). Replace
-&gt; them with the CalculatePreferredSize(SizeBounds) overload.
-&gt;
-&gt; Bug: 40232718
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id40aa2bb592e144ddc7c14588352ada8481245c4">Id40aa2bb592e144ddc7c14588352ada8481245c4</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5458613">https://chromium-review.googlesource.com/c/chromium/src/+/5458613</a>
-&gt; Commit-Queue: Weidong Liu &lt;weidongliu@chromium.org&gt;
-&gt; Reviewed-by: Keren Zhu &lt;kerenzhu@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1289043}
-
-Bug: 40232718
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I79a0993b2aebf930ab701e68a8d7cbd05d411b8f">I79a0993b2aebf930ab701e68a8d7cbd05d411b8f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5465280">https://chromium-review.googlesource.com/c/chromium/src/+/5465280</a>
-Commit-Queue: Weidong Liu &lt;weidongliu@chromium.org&gt;
-Reviewed-by: Keren Zhu &lt;kerenzhu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1289734}
+Bug: 332927582
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9be093df863d3a3f3c73287d43f19375230024e3">I9be093df863d3a3f3c73287d43f19375230024e3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5463169">https://chromium-review.googlesource.com/c/chromium/src/+/5463169</a>
+Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Auto-Submit: John Stiles &lt;johnstiles@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1289771}
 </pre>
 
 </body>
