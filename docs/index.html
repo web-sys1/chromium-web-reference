@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1290874/"> 1290874</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1df0acc09e58445c306fd35da37a7ebd452628d6">1df0acc09e58445c306fd35da37a7ebd452628d6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1290993/"> 1290993</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5fb59ccf794f3836722ff92b01e137d86ddc7210">5fb59ccf794f3836722ff92b01e137d86ddc7210</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1290805/">1290805</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/354691c75a5811fec05998206dfcf7b202fdff0b">354691c75a5811fec05998206dfcf7b202fdff0b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1290967/">1290967</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9582c4a5274969ee5b9c7d26486ed3cd04f9d516">9582c4a5274969ee5b9c7d26486ed3cd04f9d516</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1df0acc09e58445c306fd35da37a7ebd452628d6
+   5fb59ccf794f3836722ff92b01e137d86ddc7210
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1df0acc09e58445c306fd35da37a7ebd452628d6">
+    <a href="/chromium/src/+log/5fb59ccf794f3836722ff92b01e137d86ddc7210">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1df0acc09e58445c306fd35da37a7ebd452628d6.tar.gz">
+    <a href="/chromium/src/+archive/5fb59ccf794f3836722ff92b01e137d86ddc7210.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Garrett Beaty &lt;gbeaty@chromium.org&gt;
+   weidongliu &lt;weidongliu@chromium.org&gt;
   </td>
   <td>
-   Mon Apr 22 20:54:28 2024
+   Tue Apr 23 00:35:01 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Apr 22 20:54:28 2024
+   Tue Apr 23 00:35:01 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1df0acc09e58445c306fd35da37a7ebd452628d6/">
-    0b1d4d5359ed51aff81982b04c48f77d331ee804
+   <a href="/chromium/src/+/5fb59ccf794f3836722ff92b01e137d86ddc7210/">
+    3534489e2f922319d81d7e856b996733c78d72b0
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1df0acc09e58445c306fd35da37a7ebd452628d6%5E">
-    abd92de5ad22b9ed6777b71969f32a89c5f738ef
+   <a href="/chromium/src/+/5fb59ccf794f3836722ff92b01e137d86ddc7210%5E">
+    448ecf9959941940d9a0c2537cb53e48934b4642
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1df0acc09e58445c306fd35da37a7ebd452628d6%5E%21/">
+    <a href="/chromium/src/+/5fb59ccf794f3836722ff92b01e137d86ddc7210%5E%21/">
      diff
     </a>
     ]
@@ -179,36 +179,18 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[infra] Enable android-specific behavior for tests in starlark.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">views: use CalculatePreferredSize(SizeBounds) in //ash/app_menu.
 
-This change adds support for builders specifying an os type of Android.
-This can be specified via the targets_setting argument, which takes an
-instance of targets.settings. The settings enable setting values that
-control the expansion of all tests for a builder. The supported
-attributes right now are:
+In order to ensure implementation consistency and avoid oversights, we
+should unify CalculatePreferredSize() and GetHeightForWidth(). Replace
+them with the CalculatePreferredSize(SizeBounds) overload.
 
-* os_type - The type of OS that the tests are targeting, which controls
-  the expansion of OS-specific args and swarming values (not yet
-  implemented). The only supported value right now is
-  targets.os_type.ANDROID, which will add details that are common to all
-  Android tests.
-* results_bucket - The bucket to upload results to for the
-  Android-specific test presentation.
-* use_swarming - Whether tests on the builder should be swarmed.
-
-The builders migrated as part of this change contain the only uses of
-the oreo_mr1_fleet. To avoid generate_buildbot_json.py from raising an
-error due to the mixin not being referenced, targets.mixin was updated
-with a generate_pyl_entry argument. By default all named mixins will
-have an entry generated in mixins.pyl but if generate_pyl_entry is set
-to False then an entry won't be generated for the mixin.
-
-Bug: 40258588
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ida6103e5a69c14207247595fe19ed2d15bcddd52">Ida6103e5a69c14207247595fe19ed2d15bcddd52</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5464280">https://chromium-review.googlesource.com/c/chromium/src/+/5464280</a>
-Reviewed-by: Struan Shrimpton &lt;sshrimp@google.com&gt;
-Commit-Queue: Garrett Beaty &lt;gbeaty@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1290874}
+Bug: 40232718
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib78be70c8e511b3069b2e051c877c613b37f822c">Ib78be70c8e511b3069b2e051c877c613b37f822c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5468009">https://chromium-review.googlesource.com/c/chromium/src/+/5468009</a>
+Commit-Queue: Weidong Liu &lt;weidongliu@chromium.org&gt;
+Reviewed-by: Alex Newcomer &lt;newcomer@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1290993}
 </pre>
 
 </body>
