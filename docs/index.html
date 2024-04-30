@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1294052/"> 1294052</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a9350f3659820a421ec858c89f4a94c7ebefe946">a9350f3659820a421ec858c89f4a94c7ebefe946</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1294113/"> 1294113</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0f947cb58809a8da53dcf30bedefd0d6326a61da">0f947cb58809a8da53dcf30bedefd0d6326a61da</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1294042/">1294042</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2df949752d5a10a8f87945c68a902b19fd468ec9">2df949752d5a10a8f87945c68a902b19fd468ec9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1294098/">1294098</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a9169e35dbde2c33b434da320a141692b36284d9">a9169e35dbde2c33b434da320a141692b36284d9</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   a9350f3659820a421ec858c89f4a94c7ebefe946
+   0f947cb58809a8da53dcf30bedefd0d6326a61da
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/a9350f3659820a421ec858c89f4a94c7ebefe946">
+    <a href="/chromium/src/+log/0f947cb58809a8da53dcf30bedefd0d6326a61da">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/a9350f3659820a421ec858c89f4a94c7ebefe946.tar.gz">
+    <a href="/chromium/src/+archive/0f947cb58809a8da53dcf30bedefd0d6326a61da.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sean Kau &lt;skau@chromium.org&gt;
+   Will Harris &lt;wfh@chromium.org&gt;
   </td>
   <td>
-   Tue Apr 30 00:23:41 2024
+   Tue Apr 30 02:30:44 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Apr 30 00:23:41 2024
+   Tue Apr 30 02:30:44 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/a9350f3659820a421ec858c89f4a94c7ebefe946/">
-    83529312ac42d2116e0fa60dc28352ac930bedbf
+   <a href="/chromium/src/+/0f947cb58809a8da53dcf30bedefd0d6326a61da/">
+    da53a9ba0a445254a1e19db0b5c9034e68d3536b
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/a9350f3659820a421ec858c89f4a94c7ebefe946%5E">
-    917e069c8dce48fd4dfae32ae81f8b7175ac4c82
+   <a href="/chromium/src/+/0f947cb58809a8da53dcf30bedefd0d6326a61da%5E">
+    85bd585e62b0e77534edd77665df67de4c6fb5e2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/a9350f3659820a421ec858c89f4a94c7ebefe946%5E%21/">
+    <a href="/chromium/src/+/0f947cb58809a8da53dcf30bedefd0d6326a61da%5E%21/">
      diff
     </a>
     ]
@@ -179,19 +179,35 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rename the SharedUrlLoader getter in ShellDelegate
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix kEncryptSyncCompat to handle only non-sync compat providers
 
-The SharedURLLoader is from the browser process and is meant generically
-for system requests that don't use user data. Rename as such.
+If the only providers being registered did not support OSCrypt sync but
+were flagged as in use for encryption, then Encryptors returned
+via a call to GetInstance with the kEncryptSyncCompat would still
+return an Encryptor that encrypts to one of these providers,
+because the current code did not take into account this scenario.
 
-It appears that this SharedURLLoader is unused so it's being repurposed.
+This CL fixes this by making it so if no providers say they are
+OSCrypt sync compatible, and a call to GetInstance is made with
+kEncryptSyncCompat option specified, then the default encryption
+provider is set to empty string, causing fallback to OSCrypt
+sync to always occur.
 
-Bug: b:331837970
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaae403b559218f2f84468be93fa38da3ca5f4715">Iaae403b559218f2f84468be93fa38da3ca5f4715</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5495714">https://chromium-review.googlesource.com/c/chromium/src/+/5495714</a>
-Commit-Queue: Sean Kau &lt;skau@chromium.org&gt;
-Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1294052}
+This allows a future migration from OSCrypt Sync to OSCrypt Async
+without needing to implement a sync-compatible provider (e.g.
+the DPAPI provider, on Windows), while still allowing for a
+safe rollout strategy with supported rollback during the
+transition from sync to async calls.
+
+Tests are added to verify this behavior.
+
+BUG=40241934
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I257af4c1c0222b0b3121876a9f0e2bfedcf973f3">I257af4c1c0222b0b3121876a9f0e2bfedcf973f3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5499160">https://chromium-review.googlesource.com/c/chromium/src/+/5499160</a>
+Reviewed-by: Alex Gough &lt;ajgo@chromium.org&gt;
+Commit-Queue: Will Harris &lt;wfh@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1294113}
 </pre>
 
 </body>
