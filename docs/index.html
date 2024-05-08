@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1298039/"> 1298039</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c2998f89154e066a5798a15464b8e4be8eb0d19b">c2998f89154e066a5798a15464b8e4be8eb0d19b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1298082/"> 1298082</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1ad3e36bd9532502ae2c46e3df11105ecca0ffdf">1ad3e36bd9532502ae2c46e3df11105ecca0ffdf</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1298008/">1298008</a> <sup><b>(WIN)</b></sup></td>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c2998f89154e066a5798a15464b8e4be8eb0d19b
+   1ad3e36bd9532502ae2c46e3df11105ecca0ffdf
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c2998f89154e066a5798a15464b8e4be8eb0d19b">
+    <a href="/chromium/src/+log/1ad3e36bd9532502ae2c46e3df11105ecca0ffdf">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c2998f89154e066a5798a15464b8e4be8eb0d19b.tar.gz">
+    <a href="/chromium/src/+archive/1ad3e36bd9532502ae2c46e3df11105ecca0ffdf.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Christoph Schwering &lt;schwering@google.com&gt;
+   Dibyajyoti Pal &lt;dibyapal@google.com&gt;
   </td>
   <td>
-   Wed May 08 12:13:27 2024
+   Wed May 08 14:18:55 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed May 08 12:13:27 2024
+   Wed May 08 14:18:55 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c2998f89154e066a5798a15464b8e4be8eb0d19b/">
-    b5e4eff5aab5d2a41c0e4e44bcffcd9c904da163
+   <a href="/chromium/src/+/1ad3e36bd9532502ae2c46e3df11105ecca0ffdf/">
+    64ef04f7e55f9230ba60682d513a2c791cc76fdc
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c2998f89154e066a5798a15464b8e4be8eb0d19b%5E">
-    d9bfd74484c34eeed486e4d47d12ab6f2498b5c7
+   <a href="/chromium/src/+/1ad3e36bd9532502ae2c46e3df11105ecca0ffdf%5E">
+    fb017c6138a7ad4e81c7cb0c7590817abb9102af
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c2998f89154e066a5798a15464b8e4be8eb0d19b%5E%21/">
+    <a href="/chromium/src/+/1ad3e36bd9532502ae2c46e3df11105ecca0ffdf%5E%21/">
      diff
     </a>
     ]
@@ -179,36 +179,29 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Autofill] Remove bounding box parameter from AskForValuesToFill()
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Shortcuts] Use subset of icon sizes for shortcut creation
 
-The parameter is effectively only passed to
-AutofillClient::ShowAutofillSuggestions().
+This CL introduces a performance improvement in the image manipulation
+code for the Create Shortcut flow by only using icon sizes necessary
+for the shortcut creation process instead of using all sizes, and
+removing unsued enum sizes if any.
 
-On non-iOS, the parameter is redundant because we call
-AskForValuesToFill(..., field, field.bounds(), ...).
+On Windows, this information is obtained from the icon sizes used for
+the Chrome product icons.
 
-On iOS, we ignore the bounds in the iOS implementations of
-ShowAutofillSuggestions() (and we pass a default-constructed
-gfx::RectF to AskForValuesToFill()).
+On Linux, this is defined by go/shortcuts-not-apps-linux.
 
-This CL removes the parameter. This propagates to
-AutofillExternalDelegate and BAM::RefetchCardsAndUpdatePopup().
+On Mac, this is obtained from kDesiredIconSizesForShortcut from the
+web_applications/ shortcuts code.
 
-A followup CL will remove other redundant bounding box parameters.
-
-A followup CL will introduce a new gfx::Rect parameter for
-AskForValuesToFill() that represents the caret position rather
-than the bounding box.
-
-Bug: 339156167, 40072808, 335219096
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I47c84dfbeb7fc544d709f05bcd0e145ae93c7181">I47c84dfbeb7fc544d709f05bcd0e145ae93c7181</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5520690">https://chromium-review.googlesource.com/c/chromium/src/+/5520690</a>
-Reviewed-by: Maksim Ivanov &lt;emaxx@chromium.org&gt;
-Commit-Queue: Christoph Schwering &lt;schwering@google.com&gt;
-Reviewed-by: Jan Keitel &lt;jkeitel@google.com&gt;
-Reviewed-by: Alex Rudenko &lt;alexrudenko@chromium.org&gt;
-Reviewed-by: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1298039}
+Bug: 333024272
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7db6a2db4f011a148d0202950dfa9d1f4f7acc1d">I7db6a2db4f011a148d0202950dfa9d1f4f7acc1d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5523557">https://chromium-review.googlesource.com/c/chromium/src/+/5523557</a>
+Reviewed-by: Daniel Murphy &lt;dmurph@chromium.org&gt;
+Commit-Queue: Dibyajyoti Pal &lt;dibyapal@chromium.org&gt;
+Reviewed-by: David Bienvenu &lt;davidbienvenu@chromium.org&gt;
+Reviewed-by: Marijn Kruisselbrink &lt;mek@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1298082}
 </pre>
 
 </body>
