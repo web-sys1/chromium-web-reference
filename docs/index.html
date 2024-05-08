@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1298002/"> 1298002</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2b04af6a6398ca412c0c68f10fd743812866c1c0">2b04af6a6398ca412c0c68f10fd743812866c1c0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1298039/"> 1298039</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c2998f89154e066a5798a15464b8e4be8eb0d19b">c2998f89154e066a5798a15464b8e4be8eb0d19b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1297996/">1297996</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/42a6774b9f97783fdea8e20868393b9960a9f519">42a6774b9f97783fdea8e20868393b9960a9f519</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1298008/">1298008</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7bb3d36764d05e1b065c72fb6540a5346fa3c29e">7bb3d36764d05e1b065c72fb6540a5346fa3c29e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2b04af6a6398ca412c0c68f10fd743812866c1c0
+   c2998f89154e066a5798a15464b8e4be8eb0d19b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2b04af6a6398ca412c0c68f10fd743812866c1c0">
+    <a href="/chromium/src/+log/c2998f89154e066a5798a15464b8e4be8eb0d19b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2b04af6a6398ca412c0c68f10fd743812866c1c0.tar.gz">
+    <a href="/chromium/src/+archive/c2998f89154e066a5798a15464b8e4be8eb0d19b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jeroen Dhollander &lt;jeroendh@google.com&gt;
+   Christoph Schwering &lt;schwering@google.com&gt;
   </td>
   <td>
-   Wed May 08 08:49:01 2024
+   Wed May 08 12:13:27 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed May 08 08:49:01 2024
+   Wed May 08 12:13:27 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2b04af6a6398ca412c0c68f10fd743812866c1c0/">
-    3f7d7b3b22df33fd10d2d189b651910408da0d1b
+   <a href="/chromium/src/+/c2998f89154e066a5798a15464b8e4be8eb0d19b/">
+    b5e4eff5aab5d2a41c0e4e44bcffcd9c904da163
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2b04af6a6398ca412c0c68f10fd743812866c1c0%5E">
-    6d1615efd30c606fbc93ce182c01b7eba325ae28
+   <a href="/chromium/src/+/c2998f89154e066a5798a15464b8e4be8eb0d19b%5E">
+    d9bfd74484c34eeed486e4d47d12ab6f2498b5c7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2b04af6a6398ca412c0c68f10fd743812866c1c0%5E%21/">
+    <a href="/chromium/src/+/c2998f89154e066a5798a15464b8e4be8eb0d19b%5E%21/">
      diff
     </a>
     ]
@@ -179,31 +179,36 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Implement KioskInput API in Lacros
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Autofill] Remove bounding box parameter from AskForValuesToFill()
 
-The KioskInput API was added for Ash in Q4/23
-(see go/gb-kiosk-input-api).
-This API is a kiosk-only extension API that allows an extension
-to change the current keyboard input language.
+The parameter is effectively only passed to
+AutofillClient::ShowAutofillSuggestions().
 
-This CL also makes this API available in Lacros, to ensure feature
-parity between Ash and Lacros.
+On non-iOS, the parameter is redundant because we call
+AskForValuesToFill(..., field, field.bounds(), ...).
 
-For the crosapi I opted for a generic `InputMethods` API rather than
-a kiosk specific `KioskInput` API, since the functionality the API
-exposes ('change selected keyboard input language') is in no way
-kiosk specific, even though it is currently only used for a kiosk
-specific extensions.
+On iOS, we ignore the bounds in the iOS implementations of
+ShowAutofillSuggestions() (and we pass a default-constructed
+gfx::RectF to AskForValuesToFill()).
 
-Fixed: b/328584577
-Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic4879b918ef3e5972c004644dff1dba56dc59e64">Ic4879b918ef3e5972c004644dff1dba56dc59e64</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5493881">https://chromium-review.googlesource.com/c/chromium/src/+/5493881</a>
-Reviewed-by: Roland Bock &lt;rbock@google.com&gt;
-Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
-Reviewed-by: Sergii Bykov &lt;sbykov@google.com&gt;
-Commit-Queue: Jeroen Dhollander &lt;jeroendh@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1298002}
+This CL removes the parameter. This propagates to
+AutofillExternalDelegate and BAM::RefetchCardsAndUpdatePopup().
+
+A followup CL will remove other redundant bounding box parameters.
+
+A followup CL will introduce a new gfx::Rect parameter for
+AskForValuesToFill() that represents the caret position rather
+than the bounding box.
+
+Bug: 339156167, 40072808, 335219096
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I47c84dfbeb7fc544d709f05bcd0e145ae93c7181">I47c84dfbeb7fc544d709f05bcd0e145ae93c7181</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5520690">https://chromium-review.googlesource.com/c/chromium/src/+/5520690</a>
+Reviewed-by: Maksim Ivanov &lt;emaxx@chromium.org&gt;
+Commit-Queue: Christoph Schwering &lt;schwering@google.com&gt;
+Reviewed-by: Jan Keitel &lt;jkeitel@google.com&gt;
+Reviewed-by: Alex Rudenko &lt;alexrudenko@chromium.org&gt;
+Reviewed-by: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1298039}
 </pre>
 
 </body>
