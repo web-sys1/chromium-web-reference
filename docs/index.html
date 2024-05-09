@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1298706/"> 1298706</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/53e00e24883a6986fa3d0f1ad48b73dc1107cc11">53e00e24883a6986fa3d0f1ad48b73dc1107cc11</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1298841/"> 1298841</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8d4dd17d046ff4e61dd03dc270059b2f52ba8ba3">8d4dd17d046ff4e61dd03dc270059b2f52ba8ba3</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1298700/">1298700</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1411acc5acf49c352d39c02d69e1beab770b729b">1411acc5acf49c352d39c02d69e1beab770b729b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1298830/">1298830</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e330a348c34b7c611ad7bd05f9ff9fdf6b1793c2">e330a348c34b7c611ad7bd05f9ff9fdf6b1793c2</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   53e00e24883a6986fa3d0f1ad48b73dc1107cc11
+   8d4dd17d046ff4e61dd03dc270059b2f52ba8ba3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/53e00e24883a6986fa3d0f1ad48b73dc1107cc11">
+    <a href="/chromium/src/+log/8d4dd17d046ff4e61dd03dc270059b2f52ba8ba3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/53e00e24883a6986fa3d0f1ad48b73dc1107cc11.tar.gz">
+    <a href="/chromium/src/+archive/8d4dd17d046ff4e61dd03dc270059b2f52ba8ba3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Javier Contreras Tenorio (from Dev Box) &lt;javiercon@microsoft.com&gt;
+   Mingjing Zhang &lt;mjzhang@chromium.org&gt;
   </td>
   <td>
-   Thu May 09 17:28:56 2024
+   Thu May 09 20:27:57 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 09 17:28:56 2024
+   Thu May 09 20:27:57 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/53e00e24883a6986fa3d0f1ad48b73dc1107cc11/">
-    ca391f52b1af07898332a34335e923e3e0f79074
+   <a href="/chromium/src/+/8d4dd17d046ff4e61dd03dc270059b2f52ba8ba3/">
+    c0142899864e3186c0c34d866de3dc6fdb09fb72
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/53e00e24883a6986fa3d0f1ad48b73dc1107cc11%5E">
-    8d02849b9f8b72a4baea59f0483876513ca71fdc
+   <a href="/chromium/src/+/8d4dd17d046ff4e61dd03dc270059b2f52ba8ba3%5E">
+    984f55710f90ae53242b63c75cc3ece5f41dc4cd
    </a>
    <span>
     [
-    <a href="/chromium/src/+/53e00e24883a6986fa3d0f1ad48b73dc1107cc11%5E%21/">
+    <a href="/chromium/src/+/8d4dd17d046ff4e61dd03dc270059b2f52ba8ba3%5E%21/">
      diff
     </a>
     ]
@@ -179,39 +179,19 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[views_ax] Introduce UpdateFocusableState to ViewAccessibility
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add GpuChannelSharedImageInterface
 
-This CL introduces UpdateFocusableState to ViewAccessibility.
-This is so that we proactively keep the accessibility state on
-ViewAccessibility updated, rather than computing it on demand.
+This CL adds a new SharedImageInterface implementation named
+GpuChannelSharedImageInterface. This new class allows media code to
+access shared images in a unified way and is a prerequisite for
+further ClientSharedImage integration in the media code.
 
-As part of this change we needed to do some things:
-1) Make sure to recursively update the Focusable state when
-a view is added to the hierarchy, since the focusable state depends
-on `IsDrawn` which depends in turn on `parent_`.
-
-2) Make sure the submenu in the delegate unittest has a `RootView`
-so that the `IsDrawn` state is accurate.
-
-3) Lastly, we needed to add a call to `OnNativeWidgetDestroying` in
-the teardown for the `WidgetSetAspectRatioTest` because we are
-creating a `ViewAccessibility` object now here (due to the changes to
-view.cc) which on Linux as a result we add the Widget to some
-observer lists.
-The function that is in charge of clearing these lists however,
-is never called in this test suite because we use a MockNativeWindow
-rather than a NativeWindow. So we make sure this clean up happens
-manually.
-
-There is no behavior change.
-
-Bug: 325137417
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iaf281ad814cddf20d579d6f26d857d4a5dd140fb">Iaf281ad814cddf20d579d6f26d857d4a5dd140fb</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5466442">https://chromium-review.googlesource.com/c/chromium/src/+/5466442</a>
-Commit-Queue: Javier Contreras &lt;javiercon@microsoft.com&gt;
-Reviewed-by: Benjamin Beaudry &lt;benjamin.beaudry@microsoft.com&gt;
-Reviewed-by: Dirk Pranke &lt;dpranke@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1298706}
+Bug: 1494911
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If1ba727110ccc6b60dd3a8803f91669a0141edfc">If1ba727110ccc6b60dd3a8803f91669a0141edfc</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5523596">https://chromium-review.googlesource.com/c/chromium/src/+/5523596</a>
+Commit-Queue: Mingjing Zhang &lt;mjzhang@chromium.org&gt;
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1298841}
 </pre>
 
 </body>
