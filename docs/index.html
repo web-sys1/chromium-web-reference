@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1300433/"> 1300433</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1107aaec7d55affc35f46172faff195da475bdbc">1107aaec7d55affc35f46172faff195da475bdbc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1300500/"> 1300500</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/04e8694ea632a3e0de5181d9db0816a5dcbb140c">04e8694ea632a3e0de5181d9db0816a5dcbb140c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1300407/">1300407</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/27fd83ea4096079339772f94e4025ece9b3299e3">27fd83ea4096079339772f94e4025ece9b3299e3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1300505/">1300505</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7a735df586ec3a84d08bd334a8760bfea97101f3">7a735df586ec3a84d08bd334a8760bfea97101f3</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1107aaec7d55affc35f46172faff195da475bdbc
+   04e8694ea632a3e0de5181d9db0816a5dcbb140c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1107aaec7d55affc35f46172faff195da475bdbc">
+    <a href="/chromium/src/+log/04e8694ea632a3e0de5181d9db0816a5dcbb140c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1107aaec7d55affc35f46172faff195da475bdbc.tar.gz">
+    <a href="/chromium/src/+archive/04e8694ea632a3e0de5181d9db0816a5dcbb140c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kouhei Ueno &lt;kouhei@chromium.org&gt;
+   Kramer Ge &lt;fangzhoug@chromium.org&gt;
   </td>
   <td>
-   Tue May 14 05:40:30 2024
+   Tue May 14 08:39:25 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue May 14 05:40:30 2024
+   Tue May 14 08:39:25 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1107aaec7d55affc35f46172faff195da475bdbc/">
-    161bdef8340caf0cfacce09260e375c739157d13
+   <a href="/chromium/src/+/04e8694ea632a3e0de5181d9db0816a5dcbb140c/">
+    5158117d518834c36382d62d2d3c1cc06063725e
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1107aaec7d55affc35f46172faff195da475bdbc%5E">
-    954c3fbe7772c6216117d56ff3012fafc9c2c6f8
+   <a href="/chromium/src/+/04e8694ea632a3e0de5181d9db0816a5dcbb140c%5E">
+    7866d8399143ecf5a2d4b32ad43766c88090a648
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1107aaec7d55affc35f46172faff195da475bdbc%5E%21/">
+    <a href="/chromium/src/+/04e8694ea632a3e0de5181d9db0816a5dcbb140c%5E%21/">
      diff
     </a>
     ]
@@ -179,31 +179,17 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">RfhToIoThreadClientMap: Remove reference to WEBVIEW_PRERENDER2 feature flag
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Exo]PlaceAbove parent should not increment nor decrement position_it
 
-Before this CL, `RfhToIoThreadClientMap::RenderFrameHostChanged` logic
-to handle prerender activation was guarded undef rlag.
+When place above parent, position_it = list.begin() is already at the
+correct position, not need to increment or decrement from reference.
 
-This CL removes the flag guard, since we are moving away from the
-WEBVIEW_PRERENDER2 feature flag.
-
-The change is safe, since the logic is safe to be applied to non-Prerender2
-FrameTree swaps.
-
-The author tried to keep the if condition, but it seems difficult to do so:
-- We can't rely on `new_rfh-&gt;GetLifecycleState()` check, since both RFHs
-  is in state `kActive` on Prerender2 activation.
-- `WebContentsDelegate::IsPrerender2Supported()` is not reliable, since
-  Prerender2 allowance condition may have changed (TOCTOU).
-
-Bug: 339561855
-TEST: android_webview/javatests/src/org/chromium/android_webview/test/AwPrerenderTest.java
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I60ceac0f97232188ee24294e753fc9ee3868decf">I60ceac0f97232188ee24294e753fc9ee3868decf</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5527170">https://chromium-review.googlesource.com/c/chromium/src/+/5527170</a>
-Reviewed-by: Richard (Torne) Coles &lt;torne@chromium.org&gt;
-Commit-Queue: Kouhei Ueno &lt;kouhei@chromium.org&gt;
-Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1300433}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I236e1f8d7049bf69c98123c6a947d0a54ea600c7">I236e1f8d7049bf69c98123c6a947d0a54ea600c7</a>
+Bug: 338997929
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5535713">https://chromium-review.googlesource.com/c/chromium/src/+/5535713</a>
+Commit-Queue: Kramer Ge &lt;fangzhoug@chromium.org&gt;
+Reviewed-by: Peter McNeeley &lt;petermcneeley@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1300500}
 </pre>
 
 </body>
