@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1304929/"> 1304929</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f34fcdb217185f0154ea1e9bc75c535bd3d0024e">f34fcdb217185f0154ea1e9bc75c535bd3d0024e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1305000/"> 1305000</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5ba684e1d86ca813d25a6a925df4080eb89f2cd1">5ba684e1d86ca813d25a6a925df4080eb89f2cd1</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1304895/">1304895</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/10faac0584870a43c1359b9eaeff078ce8a093b3">10faac0584870a43c1359b9eaeff078ce8a093b3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1304989/">1304989</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5a948f9d2a7d129a77a0e16c13e4a46871445549">5a948f9d2a7d129a77a0e16c13e4a46871445549</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f34fcdb217185f0154ea1e9bc75c535bd3d0024e
+   5ba684e1d86ca813d25a6a925df4080eb89f2cd1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f34fcdb217185f0154ea1e9bc75c535bd3d0024e">
+    <a href="/chromium/src/+log/5ba684e1d86ca813d25a6a925df4080eb89f2cd1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f34fcdb217185f0154ea1e9bc75c535bd3d0024e.tar.gz">
+    <a href="/chromium/src/+archive/5ba684e1d86ca813d25a6a925df4080eb89f2cd1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Florian Leimgruber &lt;fleimgruber@google.com&gt;
+   Claudio DeSouza &lt;cdesouza@chromium.org&gt;
   </td>
   <td>
-   Thu May 23 08:59:43 2024
+   Thu May 23 11:50:13 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 23 08:59:43 2024
+   Thu May 23 11:50:13 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f34fcdb217185f0154ea1e9bc75c535bd3d0024e/">
-    fa9bc6405f2db9bfc920b3b39647b442f9617995
+   <a href="/chromium/src/+/5ba684e1d86ca813d25a6a925df4080eb89f2cd1/">
+    48ff55fb3efd47fa0b459652df05a395fcc4bd99
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f34fcdb217185f0154ea1e9bc75c535bd3d0024e%5E">
-    1254ea62269b25f003a4359cee60eb66fc09a145
+   <a href="/chromium/src/+/5ba684e1d86ca813d25a6a925df4080eb89f2cd1%5E">
+    33f2ff3f829a91d8de742f149f577fd3248120d5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f34fcdb217185f0154ea1e9bc75c535bd3d0024e%5E%21/">
+    <a href="/chromium/src/+/5ba684e1d86ca813d25a6a925df4080eb89f2cd1%5E%21/">
      diff
     </a>
     ]
@@ -179,29 +179,18 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Run deduplication routine twice per milestone
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Replace StringPiece with std::string_view in //chrome/browser/ui
 
-AutofillSilentlyRemoveQuasiDuplicates modifies how the deduplication
-routine behaves. Since the deduplication routine is only run once per
-milestone, this would force us to stay on every channel for at least one
-milestone during the rollout to get meaningful data.
+For a while base::StringPiece has been merely an alias to string_view.
+This CL removes all the uses of base::StringPiece and its variants from
+//chrome/browser/ui.
 
-This CL thus relaxes the "once per milestone" condition and allows
-triggering the deduplication routine a second time for users enrolled in
-the experiment. This is done by adding a new pref, which tracks whether
-the deduplication logic ran a second time.
-
-This will prevent us from using the existing deduplication metrics (e.g.
-number of profiles removed) for the rollout, since the baseline is
-different. A follow-up will thus implement feature specific metrics.
-
-Bug: b/325450676
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I959b4c6400146754df3bad70a9b549d79d673dfd">I959b4c6400146754df3bad70a9b549d79d673dfd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5541803">https://chromium-review.googlesource.com/c/chromium/src/+/5541803</a>
-Reviewed-by: Matthias Körber &lt;koerber@google.com&gt;
-Commit-Queue: Florian Leimgruber &lt;fleimgruber@google.com&gt;
-Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1304929}
+Bug: 40506050
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I608e3d4cab2ffed19edc0d6e9d24aee5b82a4d07">I608e3d4cab2ffed19edc0d6e9d24aee5b82a4d07</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5553603">https://chromium-review.googlesource.com/c/chromium/src/+/5553603</a>
+Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
+Commit-Queue: Claudio DeSouza &lt;cdesouza@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1305000}
 </pre>
 
 </body>
