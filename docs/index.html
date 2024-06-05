@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1310341/"> 1310341</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/271a291abc1f2fb4a1d9ecb31af01958f8e6e026">271a291abc1f2fb4a1d9ecb31af01958f8e6e026</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1310394/"> 1310394</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/830292b247b1fa3819fa22794955738e152e7dcc">830292b247b1fa3819fa22794955738e152e7dcc</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1310327/">1310327</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f04064c9d4b568f5a0c3920db234e8f66317e6eb">f04064c9d4b568f5a0c3920db234e8f66317e6eb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1310359/">1310359</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/36242b46568b93fbe5065131a26afdf34c9bad31">36242b46568b93fbe5065131a26afdf34c9bad31</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   271a291abc1f2fb4a1d9ecb31af01958f8e6e026
+   830292b247b1fa3819fa22794955738e152e7dcc
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/271a291abc1f2fb4a1d9ecb31af01958f8e6e026">
+    <a href="/chromium/src/+log/830292b247b1fa3819fa22794955738e152e7dcc">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/271a291abc1f2fb4a1d9ecb31af01958f8e6e026.tar.gz">
+    <a href="/chromium/src/+archive/830292b247b1fa3819fa22794955738e152e7dcc.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ben Pastene &lt;bpastene@chromium.org&gt;
+   lisa0314 &lt;lisha.guo@intel.com&gt;
   </td>
   <td>
-   Wed Jun 05 00:46:05 2024
+   Wed Jun 05 03:16:19 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jun 05 00:46:05 2024
+   Wed Jun 05 03:16:19 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/271a291abc1f2fb4a1d9ecb31af01958f8e6e026/">
-    5684b3d6b04f198182515f2f852bbd5c394ba604
+   <a href="/chromium/src/+/830292b247b1fa3819fa22794955738e152e7dcc/">
+    aca88f8d74391228efb7c1a581dcd6698c47c38e
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/271a291abc1f2fb4a1d9ecb31af01958f8e6e026%5E">
-    298769406847a3348fd440840ff35dd5291c50d6
+   <a href="/chromium/src/+/830292b247b1fa3819fa22794955738e152e7dcc%5E">
+    b843aac6ae2635b7f9353d4c7da2330599124b5e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/271a291abc1f2fb4a1d9ecb31af01958f8e6e026%5E%21/">
+    <a href="/chromium/src/+/830292b247b1fa3819fa22794955738e152e7dcc%5E%21/">
      diff
     </a>
     ]
@@ -179,31 +179,19 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">utr: Use and check for "luci-auth context" auth when running the recipe
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">WebNN: Use DML_OPERATOR_ACTIVATION_HARD_SWISH when DirectML feature level &gt;= 6.2
 
-As-is, the user needs to be authed with the following to run the utr:
-- luci-auth
-- luci-auth -scopes-context
-- gcert (if compiling with reclient as googler)
+This CL updates the hardSwish implementation of DirectML backend to
+support DML_OPERATOR_ACTIVATION_HARD_SWISH when DirectML feature level
+is greater than or equal to DML_FEATURE_LEVEL_6_2.
 
-But we can combine the first two into just one if we instead run the
-rdb prefix command inside our own `luci-auth context ...`. Doing so
-will make rdb re-use that context's auth instead of trying to create
-its own via `luci-auth login`.
-
-This pares that down to just two auth requirements:
-- luci-auth -scopes-context
-- gcert (if compiling with reclient as googler)
-
-Which we assume is an improvement. This also clarifies to login with
-a @google.com account if available.
-
-Bug: 41492688
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifd472d3e8b7412813fb7080b04bfef8bb35dcdf2">Ifd472d3e8b7412813fb7080b04bfef8bb35dcdf2</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5421600">https://chromium-review.googlesource.com/c/chromium/src/+/5421600</a>
-Commit-Queue: Ben Pastene &lt;bpastene@chromium.org&gt;
-Reviewed-by: Struan Shrimpton &lt;sshrimp@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1310341}
+Bug: 324003985
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I727d328021c32563fc8bb48cd5afc53c1b5f371f">I727d328021c32563fc8bb48cd5afc53c1b5f371f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5556679">https://chromium-review.googlesource.com/c/chromium/src/+/5556679</a>
+Reviewed-by: Rafael Cintron &lt;rafael.cintron@microsoft.com&gt;
+Reviewed-by: ningxin hu &lt;ningxin.hu@intel.com&gt;
+Commit-Queue: Lisha Guo &lt;lisha.guo@intel.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1310394}
 </pre>
 
 </body>
