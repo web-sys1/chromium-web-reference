@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1310441/"> 1310441</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b4378eb24acedae3c2ad6d7c06dea6a2ddee89b0">b4378eb24acedae3c2ad6d7c06dea6a2ddee89b0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1310489/"> 1310489</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2cd3cfc737691c6f54b00b650002e6580d67b9e7">2cd3cfc737691c6f54b00b650002e6580d67b9e7</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1310412/">1310412</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/809c0ed01db4c5fd919b6f69bd5dc322da72ae5a">809c0ed01db4c5fd919b6f69bd5dc322da72ae5a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1310486/">1310486</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/60d2167df773ea8d46815ce86239ad7baf6d086d">60d2167df773ea8d46815ce86239ad7baf6d086d</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b4378eb24acedae3c2ad6d7c06dea6a2ddee89b0
+   2cd3cfc737691c6f54b00b650002e6580d67b9e7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b4378eb24acedae3c2ad6d7c06dea6a2ddee89b0">
+    <a href="/chromium/src/+log/2cd3cfc737691c6f54b00b650002e6580d67b9e7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b4378eb24acedae3c2ad6d7c06dea6a2ddee89b0.tar.gz">
+    <a href="/chromium/src/+archive/2cd3cfc737691c6f54b00b650002e6580d67b9e7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Divyansh Mangal &lt;dmangal@microsoft.com&gt;
+   Victor Hugo Vianna Silva &lt;victorvianna@google.com&gt;
   </td>
   <td>
-   Wed Jun 05 06:30:35 2024
+   Wed Jun 05 08:46:18 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jun 05 06:30:35 2024
+   Wed Jun 05 08:46:18 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b4378eb24acedae3c2ad6d7c06dea6a2ddee89b0/">
-    cf85d59f8d22473f9a109b79649e842038993211
+   <a href="/chromium/src/+/2cd3cfc737691c6f54b00b650002e6580d67b9e7/">
+    7e0023bee4e525f892aaa4c39e9e0ba16ef26955
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b4378eb24acedae3c2ad6d7c06dea6a2ddee89b0%5E">
-    73bcd49fa65976e839458c68df4baf4931a011dd
+   <a href="/chromium/src/+/2cd3cfc737691c6f54b00b650002e6580d67b9e7%5E">
+    b37cedfad928827603acf8145992f3ee267e39de
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b4378eb24acedae3c2ad6d7c06dea6a2ddee89b0%5E%21/">
+    <a href="/chromium/src/+/2cd3cfc737691c6f54b00b650002e6580d67b9e7%5E%21/">
      diff
     </a>
     ]
@@ -179,26 +179,45 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[UIA] Expose Toggle pattern on all checkable elements but expandable buttons
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[passwords] Handle signed-in users in isGmsCoreUpdateRequired()
 
-This CL make sure that whenever `aria-checked` property is mapped,
-Toggle Pattern should be exposed. CL:4495447 introduced the
-condition that Expand Collapse Pattern and Toggle Pattern should
-not be exposed together for any element. However, the expected
-behavior according to the spec is that they should not be
-exposed together only when on a button element.
+Changes are behind flag because kPasswords is only in
+SyncUserSettings::GetSelectedTypes() if
+kEnablePasswordsAccountStorageForNonSyncingUsers is enabled.
+Changes in this CL:
 
-This issue was caught for the tree item elements, but the fix
-should handle other non-buttons elements, as well, which support both
-Expand Collapse Pattern and Toggle Pattern.
+1) Rather than have PasswordManagerUtilBridge#isGmsCoreUpdateRequired()
+and PasswordManagerUtilBridge#shouldUseUpmWiring() take an
+isPwdSyncEnabled boolean, have them take the SyncService and compute
+the boolean internally. The pro for the boolean is it reduces the API
+surface, but the con is callers can compute the bool differently. The
+code already had TODOs proposing this change, I suspect it was deferred
+because there was no way to plumb the SyncService across JNI boundaries.
+This CL adds such JNI support.
 
-Bug: 332328866
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I44d3e3ae3c7a70cead597352395953aa4d58a79e">I44d3e3ae3c7a70cead597352395953aa4d58a79e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5561571">https://chromium-review.googlesource.com/c/chromium/src/+/5561571</a>
-Reviewed-by: Alison Maher &lt;almaher@microsoft.com&gt;
-Commit-Queue: Divyansh Mangal &lt;dmangal@microsoft.com&gt;
-Reviewed-by: Benjamin Beaudry &lt;benjamin.beaudry@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1310441}
+2) Update isGmsCoreUpdateRequired() to handle signed-in non-syncing
+users exactly like syncing users, i.e. drop the IsSyncFeatureEnabled()
+check. shouldUseUpmWiring() is *NOT* updated, it seems to really care
+about syncing users.
+
+3) Do similar to (2) in the passwords_counter.cc caller, so the code
+looks reasonable.
+
+Note: I wanted to split (1) to a precursor CL without behavior changes,
+but that's hard because:
+a) calling IsSyncFeatureEnabledIncludingPasswords() in
+IsGmsCoreUpdateRequired() causes cyclic dependencies
+b) some callers already hardcode true for isPwdSyncEnabled.
+<a href="https://source.chromium.org/chromium/chromium/src/+/main:chrome/android/java/src/org/chromium/chrome/browser/sync/settings/SyncSettingsUtils.java;l=149;drc=b7d797ba31cc6613ee20ae1ac495999b50cf1c1a">https://source.chromium.org/chromium/chromium/src/+/main:chrome/android/java/src/org/chromium/chrome/browser/sync/settings/SyncSettingsUtils.java;l=149;drc=b7d797ba31cc6613ee20ae1ac495999b50cf1c1a</a>
+
+Bug: 344609691
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia43cb4b0e2fdde55c2ddbcad3209b2fe313c83e8">Ia43cb4b0e2fdde55c2ddbcad3209b2fe313c83e8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5593790">https://chromium-review.googlesource.com/c/chromium/src/+/5593790</a>
+Auto-Submit: Victor Vianna &lt;victorvianna@google.com&gt;
+Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Commit-Queue: Victor Vianna &lt;victorvianna@google.com&gt;
+Reviewed-by: Christian Dullweber &lt;dullweber@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1310489}
 </pre>
 
 </body>
