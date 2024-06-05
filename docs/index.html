@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1310489/"> 1310489</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2cd3cfc737691c6f54b00b650002e6580d67b9e7">2cd3cfc737691c6f54b00b650002e6580d67b9e7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1310551/"> 1310551</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bff87798dd7985bd2ad873d32214ad7c997be485">bff87798dd7985bd2ad873d32214ad7c997be485</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1310486/">1310486</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/60d2167df773ea8d46815ce86239ad7baf6d086d">60d2167df773ea8d46815ce86239ad7baf6d086d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1310533/">1310533</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/93b843e8e4cbdfdf7ff3e41023d3a3d2c2bb3d07">93b843e8e4cbdfdf7ff3e41023d3a3d2c2bb3d07</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2cd3cfc737691c6f54b00b650002e6580d67b9e7
+   bff87798dd7985bd2ad873d32214ad7c997be485
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2cd3cfc737691c6f54b00b650002e6580d67b9e7">
+    <a href="/chromium/src/+log/bff87798dd7985bd2ad873d32214ad7c997be485">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2cd3cfc737691c6f54b00b650002e6580d67b9e7.tar.gz">
+    <a href="/chromium/src/+archive/bff87798dd7985bd2ad873d32214ad7c997be485.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Victor Hugo Vianna Silva &lt;victorvianna@google.com&gt;
+   Nan Lin &lt;linnan@chromium.org&gt;
   </td>
   <td>
-   Wed Jun 05 08:46:18 2024
+   Wed Jun 05 12:29:19 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jun 05 08:46:18 2024
+   Wed Jun 05 12:29:19 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2cd3cfc737691c6f54b00b650002e6580d67b9e7/">
-    7e0023bee4e525f892aaa4c39e9e0ba16ef26955
+   <a href="/chromium/src/+/bff87798dd7985bd2ad873d32214ad7c997be485/">
+    49c7a39b1726e8d6b97e55bf9af068b95f951361
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2cd3cfc737691c6f54b00b650002e6580d67b9e7%5E">
-    b37cedfad928827603acf8145992f3ee267e39de
+   <a href="/chromium/src/+/bff87798dd7985bd2ad873d32214ad7c997be485%5E">
+    ef2ddb9962802679ca7d695b2b3b93dc7032cc4d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2cd3cfc737691c6f54b00b650002e6580d67b9e7%5E%21/">
+    <a href="/chromium/src/+/bff87798dd7985bd2ad873d32214ad7c997be485%5E%21/">
      diff
     </a>
     ]
@@ -179,45 +179,19 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[passwords] Handle signed-in users in isGmsCoreUpdateRequired()
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix flaky test AttributionOsLevelManagerAndroidTest.GetMeasurementStatusTimeMetric
 
-Changes are behind flag because kPasswords is only in
-SyncUserSettings::GetSelectedTypes() if
-kEnablePasswordsAccountStorageForNonSyncingUsers is enabled.
-Changes in this CL:
+The test was flaky as `GetMeasurementApiStatus()` is posted to a
+background thread and therefore may not finish when the task
+environment became idle. This CL uses a run loop which is quit when
+the callback is invoked.
 
-1) Rather than have PasswordManagerUtilBridge#isGmsCoreUpdateRequired()
-and PasswordManagerUtilBridge#shouldUseUpmWiring() take an
-isPwdSyncEnabled boolean, have them take the SyncService and compute
-the boolean internally. The pro for the boolean is it reduces the API
-surface, but the con is callers can compute the bool differently. The
-code already had TODOs proposing this change, I suspect it was deferred
-because there was no way to plumb the SyncService across JNI boundaries.
-This CL adds such JNI support.
-
-2) Update isGmsCoreUpdateRequired() to handle signed-in non-syncing
-users exactly like syncing users, i.e. drop the IsSyncFeatureEnabled()
-check. shouldUseUpmWiring() is *NOT* updated, it seems to really care
-about syncing users.
-
-3) Do similar to (2) in the passwords_counter.cc caller, so the code
-looks reasonable.
-
-Note: I wanted to split (1) to a precursor CL without behavior changes,
-but that's hard because:
-a) calling IsSyncFeatureEnabledIncludingPasswords() in
-IsGmsCoreUpdateRequired() causes cyclic dependencies
-b) some callers already hardcode true for isPwdSyncEnabled.
-<a href="https://source.chromium.org/chromium/chromium/src/+/main:chrome/android/java/src/org/chromium/chrome/browser/sync/settings/SyncSettingsUtils.java;l=149;drc=b7d797ba31cc6613ee20ae1ac495999b50cf1c1a">https://source.chromium.org/chromium/chromium/src/+/main:chrome/android/java/src/org/chromium/chrome/browser/sync/settings/SyncSettingsUtils.java;l=149;drc=b7d797ba31cc6613ee20ae1ac495999b50cf1c1a</a>
-
-Bug: 344609691
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia43cb4b0e2fdde55c2ddbcad3209b2fe313c83e8">Ia43cb4b0e2fdde55c2ddbcad3209b2fe313c83e8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5593790">https://chromium-review.googlesource.com/c/chromium/src/+/5593790</a>
-Auto-Submit: Victor Vianna &lt;victorvianna@google.com&gt;
-Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Commit-Queue: Victor Vianna &lt;victorvianna@google.com&gt;
-Reviewed-by: Christian Dullweber &lt;dullweber@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1310489}
+Bug: 338662230
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5e3b345cfb438e25866cfae861420a43a19f6d92">I5e3b345cfb438e25866cfae861420a43a19f6d92</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5597118">https://chromium-review.googlesource.com/c/chromium/src/+/5597118</a>
+Reviewed-by: Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
+Commit-Queue: Nan Lin &lt;linnan@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1310551}
 </pre>
 
 </body>
