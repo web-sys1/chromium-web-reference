@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1318947/"> 1318947</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b0978f96947365edcc7e595d20809e874ffbfcbb">b0978f96947365edcc7e595d20809e874ffbfcbb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1319022/"> 1319022</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/82c0f759b058a8e80e0c90b0d8029e037fee260c">82c0f759b058a8e80e0c90b0d8029e037fee260c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1318949/">1318949</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2c04c42e52a681e440c9ec50a819c40e50427c35">2c04c42e52a681e440c9ec50a819c40e50427c35</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1319010/">1319010</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b0dd3aaf328bf76377676afe93723b01ef33cb7f">b0dd3aaf328bf76377676afe93723b01ef33cb7f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b0978f96947365edcc7e595d20809e874ffbfcbb
+   82c0f759b058a8e80e0c90b0d8029e037fee260c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b0978f96947365edcc7e595d20809e874ffbfcbb">
+    <a href="/chromium/src/+log/82c0f759b058a8e80e0c90b0d8029e037fee260c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b0978f96947365edcc7e595d20809e874ffbfcbb.tar.gz">
+    <a href="/chromium/src/+archive/82c0f759b058a8e80e0c90b0d8029e037fee260c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Qijiang Fan &lt;fqj@chromium.org&gt;
+   Karol Sygiet &lt;sygiet@google.com&gt;
   </td>
   <td>
-   Tue Jun 25 05:27:47 2024
+   Tue Jun 25 09:03:46 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jun 25 05:27:47 2024
+   Tue Jun 25 09:03:46 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b0978f96947365edcc7e595d20809e874ffbfcbb/">
-    de8d656afffe9c2dd46261f295391c37a76ae7e6
+   <a href="/chromium/src/+/82c0f759b058a8e80e0c90b0d8029e037fee260c/">
+    7c26028f0aa366284cc07baedfe77c06cd77a6ce
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b0978f96947365edcc7e595d20809e874ffbfcbb%5E">
-    9270bc2fa3997995d4430530503e571810dd3648
+   <a href="/chromium/src/+/82c0f759b058a8e80e0c90b0d8029e037fee260c%5E">
+    d0cd90cac23f626204e804bcc3691b50f38f6c41
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b0978f96947365edcc7e595d20809e874ffbfcbb%5E%21/">
+    <a href="/chromium/src/+/82c0f759b058a8e80e0c90b0d8029e037fee260c%5E%21/">
      diff
     </a>
     ]
@@ -179,32 +179,19 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Only run tast tests on vmlab for reven
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Disable flaky OnNetworksChangedEventConnect test
 
-We try to add reven to vmlab tests, but Chromium CI buildbot doesn't
-have enough hard disk to generate artifacts for all unittests + tast
-tests, if cros_boards_with_qemu_images is set.
+This CL disables
+NetworkingPrivateServiceClientApiTest.OnNetworksChangedEventConnect
+since it was often failing and seems to be flaky.
 
-qemu run will include the ChromeOS image as part of artifacts causing
-very large squashfs even for a small unittest on vmlab, ending us no
-space left. example:
-<a href="https://ci.chromium.org/ui/p/chrome/builders/ci/chromeos-reven-chrome/11670/overview">https://ci.chromium.org/ui/p/chrome/builders/ci/chromeos-reven-chrome/11670/overview</a>
-
-So stop run tests using legacy virtualization method, and run tast tests
-only instead in vmlab (as legacy method is also running tast test only)
-
-We can use try job to verify if it works.
-
-CQ_INCLUDE_TRYBOTS=luci.chrome.try:chromeos-reven-chrome
-
-Bug: b/348110596
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9561231f4d983185cc5f68dad2a07979621dd0d3">I9561231f4d983185cc5f68dad2a07979621dd0d3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5644622">https://chromium-review.googlesource.com/c/chromium/src/+/5644622</a>
-Auto-Submit: Qijiang Fan &lt;fqj@chromium.org&gt;
-Reviewed-by: Takuto Ikuta &lt;tikuta@chromium.org&gt;
-Reviewed-by: Yoshiki Iguchi &lt;yoshiki@chromium.org&gt;
-Commit-Queue: Qijiang Fan &lt;fqj@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1318947}
+Bug: b/349276078
+Owners-Override: Karol Sygiet &lt;sygiet@google.com&gt;
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iea66aab07588f30f1ef563825f8f4282ddce26b9">Iea66aab07588f30f1ef563825f8f4282ddce26b9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5648204">https://chromium-review.googlesource.com/c/chromium/src/+/5648204</a>
+Reviewed-by: Viktor Semeniuk &lt;vsemeniuk@google.com&gt;
+Commit-Queue: Karol Sygiet &lt;sygiet@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1319022}
 </pre>
 
 </body>
