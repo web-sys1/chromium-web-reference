@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1320472/"> 1320472</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/90b610227cba98b04edfcf22f7b5c2b279430b52">90b610227cba98b04edfcf22f7b5c2b279430b52</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1320621/"> 1320621</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/98d69f68bc1498423ad1e07de72cad762ac1389d">98d69f68bc1498423ad1e07de72cad762ac1389d</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1320464/">1320464</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c207de586f3a08579a67d12fe597c5ce438eb0eb">c207de586f3a08579a67d12fe597c5ce438eb0eb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1320519/">1320519</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb347b6c4984c8f73a8eddc360ee6f3a39281de5">fb347b6c4984c8f73a8eddc360ee6f3a39281de5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   90b610227cba98b04edfcf22f7b5c2b279430b52
+   98d69f68bc1498423ad1e07de72cad762ac1389d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/90b610227cba98b04edfcf22f7b5c2b279430b52">
+    <a href="/chromium/src/+log/98d69f68bc1498423ad1e07de72cad762ac1389d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/90b610227cba98b04edfcf22f7b5c2b279430b52.tar.gz">
+    <a href="/chromium/src/+archive/98d69f68bc1498423ad1e07de72cad762ac1389d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Egor Pasko &lt;pasko@chromium.org&gt;
+   Alexander Cooper &lt;alcooper@chromium.org&gt;
   </td>
   <td>
-   Thu Jun 27 17:32:28 2024
+   Thu Jun 27 20:58:51 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jun 27 17:32:28 2024
+   Thu Jun 27 20:58:51 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/90b610227cba98b04edfcf22f7b5c2b279430b52/">
-    bec357ae85dd39bbc6684a340836841db28502c7
+   <a href="/chromium/src/+/98d69f68bc1498423ad1e07de72cad762ac1389d/">
+    e5aaef9bb5ab2f63700633f61afedd4ccc4db347
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/90b610227cba98b04edfcf22f7b5c2b279430b52%5E">
-    dabcbdf3347fd3e6fb68a24dfeab657603cff7fd
+   <a href="/chromium/src/+/98d69f68bc1498423ad1e07de72cad762ac1389d%5E">
+    7cfaeff2bf8d0de8fc96c0efb06aa680b1208a97
    </a>
    <span>
     [
-    <a href="/chromium/src/+/90b610227cba98b04edfcf22f7b5c2b279430b52%5E%21/">
+    <a href="/chromium/src/+/98d69f68bc1498423ad1e07de72cad762ac1389d%5E%21/">
      diff
     </a>
     ]
@@ -179,26 +179,26 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">android: Extend UMA expiration date for RELRO creation success rate
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Spanify arcore image copy code
 
-The histogram ChromiumAndroidLinker.RelroProvidedSuccessfully is one of
-the two remaining gistograms (along with
-ChromiumAndroidLinker.RelroSharingStatus2) tracking health of the RELRO
-sharing feature.
+Rather than reinterpret_cast data from a byte-span into the requested
+type, we now always copy into a byte span in `CopyArCoreImage`. Down
+casting to a byte span to be written is always safe, whereas up casting
+from a byte span to a desired type could lead to potentially problematic
+writes.
 
-Currently the error rate on RelroProvidedSuccessfully is very close to
-0%.
+In my testing, I also noticed that the "slow" copy path never seems to
+be hit. I've added a UMA to try to confirm this to see if we can go
+about removing it. Though for defensive coding purposes we may want to
+keep it.
 
-I suggest to extend expiration for one more year. Keeping this metric is
-not super critical, rather a first thing to check when the primary
-histogram is showing problems.
-
-Bug: 343043791
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibff0dfde61281b65bd49c9b28b6b0b309f93c0fd">Ibff0dfde61281b65bd49c9b28b6b0b309f93c0fd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5662580">https://chromium-review.googlesource.com/c/chromium/src/+/5662580</a>
-Reviewed-by: Michael Thiessen &lt;mthiesse@chromium.org&gt;
-Commit-Queue: Egor Pasko &lt;pasko@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1320472}
+Bug: 349788227
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5fa9e18e912773dd07d15170e4c855f6cd85f67a">I5fa9e18e912773dd07d15170e4c855f6cd85f67a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5663808">https://chromium-review.googlesource.com/c/chromium/src/+/5663808</a>
+Reviewed-by: Piotr Bialecki &lt;bialpio@chromium.org&gt;
+Auto-Submit: Alexander Cooper &lt;alcooper@chromium.org&gt;
+Commit-Queue: Alexander Cooper &lt;alcooper@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1320621}
 </pre>
 
 </body>
