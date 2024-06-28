@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1320741/"> 1320741</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fd549b23c3d34026e3347585a8d96cb50f476ea8">fd549b23c3d34026e3347585a8d96cb50f476ea8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1320775/"> 1320775</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ed4e6fc6c2a6af105cd95acc4f84c13a47f7289e">ed4e6fc6c2a6af105cd95acc4f84c13a47f7289e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1320718/">1320718</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/07d9695ebcbe87f7704e609d7c4e5ad21ca1a5d6">07d9695ebcbe87f7704e609d7c4e5ad21ca1a5d6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1320763/">1320763</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/733f17935a19df858c5f25e47fbd4ec7d0e1254f">733f17935a19df858c5f25e47fbd4ec7d0e1254f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   fd549b23c3d34026e3347585a8d96cb50f476ea8
+   ed4e6fc6c2a6af105cd95acc4f84c13a47f7289e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/fd549b23c3d34026e3347585a8d96cb50f476ea8">
+    <a href="/chromium/src/+log/ed4e6fc6c2a6af105cd95acc4f84c13a47f7289e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/fd549b23c3d34026e3347585a8d96cb50f476ea8.tar.gz">
+    <a href="/chromium/src/+archive/ed4e6fc6c2a6af105cd95acc4f84c13a47f7289e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ted Meyer &lt;tmathmeyer@chromium.org&gt;
+   Yuzhu Shen &lt;yzshen@chromium.org&gt;
   </td>
   <td>
-   Fri Jun 28 00:42:51 2024
+   Fri Jun 28 02:39:31 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jun 28 00:42:51 2024
+   Fri Jun 28 02:39:31 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/fd549b23c3d34026e3347585a8d96cb50f476ea8/">
-    65270f1835f5698f55e87760846818dd097da9f7
+   <a href="/chromium/src/+/ed4e6fc6c2a6af105cd95acc4f84c13a47f7289e/">
+    5cbee489144621a569ef353796d9e262ba8972fa
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/fd549b23c3d34026e3347585a8d96cb50f476ea8%5E">
-    aaf4cf167100a71bc1c0ccbbd4714156742d53c0
+   <a href="/chromium/src/+/ed4e6fc6c2a6af105cd95acc4f84c13a47f7289e%5E">
+    6a71fb8ea34944c8872fcdd4427ccd06de8fbba4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/fd549b23c3d34026e3347585a8d96cb50f476ea8%5E%21/">
+    <a href="/chromium/src/+/ed4e6fc6c2a6af105cd95acc4f84c13a47f7289e%5E%21/">
      diff
     </a>
     ]
@@ -179,53 +179,14 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor the network fetching out of HlsManifestDemuxerEngine
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Skip sync flush at client side when sync point graph validation is enabled.
 
-The stats collector for MediaPlayer HLS playbacks will have to use the
-same network fetching code as HlsManifestDemuxerEngine, so this change
-separates the behavior into a new interface an implementation, which
-both can use.
-
-There are quite a few layers now to the HLS network stack, so I'll put
-a nice little diagram here to help it make more sense:
-
-MultiBufferDataSource
- |    - Caches network requests across an entire page load
- |      but only writes into raw buffers
- |
-HlsDataSourceProviderImpl
- |    - Keeps an internal map of MBDS by ID, and provides
- |      access to the read interface via HlsDataSourceStream.
- |      Hides the raw buffer internally, but only reads in
- |      single chunks. It can also be used to concatenate
- |      data from multiple URLs together as if it was reading
- |      from a single source, which is useful for implementing
- |      the EXT-X-MAP tag.
- |
-HlsNetworkAccess
- |    - Exposes interfaces for reading data directly from
- |      different types of HLS structures:
- |      Manifests are read in their entirety from a single URI
- |      MediaSegments are read as chunks from the MediaSegment
- |      structure.
- |
- |--HlsManifestDemuxerEngine
- |    - Uses Wraps some calls in HlsNetworkAccess and provides
- |      assistance to HlsRenditionImpl in updating manifests and
- |      fetching segments
- |
- \--HlsMediaPlayerTagRecorder (In the next CL)
-      - Fetches the root manifest using HlsNetworkAccess and
-        records stats about the contents when MediaPlayer is
-        playing HLS content
-
-
-Bug: 338277331
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I20e67efa53752dbb6bb479d43cc9fc0e1c49dae0">I20e67efa53752dbb6bb479d43cc9fc0e1c49dae0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5637691">https://chromium-review.googlesource.com/c/chromium/src/+/5637691</a>
-Reviewed-by: Eugene Zemtsov &lt;eugene@chromium.org&gt;
-Commit-Queue: Ted (Chromium) Meyer &lt;tmathmeyer@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1320741}
+Bug: b/324276400
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idd5f84fe7da64954e918e982cd2ae25868a89c1b">Idd5f84fe7da64954e918e982cd2ae25868a89c1b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5651103">https://chromium-review.googlesource.com/c/chromium/src/+/5651103</a>
+Reviewed-by: Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
+Commit-Queue: Yuzhu Shen &lt;yzshen@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1320775}
 </pre>
 
 </body>
