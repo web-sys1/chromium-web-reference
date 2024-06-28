@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1320621/"> 1320621</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/98d69f68bc1498423ad1e07de72cad762ac1389d">98d69f68bc1498423ad1e07de72cad762ac1389d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1320741/"> 1320741</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fd549b23c3d34026e3347585a8d96cb50f476ea8">fd549b23c3d34026e3347585a8d96cb50f476ea8</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1320519/">1320519</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb347b6c4984c8f73a8eddc360ee6f3a39281de5">fb347b6c4984c8f73a8eddc360ee6f3a39281de5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1320718/">1320718</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/07d9695ebcbe87f7704e609d7c4e5ad21ca1a5d6">07d9695ebcbe87f7704e609d7c4e5ad21ca1a5d6</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   98d69f68bc1498423ad1e07de72cad762ac1389d
+   fd549b23c3d34026e3347585a8d96cb50f476ea8
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/98d69f68bc1498423ad1e07de72cad762ac1389d">
+    <a href="/chromium/src/+log/fd549b23c3d34026e3347585a8d96cb50f476ea8">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/98d69f68bc1498423ad1e07de72cad762ac1389d.tar.gz">
+    <a href="/chromium/src/+archive/fd549b23c3d34026e3347585a8d96cb50f476ea8.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alexander Cooper &lt;alcooper@chromium.org&gt;
+   Ted Meyer &lt;tmathmeyer@chromium.org&gt;
   </td>
   <td>
-   Thu Jun 27 20:58:51 2024
+   Fri Jun 28 00:42:51 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jun 27 20:58:51 2024
+   Fri Jun 28 00:42:51 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/98d69f68bc1498423ad1e07de72cad762ac1389d/">
-    e5aaef9bb5ab2f63700633f61afedd4ccc4db347
+   <a href="/chromium/src/+/fd549b23c3d34026e3347585a8d96cb50f476ea8/">
+    65270f1835f5698f55e87760846818dd097da9f7
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/98d69f68bc1498423ad1e07de72cad762ac1389d%5E">
-    7cfaeff2bf8d0de8fc96c0efb06aa680b1208a97
+   <a href="/chromium/src/+/fd549b23c3d34026e3347585a8d96cb50f476ea8%5E">
+    aaf4cf167100a71bc1c0ccbbd4714156742d53c0
    </a>
    <span>
     [
-    <a href="/chromium/src/+/98d69f68bc1498423ad1e07de72cad762ac1389d%5E%21/">
+    <a href="/chromium/src/+/fd549b23c3d34026e3347585a8d96cb50f476ea8%5E%21/">
      diff
     </a>
     ]
@@ -179,26 +179,53 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Spanify arcore image copy code
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor the network fetching out of HlsManifestDemuxerEngine
 
-Rather than reinterpret_cast data from a byte-span into the requested
-type, we now always copy into a byte span in `CopyArCoreImage`. Down
-casting to a byte span to be written is always safe, whereas up casting
-from a byte span to a desired type could lead to potentially problematic
-writes.
+The stats collector for MediaPlayer HLS playbacks will have to use the
+same network fetching code as HlsManifestDemuxerEngine, so this change
+separates the behavior into a new interface an implementation, which
+both can use.
 
-In my testing, I also noticed that the "slow" copy path never seems to
-be hit. I've added a UMA to try to confirm this to see if we can go
-about removing it. Though for defensive coding purposes we may want to
-keep it.
+There are quite a few layers now to the HLS network stack, so I'll put
+a nice little diagram here to help it make more sense:
 
-Bug: 349788227
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5fa9e18e912773dd07d15170e4c855f6cd85f67a">I5fa9e18e912773dd07d15170e4c855f6cd85f67a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5663808">https://chromium-review.googlesource.com/c/chromium/src/+/5663808</a>
-Reviewed-by: Piotr Bialecki &lt;bialpio@chromium.org&gt;
-Auto-Submit: Alexander Cooper &lt;alcooper@chromium.org&gt;
-Commit-Queue: Alexander Cooper &lt;alcooper@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1320621}
+MultiBufferDataSource
+ |    - Caches network requests across an entire page load
+ |      but only writes into raw buffers
+ |
+HlsDataSourceProviderImpl
+ |    - Keeps an internal map of MBDS by ID, and provides
+ |      access to the read interface via HlsDataSourceStream.
+ |      Hides the raw buffer internally, but only reads in
+ |      single chunks. It can also be used to concatenate
+ |      data from multiple URLs together as if it was reading
+ |      from a single source, which is useful for implementing
+ |      the EXT-X-MAP tag.
+ |
+HlsNetworkAccess
+ |    - Exposes interfaces for reading data directly from
+ |      different types of HLS structures:
+ |      Manifests are read in their entirety from a single URI
+ |      MediaSegments are read as chunks from the MediaSegment
+ |      structure.
+ |
+ |--HlsManifestDemuxerEngine
+ |    - Uses Wraps some calls in HlsNetworkAccess and provides
+ |      assistance to HlsRenditionImpl in updating manifests and
+ |      fetching segments
+ |
+ \--HlsMediaPlayerTagRecorder (In the next CL)
+      - Fetches the root manifest using HlsNetworkAccess and
+        records stats about the contents when MediaPlayer is
+        playing HLS content
+
+
+Bug: 338277331
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I20e67efa53752dbb6bb479d43cc9fc0e1c49dae0">I20e67efa53752dbb6bb479d43cc9fc0e1c49dae0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5637691">https://chromium-review.googlesource.com/c/chromium/src/+/5637691</a>
+Reviewed-by: Eugene Zemtsov &lt;eugene@chromium.org&gt;
+Commit-Queue: Ted (Chromium) Meyer &lt;tmathmeyer@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1320741}
 </pre>
 
 </body>
