@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1323000/"> 1323000</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b24b6ccae746d9f9e3990a96936a2fbdcdd45213">b24b6ccae746d9f9e3990a96936a2fbdcdd45213</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1323108/"> 1323108</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/97dc5182a8c28e5d2894b7d39f9db087b2c50146">97dc5182a8c28e5d2894b7d39f9db087b2c50146</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1323008/">1323008</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e41e859395837efbba5ab7662d624c865dcb33f0">e41e859395837efbba5ab7662d624c865dcb33f0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1323096/">1323096</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5c796d4b8ce44f36f493686a67cf13c5dbcdae7a">5c796d4b8ce44f36f493686a67cf13c5dbcdae7a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b24b6ccae746d9f9e3990a96936a2fbdcdd45213
+   97dc5182a8c28e5d2894b7d39f9db087b2c50146
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b24b6ccae746d9f9e3990a96936a2fbdcdd45213">
+    <a href="/chromium/src/+log/97dc5182a8c28e5d2894b7d39f9db087b2c50146">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b24b6ccae746d9f9e3990a96936a2fbdcdd45213.tar.gz">
+    <a href="/chromium/src/+archive/97dc5182a8c28e5d2894b7d39f9db087b2c50146.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Avi Drissman &lt;avi@chromium.org&gt;
+   Elly &lt;ellyjones@chromium.org&gt;
   </td>
   <td>
-   Wed Jul 03 20:33:58 2024
+   Thu Jul 04 01:04:22 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jul 03 20:33:58 2024
+   Thu Jul 04 01:04:22 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b24b6ccae746d9f9e3990a96936a2fbdcdd45213/">
-    c58baec55c53630f766a43baa87c017fafbf9f0e
+   <a href="/chromium/src/+/97dc5182a8c28e5d2894b7d39f9db087b2c50146/">
+    3644a1f6c767cb72e160b7e15f5d28a265ac3f12
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b24b6ccae746d9f9e3990a96936a2fbdcdd45213%5E">
-    7bde3a2751f391f00d1fd05a6b5ed23623a6a209
+   <a href="/chromium/src/+/97dc5182a8c28e5d2894b7d39f9db087b2c50146%5E">
+    ec5d3c5614497ff73d6696c9a83d3589e4bdfee3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b24b6ccae746d9f9e3990a96936a2fbdcdd45213%5E%21/">
+    <a href="/chromium/src/+/97dc5182a8c28e5d2894b7d39f9db087b2c50146%5E%21/">
      diff
     </a>
     ]
@@ -179,17 +179,58 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use inline constexpr for constant strings in components/dom_distiller
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">passwords: refactor PasswordManagerPorter
 
-This allows for better optimization and use of compile-time tools.
+At the moment PasswordManagerPorter does two separate tasks: import
+passwords and export passwords. It used a single codepath to handle the
+SelectFileDialog for either case, and passed a state variable through
+(using SelectFileDialog's deprecated params mechanism) to tell whether
+it was doing an import or an export. That state variable was used inside
+the SelectFileDialog callbacks to tell whether an import or an export
+was in progress and react accordingly. Since the import and export
+dialogs also used different titles and selection modes, in practice that
+led to code looking like this:
 
-Bug: none
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1b39d0f9f3d13b8cd93b3f1f7cee9e6612b15895">I1b39d0f9f3d13b8cd93b3f1f7cee9e6612b15895</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5676390">https://chromium-review.googlesource.com/c/chromium/src/+/5676390</a>
-Commit-Queue: Tommy Nyquist &lt;nyquist@chromium.org&gt;
-Auto-Submit: Avi Drissman &lt;avi@chromium.org&gt;
-Reviewed-by: Tommy Nyquist &lt;nyquist@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1323000}
+  void PresentFileSelector() {
+    if (export)
+      SelectFileDialog(export_title, export_mode, ..., IS_EXPORT);
+    else if (import)
+      SelectFileDialog(import_title, import_mode, ..., IS_IMPORT);
+  }
+
+  void FileSelected(int mode) {
+    if (mode == IS_EXPORT) {
+      ...
+    } else {
+      ...
+    }
+  }
+
+  void FileSelectionCanceled(int mode) {
+    if (mode == IS_EXPORT) {
+      ...
+    } else {
+      ...
+    }
+  }
+
+so in actuality, several of these functions were two largely-separate
+functions fused together with a boolean (sort of). This change splits
+them, so there are now separate code paths for import and export.
+Possibly PasswordManagerPorter itself should be split up into two
+fully separate classes since the export and import paths aren't ever
+used together on the same object (as far as I can tell...), but that
+would be a larger refactor.
+
+This has the effect of dropping this class's dependency on the
+deprecated params mechanism in ui::SelectFileDialog.
+
+Bug: 340178601
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I79e49a67d6d4770ffa593865e7b9dbd9598305fb">I79e49a67d6d4770ffa593865e7b9dbd9598305fb</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5677645">https://chromium-review.googlesource.com/c/chromium/src/+/5677645</a>
+Commit-Queue: Elly FJ &lt;ellyjones@chromium.org&gt;
+Reviewed-by: Scott Violet &lt;sky@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1323108}
 </pre>
 
 </body>
