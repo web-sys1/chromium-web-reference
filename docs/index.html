@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1327379/"> 1327379</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/767c043c0d9156800334eaacffa947c12c40580b">767c043c0d9156800334eaacffa947c12c40580b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1327437/"> 1327437</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/aeee008f15614b838cca9de952434ffe8bae4caf">aeee008f15614b838cca9de952434ffe8bae4caf</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1327367/">1327367</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dcb09a1718c29c993b749e73ece5e1385fd64fa4">dcb09a1718c29c993b749e73ece5e1385fd64fa4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1327408/">1327408</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/201a33eb6472fcce1854dd85d6b1a2d9114de9fd">201a33eb6472fcce1854dd85d6b1a2d9114de9fd</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   767c043c0d9156800334eaacffa947c12c40580b
+   aeee008f15614b838cca9de952434ffe8bae4caf
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/767c043c0d9156800334eaacffa947c12c40580b">
+    <a href="/chromium/src/+log/aeee008f15614b838cca9de952434ffe8bae4caf">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/767c043c0d9156800334eaacffa947c12c40580b.tar.gz">
+    <a href="/chromium/src/+archive/aeee008f15614b838cca9de952434ffe8bae4caf.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Alex Gough &lt;ajgo@chromium.org&gt;
+   Christian Xu &lt;christianxu@google.com&gt;
   </td>
   <td>
-   Mon Jul 15 09:04:08 2024
+   Mon Jul 15 12:33:43 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jul 15 09:04:08 2024
+   Mon Jul 15 12:33:43 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/767c043c0d9156800334eaacffa947c12c40580b/">
-    885717aac6951adeb2cacb44630e5d58989740c8
+   <a href="/chromium/src/+/aeee008f15614b838cca9de952434ffe8bae4caf/">
+    55819f492099f16494383caf1521cc3edcfba425
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/767c043c0d9156800334eaacffa947c12c40580b%5E">
-    4e2b26f2660322c5170073e24488e2a70b9cabe7
+   <a href="/chromium/src/+/aeee008f15614b838cca9de952434ffe8bae4caf%5E">
+    e64f929cc92e39dbc1d991c8890775c55b816409
    </a>
    <span>
     [
-    <a href="/chromium/src/+/767c043c0d9156800334eaacffa947c12c40580b%5E%21/">
+    <a href="/chromium/src/+/aeee008f15614b838cca9de952434ffe8bae4caf%5E%21/">
      diff
     </a>
     ]
@@ -179,44 +179,20 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Turn iterator _!=_.end() DCHECK() into CHECK() for components/content_settings
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS][LO] Update LRP test URL
 
-Accessing an invalid iterator can sometimes be a security
-issue and these checks are cheap, so upgrade to CHECKs.
-Generally these DCHECKS precede a use or erase of the
-checked iterator, which if the check is invalid (ie. the
-iterator == .end()) is UB.
+Update the test URL in lens overlay selection to open the result page
+with a google host URL.
 
-Added checks are NotFatalUntil::M130.
-
-`base/not_fatal_until.h` is added using tools/add_header.py,
-this may result in some main-file (foo.h for foo.cc) headers
-being re-sorted to be first as part `git cl format` of this CL.
-
-For this CL instances were located with a weggli query:
-
-```
-weggli --verbose=1 --cpp \
-         'DCHECK(_ != _.end());' \
-      -p 'DCHECK(_.end() != _);' \
-      -p 'DCHECK_NE(_, _.end());' \
-      -p 'DCHECK_NE(_.end(), _);'
-```
-
-which should avoid any potentially expensive calculations
-of the thing to be matched against .end().
-
-This CL was uploaded by git cl split.
-
-R=dullweber@chromium.org
-
-Bug: 351745839
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5110b226e566568e375f8baa21e9a411c6fae685">I5110b226e566568e375f8baa21e9a411c6fae685</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5706469">https://chromium-review.googlesource.com/c/chromium/src/+/5706469</a>
-Commit-Queue: Christian Dullweber &lt;dullweber@chromium.org&gt;
-Auto-Submit: Alex Gough &lt;ajgo@chromium.org&gt;
-Reviewed-by: Christian Dullweber &lt;dullweber@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1327379}
+Bug: None
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I47ca5398c44f94f1d59cd3863045e51e9805b073">I47ca5398c44f94f1d59cd3863045e51e9805b073</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5707170">https://chromium-review.googlesource.com/c/chromium/src/+/5707170</a>
+Commit-Queue: Christian Xu &lt;christianxu@chromium.org&gt;
+Commit-Queue: Stepan Khapugin &lt;stkhapugin@chromium.org&gt;
+Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Reviewed-by: Stepan Khapugin &lt;stkhapugin@chromium.org&gt;
+Auto-Submit: Christian Xu &lt;christianxu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1327437}
 </pre>
 
 </body>
