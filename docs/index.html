@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1328872/"> 1328872</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fcc26c3798cd35307d739c007aba352e78efe71b">fcc26c3798cd35307d739c007aba352e78efe71b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1328987/"> 1328987</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d987c7638428adf9d07d52ab6f0c5ec2b0c903e1">d987c7638428adf9d07d52ab6f0c5ec2b0c903e1</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1328832/">1328832</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/93716420b009efe16ef7ecd8e1aa1e2edcd40e06">93716420b009efe16ef7ecd8e1aa1e2edcd40e06</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1328907/">1328907</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9480660527126fb16d72c78e35f208805e8393cf">9480660527126fb16d72c78e35f208805e8393cf</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   fcc26c3798cd35307d739c007aba352e78efe71b
+   d987c7638428adf9d07d52ab6f0c5ec2b0c903e1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/fcc26c3798cd35307d739c007aba352e78efe71b">
+    <a href="/chromium/src/+log/d987c7638428adf9d07d52ab6f0c5ec2b0c903e1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/fcc26c3798cd35307d739c007aba352e78efe71b.tar.gz">
+    <a href="/chromium/src/+archive/d987c7638428adf9d07d52ab6f0c5ec2b0c903e1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Abigail Klein &lt;abigailbklein@google.com&gt;
+   Joshua Pawlicki &lt;waffles@chromium.org&gt;
   </td>
   <td>
-   Wed Jul 17 15:01:11 2024
+   Wed Jul 17 17:52:21 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jul 17 15:01:11 2024
+   Wed Jul 17 17:52:21 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/fcc26c3798cd35307d739c007aba352e78efe71b/">
-    20e77b5aecc14ff72ebb42cb532c8e83fec122cf
+   <a href="/chromium/src/+/d987c7638428adf9d07d52ab6f0c5ec2b0c903e1/">
+    170b180d29feb92eec58311d553fbf4b2c54fd58
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/fcc26c3798cd35307d739c007aba352e78efe71b%5E">
-    a23db33fd2674b90e8c28247e227ea2bf80d8196
+   <a href="/chromium/src/+/d987c7638428adf9d07d52ab6f0c5ec2b0c903e1%5E">
+    c759c60551ba35b11c6317b99b834ff9cce51c99
    </a>
    <span>
     [
-    <a href="/chromium/src/+/fcc26c3798cd35307d739c007aba352e78efe71b%5E%21/">
+    <a href="/chromium/src/+/d987c7638428adf9d07d52ab6f0c5ec2b0c903e1%5E%21/">
      diff
     </a>
     ]
@@ -179,33 +179,30 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add AXAnnotationsSubpage to ChromeOS settings.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Extensions: Allow extension updates to be downloaded in the background.
 
-We add a new subpage to ChromeOS settings which is currently an
-identical copy of the subpage in browser settings. The reason we do
-not share the subpage is because there may be features going forward
-which launch on browser but not on ChromeOS, so we want to be flexible
-to that.
+This allows the update engine to choose the best download strategy for
+an update, potentially allowing for resumption of interrupted downloads
+or for deferral to OS download services to conduct the update.
 
-Also, clean up some PdfOcr settings, which was removed in an
-earlier effort (crrev.com/c/5600000).
+It also simplifies the code, which is useful as it will soon be
+refactored.
 
-In a follow-up, will rename AxAnnotationsSubpage to
-AxAnnotationsSection in ash and browser.
+If I recall correctly, we didn't allow background downloads at the time
+we migrated code to the new extension updater because we didn't want to
+rewrite the tests to not use URLInterceptors. This CL also doesn't
+change the tests, but instead forces the use of the URLFetcher stack
+in tests via the extension updater's update_client configurator.
 
-Screenshots:
-Settings UI: <a href="https://screenshot.googleplex.com/5UputJEPvWeHhEz">https://screenshot.googleplex.com/5UputJEPvWeHhEz</a>
-Search: <a href="https://screenshot.googleplex.com/8Ek45SgBKo324h9">https://screenshot.googleplex.com/8Ek45SgBKo324h9</a>
-
-OBSOLETE_HISTOGRAM[ChromeOS.Settings.Accessibility.PdfOcr.Enabled]=PdfOcr is enabled by default as of crrev.com/c/5602829.
-
-Fixed: 340877990
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I67bcb0d660caaeafd57e0e3dc88a7096c1a43bcb">I67bcb0d660caaeafd57e0e3dc88a7096c1a43bcb</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5689532">https://chromium-review.googlesource.com/c/chromium/src/+/5689532</a>
-Reviewed-by: Ramin Halavati &lt;rhalavati@chromium.org&gt;
-Reviewed-by: Avi Drissman &lt;avi@chromium.org&gt;
-Commit-Queue: Abigail Klein &lt;abigailbklein@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1328872}
+Bug: 353249967
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9c772b3fc9f60ec256fc2ef33735c65401ac9343">I9c772b3fc9f60ec256fc2ef33735c65401ac9343</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5707267">https://chromium-review.googlesource.com/c/chromium/src/+/5707267</a>
+Commit-Queue: Joshua Pawlicki &lt;waffles@chromium.org&gt;
+Auto-Submit: Joshua Pawlicki &lt;waffles@chromium.org&gt;
+Commit-Queue: Sorin Jianu &lt;sorin@chromium.org&gt;
+Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Reviewed-by: Sorin Jianu &lt;sorin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1328987}
 </pre>
 
 </body>
