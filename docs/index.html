@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1328987/"> 1328987</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d987c7638428adf9d07d52ab6f0c5ec2b0c903e1">d987c7638428adf9d07d52ab6f0c5ec2b0c903e1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1329121/"> 1329121</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/dd2888041375720ca0a15df13594e27385ea28ae">dd2888041375720ca0a15df13594e27385ea28ae</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1328907/">1328907</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9480660527126fb16d72c78e35f208805e8393cf">9480660527126fb16d72c78e35f208805e8393cf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1329057/">1329057</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e58452f7938f2f572a9bb2ae044f6f28356a2e8e">e58452f7938f2f572a9bb2ae044f6f28356a2e8e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d987c7638428adf9d07d52ab6f0c5ec2b0c903e1
+   dd2888041375720ca0a15df13594e27385ea28ae
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d987c7638428adf9d07d52ab6f0c5ec2b0c903e1">
+    <a href="/chromium/src/+log/dd2888041375720ca0a15df13594e27385ea28ae">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d987c7638428adf9d07d52ab6f0c5ec2b0c903e1.tar.gz">
+    <a href="/chromium/src/+archive/dd2888041375720ca0a15df13594e27385ea28ae.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Joshua Pawlicki &lt;waffles@chromium.org&gt;
+   Peter Wen &lt;wnwen@chromium.org&gt;
   </td>
   <td>
-   Wed Jul 17 17:52:21 2024
+   Wed Jul 17 21:04:19 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jul 17 17:52:21 2024
+   Wed Jul 17 21:04:19 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d987c7638428adf9d07d52ab6f0c5ec2b0c903e1/">
-    170b180d29feb92eec58311d553fbf4b2c54fd58
+   <a href="/chromium/src/+/dd2888041375720ca0a15df13594e27385ea28ae/">
+    b3b17650b1cbf9923a055bc20a2f3b1853043245
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d987c7638428adf9d07d52ab6f0c5ec2b0c903e1%5E">
-    c759c60551ba35b11c6317b99b834ff9cce51c99
+   <a href="/chromium/src/+/dd2888041375720ca0a15df13594e27385ea28ae%5E">
+    7db7ed89cff6698e553860ba280593ee8f38b8cb
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d987c7638428adf9d07d52ab6f0c5ec2b0c903e1%5E%21/">
+    <a href="/chromium/src/+/dd2888041375720ca0a15df13594e27385ea28ae%5E%21/">
      diff
     </a>
     ]
@@ -179,30 +179,64 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Extensions: Allow extension updates to be downloaded in the background.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">pgo: Run per story benchmarks on android
 
-This allows the update engine to choose the best download strategy for
-an update, potentially allowing for resumption of interrupted downloads
-or for deferral to OS download services to conduct the update.
+Each telemetry benchmark has one or more stories associated with it. PGO
+on Android works by running an entire benchmark and all its associated
+stories and then copying over the files in
+/data/data/&lt;package_name&gt;/cache/pgo_profiles/*.profraw and merging them
+into a .profdata file. The .profdata files from various benchmark runs
+are then merged into a final profile.profdata file which is used in
+PGO-optimized builds.
 
-It also simplifies the code, which is useful as it will soon be
-refactored.
+The telemetry platform code for Android starts the Android browser at
+the beginning of each story and sets up it profile. During profile setup
+all the files (except those in lib/) in /data/data/&lt;package_name&gt;/* are
+deleted. After each story run completes, the PGO profile data associated
+with that story run are saved to
+/data/data/&lt;package_name&gt;/cache/pgo_profiles/*.profraw files. This means
+that any subsequent stories start by clearing the PGO profile data
+collected during the preceding story run. Running any benchmark with
+more than one story results in only the PGO profile data from the last
+story in that benchmark being kept at the end of the benchmark.
 
-If I recall correctly, we didn't allow background downloads at the time
-we migrated code to the new extension updater because we didn't want to
-rewrite the tests to not use URLInterceptors. This CL also doesn't
-change the tests, but instead forces the use of the URLFetcher stack
-in tests via the extension updater's update_client configurator.
+In order to obtain more comprehensive PGO profile coverage, this CL (on
+Android only) splits each benchmark by its stories, so that each story
+gets its own explicit benchmark run, independent from the others. This
+also has the benefit of enabling per-story repeats which in turn greatly
+reduces flakiness associated with any one of the stories failing causing
+the entire benchmark to fail. In principle this has the same effect for
+a multi-story benchmark as it does for a multi-benchmark suite. See
+<a href="https://crrev.com/c/5680092">https://crrev.com/c/5680092</a> for an example of improving from 13% success
+rate to 96% success rate just by adding repeats.
 
-Bug: 353249967
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9c772b3fc9f60ec256fc2ef33735c65401ac9343">I9c772b3fc9f60ec256fc2ef33735c65401ac9343</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5707267">https://chromium-review.googlesource.com/c/chromium/src/+/5707267</a>
-Commit-Queue: Joshua Pawlicki &lt;waffles@chromium.org&gt;
-Auto-Submit: Joshua Pawlicki &lt;waffles@chromium.org&gt;
-Commit-Queue: Sorin Jianu &lt;sorin@chromium.org&gt;
-Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Reviewed-by: Sorin Jianu &lt;sorin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1328987}
+This CL also addresses flakiness in PGO profile generation and merging
+on the LLVM side. Either profile merging would fail explicitly with an
+error code, or it would succeed but print out a warning to stderr that
+it produced an invalid profile. This CL ensures that the benchmark or
+story is repeated in both failure modes, as otherwise the failure
+propagates to the final merge of up to 16 *.profdata files, and that
+final merge will fail if any of the 16 *.profdata files are invalid
+individually.
+
+This CL also adds a passthrough for the -q flag to run_benchmark as that
+greatly reduces the noisiness of run_benchmark for successful runs.
+This way devs can focus on failure cases instead of length output from
+successful runs.
+
+This CL extends handling for Temporal PGO to all `llvm-profdata merge`
+commands. This codepath will be tested and extended in a later CL.
+
+The new --print-only-runnable flag for run_benchmark is used to collect
+the list of stories to run individually.
+
+Bug: 352333007
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia5f839bc79bcc534c4df38b4366550bf00129229">Ia5f839bc79bcc534c4df38b4366550bf00129229</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5718532">https://chromium-review.googlesource.com/c/chromium/src/+/5718532</a>
+Auto-Submit: Peter Wen &lt;wnwen@chromium.org&gt;
+Commit-Queue: Peter Wen &lt;wnwen@chromium.org&gt;
+Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1329121}
 </pre>
 
 </body>
