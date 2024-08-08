@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1338895/"> 1338895</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3b110499c8f0e71e07f13b903db39a457488ce1b">3b110499c8f0e71e07f13b903db39a457488ce1b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1338927/"> 1338927</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/df761fe065ab33c7a65386f13f83c6e4b438e06e">df761fe065ab33c7a65386f13f83c6e4b438e06e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1338860/">1338860</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f165a1b0aac185404c5fdb6b6479c392a3ed369f">f165a1b0aac185404c5fdb6b6479c392a3ed369f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1338927/">1338927</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/df761fe065ab33c7a65386f13f83c6e4b438e06e">df761fe065ab33c7a65386f13f83c6e4b438e06e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3b110499c8f0e71e07f13b903db39a457488ce1b
+   df761fe065ab33c7a65386f13f83c6e4b438e06e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3b110499c8f0e71e07f13b903db39a457488ce1b">
+    <a href="/chromium/src/+log/df761fe065ab33c7a65386f13f83c6e4b438e06e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3b110499c8f0e71e07f13b903db39a457488ce1b.tar.gz">
+    <a href="/chromium/src/+archive/df761fe065ab33c7a65386f13f83c6e4b438e06e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yuki Shiino &lt;yukishiino@chromium.org&gt;
+   Danila Kuzmin &lt;dkuzmin@google.com&gt;
   </td>
   <td>
-   Thu Aug 08 06:11:22 2024
+   Thu Aug 08 08:32:18 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Aug 08 06:11:22 2024
+   Thu Aug 08 08:32:18 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3b110499c8f0e71e07f13b903db39a457488ce1b/">
-    2b393577571205aec1c540c0e35e27ce00cd0a98
+   <a href="/chromium/src/+/df761fe065ab33c7a65386f13f83c6e4b438e06e/">
+    2b22faa58d02cdff14b3873c459c748435afe832
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3b110499c8f0e71e07f13b903db39a457488ce1b%5E">
-    045ca18bb4d7d43ffdd1f5e1df5e7570066f62b5
+   <a href="/chromium/src/+/df761fe065ab33c7a65386f13f83c6e4b438e06e%5E">
+    ca7863223b09941c4e118ce66d6c58f1e88eddb8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3b110499c8f0e71e07f13b903db39a457488ce1b%5E%21/">
+    <a href="/chromium/src/+/df761fe065ab33c7a65386f13f83c6e4b438e06e%5E%21/">
      diff
     </a>
     ]
@@ -179,80 +179,16 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PA: Remove the self pointer from shim functions
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[cleanup] Remove obsolete TODO comments
 
-tl;dr: Removes the `self` table pointer from shim functions.
-Uses a named table pointer instead.
-
-Background:
-
-OptimizeAllocatorDispatchTable [1] copies the shim function
-pointers from the next table to the top table, and introduced
-the following bug.
-
-```
-void ShimFunc(self, size, context) {
-  MakeSideEffect();
-
-  self-&gt;next-&gt;alloc_function(self-&gt;next, size, context);
-}
-
-TableA = { ShimFunc };
-
-TableB = { nullptr };  // Inherits TableA.
-```
-
-With the above setting, ShimFunc will be called twice.
-1. ShimFunc(TableB, size, context) as TableB-&gt;alloc_function
-2. ShimFunc(TableA, size, context) as TableA-&gt;alloc_function
-This is not the expected behavior. This pattern is fixed in this
-patch as follows:
-
-```
-void ShimFunc(size, context) {  // No `self`.
-  MakeSideEffect();
-
-  // `TableA` is explicitly specified.
-  TableA-&gt;next-&gt;alloc_function(size, context);
-}
-
-TableA = { ShimFunc };
-
-TableB = { nullptr };  // Inherits TableA.
-```
-
-The following setting is also confusing.
-
-```
-void ShimRealloc(self, size, context) {
-  if (size == 0)
-    return self-&gt;free_function(self, size, context);
-
-  // Do the job.
-}
-
-TableA = { ShimRealloc };
-
-TableB = { nullptr };  // Inherits TableA.
-```
-
-With the current impl, ShimRealloc is called with TableB instead
-of TableA, where ShimRealloc is originally defined. ShimRealloc
-may expect TableA-&gt;free_function instead of TableB-&gt;free_function.
-
-This patch removes the self argument and removes the related
-confusions.
-
-[1] <a href="https://source.chromium.org/chromium/chromium/src/+/main:base/allocator/partition_allocator/src/partition_alloc/shim/allocator_dispatch.h;drc=2a4fdf0c0032b1dfb3289567b77f3818b31c19f1;l=148-149">https://source.chromium.org/chromium/chromium/src/+/main:base/allocator/partition_allocator/src/partition_alloc/shim/allocator_dispatch.h;drc=2a4fdf0c0032b1dfb3289567b77f3818b31c19f1;l=148-149</a>
-
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If826acf2b81efd8f30715edbb9a3f7203be810d0">If826acf2b81efd8f30715edbb9a3f7203be810d0</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5693643">https://chromium-review.googlesource.com/c/chromium/src/+/5693643</a>
-Reviewed-by: Sergei Glazunov &lt;glazunov@google.com&gt;
-Reviewed-by: Mark Mentovai &lt;mark@chromium.org&gt;
-Reviewed-by: Takashi Sakamoto &lt;tasak@google.com&gt;
-Commit-Queue: Yuki Shiino &lt;yukishiino@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1338895}
+Bug: b:190964241, b:260015114
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibe6764b101fa1863a26b84423bdfd9c0e8ecdd22">Ibe6764b101fa1863a26b84423bdfd9c0e8ecdd22</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5769236">https://chromium-review.googlesource.com/c/chromium/src/+/5769236</a>
+Auto-Submit: Danila Kuzmin &lt;dkuzmin@google.com&gt;
+Reviewed-by: Brahim Chikhaoui &lt;bchikhaoui@google.com&gt;
+Commit-Queue: Brahim Chikhaoui &lt;bchikhaoui@google.com&gt;
+Reviewed-by: Wes Okuhara &lt;wesokuhara@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1338927}
 </pre>
 
 </body>
