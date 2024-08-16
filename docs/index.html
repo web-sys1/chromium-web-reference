@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1342714/"> 1342714</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/33cebd3cc138f15353a61455efd9166be1ec1c26">33cebd3cc138f15353a61455efd9166be1ec1c26</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1342758/"> 1342758</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1e551553486ee5fae1e4ffd040efe9fc2bc8458e">1e551553486ee5fae1e4ffd040efe9fc2bc8458e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1342705/">1342705</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/73c548309265590887eadb40baca42c6745d4d73">73c548309265590887eadb40baca42c6745d4d73</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1342729/">1342729</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bcce6c903d2a223c5a0e31a2772589fd386ebec8">bcce6c903d2a223c5a0e31a2772589fd386ebec8</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   33cebd3cc138f15353a61455efd9166be1ec1c26
+   1e551553486ee5fae1e4ffd040efe9fc2bc8458e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/33cebd3cc138f15353a61455efd9166be1ec1c26">
+    <a href="/chromium/src/+log/1e551553486ee5fae1e4ffd040efe9fc2bc8458e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/33cebd3cc138f15353a61455efd9166be1ec1c26.tar.gz">
+    <a href="/chromium/src/+archive/1e551553486ee5fae1e4ffd040efe9fc2bc8458e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mingyu Lei &lt;leimy@chromium.org&gt;
+   Brandon Fong &lt;bjfong@google.com&gt;
   </td>
   <td>
-   Fri Aug 16 08:57:27 2024
+   Fri Aug 16 12:26:09 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Aug 16 08:57:27 2024
+   Fri Aug 16 12:26:09 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/33cebd3cc138f15353a61455efd9166be1ec1c26/">
-    aae0348890fa7519532638e650c3bbb3fef9c25e
+   <a href="/chromium/src/+/1e551553486ee5fae1e4ffd040efe9fc2bc8458e/">
+    b106343449f83c5ea0e7f63e14c78be0119d6aac
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/33cebd3cc138f15353a61455efd9166be1ec1c26%5E">
-    a34357e2913d8bf4b164bdb72518356cae295373
+   <a href="/chromium/src/+/1e551553486ee5fae1e4ffd040efe9fc2bc8458e%5E">
+    d991bb5e4df03e312b447005a61f05eeb649dc67
    </a>
    <span>
     [
-    <a href="/chromium/src/+/33cebd3cc138f15353a61455efd9166be1ec1c26%5E%21/">
+    <a href="/chromium/src/+/1e551553486ee5fae1e4ffd040efe9fc2bc8458e%5E%21/">
      diff
     </a>
     ]
@@ -179,30 +179,18 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prompt API: store ReceiverContext in AITextSession for cloning
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Tab Group Parity] Launch parity to 100% stable
 
-After <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5775466">https://chromium-review.googlesource.com/c/chromium/src/+/5775466</a>
-we need to add the AITextSession into an AITextSessionSet after
-creating it. The AITextSessionSet is bound to the either RFH or the
-worker host. The host was stored in a ReceiverSet as the context, so
-it can be accessed from the IPC method implementation.
+Launch tab group parity and tab strip indicators to 100% stable, with the dialog defaulting to not showing.
 
-There is one exception: the clone API is also creating new session but
-it's a method from the AITextSession interface, so it cannot obtain
-the host from the AIManager interface's receiver set, causing crashes
-when we attempt to add the session into the set.
-
-In this CL, AITextSession will keep a pointer to AITextSessionSet, and
-will pass it to the AIManagerKeyedService::CreateTextSessionInternal().
-
-
-Bug: 5775466
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If0fbefb474efa60a7e47a3fa025a617d988ffab5">If0fbefb474efa60a7e47a3fa025a617d988ffab5</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5786290">https://chromium-review.googlesource.com/c/chromium/src/+/5786290</a>
-Reviewed-by: Tsuyoshi Horo &lt;horo@chromium.org&gt;
-Commit-Queue: Mingyu Lei &lt;leimy@chromium.org&gt;
-Reviewed-by: Jiacheng Guo &lt;gjc@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1342714}
+Bug: 359949043
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0c704d389ae6ba9152b97ce83527127e71becae0">I0c704d389ae6ba9152b97ce83527127e71becae0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5786866">https://chromium-review.googlesource.com/c/chromium/src/+/5786866</a>
+Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
+Commit-Queue: Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
+Reviewed-by: Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
+Auto-Submit: Brandon Fong &lt;bjfong@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1342758}
 </pre>
 
 </body>
