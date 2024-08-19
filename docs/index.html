@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1343509/"> 1343509</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2c88b7d4eb836cdd3a5508f7353f8db31d9a04d7">2c88b7d4eb836cdd3a5508f7353f8db31d9a04d7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1343614/"> 1343614</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4869373ca9331c696f0d2f02de03a18b52b2801e">4869373ca9331c696f0d2f02de03a18b52b2801e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1343458/">1343458</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e20ef3611fd5337988b6859873a5c299fba96a66">e20ef3611fd5337988b6859873a5c299fba96a66</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1343565/">1343565</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4185ff55e1a35a339d74791e9aeac506ddb576e4">4185ff55e1a35a339d74791e9aeac506ddb576e4</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2c88b7d4eb836cdd3a5508f7353f8db31d9a04d7
+   4869373ca9331c696f0d2f02de03a18b52b2801e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2c88b7d4eb836cdd3a5508f7353f8db31d9a04d7">
+    <a href="/chromium/src/+log/4869373ca9331c696f0d2f02de03a18b52b2801e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2c88b7d4eb836cdd3a5508f7353f8db31d9a04d7.tar.gz">
+    <a href="/chromium/src/+archive/4869373ca9331c696f0d2f02de03a18b52b2801e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Mark Cogan &lt;marq@google.com&gt;
+   Nathan Memmott &lt;memmott@chromium.org&gt;
   </td>
   <td>
-   Mon Aug 19 15:06:13 2024
+   Mon Aug 19 18:23:19 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 19 15:06:13 2024
+   Mon Aug 19 18:23:19 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2c88b7d4eb836cdd3a5508f7353f8db31d9a04d7/">
-    36266332db27751c8f072080dc05a761e7ebbb8d
+   <a href="/chromium/src/+/4869373ca9331c696f0d2f02de03a18b52b2801e/">
+    2dda490af03691b60df017c6d204cc5639baef08
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2c88b7d4eb836cdd3a5508f7353f8db31d9a04d7%5E">
-    ed977f78fcfcdc9075d2008bbe7241496005173b
+   <a href="/chromium/src/+/4869373ca9331c696f0d2f02de03a18b52b2801e%5E">
+    b17ff3918b82d26b9e4af2c9f377b741d31d9fd2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2c88b7d4eb836cdd3a5508f7353f8db31d9a04d7%5E%21/">
+    <a href="/chromium/src/+/4869373ca9331c696f0d2f02de03a18b52b2801e%5E%21/">
      diff
     </a>
     ]
@@ -179,30 +179,20 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS] Migrate ChromeBrowserState forward declaration to header.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Change Observer: Fix RevokeAllActiveGrants crash
 
-This CL migrates forward declarations of ChromeBrowserState in header
-files to instead import a forward header. This header can be updated as
-ChromeBrowserState is migrated to ProfileIOS without needing to (again)
-touch hundreds of header files. BUILD files are also updated for this
-change.
+Now that FileSystemAccessObserverObservation observes permission status
+changes, there is the potential to destroy itself on the status change
+in RevokeActiveGrants and invalidate the iterator.
 
-Where needed, this CL also changes #include directives to #import, which
-is the preferred usage in //ios.
+This fixes it by incrementing the iterator before continuing.
 
-This specific CL updates files in ios/chrome/browser/safety_check/model.
-
-This CL was uploaded by git cl split.
-
-R=bwwilliams@google.com
-
-Bug: 359819865
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0e604fce07e65e3872ba18975a2fe0b7b42edf5c">I0e604fce07e65e3872ba18975a2fe0b7b42edf5c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5797124">https://chromium-review.googlesource.com/c/chromium/src/+/5797124</a>
-Commit-Queue: Benjamin Williams &lt;bwwilliams@google.com&gt;
-Auto-Submit: Mark Cogan &lt;marq@chromium.org&gt;
-Reviewed-by: Benjamin Williams &lt;bwwilliams@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1343509}
+Bug: 360401213
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib5c8cce99c12cd329c39a2adff397cf736adc83a">Ib5c8cce99c12cd329c39a2adff397cf736adc83a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5784565">https://chromium-review.googlesource.com/c/chromium/src/+/5784565</a>
+Reviewed-by: Daseul Lee &lt;dslee@chromium.org&gt;
+Commit-Queue: Nathan Memmott &lt;memmott@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1343614}
 </pre>
 
 </body>
