@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1348572/"> 1348572</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/11e3a1844089f65459cd55b0081de580a8fbbe58">11e3a1844089f65459cd55b0081de580a8fbbe58</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1348628/"> 1348628</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e2e6c0362d4e2474cb4443d016d1b76c6dcedf0e">e2e6c0362d4e2474cb4443d016d1b76c6dcedf0e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1348552/">1348552</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6750ce7986e97557c24d7b119c8c4452c7937ca2">6750ce7986e97557c24d7b119c8c4452c7937ca2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1348591/">1348591</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f99eeca233823aa397095a6611d8f3aecbc98078">f99eeca233823aa397095a6611d8f3aecbc98078</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   11e3a1844089f65459cd55b0081de580a8fbbe58
+   e2e6c0362d4e2474cb4443d016d1b76c6dcedf0e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/11e3a1844089f65459cd55b0081de580a8fbbe58">
+    <a href="/chromium/src/+log/e2e6c0362d4e2474cb4443d016d1b76c6dcedf0e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/11e3a1844089f65459cd55b0081de580a8fbbe58.tar.gz">
+    <a href="/chromium/src/+archive/e2e6c0362d4e2474cb4443d016d1b76c6dcedf0e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+   Nafis Abedin &lt;nafisabedin@google.com&gt;
   </td>
   <td>
-   Thu Aug 29 12:14:12 2024
+   Thu Aug 29 14:45:45 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Aug 29 12:14:12 2024
+   Thu Aug 29 14:45:45 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/11e3a1844089f65459cd55b0081de580a8fbbe58/">
-    1f79dbee9e8059c73e8f204d5b409b75d9aec4d7
+   <a href="/chromium/src/+/e2e6c0362d4e2474cb4443d016d1b76c6dcedf0e/">
+    fe7e963082264ce0d5e989c3c4edf815a36bfebe
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/11e3a1844089f65459cd55b0081de580a8fbbe58%5E">
-    70f7291050c24bcd22817e31bc7162c51891d7c3
+   <a href="/chromium/src/+/e2e6c0362d4e2474cb4443d016d1b76c6dcedf0e%5E">
+    5ec048504663ab10243a481f7fe0bfb6ebee2899
    </a>
    <span>
     [
-    <a href="/chromium/src/+/11e3a1844089f65459cd55b0081de580a8fbbe58%5E%21/">
+    <a href="/chromium/src/+/e2e6c0362d4e2474cb4443d016d1b76c6dcedf0e%5E%21/">
      diff
     </a>
     ]
@@ -179,31 +179,24 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[css-nesting] Just use ConsumeDeclarationList for nested grouping rules
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[base/android] Log long-running UI thread Binder calls
 
-In CSSParserImpl::ConsumeRuleListOrNestedDeclarationList, we have some
-code which inserts a wrapper rule for any leading declarations found.
-However, the observer event flow is not correct when the runtime flag
-CSSNestedDeclarations is enabled: it would suggest that anything
-parsed by ConsumeDeclarationList is *inside* the wrapper rule
-(see CL:5806629 for an example).
+Binder has a hidden @SystemApi that can be used to intercept Binder calls. Android utilizes this with the command "adb shell am trace-ipc
+start|stop", and in SysUI to detect jank from UI thread Binder calls.
+This suggests that it would be beneficial in Chromium too. The CL is a
+continuation of @lizeb's draft CL to log slow (&gt; 2ms) Binder calls.
 
-To fix this, we can instead use the "native"  CSSNestedDeclarations-
-emitting capabilities of ConsumeDeclarationList, but modified to also
-(optionally) include the leading declarations, via
-the nested_declarations_start_index parameter.
+Binder.setProxyTransactListener() has both @hide and @SystemApi and
+android.os.Binder$ProxyTransactListener has the @hide property. Therefore, double/meta reflection and a proxy is utilized to bypass these restrictions.
 
-This brings declaration debugging for nested grouping rules up to
-the same level as for CSSNestedDeclarations appearing within normal
-style rules.
-
-Bug: 358119261
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia926aec4ee946d7aa067ba56e72bb5d36667a23c">Ia926aec4ee946d7aa067ba56e72bb5d36667a23c</a>
-Fixed: 361116768, 341803746
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5823371">https://chromium-review.googlesource.com/c/chromium/src/+/5823371</a>
-Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Reviewed-by: Philip Pfaffe &lt;pfaffe@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1348572}
+Low-Coverage-Reason: COVERAGE_UNDERREPORTED
+Bug: 40251111
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I37ef5bcd5fa155d117d0c4bf9f896fe580946c0d">I37ef5bcd5fa155d117d0c4bf9f896fe580946c0d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5799523">https://chromium-review.googlesource.com/c/chromium/src/+/5799523</a>
+Reviewed-by: Benoit Lize &lt;lizeb@chromium.org&gt;
+Reviewed-by: Michael Thiessen &lt;mthiesse@chromium.org&gt;
+Commit-Queue: Nafis Abedin &lt;nafisabedin@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1348628}
 </pre>
 
 </body>
