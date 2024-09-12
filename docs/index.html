@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1354298/"> 1354298</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1caf41c27d07c8eb18733fb3ac1bb22cb99e4407">1caf41c27d07c8eb18733fb3ac1bb22cb99e4407</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1354331/"> 1354331</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/db7f23116eb359789af546a8bd963ed5fdb1ca75">db7f23116eb359789af546a8bd963ed5fdb1ca75</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1354281/">1354281</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/817a78ac8db7069ade5cce6e07cad6bf1e254b5b">817a78ac8db7069ade5cce6e07cad6bf1e254b5b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1354312/">1354312</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f995d3596b3413eeaa91d14fa7dfccb65f6ecd5e">f995d3596b3413eeaa91d14fa7dfccb65f6ecd5e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1caf41c27d07c8eb18733fb3ac1bb22cb99e4407
+   db7f23116eb359789af546a8bd963ed5fdb1ca75
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1caf41c27d07c8eb18733fb3ac1bb22cb99e4407">
+    <a href="/chromium/src/+log/db7f23116eb359789af546a8bd963ed5fdb1ca75">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1caf41c27d07c8eb18733fb3ac1bb22cb99e4407.tar.gz">
+    <a href="/chromium/src/+archive/db7f23116eb359789af546a8bd963ed5fdb1ca75.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chris Lu &lt;thegreenfrog@chromium.org&gt;
+   Sammie Quon &lt;sammiequon@chromium.org&gt;
   </td>
   <td>
-   Thu Sep 12 01:14:03 2024
+   Thu Sep 12 03:05:33 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Sep 12 01:14:03 2024
+   Thu Sep 12 03:05:33 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1caf41c27d07c8eb18733fb3ac1bb22cb99e4407/">
-    c0d99ae895d060e46193ab961afae4b81aa57d49
+   <a href="/chromium/src/+/db7f23116eb359789af546a8bd963ed5fdb1ca75/">
+    7c5810bffdae91748f78db808f2eeebf51ce419c
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1caf41c27d07c8eb18733fb3ac1bb22cb99e4407%5E">
-    3994f2536d350e420b4a53040fe2a1172ee6a26a
+   <a href="/chromium/src/+/db7f23116eb359789af546a8bd963ed5fdb1ca75%5E">
+    a39f4379e501e3ea1f5e33b9043c503a462f417c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1caf41c27d07c8eb18733fb3ac1bb22cb99e4407%5E%21/">
+    <a href="/chromium/src/+/db7f23116eb359789af546a8bd963ed5fdb1ca75%5E%21/">
      diff
     </a>
     ]
@@ -179,33 +179,19 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ios] Create Create MagicStackCollectionViewCell
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">forest: Speculative crash in full restore service
 
-MVTs use MagicStackModuleContainer, which is a UICollectionViewCell
-subclass, and it seems like the Discover UICollectionView has
-awareness of it as a cell (see c#14 for logs that lead to this
-conclusion. This is the reasoning behind the unexpected behavior seen in
-the bug.
+The full restore service info could be received after the user has
+decided to launch apps. The contents data pointer is not needed in that
+case and we can early return.
 
-To fix this, MagicStackModuleCollectionViewCell is created as the
-cell used in the Magic Stack, while MagicStackModuleContainer will be
-used by MVTs and as the primary subview for
-MagicStackModuleCollectionViewCell. Most of the code is just moving
-necessary scoped logic (i.e. long-press context menu) to the cell
-class and forwarding calls from the cell to the container. The
-only changes are in MagicStackModuleCollectionViewCell's initWithFrame:,
-where no longer sets self.contentView's corner radius and clipToBounds
-since it does not seem to be necessary for UI consistency.
-
-Video: <a href="https://drive.google.com/file/d/1kGMhbhYosTIyPvac5D12Cggkss7f7FD1/view?usp=sharing">https://drive.google.com/file/d/1kGMhbhYosTIyPvac5D12Cggkss7f7FD1/view?usp=sharing</a>
-
-Fixed: 360829555
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic5d6b6ff3966329c809b7a355fc33925b3c767cf">Ic5d6b6ff3966329c809b7a355fc33925b3c767cf</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5855025">https://chromium-review.googlesource.com/c/chromium/src/+/5855025</a>
-Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Commit-Queue: Chris Lu &lt;thegreenfrog@chromium.org&gt;
-Reviewed-by: Scott Yoder &lt;scottyoder@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1354298}
+Test: none
+Bug: b/365844258
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I32021568f5695871d61971a6610dccef56de9ed9">I32021568f5695871d61971a6610dccef56de9ed9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5855561">https://chromium-review.googlesource.com/c/chromium/src/+/5855561</a>
+Commit-Queue: Sammie Quon &lt;sammiequon@chromium.org&gt;
+Reviewed-by: Xiaodan Zhu &lt;zxdan@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1354331}
 </pre>
 
 </body>
