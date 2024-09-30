@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1361879/"> 1361879</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2e671a042275dd09c220b1348263c00aa5a247a9">2e671a042275dd09c220b1348263c00aa5a247a9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1362012/"> 1362012</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ddd351cf6361206d6e22ed96dcf7b1508bb1fe6d">ddd351cf6361206d6e22ed96dcf7b1508bb1fe6d</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1361886/">1361886</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3c4888f5268a47d7342f8c0aa42766d5cd57acaf">3c4888f5268a47d7342f8c0aa42766d5cd57acaf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1361977/">1361977</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/34b8a505f4149e3adc161aea6c3f051f68adfcd9">34b8a505f4149e3adc161aea6c3f051f68adfcd9</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2e671a042275dd09c220b1348263c00aa5a247a9
+   ddd351cf6361206d6e22ed96dcf7b1508bb1fe6d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2e671a042275dd09c220b1348263c00aa5a247a9">
+    <a href="/chromium/src/+log/ddd351cf6361206d6e22ed96dcf7b1508bb1fe6d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2e671a042275dd09c220b1348263c00aa5a247a9.tar.gz">
+    <a href="/chromium/src/+archive/ddd351cf6361206d6e22ed96dcf7b1508bb1fe6d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sam Fortiner &lt;samfort@microsoft.com&gt;
+   Behnood Momenzadeh &lt;behnoodm@chromium.org&gt;
   </td>
   <td>
-   Mon Sep 30 17:30:56 2024
+   Mon Sep 30 21:12:40 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Sep 30 17:30:56 2024
+   Mon Sep 30 21:12:40 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2e671a042275dd09c220b1348263c00aa5a247a9/">
-    2fbcb3591d133d97fc092b627ff3ae3d87fbefbf
+   <a href="/chromium/src/+/ddd351cf6361206d6e22ed96dcf7b1508bb1fe6d/">
+    ffa86b715d78611d74b455934fadb58185258c2c
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2e671a042275dd09c220b1348263c00aa5a247a9%5E">
-    14315682dcab5c2d32baae67bccdb54e9fb43600
+   <a href="/chromium/src/+/ddd351cf6361206d6e22ed96dcf7b1508bb1fe6d%5E">
+    0df1aeaca9b6ddb9c532c67128934890dbe52620
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2e671a042275dd09c220b1348263c00aa5a247a9%5E%21/">
+    <a href="/chromium/src/+/ddd351cf6361206d6e22ed96dcf7b1508bb1fe6d%5E%21/">
      diff
     </a>
     ]
@@ -179,28 +179,20 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix dangling pointer warnings in CdmAdapter tests
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Enable Safety Reset for M131
 
-CdmAdapterTestBase::cdm_helper_ references an object that is owned by
-CdmAdapterTestBase::cdm_. Proper ordering of these two member variables
-would normally keep cdm_helper_ from being a dangling ptr. That ordering
-is now fixed in this CL, meaning any subclass that doesn't modify cdm_'s
-lifetime should get the correct member destruction order by default and
-avoid dangling pointers.
+This CL enables the safety reset feature for M131.
 
-The CdmAdapterTestWithClearKeyCdm subclass does modify the default
-destruction order though, in order to satisfy requirements with its
-helper_ member. Adding a ClearCdm() method allows subclasses to clear
-cdm_ (and related CdmAdapterTestBase state) and maintain the needed
-ordering with their own subclass state.
+TEST=manual
+BUG=b:317898420
 
-Bug: 40212619
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3b2f51e091d8f834e098bbf86315049b1ae40ac7">I3b2f51e091d8f834e098bbf86315049b1ae40ac7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5817739">https://chromium-review.googlesource.com/c/chromium/src/+/5817739</a>
-Reviewed-by: John Rummell &lt;jrummell@chromium.org&gt;
-Commit-Queue: Sam Fortiner &lt;samfort@microsoft.com&gt;
-Reviewed-by: Xiaohan Wang &lt;xhwang@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1361879}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4d8f01993066be5b39873d53799d838b5b96edab">I4d8f01993066be5b39873d53799d838b5b96edab</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5900497">https://chromium-review.googlesource.com/c/chromium/src/+/5900497</a>
+Auto-Submit: Behnood Momenzadeh &lt;behnoodm@chromium.org&gt;
+Commit-Queue: Zi Lin &lt;lziest@google.com&gt;
+Reviewed-by: John Admanski &lt;jadmanski@chromium.org&gt;
+Reviewed-by: Zi Lin &lt;lziest@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1362012}
 </pre>
 
 </body>
