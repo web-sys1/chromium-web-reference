@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1361819/"> 1361819</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7436fa648c92783994bf45f55e6674bdefb2b947">7436fa648c92783994bf45f55e6674bdefb2b947</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1361879/"> 1361879</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2e671a042275dd09c220b1348263c00aa5a247a9">2e671a042275dd09c220b1348263c00aa5a247a9</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1361775/">1361775</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/992050607fab5b71f4750763da91cd4ca0ce34cb">992050607fab5b71f4750763da91cd4ca0ce34cb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1361886/">1361886</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3c4888f5268a47d7342f8c0aa42766d5cd57acaf">3c4888f5268a47d7342f8c0aa42766d5cd57acaf</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   7436fa648c92783994bf45f55e6674bdefb2b947
+   2e671a042275dd09c220b1348263c00aa5a247a9
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/7436fa648c92783994bf45f55e6674bdefb2b947">
+    <a href="/chromium/src/+log/2e671a042275dd09c220b1348263c00aa5a247a9">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/7436fa648c92783994bf45f55e6674bdefb2b947.tar.gz">
+    <a href="/chromium/src/+archive/2e671a042275dd09c220b1348263c00aa5a247a9.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Oksana Zhuravlova &lt;oksamyt@chromium.org&gt;
+   Sam Fortiner &lt;samfort@microsoft.com&gt;
   </td>
   <td>
-   Mon Sep 30 15:12:34 2024
+   Mon Sep 30 17:30:56 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Sep 30 15:12:34 2024
+   Mon Sep 30 17:30:56 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/7436fa648c92783994bf45f55e6674bdefb2b947/">
-    16d978a7ddcea2ac8cd9b67ef50d7a66921745ae
+   <a href="/chromium/src/+/2e671a042275dd09c220b1348263c00aa5a247a9/">
+    2fbcb3591d133d97fc092b627ff3ae3d87fbefbf
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/7436fa648c92783994bf45f55e6674bdefb2b947%5E">
-    9909589eb203f91aa45a2a145cf780e0ca8485f3
+   <a href="/chromium/src/+/2e671a042275dd09c220b1348263c00aa5a247a9%5E">
+    14315682dcab5c2d32baae67bccdb54e9fb43600
    </a>
    <span>
     [
-    <a href="/chromium/src/+/7436fa648c92783994bf45f55e6674bdefb2b947%5E%21/">
+    <a href="/chromium/src/+/2e671a042275dd09c220b1348263c00aa5a247a9%5E%21/">
      diff
     </a>
     ]
@@ -179,24 +179,28 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[tracing] Add latency ids to one of Graphics.Pipeline slices
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix dangling pointer warnings in CdmAdapter tests
 
-This CL adds a new latency_ids field to ChromeGraphicsPipeline and
-records the latency ids for the corresponding frame for the
-Graphics.Pipeline with STEP_GENERATE_COMPOSITOR_FRAME.
-This should make it easier to match input to frame production and
-presentation.
+CdmAdapterTestBase::cdm_helper_ references an object that is owned by
+CdmAdapterTestBase::cdm_. Proper ordering of these two member variables
+would normally keep cdm_helper_ from being a dangling ptr. That ordering
+is now fixed in this CL, meaning any subclass that doesn't modify cdm_'s
+lifetime should get the correct member destruction order by default and
+avoid dangling pointers.
 
-PERFETTO_TESTS=`autoninja -C out/Default perfetto_diff_tests &amp;&amp; out/Default/bin/run_perfetto_diff_tests`
+The CdmAdapterTestWithClearKeyCdm subclass does modify the default
+destruction order though, in order to satisfy requirements with its
+helper_ member. Adding a ClearCdm() method allows subclasses to clear
+cdm_ (and related CdmAdapterTestBase state) and maintain the needed
+ordering with their own subclass state.
 
-Bug: b:356429321, b:368050735
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2c595e7b76a5bb3523e5e1ae925828e0a8205b18">I2c595e7b76a5bb3523e5e1ae925828e0a8205b18</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5892083">https://chromium-review.googlesource.com/c/chromium/src/+/5892083</a>
-Reviewed-by: Tushar Agarwal &lt;agarwaltushar@google.com&gt;
-Reviewed-by: Jonathan Ross &lt;jonross@chromium.org&gt;
-Reviewed-by: Mikhail Khokhlov &lt;khokhlov@google.com&gt;
-Commit-Queue: Oksana Zhuravlova &lt;oksamyt@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1361819}
+Bug: 40212619
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3b2f51e091d8f834e098bbf86315049b1ae40ac7">I3b2f51e091d8f834e098bbf86315049b1ae40ac7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5817739">https://chromium-review.googlesource.com/c/chromium/src/+/5817739</a>
+Reviewed-by: John Rummell &lt;jrummell@chromium.org&gt;
+Commit-Queue: Sam Fortiner &lt;samfort@microsoft.com&gt;
+Reviewed-by: Xiaohan Wang &lt;xhwang@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1361879}
 </pre>
 
 </body>
