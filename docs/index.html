@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1364349/"> 1364349</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ba1793be803b7e4396d1e60fd6b119166a3eb7f6">ba1793be803b7e4396d1e60fd6b119166a3eb7f6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1364438/"> 1364438</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/10a4a4eb90c44af88c973b1919b8655f2a12ea61">10a4a4eb90c44af88c973b1919b8655f2a12ea61</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1364283/">1364283</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c95d7dc0fba4a9c55eb18261e7db9a0d3c8c804a">c95d7dc0fba4a9c55eb18261e7db9a0d3c8c804a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1364392/">1364392</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/62676528bcd0d5cd86928759520850771cc12579">62676528bcd0d5cd86928759520850771cc12579</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ba1793be803b7e4396d1e60fd6b119166a3eb7f6
+   10a4a4eb90c44af88c973b1919b8655f2a12ea61
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ba1793be803b7e4396d1e60fd6b119166a3eb7f6">
+    <a href="/chromium/src/+log/10a4a4eb90c44af88c973b1919b8655f2a12ea61">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ba1793be803b7e4396d1e60fd6b119166a3eb7f6.tar.gz">
+    <a href="/chromium/src/+archive/10a4a4eb90c44af88c973b1919b8655f2a12ea61.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tom Sepez &lt;tsepez@chromium.org&gt;
+   Liam Brady &lt;lbrady@google.com&gt;
   </td>
   <td>
-   Fri Oct 04 18:21:23 2024
+   Fri Oct 04 21:06:33 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 04 18:21:23 2024
+   Fri Oct 04 21:06:33 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ba1793be803b7e4396d1e60fd6b119166a3eb7f6/">
-    b1317f5d5f84b2da09f8be161507d5c2b5bb093a
+   <a href="/chromium/src/+/10a4a4eb90c44af88c973b1919b8655f2a12ea61/">
+    c4e4d36b928e89b544feb3d98c733abf784e2054
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ba1793be803b7e4396d1e60fd6b119166a3eb7f6%5E">
-    a2934f29863ccba6059174e5f0c5c72626119e3b
+   <a href="/chromium/src/+/10a4a4eb90c44af88c973b1919b8655f2a12ea61%5E">
+    0b3e260f242e2df37fb0ddf8da66042ad9daf22f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ba1793be803b7e4396d1e60fd6b119166a3eb7f6%5E%21/">
+    <a href="/chromium/src/+/10a4a4eb90c44af88c973b1919b8655f2a12ea61%5E%21/">
      diff
     </a>
     ]
@@ -179,22 +179,35 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Ensure std::sort() comparators take large args by const-ref.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fenced frame: Use initiator frame referrer policy for beacons.
 
-Otherwise, unintended copies may take place. A quick scan across the
-codebase only identified a few such sites.
+Event-level reports are sent out with a referrer header and a referrer
+policy. The policy is currently always set to "origin". However, if a
+frame wants to have a more restrictive referrer policy, the Fenced
+Frames Ads Reporting API does not honor that, and instead will always
+send out the origin.
 
-This CL was uploaded by git cl split.
+This CL modifies the FFAR API to set the referrer policy to the policy
+that is set by the frame that initiates an event-level report. This CL
+also ensures that the most information that can be sent out in the
+referrer header is the origin; for example, a frame with the
+"unsafe-url" referrer policy will still only have beacons be populated
+with the initiator frame's origin, not its full url.
 
-R=gujen@google.com
+Ad components will have their referrer policy set to the referrer policy
+of the ad frame root. This matches the existing behavior of setting
+the referrer to the origin of the ad frame root, rather than that of
+the component ad frame itself.
 
-Bug: 369952985
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibd9dc734654938fcdb244340489cb25ea5412025">Ibd9dc734654938fcdb244340489cb25ea5412025</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5909353">https://chromium-review.googlesource.com/c/chromium/src/+/5909353</a>
-Auto-Submit: Tom Sepez &lt;tsepez@chromium.org&gt;
-Reviewed-by: Guillaume Jenkins &lt;gujen@google.com&gt;
-Commit-Queue: Guillaume Jenkins &lt;gujen@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1364349}
+See "Referrer Policy" section in design document:
+<a href="https://docs.google.com/document/d/1gKRZ9g_X5HCZbW__GinViwcC8iWEai_kBXsiJCXrt80/edit?usp=sharing">https://docs.google.com/document/d/1gKRZ9g_X5HCZbW__GinViwcC8iWEai_kBXsiJCXrt80/edit?usp=sharing</a>
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I16f6554509aea5e0e9d19a1c6058a565e2f2d7ed">I16f6554509aea5e0e9d19a1c6058a565e2f2d7ed</a>
+Bug: 341884774
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5901444">https://chromium-review.googlesource.com/c/chromium/src/+/5901444</a>
+Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Commit-Queue: Liam Brady &lt;lbrady@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1364438}
 </pre>
 
 </body>
