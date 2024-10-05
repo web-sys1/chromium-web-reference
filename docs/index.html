@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1364438/"> 1364438</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/10a4a4eb90c44af88c973b1919b8655f2a12ea61">10a4a4eb90c44af88c973b1919b8655f2a12ea61</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1364542/"> 1364542</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fa18beb4eb7cdaf1095e06c855e9190e1a02e391">fa18beb4eb7cdaf1095e06c855e9190e1a02e391</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1364392/">1364392</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/62676528bcd0d5cd86928759520850771cc12579">62676528bcd0d5cd86928759520850771cc12579</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1364500/">1364500</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8b6daba2575c68cd5639975c54f87216d00f14e1">8b6daba2575c68cd5639975c54f87216d00f14e1</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   10a4a4eb90c44af88c973b1919b8655f2a12ea61
+   fa18beb4eb7cdaf1095e06c855e9190e1a02e391
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/10a4a4eb90c44af88c973b1919b8655f2a12ea61">
+    <a href="/chromium/src/+log/fa18beb4eb7cdaf1095e06c855e9190e1a02e391">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/10a4a4eb90c44af88c973b1919b8655f2a12ea61.tar.gz">
+    <a href="/chromium/src/+archive/fa18beb4eb7cdaf1095e06c855e9190e1a02e391.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Liam Brady &lt;lbrady@google.com&gt;
+   Kristian Monsen &lt;kristianm@google.com&gt;
   </td>
   <td>
-   Fri Oct 04 21:06:33 2024
+   Sat Oct 05 01:37:25 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 04 21:06:33 2024
+   Sat Oct 05 01:37:25 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/10a4a4eb90c44af88c973b1919b8655f2a12ea61/">
-    c4e4d36b928e89b544feb3d98c733abf784e2054
+   <a href="/chromium/src/+/fa18beb4eb7cdaf1095e06c855e9190e1a02e391/">
+    18249c61a21f59fa099f61d9586c646ae9f54b85
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/10a4a4eb90c44af88c973b1919b8655f2a12ea61%5E">
-    0b3e260f242e2df37fb0ddf8da66042ad9daf22f
+   <a href="/chromium/src/+/fa18beb4eb7cdaf1095e06c855e9190e1a02e391%5E">
+    47e8a57ab14bfc85a59b36b64df93802c7236361
    </a>
    <span>
     [
-    <a href="/chromium/src/+/10a4a4eb90c44af88c973b1919b8655f2a12ea61%5E%21/">
+    <a href="/chromium/src/+/fa18beb4eb7cdaf1095e06c855e9190e1a02e391%5E%21/">
      diff
     </a>
     ]
@@ -179,35 +179,17 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fenced frame: Use initiator frame referrer policy for beacons.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use algorithms as requested by the server
 
-Event-level reports are sent out with a referrer header and a referrer
-policy. The policy is currently always set to "origin". However, if a
-frame wants to have a more restrictive referrer policy, the Fenced
-Frames Ads Reporting API does not honor that, and instead will always
-send out the origin.
+It was using a constant set of algorithms.
+Cleaning up the code a bit at the same time.
 
-This CL modifies the FFAR API to set the referrer policy to the policy
-that is set by the frame that initiates an event-level report. This CL
-also ensures that the most information that can be sent out in the
-referrer header is the origin; for example, a frame with the
-"unsafe-url" referrer policy will still only have beacons be populated
-with the initiator frame's origin, not its full url.
-
-Ad components will have their referrer policy set to the referrer policy
-of the ad frame root. This matches the existing behavior of setting
-the referrer to the origin of the ad frame root, rather than that of
-the component ad frame itself.
-
-See "Referrer Policy" section in design document:
-<a href="https://docs.google.com/document/d/1gKRZ9g_X5HCZbW__GinViwcC8iWEai_kBXsiJCXrt80/edit?usp=sharing">https://docs.google.com/document/d/1gKRZ9g_X5HCZbW__GinViwcC8iWEai_kBXsiJCXrt80/edit?usp=sharing</a>
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I16f6554509aea5e0e9d19a1c6058a565e2f2d7ed">I16f6554509aea5e0e9d19a1c6058a565e2f2d7ed</a>
-Bug: 341884774
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5901444">https://chromium-review.googlesource.com/c/chromium/src/+/5901444</a>
-Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
-Commit-Queue: Liam Brady &lt;lbrady@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1364438}
+Bug: 353766139
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0008c4667b65acc4be8225410eec15ca3bdee877">I0008c4667b65acc4be8225410eec15ca3bdee877</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5909873">https://chromium-review.googlesource.com/c/chromium/src/+/5909873</a>
+Commit-Queue: Kristian Monsen &lt;kristianm@chromium.org&gt;
+Reviewed-by: Anunoy Ghosh &lt;anunoy@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1364542}
 </pre>
 
 </body>
