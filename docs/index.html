@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1365992/"> 1365992</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6828158a9c2fa443cc17a9f3ac23ab3acb06ca09">6828158a9c2fa443cc17a9f3ac23ab3acb06ca09</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1366042/"> 1366042</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/999312a826bda6b1b98b7e35336cab6878e6743a">999312a826bda6b1b98b7e35336cab6878e6743a</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1365976/">1365976</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8e83d6dea247430d27674ed2ef9ae30ff2931fa4">8e83d6dea247430d27674ed2ef9ae30ff2931fa4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1366011/">1366011</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4c29769284a06a0fad5683f43baa52ece2dedcc1">4c29769284a06a0fad5683f43baa52ece2dedcc1</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6828158a9c2fa443cc17a9f3ac23ab3acb06ca09
+   999312a826bda6b1b98b7e35336cab6878e6743a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6828158a9c2fa443cc17a9f3ac23ab3acb06ca09">
+    <a href="/chromium/src/+log/999312a826bda6b1b98b7e35336cab6878e6743a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6828158a9c2fa443cc17a9f3ac23ab3acb06ca09.tar.gz">
+    <a href="/chromium/src/+archive/999312a826bda6b1b98b7e35336cab6878e6743a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Peter Boström &lt;pbos@chromium.org&gt;
+   Sorin Jianu &lt;sorin@chromium.org&gt;
   </td>
   <td>
-   Wed Oct 09 06:15:14 2024
+   Wed Oct 09 09:09:50 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Oct 09 06:15:14 2024
+   Wed Oct 09 09:09:50 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6828158a9c2fa443cc17a9f3ac23ab3acb06ca09/">
-    09c561c72aa562ed77267a3866d8fe24b492779b
+   <a href="/chromium/src/+/999312a826bda6b1b98b7e35336cab6878e6743a/">
+    eb14f4b8451d0a8599ed98d79c7c27abb5c244a4
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6828158a9c2fa443cc17a9f3ac23ab3acb06ca09%5E">
-    f5d51971005346d347302bebca21235e85d12096
+   <a href="/chromium/src/+/999312a826bda6b1b98b7e35336cab6878e6743a%5E">
+    57ab97b8ef2ec26e54ca600609ed9ad88743fa3a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6828158a9c2fa443cc17a9f3ac23ab3acb06ca09%5E%21/">
+    <a href="/chromium/src/+/999312a826bda6b1b98b7e35336cab6878e6743a%5E%21/">
      diff
     </a>
     ]
@@ -179,37 +179,26 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make BackgroundLoaderContents NOTREACHED non-fatal
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">components: default the user-defined empty ctor and dtor where possible
 
-This replaces a currently-fatal NOTREACHED_IN_MIGRATION() with a
-base::NotFatalUntil::M132 variant. This is my best hypothesis for a
-NOTREACHED attributed to
-RenderFrameHostImpl::ClosePageIgnoringUnloadEvents M128, though long-tail).
+I need an owner's approval please for changes under:
+components/zucchini
 
-The call stack in crash reports is compressed but
-content::RenderFrameHostImpl::ClosePageIgnoringUnloadEvents calls into
-"android_webview::AwComponentInstallerPolicy::OnCustomUninstall", except
-that's an ICF'd merge of every method that just contains
-NOTREACHED_IN_MIGRATION()). All we know is that
-ClosePageIgnoringUnloadEvents ends up calling into some method that
-contains only NOTREACHED_IN_MIGRATION().
+This is a mechanical change. There are a few instances (but not all)
+of empty user-defined constructors and destructors which can be
+defaulted in the /components code.
 
-ClosePageIgnoringUnloadEvents() however ends with a probably-tail-called
-WebContentsImpl::Close() which probably tail calls
-WebContentsDelegate::CloseContents(). The only CloseContents()
-implementation that is just NOTREACHED_IN_MIGRATION() is in
-BackgroundLoaderContents. To confirm, and probably temporarily stop
-these reports, we mark that one as non-fatal which will deduplicate it
-from other NOTREACHED() call sites. This'll either trigger new reports
-or we'll go back to being fatal in M132 if not hit again.
+This CL was uploaded by git cl split.
 
-Bug: 40580068
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie750e4d28ce3b4c1c51701fdf5847bd157cf4a59">Ie750e4d28ce3b4c1c51701fdf5847bd157cf4a59</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5918187">https://chromium-review.googlesource.com/c/chromium/src/+/5918187</a>
-Commit-Queue: Colin Blundell &lt;blundell@chromium.org&gt;
-Auto-Submit: Peter Boström &lt;pbos@chromium.org&gt;
-Reviewed-by: Colin Blundell &lt;blundell@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1365992}
+R=grt@chromium.org
+
+Bug: 371316188
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I446078e8a6155956da84e543264a6acbc68606a3">I446078e8a6155956da84e543264a6acbc68606a3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5918615">https://chromium-review.googlesource.com/c/chromium/src/+/5918615</a>
+Auto-Submit: Sorin Jianu &lt;sorin@chromium.org&gt;
+Reviewed-by: Greg Thompson &lt;grt@chromium.org&gt;
+Commit-Queue: Greg Thompson &lt;grt@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1366042}
 </pre>
 
 </body>
