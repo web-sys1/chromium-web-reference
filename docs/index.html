@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1367448/"> 1367448</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ace649bbc0f17f7158ad77fbfd68bfd19eee032c">ace649bbc0f17f7158ad77fbfd68bfd19eee032c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1367535/"> 1367535</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/302f2bc1306a9355ff5f35b75ea7af45b5559e65">302f2bc1306a9355ff5f35b75ea7af45b5559e65</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1367412/">1367412</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a1bc036cc3cee40281bd3fd7d4318510e47da508">a1bc036cc3cee40281bd3fd7d4318510e47da508</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1367507/">1367507</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/564b62e4910f95ec233c33341202783107c7a9f4">564b62e4910f95ec233c33341202783107c7a9f4</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ace649bbc0f17f7158ad77fbfd68bfd19eee032c
+   302f2bc1306a9355ff5f35b75ea7af45b5559e65
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ace649bbc0f17f7158ad77fbfd68bfd19eee032c">
+    <a href="/chromium/src/+log/302f2bc1306a9355ff5f35b75ea7af45b5559e65">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ace649bbc0f17f7158ad77fbfd68bfd19eee032c.tar.gz">
+    <a href="/chromium/src/+archive/302f2bc1306a9355ff5f35b75ea7af45b5559e65.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ryan Sultanem &lt;rsult@google.com&gt;
+   Nina Satragno &lt;nsatragno@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 11 12:08:05 2024
+   Fri Oct 11 15:07:33 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 11 12:08:05 2024
+   Fri Oct 11 15:07:33 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ace649bbc0f17f7158ad77fbfd68bfd19eee032c/">
-    8e99c2e83147081fd62b92b5204c83181d9f5ac5
+   <a href="/chromium/src/+/302f2bc1306a9355ff5f35b75ea7af45b5559e65/">
+    83fe42b81921956b06334b03c0bd935e13a38298
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ace649bbc0f17f7158ad77fbfd68bfd19eee032c%5E">
-    1e1513195ebd570e0b42ef8dc4dcb9f90d022539
+   <a href="/chromium/src/+/302f2bc1306a9355ff5f35b75ea7af45b5559e65%5E">
+    142b6edd878f9ad9d69b820e37124b7ef06bbbfc
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ace649bbc0f17f7158ad77fbfd68bfd19eee032c%5E%21/">
+    <a href="/chromium/src/+/302f2bc1306a9355ff5f35b75ea7af45b5559e65%5E%21/">
      diff
     </a>
     ]
@@ -179,31 +179,24 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[BatchUpload] Change the data/model key mapping
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[fenced-frames] Migrate WebAuthn test
 
-In preparation to using SyncService DataTypeLocalDataBatchUploader
-interface, we simplify the mapping between the data and their models.
-Now using the real data key, instead of expecting the interface to keep
-record of the mapping of the displayed items.
+Migrate a fenced frames WebAuthn test to run on headless chrome with
+chromedriver instead of the legacy content shell runner. The legacy
+content shell runner will stop supporting the WebAuthn testdriver API,
+soon.
 
-This forces the BatchUploadDialogHandler itself to keep track of its
-own id mapping per data type, given that Mojo can only support one id
-type, in order to retrieve back the right data id.
+Fix the test to set up the virtual authenticator environment on the top
+frame instead, since testdriver should be invoked from the same window
+hosting the testharness.
 
-This way the Id mapping complexity is decoupled from the data types.
-
-Currently the allowed Ids are only strings since it is the expected id
-type to be used first. But in theory, if any other id type is needed,
-the `BatchUploadDataItemModel::DataId` should support multiple types
-through `std::variant`, and it would be up to the data type to
-ensure the right data id type.
-
-Bug: b:372701325
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I11b1f204c021f3d6c6c23a329b1fd424cd3cca78">I11b1f204c021f3d6c6c23a329b1fd424cd3cca78</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5922707">https://chromium-review.googlesource.com/c/chromium/src/+/5922707</a>
-Reviewed-by: David Roger &lt;droger@chromium.org&gt;
-Commit-Queue: Ryan Sultanem &lt;rsult@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1367448}
+Bug: 372169469
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6e1b296fe86ee4087da2a5a63868e18a6b440984">I6e1b296fe86ee4087da2a5a63868e18a6b440984</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5920770">https://chromium-review.googlesource.com/c/chromium/src/+/5920770</a>
+Auto-Submit: Nina Satragno &lt;nsatragno@chromium.org&gt;
+Reviewed-by: Liam Brady &lt;lbrady@google.com&gt;
+Commit-Queue: Liam Brady &lt;lbrady@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1367535}
 </pre>
 
 </body>
