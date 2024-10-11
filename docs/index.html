@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1367616/"> 1367616</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0e5be73d10c47015ce99b8b2ced63c3ae8af66a0">0e5be73d10c47015ce99b8b2ced63c3ae8af66a0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1367764/"> 1367764</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/33c3bc61d35fe955c3e9b9531ecbf4dbabf6a861">33c3bc61d35fe955c3e9b9531ecbf4dbabf6a861</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1367575/">1367575</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/63af8d1c0256c27db40765cb2d48391c25cdfe01">63af8d1c0256c27db40765cb2d48391c25cdfe01</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1367709/">1367709</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/acd1fe16685ecdb3d082af5b8193985545328791">acd1fe16685ecdb3d082af5b8193985545328791</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0e5be73d10c47015ce99b8b2ced63c3ae8af66a0
+   33c3bc61d35fe955c3e9b9531ecbf4dbabf6a861
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0e5be73d10c47015ce99b8b2ced63c3ae8af66a0">
+    <a href="/chromium/src/+log/33c3bc61d35fe955c3e9b9531ecbf4dbabf6a861">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0e5be73d10c47015ce99b8b2ced63c3ae8af66a0.tar.gz">
+    <a href="/chromium/src/+archive/33c3bc61d35fe955c3e9b9531ecbf4dbabf6a861.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Sean Maher &lt;spvw@chromium.org&gt;
+   Daniel Rubery &lt;drubery@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 11 17:58:10 2024
+   Fri Oct 11 20:57:01 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 11 17:58:10 2024
+   Fri Oct 11 20:57:01 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0e5be73d10c47015ce99b8b2ced63c3ae8af66a0/">
-    73597164ee27e03e368400c3497f48a3ed63b7e1
+   <a href="/chromium/src/+/33c3bc61d35fe955c3e9b9531ecbf4dbabf6a861/">
+    6edad4f5711f15e1e775c272ed69b86a8eba1edc
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0e5be73d10c47015ce99b8b2ced63c3ae8af66a0%5E">
-    85c2faa8987a8da5f8bed823e310c140eb56d866
+   <a href="/chromium/src/+/33c3bc61d35fe955c3e9b9531ecbf4dbabf6a861%5E">
+    925c84622a5f9a0a753a3631c8e1b24f7bac5240
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0e5be73d10c47015ce99b8b2ced63c3ae8af66a0%5E%21/">
+    <a href="/chromium/src/+/33c3bc61d35fe955c3e9b9531ecbf4dbabf6a861%5E%21/">
      diff
     </a>
     ]
@@ -179,49 +179,18 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Disable DLL preread when there is no seek penalty or on startup
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Report external intents to Safe Browsing
 
-Motivation:
+This CL updates the ExternalNavigationHandler to send information to
+safe_browsing code when an intent is launched from Chrome. Future CLs
+will implement the report to Safe Browsing servers.
 
-- From a Beta experiment, disabling DLL prereading seems to improve
-  page load time. However, while there are no regressions for clients
-  that have no seek penalty for chrome.dll, there are congestion and
-  input delay regressions for clients with a seek penalty for
-  chrome.dll. That's why we want to experiment with disabling DLL
-  pre-reading for clients with no seek penalty only
-  ("kNoPreReadMainDllIfSsd").
-
-  In this experiment, we will also not include users with chrome on a
-  removable drive, though this is on the roadmap for the future. More
-  metrics are currently being collected to allow informed decisions
-  on this front.
-
-  For context, see crbug.com/325307453
-
-- From a Stable experiment, disabling DLL prereading in child
-  processes but enabling it in the browser process (on process launch,
-  from Thread Pool, max once per 5 seconds, see
-  "PrefetchVirtualMemoryPolicy") improves startup time (on clients
-  with or without a seek penalty for chrome.dll) but causes many
-  regressions. Since the browser process already pre-reads chrome.dll,
-  it makes sense that having less pre-reading during startup
-  (max 1 per 5 seconds instead of 1 for every child process launch)
-  improves startup time (the DLL is probably already in physical
-  memory during startup so pre-reading is just unnecessary overhead).
-  That's why we want to experiment with disabling DLL pre-reading
-  during startups, for all clients ("NoPreReadMainDllStartup").
-
-Based on analysis from olivierli, spvw, etienneb and fdoray.
-
-Verified to be working locally.
-
-Bug: 331612431, 325307453
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8ee4660b71b60e243eee8804f39d75b8e255b624">I8ee4660b71b60e243eee8804f39d75b8e255b624</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5916670">https://chromium-review.googlesource.com/c/chromium/src/+/5916670</a>
-Reviewed-by: Francois Pierre Doray &lt;fdoray@chromium.org&gt;
-Reviewed-by: Greg Thompson &lt;grt@chromium.org&gt;
-Commit-Queue: Sean Maher &lt;spvw@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1367616}
+Bug: 372064001
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I27f152e2b93d1179fed58b482056b2f8d4c10424">I27f152e2b93d1179fed58b482056b2f8d4c10424</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5914753">https://chromium-review.googlesource.com/c/chromium/src/+/5914753</a>
+Commit-Queue: Daniel Rubery &lt;drubery@chromium.org&gt;
+Reviewed-by: Michael Thiessen &lt;mthiesse@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1367764}
 </pre>
 
 </body>
