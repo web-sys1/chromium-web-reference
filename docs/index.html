@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1367535/"> 1367535</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/302f2bc1306a9355ff5f35b75ea7af45b5559e65">302f2bc1306a9355ff5f35b75ea7af45b5559e65</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1367616/"> 1367616</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0e5be73d10c47015ce99b8b2ced63c3ae8af66a0">0e5be73d10c47015ce99b8b2ced63c3ae8af66a0</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1367507/">1367507</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/564b62e4910f95ec233c33341202783107c7a9f4">564b62e4910f95ec233c33341202783107c7a9f4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1367575/">1367575</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/63af8d1c0256c27db40765cb2d48391c25cdfe01">63af8d1c0256c27db40765cb2d48391c25cdfe01</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   302f2bc1306a9355ff5f35b75ea7af45b5559e65
+   0e5be73d10c47015ce99b8b2ced63c3ae8af66a0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/302f2bc1306a9355ff5f35b75ea7af45b5559e65">
+    <a href="/chromium/src/+log/0e5be73d10c47015ce99b8b2ced63c3ae8af66a0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/302f2bc1306a9355ff5f35b75ea7af45b5559e65.tar.gz">
+    <a href="/chromium/src/+archive/0e5be73d10c47015ce99b8b2ced63c3ae8af66a0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nina Satragno &lt;nsatragno@chromium.org&gt;
+   Sean Maher &lt;spvw@chromium.org&gt;
   </td>
   <td>
-   Fri Oct 11 15:07:33 2024
+   Fri Oct 11 17:58:10 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 11 15:07:33 2024
+   Fri Oct 11 17:58:10 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/302f2bc1306a9355ff5f35b75ea7af45b5559e65/">
-    83fe42b81921956b06334b03c0bd935e13a38298
+   <a href="/chromium/src/+/0e5be73d10c47015ce99b8b2ced63c3ae8af66a0/">
+    73597164ee27e03e368400c3497f48a3ed63b7e1
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/302f2bc1306a9355ff5f35b75ea7af45b5559e65%5E">
-    142b6edd878f9ad9d69b820e37124b7ef06bbbfc
+   <a href="/chromium/src/+/0e5be73d10c47015ce99b8b2ced63c3ae8af66a0%5E">
+    85c2faa8987a8da5f8bed823e310c140eb56d866
    </a>
    <span>
     [
-    <a href="/chromium/src/+/302f2bc1306a9355ff5f35b75ea7af45b5559e65%5E%21/">
+    <a href="/chromium/src/+/0e5be73d10c47015ce99b8b2ced63c3ae8af66a0%5E%21/">
      diff
     </a>
     ]
@@ -179,24 +179,49 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[fenced-frames] Migrate WebAuthn test
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Disable DLL preread when there is no seek penalty or on startup
 
-Migrate a fenced frames WebAuthn test to run on headless chrome with
-chromedriver instead of the legacy content shell runner. The legacy
-content shell runner will stop supporting the WebAuthn testdriver API,
-soon.
+Motivation:
 
-Fix the test to set up the virtual authenticator environment on the top
-frame instead, since testdriver should be invoked from the same window
-hosting the testharness.
+- From a Beta experiment, disabling DLL prereading seems to improve
+  page load time. However, while there are no regressions for clients
+  that have no seek penalty for chrome.dll, there are congestion and
+  input delay regressions for clients with a seek penalty for
+  chrome.dll. That's why we want to experiment with disabling DLL
+  pre-reading for clients with no seek penalty only
+  ("kNoPreReadMainDllIfSsd").
 
-Bug: 372169469
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6e1b296fe86ee4087da2a5a63868e18a6b440984">I6e1b296fe86ee4087da2a5a63868e18a6b440984</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5920770">https://chromium-review.googlesource.com/c/chromium/src/+/5920770</a>
-Auto-Submit: Nina Satragno &lt;nsatragno@chromium.org&gt;
-Reviewed-by: Liam Brady &lt;lbrady@google.com&gt;
-Commit-Queue: Liam Brady &lt;lbrady@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1367535}
+  In this experiment, we will also not include users with chrome on a
+  removable drive, though this is on the roadmap for the future. More
+  metrics are currently being collected to allow informed decisions
+  on this front.
+
+  For context, see crbug.com/325307453
+
+- From a Stable experiment, disabling DLL prereading in child
+  processes but enabling it in the browser process (on process launch,
+  from Thread Pool, max once per 5 seconds, see
+  "PrefetchVirtualMemoryPolicy") improves startup time (on clients
+  with or without a seek penalty for chrome.dll) but causes many
+  regressions. Since the browser process already pre-reads chrome.dll,
+  it makes sense that having less pre-reading during startup
+  (max 1 per 5 seconds instead of 1 for every child process launch)
+  improves startup time (the DLL is probably already in physical
+  memory during startup so pre-reading is just unnecessary overhead).
+  That's why we want to experiment with disabling DLL pre-reading
+  during startups, for all clients ("NoPreReadMainDllStartup").
+
+Based on analysis from olivierli, spvw, etienneb and fdoray.
+
+Verified to be working locally.
+
+Bug: 331612431, 325307453
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8ee4660b71b60e243eee8804f39d75b8e255b624">I8ee4660b71b60e243eee8804f39d75b8e255b624</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5916670">https://chromium-review.googlesource.com/c/chromium/src/+/5916670</a>
+Reviewed-by: Francois Pierre Doray &lt;fdoray@chromium.org&gt;
+Reviewed-by: Greg Thompson &lt;grt@chromium.org&gt;
+Commit-Queue: Sean Maher &lt;spvw@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1367616}
 </pre>
 
 </body>
