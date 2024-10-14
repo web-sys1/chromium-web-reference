@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1368098/"> 1368098</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4943f3d89499c5411291ec1c7434f17745b07540">4943f3d89499c5411291ec1c7434f17745b07540</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1368113/"> 1368113</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1e4c5f5101dc3312f7c0e77dfef65e1248cbe37c">1e4c5f5101dc3312f7c0e77dfef65e1248cbe37c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1368089/">1368089</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/76cd5ba77bbd989fabb6478aa358672bb240521a">76cd5ba77bbd989fabb6478aa358672bb240521a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1368105/">1368105</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/163f99b1c4a82e1b66bf7061f324fc6cef3f26f1">163f99b1c4a82e1b66bf7061f324fc6cef3f26f1</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4943f3d89499c5411291ec1c7434f17745b07540
+   1e4c5f5101dc3312f7c0e77dfef65e1248cbe37c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4943f3d89499c5411291ec1c7434f17745b07540">
+    <a href="/chromium/src/+log/1e4c5f5101dc3312f7c0e77dfef65e1248cbe37c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4943f3d89499c5411291ec1c7434f17745b07540.tar.gz">
+    <a href="/chromium/src/+archive/1e4c5f5101dc3312f7c0e77dfef65e1248cbe37c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Tim Sergeant &lt;tsergeant@chromium.org&gt;
+   Utkarsh Pathak &lt;utpathak@microsoft.com&gt;
   </td>
   <td>
-   Mon Oct 14 03:06:50 2024
+   Mon Oct 14 06:07:48 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Oct 14 03:06:50 2024
+   Mon Oct 14 06:07:48 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4943f3d89499c5411291ec1c7434f17745b07540/">
-    ee65267a27094f97d436715ccbe0bb016f81a6e1
+   <a href="/chromium/src/+/1e4c5f5101dc3312f7c0e77dfef65e1248cbe37c/">
+    a0419199b8dd6b770ba9dd456458c1480d038521
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4943f3d89499c5411291ec1c7434f17745b07540%5E">
-    e7ae8aa177f777b81bd5d827f99d329b0ada3174
+   <a href="/chromium/src/+/1e4c5f5101dc3312f7c0e77dfef65e1248cbe37c%5E">
+    10949007af5a5eb6ad18cd3f5282ecf41fef9fce
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4943f3d89499c5411291ec1c7434f17745b07540%5E%21/">
+    <a href="/chromium/src/+/1e4c5f5101dc3312f7c0e77dfef65e1248cbe37c%5E%21/">
      diff
     </a>
     ]
@@ -179,23 +179,34 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Growth: Record "hotseat hover" when showing home screen in tablet mode
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use selection focus for caret position while navigating using arrow keys
 
-Since there's no hover event on a touchscreen device, we record the
-"hotseat hover" event when the hotseat becomes visible from showing the
-home screen.
+While moving cursor up and down, the cursor should come exactly above
+and below the previous position respectively. Currently the cursor
+position is not correct in these scenarios since we pass
+|selection_.Start()| to calculate the x position while editing, instead
+we should pass |selection_.Focus()| since focus will be having the last
+position of the caret. This change is Firefox compatible.
 
-This is a follow-up from crrev.com/c/5844374.
+Updated some existing web_tests that were using selection modifier and
+after this CL, the caret position is now changed so these web_tests
+needed to adhere to the updated caret positioning.
 
-Screencast: <a href="https://drive.google.com/file/d/1YUMgHsdYUb1dtO6genMTsTGArzVkiIoI/view?usp=sharing&amp;resourcekey=0-90Kmrc_1KXgO92Mh8vEs1Q">https://drive.google.com/file/d/1YUMgHsdYUb1dtO6genMTsTGArzVkiIoI/view?usp=sharing&amp;resourcekey=0-90Kmrc_1KXgO92Mh8vEs1Q</a>
+Updated tests:
+web_tests/editing/pasteboard/paste-list-002.html
+web_tests/editing/pasteboard/paste-list-003.html
+web_tests/editing/pasteboard/paste-list-004.html
+web_tests/editing/selection/move-3875618-fix.html
+web_tests/editing/inserting/insert-3786362-fix-expected.txt
 
-Bug: b:364124777
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icd2707300c75bdf29376eef861449fd1e98e91c4">Icd2707300c75bdf29376eef861449fd1e98e91c4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5904563">https://chromium-review.googlesource.com/c/chromium/src/+/5904563</a>
-Reviewed-by: Toni Barzic &lt;tbarzic@google.com&gt;
-Reviewed-by: Tao Wu &lt;wutao@chromium.org&gt;
-Commit-Queue: Tim Sergeant &lt;tsergeant@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1368098}
+Bug: 40658856
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id6f00889621003072d7f88bcc00d10f8318ad8f2">Id6f00889621003072d7f88bcc00d10f8318ad8f2</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5804495">https://chromium-review.googlesource.com/c/chromium/src/+/5804495</a>
+Reviewed-by: Siye Liu &lt;siliu@microsoft.com&gt;
+Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
+Commit-Queue: Utkarsh Pathak &lt;utpathak@microsoft.com&gt;
+Reviewed-by: Sanket Joshi &lt;sajos@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1368113}
 </pre>
 
 </body>
