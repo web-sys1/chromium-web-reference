@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1368421/"> 1368421</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f73fd69d98c832c26f2756303422389b939d328a">f73fd69d98c832c26f2756303422389b939d328a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1368547/"> 1368547</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/33d5cb6f126c324a27151dfe1f3af70e02867dcb">33d5cb6f126c324a27151dfe1f3af70e02867dcb</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1368328/">1368328</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0ce4993b1099ca88ecb6eb6a6bb0d6ff605fd4d9">0ce4993b1099ca88ecb6eb6a6bb0d6ff605fd4d9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1368516/">1368516</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d8b4ba7514feb0150e4fe2694a79e38734cddaa9">d8b4ba7514feb0150e4fe2694a79e38734cddaa9</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f73fd69d98c832c26f2756303422389b939d328a
+   33d5cb6f126c324a27151dfe1f3af70e02867dcb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f73fd69d98c832c26f2756303422389b939d328a">
+    <a href="/chromium/src/+log/33d5cb6f126c324a27151dfe1f3af70e02867dcb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f73fd69d98c832c26f2756303422389b939d328a.tar.gz">
+    <a href="/chromium/src/+archive/33d5cb6f126c324a27151dfe1f3af70e02867dcb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Md Hasibul Hasan &lt;hasibulhasan873@gmail.com&gt;
+   Piotr Bialecki &lt;bialpio@chromium.org&gt;
   </td>
   <td>
-   Mon Oct 14 20:54:48 2024
+   Tue Oct 15 01:23:30 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Oct 14 20:54:48 2024
+   Tue Oct 15 01:23:30 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f73fd69d98c832c26f2756303422389b939d328a/">
-    452963a86380045139ca16f3f75b64ef919e30a9
+   <a href="/chromium/src/+/33d5cb6f126c324a27151dfe1f3af70e02867dcb/">
+    4b6a2eb70927eab96a7668eee2e52e0063b79735
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f73fd69d98c832c26f2756303422389b939d328a%5E">
-    95187d55ec74dba3dcf7885c6ac6ffab835b0f3e
+   <a href="/chromium/src/+/33d5cb6f126c324a27151dfe1f3af70e02867dcb%5E">
+    66f3efe4608ccc8d504a53351014275c9cc3d0f7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f73fd69d98c832c26f2756303422389b939d328a%5E%21/">
+    <a href="/chromium/src/+/33d5cb6f126c324a27151dfe1f3af70e02867dcb%5E%21/">
      diff
     </a>
     ]
@@ -179,23 +179,24 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[UI] Use mojo enum for `MenuSourceType` in ash/app_menu/
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Video effects - fix threading issue w/ dtor running on wrong sequence
 
-This CL replaces the uses of `MenuSourceType` with the mojo version
-in ash/app_menu/*.
+VideoCaptureEffectsProcessor should not have to handle being called
+from multiple threads - prior to this CL, the thread-hop was handled
+by it, but there was a problem with mojo remote DCHECKing due to
+being destroyed on the wrong thread. The CL moves the responsibility
+of ensuring that the VideoCaptureEffectsProcessor &amp; its mojo remote is
+accessed from one sequence to VideoCaptureDeviceClient. In addition, we
+also add `DFAKE_SCOPED_RECURSIVE_LOCK(call_from_producer_)` in VCDC
+to all methods inherited from `VideoCaptureDevice::Client` to ensure
+that there is at most one thread accessing them at a time.
 
-A modified version of the following script is used for replacing
-with different folder name.
-Script: <a href="https://issues.chromium.org/issues/355460976#comment2">https://issues.chromium.org/issues/355460976#comment2</a>
-
-Bug: 355460976
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I568f9e5f15200e611d1df712bdd696e30a0ac9fe">I568f9e5f15200e611d1df712bdd696e30a0ac9fe</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5922493">https://chromium-review.googlesource.com/c/chromium/src/+/5922493</a>
-Reviewed-by: Alex Newcomer &lt;newcomer@chromium.org&gt;
-Auto-Submit: Md Hasibul Hasan &lt;hasibulhasan873@gmail.com&gt;
-Reviewed-by: Ahmed Fakhry &lt;afakhry@chromium.org&gt;
-Commit-Queue: Md Hasibul Hasan &lt;hasibulhasan873@gmail.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1368421}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I50cb67d6a55ad4c4ad15e11ae2930d0c9a7800bf">I50cb67d6a55ad4c4ad15e11ae2930d0c9a7800bf</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5599239">https://chromium-review.googlesource.com/c/chromium/src/+/5599239</a>
+Commit-Queue: Piotr Bialecki &lt;bialpio@chromium.org&gt;
+Reviewed-by: Miguel Casas-Sanchez &lt;mcasas@chromium.org&gt;
+Reviewed-by: Colin Blundell &lt;blundell@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1368547}
 </pre>
 
 </body>
