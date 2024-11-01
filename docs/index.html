@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1376965/"> 1376965</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b7f429c9da5800ad560fdb5aade96c61b3ffbad3">b7f429c9da5800ad560fdb5aade96c61b3ffbad3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1377078/"> 1377078</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/957db5b674f2d65667c860f6fa29c6cc63471999">957db5b674f2d65667c860f6fa29c6cc63471999</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1376908/">1376908</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e15d1b62dda5a8ed41f58ac6effa4a574c631d04">e15d1b62dda5a8ed41f58ac6effa4a574c631d04</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1377050/">1377050</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/017167461340304aab6e17cd9608d0edb5b34d31">017167461340304aab6e17cd9608d0edb5b34d31</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b7f429c9da5800ad560fdb5aade96c61b3ffbad3
+   957db5b674f2d65667c860f6fa29c6cc63471999
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b7f429c9da5800ad560fdb5aade96c61b3ffbad3">
+    <a href="/chromium/src/+log/957db5b674f2d65667c860f6fa29c6cc63471999">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b7f429c9da5800ad560fdb5aade96c61b3ffbad3.tar.gz">
+    <a href="/chromium/src/+archive/957db5b674f2d65667c860f6fa29c6cc63471999.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kyra &lt;kyraseevers@chromium.org&gt;
+   Kevin Ellis &lt;kevers@google.com&gt;
   </td>
   <td>
-   Fri Nov 01 17:38:27 2024
+   Fri Nov 01 21:01:48 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Nov 01 17:38:27 2024
+   Fri Nov 01 21:01:48 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b7f429c9da5800ad560fdb5aade96c61b3ffbad3/">
-    815bbd5ded6889445b1fd3c083f8fd9cb6120bba
+   <a href="/chromium/src/+/957db5b674f2d65667c860f6fa29c6cc63471999/">
+    aaedad68c204a0c6bef08389231dd95a7725adf2
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b7f429c9da5800ad560fdb5aade96c61b3ffbad3%5E">
-    bac63053015c6fb10ae68a07fcaceec00ad49aba
+   <a href="/chromium/src/+/957db5b674f2d65667c860f6fa29c6cc63471999%5E">
+    a1a7837948398d3e4319494c4acc1edc35809302
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b7f429c9da5800ad560fdb5aade96c61b3ffbad3%5E%21/">
+    <a href="/chromium/src/+/957db5b674f2d65667c860f6fa29c6cc63471999%5E%21/">
      diff
     </a>
     ]
@@ -179,17 +179,27 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Create experimental feature for PartitionVisitedLinkDatabase
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor slow tests in css/css-transitions.
 
-The goal of this CL is to add an experimental web platform feature (via runtime_enabled_features.json5) which corresponds to a Chrome feature flag "blink::features::kPartitionVisitedLinkDatabase".
+Very wasteful to simply let the animations run given the sheer number
+of animations. This batch of tests also liberally uses setTimeout,
+which is no longer permitted in WPT tests.
 
-This feature is supported on all platforms except iOS.
+Added a step to catch when all transitions have started, then simply
+sample the computed value at fixed values for animation.currentTime.
+The animations are left running with currentTime aligned with the
+end of the transition, which makes the transitionend events imminent.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1d9b8da961f510dfee9480a121023789b622b858">I1d9b8da961f510dfee9480a121023789b622b858</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5979018">https://chromium-review.googlesource.com/c/chromium/src/+/5979018</a>
-Reviewed-by: Scott Haseley &lt;shaseley@chromium.org&gt;
-Commit-Queue: Kyra Seevers &lt;kyraseevers@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1376965}
+Rather than time based, each step in the batch processing is promise
+based.
+
+Bug: 375377010,375587482
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8a071a9c5e0c99770d91acb24c8b67a745ace616">I8a071a9c5e0c99770d91acb24c8b67a745ace616</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5979045">https://chromium-review.googlesource.com/c/chromium/src/+/5979045</a>
+Reviewed-by: Olga Gerchikov &lt;gerchiko@microsoft.com&gt;
+Commit-Queue: Kevin Ellis &lt;kevers@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1377078}
 </pre>
 
 </body>
