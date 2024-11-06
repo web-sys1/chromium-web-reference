@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1378805/"> 1378805</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/458951ddd2965c24547df44d9772f88f405ad0c3">458951ddd2965c24547df44d9772f88f405ad0c3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1378865/"> 1378865</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/330a5747bd91cb9c759196f53269701691fe5780">330a5747bd91cb9c759196f53269701691fe5780</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1378799/">1378799</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/39b18eda1617a524cc8ab4069c95dff1c47542dc">39b18eda1617a524cc8ab4069c95dff1c47542dc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1378849/">1378849</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9d9167e738858f489432b617c1b87db2e1a59b17">9d9167e738858f489432b617c1b87db2e1a59b17</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   458951ddd2965c24547df44d9772f88f405ad0c3
+   330a5747bd91cb9c759196f53269701691fe5780
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/458951ddd2965c24547df44d9772f88f405ad0c3">
+    <a href="/chromium/src/+log/330a5747bd91cb9c759196f53269701691fe5780">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/458951ddd2965c24547df44d9772f88f405ad0c3.tar.gz">
+    <a href="/chromium/src/+archive/330a5747bd91cb9c759196f53269701691fe5780.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chuong Ho &lt;hdchuong@google.com&gt;
+   Daniil Sakhapov &lt;sakhapov@chromium.org&gt;
   </td>
   <td>
-   Wed Nov 06 06:01:58 2024
+   Wed Nov 06 08:54:41 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 06 06:01:58 2024
+   Wed Nov 06 08:54:41 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/458951ddd2965c24547df44d9772f88f405ad0c3/">
-    0aae4f2dbe4001739c3f46ab61648efb26c82ea2
+   <a href="/chromium/src/+/330a5747bd91cb9c759196f53269701691fe5780/">
+    b394869ab73c26377454d9ad3be67bde625cc344
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/458951ddd2965c24547df44d9772f88f405ad0c3%5E">
-    5f89eabf85dd9d7732e4f508346039f075dc33ef
+   <a href="/chromium/src/+/330a5747bd91cb9c759196f53269701691fe5780%5E">
+    bd90961fa7bc9b43ddd4a15c0795df54373f700b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/458951ddd2965c24547df44d9772f88f405ad0c3%5E%21/">
+    <a href="/chromium/src/+/330a5747bd91cb9c759196f53269701691fe5780%5E%21/">
      diff
     </a>
     ]
@@ -179,25 +179,18 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">lobster: use width and height defined by the inner content
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[carousel] Check for ::scroll-marker-group style in scroller
 
-Before this revert (crrev/c/5992679), the enablement of Lobster disables
-ShouldAutoResizeHost. Without ShouldAutoResizeHost, the initial width and height must be set from C++.
+To determine if a scroller needs ::scroll-marker-group, check if
+it has ::scroll-marker-group style in addition to checking
+scroll-marker-group property.
 
-Unfornately, Lobster and Editor WebUI share the same web content bundle (mako). When Mako's ShouldAutoResizeHost is disabled, Orca UI dimension has to be set from C++ too. This requires the enablement of OrcaResizingSupport flag currently to make it work.
-
-Unfortunately, resizing support for Orca is still ongoing and therefore full enablement of this flag isn't fully polished.
-
-To decouple Lobster UI from OrcaResizingSupport, we apply the WebUI sizing strategy used by Orca without OrcaResizingSupport.
-
-I.e., setting the webui dimension from the web inner content (typescript) and propagating the setting using `WebUIBubbleDialogView::ResizeDueToAutoResize`.
-
-Bug: b:374885791
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3f8cefb66f21c030d85330dfe1b20b77ac8d6453">I3f8cefb66f21c030d85330dfe1b20b77ac8d6453</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5992679">https://chromium-review.googlesource.com/c/chromium/src/+/5992679</a>
-Reviewed-by: Curtis McMullan &lt;curtismcmullan@chromium.org&gt;
-Commit-Queue: Chuong Ho &lt;hdchuong@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1378805}
+Bug: 332396355
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2c569f1d97cc5e7ca95a1fa8f7354fb7610faca3">I2c569f1d97cc5e7ca95a1fa8f7354fb7610faca3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5994432">https://chromium-review.googlesource.com/c/chromium/src/+/5994432</a>
+Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
+Commit-Queue: Daniil Sakhapov &lt;sakhapov@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1378865}
 </pre>
 
 </body>
