@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1378737/"> 1378737</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d4631ac72e5b6fac2dc454ff15a9d162b8c7fc4f">d4631ac72e5b6fac2dc454ff15a9d162b8c7fc4f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1378805/"> 1378805</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/458951ddd2965c24547df44d9772f88f405ad0c3">458951ddd2965c24547df44d9772f88f405ad0c3</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1378707/">1378707</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/385b90acb69ad6e5a0749e1c24ed21bd2f44f64b">385b90acb69ad6e5a0749e1c24ed21bd2f44f64b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1378799/">1378799</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/39b18eda1617a524cc8ab4069c95dff1c47542dc">39b18eda1617a524cc8ab4069c95dff1c47542dc</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d4631ac72e5b6fac2dc454ff15a9d162b8c7fc4f
+   458951ddd2965c24547df44d9772f88f405ad0c3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d4631ac72e5b6fac2dc454ff15a9d162b8c7fc4f">
+    <a href="/chromium/src/+log/458951ddd2965c24547df44d9772f88f405ad0c3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d4631ac72e5b6fac2dc454ff15a9d162b8c7fc4f.tar.gz">
+    <a href="/chromium/src/+archive/458951ddd2965c24547df44d9772f88f405ad0c3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jordan Bayles &lt;jophba@chromium.org&gt;
+   Chuong Ho &lt;hdchuong@google.com&gt;
   </td>
   <td>
-   Wed Nov 06 02:15:49 2024
+   Wed Nov 06 06:01:58 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 06 02:15:49 2024
+   Wed Nov 06 06:01:58 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d4631ac72e5b6fac2dc454ff15a9d162b8c7fc4f/">
-    7d67480c7e9c4e3253535b0a0945e9306c253ed2
+   <a href="/chromium/src/+/458951ddd2965c24547df44d9772f88f405ad0c3/">
+    0aae4f2dbe4001739c3f46ab61648efb26c82ea2
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d4631ac72e5b6fac2dc454ff15a9d162b8c7fc4f%5E">
-    e7eb5511a93f74f5857cb56378737aad3ae850f7
+   <a href="/chromium/src/+/458951ddd2965c24547df44d9772f88f405ad0c3%5E">
+    5f89eabf85dd9d7732e4f508346039f075dc33ef
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d4631ac72e5b6fac2dc454ff15a9d162b8c7fc4f%5E%21/">
+    <a href="/chromium/src/+/458951ddd2965c24547df44d9772f88f405ad0c3%5E%21/">
      diff
     </a>
     ]
@@ -179,20 +179,25 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Cast Streaming] Move EncodedFrame to use base::HeapArray
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">lobster: use width and height defined by the inner content
 
-This patch updates the EncodedFrame class to use base::HeapArray,
-aligning it with the media::VideoEncoder API.
+Before this revert (crrev/c/5992679), the enablement of Lobster disables
+ShouldAutoResizeHost. Without ShouldAutoResizeHost, the initial width and height must be set from C++.
 
-This will eliminate some unnecessary copies as part of launching the
-new media::VideoEncoder implementation.
+Unfornately, Lobster and Editor WebUI share the same web content bundle (mako). When Mako's ShouldAutoResizeHost is disabled, Orca UI dimension has to be set from C++ too. This requires the enablement of OrcaResizingSupport flag currently to make it work.
 
-Bug: 282984511
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia71b7bcdee1a626ab079fe2ed4f61a08a6eb9f1c">Ia71b7bcdee1a626ab079fe2ed4f61a08a6eb9f1c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5977035">https://chromium-review.googlesource.com/c/chromium/src/+/5977035</a>
-Commit-Queue: Jordan Bayles &lt;jophba@chromium.org&gt;
-Reviewed-by: Mark Foltz &lt;mfoltz@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1378737}
+Unfortunately, resizing support for Orca is still ongoing and therefore full enablement of this flag isn't fully polished.
+
+To decouple Lobster UI from OrcaResizingSupport, we apply the WebUI sizing strategy used by Orca without OrcaResizingSupport.
+
+I.e., setting the webui dimension from the web inner content (typescript) and propagating the setting using `WebUIBubbleDialogView::ResizeDueToAutoResize`.
+
+Bug: b:374885791
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3f8cefb66f21c030d85330dfe1b20b77ac8d6453">I3f8cefb66f21c030d85330dfe1b20b77ac8d6453</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5992679">https://chromium-review.googlesource.com/c/chromium/src/+/5992679</a>
+Reviewed-by: Curtis McMullan &lt;curtismcmullan@chromium.org&gt;
+Commit-Queue: Chuong Ho &lt;hdchuong@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1378805}
 </pre>
 
 </body>
