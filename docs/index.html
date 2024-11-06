@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1378927/"> 1378927</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2db3dffa9a082575723b7b09cc78dc0eb31a4913">2db3dffa9a082575723b7b09cc78dc0eb31a4913</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1378986/"> 1378986</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1a4b691a08d2eeac756ee4dfa65448d5b3c27fc8">1a4b691a08d2eeac756ee4dfa65448d5b3c27fc8</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1378895/">1378895</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c086b4696a8102cadcae24ed738dea18316f8ab2">c086b4696a8102cadcae24ed738dea18316f8ab2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1378947/">1378947</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/15f9a7e67dc59bdbf7a8662fc34a3ee6f857c115">15f9a7e67dc59bdbf7a8662fc34a3ee6f857c115</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2db3dffa9a082575723b7b09cc78dc0eb31a4913
+   1a4b691a08d2eeac756ee4dfa65448d5b3c27fc8
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2db3dffa9a082575723b7b09cc78dc0eb31a4913">
+    <a href="/chromium/src/+log/1a4b691a08d2eeac756ee4dfa65448d5b3c27fc8">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2db3dffa9a082575723b7b09cc78dc0eb31a4913.tar.gz">
+    <a href="/chromium/src/+archive/1a4b691a08d2eeac756ee4dfa65448d5b3c27fc8.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Maksim Sisov &lt;msisov@igalia.com&gt;
+   Sylvain Defresne &lt;sdefresne@chromium.org&gt;
   </td>
   <td>
-   Wed Nov 06 12:02:47 2024
+   Wed Nov 06 14:46:01 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Nov 06 12:02:47 2024
+   Wed Nov 06 14:46:01 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2db3dffa9a082575723b7b09cc78dc0eb31a4913/">
-    f7dd1fff5a24ad25e32d3a5331ad07b9e2ab1664
+   <a href="/chromium/src/+/1a4b691a08d2eeac756ee4dfa65448d5b3c27fc8/">
+    d36a101abf0d1ff1641db5f805afa628ddacfc9d
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2db3dffa9a082575723b7b09cc78dc0eb31a4913%5E">
-    1c3b4bfa3ff0380f33ae821a59a99ed2f1ad68a1
+   <a href="/chromium/src/+/1a4b691a08d2eeac756ee4dfa65448d5b3c27fc8%5E">
+    5b5ca77a8ab7246854a3db2d31520a97b5468f2c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2db3dffa9a082575723b7b09cc78dc0eb31a4913%5E%21/">
+    <a href="/chromium/src/+/1a4b691a08d2eeac756ee4dfa65448d5b3c27fc8%5E%21/">
      diff
     </a>
     ]
@@ -179,22 +179,27 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Cleanup //ui/native_theme from LaCros support code.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ios] Refactor DeferredInitializationRunner
 
-No functional changes are done.
+Decouple the runner from the queue, allowing to have multiple
+runners (one per ProfileState and one for AppState) while the
+tasks are still sequenced serially in the same queue.
 
-1) Removed code under IS_CHROMEOS_LACROS
-2) Renamed IS_CHROMEOS_ASH to IS_CHROMEOS
-3) Removed chromeos_buildflags.h includes and deps
-4) General clean ups.
+Expose a DeferredInitializationRunner from the AppState and
+use it when scheduling tasks from the MainController (instead
+of a singleton instance).
 
-Bug: 373972275, 373971535, 377330006
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3279245d58311f30148999df2cffaad2244825e7">I3279245d58311f30148999df2cffaad2244825e7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5993510">https://chromium-review.googlesource.com/c/chromium/src/+/5993510</a>
-Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Commit-Queue: Maksim Sisov &lt;msisov@igalia.com&gt;
-Reviewed-by: Georg Neis &lt;neis@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1378927}
+Move registration of the ReadlingListDownloadService from the
+StartupTaks to MainController (though they will eventually be
+moved to ProfileController).
+
+Bug: 333863468
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3aef15913b2eb6f7eea5263b9a97e02ee43570f0">I3aef15913b2eb6f7eea5263b9a97e02ee43570f0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5993853">https://chromium-review.googlesource.com/c/chromium/src/+/5993853</a>
+Commit-Queue: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+Reviewed-by: Aliona Dangla &lt;alionadangla@chromium.org&gt;
+Auto-Submit: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1378986}
 </pre>
 
 </body>
