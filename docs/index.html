@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1381278/"> 1381278</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/43944fd0d67e48a8ebdc6658ff6a61b13b9788ef">43944fd0d67e48a8ebdc6658ff6a61b13b9788ef</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1381380/"> 1381380</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6060de4f24995c1e9d6d5a6171aa16189e9d8fd3">6060de4f24995c1e9d6d5a6171aa16189e9d8fd3</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1381238/">1381238</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/a82efcc745b26d2a351f506137ad64a30d3698fe">a82efcc745b26d2a351f506137ad64a30d3698fe</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1381282/">1381282</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a4f32a53a415d052df4bae8435e7fff0cbd4e670">a4f32a53a415d052df4bae8435e7fff0cbd4e670</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   43944fd0d67e48a8ebdc6658ff6a61b13b9788ef
+   6060de4f24995c1e9d6d5a6171aa16189e9d8fd3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/43944fd0d67e48a8ebdc6658ff6a61b13b9788ef">
+    <a href="/chromium/src/+log/6060de4f24995c1e9d6d5a6171aa16189e9d8fd3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/43944fd0d67e48a8ebdc6658ff6a61b13b9788ef.tar.gz">
+    <a href="/chromium/src/+archive/6060de4f24995c1e9d6d5a6171aa16189e9d8fd3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kevin Babbitt &lt;kbabbitt@microsoft.com&gt;
+   Ted Meyer &lt;tmathmeyer@chromium.org&gt;
   </td>
   <td>
-   Mon Nov 11 18:11:54 2024
+   Mon Nov 11 20:57:24 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Nov 11 18:11:54 2024
+   Mon Nov 11 20:57:24 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/43944fd0d67e48a8ebdc6658ff6a61b13b9788ef/">
-    3f4f04a33b16f52dbbc23a9141f487d4057af7a9
+   <a href="/chromium/src/+/6060de4f24995c1e9d6d5a6171aa16189e9d8fd3/">
+    33a0e7b0df7b95bc106e627a4fb8ef8694553f83
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/43944fd0d67e48a8ebdc6658ff6a61b13b9788ef%5E">
-    25154ce1cadeb2072f76aae6e8fdcd7893fda5cd
+   <a href="/chromium/src/+/6060de4f24995c1e9d6d5a6171aa16189e9d8fd3%5E">
+    d22bf34e6b67dbfd61595a970d0f2c2b59da08d8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/43944fd0d67e48a8ebdc6658ff6a61b13b9788ef%5E%21/">
+    <a href="/chromium/src/+/6060de4f24995c1e9d6d5a6171aa16189e9d8fd3%5E%21/">
      diff
     </a>
     ]
@@ -179,41 +179,14 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Consolidate caching of style invalidation tracing flag
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Build HLS for all platforms
 
-Because the devtools.timeline.invalidationTracking tracing category is
-logged on performance sensitive codepaths, we cache a pointer to the
-'enabled' flag for it in several places to minimize costs when it's
-disabled. This CL consolidates these cache locations to a single
-instance.
-
-A comment left in the code in 2014 called out that not sharing these
-cache instances was deliberate for performance reasons. However,
-recent benchmark runs do not clearly bear this out as a problem:
-
-<a href="https://pinpoint-dot-chromeperf.appspot.com/job/148c5b22210000">https://pinpoint-dot-chromeperf.appspot.com/job/148c5b22210000</a>
-blink_perf.css:
- 11 improvements ranging from 1.5% to 9.1%
-  6 regressions ranging from 1.6% to 4.4%
-
-<a href="https://pinpoint-dot-chromeperf.appspot.com/job/12e96322210000">https://pinpoint-dot-chromeperf.appspot.com/job/12e96322210000</a>
-blink_perf.dom:
-  1 improvement of 1.7%
-  3 regressions ranging from 1.0% to 2.9%
-
-<a href="https://pinpoint-dot-chromeperf.appspot.com/job/167d55f2210000">https://pinpoint-dot-chromeperf.appspot.com/job/167d55f2210000</a>
-speedometer2: neutral
-
-<a href="https://pinpoint-dot-chromeperf.appspot.com/job/16a7f03c210000">https://pinpoint-dot-chromeperf.appspot.com/job/16a7f03c210000</a>
-speedometer3: neutral
-
-Bug: 337076014
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7e5a41cd4e3ab5f9d9a727b383ddcbf76564b312">I7e5a41cd4e3ab5f9d9a727b383ddcbf76564b312</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/5994494">https://chromium-review.googlesource.com/c/chromium/src/+/5994494</a>
-Reviewed-by: Alex Rudenko &lt;alexrudenko@chromium.org&gt;
-Reviewed-by: Steinar H Gunderson &lt;sesse@chromium.org&gt;
-Commit-Queue: Kevin Babbitt &lt;kbabbitt@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1381278}
+Bug: 40057824
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie39c50e16f4b4c2a19a811c15342e9c131f9b202">Ie39c50e16f4b4c2a19a811c15342e9c131f9b202</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6003813">https://chromium-review.googlesource.com/c/chromium/src/+/6003813</a>
+Commit-Queue: Ted (Chromium) Meyer &lt;tmathmeyer@chromium.org&gt;
+Reviewed-by: Frank Liberato &lt;liberato@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1381380}
 </pre>
 
 </body>
