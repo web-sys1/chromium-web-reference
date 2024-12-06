@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1392668/"> 1392668</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/486bee827ca6285ed38b79643823fd1742e65fa4">486bee827ca6285ed38b79643823fd1742e65fa4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1392682/"> 1392682</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0227e74ba46c2f0782839757379e7f2600c5d90d">0227e74ba46c2f0782839757379e7f2600c5d90d</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1392654/">1392654</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dfcc3898f826fe8b88309bb23dcaa382be7301f2">dfcc3898f826fe8b88309bb23dcaa382be7301f2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1392680/">1392680</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/466ff27c06452879600e0e712ee35435aca77f0e">466ff27c06452879600e0e712ee35435aca77f0e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   486bee827ca6285ed38b79643823fd1742e65fa4
+   0227e74ba46c2f0782839757379e7f2600c5d90d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/486bee827ca6285ed38b79643823fd1742e65fa4">
+    <a href="/chromium/src/+log/0227e74ba46c2f0782839757379e7f2600c5d90d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/486bee827ca6285ed38b79643823fd1742e65fa4.tar.gz">
+    <a href="/chromium/src/+archive/0227e74ba46c2f0782839757379e7f2600c5d90d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Michelle Chen &lt;michellegc@google.com&gt;
+   Mingjing Zhang &lt;mjzhang@chromium.org&gt;
   </td>
   <td>
-   Fri Dec 06 01:16:31 2024
+   Fri Dec 06 01:40:56 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 06 01:16:31 2024
+   Fri Dec 06 01:40:56 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/486bee827ca6285ed38b79643823fd1742e65fa4/">
-    a96737a1e43b1e914d655eb3eece4c6ef241e6f1
+   <a href="/chromium/src/+/0227e74ba46c2f0782839757379e7f2600c5d90d/">
+    ea36623bb5935172f5a84a3b52bd8e058c4197ab
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/486bee827ca6285ed38b79643823fd1742e65fa4%5E">
-    fdd59be20b383d3145f394851d8acf5a525ba842
+   <a href="/chromium/src/+/0227e74ba46c2f0782839757379e7f2600c5d90d%5E">
+    766512b803b3930f6c7e733b99271f1881ea08f6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/486bee827ca6285ed38b79643823fd1742e65fa4%5E%21/">
+    <a href="/chromium/src/+/0227e74ba46c2f0782839757379e7f2600c5d90d%5E%21/">
      diff
     </a>
     ]
@@ -179,35 +179,19 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Clean up old code paths for touch selection handle styling.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove redundant waiting of sync token in DrawingBuffer
 
-Remove flag checks for touch selection handle styling related to the
-launched ChromeOS "TouchTextEditingRedesign" feature (e.g. dynamic
-colour, padding, opacity) and remove old code paths.
+This CL removes a redundant WaitSyncTokenCHROMIUM call in DrawingBuffer
+since the waiting of the sync token is already handled by the
+SharedImageTexture::BeginAccess() call that occurs slightly after
+the removed WaitSyncTokenCHROMIUM.
 
-This should not change user visible behaviour on ChromeOS, but it will
-change the appearance of the touch selection handles for other platforms
-since "TouchTextEditingRedesign" is currently only enabled by default
-for ChromeOS.
-
-(Chatted with Chrome UX, they are ok with these style tweaks and don't
-believe it needs to be flag guarded since it's a minor change.)
-
-Before:
-<a href="https://screenshot.googleplex.com/3XTegvYqn7YoVKf.png">https://screenshot.googleplex.com/3XTegvYqn7YoVKf.png</a>
-<a href="https://screenshot.googleplex.com/89j9pgU6S3GhTKm.png">https://screenshot.googleplex.com/89j9pgU6S3GhTKm.png</a>
-
-After:
-<a href="https://screenshot.googleplex.com/AnKHojqK7L5j5Ks.png">https://screenshot.googleplex.com/AnKHojqK7L5j5Ks.png</a>
-<a href="https://screenshot.googleplex.com/6owP9TMcvtYMLyY.png">https://screenshot.googleplex.com/6owP9TMcvtYMLyY.png</a>
-
-Bug: b:273368423, b:262297017
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id2085db906c857ab20e530106cb2148f03867ce3">Id2085db906c857ab20e530106cb2148f03867ce3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6054832">https://chromium-review.googlesource.com/c/chromium/src/+/6054832</a>
-Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Reviewed-by: Thomas Lukaszewicz &lt;tluk@chromium.org&gt;
-Commit-Queue: Michelle Chen &lt;michellegc@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1392668}
+Bug: 40286368
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ica9b7e6af9a5edeb0f08c37e1cebfd153ffa921f">Ica9b7e6af9a5edeb0f08c37e1cebfd153ffa921f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6073147">https://chromium-review.googlesource.com/c/chromium/src/+/6073147</a>
+Commit-Queue: Mingjing Zhang &lt;mjzhang@chromium.org&gt;
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1392682}
 </pre>
 
 </body>
