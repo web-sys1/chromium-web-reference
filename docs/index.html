@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1393687/"> 1393687</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1e89054c1b8bc8a38faede7200cbfa3cda30205b">1e89054c1b8bc8a38faede7200cbfa3cda30205b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1393850/"> 1393850</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9c2f4378404066f20672d91d79aa6ee82adaae39">9c2f4378404066f20672d91d79aa6ee82adaae39</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1393741/">1393741</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/eaaef66f3dca80d4556e62d902a7ecf4ebf61ccf">eaaef66f3dca80d4556e62d902a7ecf4ebf61ccf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1393866/">1393866</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9f9da099077a483a0c6a44d483f072b750bff2ca">9f9da099077a483a0c6a44d483f072b750bff2ca</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1e89054c1b8bc8a38faede7200cbfa3cda30205b
+   9c2f4378404066f20672d91d79aa6ee82adaae39
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1e89054c1b8bc8a38faede7200cbfa3cda30205b">
+    <a href="/chromium/src/+log/9c2f4378404066f20672d91d79aa6ee82adaae39">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1e89054c1b8bc8a38faede7200cbfa3cda30205b.tar.gz">
+    <a href="/chromium/src/+archive/9c2f4378404066f20672d91d79aa6ee82adaae39.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
+   Justin Cohen &lt;justincohen@chromium.org&gt;
   </td>
   <td>
-   Mon Dec 09 16:12:49 2024
+   Mon Dec 09 20:31:41 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Dec 09 16:12:49 2024
+   Mon Dec 09 20:31:41 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1e89054c1b8bc8a38faede7200cbfa3cda30205b/">
-    e5d6529faa1ae567d9e64e542f6f01684ee8dfe6
+   <a href="/chromium/src/+/9c2f4378404066f20672d91d79aa6ee82adaae39/">
+    cb649e6f902b127e1348fd86979e5e9f745e3561
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1e89054c1b8bc8a38faede7200cbfa3cda30205b%5E">
-    7a2f73d36cff3b3a2afea50b7c5ddbf5b0db1be5
+   <a href="/chromium/src/+/9c2f4378404066f20672d91d79aa6ee82adaae39%5E">
+    6c57ebbd8c3a897a9bb485db61c993b2d2678ebd
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1e89054c1b8bc8a38faede7200cbfa3cda30205b%5E%21/">
+    <a href="/chromium/src/+/9c2f4378404066f20672d91d79aa6ee82adaae39%5E%21/">
      diff
     </a>
     ]
@@ -179,33 +179,19 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Tab Switcher] Invalidate favicon when URL is updated
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">ios: Ignore googleapis network requests for EG2 synchronization.
 
-For tab group sync the way the tab is navigated bypasses the normal
-navigation method that resets the favicon. Normally this is fine since
-the onFaviconUpdated is called. However, if the new page doesn't have a
-favicon the favicon is not reset.
+Tests shouldn't be making network requests in the first place, but
+tests still shouldn't fail because these requests timeout.
 
-To fix this do what is done for thumbnails and reset the favicon on
-URL change as well. If the URL has the same favicon no update will
-happen. However, if the favicon differs this will ensure the correct
-favicon is shown (or a globe placeholder). This isn't particularly
-expensive since URLs rarely change while the tab switcher is open.
 
-It does matter more for the bottom tab strip. However, this is the
-correct behavior that should have been happening for the bottom tab
-strip in the first place.
-
-Note there are known bugs that still return the "wrong" favicon, but
-this is happening in native and is unrelated to this change.
-
-Fixed: 382520662
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I86c50f7ec71bbe72db37a65919548900cc3eec2d">I86c50f7ec71bbe72db37a65919548900cc3eec2d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6077546">https://chromium-review.googlesource.com/c/chromium/src/+/6077546</a>
-Reviewed-by: Sky Malice &lt;skym@chromium.org&gt;
-Code-Coverage: findit-for-me@appspot.gserviceaccount.com &lt;findit-for-me@appspot.gserviceaccount.com&gt;
-Commit-Queue: Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1393687}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I97059b357c3bf99337ebade52abdf2f6040696f9">I97059b357c3bf99337ebade52abdf2f6040696f9</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6072375">https://chromium-review.googlesource.com/c/chromium/src/+/6072375</a>
+Auto-Submit: Justin Cohen &lt;justincohen@chromium.org&gt;
+Reviewed-by: Yue She &lt;yueshe@google.com&gt;
+Reviewed-by: Rohit Rao &lt;rohitrao@chromium.org&gt;
+Commit-Queue: Rohit Rao &lt;rohitrao@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1393850}
 </pre>
 
 </body>
