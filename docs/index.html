@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1394367/"> 1394367</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/635111de4cd971b34801e26b75702f6755be2fbc">635111de4cd971b34801e26b75702f6755be2fbc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1394501/"> 1394501</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/49b8ddcb14867f200cfa36063fcb79be944f3bcf">49b8ddcb14867f200cfa36063fcb79be944f3bcf</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1394358/">1394358</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dbdd5243a90c8d3dfb03f4be94367eac2f6b4598">dbdd5243a90c8d3dfb03f4be94367eac2f6b4598</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1394499/">1394499</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/532f00958d28d41709aa6e75c76235b37da24ea5">532f00958d28d41709aa6e75c76235b37da24ea5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   635111de4cd971b34801e26b75702f6755be2fbc
+   49b8ddcb14867f200cfa36063fcb79be944f3bcf
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/635111de4cd971b34801e26b75702f6755be2fbc">
+    <a href="/chromium/src/+log/49b8ddcb14867f200cfa36063fcb79be944f3bcf">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/635111de4cd971b34801e26b75702f6755be2fbc.tar.gz">
+    <a href="/chromium/src/+archive/49b8ddcb14867f200cfa36063fcb79be944f3bcf.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Emily Andrews &lt;emiled@microsoft.com&gt;
   </td>
   <td>
-   Tue Dec 10 17:27:11 2024
+   Tue Dec 10 20:42:14 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Dec 10 17:27:11 2024
+   Tue Dec 10 20:42:14 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/635111de4cd971b34801e26b75702f6755be2fbc/">
-    442f86f701393213c3f3d58370609a8e6bb4c939
+   <a href="/chromium/src/+/49b8ddcb14867f200cfa36063fcb79be944f3bcf/">
+    90ce6fcedc2de71cceb433ba5673c1c736aa71f9
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/635111de4cd971b34801e26b75702f6755be2fbc%5E">
-    9d78e67bab39346420ba3bcc06a1c9e8898a2167
+   <a href="/chromium/src/+/49b8ddcb14867f200cfa36063fcb79be944f3bcf%5E">
+    d15fd76ecbf7fb17bbe4e2833c7537c120d4e045
    </a>
    <span>
     [
-    <a href="/chromium/src/+/635111de4cd971b34801e26b75702f6755be2fbc%5E%21/">
+    <a href="/chromium/src/+/49b8ddcb14867f200cfa36063fcb79be944f3bcf%5E%21/">
      diff
     </a>
     ]
@@ -179,34 +179,25 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll WebRTC from 919e3acd139a to 6d0ecac3dd29 (1 revision)
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add APIs to RenderProcessHost to use ChildProcessId
 
-<a href="https://webrtc.googlesource.com/src.git/+log/919e3acd139a..6d0ecac3dd29">https://webrtc.googlesource.com/src.git/+log/919e3acd139a..6d0ecac3dd29</a>
+Using int32_t for the child process id can be fraught with peril.
+Developers can mistake this for the PID. Bugs can be created by passing
+in an invalid value by mistake. Using a strongly typed ChildProcessId
+instead will allow the compiler to catch errors.
 
-2024-12-10 chromium-webrtc-autoroll@webrtc-ci.iam.gserviceaccount.com Roll chromium_revision 8c8eda9309..0148002d14 (1394101:1394244)
+This change modifies the internal id_ and render_process_id_ variables
+in the RenderProcessHostImpl code and adds APIs to use ChildProcessId
+to index in. This will allow incremental changes to remove int
+references.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/webrtc-chromium-autoroll">https://autoroll.skia.org/r/webrtc-chromium-autoroll</a>
-Please CC webrtc-chromium-sheriffs-robots@google.com,webrtc-infra@google.com on the revert to ensure that a human
-is aware of the problem.
-
-To file a bug in WebRTC: <a href="https://bugs.chromium.org/p/webrtc/issues/entry">https://bugs.chromium.org/p/webrtc/issues/entry</a>
-To file a bug in Chromium: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
-
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://issues.skia.org/issues/new?component=1389291&amp;template=1850622">https://issues.skia.org/issues/new?component=1389291&amp;template=1850622</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Bug: None
-Tbr: webrtc-chromium-sheriffs-robots@google.com
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If752a8333976d8f42f609409f07affd0e4566a96">If752a8333976d8f42f609409f07affd0e4566a96</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6085665">https://chromium-review.googlesource.com/c/chromium/src/+/6085665</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1394367}
+Bug: 379869738
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9d3579b1fea007468e5953087ff75715f63452e7">I9d3579b1fea007468e5953087ff75715f63452e7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6035938">https://chromium-review.googlesource.com/c/chromium/src/+/6035938</a>
+Reviewed-by: Arthur Sonzogni &lt;arthursonzogni@chromium.org&gt;
+Commit-Queue: Emily Andrews &lt;emiled@microsoft.com&gt;
+Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1394501}
 </pre>
 
 </body>
