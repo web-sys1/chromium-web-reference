@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1395984/"> 1395984</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f26649bc65dc5e0894c890cfd4798ba3910b55d3">f26649bc65dc5e0894c890cfd4798ba3910b55d3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1396142/"> 1396142</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/dd407b1d6140ecd9b09301888f366f6609ef6d60">dd407b1d6140ecd9b09301888f366f6609ef6d60</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1396002/">1396002</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c47217f2e53048b4b6b9dda43dbd033dedd3eb15">c47217f2e53048b4b6b9dda43dbd033dedd3eb15</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1396148/">1396148</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3f2d5dfc66d09d47ca178244de16ada6e63ce601">3f2d5dfc66d09d47ca178244de16ada6e63ce601</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f26649bc65dc5e0894c890cfd4798ba3910b55d3
+   dd407b1d6140ecd9b09301888f366f6609ef6d60
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f26649bc65dc5e0894c890cfd4798ba3910b55d3">
+    <a href="/chromium/src/+log/dd407b1d6140ecd9b09301888f366f6609ef6d60">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f26649bc65dc5e0894c890cfd4798ba3910b55d3.tar.gz">
+    <a href="/chromium/src/+archive/dd407b1d6140ecd9b09301888f366f6609ef6d60.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Benoît Lizé &lt;lizeb@chromium.org&gt;
+   Victor Hugo Vianna Silva &lt;victorvianna@google.com&gt;
   </td>
   <td>
-   Fri Dec 13 16:31:17 2024
+   Fri Dec 13 20:37:06 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 13 16:31:17 2024
+   Fri Dec 13 20:37:06 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f26649bc65dc5e0894c890cfd4798ba3910b55d3/">
-    2814cbde8df227eac0fd85612fb8af3dd0042034
+   <a href="/chromium/src/+/dd407b1d6140ecd9b09301888f366f6609ef6d60/">
+    df7b4d1532aa7b98867d63a1da9dc8a8a3f1fbdd
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f26649bc65dc5e0894c890cfd4798ba3910b55d3%5E">
-    b1446bf9927a009895d781e3f2e65aced0784613
+   <a href="/chromium/src/+/dd407b1d6140ecd9b09301888f366f6609ef6d60%5E">
+    10683c0e15d67c572645eebc640c41470e7f253b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f26649bc65dc5e0894c890cfd4798ba3910b55d3%5E%21/">
+    <a href="/chromium/src/+/dd407b1d6140ecd9b09301888f366f6609ef6d60%5E%21/">
      diff
     </a>
     ]
@@ -179,28 +179,27 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[cc/scheduler] Add a feature to throttle main frames to 60Hz
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Delete TraceLog::Mode
 
-This CL adds a feature to allow decoupling BeginImplFrame() from
-BeginMainFrame(). It works by not sending a BeginMainFrame() (but not
-marking it as sent either) in the scheduler, on high refresh rate
-clients.
+Addresses an old TODO and removes the enum, which has a single value
+these days. There is a chance this causes behavior changes in [1].
+As far as I can tell, the "category enabled byte" has one bit per data
+source, and the category is considered enabled if any of those is
+set [2]. [1] is fishy because it only looks at the last bit. After this
+CL, the code considers all bits, potentially fixing a bug. For
+reference, [1] was introduced in [3].
 
-Concretely, when the feature is enabled, no more than one BeginMainFrame
-is sent per 1/60th of a second, which in practice means that impl-side
-scrolling (even when blocked on main, i.e. with a non-passive observer)
-and CSS animations work at 120fps, but main updates
-(i.e. requestAnimationFrame()) happen at 60fps.
+[1] <a href="https://source.chromium.org/chromium/chromium/src/+/main:base/trace_event/trace_log.cc;l=1550;drc=f2099cc1ffd068d0ec4db66f5c93461b9f0e7065">https://source.chromium.org/chromium/chromium/src/+/main:base/trace_event/trace_log.cc;l=1550;drc=f2099cc1ffd068d0ec4db66f5c93461b9f0e7065</a>
+[2] <a href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/perfetto/include/perfetto/tracing/internal/track_event_macros.h;l=41;drc=5ea57a9daa99de33d1f87995baeaf018a6ebb83b">https://source.chromium.org/chromium/chromium/src/+/main:third_party/perfetto/include/perfetto/tracing/internal/track_event_macros.h;l=41;drc=5ea57a9daa99de33d1f87995baeaf018a6ebb83b</a>
+[3] <a href="https://codereview.chromium.org/2421743003/patch/20001/30001">https://codereview.chromium.org/2421743003/patch/20001/30001</a>
 
-This patch works, but is not 100% complete, hence the feature is
-disabled, though exercized with unit tests.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iab0b0aad76ee4437b4ed7a39137fd88b1b5b8a7e">Iab0b0aad76ee4437b4ed7a39137fd88b1b5b8a7e</a>
-Bug: 379678455
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6054335">https://chromium-review.googlesource.com/c/chromium/src/+/6054335</a>
-Commit-Queue: Benoit Lize &lt;lizeb@chromium.org&gt;
-Reviewed-by: Jonathan Ross &lt;jonross@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1395984}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib926c286711c8ee02858c1bec4f0c5b98dce85f3">Ib926c286711c8ee02858c1bec4f0c5b98dce85f3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6088166">https://chromium-review.googlesource.com/c/chromium/src/+/6088166</a>
+Reviewed-by: Etienne Pierre-Doray &lt;etiennep@chromium.org&gt;
+Commit-Queue: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Owners-Override: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1396142}
 </pre>
 
 </body>
