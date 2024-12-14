@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1396142/"> 1396142</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dd407b1d6140ecd9b09301888f366f6609ef6d60">dd407b1d6140ecd9b09301888f366f6609ef6d60</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1396261/"> 1396261</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/25ccbccf2088670e1ea8f8f136544eeaf62a18c3">25ccbccf2088670e1ea8f8f136544eeaf62a18c3</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1396148/">1396148</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3f2d5dfc66d09d47ca178244de16ada6e63ce601">3f2d5dfc66d09d47ca178244de16ada6e63ce601</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1396263/">1396263</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6fc2b8dd2b30a220980577ee9066be8540133ff7">6fc2b8dd2b30a220980577ee9066be8540133ff7</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   dd407b1d6140ecd9b09301888f366f6609ef6d60
+   25ccbccf2088670e1ea8f8f136544eeaf62a18c3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/dd407b1d6140ecd9b09301888f366f6609ef6d60">
+    <a href="/chromium/src/+log/25ccbccf2088670e1ea8f8f136544eeaf62a18c3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/dd407b1d6140ecd9b09301888f366f6609ef6d60.tar.gz">
+    <a href="/chromium/src/+archive/25ccbccf2088670e1ea8f8f136544eeaf62a18c3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Victor Hugo Vianna Silva &lt;victorvianna@google.com&gt;
+   inglorion &lt;inglorion@chromium.org&gt;
   </td>
   <td>
-   Fri Dec 13 20:37:06 2024
+   Sat Dec 14 00:14:23 2024
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 13 20:37:06 2024
+   Sat Dec 14 00:14:23 2024
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/dd407b1d6140ecd9b09301888f366f6609ef6d60/">
-    df7b4d1532aa7b98867d63a1da9dc8a8a3f1fbdd
+   <a href="/chromium/src/+/25ccbccf2088670e1ea8f8f136544eeaf62a18c3/">
+    4c217c557ff12300e623bc4f551c2201ca93aa10
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/dd407b1d6140ecd9b09301888f366f6609ef6d60%5E">
-    10683c0e15d67c572645eebc640c41470e7f253b
+   <a href="/chromium/src/+/25ccbccf2088670e1ea8f8f136544eeaf62a18c3%5E">
+    c06698dc3f1e3293b78f9b0c56810d4761790cef
    </a>
    <span>
     [
-    <a href="/chromium/src/+/dd407b1d6140ecd9b09301888f366f6609ef6d60%5E%21/">
+    <a href="/chromium/src/+/25ccbccf2088670e1ea8f8f136544eeaf62a18c3%5E%21/">
      diff
     </a>
     ]
@@ -179,27 +179,31 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Delete TraceLog::Mode
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">build: add cros_needs_rewrapper_path_arg gn arg
 
-Addresses an old TODO and removes the enum, which has a single value
-these days. There is a chance this causes behavior changes in [1].
-As far as I can tell, the "category enabled byte" has one bit per data
-source, and the category is considered enabled if any of those is
-set [2]. [1] is fishy because it only looks at the last bit. After this
-CL, the code considers all bits, potentially fixing a bug. For
-reference, [1] was introduced in [3].
+While transitioning from building Chrome for ChromeOS using ChromeOS's
+toolchain to using Chrome's bundled toolchain, we need to account for
+the situation where ChromeOS's toolchain requires the path to rewrapper
+and its configuration to be specified using command line arguments,
+whereas Chrome's bundled toolchain does not recognize these arguments
+and will error if they are specified.
 
-[1] <a href="https://source.chromium.org/chromium/chromium/src/+/main:base/trace_event/trace_log.cc;l=1550;drc=f2099cc1ffd068d0ec4db66f5c93461b9f0e7065">https://source.chromium.org/chromium/chromium/src/+/main:base/trace_event/trace_log.cc;l=1550;drc=f2099cc1ffd068d0ec4db66f5c93461b9f0e7065</a>
-[2] <a href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/perfetto/include/perfetto/tracing/internal/track_event_macros.h;l=41;drc=5ea57a9daa99de33d1f87995baeaf018a6ebb83b">https://source.chromium.org/chromium/chromium/src/+/main:third_party/perfetto/include/perfetto/tracing/internal/track_event_macros.h;l=41;drc=5ea57a9daa99de33d1f87995baeaf018a6ebb83b</a>
-[3] <a href="https://codereview.chromium.org/2421743003/patch/20001/30001">https://codereview.chromium.org/2421743003/patch/20001/30001</a>
+This CL adds a new gn arg cros_needs_rewrapper_path_arg which controls
+whether we should pass the rewrapper command line arguments when
+building with reclient. It defaults to true, which is the correct value
+for ChromeOS's toolchain, which is currently what we use to build Chrome
+for ChromeOS. When switching to Chrome's bundled toolchain,
+cros_needs_rewrapper_path_arg should be set to false. Once the
+transition is complete, the argument can be removed.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib926c286711c8ee02858c1bec4f0c5b98dce85f3">Ib926c286711c8ee02858c1bec4f0c5b98dce85f3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6088166">https://chromium-review.googlesource.com/c/chromium/src/+/6088166</a>
-Reviewed-by: Etienne Pierre-Doray &lt;etiennep@chromium.org&gt;
-Commit-Queue: Andrew Grieve &lt;agrieve@chromium.org&gt;
-Owners-Override: Andrew Grieve &lt;agrieve@chromium.org&gt;
-Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1396142}
+BUG=b:356466829
+TEST=chrome builds with ChromeOS's toolchain and Chrome's toolchain
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I85226a097064b7cf12547ee008754a8a1e034e6a">I85226a097064b7cf12547ee008754a8a1e034e6a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6088132">https://chromium-review.googlesource.com/c/chromium/src/+/6088132</a>
+Commit-Queue: Nico Weber &lt;thakis@chromium.org&gt;
+Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1396261}
 </pre>
 
 </body>
