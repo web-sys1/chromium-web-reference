@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1401530/"> 1401530</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0d34ef0bb80cb8107e666923653aa7a29dd6705a">0d34ef0bb80cb8107e666923653aa7a29dd6705a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1401655/"> 1401655</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/85108efa6e1111593cd19d48d941d4c1ae89a272">85108efa6e1111593cd19d48d941d4c1ae89a272</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1401510/">1401510</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e62073ee80efc778f95a916d67af2496128f91d3">e62073ee80efc778f95a916d67af2496128f91d3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1401643/">1401643</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/603e84f1273c35cd7bd17c9f87cbd1e68565ca18">603e84f1273c35cd7bd17c9f87cbd1e68565ca18</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0d34ef0bb80cb8107e666923653aa7a29dd6705a
+   85108efa6e1111593cd19d48d941d4c1ae89a272
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0d34ef0bb80cb8107e666923653aa7a29dd6705a">
+    <a href="/chromium/src/+log/85108efa6e1111593cd19d48d941d4c1ae89a272">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0d34ef0bb80cb8107e666923653aa7a29dd6705a.tar.gz">
+    <a href="/chromium/src/+archive/85108efa6e1111593cd19d48d941d4c1ae89a272.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   John Chen &lt;johnchen@chromium.org&gt;
+   Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
   </td>
   <td>
-   Thu Jan 02 19:37:36 2025
+   Fri Jan 03 01:14:26 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 02 19:37:36 2025
+   Fri Jan 03 01:14:26 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0d34ef0bb80cb8107e666923653aa7a29dd6705a/">
-    aef61160ec3217fd98cadf14f5390fc88f2f40bf
+   <a href="/chromium/src/+/85108efa6e1111593cd19d48d941d4c1ae89a272/">
+    ba17e92ab7709d7c3e52bd90b60bb32f2fae4f7f
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0d34ef0bb80cb8107e666923653aa7a29dd6705a%5E">
-    c2b954a139dd2e78d57a75917ec8601bd4916fb4
+   <a href="/chromium/src/+/85108efa6e1111593cd19d48d941d4c1ae89a272%5E">
+    f6ff9c9bb86c643bc697d2fb32c8875108ddd3ba
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0d34ef0bb80cb8107e666923653aa7a29dd6705a%5E%21/">
+    <a href="/chromium/src/+/85108efa6e1111593cd19d48d941d4c1ae89a272%5E%21/">
      diff
     </a>
     ]
@@ -179,19 +179,29 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Perf] Snapdragon Elite NPI user acceptance test
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix cull rect update for clipped scroller
 
-Switch win-arm64-snapdragon-elite-perf from Inspiron 14 Plus 7441
-(which crashes regularly) to Latitude 7455 (new replacement device).
+This fixes two causes of the bug:
+1. We should proactively update cull rects of a scroller when its
+   contents rect changes. In most cases, a change of contents rect
+   will Set[Descendnat]NeedsRepaint of the scroller by the paint
+   invalidator, but that's not the case if a containing-block-order
+   descendant causing the change is not a paint-order descendant of
+   the scroller.
+2. When the input cull rect of a scroller is clipped by ancestors,
+   the edge-touching logic in ChangedEnough is unreliable, so we need
+   to skip the ChangedEnough check.
 
-Ignore-Freeze: Test-only device on FYI waterfall
-Bug: b:385765065
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2484c658420bdf77f48e9a7befeb3179c545996d">I2484c658420bdf77f48e9a7befeb3179c545996d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6138580">https://chromium-review.googlesource.com/c/chromium/src/+/6138580</a>
-Commit-Queue: Wenbin Zhang &lt;wenbinzhang@google.com&gt;
-Auto-Submit: John Chen &lt;johnchen@chromium.org&gt;
-Reviewed-by: Wenbin Zhang &lt;wenbinzhang@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1401530}
+Actually, either of the above can avoid ChangedEnough and fix the bug,
+but can potentially leave problems without the other, though I haven't
+found a test case that can reproduce with only one of the above fixes.
+
+Bug: 385704990
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ida6cb29483b0e51f6c9fcf2371c05b584e150fce">Ida6cb29483b0e51f6c9fcf2371c05b584e150fce</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6133753">https://chromium-review.googlesource.com/c/chromium/src/+/6133753</a>
+Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
+Commit-Queue: Xianzhu Wang &lt;wangxianzhu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1401655}
 </pre>
 
 </body>
