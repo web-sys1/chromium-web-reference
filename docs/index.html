@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1403790/"> 1403790</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/86c84e1d75659b8de82d61a065f9c47d8c836440">86c84e1d75659b8de82d61a065f9c47d8c836440</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1403952/"> 1403952</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e5efdc1ab595630f66933b8cd61d3c01bc7e5639">e5efdc1ab595630f66933b8cd61d3c01bc7e5639</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1403769/">1403769</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7b953daf369fa236985841bca2a11117c2885feb">7b953daf369fa236985841bca2a11117c2885feb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1403928/">1403928</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6ccbd43c71eec834b2c0055b4d62b66621a1ea27">6ccbd43c71eec834b2c0055b4d62b66621a1ea27</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   86c84e1d75659b8de82d61a065f9c47d8c836440
+   e5efdc1ab595630f66933b8cd61d3c01bc7e5639
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/86c84e1d75659b8de82d61a065f9c47d8c836440">
+    <a href="/chromium/src/+log/e5efdc1ab595630f66933b8cd61d3c01bc7e5639">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/86c84e1d75659b8de82d61a065f9c47d8c836440.tar.gz">
+    <a href="/chromium/src/+archive/e5efdc1ab595630f66933b8cd61d3c01bc7e5639.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   David Song &lt;wintermelons@google.com&gt;
+   Yao Xiao &lt;yaoxia@google.com&gt;
   </td>
   <td>
-   Wed Jan 08 20:56:50 2025
+   Thu Jan 09 01:55:56 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jan 08 20:56:50 2025
+   Thu Jan 09 01:55:56 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/86c84e1d75659b8de82d61a065f9c47d8c836440/">
-    ad1d9ff1d499a301346e74e4c622d328a30ac9d3
+   <a href="/chromium/src/+/e5efdc1ab595630f66933b8cd61d3c01bc7e5639/">
+    ffd37bfcaecea7d8c185d2c6437712828800666b
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/86c84e1d75659b8de82d61a065f9c47d8c836440%5E">
-    64a02d12d71350a874fe9c6dde1096a145fda975
+   <a href="/chromium/src/+/e5efdc1ab595630f66933b8cd61d3c01bc7e5639%5E">
+    77c1df4fe37603a7c595b00ba14dfe1592b4258b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/86c84e1d75659b8de82d61a065f9c47d8c836440%5E%21/">
+    <a href="/chromium/src/+/e5efdc1ab595630f66933b8cd61d3c01bc7e5639%5E%21/">
      diff
     </a>
     ]
@@ -179,25 +179,50 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[A11y][fuchsia] Handle generated Scroll events
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "[shared storage] Implement sharedStorage.batchUpdate() for PA worklet"
 
-Implement `BrowserAccessibilityManagerFuchsia::FireGeneratedEvent` to
-handle horizontal and vertical scroll events, by updating the node in
-the Fuchsia tree.
+This is a reland of commit f0cab8e2346b2a62aa3be1d5a41ec7737bf335af
 
-This is needed because scroll events no longer trigger
-`OnLocationChanged` after <a href="https://crrev.com/c/5878051.">https://crrev.com/c/5878051.</a> The linked bug
-shows an example where bounding boxes are drawn incorrectly after
-scrolling.
+The original CL incorrectly attempted to access
+args[0].As&lt;v8::Object&gt;() even when the initial IDL validation
+(args_converter.is_success() &amp;&amp; !args[0]-&gt;IsObject()) failed. This
+could lead to unpredictable behavior as args[0] might not be a valid
+object. This reland fixes this by ensuring that
+args[0].As&lt;v8::Object&gt;() is only accessed when
+args_converter.is_success() is true.
 
-Bug: 382000068
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib12021e986a3860985bbab4ef5835c1112218e31">Ib12021e986a3860985bbab4ef5835c1112218e31</a>
-Tested: Local device, following the repro steps in the bug.
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6138366">https://chromium-review.googlesource.com/c/chromium/src/+/6138366</a>
-Auto-Submit: David Song &lt;wintermelons@google.com&gt;
-Reviewed-by: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
-Commit-Queue: David Song &lt;wintermelons@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1403790}
+Code changes: see the diff between Patchset 1 and Patchset 2
+
+Original change's description:
+&gt; [shared storage] Implement sharedStorage.batchUpdate() for PA worklet
+&gt;
+&gt; Add sharedStorage.batchUpdate() function. Parse arguments into
+&gt; the 'methods' sequence and a 'with_lock' optional flag, and
+&gt; propagate the result to the browser process to invoke the
+&gt; `SharedStorageLockManager::SharedStorageBatchUpdate()` API.
+&gt;
+&gt; This allows developers to perform multiple Shared Storage operations atomically within a single lock, as part of the Web
+&gt; Lock integration proposal:
+&gt; - <a href="https://github.com/WICG/shared-storage/pull/199">https://github.com/WICG/shared-storage/pull/199</a>
+&gt; - <a href="https://github.com/WICG/shared-storage/pull/205">https://github.com/WICG/shared-storage/pull/205</a>
+&gt;
+&gt; Fuchsia-Binary-Size: Size increase is unavoidable.
+&gt; Bug: 373899210
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic6e9f794d78523ec9f6b87f37fb5e91f17635c58">Ic6e9f794d78523ec9f6b87f37fb5e91f17635c58</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6072850">https://chromium-review.googlesource.com/c/chromium/src/+/6072850</a>
+&gt; Commit-Queue: Yao Xiao &lt;yaoxia@chromium.org&gt;
+&gt; Reviewed-by: Maks Orlovich &lt;morlovich@chromium.org&gt;
+&gt; Reviewed-by: Cammie Smith Barnes &lt;cammie@chromium.org&gt;
+&gt; Reviewed-by: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1401673}
+
+Bug: 373899210
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1782e6af1de95cc643053aa80c2a15f601da56a5">I1782e6af1de95cc643053aa80c2a15f601da56a5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6132126">https://chromium-review.googlesource.com/c/chromium/src/+/6132126</a>
+Reviewed-by: Maks Orlovich &lt;morlovich@chromium.org&gt;
+Reviewed-by: Giovanni Ortuno Urquidi &lt;ortuno@chromium.org&gt;
+Commit-Queue: Yao Xiao &lt;yaoxia@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1403952}
 </pre>
 
 </body>
