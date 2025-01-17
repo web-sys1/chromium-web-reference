@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1407885/"> 1407885</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/562fa1618ba505ababb4bdbb83f4075a103ff193">562fa1618ba505ababb4bdbb83f4075a103ff193</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1407934/"> 1407934</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f0dc0d21e18e04b7c9e3b19988c1e07d17490964">f0dc0d21e18e04b7c9e3b19988c1e07d17490964</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1407869/">1407869</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d03c29bdf6931ec5865223ee2e123130b9eb4ae9">d03c29bdf6931ec5865223ee2e123130b9eb4ae9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1407955/">1407955</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1886cc70aa68e5aa7887932093d3023f2d25ef16">1886cc70aa68e5aa7887932093d3023f2d25ef16</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   562fa1618ba505ababb4bdbb83f4075a103ff193
+   f0dc0d21e18e04b7c9e3b19988c1e07d17490964
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/562fa1618ba505ababb4bdbb83f4075a103ff193">
+    <a href="/chromium/src/+log/f0dc0d21e18e04b7c9e3b19988c1e07d17490964">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/562fa1618ba505ababb4bdbb83f4075a103ff193.tar.gz">
+    <a href="/chromium/src/+archive/f0dc0d21e18e04b7c9e3b19988c1e07d17490964.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jérôme Lebel &lt;jlebel@chromium.org&gt;
+   Dominic Farolino &lt;dom@chromium.org&gt;
   </td>
   <td>
-   Fri Jan 17 14:59:51 2025
+   Fri Jan 17 16:07:21 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jan 17 14:59:51 2025
+   Fri Jan 17 16:07:21 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/562fa1618ba505ababb4bdbb83f4075a103ff193/">
-    e49c817883a6c70c6e6b2bd2ce36113576c59469
+   <a href="/chromium/src/+/f0dc0d21e18e04b7c9e3b19988c1e07d17490964/">
+    200939354237cc42f75a5665185650431c79f364
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/562fa1618ba505ababb4bdbb83f4075a103ff193%5E">
-    4e59269d93663f5bcdd8839f6955f3d42179dec2
+   <a href="/chromium/src/+/f0dc0d21e18e04b7c9e3b19988c1e07d17490964%5E">
+    1f8b5f5b72137e496cd2b7c8f439f1fa2f702d97
    </a>
    <span>
     [
-    <a href="/chromium/src/+/562fa1618ba505ababb4bdbb83f4075a103ff193%5E%21/">
+    <a href="/chromium/src/+/f0dc0d21e18e04b7c9e3b19988c1e07d17490964%5E%21/">
      diff
     </a>
     ]
@@ -179,27 +179,26 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS] Process sync AuthenticationService::OnIdentityListChanged()
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">DOM: Fix moveBefore() style CharacterData style calculation crash
 
-Async process of OnIdentityListChanged() has been moved closer to the
-internal library.
-This post task is not needed anymore after crrev.com/i/7949889.
+When we decided to allow the moveBefore() API to move CharacterData
+nodes around the DOM, <a href="https://crrev.com/c/5943680">https://crrev.com/c/5943680</a> was landed to ensure
+we still call `FlatTreeParentChanged()` on ALL CharacterData nodes.
+This was a bug, since Comment nodes should never have this called on
+them. A test was also added, but it did not properly test Comment nodes,
+which should never have `FlatTreeParentChanged()` called.
 
-With this change, all the non-required `RunUntilIdle` are moved from
-`AuthenticationServiceTest`.
+This CL ensures that we early-return from
+`ContainerNode::ChildrenChanged()` altogether in this case, and fixes
+the test to properly test Comments.
 
-Also, AuthenticationServiceTest.MDMErrorsDontSeedEmptyAccountIds is
-updated to make sure the MDM error is added for an unknown identity.
-
-Bug: 40376880
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I75c73be09de4affdf065bcf8f1d5cd369171c3a1">I75c73be09de4affdf065bcf8f1d5cd369171c3a1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6173558">https://chromium-review.googlesource.com/c/chromium/src/+/6173558</a>
-Reviewed-by: Marc Treib &lt;treib@chromium.org&gt;
-Reviewed-by: Mihai Sardarescu &lt;msarda@chromium.org&gt;
-Auto-Submit: Jérôme Lebel &lt;jlebel@chromium.org&gt;
-Commit-Queue: Jérôme Lebel &lt;jlebel@chromium.org&gt;
-Commit-Queue: Mihai Sardarescu &lt;msarda@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1407885}
+Bug: 40150299
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia850b2d13eeaa4f34aa5f836e2697e600d006328">Ia850b2d13eeaa4f34aa5f836e2697e600d006328</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6180060">https://chromium-review.googlesource.com/c/chromium/src/+/6180060</a>
+Reviewed-by: Noam Rosenthal &lt;nrosenthal@chromium.org&gt;
+Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
+Commit-Queue: Dominic Farolino &lt;dom@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1407934}
 </pre>
 
 </body>
