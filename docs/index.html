@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1408595/"> 1408595</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/03c2348e3abb0647cdebe11250c6de7fc6f47b5e">03c2348e3abb0647cdebe11250c6de7fc6f47b5e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1408663/"> 1408663</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9d25d8630c6eca42513f772fb4a152c83d0d5d69">9d25d8630c6eca42513f772fb4a152c83d0d5d69</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1408591/">1408591</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6337eddfd79a5de99144deea4cfbee3bb01ab873">6337eddfd79a5de99144deea4cfbee3bb01ab873</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1408643/">1408643</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a20a376894272b4c97738b0dc309bf469742a836">a20a376894272b4c97738b0dc309bf469742a836</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   03c2348e3abb0647cdebe11250c6de7fc6f47b5e
+   9d25d8630c6eca42513f772fb4a152c83d0d5d69
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/03c2348e3abb0647cdebe11250c6de7fc6f47b5e">
+    <a href="/chromium/src/+log/9d25d8630c6eca42513f772fb4a152c83d0d5d69">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/03c2348e3abb0647cdebe11250c6de7fc6f47b5e.tar.gz">
+    <a href="/chromium/src/+archive/9d25d8630c6eca42513f772fb4a152c83d0d5d69.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Finnur Thorarinsson &lt;finnur@chromium.org&gt;
+   Colin Blundell &lt;blundell@chromium.org&gt;
   </td>
   <td>
-   Mon Jan 20 12:06:28 2025
+   Mon Jan 20 15:10:22 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jan 20 12:06:28 2025
+   Mon Jan 20 15:10:22 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/03c2348e3abb0647cdebe11250c6de7fc6f47b5e/">
-    278ba8cec8d76de2577902900582ebcf2f28472e
+   <a href="/chromium/src/+/9d25d8630c6eca42513f772fb4a152c83d0d5d69/">
+    c4b87d2e1beb672cc708a71a315728ec71a55b4f
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/03c2348e3abb0647cdebe11250c6de7fc6f47b5e%5E">
-    4e6b65f07b97dbe950b6e7a7290fd3a311f73bc3
+   <a href="/chromium/src/+/9d25d8630c6eca42513f772fb4a152c83d0d5d69%5E">
+    63db311b1432618bd7f9b271431f86c5bdac5197
    </a>
    <span>
     [
-    <a href="/chromium/src/+/03c2348e3abb0647cdebe11250c6de7fc6f47b5e%5E%21/">
+    <a href="/chromium/src/+/9d25d8630c6eca42513f772fb4a152c83d0d5d69%5E%21/">
      diff
     </a>
     ]
@@ -179,33 +179,25 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Pwa]: Switch to new filter functions that query on Capabilities.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Blink] Have CanvasRenderingContext2D implement GetColorSpace "natively"
 
-Target(s): chrome/browser/devtools
+Changes CanvasRenderingContext2D to implement GetColorSpace() directly
+and layer GetSkColorSpace() on top of it rather than the other way
+around. Note that this is a behavioral no-op due to [1][2][3].
 
-This updates callsites for FindBestAppWithUrlInScope and for
-FindAllAppsNestedInUrl to use the new versions that allows for
-querying the web app registry for apps with certain capabilities
-(such as how it opens, browser tab/dedicated window, supports
-badging/notifications, etc).
+This is a step toward eventual elimination of
+CanvasRenderingContext::GetSkColorSpace().
 
-It replaces similar functions that deal with install state, which
-is error prone and confusing for consumers of the API.
+[1] <a href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/html/canvas/canvas_2d_color_params.cc;l=38-40?q=canvas_2d_color_params&amp;ss=chromium">https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/html/canvas/canvas_2d_color_params.cc;l=38-40?q=canvas_2d_color_params&amp;ss=chromium</a>
+[2] <a href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/html/canvas/canvas_2d_color_params.cc;l=31-36?q=canvas_2d_color_params&amp;ss=chromium">https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/html/canvas/canvas_2d_color_params.cc;l=31-36?q=canvas_2d_color_params&amp;ss=chromium</a>
+[3] <a href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/platform/graphics/graphics_types.cc;l=302-305;bpv=1;bpt=1?q=PredefinedColorSpaceToSk&amp;ss=chromium">https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/platform/graphics/graphics_types.cc;l=302-305;bpv=1;bpt=1?q=PredefinedColorSpaceToSk&amp;ss=chromium</a>
 
-The prototype with more discussion threads can be found here:
-<a href="https://chromium-review.googlesource.com/c/chromium/src/+/6167649">https://chromium-review.googlesource.com/c/chromium/src/+/6167649</a>
-
-This CL was uploaded by git cl split.
-
-R=caseq@chromium.org
-
-Bug: 390167210
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icbbb49238a5b0c8153f7e0d2905f00a41b6949ea">Icbbb49238a5b0c8153f7e0d2905f00a41b6949ea</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6180270">https://chromium-review.googlesource.com/c/chromium/src/+/6180270</a>
-Auto-Submit: Finnur Thorarinsson &lt;finnur@chromium.org&gt;
-Reviewed-by: Danil Somsikov &lt;dsv@chromium.org&gt;
-Commit-Queue: Danil Somsikov &lt;dsv@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1408595}
+Bug: 371227617
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id0b43b142c3e13a53f4196a506dd5d61de8c490a">Id0b43b142c3e13a53f4196a506dd5d61de8c490a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6185439">https://chromium-review.googlesource.com/c/chromium/src/+/6185439</a>
+Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
+Commit-Queue: Colin Blundell &lt;blundell@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1408663}
 </pre>
 
 </body>
