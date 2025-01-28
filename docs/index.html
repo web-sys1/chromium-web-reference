@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1412280/"> 1412280</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f1b2827b0e9fbab1d49b1e4449c2f3b4ed231cdd">f1b2827b0e9fbab1d49b1e4449c2f3b4ed231cdd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1412297/"> 1412297</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f62cdc74990e3b58224e6c57e445fe31814cc46e">f62cdc74990e3b58224e6c57e445fe31814cc46e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1412262/">1412262</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6c6c638d66fda1d621f02e14b03b2d847582197a">6c6c638d66fda1d621f02e14b03b2d847582197a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1412371/">1412371</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bf36e829f0206326411be059a10fec5c3a137797">bf36e829f0206326411be059a10fec5c3a137797</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   f1b2827b0e9fbab1d49b1e4449c2f3b4ed231cdd
+   f62cdc74990e3b58224e6c57e445fe31814cc46e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/f1b2827b0e9fbab1d49b1e4449c2f3b4ed231cdd">
+    <a href="/chromium/src/+log/f62cdc74990e3b58224e6c57e445fe31814cc46e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/f1b2827b0e9fbab1d49b1e4449c2f3b4ed231cdd.tar.gz">
+    <a href="/chromium/src/+archive/f62cdc74990e3b58224e6c57e445fe31814cc46e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Dan McArdle &lt;dmcardle@chromium.org&gt;
+   Brian Sheedy &lt;bsheedy@chromium.org&gt;
   </td>
   <td>
-   Tue Jan 28 14:56:08 2025
+   Tue Jan 28 15:25:41 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jan 28 14:56:08 2025
+   Tue Jan 28 15:25:41 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/f1b2827b0e9fbab1d49b1e4449c2f3b4ed231cdd/">
-    1a944fcefb631de0f8dcb15a28a56beef795b33a
+   <a href="/chromium/src/+/f62cdc74990e3b58224e6c57e445fe31814cc46e/">
+    6346682e9d2a8cf8e603efdf280a6cfa1f0a6057
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/f1b2827b0e9fbab1d49b1e4449c2f3b4ed231cdd%5E">
-    71fdad55e607bbe943380f6c661373bc6e6ae915
+   <a href="/chromium/src/+/f62cdc74990e3b58224e6c57e445fe31814cc46e%5E">
+    737c61c21f54cdbdb151eb19af2676cc9f842007
    </a>
    <span>
     [
-    <a href="/chromium/src/+/f1b2827b0e9fbab1d49b1e4449c2f3b4ed231cdd%5E%21/">
+    <a href="/chromium/src/+/f62cdc74990e3b58224e6c57e445fe31814cc46e%5E%21/">
      diff
     </a>
     ]
@@ -179,30 +179,18 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">PrivateAggregation: Optimize special case of `maxContributions`
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rename GPU Win/RTX 4070 builders
 
-This CL implements an optimization for per-context limits, which are
-still gated by a feature and disabled by default.
+Renames the Win/RTX 4070 Super builders to properly reference Windows 11
+instead of Windows 10.
 
-We're making `ShouldSendReportDeterministically()` a little more clever,
-with the goal of enabling Private Aggregation to send fewer null reports
-without loss of privacy. Rather than requiring determinism whenever the
-`std::optional&lt;size_t&gt; max_contributions` parameter has a value, we will
-now additionally require that it would make the aggregatable report
-stick out. This resembles the semantics of the `filtering_id_max_bytes`
-parameter.
-
-This CL should not contain any web-visible behavior changes, primarily
-because none of the calling APIs have defined the `maxContributions`
-field yet.
-
-Bug: 376707230
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iee0d849170e728fd9cdc540daa83881ce96a21dc">Iee0d849170e728fd9cdc540daa83881ce96a21dc</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6183147">https://chromium-review.googlesource.com/c/chromium/src/+/6183147</a>
-Commit-Queue: Dan McArdle &lt;dmcardle@chromium.org&gt;
-Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
-Reviewed-by: Alex Turner &lt;alexmt@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1412280}
+Bug: 389981873
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia294c8385e58ab78e61e952d06345c6b1010cc07">Ia294c8385e58ab78e61e952d06345c6b1010cc07</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6203313">https://chromium-review.googlesource.com/c/chromium/src/+/6203313</a>
+Auto-Submit: Brian Sheedy &lt;bsheedy@chromium.org&gt;
+Reviewed-by: Yuly Novikov &lt;ynovikov@chromium.org&gt;
+Commit-Queue: Yuly Novikov &lt;ynovikov@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1412297}
 </pre>
 
 </body>
