@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1415996/"> 1415996</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5d04df6b50b8b92c15465646363becd85ed3f3ce">5d04df6b50b8b92c15465646363becd85ed3f3ce</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1416035/"> 1416035</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/167bf0d016166c1ced24af74012e4e4f0413068c">167bf0d016166c1ced24af74012e4e4f0413068c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1415986/">1415986</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fe7c68665f90dfb8849775329fc7d9292e63c908">fe7c68665f90dfb8849775329fc7d9292e63c908</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1416030/">1416030</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2979015328c6d6e421eab1d2676ea62c8d4b1a3c">2979015328c6d6e421eab1d2676ea62c8d4b1a3c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5d04df6b50b8b92c15465646363becd85ed3f3ce
+   167bf0d016166c1ced24af74012e4e4f0413068c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5d04df6b50b8b92c15465646363becd85ed3f3ce">
+    <a href="/chromium/src/+log/167bf0d016166c1ced24af74012e4e4f0413068c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5d04df6b50b8b92c15465646363becd85ed3f3ce.tar.gz">
+    <a href="/chromium/src/+archive/167bf0d016166c1ced24af74012e4e4f0413068c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Adam Rice &lt;ricea@chromium.org&gt;
+   Steinar H. Gunderson &lt;sesse@chromium.org&gt;
   </td>
   <td>
-   Wed Feb 05 05:49:14 2025
+   Wed Feb 05 08:57:01 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 05 05:49:14 2025
+   Wed Feb 05 08:57:01 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5d04df6b50b8b92c15465646363becd85ed3f3ce/">
-    4ea6f1c11e49247e72fb0f69dd0bf439c677933c
+   <a href="/chromium/src/+/167bf0d016166c1ced24af74012e4e4f0413068c/">
+    d831265b0e83400f613711a5ed3c7961e80e7b29
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5d04df6b50b8b92c15465646363becd85ed3f3ce%5E">
-    e1203a2ad9a619c4c79834f9198f1af3bf47760f
+   <a href="/chromium/src/+/167bf0d016166c1ced24af74012e4e4f0413068c%5E">
+    9ded5422265dbc5842133090023fc37207317892
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5d04df6b50b8b92c15465646363becd85ed3f3ce%5E%21/">
+    <a href="/chromium/src/+/167bf0d016166c1ced24af74012e4e4f0413068c%5E%21/">
      diff
     </a>
     ]
@@ -179,29 +179,21 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Don't store in NoVarySearchCache entries that won't be written to disk cache
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reapply "Remove a trailing zero byte that was never used for anything."
 
-Previously, entries with Cache-Control: no-store could be written to the
-NoVarySearchCache even though they would never be written to disk. Since
-persistence isn't implemented yet, this had no security or privacy
-implications, but was inefficient.
+This reverts commit e9c511f60b4c7b6310a6d57081e2b7145d971dcd.
 
-Delay inserting an entry into the NoVarySearchCache until the final
-decision has been made to write the disk cache entry to disk.
+The issue was that the zero-termination in one of the
+QuasiLowercaseIntoBuffer() overloads remained, potentially writing
+one byte past the end of a stack buffer. This has been fixed in the
+reland.
 
-In addition, stop keeping entries that have failed the simple cache
-memory hint check in the NoVarySearchCache. Since these are going to be
-deleted from the disk cache and refetched anyway, there is no benefit in
-retaining the NoVarySearchCache entry. When the new response arrives it
-will be added to the NoVarySearchCache as usual.
-
-Bug: 382394774,391784822
-Low-Coverage-Reason: TESTS_IN_SEPARATE_CL Tests are coming.
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I18dffe7a17a316758ccaba16bdd3a182720ef124">I18dffe7a17a316758ccaba16bdd3a182720ef124</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6228186">https://chromium-review.googlesource.com/c/chromium/src/+/6228186</a>
-Commit-Queue: Adam Rice &lt;ricea@chromium.org&gt;
-Reviewed-by: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1415996}
+Bug: 394371771
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I20df6e6c3615878feb95f108a127801e10923a9a">I20df6e6c3615878feb95f108a127801e10923a9a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6231836">https://chromium-review.googlesource.com/c/chromium/src/+/6231836</a>
+Commit-Queue: Steinar H Gunderson &lt;sesse@chromium.org&gt;
+Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1416035}
 </pre>
 
 </body>
