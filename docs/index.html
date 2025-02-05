@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1415970/"> 1415970</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/00abd8ee0673739c7a8f4f9b49118714671cbfb0">00abd8ee0673739c7a8f4f9b49118714671cbfb0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1415996/"> 1415996</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5d04df6b50b8b92c15465646363becd85ed3f3ce">5d04df6b50b8b92c15465646363becd85ed3f3ce</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1415960/">1415960</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/620f83b907f60f973a80c6171dc231115e15b4e4">620f83b907f60f973a80c6171dc231115e15b4e4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1415986/">1415986</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fe7c68665f90dfb8849775329fc7d9292e63c908">fe7c68665f90dfb8849775329fc7d9292e63c908</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   00abd8ee0673739c7a8f4f9b49118714671cbfb0
+   5d04df6b50b8b92c15465646363becd85ed3f3ce
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/00abd8ee0673739c7a8f4f9b49118714671cbfb0">
+    <a href="/chromium/src/+log/5d04df6b50b8b92c15465646363becd85ed3f3ce">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/00abd8ee0673739c7a8f4f9b49118714671cbfb0.tar.gz">
+    <a href="/chromium/src/+archive/5d04df6b50b8b92c15465646363becd85ed3f3ce.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Emily Andrews &lt;emiled@microsoft.com&gt;
+   Adam Rice &lt;ricea@chromium.org&gt;
   </td>
   <td>
-   Wed Feb 05 03:19:26 2025
+   Wed Feb 05 05:49:14 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 05 03:19:26 2025
+   Wed Feb 05 05:49:14 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/00abd8ee0673739c7a8f4f9b49118714671cbfb0/">
-    cfe4ceeebbff8654486f5beea44b22a37cb6b94e
+   <a href="/chromium/src/+/5d04df6b50b8b92c15465646363becd85ed3f3ce/">
+    4ea6f1c11e49247e72fb0f69dd0bf439c677933c
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/00abd8ee0673739c7a8f4f9b49118714671cbfb0%5E">
-    3fdf5aeb5ba344337f6d1d413a96d862bc9bab4d
+   <a href="/chromium/src/+/5d04df6b50b8b92c15465646363becd85ed3f3ce%5E">
+    e1203a2ad9a619c4c79834f9198f1af3bf47760f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/00abd8ee0673739c7a8f4f9b49118714671cbfb0%5E%21/">
+    <a href="/chromium/src/+/5d04df6b50b8b92c15465646363becd85ed3f3ce%5E%21/">
      diff
     </a>
     ]
@@ -179,22 +179,29 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix mojo typescript generation to take into account type nesting
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Don't store in NoVarySearchCache entries that won't be written to disk cache
 
-This change updates the mojom_ts_generator.py to fix an issue where
-imports of Interface types nested in arrays and other containers
-would be missing from the .ts file for WebUI files.
+Previously, entries with Cache-Control: no-store could be written to the
+NoVarySearchCache even though they would never be written to disk. Since
+persistence isn't implemented yet, this had no security or privacy
+implications, but was inefficient.
 
-Also adds a test case to validate the changes and comments to help
-explain the logic
+Delay inserting an entry into the NoVarySearchCache until the final
+decision has been made to write the disk cache entry to disk.
 
-Bug: 393183858
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I39ed13af22f5f12da2253c12c38a1a1f44d98a59">I39ed13af22f5f12da2253c12c38a1a1f44d98a59</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6218839">https://chromium-review.googlesource.com/c/chromium/src/+/6218839</a>
-Reviewed-by: Rebekah Potter &lt;rbpotter@chromium.org&gt;
-Reviewed-by: Fred Shih &lt;ffred@chromium.org&gt;
-Commit-Queue: Emily Andrews &lt;emiled@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1415970}
+In addition, stop keeping entries that have failed the simple cache
+memory hint check in the NoVarySearchCache. Since these are going to be
+deleted from the disk cache and refetched anyway, there is no benefit in
+retaining the NoVarySearchCache entry. When the new response arrives it
+will be added to the NoVarySearchCache as usual.
+
+Bug: 382394774,391784822
+Low-Coverage-Reason: TESTS_IN_SEPARATE_CL Tests are coming.
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I18dffe7a17a316758ccaba16bdd3a182720ef124">I18dffe7a17a316758ccaba16bdd3a182720ef124</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6228186">https://chromium-review.googlesource.com/c/chromium/src/+/6228186</a>
+Commit-Queue: Adam Rice &lt;ricea@chromium.org&gt;
+Reviewed-by: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1415996}
 </pre>
 
 </body>
