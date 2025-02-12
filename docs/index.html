@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1418806/"> 1418806</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/24e2565b11fa1ddbdf0f10d069bb7f6c08aba3fa">24e2565b11fa1ddbdf0f10d069bb7f6c08aba3fa</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1419021/"> 1419021</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/45561553bccccc72160d32ee79640d4dee1d13bd">45561553bccccc72160d32ee79640d4dee1d13bd</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1418803/">1418803</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8902e64367999c60bccd15e4d740d0946184afd0">8902e64367999c60bccd15e4d740d0946184afd0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1418964/">1418964</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8ce8371caf8f3fd88b6de9f01810f49512e326ae">8ce8371caf8f3fd88b6de9f01810f49512e326ae</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   24e2565b11fa1ddbdf0f10d069bb7f6c08aba3fa
+   45561553bccccc72160d32ee79640d4dee1d13bd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/24e2565b11fa1ddbdf0f10d069bb7f6c08aba3fa">
+    <a href="/chromium/src/+log/45561553bccccc72160d32ee79640d4dee1d13bd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/24e2565b11fa1ddbdf0f10d069bb7f6c08aba3fa.tar.gz">
+    <a href="/chromium/src/+archive/45561553bccccc72160d32ee79640d4dee1d13bd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kevin Ellis &lt;kevers@google.com&gt;
+   dljames &lt;dljames@chromium.org&gt;
   </td>
   <td>
-   Tue Feb 11 19:37:55 2025
+   Wed Feb 12 01:23:27 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Feb 11 19:37:55 2025
+   Wed Feb 12 01:23:27 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/24e2565b11fa1ddbdf0f10d069bb7f6c08aba3fa/">
-    c27e3e0042f5af4587de09873cc6776958aed95d
+   <a href="/chromium/src/+/45561553bccccc72160d32ee79640d4dee1d13bd/">
+    eec68bf6bb87258cb93640973ca33dbb82e7c6eb
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/24e2565b11fa1ddbdf0f10d069bb7f6c08aba3fa%5E">
-    9387224739d188953f4c911c7008ab322c3ee0c3
+   <a href="/chromium/src/+/45561553bccccc72160d32ee79640d4dee1d13bd%5E">
+    24b81fe8a11f2d5667ef02e2d5c9385bef68e8e1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/24e2565b11fa1ddbdf0f10d069bb7f6c08aba3fa%5E%21/">
+    <a href="/chromium/src/+/45561553bccccc72160d32ee79640d4dee1d13bd%5E%21/">
      diff
     </a>
     ]
@@ -179,32 +179,17 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix compositor sync after pause + set time + play
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Docs] Update CQ doc to include 3 ways to stop the CQ
 
-<a href="https://chromium-review.googlesource.com/c/chromium/src/+/4605129">https://chromium-review.googlesource.com/c/chromium/src/+/4605129</a>
-introduced a regression where a restart would preserve start time
-even in cases where a new start time was required.
+1. Change the Commit-Queue value from +1 to 0 in Gerrit UI.
+2. Upload a new patchset which triggers a new dry run.
+3. Code-Review -1. This prevents a CL from landing.
 
-This patch cleans up the logic for determining if a restart is
-required, and if a fresh start time is needed when restarting. If
-parameters to compositing state remain unchanged and simply waiting on
-a start time, we don't need to cancel or restart and can simply keep
-the animation in a pending state until the start time is received. If
-keyframes where changed, but timing characteristics remain the same,
-we should preserve start time while restarting. This is the issue the
-aforementioned patch was addressing.
-
-The terms soft_change and hard_change were not clearly defined in
-the code. This terminology has been replaced in order to make the
-process clear.
-
-
-Bug: 374374231
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ida5a9dc2c53a0f46bf33a2064c29989ec2c62d2c">Ida5a9dc2c53a0f46bf33a2064c29989ec2c62d2c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6234613">https://chromium-review.googlesource.com/c/chromium/src/+/6234613</a>
-Reviewed-by: Robert Flack &lt;flackr@chromium.org&gt;
-Commit-Queue: Kevin Ellis &lt;kevers@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1418806}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8cd0659a83deb469631f180e8a1192ba87fe8f94">I8cd0659a83deb469631f180e8a1192ba87fe8f94</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6254918">https://chromium-review.googlesource.com/c/chromium/src/+/6254918</a>
+Reviewed-by: Ben Pastene &lt;bpastene@chromium.org&gt;
+Commit-Queue: Darryl James &lt;dljames@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1419021}
 </pre>
 
 </body>
