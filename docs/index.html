@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1421688/"> 1421688</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d14306c17afaec9da2472d19fe443f96580776a5">d14306c17afaec9da2472d19fe443f96580776a5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1421752/"> 1421752</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/630f0062170f445b6fd69ad38f3203de04123511">630f0062170f445b6fd69ad38f3203de04123511</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1421720/">1421720</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/197c55bf2b137c1a3eed14936b7037273f0d7248">197c55bf2b137c1a3eed14936b7037273f0d7248</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1421742/">1421742</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5669fe940fc2978841e6192a45c3fbc2cf998667">5669fe940fc2978841e6192a45c3fbc2cf998667</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d14306c17afaec9da2472d19fe443f96580776a5
+   630f0062170f445b6fd69ad38f3203de04123511
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d14306c17afaec9da2472d19fe443f96580776a5">
+    <a href="/chromium/src/+log/630f0062170f445b6fd69ad38f3203de04123511">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d14306c17afaec9da2472d19fe443f96580776a5.tar.gz">
+    <a href="/chromium/src/+archive/630f0062170f445b6fd69ad38f3203de04123511.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Yue Zhang &lt;yuezhanggg@chromium.org&gt;
+   Nayeem Jahan Rafi &lt;njrafi@google.com&gt;
   </td>
   <td>
-   Wed Feb 19 00:02:16 2025
+   Wed Feb 19 02:51:05 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Feb 19 00:02:16 2025
+   Wed Feb 19 02:51:05 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d14306c17afaec9da2472d19fe443f96580776a5/">
-    597035e32ac1b4e3467b75615a282493162998a9
+   <a href="/chromium/src/+/630f0062170f445b6fd69ad38f3203de04123511/">
+    9cec604a2996edc7c2c8b772c33d876f7694eeb2
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d14306c17afaec9da2472d19fe443f96580776a5%5E">
-    bcf216f16133270a3deaad650a22c6879c673ab9
+   <a href="/chromium/src/+/630f0062170f445b6fd69ad38f3203de04123511%5E">
+    c449b07408a04c0e0fc9fff84691123c9ff54405
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d14306c17afaec9da2472d19fe443f96580776a5%5E%21/">
+    <a href="/chromium/src/+/630f0062170f445b6fd69ad38f3203de04123511%5E%21/">
      diff
     </a>
     ]
@@ -179,45 +179,20 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "[a11y] Ensure AXObject::ToString() is called only after Init()"
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add a kill switch for Mantis
 
-This reverts commit 04f2270194cb745744c5e2da840cc1299776b8e1.
+Enable Mantis based on the flag kMediaAppImageMantisModel.
 
-Reason for revert: Causing test failure on Android, see b/397515684.
+BUG=b:390516643
+TEST=chromeos_unittests
+--gtest_filter="MantisUntrustedServiceManagerTest.*"
 
-Original change's description:
-&gt; [a11y] Ensure AXObject::ToString() is called only after Init()
-&gt;
-&gt; Calling AXObject::ToString() before Init() can
-&gt; lead to a segfault in the renderer process without
-&gt; a stack trace. This makes debugging extremely
-&gt; difficult, especially when adding logging
-&gt; statements, as each additional log that
-&gt; potentially calls ToString() before Init()
-&gt; increases the likelihood of a crash.
-&gt;
-&gt; This change adds a check to ensure that Init() has
-&gt; been called before ToString() is executed,
-&gt; preventing the segfault and improving
-&gt; debuggability.
-&gt;
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If9acb9592e6310af274cadacb75b99d18585cecd">If9acb9592e6310af274cadacb75b99d18585cecd</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6271111">https://chromium-review.googlesource.com/c/chromium/src/+/6271111</a>
-&gt; Reviewed-by: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
-&gt; Commit-Queue: Aaron Leventhal &lt;aleventhal@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1421634}
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I487788ac6658b4e2e02d08d21497673bf421bd3f">I487788ac6658b4e2e02d08d21497673bf421bd3f</a>
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6279747">https://chromium-review.googlesource.com/c/chromium/src/+/6279747</a>
-Auto-Submit: Yue Zhang &lt;yuezhanggg@chromium.org&gt;
-Reviewed-by: Yue Zhang &lt;yuezhanggg@chromium.org&gt;
-Owners-Override: Yue Zhang &lt;yuezhanggg@chromium.org&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1421688}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie89f08c5dfdba7e43cc1368d738ed3cf056d80a6">Ie89f08c5dfdba7e43cc1368d738ed3cf056d80a6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6275512">https://chromium-review.googlesource.com/c/chromium/src/+/6275512</a>
+Reviewed-by: Yi Chou &lt;yich@google.com&gt;
+Commit-Queue: MD Nayeem Jahan Rafi &lt;njrafi@google.com&gt;
+Reviewed-by: Howard Yang &lt;hcyang@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1421752}
 </pre>
 
 </body>
