@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1426226/"> 1426226</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4c012398d3463f7a18c2fc4fbf8c5810f0460eca">4c012398d3463f7a18c2fc4fbf8c5810f0460eca</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1426266/"> 1426266</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/95777ba914ba0db657cf242a23e747ed8f19f7ed">95777ba914ba0db657cf242a23e747ed8f19f7ed</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1426213/">1426213</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/740a8dfaf572311c0322443abd2d80b1c4143422">740a8dfaf572311c0322443abd2d80b1c4143422</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1426283/">1426283</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b4cdad47a0af076f19c8216d9c62f20711b453e6">b4cdad47a0af076f19c8216d9c62f20711b453e6</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4c012398d3463f7a18c2fc4fbf8c5810f0460eca
+   95777ba914ba0db657cf242a23e747ed8f19f7ed
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4c012398d3463f7a18c2fc4fbf8c5810f0460eca">
+    <a href="/chromium/src/+log/95777ba914ba0db657cf242a23e747ed8f19f7ed">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4c012398d3463f7a18c2fc4fbf8c5810f0460eca.tar.gz">
+    <a href="/chromium/src/+archive/95777ba914ba0db657cf242a23e747ed8f19f7ed.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Benoît Lizé &lt;lizeb@chromium.org&gt;
+   Roland Bock &lt;rbock@google.com&gt;
   </td>
   <td>
-   Fri Feb 28 11:52:10 2025
+   Fri Feb 28 14:03:14 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Feb 28 11:52:10 2025
+   Fri Feb 28 14:03:14 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4c012398d3463f7a18c2fc4fbf8c5810f0460eca/">
-    5ce2d951aa29437f9227bd4ab120cdef9043a61a
+   <a href="/chromium/src/+/95777ba914ba0db657cf242a23e747ed8f19f7ed/">
+    e5a5a2fdcbafbdfdb3a3d7eefa95139ff0ab0d9e
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4c012398d3463f7a18c2fc4fbf8c5810f0460eca%5E">
-    57ceaaf284e1f5d32db915782919bbc30a789de6
+   <a href="/chromium/src/+/95777ba914ba0db657cf242a23e747ed8f19f7ed%5E">
+    80505a9e75111cf098ca9f5bcb9b91380e77df43
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4c012398d3463f7a18c2fc4fbf8c5810f0460eca%5E%21/">
+    <a href="/chromium/src/+/95777ba914ba0db657cf242a23e747ed8f19f7ed%5E%21/">
      diff
     </a>
     ]
@@ -179,29 +179,66 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[cc] Trigger ImplFrame deadline immediately when main is throttled
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "[oobe] Switch wizard controller tests to USD"
 
-When a BeginMainFrame() is not sent, do not wait for the Impl frame
-deadline. Otherwise, we falsely believe that we dropped a frame when the
-deadline comes without a commit.
+This reverts commit 9c632cbd7eb1c8efccfe60c727c5aa67024ff7bc.
 
-One example where this always happens is when a page has rAF animations,
-but is otherwise static, with main running at 60 and impl at 120. In
-this case, every other (compositor) frame has no update, and does not
-send BeginMainFrame(). Without this CL, we still post a deadline for all
-these frames, which is wasteful, and can inflate missed frame metrics
-too.
+Reason for revert: Found fix (and will run linux-chromeos-chrome
+for realz)
 
-This commit does not go all the way: removing the "needs_redraw_"
-condition was attempted, and reverted in the past. See the TODO in the
-code for details.
+Original change's description:
+&gt; Revert "[oobe] Switch wizard controller tests to USD"
+&gt;
+&gt; This reverts commit 2efd39f4334c59a8e80903e2166e73d7c994368f.
+&gt;
+&gt; Reason for revert:
+&gt;
+&gt; Break tests on `linux-chromeos-chrome`:
+&gt; WizardControllerDemoSetupTest.DemoSetupCanceled
+&gt; WizardControllerFlowTest.ControlFlowSkipUpdateEnroll
+&gt;
+&gt; First failed build: <a href="https://ci.chromium.org/ui/p/chrome/builders/ci/linux-chromeos-chrome/49246/overview">https://ci.chromium.org/ui/p/chrome/builders/ci/linux-chromeos-chrome/49246/overview</a>
+&gt;
+&gt; Original change's description:
+&gt; &gt; [oobe] Switch wizard controller tests to USD
+&gt; &gt;
+&gt; &gt; Since M131, Unified Enrollment State Determination (USD) replaces
+&gt; &gt; legacy state determination for ZTE and FRE. The code for legacy
+&gt; &gt; state determination can therefore be removed.
+&gt; &gt;
+&gt; &gt; This CL is moving the enrollment-related tests from legacy enrollment
+&gt; &gt; state determination to Unified State Determination.
+&gt; &gt;
+&gt; &gt; Bug: 383047722
+&gt; &gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I48dc355f44f7436814ec6a3f7cd60bb6c55a92d6">I48dc355f44f7436814ec6a3f7cd60bb6c55a92d6</a>
+&gt; &gt; Tests: Refactored tests
+&gt; &gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6304982">https://chromium-review.googlesource.com/c/chromium/src/+/6304982</a>
+&gt; &gt; Commit-Queue: Roland Bock &lt;rbock@google.com&gt;
+&gt; &gt; Reviewed-by: Denis Kuznetsov &lt;antrim@chromium.org&gt;
+&gt; &gt; Cr-Commit-Position: refs/heads/main@{#1425654}
+&gt;
+&gt; Bug: 383047722
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I926dc5af62cff4fe5b882450bc2fac79e8f6c310">I926dc5af62cff4fe5b882450bc2fac79e8f6c310</a>
+&gt; No-Presubmit: true
+&gt; No-Tree-Checks: true
+&gt; No-Try: true
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6309895">https://chromium-review.googlesource.com/c/chromium/src/+/6309895</a>
+&gt; Auto-Submit: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
+&gt; Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+&gt; Commit-Queue: Denis Kuznetsov &lt;antrim@chromium.org&gt;
+&gt; Reviewed-by: Denis Kuznetsov &lt;antrim@chromium.org&gt;
+&gt; Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1425753}
 
-Bug: 379678455
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3210cd815f0bbef5b2129f54b89e40c2187dd6f3">I3210cd815f0bbef5b2129f54b89e40c2187dd6f3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6309083">https://chromium-review.googlesource.com/c/chromium/src/+/6309083</a>
-Reviewed-by: Jonathan Ross &lt;jonross@chromium.org&gt;
-Commit-Queue: Benoit Lize &lt;lizeb@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1426226}
+Cq-Include-Trybots: luci.chrome.try:linux-chromeos-chrome
+Cq-Include-Trybots: luci.chromium.try:linux-chromeos-rel
+
+Bug: 383047722
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I11fa566c21766a051d9f6c74aa18971894ff5ef5">I11fa566c21766a051d9f6c74aa18971894ff5ef5</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6308889">https://chromium-review.googlesource.com/c/chromium/src/+/6308889</a>
+Reviewed-by: Denis Kuznetsov &lt;antrim@chromium.org&gt;
+Commit-Queue: Roland Bock &lt;rbock@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1426266}
 </pre>
 
 </body>
