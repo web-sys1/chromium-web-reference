@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1427651/"> 1427651</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/28b5f775033cb398a2d250028cc9489145d55255">28b5f775033cb398a2d250028cc9489145d55255</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1427698/"> 1427698</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/901d870cbdf914f45dad72c71be52ee4e4a7a187">901d870cbdf914f45dad72c71be52ee4e4a7a187</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1427650/">1427650</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/673f1988184476555d9ebe2e8ea268e5900d5dc6">673f1988184476555d9ebe2e8ea268e5900d5dc6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1427692/">1427692</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/118dd62129ba3427bf1c6c22647d40d749c5843a">118dd62129ba3427bf1c6c22647d40d749c5843a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   28b5f775033cb398a2d250028cc9489145d55255
+   901d870cbdf914f45dad72c71be52ee4e4a7a187
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/28b5f775033cb398a2d250028cc9489145d55255">
+    <a href="/chromium/src/+log/901d870cbdf914f45dad72c71be52ee4e4a7a187">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/28b5f775033cb398a2d250028cc9489145d55255.tar.gz">
+    <a href="/chromium/src/+archive/901d870cbdf914f45dad72c71be52ee4e4a7a187.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Daniel Vogelheim &lt;vogelheim@chromium.org&gt;
+   Raphael Kubo da Costa &lt;kubo@igalia.com&gt;
   </td>
   <td>
-   Tue Mar 04 12:03:17 2025
+   Tue Mar 04 14:45:57 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 04 12:03:17 2025
+   Tue Mar 04 14:45:57 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/28b5f775033cb398a2d250028cc9489145d55255/">
-    cd6384a72553625ec6065c77d8ca264e9f5398a5
+   <a href="/chromium/src/+/901d870cbdf914f45dad72c71be52ee4e4a7a187/">
+    37cd40926efd99f4881335fad0b4e7d98db2a553
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/28b5f775033cb398a2d250028cc9489145d55255%5E">
-    673f1988184476555d9ebe2e8ea268e5900d5dc6
+   <a href="/chromium/src/+/901d870cbdf914f45dad72c71be52ee4e4a7a187%5E">
+    5c15f2fb39a5ede34ceec2aef06ae8a9493fb3aa
    </a>
    <span>
     [
-    <a href="/chromium/src/+/28b5f775033cb398a2d250028cc9489145d55255%5E%21/">
+    <a href="/chromium/src/+/901d870cbdf914f45dad72c71be52ee4e4a7a187%5E%21/">
      diff
     </a>
     ]
@@ -179,19 +179,25 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Sanitizer] Remove outdated IDL expectation.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">mobile_config.gni: Stop unsetting target_platform on host toolchains
 
-Remove the long-outdated interface expectation file
-interfaces/sanitizer-api.tentative.idl.
+Remove the part of <a href="https://crrev.com/c/6306066">https://crrev.com/c/6306066</a> that set
+`target_platform` to an empty string when the host toolchain was being used.
 
-Note that the current interface remains, at interfaces/sanitizer-api.idl.
+The idea of preventing people from writing wrong GN code is good, but
+there are not a lot of places that need to check this variable at the
+moment and, most importantly, checking this value on the host toolchain
+is the only way to know that this is a build targeting tvOS. This is
+exactly what we need to do in V8's gni/v8.gni so that we always set
+`v8_enable_lite_mode` on all toolchains.
 
-Bug: 356601280
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I78df1eeff74350851237a4f414ed66a6a7bb299d">I78df1eeff74350851237a4f414ed66a6a7bb299d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6291304">https://chromium-review.googlesource.com/c/chromium/src/+/6291304</a>
-Commit-Queue: Daniel Vogelheim &lt;vogelheim@chromium.org&gt;
-Reviewed-by: Yifan Luo &lt;lyf@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1427651}
+Bug: 391990604
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id8ac8683d288368d79b5013d05e6cb99c36b3b25">Id8ac8683d288368d79b5013d05e6cb99c36b3b25</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6317669">https://chromium-review.googlesource.com/c/chromium/src/+/6317669</a>
+Auto-Submit: Raphael Kubo da Costa &lt;kubo@igalia.com&gt;
+Commit-Queue: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+Reviewed-by: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1427698}
 </pre>
 
 </body>
