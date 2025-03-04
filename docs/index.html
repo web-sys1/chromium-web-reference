@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1427698/"> 1427698</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/901d870cbdf914f45dad72c71be52ee4e4a7a187">901d870cbdf914f45dad72c71be52ee4e4a7a187</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1427802/"> 1427802</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/011be37c1430a7565a33d6c9c5d65c143df0b9c2">011be37c1430a7565a33d6c9c5d65c143df0b9c2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1427692/">1427692</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/118dd62129ba3427bf1c6c22647d40d749c5843a">118dd62129ba3427bf1c6c22647d40d749c5843a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1427795/">1427795</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/80d1a89badf1760819237c434d806b4ec7f93f95">80d1a89badf1760819237c434d806b4ec7f93f95</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   901d870cbdf914f45dad72c71be52ee4e4a7a187
+   011be37c1430a7565a33d6c9c5d65c143df0b9c2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/901d870cbdf914f45dad72c71be52ee4e4a7a187">
+    <a href="/chromium/src/+log/011be37c1430a7565a33d6c9c5d65c143df0b9c2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/901d870cbdf914f45dad72c71be52ee4e4a7a187.tar.gz">
+    <a href="/chromium/src/+archive/011be37c1430a7565a33d6c9c5d65c143df0b9c2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Raphael Kubo da Costa &lt;kubo@igalia.com&gt;
+   Rafał Godlewski &lt;rgod@google.com&gt;
   </td>
   <td>
-   Tue Mar 04 14:45:57 2025
+   Tue Mar 04 17:32:06 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 04 14:45:57 2025
+   Tue Mar 04 17:32:06 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/901d870cbdf914f45dad72c71be52ee4e4a7a187/">
-    37cd40926efd99f4881335fad0b4e7d98db2a553
+   <a href="/chromium/src/+/011be37c1430a7565a33d6c9c5d65c143df0b9c2/">
+    856d7ba7a43e72853b155f3e4a8a2300866c0dfd
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/901d870cbdf914f45dad72c71be52ee4e4a7a187%5E">
-    5c15f2fb39a5ede34ceec2aef06ae8a9493fb3aa
+   <a href="/chromium/src/+/011be37c1430a7565a33d6c9c5d65c143df0b9c2%5E">
+    b74a3656052cafd26861ca53f4a0f100d1addb54
    </a>
    <span>
     [
-    <a href="/chromium/src/+/901d870cbdf914f45dad72c71be52ee4e4a7a187%5E%21/">
+    <a href="/chromium/src/+/011be37c1430a7565a33d6c9c5d65c143df0b9c2%5E%21/">
      diff
     </a>
     ]
@@ -179,25 +179,20 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">mobile_config.gni: Stop unsetting target_platform on host toolchains
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS] Refactor password settings consumer
 
-Remove the part of <a href="https://crrev.com/c/6306066">https://crrev.com/c/6306066</a> that set
-`target_platform` to an empty string when the host toolchain was being used.
+* Groups consumer methods into logical sections
+* Merges functions that were previously always called together (set
+state + update section) into one `set` call in consumer and moves the
+`update` part into private section of VC
+* Renames some variables to better match their actual meaning
 
-The idea of preventing people from writing wrong GN code is good, but
-there are not a lot of places that need to check this variable at the
-moment and, most importantly, checking this value on the host toolchain
-is the only way to know that this is a build targeting tvOS. This is
-exactly what we need to do in V8's gni/v8.gni so that we always set
-`v8_enable_lite_mode` on all toolchains.
-
-Bug: 391990604
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id8ac8683d288368d79b5013d05e6cb99c36b3b25">Id8ac8683d288368d79b5013d05e6cb99c36b3b25</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6317669">https://chromium-review.googlesource.com/c/chromium/src/+/6317669</a>
-Auto-Submit: Raphael Kubo da Costa &lt;kubo@igalia.com&gt;
-Commit-Queue: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
-Reviewed-by: Sylvain Defresne &lt;sdefresne@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1427698}
+Bug: 399398237
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2f18393468e410290ed3b576f72fc8afc55167f8">I2f18393468e410290ed3b576f72fc8afc55167f8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6322011">https://chromium-review.googlesource.com/c/chromium/src/+/6322011</a>
+Reviewed-by: Tommy Martino &lt;tmartino@chromium.org&gt;
+Commit-Queue: Rafał Godlewski &lt;rgod@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1427802}
 </pre>
 
 </body>
