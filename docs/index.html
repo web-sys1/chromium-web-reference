@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1428995/"> 1428995</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2505a98be194206114a6a2c4b42934885a5a6ad5">2505a98be194206114a6a2c4b42934885a5a6ad5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1429113/"> 1429113</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f76eb39809c3d95bf47ff8d8fb4d9da4c4833e72">f76eb39809c3d95bf47ff8d8fb4d9da4c4833e72</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1429008/">1429008</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7ae2631025f3cc7ecfe78de110489dd35eef1a19">7ae2631025f3cc7ecfe78de110489dd35eef1a19</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1429103/">1429103</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c9b4abe6fa092df4c723f0428a51b71d9d6ec458">c9b4abe6fa092df4c723f0428a51b71d9d6ec458</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   2505a98be194206114a6a2c4b42934885a5a6ad5
+   f76eb39809c3d95bf47ff8d8fb4d9da4c4833e72
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/2505a98be194206114a6a2c4b42934885a5a6ad5">
+    <a href="/chromium/src/+log/f76eb39809c3d95bf47ff8d8fb4d9da4c4833e72">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/2505a98be194206114a6a2c4b42934885a5a6ad5.tar.gz">
+    <a href="/chromium/src/+archive/f76eb39809c3d95bf47ff8d8fb4d9da4c4833e72.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   msiem &lt;msiem@chromium.org&gt;
+   Justin Donnelly &lt;jdonnelly@chromium.org&gt;
   </td>
   <td>
-   Thu Mar 06 17:38:09 2025
+   Thu Mar 06 21:00:46 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Mar 06 17:38:09 2025
+   Thu Mar 06 21:00:46 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/2505a98be194206114a6a2c4b42934885a5a6ad5/">
-    2ec96702a65e1eae31c1f8f777b930268f2dd6d7
+   <a href="/chromium/src/+/f76eb39809c3d95bf47ff8d8fb4d9da4c4833e72/">
+    27e73fd7a69c79f9a87aeaf531b30701353fa446
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/2505a98be194206114a6a2c4b42934885a5a6ad5%5E">
-    08eac3bec94f27733eec9ff63f996c44424ab268
+   <a href="/chromium/src/+/f76eb39809c3d95bf47ff8d8fb4d9da4c4833e72%5E">
+    93b3ce8faab6f43247f545a7e8809b3efadd7729
    </a>
    <span>
     [
-    <a href="/chromium/src/+/2505a98be194206114a6a2c4b42934885a5a6ad5%5E%21/">
+    <a href="/chromium/src/+/f76eb39809c3d95bf47ff8d8fb4d9da4c4833e72%5E%21/">
      diff
     </a>
     ]
@@ -179,27 +179,22 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PWA]: Move web-feature use counters to not count for default entries
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[spark][omnibox] Always show a visible suggestion image placeholder.
 
-Start_url, manifest_id, and scope are never empty after parsing.
-However, use counters should only be updated if the field has been set
-by the developer and not if it was set by default.
+Placeholders are always shown for suggestions with images, but the placeholder color is the same as the popup background so the placeholders are effectively invisible.
 
-Moving UseCounter::Count() for the above mentioned fields to their
-specific parse methods. This ensures the counter is only updated if the
-field has been set by developer.
+For the existing use (entity suggestions), it doesn't matter because the server provides a value in `dominant_image_color` that we use to change the placeholder color from the default. This CL changes the default to be the color theme's hover color, which is a complementary value within the theme that stands out slightly from the background color.
 
-Additional cleanup: capture_links has been deprecated and should be
-removed from the parser.
+The goal is to support enterprise aggregator suggestions, which do not provide a value for `dominant_image_color`. For these suggestions, we'll show a subtle placeholder that's distinguishable from the popup background, until the actual image is fetched and shown.
 
-Adding tests to verify this behavior.
+Example of a placeholder being shown for one suggestion that hasn't (yet) shown the suggestion image: <a href="https://screenshot.googleplex.com/3KQFMWJwRCeJ9pB.png">https://screenshot.googleplex.com/3KQFMWJwRCeJ9pB.png</a>
 
-Bug: 398921114
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8d6b407c7146d4bcedb3b553fe334ff348bc9613">I8d6b407c7146d4bcedb3b553fe334ff348bc9613</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6330877">https://chromium-review.googlesource.com/c/chromium/src/+/6330877</a>
-Reviewed-by: Dibyajyoti Pal &lt;dibyapal@chromium.org&gt;
-Commit-Queue: May Siem &lt;msiem@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1428995}
+Bug: 395967383
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1636431f9f62627add0db5b48124cd2587745a9d">I1636431f9f62627add0db5b48124cd2587745a9d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6329930">https://chromium-review.googlesource.com/c/chromium/src/+/6329930</a>
+Reviewed-by: manuk hovanesian &lt;manukh@chromium.org&gt;
+Commit-Queue: Justin Donnelly &lt;jdonnelly@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1429113}
 </pre>
 
 </body>
