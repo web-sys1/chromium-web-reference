@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1437493/"> 1437493</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/22bf927ec9c4e570c59f3b43fc5efb35198e5aa5">22bf927ec9c4e570c59f3b43fc5efb35198e5aa5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1437595/"> 1437595</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/82f4d10b991b1bb0a043348c73c65b5eff071b1b">82f4d10b991b1bb0a043348c73c65b5eff071b1b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1437499/">1437499</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1bfcf6fc53c9756c05de0499663005989b495a02">1bfcf6fc53c9756c05de0499663005989b495a02</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1437610/">1437610</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/33d034391ce93772db42afd84634b2501792029b">33d034391ce93772db42afd84634b2501792029b</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   22bf927ec9c4e570c59f3b43fc5efb35198e5aa5
+   82f4d10b991b1bb0a043348c73c65b5eff071b1b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/22bf927ec9c4e570c59f3b43fc5efb35198e5aa5">
+    <a href="/chromium/src/+log/82f4d10b991b1bb0a043348c73c65b5eff071b1b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/22bf927ec9c4e570c59f3b43fc5efb35198e5aa5.tar.gz">
+    <a href="/chromium/src/+archive/82f4d10b991b1bb0a043348c73c65b5eff071b1b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Michael Maltsev &lt;michaelm@island.io&gt;
+   Wes Okuhara &lt;wesokuhara@google.com&gt;
   </td>
   <td>
-   Tue Mar 25 14:43:11 2025
+   Tue Mar 25 17:38:03 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Mar 25 14:43:11 2025
+   Tue Mar 25 17:38:03 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/22bf927ec9c4e570c59f3b43fc5efb35198e5aa5/">
-    c40e59a02ba7b8439f17462fd7198e19e1366f51
+   <a href="/chromium/src/+/82f4d10b991b1bb0a043348c73c65b5eff071b1b/">
+    c3c792212b9971061c23766f448b5b1e57eb8fa6
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/22bf927ec9c4e570c59f3b43fc5efb35198e5aa5%5E">
-    e606d95bc10927f04b71b30fe60c9fb0efbe0884
+   <a href="/chromium/src/+/82f4d10b991b1bb0a043348c73c65b5eff071b1b%5E">
+    7c0aa27d95b1b3a84ae59e39ddf3353fa576c6b2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/22bf927ec9c4e570c59f3b43fc5efb35198e5aa5%5E%21/">
+    <a href="/chromium/src/+/82f4d10b991b1bb0a043348c73c65b5eff071b1b%5E%21/">
      diff
     </a>
     ]
@@ -179,32 +179,20 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Restrict mime type for content scripts
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Settings: Immediately invalidate weak pointers OnJavascriptDisallowed()
 
-The purpose of this change is to improve the browser's security and
-reduce mistakes. It aligns content script loading rules with other areas
-of the browser, such as loading scripts in HTML pages via script tags,
-and service worker scripts (including in MV3 extensions). This will
-prevent mistakes and misuses such as loading content scripts from JSON
-or image files.
+This is an attempt to fix a crash caused by some race condition where
+there is a dangling pointer to a callback. Calling InvalidateWeakPtrs
+immediately ensures that the weak pointers are invalidated before the
+version updater instance is destroyed.
 
-The change applies to content scripts loaded via the extension's
-manifest and the following APIs:
-- chrome.tabs.executeScript
-- chrome.scripting.executeScript
-- chrome.userScripts.execute
-
-The following file was removed as it's unused since commit
-f317c7a2226cf5a6b759fc152a55f4f28ac552dc:
-chrome/test/data/extensions/bad/bad_encoding/test.js
-
-Bug: 40059598
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I509cb1838d2b471ae00b6b50181d698a37ce5c8b">I509cb1838d2b471ae00b6b50181d698a37ce5c8b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6298395">https://chromium-review.googlesource.com/c/chromium/src/+/6298395</a>
-Commit-Queue: Michael Maltsev (R&amp;D) &lt;michaelm@island.io&gt;
-Reviewed-by: Oliver Dunk &lt;oliverdunk@chromium.org&gt;
-Reviewed-by: Devlin Cronin &lt;rdevlin.cronin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1437493}
+Bug: 403356059
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I092da089986fa9f19efba24c3f0c97fa013adb71">I092da089986fa9f19efba24c3f0c97fa013adb71</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6389538">https://chromium-review.googlesource.com/c/chromium/src/+/6389538</a>
+Commit-Queue: Wes Okuhara &lt;wesokuhara@google.com&gt;
+Reviewed-by: Demetrios Papadopoulos &lt;dpapad@chromium.org&gt;
+Reviewed-by: Xiaohui Chen &lt;xiaohuic@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1437595}
 </pre>
 
 </body>
