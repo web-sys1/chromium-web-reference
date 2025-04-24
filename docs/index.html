@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1451248/"> 1451248</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/86374bb11b1d7249a5eb4e873b12ab9c5861cc82">86374bb11b1d7249a5eb4e873b12ab9c5861cc82</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1451420/"> 1451420</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/82cb8b6ee8f44d236edbd71efd9daee1fff18759">82cb8b6ee8f44d236edbd71efd9daee1fff18759</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1451179/">1451179</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9cc961768f08aba8e0096ba6b02ef55162ec1e17">9cc961768f08aba8e0096ba6b02ef55162ec1e17</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1451358/">1451358</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c4d9281b4e60d54f0a853a12add886796b0fc714">c4d9281b4e60d54f0a853a12add886796b0fc714</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   86374bb11b1d7249a5eb4e873b12ab9c5861cc82
+   82cb8b6ee8f44d236edbd71efd9daee1fff18759
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/86374bb11b1d7249a5eb4e873b12ab9c5861cc82">
+    <a href="/chromium/src/+log/82cb8b6ee8f44d236edbd71efd9daee1fff18759">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/86374bb11b1d7249a5eb4e873b12ab9c5861cc82.tar.gz">
+    <a href="/chromium/src/+archive/82cb8b6ee8f44d236edbd71efd9daee1fff18759.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Bruno Braga &lt;brunobraga@google.com&gt;
+   Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
   </td>
   <td>
-   Thu Apr 24 17:11:26 2025
+   Thu Apr 24 20:43:13 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Apr 24 17:11:26 2025
+   Thu Apr 24 20:43:13 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/86374bb11b1d7249a5eb4e873b12ab9c5861cc82/">
-    d6f6f31e879045beead9f7ddc063f26facc05aab
+   <a href="/chromium/src/+/82cb8b6ee8f44d236edbd71efd9daee1fff18759/">
+    e67b6cc5f07860035cf0ecbb1ae61dfe7024a1d9
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/86374bb11b1d7249a5eb4e873b12ab9c5861cc82%5E">
-    06770268566c51e3f3039a4be41cd1d9cee21468
+   <a href="/chromium/src/+/82cb8b6ee8f44d236edbd71efd9daee1fff18759%5E">
+    7a298777fc1459ec46d0eba624cf794874101ce4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/86374bb11b1d7249a5eb4e873b12ab9c5861cc82%5E%21/">
+    <a href="/chromium/src/+/82cb8b6ee8f44d236edbd71efd9daee1fff18759%5E%21/">
      diff
     </a>
     ]
@@ -179,22 +179,33 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[AutofillAi] IPH Cta label varies depending on experiment
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Optimize base::DictValue::Merge
 
-Screenshot string 1: <a href="https://screenshot.googleplex.com/3HFXKEiD2Ah2EFe.png">https://screenshot.googleplex.com/3HFXKEiD2Ah2EFe.png</a>
-Screenshot string 2: <a href="https://screenshot.googleplex.com/33AwAnTyqtacFo8.png">https://screenshot.googleplex.com/33AwAnTyqtacFo8.png</a>
+1. Skip all lookups when the dictionary being merged into is empty, and
+instead replace this with the dictionary being merged from.
 
-In order to use this, our finch config will need to have 3 arms. The
-default will use See how string, while 2 other arms can set the param
-values introduced in this CL to 1 and 2.
+2. Reuse keys and value wrappers. By iterating over the dictionary
+storage directly, we can move the std::unique_ptr&lt;Value&gt; between the two
+dictionaries, rather than unwrapping it in the public iterator and
+re-wrapping it in the call to Set. Similarly, this allows us to move the
+std::string keys between the two, avoiding unnecessary string copies.
 
-Bug: 411354599
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id9c2b21be4a14e843bbdb8d56ce14e8d7b083434">Id9c2b21be4a14e843bbdb8d56ce14e8d7b083434</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6485409">https://chromium-review.googlesource.com/c/chromium/src/+/6485409</a>
-Reviewed-by: Dana Fried &lt;dfried@chromium.org&gt;
-Commit-Queue: Bruno Braga &lt;brunobraga@google.com&gt;
-Reviewed-by: Jan Keitel &lt;jkeitel@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1451248}
+3. Unconditionally perform a single key lookup using try_emplace instead
+of performing two in the case that the to-be-merged value is a
+dictionary but the existing one is not.
+
+Note that this is still not completely optimal, as existing entries may
+need to be shifted repeatedly in the underlying vector storage (consider
+`[d, e, f].merge([a, b, c])`), though this issue is not something
+prominently advertised in DictValue's documentation even though it also
+applies to repeated calls to Set in general. Addressing this for Merge
+would drastically increase the code complexity, so we leave it for now.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7ed579d846ea204b6881d8b12543f03f6e195782">I7ed579d846ea204b6881d8b12543f03f6e195782</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6483669">https://chromium-review.googlesource.com/c/chromium/src/+/6483669</a>
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Commit-Queue: Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1451420}
 </pre>
 
 </body>
