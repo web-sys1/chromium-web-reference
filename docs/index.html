@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1451628/"> 1451628</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/035d05bd372ccf966bb8d6178c5bdaa14da93498">035d05bd372ccf966bb8d6178c5bdaa14da93498</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1451672/"> 1451672</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/832d210e4cdf00894c7c46b7bab0128c344b9e3f">832d210e4cdf00894c7c46b7bab0128c344b9e3f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1451628/">1451628</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/035d05bd372ccf966bb8d6178c5bdaa14da93498">035d05bd372ccf966bb8d6178c5bdaa14da93498</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1451663/">1451663</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/85dd9668972f44351fd845f2ea6f2e1f781ce219">85dd9668972f44351fd845f2ea6f2e1f781ce219</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   035d05bd372ccf966bb8d6178c5bdaa14da93498
+   832d210e4cdf00894c7c46b7bab0128c344b9e3f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/035d05bd372ccf966bb8d6178c5bdaa14da93498">
+    <a href="/chromium/src/+log/832d210e4cdf00894c7c46b7bab0128c344b9e3f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/035d05bd372ccf966bb8d6178c5bdaa14da93498.tar.gz">
+    <a href="/chromium/src/+archive/832d210e4cdf00894c7c46b7bab0128c344b9e3f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ramin Halavati &lt;rhalavati@google.com&gt;
+   Olesia Marukhno &lt;olesiamarukhno@google.com&gt;
   </td>
   <td>
-   Fri Apr 25 05:56:44 2025
+   Fri Apr 25 09:02:26 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 25 05:56:44 2025
+   Fri Apr 25 09:02:26 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/035d05bd372ccf966bb8d6178c5bdaa14da93498/">
-    d837fc2d9392a37c3c05d3e7297fa8fca84d21a4
+   <a href="/chromium/src/+/832d210e4cdf00894c7c46b7bab0128c344b9e3f/">
+    10a1b7caa41955d1b2dff03bbfa48869f6927ca4
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/035d05bd372ccf966bb8d6178c5bdaa14da93498%5E">
-    f9992853e3868fbf055a003c1241d1ed1e60be33
+   <a href="/chromium/src/+/832d210e4cdf00894c7c46b7bab0128c344b9e3f%5E">
+    fc026484175c80b823fcd63c4d2ceaea47c2bc74
    </a>
    <span>
     [
-    <a href="/chromium/src/+/035d05bd372ccf966bb8d6178c5bdaa14da93498%5E%21/">
+    <a href="/chromium/src/+/832d210e4cdf00894c7c46b7bab0128c344b9e3f%5E%21/">
      diff
     </a>
     ]
@@ -179,31 +179,21 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Replace PdfiumOCR downsampling threshold from DPI to pixel size.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[DNS] Implement regrant, undo regrant and clear all
 
-OCR library has a fixed upper threshold on the image sizes that it
-processes and sending higher resolution images would result in waste of
-memory while transmitting the image to the library and extra process
-when the image is downsampled.
+Implement regrant, undo regrant and clear all revoked permissions logic.
+All revocation types share UI so by piping the methods to the related
+methods in RevokedPermissionsService, the regrant, undo regrant and
+clear all will work for disruptive notifications too.
 
-Previously 300dpi was set as the maximum limit for image size, but it
-did not match the actual mechanism in OCR module and metrics show that
-it results in many images sent overt the downsampling threshold.
-
-To improve it, replace upper limit on image size from 300 DPI to
-2048 pixels (current limit in the OCR library).
-
-APIs will be added in the next CLs to fetch this value from the library
-and pass it to the required clients:
- - <a href="http://crrev.com/c/6487926">http://crrev.com/c/6487926</a>
- - <a href="http://crrev.com/c/6487567">http://crrev.com/c/6487567</a>
-
-Bug: 413318481
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie478e490c7fd6dad12496e0d037de123e8643f3b">Ie478e490c7fd6dad12496e0d037de123e8643f3b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6487893">https://chromium-review.googlesource.com/c/chromium/src/+/6487893</a>
-Commit-Queue: Ramin Halavati &lt;rhalavati@chromium.org&gt;
-Reviewed-by: Lei Zhang &lt;thestig@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1451628}
+Bug: 406475122
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I033d1891eb1e22151482d380074c4a2a0cfd9849">I033d1891eb1e22151482d380074c4a2a0cfd9849</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6461966">https://chromium-review.googlesource.com/c/chromium/src/+/6461966</a>
+Reviewed-by: Side YILMAZ &lt;sideyilmaz@chromium.org&gt;
+Reviewed-by: Christian Dullweber &lt;dullweber@chromium.org&gt;
+Commit-Queue: Christian Dullweber &lt;dullweber@chromium.org&gt;
+Auto-Submit: Olesia Marukhno &lt;olesiamarukhno@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1451672}
 </pre>
 
 </body>
