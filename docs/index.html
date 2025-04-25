@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1451420/"> 1451420</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/82cb8b6ee8f44d236edbd71efd9daee1fff18759">82cb8b6ee8f44d236edbd71efd9daee1fff18759</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1451576/"> 1451576</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b400ca75e527f016308c3037be85c9812ed499a1">b400ca75e527f016308c3037be85c9812ed499a1</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1451358/">1451358</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c4d9281b4e60d54f0a853a12add886796b0fc714">c4d9281b4e60d54f0a853a12add886796b0fc714</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1451573/">1451573</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d5755cda55d2718c6232bc11662b296f9d7112bc">d5755cda55d2718c6232bc11662b296f9d7112bc</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   82cb8b6ee8f44d236edbd71efd9daee1fff18759
+   b400ca75e527f016308c3037be85c9812ed499a1
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/82cb8b6ee8f44d236edbd71efd9daee1fff18759">
+    <a href="/chromium/src/+log/b400ca75e527f016308c3037be85c9812ed499a1">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/82cb8b6ee8f44d236edbd71efd9daee1fff18759.tar.gz">
+    <a href="/chromium/src/+archive/b400ca75e527f016308c3037be85c9812ed499a1.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
+   Wei Wang &lt;wei4.wang@intel.com&gt;
   </td>
   <td>
-   Thu Apr 24 20:43:13 2025
+   Fri Apr 25 01:26:34 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Apr 24 20:43:13 2025
+   Fri Apr 25 01:26:34 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/82cb8b6ee8f44d236edbd71efd9daee1fff18759/">
-    e67b6cc5f07860035cf0ecbb1ae61dfe7024a1d9
+   <a href="/chromium/src/+/b400ca75e527f016308c3037be85c9812ed499a1/">
+    5a5964ebabc56c986e8581e235dbf35ae005af88
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/82cb8b6ee8f44d236edbd71efd9daee1fff18759%5E">
-    7a298777fc1459ec46d0eba624cf794874101ce4
+   <a href="/chromium/src/+/b400ca75e527f016308c3037be85c9812ed499a1%5E">
+    a18e730b6ed99dd22f87f9f413be3297afaa0b70
    </a>
    <span>
     [
-    <a href="/chromium/src/+/82cb8b6ee8f44d236edbd71efd9daee1fff18759%5E%21/">
+    <a href="/chromium/src/+/b400ca75e527f016308c3037be85c9812ed499a1%5E%21/">
      diff
     </a>
     ]
@@ -179,33 +179,20 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Optimize base::DictValue::Merge
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll TFLite to Next Green Version
 
-1. Skip all lookups when the dictionary being merged into is empty, and
-instead replace this with the dictionary being merged from.
+Roll src/third_party/tflite/src/ a9b36256a..42d6877b1 (83 commits) to
+fix wrong supported types for tanh and logistic for xnnpack delegate in
+the PR[1].
 
-2. Reuse keys and value wrappers. By iterating over the dictionary
-storage directly, we can move the std::unique_ptr&lt;Value&gt; between the two
-dictionaries, rather than unwrapping it in the public iterator and
-re-wrapping it in the call to Set. Similarly, this allows us to move the
-std::string keys between the two, avoiding unnecessary string copies.
+[1] <a href="https://github.com/tensorflow/tensorflow/pull/91897">https://github.com/tensorflow/tensorflow/pull/91897</a>
 
-3. Unconditionally perform a single key lookup using try_emplace instead
-of performing two in the case that the to-be-merged value is a
-dictionary but the existing one is not.
-
-Note that this is still not completely optimal, as existing entries may
-need to be shifted repeatedly in the underlying vector storage (consider
-`[d, e, f].merge([a, b, c])`), though this issue is not something
-prominently advertised in DictValue's documentation even though it also
-applies to repeated calls to Set in general. Addressing this for Merge
-would drastically increase the code complexity, so we leave it for now.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7ed579d846ea204b6881d8b12543f03f6e195782">I7ed579d846ea204b6881d8b12543f03f6e195782</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6483669">https://chromium-review.googlesource.com/c/chromium/src/+/6483669</a>
-Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Commit-Queue: Andrew Paseltiner &lt;apaseltiner@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1451420}
+Bug: 401281047
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Idac1a2532f8e382bdc7c30317ddb6aafdc80cb15">Idac1a2532f8e382bdc7c30317ddb6aafdc80cb15</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6485675">https://chromium-review.googlesource.com/c/chromium/src/+/6485675</a>
+Reviewed-by: Sophie Chang &lt;sophiechang@chromium.org&gt;
+Commit-Queue: Wei4 Wang &lt;wei4.wang@intel.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1451576}
 </pre>
 
 </body>
