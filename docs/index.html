@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1451738/"> 1451738</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/779d33cbe47eacec125c70ceafb643af16c1b3ef">779d33cbe47eacec125c70ceafb643af16c1b3ef</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1451808/"> 1451808</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/21a59b7f19f76cac88057ca88690ba1100e29bf2">21a59b7f19f76cac88057ca88690ba1100e29bf2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1451739/">1451739</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/80f89442c0d0bcc62a49dbc358e4c3ec48f0bd6a">80f89442c0d0bcc62a49dbc358e4c3ec48f0bd6a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1451770/">1451770</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0f9bac08f28194d1a521044c5bf5581b420a3d7f">0f9bac08f28194d1a521044c5bf5581b420a3d7f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   779d33cbe47eacec125c70ceafb643af16c1b3ef
+   21a59b7f19f76cac88057ca88690ba1100e29bf2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/779d33cbe47eacec125c70ceafb643af16c1b3ef">
+    <a href="/chromium/src/+log/21a59b7f19f76cac88057ca88690ba1100e29bf2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/779d33cbe47eacec125c70ceafb643af16c1b3ef.tar.gz">
+    <a href="/chromium/src/+archive/21a59b7f19f76cac88057ca88690ba1100e29bf2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Steinar H. Gunderson &lt;sesse@chromium.org&gt;
+   Dana Fried &lt;dfried@chromium.org&gt;
   </td>
   <td>
-   Fri Apr 25 12:24:39 2025
+   Fri Apr 25 15:01:40 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Apr 25 12:24:39 2025
+   Fri Apr 25 15:01:40 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/779d33cbe47eacec125c70ceafb643af16c1b3ef/">
-    46fe168d8d0f21420509547fe5b45b1299497e68
+   <a href="/chromium/src/+/21a59b7f19f76cac88057ca88690ba1100e29bf2/">
+    0208996b59ba448d4626fb018376cafe05056e7e
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/779d33cbe47eacec125c70ceafb643af16c1b3ef%5E">
-    e0a39ee365a319f377bfe70c1b79ed9064bd8a6b
+   <a href="/chromium/src/+/21a59b7f19f76cac88057ca88690ba1100e29bf2%5E">
+    e7828c0700e91676fa30d1a26a5cb5e5a35626aa
    </a>
    <span>
     [
-    <a href="/chromium/src/+/779d33cbe47eacec125c70ceafb643af16c1b3ef%5E%21/">
+    <a href="/chromium/src/+/21a59b7f19f76cac88057ca88690ba1100e29bf2%5E%21/">
      diff
     </a>
     ]
@@ -179,34 +179,23 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make \r and \f abort strings in lazy CSS parsing.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Level Up] Password save recovery promo
 
-We already had code to make a raw \n inside strings abort
-lazy CSS parsing (since they are an edge case that count as
-an immediate end quote). However, it turns out that \f and \r
-have the same behavior and need to be treated the same;
-otherwise, we could find the wrong ending point for blocks
-that contained such anomalies.
+Shows when the user logs into a site that they have selected "Never save
+passwords for this site".
 
-We use slightly different strategies for the three SIMD paths
-we have; SSE2 uses three comparisons and OR (we don't have
-anything much better, and this path is only taken by old/slow
-machines anyway), AVX2 uses a shuffle-and-compare, and NEON
-uses just a single shuffle (which we can do because its
-shuffle-index-out-of-bounds behavior is more favorable than
-on x86 for this case).
+Reminds them that they are not saving passwords and says how they can
+change that.
 
-This is a reland with a fix for 32-bit Arm, which doesn't have
-full 16-element shuffles.
+Follow-ups probably include UI changes to better differentiate between
+the "never" state, the "not saved" state, and the "saved" state.
 
-Fixed: 406036299
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I16c8c27b4d9255318273e05def4d242c55a53ffe">I16c8c27b4d9255318273e05def4d242c55a53ffe</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6491527">https://chromium-review.googlesource.com/c/chromium/src/+/6491527</a>
-Commit-Queue: Steinar H Gunderson &lt;sesse@chromium.org&gt;
-Reviewed-by: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Auto-Submit: Steinar H Gunderson &lt;sesse@chromium.org&gt;
-Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1451738}
+Bug: 411441888, 413644558
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7d2334a15576b3a5723c0d21780f344e5a61f496">I7d2334a15576b3a5723c0d21780f344e5a61f496</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6484191">https://chromium-review.googlesource.com/c/chromium/src/+/6484191</a>
+Reviewed-by: Eshwar Stalin &lt;estalin@chromium.org&gt;
+Commit-Queue: Dana Fried &lt;dfried@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1451808}
 </pre>
 
 </body>
