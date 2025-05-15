@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1460573/"> 1460573</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/619ea1538196518a495a72c330666eb13a5f9d70">619ea1538196518a495a72c330666eb13a5f9d70</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1460649/"> 1460649</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/deb5fe01beba5fcd843fce7d903f57e295090174">deb5fe01beba5fcd843fce7d903f57e295090174</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1460566/">1460566</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/629e5274d1aa037d9c2291fffa68d126f05cebb1">629e5274d1aa037d9c2291fffa68d126f05cebb1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1460647/">1460647</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f3188c4dec8b2dec4f7a35de1790a0081719795a">f3188c4dec8b2dec4f7a35de1790a0081719795a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   619ea1538196518a495a72c330666eb13a5f9d70
+   deb5fe01beba5fcd843fce7d903f57e295090174
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/619ea1538196518a495a72c330666eb13a5f9d70">
+    <a href="/chromium/src/+log/deb5fe01beba5fcd843fce7d903f57e295090174">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/619ea1538196518a495a72c330666eb13a5f9d70.tar.gz">
+    <a href="/chromium/src/+archive/deb5fe01beba5fcd843fce7d903f57e295090174.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Thomas Thrainer &lt;thomasth@google.com&gt;
+   Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
   </td>
   <td>
-   Thu May 15 09:10:02 2025
+   Thu May 15 12:22:49 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 15 09:10:02 2025
+   Thu May 15 12:22:49 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/619ea1538196518a495a72c330666eb13a5f9d70/">
-    96da1d028dd5767395336fd140db9f1e069a9b10
+   <a href="/chromium/src/+/deb5fe01beba5fcd843fce7d903f57e295090174/">
+    0f6b1574a6de865d8912513afdb6e08fa0042582
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/619ea1538196518a495a72c330666eb13a5f9d70%5E">
-    e1b5b3f8df00a6130b2f4252d968b6e37a247819
+   <a href="/chromium/src/+/deb5fe01beba5fcd843fce7d903f57e295090174%5E">
+    118d864f8f33acaedb1995d02396120bf3b04672
    </a>
    <span>
     [
-    <a href="/chromium/src/+/619ea1538196518a495a72c330666eb13a5f9d70%5E%21/">
+    <a href="/chromium/src/+/deb5fe01beba5fcd843fce7d903f57e295090174%5E%21/">
      diff
     </a>
     ]
@@ -179,26 +179,25 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make LocalRecoveryFactor's account scoped
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Restrict timeline-scope to &lt;dashed-ident&gt;
 
-<a href="https://crrev.com/c/6521707">https://crrev.com/c/6521707</a> allows PhysicalDeviceRecoveryFactor and
-ICloudKeychainRecoveryFactor to be account scoped - i.e. they're only
-created if there is a primary account.
+Apparently, timeline-scope was neglected when we made the decision
+to make timeline names dashed idents; it still accepts non-dashed
+idents in Blink.
 
-Similarly, both local recovery factors now require a non-null
-TrustedVaultThrottlingConnection during creation.
+This CL aligns our behavior with the spec, and also with Safari.
 
-Those changes allow various simplifications in
-StandaloneTrustedVaultBackend, PhysicalDeviceRecoveryFactor and
-ICloudKeychainRecoveryFactor.
+I'm confident that this bugfix has ~zero compat risk, since both
+scroll timeline names and view timeline names only accept dashed idents.
+In other words, if there are cases of timeline-scope:undashed out there,
+they cannot match any named timelines.
 
-Bug: 415292351, 409488087
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iddfed35919050136a9c22542dec2f1f968acb160">Iddfed35919050136a9c22542dec2f1f968acb160</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6509013">https://chromium-review.googlesource.com/c/chromium/src/+/6509013</a>
-Commit-Queue: Thomas Thrainer &lt;thomasth@google.com&gt;
-Reviewed-by: Adem Derinel &lt;derinel@google.com&gt;
-Reviewed-by: Maksim Moskvitin &lt;mmoskvitin@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1460573}
+Fixed: 417852971
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I67af3515e5307af2d667d41f7427e1d4806c92b1">I67af3515e5307af2d667d41f7427e1d4806c92b1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6552115">https://chromium-review.googlesource.com/c/chromium/src/+/6552115</a>
+Reviewed-by: Kevin Ellis &lt;kevers@chromium.org&gt;
+Commit-Queue: Anders Hartvoll Ruud &lt;andruud@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1460649}
 </pre>
 
 </body>
