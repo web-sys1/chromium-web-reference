@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1460519/"> 1460519</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6e96e774e9f68a46fda8a44bc4ed951e83367e12">6e96e774e9f68a46fda8a44bc4ed951e83367e12</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1460573/"> 1460573</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/619ea1538196518a495a72c330666eb13a5f9d70">619ea1538196518a495a72c330666eb13a5f9d70</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1460491/">1460491</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7a600be1417d797bf248b8fa7ae35bb1d444eb73">7a600be1417d797bf248b8fa7ae35bb1d444eb73</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1460566/">1460566</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/629e5274d1aa037d9c2291fffa68d126f05cebb1">629e5274d1aa037d9c2291fffa68d126f05cebb1</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6e96e774e9f68a46fda8a44bc4ed951e83367e12
+   619ea1538196518a495a72c330666eb13a5f9d70
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6e96e774e9f68a46fda8a44bc4ed951e83367e12">
+    <a href="/chromium/src/+log/619ea1538196518a495a72c330666eb13a5f9d70">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6e96e774e9f68a46fda8a44bc4ed951e83367e12.tar.gz">
+    <a href="/chromium/src/+archive/619ea1538196518a495a72c330666eb13a5f9d70.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kent Tamura &lt;tkent@chromium.org&gt;
+   Thomas Thrainer &lt;thomasth@google.com&gt;
   </td>
   <td>
-   Thu May 15 05:57:49 2025
+   Thu May 15 09:10:02 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 15 05:57:49 2025
+   Thu May 15 09:10:02 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6e96e774e9f68a46fda8a44bc4ed951e83367e12/">
-    80a03062f0a9ce11b5e67d23a166450977b299a9
+   <a href="/chromium/src/+/619ea1538196518a495a72c330666eb13a5f9d70/">
+    96da1d028dd5767395336fd140db9f1e069a9b10
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6e96e774e9f68a46fda8a44bc4ed951e83367e12%5E">
-    a82b813fa801a68cdf38deccd7c6700c2816490f
+   <a href="/chromium/src/+/619ea1538196518a495a72c330666eb13a5f9d70%5E">
+    e1b5b3f8df00a6130b2f4252d968b6e37a247819
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6e96e774e9f68a46fda8a44bc4ed951e83367e12%5E%21/">
+    <a href="/chromium/src/+/619ea1538196518a495a72c330666eb13a5f9d70%5E%21/">
      diff
     </a>
     ]
@@ -179,30 +179,26 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Textarea: Improve typing performance by reducing `value` creation
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make LocalRecoveryFactor's account scoped
 
-Every typing in a textarea built the `value` string four times.
-  1. UpdateValue() call in SubtreeHasChanged()
-  2. IsInnerEditorValueEmpty() call in UpdatePlaceholderVisibility()
-  3. InnerEditorValue() call in SubtreeHasChanged()
-  4. CachedTextInputInfo::EnsureCached()
+<a href="https://crrev.com/c/6521707">https://crrev.com/c/6521707</a> allows PhysicalDeviceRecoveryFactor and
+ICloudKeychainRecoveryFactor to be account scoped - i.e. they're only
+created if there is a primary account.
 
-We can use Value() for 2, 3 and 4.
+Similarly, both local recovery factors now require a non-null
+TrustedVaultThrottlingConnection during creation.
 
-- Add TRACE_EVENT0() to HTMLTextAreaElement::SubtreeHasChanged(), which
-  can be slow.
+Those changes allow various simplifications in
+StandaloneTrustedVaultBackend, PhysicalDeviceRecoveryFactor and
+ICloudKeychainRecoveryFactor.
 
-- Use ComputeValue() in TextControlElement::InnerEditorValue().
-  ComputeValue() is faster than the existing code with StringBuilder.
-
-This CL reduces 5.9ms of typing lag in a textarea with 23k paragraphs.
-
-Bug: 414858401
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia0abbaf46a1ca67b070b115bb1fac3f1fd97fb5d">Ia0abbaf46a1ca67b070b115bb1fac3f1fd97fb5d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6549795">https://chromium-review.googlesource.com/c/chromium/src/+/6549795</a>
-Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Commit-Queue: Kent Tamura &lt;tkent@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1460519}
+Bug: 415292351, 409488087
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iddfed35919050136a9c22542dec2f1f968acb160">Iddfed35919050136a9c22542dec2f1f968acb160</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6509013">https://chromium-review.googlesource.com/c/chromium/src/+/6509013</a>
+Commit-Queue: Thomas Thrainer &lt;thomasth@google.com&gt;
+Reviewed-by: Adem Derinel &lt;derinel@google.com&gt;
+Reviewed-by: Maksim Moskvitin &lt;mmoskvitin@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1460573}
 </pre>
 
 </body>
