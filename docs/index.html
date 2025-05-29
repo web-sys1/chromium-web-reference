@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1467078/"> 1467078</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4357c4ab9dd4418af769901b77b5d6960bc9502e">4357c4ab9dd4418af769901b77b5d6960bc9502e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1467172/"> 1467172</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2d9ba65be939973009beee8f386fc4251aa44af7">2d9ba65be939973009beee8f386fc4251aa44af7</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1467069/">1467069</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/56b50200b2ced2a5789d7d1d258983efb70367be">56b50200b2ced2a5789d7d1d258983efb70367be</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1467141/">1467141</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0ef3ace1f4dab8d1d2c8a72b7050ca90c8a38574">0ef3ace1f4dab8d1d2c8a72b7050ca90c8a38574</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4357c4ab9dd4418af769901b77b5d6960bc9502e
+   2d9ba65be939973009beee8f386fc4251aa44af7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4357c4ab9dd4418af769901b77b5d6960bc9502e">
+    <a href="/chromium/src/+log/2d9ba65be939973009beee8f386fc4251aa44af7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4357c4ab9dd4418af769901b77b5d6960bc9502e.tar.gz">
+    <a href="/chromium/src/+archive/2d9ba65be939973009beee8f386fc4251aa44af7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Xi Han &lt;hanxi@google.com&gt;
+   Vladimir Levin &lt;vmpstr@chromium.org&gt;
   </td>
   <td>
-   Thu May 29 18:02:43 2025
+   Thu May 29 20:59:56 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu May 29 18:02:43 2025
+   Thu May 29 20:59:56 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4357c4ab9dd4418af769901b77b5d6960bc9502e/">
-    968b054f9fb3af3b9dfbe7ec166987cfeb9472ba
+   <a href="/chromium/src/+/2d9ba65be939973009beee8f386fc4251aa44af7/">
+    d87b0330c6a22b9f9de0578c0d0826bc2aa5fb69
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4357c4ab9dd4418af769901b77b5d6960bc9502e%5E">
-    e003768630df908fa81b54ea457ce59c4b8e1306
+   <a href="/chromium/src/+/2d9ba65be939973009beee8f386fc4251aa44af7%5E">
+    8ddef9fd723d71095b20c27f1dc242707693fa6d
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4357c4ab9dd4418af769901b77b5d6960bc9502e%5E%21/">
+    <a href="/chromium/src/+/2d9ba65be939973009beee8f386fc4251aa44af7%5E%21/">
      diff
     </a>
     ]
@@ -179,17 +179,22 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[AppIntegration] Fix crash in CCT onPause().
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">VT: Don't block rendering if we don't have a document frame.
 
-The crash was due to mTab is null. Adding a null check to prevent the
-crash.
+Blocking rendering relies on checking if we're the local root. However,
+if there is no frame (startup/teardown) then that check crashes instead.
 
-Bug: 421138230
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If4dc54d9408a429d151a3456358bb5e6ec5d49ff">If4dc54d9408a429d151a3456358bb5e6ec5d49ff</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6603117">https://chromium-review.googlesource.com/c/chromium/src/+/6603117</a>
-Commit-Queue: Xi Han &lt;hanxi@chromium.org&gt;
-Reviewed-by: Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1467078}
+Avoid this by not blocking rendering if there is no frame.
+
+R=skobes@chromium.org
+
+Test: clusterfuzz doesn't have a reliable repro, so not including test
+Bug: 419361216
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id3e09e2262d07e6bd503dc553353c729ab2de5a0">Id3e09e2262d07e6bd503dc553353c729ab2de5a0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6604798">https://chromium-review.googlesource.com/c/chromium/src/+/6604798</a>
+Reviewed-by: Steve Kobes &lt;skobes@chromium.org&gt;
+Commit-Queue: Vladimir Levin &lt;vmpstr@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1467172}
 </pre>
 
 </body>
