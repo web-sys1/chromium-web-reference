@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1468481/"> 1468481</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4db12c586d118f51a2f274d5e521f3a8c17dc578">4db12c586d118f51a2f274d5e521f3a8c17dc578</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1468510/"> 1468510</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3955c7bfd6366b110d27efdc12b0f764ebac41e2">3955c7bfd6366b110d27efdc12b0f764ebac41e2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1468479/">1468479</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fe731696ea79b86f5a72bf2b357afaff3da6b826">fe731696ea79b86f5a72bf2b357afaff3da6b826</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1468495/">1468495</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/571a36858d67de0269b8c6e17cc76d1b0714bd11">571a36858d67de0269b8c6e17cc76d1b0714bd11</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4db12c586d118f51a2f274d5e521f3a8c17dc578
+   3955c7bfd6366b110d27efdc12b0f764ebac41e2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4db12c586d118f51a2f274d5e521f3a8c17dc578">
+    <a href="/chromium/src/+log/3955c7bfd6366b110d27efdc12b0f764ebac41e2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4db12c586d118f51a2f274d5e521f3a8c17dc578.tar.gz">
+    <a href="/chromium/src/+archive/3955c7bfd6366b110d27efdc12b0f764ebac41e2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Elias Homsi &lt;eliashomsi@google.com&gt;
+   Kyra Seevers &lt;kyraseevers@chromium.org&gt;
   </td>
   <td>
-   Tue Jun 03 01:29:42 2025
+   Tue Jun 03 02:47:15 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jun 03 01:29:42 2025
+   Tue Jun 03 02:47:15 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4db12c586d118f51a2f274d5e521f3a8c17dc578/">
-    20d9a85e9664c20ea7bb993ab6548d45aec1155b
+   <a href="/chromium/src/+/3955c7bfd6366b110d27efdc12b0f764ebac41e2/">
+    37764c3befdc572a1bfbac36e6b08fea3b7de120
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4db12c586d118f51a2f274d5e521f3a8c17dc578%5E">
-    9dd8ca8ea19bd5b3450cbb13e3cd5aa746b0da26
+   <a href="/chromium/src/+/3955c7bfd6366b110d27efdc12b0f764ebac41e2%5E">
+    eab6dc222f535f33932a9b407b5ebb418cfd2503
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4db12c586d118f51a2f274d5e521f3a8c17dc578%5E%21/">
+    <a href="/chromium/src/+/3955c7bfd6366b110d27efdc12b0f764ebac41e2%5E%21/">
      diff
     </a>
     ]
@@ -179,22 +179,29 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add metric to record printed page size
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Removing kPartitionVisitedLinkDatabase references in code
 
-This CL adds a metric to record the size of pages to be printed to be scanned by content analysis. This allows us to monitor the size of printed pages that are being scanned to verify if we need to increase the supported size beyond 50 MB.
+This flag was used in multi-arm experiments but is currently disabled by
+default and will never be launched. It does not control any
+functionality that is not currently enabled by
+kPartitionVisitedLinkDatabaseWithSelfLinks.
 
-The maximum metric value is set to 500 MB and it's sampled with 50 buckets.
+There are small alterations to test suites where this flag was used to
+construct various test modes. In history_browsertest and
+visitedlink_unittest, I removed the test modes entirely and just enabled
+partitioning since there are no longer various levels of partitioning
+(just one - with self links).
 
-Chromium CL: crrev.com/c/5033960
-Bug: 417992384
+This is Part 2 of 3 of its removal - we need to remove any references to
+the flag before removing the flag itself according to:
+<a href="https://chromium.googlesource.com/chromium/src/+/HEAD/docs/how_to_add_your_feature_flag.md.">https://chromium.googlesource.com/chromium/src/+/HEAD/docs/how_to_add_your_feature_flag.md.</a>
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iac02e22a93b1593b948d76e5580f9e8528c0bec1">Iac02e22a93b1593b948d76e5580f9e8528c0bec1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6612224">https://chromium-review.googlesource.com/c/chromium/src/+/6612224</a>
-Reviewed-by: Nancy Xiao &lt;nancylanxiao@google.com&gt;
-Auto-Submit: Elias Homsi &lt;eliashomsi@google.com&gt;
-Reviewed-by: Owen Min &lt;zmin@chromium.org&gt;
-Commit-Queue: Elias Homsi &lt;eliashomsi@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1468481}
+Bug: 421314624
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7b233049982dee591f72a70094a4ff6a0af443f1">I7b233049982dee591f72a70094a4ff6a0af443f1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6604625">https://chromium-review.googlesource.com/c/chromium/src/+/6604625</a>
+Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
+Commit-Queue: Kyra Seevers &lt;kyraseevers@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1468510}
 </pre>
 
 </body>
