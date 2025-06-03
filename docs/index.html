@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1468510/"> 1468510</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3955c7bfd6366b110d27efdc12b0f764ebac41e2">3955c7bfd6366b110d27efdc12b0f764ebac41e2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1468530/"> 1468530</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/25b9c974de7bd4ffffe1efa46514d013c911d64d">25b9c974de7bd4ffffe1efa46514d013c911d64d</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1468495/">1468495</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/571a36858d67de0269b8c6e17cc76d1b0714bd11">571a36858d67de0269b8c6e17cc76d1b0714bd11</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1468527/">1468527</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/537a53743e2c4289705d2750b0fab9588eefe12e">537a53743e2c4289705d2750b0fab9588eefe12e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3955c7bfd6366b110d27efdc12b0f764ebac41e2
+   25b9c974de7bd4ffffe1efa46514d013c911d64d
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3955c7bfd6366b110d27efdc12b0f764ebac41e2">
+    <a href="/chromium/src/+log/25b9c974de7bd4ffffe1efa46514d013c911d64d">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3955c7bfd6366b110d27efdc12b0f764ebac41e2.tar.gz">
+    <a href="/chromium/src/+archive/25b9c974de7bd4ffffe1efa46514d013c911d64d.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Kyra Seevers &lt;kyraseevers@chromium.org&gt;
+   Thomas Lukaszewicz &lt;tluk@chromium.org&gt;
   </td>
   <td>
-   Tue Jun 03 02:47:15 2025
+   Tue Jun 03 05:46:13 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jun 03 02:47:15 2025
+   Tue Jun 03 05:46:13 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3955c7bfd6366b110d27efdc12b0f764ebac41e2/">
-    37764c3befdc572a1bfbac36e6b08fea3b7de120
+   <a href="/chromium/src/+/25b9c974de7bd4ffffe1efa46514d013c911d64d/">
+    73c52b7194cb0360d75a6070ac1ee50f1f03fc9d
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3955c7bfd6366b110d27efdc12b0f764ebac41e2%5E">
-    eab6dc222f535f33932a9b407b5ebb418cfd2503
+   <a href="/chromium/src/+/25b9c974de7bd4ffffe1efa46514d013c911d64d%5E">
+    9900f3af90e012baf388efc0d03d6d6b6e540446
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3955c7bfd6366b110d27efdc12b0f764ebac41e2%5E%21/">
+    <a href="/chromium/src/+/25b9c974de7bd4ffffe1efa46514d013c911d64d%5E%21/">
      diff
     </a>
     ]
@@ -179,29 +179,21 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Removing kPartitionVisitedLinkDatabase references in code
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Move ClientDestroyedWidget to DesktopWindowTreeHostWin
 
-This flag was used in multi-arm experiments but is currently disabled by
-default and will never be launched. It does not control any
-functionality that is not currently enabled by
-kPartitionVisitedLinkDatabaseWithSelfLinks.
+This CL moves the ClientDestroyedWidget() interface from
+BrowserDesktopWindowTreeHost to DesktopWindowTreeHost. This
+allows invalidation of Widget-specific state on all window tree
+host subclasses, not just the Browser specific subclasses.
 
-There are small alterations to test suites where this flag was used to
-construct various test modes. In history_browsertest and
-visitedlink_unittest, I removed the test modes entirely and just enabled
-partitioning since there are no longer various levels of partitioning
-(just one - with self links).
+This is purely a refactor with no intended behavioral changes.
 
-This is Part 2 of 3 of its removal - we need to remove any references to
-the flag before removing the flag itself according to:
-<a href="https://chromium.googlesource.com/chromium/src/+/HEAD/docs/how_to_add_your_feature_flag.md.">https://chromium.googlesource.com/chromium/src/+/HEAD/docs/how_to_add_your_feature_flag.md.</a>
-
-Bug: 421314624
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7b233049982dee591f72a70094a4ff6a0af443f1">I7b233049982dee591f72a70094a4ff6a0af443f1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6604625">https://chromium-review.googlesource.com/c/chromium/src/+/6604625</a>
-Reviewed-by: Nico Weber &lt;thakis@chromium.org&gt;
-Commit-Queue: Kyra Seevers &lt;kyraseevers@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1468510}
+Bug: 413168662
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I48fd8a76e19535a5bd7cf0a14a787c774e8447af">I48fd8a76e19535a5bd7cf0a14a787c774e8447af</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6615157">https://chromium-review.googlesource.com/c/chromium/src/+/6615157</a>
+Reviewed-by: Keren Zhu &lt;kerenzhu@chromium.org&gt;
+Commit-Queue: Tom Lukaszewicz &lt;tluk@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1468530}
 </pre>
 
 </body>
