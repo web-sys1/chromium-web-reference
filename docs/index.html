@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1472791/"> 1472791</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e1c036e5b3d5b677aa2b22fd86258e226e58fffd">e1c036e5b3d5b677aa2b22fd86258e226e58fffd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1472817/"> 1472817</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/971b24795de9efbfe1877255c2aa5db849bb23a6">971b24795de9efbfe1877255c2aa5db849bb23a6</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1472786/">1472786</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e9c110526d605693c3deeec1e53caa66d25a2610">e9c110526d605693c3deeec1e53caa66d25a2610</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1472815/">1472815</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/24d9b359a8aadd4df93afa996c3c21c3a3c0facd">24d9b359a8aadd4df93afa996c3c21c3a3c0facd</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e1c036e5b3d5b677aa2b22fd86258e226e58fffd
+   971b24795de9efbfe1877255c2aa5db849bb23a6
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e1c036e5b3d5b677aa2b22fd86258e226e58fffd">
+    <a href="/chromium/src/+log/971b24795de9efbfe1877255c2aa5db849bb23a6">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e1c036e5b3d5b677aa2b22fd86258e226e58fffd.tar.gz">
+    <a href="/chromium/src/+archive/971b24795de9efbfe1877255c2aa5db849bb23a6.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Foromo Daniel Soromou &lt;koretadaniel@chromium.org&gt;
+   Jun Ishiguro &lt;junis@google.com&gt;
   </td>
   <td>
-   Thu Jun 12 01:21:13 2025
+   Thu Jun 12 03:01:42 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jun 12 01:21:13 2025
+   Thu Jun 12 03:01:42 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e1c036e5b3d5b677aa2b22fd86258e226e58fffd/">
-    a64ce22d81edd17d67e96428aa0860650b3769fc
+   <a href="/chromium/src/+/971b24795de9efbfe1877255c2aa5db849bb23a6/">
+    bc24568199d44f221a1fb6bb1086bf4b43e9c08f
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e1c036e5b3d5b677aa2b22fd86258e226e58fffd%5E">
-    85d76a19e0b8825898397effc5b460a4a9174706
+   <a href="/chromium/src/+/971b24795de9efbfe1877255c2aa5db849bb23a6%5E">
+    631c4ac33ecb617e41e5934f2b6697c974208bc7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e1c036e5b3d5b677aa2b22fd86258e226e58fffd%5E%21/">
+    <a href="/chromium/src/+/971b24795de9efbfe1877255c2aa5db849bb23a6%5E%21/">
      diff
     </a>
     ]
@@ -179,23 +179,26 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add container for subclasses of InfoBarView to add children to
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Shutdown ChromeBrowserPolicyConnector before TaskEnvironment is deleted
 
-Adds a dedicated `content_container_` view that spans the full infobar
-and receives every child supplied by concrete infobar implementations.
-Because the close button is now added **after** this container, it
-naturally stays at the end of the child list—removing the
-`ReorderChildView()` call previously issued on each new child. This both
-simplifies the hierarchy management and avoids pointless work during
-`ViewHierarchyChanged`.
+ChromeBrowserPolicyConnector::Shutdown() must be called while ThreadPool
+is active. Currently, TestingBrowserProcess does the shutdown on
+SetLocalState(nullptr) as a workaround. For tests where this does not
+work, we manually call ShutdownBrowserPolicyConnector() on TearDown()
+of test fixtures.
 
-Bug: 330923783
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I68f5227e3fe0d11d547422fe886af9d717bae7e4">I68f5227e3fe0d11d547422fe886af9d717bae7e4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6632793">https://chromium-review.googlesource.com/c/chromium/src/+/6632793</a>
-Reviewed-by: Eshwar Stalin &lt;estalin@chromium.org&gt;
-Commit-Queue: Daniel Soromou &lt;koretadaniel@chromium.org&gt;
-Reviewed-by: David Pennington &lt;dpenning@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1472791}
+This CL uses TaskEnvironment::DestructionObserver for
+TestingBrowserProcess to shutdown objects before TaskEnvironment is
+destroyed. This also removes the manual calls of
+ShutdownBrowserPolicyConnector() as it is no longer needed.
+
+Bug: 422039036
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3c8a9d884ec60dc712815db937d4ac1c8932e2ad">I3c8a9d884ec60dc712815db937d4ac1c8932e2ad</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6615384">https://chromium-review.googlesource.com/c/chromium/src/+/6615384</a>
+Commit-Queue: Jun Ishiguro &lt;junis@google.com&gt;
+Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
+Reviewed-by: Dana Fried &lt;dfried@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1472817}
 </pre>
 
 </body>
