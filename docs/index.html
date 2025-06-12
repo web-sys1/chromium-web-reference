@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1472817/"> 1472817</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/971b24795de9efbfe1877255c2aa5db849bb23a6">971b24795de9efbfe1877255c2aa5db849bb23a6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1472853/"> 1472853</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f71d981d2e657151554714ab467d41b92a1471ad">f71d981d2e657151554714ab467d41b92a1471ad</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1472815/">1472815</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/24d9b359a8aadd4df93afa996c3c21c3a3c0facd">24d9b359a8aadd4df93afa996c3c21c3a3c0facd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1472854/">1472854</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/517a198421a303c0af0cd3851db9cb997ece790b">517a198421a303c0af0cd3851db9cb997ece790b</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   971b24795de9efbfe1877255c2aa5db849bb23a6
+   f71d981d2e657151554714ab467d41b92a1471ad
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/971b24795de9efbfe1877255c2aa5db849bb23a6">
+    <a href="/chromium/src/+log/f71d981d2e657151554714ab467d41b92a1471ad">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/971b24795de9efbfe1877255c2aa5db849bb23a6.tar.gz">
+    <a href="/chromium/src/+archive/f71d981d2e657151554714ab467d41b92a1471ad.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jun Ishiguro &lt;junis@google.com&gt;
+   Minoru Chikamune &lt;chikamune@chromium.org&gt;
   </td>
   <td>
-   Thu Jun 12 03:01:42 2025
+   Thu Jun 12 05:42:34 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jun 12 03:01:42 2025
+   Thu Jun 12 05:42:34 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/971b24795de9efbfe1877255c2aa5db849bb23a6/">
-    bc24568199d44f221a1fb6bb1086bf4b43e9c08f
+   <a href="/chromium/src/+/f71d981d2e657151554714ab467d41b92a1471ad/">
+    69f006d7f89c49bb8563ec747eb785bc03fd3340
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/971b24795de9efbfe1877255c2aa5db849bb23a6%5E">
-    631c4ac33ecb617e41e5934f2b6697c974208bc7
+   <a href="/chromium/src/+/f71d981d2e657151554714ab467d41b92a1471ad%5E">
+    4ffcb169e14a47d7470904d0969ab650d790b79a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/971b24795de9efbfe1877255c2aa5db849bb23a6%5E%21/">
+    <a href="/chromium/src/+/f71d981d2e657151554714ab467d41b92a1471ad%5E%21/">
      diff
     </a>
     ]
@@ -179,26 +179,21 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Shutdown ChromeBrowserPolicyConnector before TaskEnvironment is deleted
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactoring: Moves BindStorageControl() from ServiceWorkerContextWrapper to ServiceWorkerRegistry
 
-ChromeBrowserPolicyConnector::Shutdown() must be called while ThreadPool
-is active. Currently, TestingBrowserProcess does the shutdown on
-SetLocalState(nullptr) as a workaround. For tests where this does not
-work, we manually call ShutdownBrowserPolicyConnector() on TearDown()
-of test fixtures.
+The BindStorageControl() function has been located in
+ServiceWorkerContextWrapper class. But this function is a storage
+related function. I think this function should belong to
+ServiceWorkerRegistry class. This CL moves BindStorageControl() function
+from ServiceWorkerContextWrapper to ServiceWorkerRegistry.
 
-This CL uses TaskEnvironment::DestructionObserver for
-TestingBrowserProcess to shutdown objects before TaskEnvironment is
-destroyed. This also removes the manual calls of
-ShutdownBrowserPolicyConnector() as it is no longer needed.
-
-Bug: 422039036
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3c8a9d884ec60dc712815db937d4ac1c8932e2ad">I3c8a9d884ec60dc712815db937d4ac1c8932e2ad</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6615384">https://chromium-review.googlesource.com/c/chromium/src/+/6615384</a>
-Commit-Queue: Jun Ishiguro &lt;junis@google.com&gt;
-Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
-Reviewed-by: Dana Fried &lt;dfried@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1472817}
+Bug: 421530699
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic9889cc2e7e3c024c356a87d2c35699c9c0d57ef">Ic9889cc2e7e3c024c356a87d2c35699c9c0d57ef</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6630129">https://chromium-review.googlesource.com/c/chromium/src/+/6630129</a>
+Reviewed-by: Shunya Shishido &lt;sisidovski@chromium.org&gt;
+Reviewed-by: Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
+Commit-Queue: Minoru Chikamune &lt;chikamune@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1472853}
 </pre>
 
 </body>
