@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1477096/"> 1477096</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0731989573383a3bf1fc3bfe9648599a79353902">0731989573383a3bf1fc3bfe9648599a79353902</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1477118/"> 1477118</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c8111d5d605d669b1a6616df216dc310d88d1024">c8111d5d605d669b1a6616df216dc310d88d1024</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1477096/">1477096</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/0731989573383a3bf1fc3bfe9648599a79353902">0731989573383a3bf1fc3bfe9648599a79353902</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1477116/">1477116</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1389009c3c31c2265d4140b7e1a62dc9e815d4b1">1389009c3c31c2265d4140b7e1a62dc9e815d4b1</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   0731989573383a3bf1fc3bfe9648599a79353902
+   c8111d5d605d669b1a6616df216dc310d88d1024
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/0731989573383a3bf1fc3bfe9648599a79353902">
+    <a href="/chromium/src/+log/c8111d5d605d669b1a6616df216dc310d88d1024">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/0731989573383a3bf1fc3bfe9648599a79353902.tar.gz">
+    <a href="/chromium/src/+archive/c8111d5d605d669b1a6616df216dc310d88d1024.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Eliot Courtney &lt;edcourtney@google.com&gt;
+   HuanPo Lin &lt;robertlin@chromium.org&gt;
   </td>
   <td>
-   Mon Jun 23 03:09:51 2025
+   Mon Jun 23 06:19:44 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jun 23 03:09:51 2025
+   Mon Jun 23 06:19:44 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/0731989573383a3bf1fc3bfe9648599a79353902/">
-    c64e76f5f8f2a1d631983b8697f626618086ead7
+   <a href="/chromium/src/+/c8111d5d605d669b1a6616df216dc310d88d1024/">
+    bf0eec01aaee30716ee1c70be15fd7450a6071a1
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/0731989573383a3bf1fc3bfe9648599a79353902%5E">
-    c313d9b6d87a063d176e5756652817f05cb361a9
+   <a href="/chromium/src/+/c8111d5d605d669b1a6616df216dc310d88d1024%5E">
+    7018a9aa0e473ed9715ddf370076c0c7b5139b5c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/0731989573383a3bf1fc3bfe9648599a79353902%5E%21/">
+    <a href="/chromium/src/+/c8111d5d605d669b1a6616df216dc310d88d1024%5E%21/">
      diff
     </a>
     ]
@@ -179,28 +179,22 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Guard additional members with locking in ScreenCapture
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">preload: Fix prerender doesn't work with same urls with different target_hint
 
-This CL modifies mNativeDestructionLock to have an additional
-responsibility of synchronizing access to members that need to be
-accessed on the background thread and the desktop capturer thread. In
-upcoming CLs, the members which this CL adds GuardedBy to will need to
-be accessed by both threads. For example, when starting capture, the
-MediaProjection API can call into MediaProjection.Callback very soon,
-even before ScreenCapture#startCapture finishes.
+Currently, PrerendererImpl::PrerenderInfo doesn't consider target_hint
+and only push one prerender at a time in
+`PrerendererImpl::ProcessCandidatesForPrerender`. This CL makes
+`PrerendererImpl::ProcessCandidatesForPrerender` push one prerender per
+target_hint value, and updates the dedup methods in
+`PrerendererImpl::MaybePrerender` to avoid deduplicating prerenders with
+a same url but different target_hint.
 
-Also, in following CLs to e.g. handle resizing/rotating of the capture,
-the code becomes more complex so it's nice to have the locking
-programmatically checked.
-
-Bug: 352187279
-Test: CQ
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I04013bc1086784a06c67a51928467a2a24f2f9ce">I04013bc1086784a06c67a51928467a2a24f2f9ce</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6637392">https://chromium-review.googlesource.com/c/chromium/src/+/6637392</a>
-Commit-Queue: Eliot Courtney &lt;edcourtney@chromium.org&gt;
-Reviewed-by: Calder Kitagawa &lt;ckitagawa@chromium.org&gt;
-Reviewed-by: David Trainor &lt;dtrainor@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1477096}
+Bug: 422441209
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icf58f5be3739fe788d47272e08cf584d60cc5cca">Icf58f5be3739fe788d47272e08cf584d60cc5cca</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6636534">https://chromium-review.googlesource.com/c/chromium/src/+/6636534</a>
+Commit-Queue: Huanpo Lin &lt;robertlin@chromium.org&gt;
+Reviewed-by: Hiroki Nakagawa &lt;nhiroki@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1477118}
 </pre>
 
 </body>
