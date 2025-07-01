@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1480868/"> 1480868</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9c93c65a8bee46d68b2e67742ade14b3497efe5e">9c93c65a8bee46d68b2e67742ade14b3497efe5e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1480918/"> 1480918</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d9bed3af448363a21a5eb2098c6d34dbc3b6306c">d9bed3af448363a21a5eb2098c6d34dbc3b6306c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1480870/">1480870</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e5eb677d594ad07d109441556592bfd62b9fd3f0">e5eb677d594ad07d109441556592bfd62b9fd3f0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1480914/">1480914</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6e1aa8a36dfc1d5e3e26dfbc85257d86f7095549">6e1aa8a36dfc1d5e3e26dfbc85257d86f7095549</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   9c93c65a8bee46d68b2e67742ade14b3497efe5e
+   d9bed3af448363a21a5eb2098c6d34dbc3b6306c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/9c93c65a8bee46d68b2e67742ade14b3497efe5e">
+    <a href="/chromium/src/+log/d9bed3af448363a21a5eb2098c6d34dbc3b6306c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/9c93c65a8bee46d68b2e67742ade14b3497efe5e.tar.gz">
+    <a href="/chromium/src/+archive/d9bed3af448363a21a5eb2098c6d34dbc3b6306c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Di Wu &lt;diwux@google.com&gt;
+   Abhishek Shanthkumar &lt;abhishek.shanthkumar@microsoft.com&gt;
   </td>
   <td>
-   Tue Jul 01 05:43:12 2025
+   Tue Jul 01 08:37:03 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Jul 01 05:43:12 2025
+   Tue Jul 01 08:37:03 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/9c93c65a8bee46d68b2e67742ade14b3497efe5e/">
-    f275593e3f0e315af4398e3ce049497919185f4b
+   <a href="/chromium/src/+/d9bed3af448363a21a5eb2098c6d34dbc3b6306c/">
+    041d6eebe345212b9ff5041e94bf9c78967306a7
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/9c93c65a8bee46d68b2e67742ade14b3497efe5e%5E">
-    e4c270b6b4b1d8f70bdc5101155e54f4c82312a4
+   <a href="/chromium/src/+/d9bed3af448363a21a5eb2098c6d34dbc3b6306c%5E">
+    b240739bdc5727872a03e1a3560afc5dd24a1ea6
    </a>
    <span>
     [
-    <a href="/chromium/src/+/9c93c65a8bee46d68b2e67742ade14b3497efe5e%5E%21/">
+    <a href="/chromium/src/+/d9bed3af448363a21a5eb2098c6d34dbc3b6306c%5E%21/">
      diff
     </a>
     ]
@@ -179,29 +179,19 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Ash: Fix flaky test LogoutButtonTrayTest.ButtonPressed
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">IDB: Implement cursor prefetch without using Clone()
 
-This test is flaky because it signs the user out and then continues to
-perform actions that require an active user session. This creates an
-invalid state and a race condition, causing the test to fail
-intermittently.
+SQLite cursors cannot be cloned (easily), plus cloning the cursor just
+to save the position is excessive.
+Also includes a drive-by fix to the SQLite index cursor query when
+seeking to a target primary key.
 
-The fix is to re-login the user after the first sign-out action. This
-restores a valid session, allowing the rest of the test to execute
-reliably without changing its original structure.
-
-Additionally, the test is updated to explicitly make the logout button
-visible via the kShowLogoutButtonInTray pref before clicking it, fixing
-a latent bug.
-
-Bug: b:281717553, 306490143
-Test: ash_unittests --gtest_filter=LogoutButtonTrayTest.ButtonPressed
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0159c4c7a96784de3b93aae8438a6a4068d90728">I0159c4c7a96784de3b93aae8438a6a4068d90728</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6659479">https://chromium-review.googlesource.com/c/chromium/src/+/6659479</a>
-Reviewed-by: Xiyuan Xia &lt;xiyuan@chromium.org&gt;
-Commit-Queue: Di Wu &lt;diwux@google.com&gt;
-Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1480868}
+Bug: 419208481
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I80c63b3d256499be61c29152863244c2309142a6">I80c63b3d256499be61c29152863244c2309142a6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6682405">https://chromium-review.googlesource.com/c/chromium/src/+/6682405</a>
+Reviewed-by: Evan Stade &lt;evanstade@microsoft.com&gt;
+Commit-Queue: Abhishek Shanthkumar &lt;abhishek.shanthkumar@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1480918}
 </pre>
 
 </body>
