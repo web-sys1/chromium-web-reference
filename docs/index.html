@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1482426/"> 1482426</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4f926adf0e474c41f6d4cd90bd83df5f148a7595">4f926adf0e474c41f6d4cd90bd83df5f148a7595</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1482448/"> 1482448</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/029b4087fdcce5430071e4db3d4dded426c4f5cf">029b4087fdcce5430071e4db3d4dded426c4f5cf</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1482418/">1482418</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/91c6d52ab9034dc75c00792572115c7bffa21a74">91c6d52ab9034dc75c00792572115c7bffa21a74</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1482444/">1482444</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f016662a4bd40a501ef1d3441f0468740cfe375e">f016662a4bd40a501ef1d3441f0468740cfe375e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   4f926adf0e474c41f6d4cd90bd83df5f148a7595
+   029b4087fdcce5430071e4db3d4dded426c4f5cf
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/4f926adf0e474c41f6d4cd90bd83df5f148a7595">
+    <a href="/chromium/src/+log/029b4087fdcce5430071e4db3d4dded426c4f5cf">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/4f926adf0e474c41f6d4cd90bd83df5f148a7595.tar.gz">
+    <a href="/chromium/src/+archive/029b4087fdcce5430071e4db3d4dded426c4f5cf.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Keren Zhu &lt;kerenzhu@chromium.org&gt;
+   Fergal Daly &lt;fergal@chromium.org&gt;
   </td>
   <td>
-   Fri Jul 04 02:48:12 2025
+   Fri Jul 04 06:12:47 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jul 04 02:48:12 2025
+   Fri Jul 04 06:12:47 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/4f926adf0e474c41f6d4cd90bd83df5f148a7595/">
-    d53b4952ac1b69c02147e755c69d3ff7786cbf58
+   <a href="/chromium/src/+/029b4087fdcce5430071e4db3d4dded426c4f5cf/">
+    d261da6cfb2118d623a4ea2966629b1b9e89623d
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/4f926adf0e474c41f6d4cd90bd83df5f148a7595%5E">
-    ace05613d16492015ca4245437fdd24d7378c1f5
+   <a href="/chromium/src/+/029b4087fdcce5430071e4db3d4dded426c4f5cf%5E">
+    ed04623a668992e5fa58185ab2251c9b072c5465
    </a>
    <span>
     [
-    <a href="/chromium/src/+/4f926adf0e474c41f6d4cd90bd83df5f148a7595%5E%21/">
+    <a href="/chromium/src/+/029b4087fdcce5430071e4db3d4dded426c4f5cf%5E%21/">
      diff
     </a>
     ]
@@ -179,38 +179,47 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">testing: Remove BrowserWidgetFocusSupplier
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Refactor WebUITabStripContainerViewTest to InProcessBrowserTest"
 
-This supplier observes browser window activation. It is no longer needed
-after <a href="https://crrev.com/c/6693572,">https://crrev.com/c/6693572,</a> where the default supplier
-(NativeViewWidgetFocusSupplier) becomes capable of observing the
-activation of *any* widget, including browser window's widgets.
+This reverts commit 31035741e67d8d073007896abfb814288e58c880.
 
-Also fixes views::WidgetTest::GetAllWidgets() so that it actually
-returns all widgets. This was a limitation that would block the removal
-of BrowserWidgetFocusSupplier.
+Reason for revert: Causing consistent failures e.g.
 
-Previously, GetAllWidgets() could not be used in ChromeOS browser tests
-(it would trigger a CHECK). The utility relies on `AuraTestHelper`,
-which is not available in that test environment. Getting a list of all
-root windows on ChromeOS in browser tests requires calling
-ash::Shell::GetAllRootWindows(), but //ui/views cannot depend on //ash,
-otherwise it forms a circular dependency as //ash already depends on
-//ui/views.
+<a href="https://ci.chromium.org/ui/p/chromium/builders/ci/linux-blink-web-tests-force-accessibility-rel/38729/blamelist">https://ci.chromium.org/ui/p/chromium/builders/ci/linux-blink-web-tests-force-accessibility-rel/38729/blamelist</a>
 
-This CL solves the layering difficultly by injecting
-ash::Shell::GetAllRootWindows() as a callback in WidgetTest via a new
-static method, WidgetTest::SetRootWindowProvider(). The callback is
-registered during browser test set up time at a higher layer
-(InProcessBrowserTest::SetUp() in `//chrome`). This makes
-`GetAllWidgets()` universally usable.
+Bug: 417766643
+Original change's description:
+&gt; Refactor WebUITabStripContainerViewTest to InProcessBrowserTest
+&gt;
+&gt; 1. Refactored `WebUITabStripContainerViewTest` and related tests from
+&gt; unit test fixture to `InProcessBrowserTest`.
+&gt;
+&gt; 2. Removed all dependencies on `TestWithBrowserView`.
+&gt;
+&gt; 3. Refactored regression test to use `DevToolsWindowTesting` for real
+&gt; DevTools window creation and verification.
+&gt;
+&gt; 4. Some other useful cleanups.
+&gt;
+&gt; Bug: 417766643
+&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7a6626999ac1304376b1aabbba7c63626b6890d7">I7a6626999ac1304376b1aabbba7c63626b6890d7</a>
+&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6701930">https://chromium-review.googlesource.com/c/chromium/src/+/6701930</a>
+&gt; Commit-Queue: Ho Cheung &lt;hocheung@chromium.org&gt;
+&gt; Reviewed-by: Tom Lukaszewicz &lt;tluk@chromium.org&gt;
+&gt; Reviewed-by: Keren Zhu &lt;kerenzhu@chromium.org&gt;
+&gt; Cr-Commit-Position: refs/heads/main@{#1482433}
 
-Bug: none
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I58495792ba43387c6275da75bd0ec3d61b1eb9cd">I58495792ba43387c6275da75bd0ec3d61b1eb9cd</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6700134">https://chromium-review.googlesource.com/c/chromium/src/+/6700134</a>
-Commit-Queue: Keren Zhu &lt;kerenzhu@chromium.org&gt;
-Reviewed-by: Dana Fried &lt;dfried@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1482426}
+Bug: 417766643
+No-Presubmit: true
+No-Tree-Checks: true
+No-Try: true
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2eb5666ac701d0715fdd7e9a3e6b66daa2c00b59">I2eb5666ac701d0715fdd7e9a3e6b66daa2c00b59</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6704809">https://chromium-review.googlesource.com/c/chromium/src/+/6704809</a>
+Commit-Queue: Fergal Daly &lt;fergal@chromium.org&gt;
+Auto-Submit: Fergal Daly &lt;fergal@chromium.org&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Owners-Override: Fergal Daly &lt;fergal@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1482448}
 </pre>
 
 </body>
