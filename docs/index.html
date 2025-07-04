@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1482409/"> 1482409</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/beac24d3d12ec89563b632a79c6d4fcb0156eaad">beac24d3d12ec89563b632a79c6d4fcb0156eaad</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1482426/"> 1482426</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4f926adf0e474c41f6d4cd90bd83df5f148a7595">4f926adf0e474c41f6d4cd90bd83df5f148a7595</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1482410/">1482410</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fe1dc2d374af0f885e7b05085c22e0a4bcb69c2c">fe1dc2d374af0f885e7b05085c22e0a4bcb69c2c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1482418/">1482418</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/91c6d52ab9034dc75c00792572115c7bffa21a74">91c6d52ab9034dc75c00792572115c7bffa21a74</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   beac24d3d12ec89563b632a79c6d4fcb0156eaad
+   4f926adf0e474c41f6d4cd90bd83df5f148a7595
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/beac24d3d12ec89563b632a79c6d4fcb0156eaad">
+    <a href="/chromium/src/+log/4f926adf0e474c41f6d4cd90bd83df5f148a7595">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/beac24d3d12ec89563b632a79c6d4fcb0156eaad.tar.gz">
+    <a href="/chromium/src/+archive/4f926adf0e474c41f6d4cd90bd83df5f148a7595.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Hayato Ito &lt;hayato@chromium.org&gt;
+   Keren Zhu &lt;kerenzhu@chromium.org&gt;
   </td>
   <td>
-   Fri Jul 04 01:08:14 2025
+   Fri Jul 04 02:48:12 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jul 04 01:08:14 2025
+   Fri Jul 04 02:48:12 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/beac24d3d12ec89563b632a79c6d4fcb0156eaad/">
-    7b2d9437c4ae3c31bf77c7c0dc0afc497fed00d0
+   <a href="/chromium/src/+/4f926adf0e474c41f6d4cd90bd83df5f148a7595/">
+    d53b4952ac1b69c02147e755c69d3ff7786cbf58
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/beac24d3d12ec89563b632a79c6d4fcb0156eaad%5E">
-    0bb060174d7fa24c3d00e013f03648a5c88ca6e8
+   <a href="/chromium/src/+/4f926adf0e474c41f6d4cd90bd83df5f148a7595%5E">
+    ace05613d16492015ca4245437fdd24d7378c1f5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/beac24d3d12ec89563b632a79c6d4fcb0156eaad%5E%21/">
+    <a href="/chromium/src/+/4f926adf0e474c41f6d4cd90bd83df5f148a7595%5E%21/">
      diff
     </a>
     ]
@@ -179,26 +179,38 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use priority-based TaskRunner in URLLoader
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">testing: Remove BrowserWidgetFocusSupplier
 
-This CL updates the URLLoader to use the new priority-based task
-runners.
+This supplier observes browser window activation. It is no longer needed
+after <a href="https://crrev.com/c/6693572,">https://crrev.com/c/6693572,</a> where the default supplier
+(NativeViewWidgetFocusSupplier) becomes capable of observing the
+activation of *any* widget, including browser window's widgets.
 
-This change is guarded by the "url_loader" feature parameter of the
-`NetworkServiceTaskScheduler` feature.
+Also fixes views::WidgetTest::GetAllWidgets() so that it actually
+returns all widgets. This was a limitation that would block the removal
+of BrowserWidgetFocusSupplier.
 
-This is part of a larger effort to migrate the network stack to use the
-new NetworkServiceTaskScheduler, instead of the generic default task
-runner.
+Previously, GetAllWidgets() could not be used in ChromeOS browser tests
+(it would trigger a CHECK). The utility relies on `AuraTestHelper`,
+which is not available in that test environment. Getting a list of all
+root windows on ChromeOS in browser tests requires calling
+ash::Shell::GetAllRootWindows(), but //ui/views cannot depend on //ash,
+otherwise it forms a circular dependency as //ash already depends on
+//ui/views.
 
-Bug: 421051258
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5e05dd2b1b4031c301338fa9df691884621c80f4">I5e05dd2b1b4031c301338fa9df691884621c80f4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6701971">https://chromium-review.googlesource.com/c/chromium/src/+/6701971</a>
-Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
-Reviewed-by: Kouhei Ueno &lt;kouhei@chromium.org&gt;
-Reviewed-by: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
-Commit-Queue: Hayato Ito &lt;hayato@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1482409}
+This CL solves the layering difficultly by injecting
+ash::Shell::GetAllRootWindows() as a callback in WidgetTest via a new
+static method, WidgetTest::SetRootWindowProvider(). The callback is
+registered during browser test set up time at a higher layer
+(InProcessBrowserTest::SetUp() in `//chrome`). This makes
+`GetAllWidgets()` universally usable.
+
+Bug: none
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I58495792ba43387c6275da75bd0ec3d61b1eb9cd">I58495792ba43387c6275da75bd0ec3d61b1eb9cd</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6700134">https://chromium-review.googlesource.com/c/chromium/src/+/6700134</a>
+Commit-Queue: Keren Zhu &lt;kerenzhu@chromium.org&gt;
+Reviewed-by: Dana Fried &lt;dfried@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1482426}
 </pre>
 
 </body>
