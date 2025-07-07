@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1482975/"> 1482975</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1833a5d90d83c620dd6ea1c56bd174f8aea9bb0f">1833a5d90d83c620dd6ea1c56bd174f8aea9bb0f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1483000/"> 1483000</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d996631e9d5c3341ad2d2ded1e6dc45150074764">d996631e9d5c3341ad2d2ded1e6dc45150074764</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1482968/">1482968</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b90a40905b309c10269e1edaaa2552e21fd872bd">b90a40905b309c10269e1edaaa2552e21fd872bd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1482994/">1482994</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f22640914dcfe2d4c6d6d8f7cda069668b66e8e5">f22640914dcfe2d4c6d6d8f7cda069668b66e8e5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   1833a5d90d83c620dd6ea1c56bd174f8aea9bb0f
+   d996631e9d5c3341ad2d2ded1e6dc45150074764
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/1833a5d90d83c620dd6ea1c56bd174f8aea9bb0f">
+    <a href="/chromium/src/+log/d996631e9d5c3341ad2d2ded1e6dc45150074764">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/1833a5d90d83c620dd6ea1c56bd174f8aea9bb0f.tar.gz">
+    <a href="/chromium/src/+archive/d996631e9d5c3341ad2d2ded1e6dc45150074764.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Christopher Cameron &lt;ccameron@chromium.org&gt;
+   Morten Stenshorne &lt;mstensho@chromium.org&gt;
   </td>
   <td>
-   Mon Jul 07 03:14:07 2025
+   Mon Jul 07 06:07:06 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jul 07 03:14:07 2025
+   Mon Jul 07 06:07:06 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/1833a5d90d83c620dd6ea1c56bd174f8aea9bb0f/">
-    015b7ab250d8c342a6ce21736e8ec8bcf5d76b5f
+   <a href="/chromium/src/+/d996631e9d5c3341ad2d2ded1e6dc45150074764/">
+    75a9c65d7ab81fb79bfb92e7da6b623d4a607599
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/1833a5d90d83c620dd6ea1c56bd174f8aea9bb0f%5E">
-    ad89e41c1bcbb3ac25c19945f488fbd59771cb38
+   <a href="/chromium/src/+/d996631e9d5c3341ad2d2ded1e6dc45150074764%5E">
+    739053cc40118bce3f3a6ca89c31612ec4e039e3
    </a>
    <span>
     [
-    <a href="/chromium/src/+/1833a5d90d83c620dd6ea1c56bd174f8aea9bb0f%5E%21/">
+    <a href="/chromium/src/+/d996631e9d5c3341ad2d2ded1e6dc45150074764%5E%21/">
      diff
     </a>
     ]
@@ -179,27 +179,25 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">cc::PaintFlags: Use log2 for HDR headroom
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Deflake editing/pasteboard/data-transfer-items-image-png.html
 
-All various specifications use HDR headroom as log2 of the ratio of peak
-brightness to the brightness of white. In this scheme This means that
-"no headroom" means "headroom 0" means "SDR". It also aligns with the
-concept of stops from photography.
+Failed about 76 out of 1000 times when tested locally.
 
-Historically we often used the ratio of peak brightness to the
-brightness of white (without the log2), and sometimes called that
-headroom.
+Just waiting for the image to load solved most of it, but waiting for
+the iframe to load before pasting is also necessary. Also, don't get
+confused by image load events that fire before the src attribute has
+been set. Insert the element dynamically instead.
 
-This can get confusing, so be consistent that "headroom" be log2 of the
-ratio, starting in cc::PaintFlags::ComputeEffectiveHdrHeadroom. Also add
-a helper in gfx::DisplayColorSpaces.
+Additionally, the ref had a failure rate of about 3 in 10000, due to the
+iframe not being ready. Change it to an image. Probably not the only
+test affected by this, though.
 
-Bug: 428575083
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If5d09ca2da19ff93b0c534ff63775d612c7d9be8">If5d09ca2da19ff93b0c534ff63775d612c7d9be8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6694580">https://chromium-review.googlesource.com/c/chromium/src/+/6694580</a>
-Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
-Commit-Queue: ccameron chromium &lt;ccameron@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1482975}
+Bug: 40492748
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8ee06ff4deaf5a1286cbb7482803b3d6dc544bf1">I8ee06ff4deaf5a1286cbb7482803b3d6dc544bf1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6663802">https://chromium-review.googlesource.com/c/chromium/src/+/6663802</a>
+Reviewed-by: Koji Ishii &lt;kojii@chromium.org&gt;
+Commit-Queue: Morten Stenshorne &lt;mstensho@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1483000}
 </pre>
 
 </body>
