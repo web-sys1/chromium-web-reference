@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1484164/"> 1484164</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/cb1aa794f2682f2881de9ef057348d2f4f83a488">cb1aa794f2682f2881de9ef057348d2f4f83a488</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1484218/"> 1484218</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8190fbfd3df0930558027ce9f80dcabdef3174c5">8190fbfd3df0930558027ce9f80dcabdef3174c5</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1484163/">1484163</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/71a82edac606bb80ee4c691ac071b3e444108e29">71a82edac606bb80ee4c691ac071b3e444108e29</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1484219/">1484219</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d6f282ef2be18e9457b0aea3b5014736e6544729">d6f282ef2be18e9457b0aea3b5014736e6544729</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   cb1aa794f2682f2881de9ef057348d2f4f83a488
+   8190fbfd3df0930558027ce9f80dcabdef3174c5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/cb1aa794f2682f2881de9ef057348d2f4f83a488">
+    <a href="/chromium/src/+log/8190fbfd3df0930558027ce9f80dcabdef3174c5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/cb1aa794f2682f2881de9ef057348d2f4f83a488.tar.gz">
+    <a href="/chromium/src/+archive/8190fbfd3df0930558027ce9f80dcabdef3174c5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Zhengyi Xu &lt;zhengyixu@microsoft.com&gt;
+   Nohemi Fernandez &lt;fernandex@google.com&gt;
   </td>
   <td>
-   Wed Jul 09 06:00:36 2025
+   Wed Jul 09 08:54:38 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Jul 09 06:00:36 2025
+   Wed Jul 09 08:54:38 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/cb1aa794f2682f2881de9ef057348d2f4f83a488/">
-    181255fe6c37337f3f9a84cd0c639e66d35389bb
+   <a href="/chromium/src/+/8190fbfd3df0930558027ce9f80dcabdef3174c5/">
+    2367f10990c314c2b083ff6797dea6cbec4ba04b
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/cb1aa794f2682f2881de9ef057348d2f4f83a488%5E">
-    71a82edac606bb80ee4c691ac071b3e444108e29
+   <a href="/chromium/src/+/8190fbfd3df0930558027ce9f80dcabdef3174c5%5E">
+    a26cbc5ab9849e136ba032ae2c1fa41acfd2beac
    </a>
    <span>
     [
-    <a href="/chromium/src/+/cb1aa794f2682f2881de9ef057348d2f4f83a488%5E%21/">
+    <a href="/chromium/src/+/8190fbfd3df0930558027ce9f80dcabdef3174c5%5E%21/">
      diff
     </a>
     ]
@@ -179,48 +179,20 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[SxS] Update split view visibility in UpdateUIForContents
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS] Modularize attaching tab helpers to Reading Mode web state.
 
-Currently, the split view visibility is only updated when we set the
-WebContents. However, we should note that the layout manager will only
-update the layout if (see `LayoutManagerBase::ApplyLayout`):
-- The parent available size changes
-- The child view is visible
-- The bounds of the child view are not empty.
+Refactors existing code to attach web state tab helpers in
+ReaderModeContentTabHelper so that all actions related to the Reading
+mode web state are compartmentalized and easier to extend for future
+tab helper support.
 
-For the split view, if we switch from a split tab (focused on the split
-tab, with left and right sizes not equal) to a non-split tab, and then
-switch back, the following steps will occur: 1. Because the active tab
-is the split tab, we will swap it to the first view and hide the
-inactive view. 2. When switching back, we will set the `WebContents` and
-set the bounds of both views.
-
-In step 2, during the `UpdateUIForContents` layout, the split view is
-not visible and will have empty bounds. However, thanks to the top
-container separator line (visibility changed and has 1 pixel height),
-the available size changes, so we will still update the split view's
-size to empty before we set the `WebContents` and prevent a re-layout of
-the split view `WebContents`.
-
-But if the available size does not change, the split view will keep the
-old size (original main tab size) and then layout to the correct size
-after we set the WebContents. This will cause the split view WebContents
-to re-layout twice when switching from the non-split tab to the split
-tab.
-
-So this CL ensures the split view visibility is updated before the
-browser view does the first layout, preventing the possible re-layout.
-Also added a test to verify there is no re-layout during tab switching.
-
-Co-authored-by: estalin@chromium.org
-
-Bug: 427608924
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id4fb2eb0aa6fe53aab9ef94821c47f4d67f68841">Id4fb2eb0aa6fe53aab9ef94821c47f4d67f68841</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6669682">https://chromium-review.googlesource.com/c/chromium/src/+/6669682</a>
-Reviewed-by: Eshwar Stalin &lt;estalin@chromium.org&gt;
-Reviewed-by: Dana Fried &lt;dfried@chromium.org&gt;
-Commit-Queue: Zhengyi Xu &lt;zhengyixu@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1484164}
+Bug: 417686222
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6bf5ae7c58720bd48407a8bd1bf8c4201e61c281">I6bf5ae7c58720bd48407a8bd1bf8c4201e61c281</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6709345">https://chromium-review.googlesource.com/c/chromium/src/+/6709345</a>
+Reviewed-by: Quentin Pubert &lt;qpubert@google.com&gt;
+Commit-Queue: Nohemi Fernandez &lt;fernandex@google.com&gt;
+Auto-Submit: Nohemi Fernandez &lt;fernandex@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1484218}
 </pre>
 
 </body>
