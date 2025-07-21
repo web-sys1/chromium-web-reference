@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1489607/"> 1489607</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8f41aa21d2261ba1b0fdbaab59dd6e78cca72ace">8f41aa21d2261ba1b0fdbaab59dd6e78cca72ace</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1489754/"> 1489754</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bd09cab0a9564ca1d3114f7422c9f6281ea6ebdb">bd09cab0a9564ca1d3114f7422c9f6281ea6ebdb</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1489638/">1489638</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/83a0bf8f9d9264c3644d4958a2aca988a6eba05f">83a0bf8f9d9264c3644d4958a2aca988a6eba05f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1489757/">1489757</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/afb1633198e47ffceef82bd413920dd51f41cb8c">afb1633198e47ffceef82bd413920dd51f41cb8c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8f41aa21d2261ba1b0fdbaab59dd6e78cca72ace
+   bd09cab0a9564ca1d3114f7422c9f6281ea6ebdb
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8f41aa21d2261ba1b0fdbaab59dd6e78cca72ace">
+    <a href="/chromium/src/+log/bd09cab0a9564ca1d3114f7422c9f6281ea6ebdb">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8f41aa21d2261ba1b0fdbaab59dd6e78cca72ace.tar.gz">
+    <a href="/chromium/src/+archive/bd09cab0a9564ca1d3114f7422c9f6281ea6ebdb.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Nancy Xiao &lt;nancylanxiao@google.com&gt;
+   David Sanders &lt;dsanders11@ucsbalum.com&gt;
   </td>
   <td>
-   Mon Jul 21 17:02:56 2025
+   Mon Jul 21 20:29:59 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jul 21 17:02:56 2025
+   Mon Jul 21 20:29:59 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8f41aa21d2261ba1b0fdbaab59dd6e78cca72ace/">
-    d8df4cf0dcda10f2635215fb86265c00f47460d2
+   <a href="/chromium/src/+/bd09cab0a9564ca1d3114f7422c9f6281ea6ebdb/">
+    e1bf5cf44f2d723f332d932f8a0aac2eacdd12be
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8f41aa21d2261ba1b0fdbaab59dd6e78cca72ace%5E">
-    a946ad227144300ab8ca18157dac804dc43fc3b8
+   <a href="/chromium/src/+/bd09cab0a9564ca1d3114f7422c9f6281ea6ebdb%5E">
+    961311b0d80cebbba4b189e8d5e0198bd1426590
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8f41aa21d2261ba1b0fdbaab59dd6e78cca72ace%5E%21/">
+    <a href="/chromium/src/+/bd09cab0a9564ca1d3114f7422c9f6281ea6ebdb%5E%21/">
      diff
     </a>
     ]
@@ -179,28 +179,14 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add reporting client null check and event check to the reporting router
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Lower compile-size delta threshold to 250 MiB
 
-Previously the event reporting methods are invoked with the assumption
-that the `reporting_client` has been properly initialized. While it is
-usually true in the real world, the `reporting_client` could be a null
-pointer, if the `RealtimeReportingClientFactory` is not bound to a
-testing factory (i.e. when reporting is not the test focus).
-
-Because `reporting_client`, which, like `safe_browsing_event_router`,
-has the `ServiceIsNULLWhileTesting()` set to true, the null pointer
-issue only surfaces, when we remove the now obsolete safe browsing
-router null check from line 175 in the deep_scanning_utils.
-
-This change is to make sure the reporting router, the wrapper class
-around `reporting_client`, handles the null pointer cases properly.
-
-Fixed: 432679921
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If073d9d3654badc5106c09af3edb6b42511707da">If073d9d3654badc5106c09af3edb6b42511707da</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6775061">https://chromium-review.googlesource.com/c/chromium/src/+/6775061</a>
-Reviewed-by: Dominique Fauteux-Chapleau &lt;domfc@chromium.org&gt;
-Commit-Queue: Nancy Xiao &lt;nancylanxiao@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1489607}
+Bug: 40190002
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibf22f292d77aa59df5c30bb19c88dba9e5bbc2f8">Ibf22f292d77aa59df5c30bb19c88dba9e5bbc2f8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6775735">https://chromium-review.googlesource.com/c/chromium/src/+/6775735</a>
+Commit-Queue: David Sanders &lt;dsanders11@ucsbalum.com&gt;
+Reviewed-by: Erik Staab &lt;estaab@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1489754}
 </pre>
 
 </body>
