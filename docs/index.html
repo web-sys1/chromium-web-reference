@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1491799/"> 1491799</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/64385cd5c914ebab8a34b4a1a3a0478ba63fc345">64385cd5c914ebab8a34b4a1a3a0478ba63fc345</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1491815/"> 1491815</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0c5a9d17d5df794187e18d3dddae34e3714a8788">0c5a9d17d5df794187e18d3dddae34e3714a8788</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1491797/">1491797</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b7e4323856ec949328361530096efa7debee7635">b7e4323856ec949328361530096efa7debee7635</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1491815/">1491815</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0c5a9d17d5df794187e18d3dddae34e3714a8788">0c5a9d17d5df794187e18d3dddae34e3714a8788</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   64385cd5c914ebab8a34b4a1a3a0478ba63fc345
+   0c5a9d17d5df794187e18d3dddae34e3714a8788
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/64385cd5c914ebab8a34b4a1a3a0478ba63fc345">
+    <a href="/chromium/src/+log/0c5a9d17d5df794187e18d3dddae34e3714a8788">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/64385cd5c914ebab8a34b4a1a3a0478ba63fc345.tar.gz">
+    <a href="/chromium/src/+archive/0c5a9d17d5df794187e18d3dddae34e3714a8788.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Chang Liu &lt;changliu1@microsoft.com&gt;
+   David Sanders &lt;dsanders11@ucsbalum.com&gt;
   </td>
   <td>
-   Fri Jul 25 01:54:08 2025
+   Fri Jul 25 03:14:45 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jul 25 01:54:08 2025
+   Fri Jul 25 03:14:45 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/64385cd5c914ebab8a34b4a1a3a0478ba63fc345/">
-    a59af5afd30908d71c4e95f73c07be0ec23f968d
+   <a href="/chromium/src/+/0c5a9d17d5df794187e18d3dddae34e3714a8788/">
+    3c21e295b4cedfbc8444d44d526e589859ef6d05
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/64385cd5c914ebab8a34b4a1a3a0478ba63fc345%5E">
-    c07c367835b382cdb0efdc02169be0ec622aab46
+   <a href="/chromium/src/+/0c5a9d17d5df794187e18d3dddae34e3714a8788%5E">
+    ccbea5e7a57e1e1b39661f1b774f16d2c023c7a5
    </a>
    <span>
     [
-    <a href="/chromium/src/+/64385cd5c914ebab8a34b4a1a3a0478ba63fc345%5E%21/">
+    <a href="/chromium/src/+/0c5a9d17d5df794187e18d3dddae34e3714a8788%5E%21/">
      diff
     </a>
     ]
@@ -179,33 +179,16 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prevent navigation to browsers that are closing
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Do IWYU for reading_list_model_factory.h
 
-This CL fixes an issue where WebContents can be added to a Browser
-that is in the process of closing, leading to improper cleanup and
-potential resource leaks.
+Should save ~106 MiB of compiler input size.
 
-The issue manifests in the following sequence: 1. A Browser window
-starts closing (IsBrowserClosing() becomes true) 2. A navigation
-request(e.g., opening Downloads tab from dialog) attempts to add
-WebContents to that Browser
-3. This leads to a DUMP_WILL_BE_CHECK failure in
-Browser::OnTabInsertedAt
-
-The fix adds an early check in the Navigate() function to prevent
-adding tabs to browsers that are closing. The check is placed
-alongside the existing profile shutdown check for consistency
-and uses IsBrowserClosing() which provides broader coverage than
-is_delete_scheduled() as it becomes true earlier in the
-closing process.
-
-Bug: 40927136
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iedbdd27ebab80ff312b18b261f68b08b793b98db">Iedbdd27ebab80ff312b18b261f68b08b793b98db</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6780027">https://chromium-review.googlesource.com/c/chromium/src/+/6780027</a>
-Reviewed-by: Elly FJ &lt;ellyjones@chromium.org&gt;
-Commit-Queue: Chang Liu &lt;changliu1@microsoft.com&gt;
-Reviewed-by: Dana Fried &lt;dfried@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1491799}
+Bug: 40318405
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie49df87faf170db4b3d605ef8e3b6dfff04a5e7b">Ie49df87faf170db4b3d605ef8e3b6dfff04a5e7b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6784907">https://chromium-review.googlesource.com/c/chromium/src/+/6784907</a>
+Commit-Queue: David Sanders &lt;dsanders11@ucsbalum.com&gt;
+Reviewed-by: Shakti Sahu &lt;shaktisahu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1491815}
 </pre>
 
 </body>
