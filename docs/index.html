@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1493045/"> 1493045</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b117ff2ffb0e78873dd3d80ee748d3dba28edcba">b117ff2ffb0e78873dd3d80ee748d3dba28edcba</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1493233/"> 1493233</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2fce796dd77956a7bfee682dead0bfcf21afbbcf">2fce796dd77956a7bfee682dead0bfcf21afbbcf</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1493051/">1493051</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1208949b285501236d1cc61aa2e3be89c7c1d95c">1208949b285501236d1cc61aa2e3be89c7c1d95c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1493218/">1493218</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d720139371e6c0e555e30d54b48025a22a150e99">d720139371e6c0e555e30d54b48025a22a150e99</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b117ff2ffb0e78873dd3d80ee748d3dba28edcba
+   2fce796dd77956a7bfee682dead0bfcf21afbbcf
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b117ff2ffb0e78873dd3d80ee748d3dba28edcba">
+    <a href="/chromium/src/+log/2fce796dd77956a7bfee682dead0bfcf21afbbcf">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b117ff2ffb0e78873dd3d80ee748d3dba28edcba.tar.gz">
+    <a href="/chromium/src/+archive/2fce796dd77956a7bfee682dead0bfcf21afbbcf.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Stephen McGruer &lt;smcgruer@chromium.org&gt;
+   junwei &lt;junwei.fu@intel.com&gt;
   </td>
   <td>
-   Mon Jul 28 20:24:07 2025
+   Tue Jul 29 01:46:02 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jul 28 20:24:07 2025
+   Tue Jul 29 01:46:02 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b117ff2ffb0e78873dd3d80ee748d3dba28edcba/">
-    b65bea43d7bdccde7e1cc2ed8397c28076a10743
+   <a href="/chromium/src/+/2fce796dd77956a7bfee682dead0bfcf21afbbcf/">
+    89933f3e554f36c74d695e18650b027186956ff7
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b117ff2ffb0e78873dd3d80ee748d3dba28edcba%5E">
-    084ea031937c61a4a0a590759ba70d8cec1570bc
+   <a href="/chromium/src/+/2fce796dd77956a7bfee682dead0bfcf21afbbcf%5E">
+    a67d651c3f7c81bf11fa95ac22c2b09e659b82c8
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b117ff2ffb0e78873dd3d80ee748d3dba28edcba%5E%21/">
+    <a href="/chromium/src/+/2fce796dd77956a7bfee682dead0bfcf21afbbcf%5E%21/">
      diff
     </a>
     ]
@@ -179,39 +179,21 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Extract a credential finder out of SecurePaymentConfirmationAppFactory
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">webnn: Clamp and shift negative indices to positive
 
-This CL refactors SecurePaymentConfirmationAppFactory to extract
-the credential finding logic into a new class,
-SecurePaymentConfirmationCredentialFinder. This simplifies the
-tests for SecurePaymentConfirmationAppFactory, which no longer need
-to care about setting up the underlying user database and/or
-credential store APIs, and will also allow us to more easily change
-the logic for credential finding in the future (e.g., to use *both*
-the credential store APIs and the database together).
+The indices in gather can exceed the boundary of the `axis` dimension of
+input, so add a clamp operation to make sure the value in range of `-N`
+(inclusive) to `N` (exclusive), where `N = input.dimensions[axis]`, and
+shift negative indices to positive with `where(lesser(indices,
+constant(0)), indices, add(indices, constant(input.dimensions[axis])))`.
 
-Changes in SecurePaymentConfirmationAppFactory unittests:
-  - Functionality from test subclasses moved to the top-level
-    SecurePaymentConfirmationAppFactoryTest class.
-  - Tests now use a mock SecurePaymentConfirmationCredentialFinder
-    instead of talking to mock database or authenticators.
-  - Third-party payment bit related tests move to unittests for the
-    new credential finder class.
-  - AppDisabledIfCredentialStoreAPIsUnavailable test changed to be
-    more generic, renamed to AppDisabledIfCredentialFetchingFails.
-  - SecureConfirmationPaymentRequest_PaymentInstrumentDetails moved
-    to the base test class.
-  - Fallback_NoAuthenticator renamed to match its actual
-    implementation, that there is no *user-verifying platform*
-    authenticator available.
-
-Bug: None
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic11849baa0f3fa1b875e9c86c539e88f3d395b03">Ic11849baa0f3fa1b875e9c86c539e88f3d395b03</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6785107">https://chromium-review.googlesource.com/c/chromium/src/+/6785107</a>
-Reviewed-by: Darwin Yang &lt;darwinyang@chromium.org&gt;
-Commit-Queue: Stephen McGruer &lt;smcgruer@chromium.org&gt;
-Reviewed-by: Slobodan Pejic &lt;slobodan@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1493045}
+Bug: 373192621
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib7faee97586eb5083ed47da116ae3d26bbdf8b21">Ib7faee97586eb5083ed47da116ae3d26bbdf8b21</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6773842">https://chromium-review.googlesource.com/c/chromium/src/+/6773842</a>
+Reviewed-by: ningxin hu &lt;ningxin.hu@intel.com&gt;
+Reviewed-by: Reilly Grant &lt;reillyg@chromium.org&gt;
+Commit-Queue: Junwei Fu &lt;junwei.fu@intel.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1493233}
 </pre>
 
 </body>
