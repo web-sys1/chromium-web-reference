@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1497028/"> 1497028</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/99afec4b7d6c392df8904bef06c91a096b75b0a5">99afec4b7d6c392df8904bef06c91a096b75b0a5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1497109/"> 1497109</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/34c45dcd9760e331337881af570dd474ca3678cf">34c45dcd9760e331337881af570dd474ca3678cf</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1497033/">1497033</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bb2c195887ca100d73de96972b6b19f64ca1cd91">bb2c195887ca100d73de96972b6b19f64ca1cd91</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1497133/">1497133</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/468048d19a1bc9f8218a6842556890e91d638096">468048d19a1bc9f8218a6842556890e91d638096</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   99afec4b7d6c392df8904bef06c91a096b75b0a5
+   34c45dcd9760e331337881af570dd474ca3678cf
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/99afec4b7d6c392df8904bef06c91a096b75b0a5">
+    <a href="/chromium/src/+log/34c45dcd9760e331337881af570dd474ca3678cf">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/99afec4b7d6c392df8904bef06c91a096b75b0a5.tar.gz">
+    <a href="/chromium/src/+archive/34c45dcd9760e331337881af570dd474ca3678cf.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Duncan Mercer &lt;mercerd@google.com&gt;
+   Michael Tang &lt;tangm@microsoft.com&gt;
   </td>
   <td>
-   Tue Aug 05 17:50:49 2025
+   Tue Aug 05 19:31:20 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 05 17:50:49 2025
+   Tue Aug 05 19:31:20 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/99afec4b7d6c392df8904bef06c91a096b75b0a5/">
-    c0e5d6caf95044602ff97a2b1cd57a96fee22c46
+   <a href="/chromium/src/+/34c45dcd9760e331337881af570dd474ca3678cf/">
+    d3c65c8487a5c3b2172523d535243cd23c14caf4
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/99afec4b7d6c392df8904bef06c91a096b75b0a5%5E">
-    d6dfd90d9efe68f388c385045f40ea7ca51bdc1a
+   <a href="/chromium/src/+/34c45dcd9760e331337881af570dd474ca3678cf%5E">
+    2c2edfa1bdc9e5627cfc746fde0f7e1ad05a80de
    </a>
    <span>
     [
-    <a href="/chromium/src/+/99afec4b7d6c392df8904bef06c91a096b75b0a5%5E%21/">
+    <a href="/chromium/src/+/34c45dcd9760e331337881af570dd474ca3678cf%5E%21/">
      diff
     </a>
     ]
@@ -179,20 +179,27 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[AIM] Create controller for composebox
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix off-by-one frame issue with EarlyFullScreenVideoOptimization
 
-To follow the structure of the searchbox, creating a
-LensComposeboxController to house state that is specific to the side
-panel instance of the composebox. Might not be needed in the future, but
-we can remove later if so.
+There was an issue with EarlyFullScreenVideoOptimization in which we
+resize the swap chain for full screen after the present. This means that
+the new size won't latch until the subsequent frame. This is normally
+not noticeable except in the first frame case or in the case when a
+video does not present (e.g. when the image does not change).
 
-Bug: 435504019
+This change fixes this by delaying the actual swap chain presentation to
+after TryDisableDesktopPlane. It also moves TryDisableDesktopPlane and
+FinishPresentToSwapChain into PresentToSwapChain to simplify
+SwapChainPresenter's API.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I57436fcfa8a961a396a9fca4b8d65c82459c784e">I57436fcfa8a961a396a9fca4b8d65c82459c784e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6819802">https://chromium-review.googlesource.com/c/chromium/src/+/6819802</a>
-Commit-Queue: Duncan Mercer &lt;mercerd@google.com&gt;
-Reviewed-by: Jason Hu &lt;hujasonx@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1497028}
+This also adds tests to ensure that common cases of entering and exiting
+full screen mode do not regress.
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib32e80909d0e2b3220129ec3987d9ea37adca04d">Ib32e80909d0e2b3220129ec3987d9ea37adca04d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6787419">https://chromium-review.googlesource.com/c/chromium/src/+/6787419</a>
+Commit-Queue: Michael Tang &lt;tangm@microsoft.com&gt;
+Reviewed-by: Rafael Cintron &lt;rafael.cintron@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1497109}
 </pre>
 
 </body>
