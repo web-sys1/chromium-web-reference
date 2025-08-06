@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1497109/"> 1497109</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/34c45dcd9760e331337881af570dd474ca3678cf">34c45dcd9760e331337881af570dd474ca3678cf</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1497300/"> 1497300</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/525c2ec42e6288dc4720f1aa72512eabaa827308">525c2ec42e6288dc4720f1aa72512eabaa827308</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1497133/">1497133</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/468048d19a1bc9f8218a6842556890e91d638096">468048d19a1bc9f8218a6842556890e91d638096</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1497310/">1497310</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3026de1b6c1a7fd15007fe7989cbcebb8c2d4bd5">3026de1b6c1a7fd15007fe7989cbcebb8c2d4bd5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   34c45dcd9760e331337881af570dd474ca3678cf
+   525c2ec42e6288dc4720f1aa72512eabaa827308
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/34c45dcd9760e331337881af570dd474ca3678cf">
+    <a href="/chromium/src/+log/525c2ec42e6288dc4720f1aa72512eabaa827308">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/34c45dcd9760e331337881af570dd474ca3678cf.tar.gz">
+    <a href="/chromium/src/+archive/525c2ec42e6288dc4720f1aa72512eabaa827308.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Michael Tang &lt;tangm@microsoft.com&gt;
+   Keigo Oka &lt;oka@google.com&gt;
   </td>
   <td>
-   Tue Aug 05 19:31:20 2025
+   Wed Aug 06 01:07:51 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Aug 05 19:31:20 2025
+   Wed Aug 06 01:07:51 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/34c45dcd9760e331337881af570dd474ca3678cf/">
-    d3c65c8487a5c3b2172523d535243cd23c14caf4
+   <a href="/chromium/src/+/525c2ec42e6288dc4720f1aa72512eabaa827308/">
+    4507c6bac7592c50e3cf74f2513536b01df597ed
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/34c45dcd9760e331337881af570dd474ca3678cf%5E">
-    2c2edfa1bdc9e5627cfc746fde0f7e1ad05a80de
+   <a href="/chromium/src/+/525c2ec42e6288dc4720f1aa72512eabaa827308%5E">
+    b19091ef1d0d9b8443fa6c9f0b809eb1fdcb40e7
    </a>
    <span>
     [
-    <a href="/chromium/src/+/34c45dcd9760e331337881af570dd474ca3678cf%5E%21/">
+    <a href="/chromium/src/+/525c2ec42e6288dc4720f1aa72512eabaa827308%5E%21/">
      diff
     </a>
     ]
@@ -179,27 +179,19 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix off-by-one frame issue with EarlyFullScreenVideoOptimization
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">java_cpp_enum: Support IS_POSIX and fix a bug on empty line handling
 
-There was an issue with EarlyFullScreenVideoOptimization in which we
-resize the swap chain for full screen after the present. This means that
-the new size won't latch until the subsequent frame. This is normally
-not noticeable except in the first frame case or in the case when a
-video does not present (e.g. when the image does not change).
+- Allow enum to have BUILDFLAG(IS_POSIX) ifdefs in it.
+- Fix a crash bug that happens if an empty line exists before the last
+  ignored ifdefs.
 
-This change fixes this by delaying the actual swap chain presentation to
-after TryDisableDesktopPlane. It also moves TryDisableDesktopPlane and
-FinishPresentToSwapChain into PresentToSwapChain to simplify
-SwapChainPresenter's API.
-
-This also adds tests to ensure that common cases of entering and exiting
-full screen mode do not regress.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib32e80909d0e2b3220129ec3987d9ea37adca04d">Ib32e80909d0e2b3220129ec3987d9ea37adca04d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6787419">https://chromium-review.googlesource.com/c/chromium/src/+/6787419</a>
-Commit-Queue: Michael Tang &lt;tangm@microsoft.com&gt;
-Reviewed-by: Rafael Cintron &lt;rafael.cintron@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1497109}
+Bug: 422035179
+Test: java_cpp_enum_tests.py
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I89d4ec778722b46e07448ad35bf6babb519c7663">I89d4ec778722b46e07448ad35bf6babb519c7663</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6791387">https://chromium-review.googlesource.com/c/chromium/src/+/6791387</a>
+Commit-Queue: Keigo Oka &lt;oka@chromium.org&gt;
+Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1497300}
 </pre>
 
 </body>
