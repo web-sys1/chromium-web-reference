@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1502672/"> 1502672</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/769c578ad6daa45c486326af99d5ff3c1e1baf0b">769c578ad6daa45c486326af99d5ff3c1e1baf0b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1502811/"> 1502811</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/53182ab68dbe848a64e3bcca8a7b8210772556a7">53182ab68dbe848a64e3bcca8a7b8210772556a7</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1502685/">1502685</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/74facf6a6f36259de09c3dd482ac7d18b2f25c63">74facf6a6f36259de09c3dd482ac7d18b2f25c63</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1502811/">1502811</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/53182ab68dbe848a64e3bcca8a7b8210772556a7">53182ab68dbe848a64e3bcca8a7b8210772556a7</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   769c578ad6daa45c486326af99d5ff3c1e1baf0b
+   53182ab68dbe848a64e3bcca8a7b8210772556a7
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/769c578ad6daa45c486326af99d5ff3c1e1baf0b">
+    <a href="/chromium/src/+log/53182ab68dbe848a64e3bcca8a7b8210772556a7">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/769c578ad6daa45c486326af99d5ff3c1e1baf0b.tar.gz">
+    <a href="/chromium/src/+archive/53182ab68dbe848a64e3bcca8a7b8210772556a7.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Matt Menke &lt;mmenke@chromium.org&gt;
+   David Sanders &lt;dsanders11@ucsbalum.com&gt;
   </td>
   <td>
-   Mon Aug 18 14:25:36 2025
+   Mon Aug 18 17:41:50 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 18 14:25:36 2025
+   Mon Aug 18 17:41:50 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/769c578ad6daa45c486326af99d5ff3c1e1baf0b/">
-    c92e87401554eeaa0f29308d3fc8197f504b4761
+   <a href="/chromium/src/+/53182ab68dbe848a64e3bcca8a7b8210772556a7/">
+    b91cf6164a1077297cbc1d58c270f3e16794f53b
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/769c578ad6daa45c486326af99d5ff3c1e1baf0b%5E">
-    991fd9eb67ecc0ba8fac679e22fb12f8dcfbd66c
+   <a href="/chromium/src/+/53182ab68dbe848a64e3bcca8a7b8210772556a7%5E">
+    d4e73355325c78e80d700d8ec3a8955f1de3f320
    </a>
    <span>
     [
-    <a href="/chromium/src/+/769c578ad6daa45c486326af99d5ff3c1e1baf0b%5E%21/">
+    <a href="/chromium/src/+/53182ab68dbe848a64e3bcca8a7b8210772556a7%5E%21/">
      diff
     </a>
     ]
@@ -179,26 +179,18 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove ETSConnectionListener::OnResponseCompletedSuccessfully().
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Forward declare FrameTree in devtools_instrumentation.h
 
-The EmbeddedTestServerConnectionListener method wasn't being used any
-more. I believe it was once used to simulate CONNECT proxy behavior in
-one or two tests, but there are better options for that now, which those
-tests have likely been migrated to using.
+Should save ~141 MiB of compiler input size.
 
-Moreover, the test for it is disabled on ChromeOS due to flake, and is
-likely flaky everywhere (the test sends an HTTP request and expects the
-network stack to keep the socket open, but the request has both
-"Connection: close" and "Connection: keep-alive" - Chrome likely obeys
-the first one). A bit weird that this issue only got the test disabled
-on ChromeOS, but not worth investigating, at this point.
+Adds missing includes and forward decls to fix the build.
 
-Fixed: 40164405
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I00b23b33279cb7121f4fcc94982c0879fa6b98e8">I00b23b33279cb7121f4fcc94982c0879fa6b98e8</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6853926">https://chromium-review.googlesource.com/c/chromium/src/+/6853926</a>
-Reviewed-by: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
-Commit-Queue: mmenke &lt;mmenke@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1502672}
+Bug: 429365675
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie31b3d2218810307499eb221f8904911439c9354">Ie31b3d2218810307499eb221f8904911439c9354</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6855266">https://chromium-review.googlesource.com/c/chromium/src/+/6855266</a>
+Commit-Queue: David Sanders &lt;dsanders11@ucsbalum.com&gt;
+Reviewed-by: Bo Liu &lt;boliu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1502811}
 </pre>
 
 </body>
