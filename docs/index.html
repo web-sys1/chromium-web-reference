@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1502517/"> 1502517</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/21a2270cf02cb89be1aa482844fa54206c13d103">21a2270cf02cb89be1aa482844fa54206c13d103</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1502541/"> 1502541</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/692e31896ab986fb3d673a7b0ee7779533f83293">692e31896ab986fb3d673a7b0ee7779533f83293</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1502516/">1502516</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/220029b64c6d906e7f5c25d2dc04234fba938885">220029b64c6d906e7f5c25d2dc04234fba938885</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1502540/">1502540</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/04c75bf8e676e95617becd195a599e2c24faed85">04c75bf8e676e95617becd195a599e2c24faed85</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   21a2270cf02cb89be1aa482844fa54206c13d103
+   692e31896ab986fb3d673a7b0ee7779533f83293
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/21a2270cf02cb89be1aa482844fa54206c13d103">
+    <a href="/chromium/src/+log/692e31896ab986fb3d673a7b0ee7779533f83293">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/21a2270cf02cb89be1aa482844fa54206c13d103.tar.gz">
+    <a href="/chromium/src/+archive/692e31896ab986fb3d673a7b0ee7779533f83293.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Wangpengqiang &lt;wangpengqiang@bytedance.com&gt;
+   Takashi Sakamoto &lt;tasak@google.com&gt;
   </td>
   <td>
-   Mon Aug 18 03:23:11 2025
+   Mon Aug 18 06:11:53 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 18 03:23:11 2025
+   Mon Aug 18 06:11:53 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/21a2270cf02cb89be1aa482844fa54206c13d103/">
-    e4ec8fda6f26fa718e123594e864f4ddcc16ae51
+   <a href="/chromium/src/+/692e31896ab986fb3d673a7b0ee7779533f83293/">
+    4afe1bae1f66df281713af5b2b1d2547fc4a55c2
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/21a2270cf02cb89be1aa482844fa54206c13d103%5E">
-    220029b64c6d906e7f5c25d2dc04234fba938885
+   <a href="/chromium/src/+/692e31896ab986fb3d673a7b0ee7779533f83293%5E">
+    04c75bf8e676e95617becd195a599e2c24faed85
    </a>
    <span>
     [
-    <a href="/chromium/src/+/21a2270cf02cb89be1aa482844fa54206c13d103%5E%21/">
+    <a href="/chromium/src/+/692e31896ab986fb3d673a7b0ee7779533f83293%5E%21/">
      diff
     </a>
     ]
@@ -179,27 +179,21 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Provide all utilities and single utility choices when sample heap profile.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[PA] Skip HardeningTest.(PoolOffset)MetadataPointerCrashing if PartitionAlloc External Metadata synthetic trial is enabled
 
-If I just want to sample heap profile for all utility processes, I just use
-all process in chrome://flags, or using the command line
- --memlog=utility-and-browser.
+If the trial is enabled, PartitionAlloc External Metadata is randomly
+decided to be enabled or not enabled at the first time when a process
+allocates memory. This makes it difficult to run death test related to
+the feature, because a newly created process for death check might have
+different PartitionAlloc External Metadata configuration. This causes
+(PoolOffset)MetadataPointerCrashing flaky.
 
-If I just want to sample heap profile for one of all utility processes,
-I just use the command line --memlog=utility-sampling,
-don't using any choice in chrome://flags.
-
-Provide all utilities and single utility choices in chrome://flags,
-and provide "--memlog=all-utilities" via command line
-to sample heap profile, Just like renderer process.
-
-Bug: 437807116
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id18a03b2ea00089a67cd5f9b85547ba56c700396">Id18a03b2ea00089a67cd5f9b85547ba56c700396</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6835589">https://chromium-review.googlesource.com/c/chromium/src/+/6835589</a>
-Reviewed-by: Tom Lukaszewicz &lt;tluk@chromium.org&gt;
-Reviewed-by: Siddhartha S &lt;ssid@chromium.org&gt;
-Commit-Queue: Peng Zhou &lt;zhoupeng.1996@bytedance.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1502517}
+Bug: crbug.com/435341877 crbug.com/438847736 crbug.com/438812113
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icc3a224bf497d6c2eb9b8a25b1ab51b0675d27d3">Icc3a224bf497d6c2eb9b8a25b1ab51b0675d27d3</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6852758">https://chromium-review.googlesource.com/c/chromium/src/+/6852758</a>
+Commit-Queue: Takashi Sakamoto &lt;tasak@google.com&gt;
+Reviewed-by: Yuki Shiino &lt;yukishiino@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1502541}
 </pre>
 
 </body>
