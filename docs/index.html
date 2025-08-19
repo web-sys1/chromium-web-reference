@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1502921/"> 1502921</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c2e595b390bf728c7f974203caba5b3267512746">c2e595b390bf728c7f974203caba5b3267512746</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1503090/"> 1503090</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ec14392dbdfb61570b3aac8ed21058c771630777">ec14392dbdfb61570b3aac8ed21058c771630777</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1502894/">1502894</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d250e29b0c437079e355655861d5af4dd880ffa8">d250e29b0c437079e355655861d5af4dd880ffa8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1503085/">1503085</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8786b253fdcee394246367aad147bb7c7c8bccfa">8786b253fdcee394246367aad147bb7c7c8bccfa</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c2e595b390bf728c7f974203caba5b3267512746
+   ec14392dbdfb61570b3aac8ed21058c771630777
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c2e595b390bf728c7f974203caba5b3267512746">
+    <a href="/chromium/src/+log/ec14392dbdfb61570b3aac8ed21058c771630777">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c2e595b390bf728c7f974203caba5b3267512746.tar.gz">
+    <a href="/chromium/src/+archive/ec14392dbdfb61570b3aac8ed21058c771630777.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Maks Orlovich &lt;morlovich@chromium.org&gt;
+   Mark Schillaci &lt;mschillaci@google.com&gt;
   </td>
   <td>
-   Mon Aug 18 20:23:27 2025
+   Tue Aug 19 01:08:46 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Aug 18 20:23:27 2025
+   Tue Aug 19 01:08:46 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c2e595b390bf728c7f974203caba5b3267512746/">
-    08cdee20488398ee5a049af3157d8ffa673f71e4
+   <a href="/chromium/src/+/ec14392dbdfb61570b3aac8ed21058c771630777/">
+    56cfb5857b48be1a27714101ea7b034f62cee2a1
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c2e595b390bf728c7f974203caba5b3267512746%5E">
-    11f67a88d1752c34fab672aeb4dfce70ceb49d1d
+   <a href="/chromium/src/+/ec14392dbdfb61570b3aac8ed21058c771630777%5E">
+    2baea2139b9110b23e7910caaebe00a0e1048948
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c2e595b390bf728c7f974203caba5b3267512746%5E%21/">
+    <a href="/chromium/src/+/ec14392dbdfb61570b3aac8ed21058c771630777%5E%21/">
      diff
     </a>
     ]
@@ -179,23 +179,26 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Webium: fix the "Received message for unknown endpoint 2" error
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Bookmarks Bar] Update TopToolbarOverlayMediator to account for Bookmarks Bar
 
-This was caused by calling tabsApi_.getTabs() twice, both in
-loadTabStripModel_ and registerTabChangeCallbacks_. The associated
-receiver for the loadTabStripModel_ result's tabSnapshot.stream would
-never be connected, and so messages sent to it would produce this
-warning.
+With this CL we add a temporary workaround to offset the Toolbar layer
+by the Bookmarks Bar height in order to get a correct positioning. The
+Toolbar was written to always be the bottom of the Top Controls, but
+this is incorrect now that we have the Bookmarks Bar present. A full fix
+of this will require the TopControlsRefactor to be implemented so we can
+control offsets via the TopControlsStacker, and ideally the snapshot
+bounds update work to be completed as well. To unblock the Bookmarks
+Bar, we add a Supplier to the TopToolbarOverlayMediator so it can get
+the current bookmarks bar height so that the Toolbar can adjust its
+offset.
 
-Instead, use a single call for both ops. This should also avoid
-potential races.
-
-Bug: 393144165
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibccff0b62525e4d91072c01af4287e1fa41b4716">Ibccff0b62525e4d91072c01af4287e1fa41b4716</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6857384">https://chromium-review.googlesource.com/c/chromium/src/+/6857384</a>
-Reviewed-by: Keren Zhu &lt;kerenzhu@chromium.org&gt;
-Commit-Queue: Maks Orlovich &lt;morlovich@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1502921}
+Bug: 430058443
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic4e70f3ee582a3319855d466341509f55ae1b3ba">Ic4e70f3ee582a3319855d466341509f55ae1b3ba</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6853854">https://chromium-review.googlesource.com/c/chromium/src/+/6853854</a>
+Commit-Queue: Mark Schillaci &lt;mschillaci@google.com&gt;
+Reviewed-by: Wenyu Fu &lt;wenyufu@chromium.org&gt;
+Reviewed-by: Sinan Sahin &lt;sinansahin@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1503090}
 </pre>
 
 </body>
