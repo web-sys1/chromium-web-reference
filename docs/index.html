@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1506918/"> 1506918</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/bf26f2e70651a910ec3ef217c4f13e0b403e628b">bf26f2e70651a910ec3ef217c4f13e0b403e628b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1506962/"> 1506962</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7834243852f6ea480fd2378172b3967a79a124f5">7834243852f6ea480fd2378172b3967a79a124f5</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1506921/">1506921</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9258035c68157b85142cfe033048ddfc996a9067">9258035c68157b85142cfe033048ddfc996a9067</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1506963/">1506963</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f6bf634e70333a37b00bcbfc3749830f53015a02">f6bf634e70333a37b00bcbfc3749830f53015a02</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   bf26f2e70651a910ec3ef217c4f13e0b403e628b
+   7834243852f6ea480fd2378172b3967a79a124f5
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/bf26f2e70651a910ec3ef217c4f13e0b403e628b">
+    <a href="/chromium/src/+log/7834243852f6ea480fd2378172b3967a79a124f5">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/bf26f2e70651a910ec3ef217c4f13e0b403e628b.tar.gz">
+    <a href="/chromium/src/+archive/7834243852f6ea480fd2378172b3967a79a124f5.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Shunya Shishido &lt;sisidovski@chromium.org&gt;
+   Ivan Pavlotsky &lt;ivan.pavlotsky@lge.com&gt;
   </td>
   <td>
-   Wed Aug 27 05:24:54 2025
+   Wed Aug 27 08:32:14 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Aug 27 05:24:54 2025
+   Wed Aug 27 08:32:14 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/bf26f2e70651a910ec3ef217c4f13e0b403e628b/">
-    9c013f04144e66bd5aedb0f4268a09d80da66e5d
+   <a href="/chromium/src/+/7834243852f6ea480fd2378172b3967a79a124f5/">
+    5a7a0477ee10c8369f056e11775aa11eb568c00c
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/bf26f2e70651a910ec3ef217c4f13e0b403e628b%5E">
-    ee0e2f2afce03661013a068bff13790fb6488504
+   <a href="/chromium/src/+/7834243852f6ea480fd2378172b3967a79a124f5%5E">
+    2d98297dd6f0ef764785eb650acbdc9d5a64186b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/bf26f2e70651a910ec3ef217c4f13e0b403e628b%5E%21/">
+    <a href="/chromium/src/+/7834243852f6ea480fd2378172b3967a79a124f5%5E%21/">
      diff
     </a>
     ]
@@ -179,44 +179,19 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix missing metrics for Service Worker Synthetic Responses
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Disable Xclang and target-feature flags for non-Clang builds
 
-This change fixes a bug where page load metrics (e.g., FCP, LCP) were
-not being recorded for pages served via Service Worker Synthetic
-Responses.
+Xclang and target-feature build flags are Clang-specific. But some
+parties need to build Chromium with GCC or another compilers. So, let's
+add is_clang check for these flags.
 
-The metric recording in `ServiceWorkerPageLoadMetricsObserver` often
-depended on the page being fully service worker controlled
-(`kLoadingBehaviorServiceWorkerControlled`). However, synthetic
-responses can be served even without a fetch handler, meaning the page
-isn't "controlled" in the traditional sense, causing metrics to be
-missed.
-
-This patch addresses this by:
-
-1.  **Ensuring Correct Flagging:** Modifying `DocumentLoader` to always
-    set the `kLoadingBehaviorServiceWorkerSyntheticResponse` flag when a
-    synthetic response is used, independent of the controller mode.
-2.  **Updating Observer Logic:** Introducing helper functions in
-    `ServiceWorkerPageLoadMetricsObserver` to check for *either*
-    service worker control or the presence of the synthetic response
-    flag (`IsServiceWorkerControlledOrSyntheticResponseEnabled`). This
-    ensures metric recording is triggered correctly for synthetic
-    response cases.
-
-The unit test mistakenly set `kLoadingBehaviorServiceWorkerControlled`
-in the last CL and that introduced this bug. So added CHECK to the
-`IsServiceWorkerSyntheticResponseEnabled()` in ServiceWorkerPLMO to
-ensure the correct expectation. Ideally, it's better to have a browser
-test for the synthetic response page load metrics, but it requires
-another complicated test set up. Let me leave it in a future CL.
-
-Bug: 40240298, 352578800
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I624fcc4b9f6e4d7216d4dfa2dcc57c628094b48c">I624fcc4b9f6e4d7216d4dfa2dcc57c628094b48c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6887127">https://chromium-review.googlesource.com/c/chromium/src/+/6887127</a>
-Reviewed-by: Yoshisato Yanagisawa &lt;yyanagisawa@chromium.org&gt;
-Commit-Queue: Shunya Shishido &lt;sisidovski@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1506918}
+Bug: 40565911
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2859eb85d0fe02a10f2474aea0f4769b103c9800">I2859eb85d0fe02a10f2474aea0f4769b103c9800</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6863010">https://chromium-review.googlesource.com/c/chromium/src/+/6863010</a>
+Reviewed-by: Keishi Hattori &lt;keishi@chromium.org&gt;
+Reviewed-by: Takashi Sakamoto &lt;tasak@google.com&gt;
+Commit-Queue: Ivan Pavlotsky &lt;ivan.pavlotsky@lge.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1506962}
 </pre>
 
 </body>
