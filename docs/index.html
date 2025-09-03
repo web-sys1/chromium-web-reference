@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1510099/"> 1510099</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6a614d9fb0a364b47b89786257c5399a1a62b0c7">6a614d9fb0a364b47b89786257c5399a1a62b0c7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1510157/"> 1510157</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ae1ebb9eaf7583633a4a4d2e5c4bec08ce0a8c4e">ae1ebb9eaf7583633a4a4d2e5c4bec08ce0a8c4e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1510087/">1510087</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9820e313b5f003b91e38bb06d08600197a1eadbe">9820e313b5f003b91e38bb06d08600197a1eadbe</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1510145/">1510145</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/be0fbe1aeb5c86396661abeed7e6a53380007211">be0fbe1aeb5c86396661abeed7e6a53380007211</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6a614d9fb0a364b47b89786257c5399a1a62b0c7
+   ae1ebb9eaf7583633a4a4d2e5c4bec08ce0a8c4e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6a614d9fb0a364b47b89786257c5399a1a62b0c7">
+    <a href="/chromium/src/+log/ae1ebb9eaf7583633a4a4d2e5c4bec08ce0a8c4e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6a614d9fb0a364b47b89786257c5399a1a62b0c7.tar.gz">
+    <a href="/chromium/src/+archive/ae1ebb9eaf7583633a4a4d2e5c4bec08ce0a8c4e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Christoph Schwering &lt;schwering@google.com&gt;
+   Andrii Natiahlyi &lt;natiahlyi@google.com&gt;
   </td>
   <td>
-   Wed Sep 03 09:01:12 2025
+   Wed Sep 03 12:17:19 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Sep 03 09:01:12 2025
+   Wed Sep 03 12:17:19 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6a614d9fb0a364b47b89786257c5399a1a62b0c7/">
-    f97921f369944e79eda709d4f423cfea53bef939
+   <a href="/chromium/src/+/ae1ebb9eaf7583633a4a4d2e5c4bec08ce0a8c4e/">
+    06cfd479df6c169ac6191b73fc7b4b2131c14861
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6a614d9fb0a364b47b89786257c5399a1a62b0c7%5E">
-    edf59808d1165198ed4cecc638065a0272517f3f
+   <a href="/chromium/src/+/ae1ebb9eaf7583633a4a4d2e5c4bec08ce0a8c4e%5E">
+    379b47dc5a2d82d2f8745aa89bcd0f54de60ab3e
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6a614d9fb0a364b47b89786257c5399a1a62b0c7%5E%21/">
+    <a href="/chromium/src/+/ae1ebb9eaf7583633a4a4d2e5c4bec08ce0a8c4e%5E%21/">
      diff
     </a>
     ]
@@ -179,43 +179,17 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Autofill] Refactor AsyncContext and async ML calls
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add documentation for the password importer
 
-This CL refactors the asynchronous ML model calls in AutofillManager
-in two ways:
+Explain the functionality and state machine of the `passwords-importer`
+component via a file overview comment.
 
-1. It restructures ApplyMlModel().
-
-   Old behaviour: ApplyMlModel() was called twice, once synchronously
-   and once asynchronously, to run the Autofill and the PWM models,
-   respectively. The second call was done by the first one.
-
-   New behaviour: RunMlModels() is called asynchronously. It
-   triggers two asynchronous model runs, for Autofill and PWM.
-
-   Motivation: The threading through of the AsyncContext is easier to
-   follow with new structure. The new name is to avoid confusion: after
-   the followup CLs, RunMlModels() won't "apply" the predictions to the
-   FormStructure (that'll be done in ParseFormsAsyncCommon()).
-
-2. It threads through an AsyncContext through all asynchronous calls.
-
-   Old behaviour: Only the heuristics used AsyncContext.
-
-   Future behaviour: Also the ML predictions will be stored in
-   AsyncContext. AsyncContext::current_stage indicates whether we're
-   running the Autofill or the PWM model.
-
-   Motivation: In a followup CL, the final response callback
-   (update_cache()) will apply the heuristic and ML predictions to
-   the FormStructure.
-
-Bug: 427787155, 40232021
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I573edb00f927094dff582e1c5f33906708e01384">I573edb00f927094dff582e1c5f33906708e01384</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6903967">https://chromium-review.googlesource.com/c/chromium/src/+/6903967</a>
-Reviewed-by: Jan Keitel &lt;jkeitel@google.com&gt;
-Commit-Queue: Christoph Schwering &lt;schwering@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1510099}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0c7b60a5e47cf43ecf59d472b546b56cc57d8c3b">I0c7b60a5e47cf43ecf59d472b546b56cc57d8c3b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6904498">https://chromium-review.googlesource.com/c/chromium/src/+/6904498</a>
+Auto-Submit: Andrii Natiahlyi &lt;natiahlyi@google.com&gt;
+Commit-Queue: Andrii Natiahlyi &lt;natiahlyi@google.com&gt;
+Reviewed-by: Adem Derinel &lt;derinel@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1510157}
 </pre>
 
 </body>
