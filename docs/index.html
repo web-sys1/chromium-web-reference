@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1514635/"> 1514635</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b0df5d550527d8d709333b52cf164fd3c2ac5cd8">b0df5d550527d8d709333b52cf164fd3c2ac5cd8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1514678/"> 1514678</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d30cbc86d8c06feb188d3ef2e9dcdfd7a1fcccff">d30cbc86d8c06feb188d3ef2e9dcdfd7a1fcccff</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1514640/">1514640</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5a37321dab31c37ce885a34cb6facaca869896ac">5a37321dab31c37ce885a34cb6facaca869896ac</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1514677/">1514677</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a0857bc5fc46c520d7fe71beb1b0a0d7b0e60136">a0857bc5fc46c520d7fe71beb1b0a0d7b0e60136</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b0df5d550527d8d709333b52cf164fd3c2ac5cd8
+   d30cbc86d8c06feb188d3ef2e9dcdfd7a1fcccff
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b0df5d550527d8d709333b52cf164fd3c2ac5cd8">
+    <a href="/chromium/src/+log/d30cbc86d8c06feb188d3ef2e9dcdfd7a1fcccff">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b0df5d550527d8d709333b52cf164fd3c2ac5cd8.tar.gz">
+    <a href="/chromium/src/+archive/d30cbc86d8c06feb188d3ef2e9dcdfd7a1fcccff.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Shin Kawamura &lt;kawasin@google.com&gt;
+   François Degros &lt;fdegros@chromium.org&gt;
   </td>
   <td>
-   Fri Sep 12 02:16:52 2025
+   Fri Sep 12 06:15:17 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Sep 12 02:16:52 2025
+   Fri Sep 12 06:15:17 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b0df5d550527d8d709333b52cf164fd3c2ac5cd8/">
-    a816fb0d91d10fc6b9645dbc7ceef1c69ee9db34
+   <a href="/chromium/src/+/d30cbc86d8c06feb188d3ef2e9dcdfd7a1fcccff/">
+    28a3748ade33db4709837abb1c2d7b973e7801f7
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b0df5d550527d8d709333b52cf164fd3c2ac5cd8%5E">
-    fafea061cd0909caeed800aca7181b4a8f31319a
+   <a href="/chromium/src/+/d30cbc86d8c06feb188d3ef2e9dcdfd7a1fcccff%5E">
+    a0857bc5fc46c520d7fe71beb1b0a0d7b0e60136
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b0df5d550527d8d709333b52cf164fd3c2ac5cd8%5E%21/">
+    <a href="/chromium/src/+/d30cbc86d8c06feb188d3ef2e9dcdfd7a1fcccff%5E%21/">
      diff
     </a>
     ]
@@ -179,44 +179,18 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor ChildProcessConnection to use a controller for bindings
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Disable two failing tests on Windows
 
-This change introduces a new abstraction layer,
-`ChildServiceConnectionController`, to manage the service binding logic
-within `ChildProcessConnection`.
+ExtensionTelemetryServiceBrowserTest.DetectsAndReportsSearchHijackingSignal
+ServiceWorkerMessagingTest.RemoveWithPending
 
-The primary motivation is to support a new upcoming Android API, which
-allows modifying the flags of an existing service binding. This avoids
-the need for the previous approach of maintaining multiple parallel
-bindings (strong, visible, waived, and not-perceptible) for different
-priority levels.
-
-The refactoring includes:
-
-- A `ChildServiceConnectionController` interface defining the contract
-  for managing service bindings.
-- `LegacyChildServiceConnectionController`, which encapsulates the original
-  logic of managing multiple bindings for older Android versions.
-- `ChildProcessConnection` is updated to delegate all binding management
-  to an instance of the controller.
-- State and logic related to binding management (e.g. binding counts,
-  binding state, re-binding logic) have been moved from
-  `ChildProcessConnection` into the controller implementations.
-
-In this change, the logic of
-`ChildProcessConnection.retireBindingsAndBindFallback()` is slightly
-changed. It used to abort binding connections if any of connection fails
-to bind. However, since the abort is a kind of optimization for the rare
-failure case, we can omit it and simply call
-`ChildServiceConnectionController.add{level}Binding()` to reconstruct
-the binding counters.
-
-Bug: 436110326
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iac0cf6daf917543f18931f555a09663db907f748">Iac0cf6daf917543f18931f555a09663db907f748</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6922420">https://chromium-review.googlesource.com/c/chromium/src/+/6922420</a>
-Commit-Queue: Shin Kawamura &lt;kawasin@google.com&gt;
-Reviewed-by: Bo Liu &lt;boliu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1514635}
+Bug: 444572871
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I10f5e9c0df25edd45c09ac34fd63e8fb9a60affd">I10f5e9c0df25edd45c09ac34fd63e8fb9a60affd</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6942292">https://chromium-review.googlesource.com/c/chromium/src/+/6942292</a>
+Reviewed-by: Cassy Chun-Crogan &lt;cassycc@google.com&gt;
+Commit-Queue: François Degros &lt;fdegros@chromium.org&gt;
+Owners-Override: François Degros &lt;fdegros@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1514678}
 </pre>
 
 </body>
