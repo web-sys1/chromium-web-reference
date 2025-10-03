@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1524608/"> 1524608</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/db8b9c0794851e01172ee1f36ff046f6e6a021f2">db8b9c0794851e01172ee1f36ff046f6e6a021f2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1524655/"> 1524655</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb5989ef1f68c15d199981af4c779761f07dd680">fb5989ef1f68c15d199981af4c779761f07dd680</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1524608/">1524608</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/db8b9c0794851e01172ee1f36ff046f6e6a021f2">db8b9c0794851e01172ee1f36ff046f6e6a021f2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1524655/">1524655</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fb5989ef1f68c15d199981af4c779761f07dd680">fb5989ef1f68c15d199981af4c779761f07dd680</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   db8b9c0794851e01172ee1f36ff046f6e6a021f2
+   fb5989ef1f68c15d199981af4c779761f07dd680
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/db8b9c0794851e01172ee1f36ff046f6e6a021f2">
+    <a href="/chromium/src/+log/fb5989ef1f68c15d199981af4c779761f07dd680">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/db8b9c0794851e01172ee1f36ff046f6e6a021f2.tar.gz">
+    <a href="/chromium/src/+archive/fb5989ef1f68c15d199981af4c779761f07dd680.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Jun Ishiguro &lt;junis@google.com&gt;
+   Peng Zhou &lt;zhoupeng.1996@bytedance.com&gt;
   </td>
   <td>
-   Fri Oct 03 05:40:24 2025
+   Fri Oct 03 08:35:36 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Oct 03 05:40:24 2025
+   Fri Oct 03 08:35:36 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/db8b9c0794851e01172ee1f36ff046f6e6a021f2/">
-    ec796c8e6877d4c34756faa84285150535601ca2
+   <a href="/chromium/src/+/fb5989ef1f68c15d199981af4c779761f07dd680/">
+    7b432ac5ec4541bd1af2837124402b0ea3f5ea43
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/db8b9c0794851e01172ee1f36ff046f6e6a021f2%5E">
-    15a05f8007e001ea81e87ec676e7af90cb3130ab
+   <a href="/chromium/src/+/fb5989ef1f68c15d199981af4c779761f07dd680%5E">
+    c4a7a38831727e0151fc394153653fac20341e72
    </a>
    <span>
     [
-    <a href="/chromium/src/+/db8b9c0794851e01172ee1f36ff046f6e6a021f2%5E%21/">
+    <a href="/chromium/src/+/fb5989ef1f68c15d199981af4c779761f07dd680%5E%21/">
      diff
     </a>
     ]
@@ -179,36 +179,29 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Reland "Always start ArcApps publisher in ArcAppTest"
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">TextFragmentHandler: only generate for non-empty visible text range
 
-This is a reland of commit 638a867363610f8452057985c92ab44512d53ae3
+Update the check before starting text fragment generation to ensure the
+selection corresponds to a visible, non-empty text range within the
+frame. This prevents generating links when the selection contains only
+invisible or empty text. Consider the case:
+&lt;input type="file"&gt;
+&lt;script&gt;
+  document.execCommand('selectall');
+&lt;/script&gt;
 
-Original change was reverted because the parent change caused test
-failures. The parent change has relanded already.
+If the user opens the context menu at this point, the selection has no
+visible text, which previously could trigger a `DCHECK`. This change
+avoids that crash by ensuring text fragment generation only runs for a
+non-empty visible text range.
 
-Original change's description:
-&gt; Always start ArcApps publisher in ArcAppTest
-&gt;
-&gt; The start_app_service_publisher_ flag in ArcAppTest was always true for
-&gt; all usages.
-&gt;
-&gt; This CL removes this unnecessary flag and related conditional logic to
-&gt; simplify the test helper. The ArcApps publisher is now unconditionally
-&gt; initialized and shut down for the tests.
-&gt;
-&gt; Bug: b:442761233
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7e9f7a21c6521d2e44351e748190c3ce6f3321f6">I7e9f7a21c6521d2e44351e748190c3ce6f3321f6</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6954713">https://chromium-review.googlesource.com/c/chromium/src/+/6954713</a>
-&gt; Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
-&gt; Commit-Queue: Jun Ishiguro &lt;junis@google.com&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1518578}
-
-Bug: b:442761233
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib221f8537aff757bf109ac1e43481d6c3aac9c8a">Ib221f8537aff757bf109ac1e43481d6c3aac9c8a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7006048">https://chromium-review.googlesource.com/c/chromium/src/+/7006048</a>
-Commit-Queue: Jun Ishiguro &lt;junis@google.com&gt;
-Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1524608}
+Bug: 447973114
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id2ca8ad0f7c91c0382cad527d9f34829be762fc0">Id2ca8ad0f7c91c0382cad527d9f34829be762fc0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7006049">https://chromium-review.googlesource.com/c/chromium/src/+/7006049</a>
+Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
+Reviewed-by: David Bokan &lt;bokan@chromium.org&gt;
+Commit-Queue: Peng Zhou &lt;zhoupeng.1996@bytedance.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1524655}
 </pre>
 
 </body>
