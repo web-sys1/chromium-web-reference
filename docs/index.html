@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1529895/"> 1529895</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e63453d76bab2b135c256165206bd39f30403be2">e63453d76bab2b135c256165206bd39f30403be2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1529918/"> 1529918</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c99c7c16295012e93cdb5e6afe10da93b96115c3">c99c7c16295012e93cdb5e6afe10da93b96115c3</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1529887/">1529887</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4a3d9cf4a62435ae446743f2520e75712ef4542d">4a3d9cf4a62435ae446743f2520e75712ef4542d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1529918/">1529918</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c99c7c16295012e93cdb5e6afe10da93b96115c3">c99c7c16295012e93cdb5e6afe10da93b96115c3</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   e63453d76bab2b135c256165206bd39f30403be2
+   c99c7c16295012e93cdb5e6afe10da93b96115c3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/e63453d76bab2b135c256165206bd39f30403be2">
+    <a href="/chromium/src/+log/c99c7c16295012e93cdb5e6afe10da93b96115c3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/e63453d76bab2b135c256165206bd39f30403be2.tar.gz">
+    <a href="/chromium/src/+archive/c99c7c16295012e93cdb5e6afe10da93b96115c3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Matt Menke &lt;mmenke@chromium.org&gt;
+   Brian Sheedy &lt;bsheedy@chromium.org&gt;
   </td>
   <td>
-   Wed Oct 15 01:06:06 2025
+   Wed Oct 15 02:20:06 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Oct 15 01:06:06 2025
+   Wed Oct 15 02:20:06 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/e63453d76bab2b135c256165206bd39f30403be2/">
-    bfabc5199c9727c0ae15de535ead7a6f57871965
+   <a href="/chromium/src/+/c99c7c16295012e93cdb5e6afe10da93b96115c3/">
+    de6d131dcd36027e625544d5147cab567a6057b7
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/e63453d76bab2b135c256165206bd39f30403be2%5E">
-    588a75b1a426d96c77e96b0f106afd0e898c97c1
+   <a href="/chromium/src/+/c99c7c16295012e93cdb5e6afe10da93b96115c3%5E">
+    090f0d705b04e85ea87ed46fe924e28edcca2410
    </a>
    <span>
     [
-    <a href="/chromium/src/+/e63453d76bab2b135c256165206bd39f30403be2%5E%21/">
+    <a href="/chromium/src/+/c99c7c16295012e93cdb5e6afe10da93b96115c3%5E%21/">
      diff
     </a>
     ]
@@ -179,41 +179,21 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Happy Eyeballs v3] Remove excluded IP arg from MaybeAttemptTcpBased().
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix Win/NVIDIA expectation
 
-This seems of limited utility. There are 4 cases here:
+Fixes a recently added Win/NVIDIA pixel test expectation that was
+incorrectly targeting Windows 10. The builder this is occurring on has
+Windows 10 in the name but is actually running Windows 11 since part of
+the experiment we are running is switching to Windows 11.
 
-1. There are other IP addresses not marked as slow (and not marked
-as failing). In this case, we would try one of those other IP addresses
-even without the exclusion, since the excluded IP address is now marked
-as slow.
-
-2. There is only one IP address not marked as failing, which is the
-one that was just marked as slow. In that case, we wouldn't retry
-that IP address, anyways, since we don't retry IPs marked as slow
-if we already have enough connection attempts.
-
-3. There are other IP addresses not marked as failing and not marked
-as slow (which necessarily wouldn't marked the excluded one, which was
-just marked as slow). We would use one of them, regardless of the
-exclusion.
-
-4. There is at least one IP address already marked as slow, and no
-others marked as slow succeeded (or not marked as anything). In this
-case, we would have started a connection to one of those other slow
-IP addresses, in preference to the one just marked as slow. If there
-are multiple IP addresses, for instance, once they've all been
-marked as slow, I guess the exclusion means we'd potentially bounce
-between making to the first two connections them, each time we mark
-an attempt as slow. This seems a marked difference from 2, where
-was just don't try to make any more connections.
-
-Bug: 40812426
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id93fbde49b58f594202501241861d462634b5859">Id93fbde49b58f594202501241861d462634b5859</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7037754">https://chromium-review.googlesource.com/c/chromium/src/+/7037754</a>
-Reviewed-by: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
-Commit-Queue: mmenke &lt;mmenke@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1529895}
+Bug: 451750216
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I22ce20f36b4f0a65dbb65aadd85fca2b311e6039">I22ce20f36b4f0a65dbb65aadd85fca2b311e6039</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7040430">https://chromium-review.googlesource.com/c/chromium/src/+/7040430</a>
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Commit-Queue: Brian Sheedy &lt;bsheedy@chromium.org&gt;
+Auto-Submit: Brian Sheedy &lt;bsheedy@chromium.org&gt;
+Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1529918}
 </pre>
 
 </body>
