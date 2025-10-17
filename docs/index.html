@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1531023/"> 1531023</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/03af5ad5b53031367bb607ed9648e15eff4e1a05">03af5ad5b53031367bb607ed9648e15eff4e1a05</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1531162/"> 1531162</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3a4045a8a9a992d70cad3ad7b8230fc7bafda11a">3a4045a8a9a992d70cad3ad7b8230fc7bafda11a</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1531014/">1531014</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/488bfecf272e9bc2d173f216c2008e05e84e1b67">488bfecf272e9bc2d173f216c2008e05e84e1b67</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1531162/">1531162</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/3a4045a8a9a992d70cad3ad7b8230fc7bafda11a">3a4045a8a9a992d70cad3ad7b8230fc7bafda11a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   03af5ad5b53031367bb607ed9648e15eff4e1a05
+   3a4045a8a9a992d70cad3ad7b8230fc7bafda11a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/03af5ad5b53031367bb607ed9648e15eff4e1a05">
+    <a href="/chromium/src/+log/3a4045a8a9a992d70cad3ad7b8230fc7bafda11a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/03af5ad5b53031367bb607ed9648e15eff4e1a05.tar.gz">
+    <a href="/chromium/src/+archive/3a4045a8a9a992d70cad3ad7b8230fc7bafda11a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Brian Sheedy &lt;bsheedy@chromium.org&gt;
+   Nick Harper &lt;nharper@chromium.org&gt;
   </td>
   <td>
-   Thu Oct 16 19:56:46 2025
+   Fri Oct 17 00:59:40 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Oct 16 19:56:46 2025
+   Fri Oct 17 00:59:40 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/03af5ad5b53031367bb607ed9648e15eff4e1a05/">
-    a0a38b3dfa78408a29be5159182c02b9018ce454
+   <a href="/chromium/src/+/3a4045a8a9a992d70cad3ad7b8230fc7bafda11a/">
+    523b2bd82b0cb8118ec91f98b6e31b7a387ba5ce
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/03af5ad5b53031367bb607ed9648e15eff4e1a05%5E">
-    ef64f8499aae38906afb27d94eda6832161a8f8c
+   <a href="/chromium/src/+/3a4045a8a9a992d70cad3ad7b8230fc7bafda11a%5E">
+    70f2d6dd938cd6f9cc11b14c1d486387504b28f4
    </a>
    <span>
     [
-    <a href="/chromium/src/+/03af5ad5b53031367bb607ed9648e15eff4e1a05%5E%21/">
+    <a href="/chromium/src/+/3a4045a8a9a992d70cad3ad7b8230fc7bafda11a%5E%21/">
      diff
     </a>
     ]
@@ -179,27 +179,25 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Remove GPU pixel test grace period
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Prepare for VerifyQWACs feature rollout
 
-Removes the GPU pixel test grace period functionality, as it is
-infrequently used, causes issues, and can be largely replaced with
-normal test expectations. Issues include but aren't limited to:
+(This is a reland of crrev.com/c/6931744 which was reverted in
+crrev.com/c/7006389.)
 
-1. Unexpectedly breaking builders, including branched builders, if a
-   grace period expires
-2. Incompatibility with tests that use inexact matching due to the
-   inclusion of the `ignore` tag, which affects the trace ID and makes
-   Gold think that the image is coming from a different config.
+- Adds a fieldtrial config for the VerifyQWACs feature rollout
+- Fixes tests when the feature is enabled
+- Fixes Android UI issue discovered by tests run when the feature is
+  enabled
 
-The one group of tests that currently has a grace period (MeetEffects)
-instead has Failure expectations added.
-
-Bug: 286989320
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6f718b8bc101a172f47542955c52dec233227c0a">I6f718b8bc101a172f47542955c52dec233227c0a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7047338">https://chromium-review.googlesource.com/c/chromium/src/+/7047338</a>
-Commit-Queue: Brian Sheedy &lt;bsheedy@chromium.org&gt;
-Reviewed-by: Yuly Novikov &lt;ynovikov@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1531023}
+Bug: 390486014
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I42a9bc6f6ed81594eb2d6e2fa3e569d41f73a173">I42a9bc6f6ed81594eb2d6e2fa3e569d41f73a173</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7039220">https://chromium-review.googlesource.com/c/chromium/src/+/7039220</a>
+Reviewed-by: Matt Mueller &lt;mattm@chromium.org&gt;
+Reviewed-by: Mustafa Emre Acer &lt;meacer@chromium.org&gt;
+Reviewed-by: Chris Thompson &lt;cthomp@chromium.org&gt;
+Reviewed-by: Colin Blundell &lt;blundell@chromium.org&gt;
+Commit-Queue: Nick Harper &lt;nharper@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1531162}
 </pre>
 
 </body>
