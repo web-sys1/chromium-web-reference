@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1538922/"> 1538922</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/86e732e80366c4571ea45bd88bfb3399cfcaca84">86e732e80366c4571ea45bd88bfb3399cfcaca84</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1538947/"> 1538947</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/285791ee17e296d4bda44ca95a70ff930202c275">285791ee17e296d4bda44ca95a70ff930202c275</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1538924/">1538924</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/71461f6b98e7d532fdaf7dcb7733e9fbbfe35bb2">71461f6b98e7d532fdaf7dcb7733e9fbbfe35bb2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1538943/">1538943</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4f9450f9338cbb5fc2d1a25737bf0ee735e84558">4f9450f9338cbb5fc2d1a25737bf0ee735e84558</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   86e732e80366c4571ea45bd88bfb3399cfcaca84
+   285791ee17e296d4bda44ca95a70ff930202c275
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/86e732e80366c4571ea45bd88bfb3399cfcaca84">
+    <a href="/chromium/src/+log/285791ee17e296d4bda44ca95a70ff930202c275">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/86e732e80366c4571ea45bd88bfb3399cfcaca84.tar.gz">
+    <a href="/chromium/src/+archive/285791ee17e296d4bda44ca95a70ff930202c275.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ben Chin &lt;lungc@chromium.org&gt;
+   Jocelyn Tran &lt;jocelyntran@google.com&gt;
   </td>
   <td>
-   Sat Nov 01 00:40:23 2025
+   Sat Nov 01 03:05:56 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Nov 01 00:40:23 2025
+   Sat Nov 01 03:05:56 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/86e732e80366c4571ea45bd88bfb3399cfcaca84/">
-    44d72e06ae4e205da56b0b3d9f067549aba02b4e
+   <a href="/chromium/src/+/285791ee17e296d4bda44ca95a70ff930202c275/">
+    79a130026a2634837ccf3e3aa227d62339d25ed4
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/86e732e80366c4571ea45bd88bfb3399cfcaca84%5E">
-    cd49f24144b04de7c9fb7597d7a2a91ac7a976ad
+   <a href="/chromium/src/+/285791ee17e296d4bda44ca95a70ff930202c275%5E">
+    8b3633a0c2b16b0ff6181003957ec97c2a5330f9
    </a>
    <span>
     [
-    <a href="/chromium/src/+/86e732e80366c4571ea45bd88bfb3399cfcaca84%5E%21/">
+    <a href="/chromium/src/+/285791ee17e296d4bda44ca95a70ff930202c275%5E%21/">
      diff
     </a>
     ]
@@ -179,29 +179,27 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rename onUpdateUrl to onUpdateTargetUrl
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[A11y] Remove range control values from the name on Android
 
-The method name onUpdateUrl in WebContentsDelegateAndroid was
-ambiguous. It suggested a change in the visible URL of the web contents,
-but its implementation was tied to UpdateTargetURL, which is meant to
-report the URL of the link under the cursor.
+On Android, the kValue string attribute for range controls (e.g.,
+sliders, progress bars) is currently prepended to the element's
+accessible name. This pollutes the name with state information.
 
-To improve clarity and align the name with its actual function, this
-CL renames the method to onUpdateTargetUrl in both the C++ delegate
-and the Java interface.
+The Android text property is meant to represent the element's primary,
+stable name (its label), while the value is a dynamic state.
 
-This refactoring was requested by reviewers to be split into a separate
-CL from a larger feature change. This allows for a focused review of
-the API modification and its impact on existing implementers.
+Textual values (from aria-valuetext, e.g., "Medium") are moved from the
+name to the state description. Numerical values (from aria-valuenow) are
+removed from the name and we now correctly rely on the native RangeInfo
+to handle them -- the removal from the text property prevents redundant
+announcements.
 
-Bug: 454446656
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7e5b810c400f104aa8028b171d7f0b085e1b3ed5">I7e5b810c400f104aa8028b171d7f0b085e1b3ed5</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7088351">https://chromium-review.googlesource.com/c/chromium/src/+/7088351</a>
-Reviewed-by: Richard (Torne) Coles &lt;torne@chromium.org&gt;
-Reviewed-by: Ted Choc &lt;tedchoc@chromium.org&gt;
-Reviewed-by: Michael Thiessen &lt;mthiesse@chromium.org&gt;
-Commit-Queue: Ben Chin &lt;lungc@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1538922}
+Bug: 445223077
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I64588dc683bc9e02a802c8bc4ffc3998f26abc09">I64588dc683bc9e02a802c8bc4ffc3998f26abc09</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7080647">https://chromium-review.googlesource.com/c/chromium/src/+/7080647</a>
+Reviewed-by: Lucas Radaelli &lt;lucasradaelli@google.com&gt;
+Commit-Queue: Jocelyn Tran &lt;jocelyntran@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1538947}
 </pre>
 
 </body>
