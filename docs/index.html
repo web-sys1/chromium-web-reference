@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1541343/"> 1541343</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b3fc3eacc985a99bd0cb21a98cef0c83f505a1e5">b3fc3eacc985a99bd0cb21a98cef0c83f505a1e5</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1541537/"> 1541537</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/914a63c06521c3dd6dba1211076a22d696320f09">914a63c06521c3dd6dba1211076a22d696320f09</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1541325/">1541325</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5df75d2326622e9e3fb585a1f5a0fc7b775ea2eb">5df75d2326622e9e3fb585a1f5a0fc7b775ea2eb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1541536/">1541536</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/336944cd50866db6f8bc8ff5b9596915e018be7f">336944cd50866db6f8bc8ff5b9596915e018be7f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b3fc3eacc985a99bd0cb21a98cef0c83f505a1e5
+   914a63c06521c3dd6dba1211076a22d696320f09
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b3fc3eacc985a99bd0cb21a98cef0c83f505a1e5">
+    <a href="/chromium/src/+log/914a63c06521c3dd6dba1211076a22d696320f09">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b3fc3eacc985a99bd0cb21a98cef0c83f505a1e5.tar.gz">
+    <a href="/chromium/src/+archive/914a63c06521c3dd6dba1211076a22d696320f09.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ben Joyce &lt;bjoyce@google.com&gt;
+   Lei Zhang &lt;thestig@chromium.org&gt;
   </td>
   <td>
-   Thu Nov 06 19:15:36 2025
+   Fri Nov 07 01:14:28 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Nov 06 19:15:36 2025
+   Fri Nov 07 01:14:28 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b3fc3eacc985a99bd0cb21a98cef0c83f505a1e5/">
-    fb58b6d55ae0dd171f6975aa623abe0b5dcb069d
+   <a href="/chromium/src/+/914a63c06521c3dd6dba1211076a22d696320f09/">
+    3b068e3f1a6f8d5a34bdb97a6fc3406910ed190b
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b3fc3eacc985a99bd0cb21a98cef0c83f505a1e5%5E">
-    f4ef5b6a7995ae24b7f300ab066991193a73d997
+   <a href="/chromium/src/+/914a63c06521c3dd6dba1211076a22d696320f09%5E">
+    336944cd50866db6f8bc8ff5b9596915e018be7f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b3fc3eacc985a99bd0cb21a98cef0c83f505a1e5%5E%21/">
+    <a href="/chromium/src/+/914a63c06521c3dd6dba1211076a22d696320f09%5E%21/">
      diff
     </a>
     ]
@@ -179,28 +179,30 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add testMetadata to chromedriver test upload.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Optimize ui::ConvertColorProviderColorIdToCSSColorId()
 
-The test metadata is needed by the flakiness endorser when used with the structured test ids. This is similar to the metadata included in the typ runner: <a href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/catapult/third_party/typ/typ/result_sink.py;drc=9557edbf5998b1791dab5e15b05eba3fadf7e32b;l=496">https://source.chromium.org/chromium/chromium/src/+/main:third_party/catapult/third_party/typ/typ/result_sink.py;drc=9557edbf5998b1791dab5e15b05eba3fadf7e32b;l=496</a>
+- Change it to take a std::string_view instead of a std::string, so
+  callers can potentially avoid copying a string.
+- Call std::string::reserve() since the resulting length can be
+  estimated.
+- Preprocess the first character. It's always replacing 'k' with '-'.
+- Use std::string::push_back(char c) instead of
+  std::string::operator+=(std::string) to avoid having to instantiate a
+  std::string for every single character in the input.
+- Only call base::ToLowerASCII() when needed.
 
+Along the way, fix some nits:
 
-This goes with the structured-test-id change made in:
+- Use early returns.
+- Use `it` for iterator variable naming instead of `i`.
+- Use `c` for character variable naming instead of `i`.
+- Use "kFoo" naming for true constants.
 
-<a href="https://chromium-review.googlesource.com/c/chromium/src/+/6916708">https://chromium-review.googlesource.com/c/chromium/src/+/6916708</a>
-
-Tested in <a href="https://ci.chromium.org/ui/p/chromium/builders/try/linux-rel/2438147/overview">https://ci.chromium.org/ui/p/chromium/builders/try/linux-rel/2438147/overview</a>
-
-#ai-assisted
-
-I told gemini the testmetadata was missing and it should use the testmetadata as seen in the typ runner file. It used testName instead of name.
-
-Bug: 456432041
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id0022ffef545fd74a6fbd131f8f60168629e9444">Id0022ffef545fd74a6fbd131f8f60168629e9444</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7124354">https://chromium-review.googlesource.com/c/chromium/src/+/7124354</a>
-Reviewed-by: Sophie Chang &lt;sophiechang@chromium.org&gt;
-Reviewed-by: Patrick Meiring &lt;meiring@google.com&gt;
-Commit-Queue: Benjamin Joyce (Ben) &lt;bjoyce@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1541343}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic1a8d0bc589452fcd3f750ce34d8d890c0192244">Ic1a8d0bc589452fcd3f750ce34d8d890c0192244</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7129458">https://chromium-review.googlesource.com/c/chromium/src/+/7129458</a>
+Commit-Queue: Lei Zhang &lt;thestig@chromium.org&gt;
+Reviewed-by: Tom Lukaszewicz &lt;tluk@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1541537}
 </pre>
 
 </body>
