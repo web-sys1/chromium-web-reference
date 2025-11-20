@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1547592/"> 1547592</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/38c276e778d14ef7289c0503896324386a50771f">38c276e778d14ef7289c0503896324386a50771f</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1547631/"> 1547631</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b70f63324ad04f1a82a79b57cf4e397133b8c15a">b70f63324ad04f1a82a79b57cf4e397133b8c15a</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1547581/">1547581</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/50646f02a915c4eef27544c74907ad5ee0b289ad">50646f02a915c4eef27544c74907ad5ee0b289ad</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1547637/">1547637</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/89aadf234c75d3d4252d2a45a3c7f954087a3e5e">89aadf234c75d3d4252d2a45a3c7f954087a3e5e</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   38c276e778d14ef7289c0503896324386a50771f
+   b70f63324ad04f1a82a79b57cf4e397133b8c15a
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/38c276e778d14ef7289c0503896324386a50771f">
+    <a href="/chromium/src/+log/b70f63324ad04f1a82a79b57cf4e397133b8c15a">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/38c276e778d14ef7289c0503896324386a50771f.tar.gz">
+    <a href="/chromium/src/+archive/b70f63324ad04f1a82a79b57cf4e397133b8c15a.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Maggie Jennings &lt;mjenn@google.com&gt;
+   Daniel Cheng &lt;dcheng@chromium.org&gt;
   </td>
   <td>
-   Thu Nov 20 02:42:35 2025
+   Thu Nov 20 05:32:17 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Nov 20 02:42:35 2025
+   Thu Nov 20 05:32:17 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/38c276e778d14ef7289c0503896324386a50771f/">
-    6a97e3edd8345ae754737b3c7a8aaf2ce6d525f2
+   <a href="/chromium/src/+/b70f63324ad04f1a82a79b57cf4e397133b8c15a/">
+    eb9e83140334adff943eb4866b5c3e5b2d534acd
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/38c276e778d14ef7289c0503896324386a50771f%5E">
-    5c510d4ea63100fae380ee374604585688ccbec1
+   <a href="/chromium/src/+/b70f63324ad04f1a82a79b57cf4e397133b8c15a%5E">
+    f647c028d0008fccdc481dbb67d74fd1001d311c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/38c276e778d14ef7289c0503896324386a50771f%5E%21/">
+    <a href="/chromium/src/+/b70f63324ad04f1a82a79b57cf4e397133b8c15a%5E%21/">
      diff
     </a>
     ]
@@ -179,23 +179,29 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Task Nudge] Do not activate window when TaskListBubble shows
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use UnwrappingCrossThreadHandle in ImageCaptureFrameGrabber
 
-widget-&gt;Show() will always activate the window where the widget is
-shown, which is not the desired behavior (see description
-ofb/453719104). ShowInactive() will show the bubble, without activating
-the window.
+While this code appears to work, Persistents are not safe to pass across
+threads. Rewrite this to use UnwrappingCrossThreadHandle instead.
 
-Before: <a href="https://screencast.googleplex.com/cast/NjEyNjE5NTgzMjc4Mjg0OHwwMGUwYzhiYy00Yw">https://screencast.googleplex.com/cast/NjEyNjE5NTgzMjc4Mjg0OHwwMGUwYzhiYy00Yw</a>
+Additional fixes and cleanups:
+- Make ScopedPromiseResolver an inner class. There is already another
+  `blink::ScopedPromiseResolver` that is not templated that would
+  conflict with it if both definitions were ever visible in the same
+  translation unit.
+- Remove unnecessary callbacks to remove indirections and simplify the
+  code. Callback trampolines are not free, and this helper is used in
+  exactly one place.
+- Related: return an image by value rather than by callback, so the
+  compiler can warn if a path forgets to return an image.
 
-After: <a href="https://screencast.googleplex.com/cast/NjQwMjMwNDExMzYzOTQyNHxjZDkxYjFkMy1mMg">https://screencast.googleplex.com/cast/NjQwMjMwNDExMzYzOTQyNHxjZDkxYjFkMy1mMg</a>
-
-Bug: 462140399
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id54ac3aebb99b644a13041a88ffa2964d0d7071b">Id54ac3aebb99b644a13041a88ffa2964d0d7071b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7172950">https://chromium-review.googlesource.com/c/chromium/src/+/7172950</a>
-Commit-Queue: Maggie Jennings &lt;mjenn@google.com&gt;
-Reviewed-by: Abe Boujane &lt;boujane@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1547592}
+Bug: 460743390
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icba0ebf829e6dfaa094f2f08862b79a838a2f362">Icba0ebf829e6dfaa094f2f08862b79a838a2f362</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7167966">https://chromium-review.googlesource.com/c/chromium/src/+/7167966</a>
+Reviewed-by: Reilly Grant &lt;reillyg@chromium.org&gt;
+Reviewed-by: Michael Lippautz &lt;mlippautz@chromium.org&gt;
+Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1547631}
 </pre>
 
 </body>
