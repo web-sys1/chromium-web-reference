@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1547631/"> 1547631</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b70f63324ad04f1a82a79b57cf4e397133b8c15a">b70f63324ad04f1a82a79b57cf4e397133b8c15a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1547671/"> 1547671</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/088d91c352eb9e502c36d6ebe57c2776e1f343a2">088d91c352eb9e502c36d6ebe57c2776e1f343a2</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1547637/">1547637</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/89aadf234c75d3d4252d2a45a3c7f954087a3e5e">89aadf234c75d3d4252d2a45a3c7f954087a3e5e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1547666/">1547666</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/70251b02cc9abbf682bc7a3cb6994ac2586c23b5">70251b02cc9abbf682bc7a3cb6994ac2586c23b5</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b70f63324ad04f1a82a79b57cf4e397133b8c15a
+   088d91c352eb9e502c36d6ebe57c2776e1f343a2
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b70f63324ad04f1a82a79b57cf4e397133b8c15a">
+    <a href="/chromium/src/+log/088d91c352eb9e502c36d6ebe57c2776e1f343a2">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b70f63324ad04f1a82a79b57cf4e397133b8c15a.tar.gz">
+    <a href="/chromium/src/+archive/088d91c352eb9e502c36d6ebe57c2776e1f343a2.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Daniel Cheng &lt;dcheng@chromium.org&gt;
+   Pavol Marko &lt;pmarko@google.com&gt;
   </td>
   <td>
-   Thu Nov 20 05:32:17 2025
+   Thu Nov 20 08:54:40 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Nov 20 05:32:17 2025
+   Thu Nov 20 08:54:40 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b70f63324ad04f1a82a79b57cf4e397133b8c15a/">
-    eb9e83140334adff943eb4866b5c3e5b2d534acd
+   <a href="/chromium/src/+/088d91c352eb9e502c36d6ebe57c2776e1f343a2/">
+    49dce4c687f56a66e9f075d51f1dfba1eea34f2e
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b70f63324ad04f1a82a79b57cf4e397133b8c15a%5E">
-    f647c028d0008fccdc481dbb67d74fd1001d311c
+   <a href="/chromium/src/+/088d91c352eb9e502c36d6ebe57c2776e1f343a2%5E">
+    d07588ae545a1b8e830e5aa59bca88c7944c84ff
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b70f63324ad04f1a82a79b57cf4e397133b8c15a%5E%21/">
+    <a href="/chromium/src/+/088d91c352eb9e502c36d6ebe57c2776e1f343a2%5E%21/">
      diff
     </a>
     ]
@@ -179,29 +179,17 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use UnwrappingCrossThreadHandle in ImageCaptureFrameGrabber
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">cleanup: Remove network_portal_detector refs from crosapi
 
-While this code appears to work, Persistents are not safe to pass across
-threads. Rewrite this to use UnwrappingCrossThreadHandle instead.
+network_portal_detector is not used anymore (see CL:5458690).
+Remove obsolete references to it.
 
-Additional fixes and cleanups:
-- Make ScopedPromiseResolver an inner class. There is already another
-  `blink::ScopedPromiseResolver` that is not templated that would
-  conflict with it if both definitions were ever visible in the same
-  translation unit.
-- Remove unnecessary callbacks to remove indirections and simplify the
-  code. Callback trampolines are not free, and this helper is used in
-  exactly one place.
-- Related: return an image by value rather than by callback, so the
-  compiler can warn if a path forgets to return an image.
-
-Bug: 460743390
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icba0ebf829e6dfaa094f2f08862b79a838a2f362">Icba0ebf829e6dfaa094f2f08862b79a838a2f362</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7167966">https://chromium-review.googlesource.com/c/chromium/src/+/7167966</a>
-Reviewed-by: Reilly Grant &lt;reillyg@chromium.org&gt;
-Reviewed-by: Michael Lippautz &lt;mlippautz@chromium.org&gt;
-Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1547631}
+Bug: 447558638
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I71d01f7fca2dfaf12e9f726053f594e41c08ed88">I71d01f7fca2dfaf12e9f726053f594e41c08ed88</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7173080">https://chromium-review.googlesource.com/c/chromium/src/+/7173080</a>
+Commit-Queue: Pavol Marko &lt;pmarko@chromium.org&gt;
+Reviewed-by: Theresa Sullivan &lt;twellington@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1547671}
 </pre>
 
 </body>
