@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1554230/"> 1554230</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/643f28077b1478556e4bc8171a71cd7fd37cf20d">643f28077b1478556e4bc8171a71cd7fd37cf20d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1554397/"> 1554397</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/473db8f3ae0d273d95b2a86462ced0021f6ede3e">473db8f3ae0d273d95b2a86462ced0021f6ede3e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1554220/">1554220</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b024a65e10a7fc5374c276bba679d1c918a8ce2b">b024a65e10a7fc5374c276bba679d1c918a8ce2b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1554367/">1554367</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8680b3cdad8e38b747bccca01c4626479f001b3a">8680b3cdad8e38b747bccca01c4626479f001b3a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   643f28077b1478556e4bc8171a71cd7fd37cf20d
+   473db8f3ae0d273d95b2a86462ced0021f6ede3e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/643f28077b1478556e4bc8171a71cd7fd37cf20d">
+    <a href="/chromium/src/+log/473db8f3ae0d273d95b2a86462ced0021f6ede3e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/643f28077b1478556e4bc8171a71cd7fd37cf20d.tar.gz">
+    <a href="/chromium/src/+archive/473db8f3ae0d273d95b2a86462ced0021f6ede3e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Morten Stenshorne &lt;mstensho@chromium.org&gt;
+   Brian Sheedy &lt;bsheedy@chromium.org&gt;
   </td>
   <td>
-   Thu Dec 04 20:44:01 2025
+   Fri Dec 05 01:19:38 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Dec 04 20:44:01 2025
+   Fri Dec 05 01:19:38 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/643f28077b1478556e4bc8171a71cd7fd37cf20d/">
-    f31e3e390bddda4e6f89616c4f670d23a8eb7a44
+   <a href="/chromium/src/+/473db8f3ae0d273d95b2a86462ced0021f6ede3e/">
+    5aea15ddf3009f389c6ef30f38d71aaa0d690a08
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/643f28077b1478556e4bc8171a71cd7fd37cf20d%5E">
-    d0216b25714fd02f6c622a6f01799d01bc1548f1
+   <a href="/chromium/src/+/473db8f3ae0d273d95b2a86462ced0021f6ede3e%5E">
+    65c0fedd434810aa2bc4f7e5da463d96b223319a
    </a>
    <span>
     [
-    <a href="/chromium/src/+/643f28077b1478556e4bc8171a71cd7fd37cf20d%5E%21/">
+    <a href="/chromium/src/+/473db8f3ae0d273d95b2a86462ced0021f6ede3e%5E%21/">
      diff
     </a>
     ]
@@ -179,28 +179,19 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Multicol post-layout: subtree force update consistency fix.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Enable MeetEffects tests on Win/Intel 770
 
-Add a state stack. We couldn't trust ShouldForceEntireSubtreeUpdate() to
-return the same value upon entry as upon exit, since
-SetShouldCheckForPaintInvalidation() might be called on a descendant in
-the meantime (and propagated up the tree).
+Removes the Failure expectation for MeetEffects pixel tests on
+Win/Intel UHD 770 since the tests appear to be fairly stable now.
 
-force_entire_subtree_update_ in TraversalListener ended up as negative,
-because the result of ShouldForceEntireSubtreeUpdate() wasn't the same
-upon entry (false) and exit (true). This caused a DCHECK failure.
-`DCHECK_GE(force_entire_subtree_update_, 0)`
-
-This particular case does seem benign, but the CL is also a speculative
-"fix" for the real crash in crbug.com/464464623 (not been able to
-reproduce it).
-
-Bug: 464464623
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3d942d71930762ab7db73297567b722e28a06312">I3d942d71930762ab7db73297567b722e28a06312</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7221490">https://chromium-review.googlesource.com/c/chromium/src/+/7221490</a>
-Commit-Queue: Morten Stenshorne &lt;mstensho@chromium.org&gt;
-Reviewed-by: Ian Kilpatrick &lt;ikilpatrick@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1554230}
+Bug: b/286989320
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I535134390285483dca82cbaea1560eb5c373882e">I535134390285483dca82cbaea1560eb5c373882e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7224763">https://chromium-review.googlesource.com/c/chromium/src/+/7224763</a>
+Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Commit-Queue: Brian Sheedy &lt;bsheedy@chromium.org&gt;
+Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
+Auto-Submit: Brian Sheedy &lt;bsheedy@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1554397}
 </pre>
 
 </body>
