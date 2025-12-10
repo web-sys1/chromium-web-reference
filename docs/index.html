@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1556581/"> 1556581</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d34c35d50145d36ffe281ac7219d344aa929b20d">d34c35d50145d36ffe281ac7219d344aa929b20d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1556654/"> 1556654</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b1e55c4e4cc1492994befbab7826c87fc22b9e31">b1e55c4e4cc1492994befbab7826c87fc22b9e31</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1556582/">1556582</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/df9a0ecf324df2c13123e0d7e8168d2e4c9fd1ce">df9a0ecf324df2c13123e0d7e8168d2e4c9fd1ce</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1556656/">1556656</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/716f0ad3d382df3039c3b343bee4999da93cec02">716f0ad3d382df3039c3b343bee4999da93cec02</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   d34c35d50145d36ffe281ac7219d344aa929b20d
+   b1e55c4e4cc1492994befbab7826c87fc22b9e31
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/d34c35d50145d36ffe281ac7219d344aa929b20d">
+    <a href="/chromium/src/+log/b1e55c4e4cc1492994befbab7826c87fc22b9e31">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/d34c35d50145d36ffe281ac7219d344aa929b20d.tar.gz">
+    <a href="/chromium/src/+archive/b1e55c4e4cc1492994befbab7826c87fc22b9e31.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ginny Huang &lt;ginnyhuang@chromium.org&gt;
+   Ryo Hashimoto &lt;hashimoto@google.com&gt;
   </td>
   <td>
-   Wed Dec 10 08:23:14 2025
+   Wed Dec 10 11:53:15 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 10 08:23:14 2025
+   Wed Dec 10 11:53:15 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/d34c35d50145d36ffe281ac7219d344aa929b20d/">
-    8dddb67bd9fbe7207340ef2bb6d84460a95b7bb5
+   <a href="/chromium/src/+/b1e55c4e4cc1492994befbab7826c87fc22b9e31/">
+    1f9a634080dfffe4e6e2f63961cde7282b37f86f
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/d34c35d50145d36ffe281ac7219d344aa929b20d%5E">
-    63184ccc4db6a24cdcc41775e3d9748207f72ae0
+   <a href="/chromium/src/+/b1e55c4e4cc1492994befbab7826c87fc22b9e31%5E">
+    6aa067ba1a103885ea671dc5ca5f240f8eb63098
    </a>
    <span>
     [
-    <a href="/chromium/src/+/d34c35d50145d36ffe281ac7219d344aa929b20d%5E%21/">
+    <a href="/chromium/src/+/b1e55c4e4cc1492994befbab7826c87fc22b9e31%5E%21/">
      diff
     </a>
     ]
@@ -179,41 +179,31 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Remove callback_helpers.h include from is_callback.h (try 4)"
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">blink: Unify scrollbar thumb length calculation
 
-This reverts commit b77e697a5331959b6897fc31a740a3217bd08c24.
+Let scrollbar layer impl objects calculate the thumb length. By doing
+this, it can appropriately calculate the thumb length for the current
+zoom level. This is possible because
+LayerTreeImpl::UpdateScrollbarGeometries() uses
+current_page_scale_factor() to calculate the clip layer length for
+scrollbar layers.
 
-Reason for revert: <a href="https://ci.chromium.org/ui/p/chrome/builders/ci/device-builder/300584/overview">https://ci.chromium.org/ui/p/chrome/builders/ci/device-builder/300584/overview</a>
+To do this, the following changes are made:
+- ScrollbarLayerImplBase::ThumbLength() calculates the thumb length for all scrollbar layer types.
+- NinePatchThumbScrollbarLayer and PaintedScrollbarLayer keep minimum_thumb_length_ and thumb_thickness_ instead of thumb_size_.
+- cc:Scrollbar and its implementations provide the minimum thumb length for scrollbar layers.
 
-Original change's description:
-&gt; Remove callback_helpers.h include from is_callback.h (try 4)
-&gt;
-&gt; This temporary include existed to help safely land the CL that added
-&gt; is_callback.h. Now that is_callback.h is in the code base, remove this
-&gt; crutch.
-&gt;
-&gt; Previous attempts to land this got reverted due to developers adding
-&gt; more callback_helpers.h usage without IYWU, or failing bots that were
-&gt; not part of the default try set. Those types of issues hopefully have
-&gt; been fixed separately.
-&gt;
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I7d8227a2c051fe2471ef24bef597f7647d08b83e">I7d8227a2c051fe2471ef24bef597f7647d08b83e</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7240646">https://chromium-review.googlesource.com/c/chromium/src/+/7240646</a>
-&gt; Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
-&gt; Commit-Queue: Lei Zhang &lt;thestig@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1556541}
+Also update test expectations because now the tests run with the real
+thumb length values instead of random values chosen by the test authors.
 
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib496d989ecfe065fd8a1acf06873737c2b7d7703">Ib496d989ecfe065fd8a1acf06873737c2b7d7703</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7244756">https://chromium-review.googlesource.com/c/chromium/src/+/7244756</a>
-Bot-Commit: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Auto-Submit: Ginny Huang &lt;ginnyhuang@chromium.org&gt;
-Commit-Queue: Ginny Huang &lt;ginnyhuang@chromium.org&gt;
-Owners-Override: Ginny Huang &lt;ginnyhuang@chromium.org&gt;
-Commit-Queue: Rubber Stamper &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1556581}
+BUG=459997344
+
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I15945f0af86026fdbd1714c044490d6f92dcb541">I15945f0af86026fdbd1714c044490d6f92dcb541</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7185502">https://chromium-review.googlesource.com/c/chromium/src/+/7185502</a>
+Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
+Reviewed-by: Robert Flack &lt;flackr@chromium.org&gt;
+Commit-Queue: Ryo Hashimoto &lt;hashimoto@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1556654}
 </pre>
 
 </body>
