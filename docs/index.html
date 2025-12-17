@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1559708/"> 1559708</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/37b32469a3824977f722ff1a9f49717b184d0f23">37b32469a3824977f722ff1a9f49717b184d0f23</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1559746/"> 1559746</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d46cdd73e50b697ba508a8b2b5792e14e1d774c0">d46cdd73e50b697ba508a8b2b5792e14e1d774c0</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1559693/">1559693</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/13d9d55e019aa0e4ac14e32777c41b6a086bfe7d">13d9d55e019aa0e4ac14e32777c41b6a086bfe7d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1559739/">1559739</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7432e2983b4ccf133efe6024ce6b5afaaec51350">7432e2983b4ccf133efe6024ce6b5afaaec51350</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   37b32469a3824977f722ff1a9f49717b184d0f23
+   d46cdd73e50b697ba508a8b2b5792e14e1d774c0
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/37b32469a3824977f722ff1a9f49717b184d0f23">
+    <a href="/chromium/src/+log/d46cdd73e50b697ba508a8b2b5792e14e1d774c0">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/37b32469a3824977f722ff1a9f49717b184d0f23.tar.gz">
+    <a href="/chromium/src/+archive/d46cdd73e50b697ba508a8b2b5792e14e1d774c0.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Felipe Erias &lt;felipeerias@igalia.com&gt;
+   Ayumi Ono &lt;ayumiohno@google.com&gt;
   </td>
   <td>
-   Wed Dec 17 02:50:03 2025
+   Wed Dec 17 06:05:38 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Wed Dec 17 02:50:03 2025
+   Wed Dec 17 06:05:38 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/37b32469a3824977f722ff1a9f49717b184d0f23/">
-    c1d43a6c598651695b6c80380b657b95c6353fee
+   <a href="/chromium/src/+/d46cdd73e50b697ba508a8b2b5792e14e1d774c0/">
+    2ecfeac9723869785d367094e15c5359c4b2231a
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/37b32469a3824977f722ff1a9f49717b184d0f23%5E">
-    20bf06be65f758c19577a9e625bebd4f7db5efc4
+   <a href="/chromium/src/+/d46cdd73e50b697ba508a8b2b5792e14e1d774c0%5E">
+    2220d648d9e7810183a5aa3d0fb246ecb6303d8c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/37b32469a3824977f722ff1a9f49717b184d0f23%5E%21/">
+    <a href="/chromium/src/+/d46cdd73e50b697ba508a8b2b5792e14e1d774c0%5E%21/">
      diff
     </a>
     ]
@@ -179,25 +179,32 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Transform collapsed spaces to U+3000 for text-transform: full-width
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Make ExtensionUrlOverrideStateTracker destructor virtual.
 
-Per CSS Text Level 3, the full-width transformation happens after
-whitespace collapsing. This means that when this property is active
-and whitespace collapses to a single space, it should become
-Ideographic Space (U+3000).
+`ExtensionUrlOverrideStateTrackerImpl` is a derived class that inherits
+from `ExtensionUrlOverrideStateTracker` (the base class).
 
-Previously, InlineItemsBuilder always inserted U+0020 when collapsing
-whitespace, ignoring the value of text-transform. This CL ensures
-that the correct type of space is used for the current style.
+In `ExtensionUrlOverrideRegistryManager`, the member `state_tracker_` is
+declared as `std::unique_ptr&lt;ExtensionUrlOverrideStateTracker&gt;`.
+However, it is being initialized with
+`std::make_unique&lt;ExtensionUrlOverrideStateTrackerImpl&gt;()`.
 
-Test: external/wpt/css/css-text/text-transform/text-transform-fullwidth-002.xht
-Bug: 41297237
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id0208610b312901d56c4c3bfd415be33c766ec97">Id0208610b312901d56c4c3bfd415be33c766ec97</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7234894">https://chromium-review.googlesource.com/c/chromium/src/+/7234894</a>
-Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
-Commit-Queue: Felipe Erias &lt;felipeerias@igalia.com&gt;
-Reviewed-by: Stephen Chenney &lt;schenney@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1559708}
+Without a `virtual` destructor in the base class, when `state_tracker_`
+is destroyed, only the base class destructor is invoked. This leads to:
+*   The wrong size parameter being passed to sized delete.
+*   Undefined Behavior because members unique to `ExtensionUrlOverrideStateTrackerImpl`, such as `std::unique_ptr&lt;RegistrarSynchronizer&gt;`, are not properly destructed.
+
+Making the base class destructor virtual ensures that the derived class
+destructor is also called, thus preventing these issues.
+
+Include-Ci-Only-Tests: chromium.android.desktop:android-desktop-x64-rel-15-tests|chrome_public_test_apk
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic3834ba2719e1efcccec4828acdec7dd74695561">Ic3834ba2719e1efcccec4828acdec7dd74695561</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7267470">https://chromium-review.googlesource.com/c/chromium/src/+/7267470</a>
+Reviewed-by: Stephen Nusko &lt;nuskos@chromium.org&gt;
+Reviewed-by: Mikihito Matsuura &lt;mikt@google.com&gt;
+Commit-Queue: Ayumi Ono &lt;ayumiohno@google.com&gt;
+Reviewed-by: Hidehiko Abe &lt;hidehiko@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1559746}
 </pre>
 
 </body>
