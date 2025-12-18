@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1560517/"> 1560517</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/535735f5f261267276cb20913a4d2c95826dd881">535735f5f261267276cb20913a4d2c95826dd881</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1560660/"> 1560660</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2e043df1ab7f5dd38dc65307dcdbf1409da38b96">2e043df1ab7f5dd38dc65307dcdbf1409da38b96</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1560517/">1560517</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/535735f5f261267276cb20913a4d2c95826dd881">535735f5f261267276cb20913a4d2c95826dd881</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1560612/">1560612</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d70c2acf8f3d445d3e6ff266379621515688406a">d70c2acf8f3d445d3e6ff266379621515688406a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   535735f5f261267276cb20913a4d2c95826dd881
+   2e043df1ab7f5dd38dc65307dcdbf1409da38b96
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/535735f5f261267276cb20913a4d2c95826dd881">
+    <a href="/chromium/src/+log/2e043df1ab7f5dd38dc65307dcdbf1409da38b96">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/535735f5f261267276cb20913a4d2c95826dd881.tar.gz">
+    <a href="/chromium/src/+archive/2e043df1ab7f5dd38dc65307dcdbf1409da38b96.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Edman Anjos &lt;edmanp@google.com&gt;
+   Paul Adedeji &lt;pauladedeji@google.com&gt;
   </td>
   <td>
-   Thu Dec 18 14:35:08 2025
+   Thu Dec 18 18:06:44 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Dec 18 14:35:08 2025
+   Thu Dec 18 18:06:44 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/535735f5f261267276cb20913a4d2c95826dd881/">
-    8eaa3b164ee3e416adf037116f3b4e1c64754904
+   <a href="/chromium/src/+/2e043df1ab7f5dd38dc65307dcdbf1409da38b96/">
+    43f0ce1ac8cf889a556482015ff2608386efefee
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/535735f5f261267276cb20913a4d2c95826dd881%5E">
-    f2fb787c19814e2d53cc078623fbfc33df9a1935
+   <a href="/chromium/src/+/2e043df1ab7f5dd38dc65307dcdbf1409da38b96%5E">
+    659c0b06e7e3519659c6eecb1e594c2e6784ae3c
    </a>
    <span>
     [
-    <a href="/chromium/src/+/535735f5f261267276cb20913a4d2c95826dd881%5E%21/">
+    <a href="/chromium/src/+/2e043df1ab7f5dd38dc65307dcdbf1409da38b96%5E%21/">
      diff
     </a>
     ]
@@ -179,35 +179,27 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">manifest: Extend display_override to accept url_patterns
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[composebox] Decouple realbox/omnibox next composebox behavior/styling.
 
-Currently display_override in the web manifest accepts a list of
-DisplayMode strings.
+Justification: The omnibox currently reuses the composebox's
+`ntpRealboxNextEnabled` property, hardcoding it to `true. As of now, the
+coupling doesn't cause any issues, but changes made by NTP engineers can
+inadvertently affect the Omnibox's styling or behavior. We should avoid
+this happening.
 
-This CL extends it to additionally accept objects in the format
+Solution:
+* Add a new property `searchboxNextEnabled`.
+* Decouple the code by replacing most uses of `ntpRealboxNextEnabled` with the new property.
+* Ensure compatibility by setting `searchboxNextEnabled` to `true` whenever `ntpRealboxNextEnabled` is `true`.
+* Add comments making it clear that "next" styling should depend on `searchbox-next-enabled`.
 
-  { "display": "unframed", "url_patterns": [ ... ] }
-
-The list of url_patterns can be used to select in which URLs this
-display override applies.
-
-manifest_parser.cc permits out-of-scope and out-of-origin URL patterns.
-Downstream consumers of these patterns should validate and only apply
-the display mode when in-scope.
-
-For the time being only the "unframed" display mode is allowed to have
-url_patterns.
-
-Bug: 465492865
-Test: testing/xvfb.py tools/autotest.py -C out_/Default third_party/blink/renderer/modules/manifest/manifest_parser_unittest.cc
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9c99ff33b0ff63e7c7c33ae9d32c07c701aeabe7">I9c99ff33b0ff63e7c7c33ae9d32c07c701aeabe7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7228926">https://chromium-review.googlesource.com/c/chromium/src/+/7228926</a>
-Reviewed-by: Daniel Murphy &lt;dmurph@chromium.org&gt;
-Reviewed-by: Antonio Sartori &lt;antoniosartori@chromium.org&gt;
-Reviewed-by: Kinuko Yasuda &lt;kinuko@chromium.org&gt;
-Reviewed-by: Andrew Rayskiy &lt;greengrape@google.com&gt;
-Commit-Queue: Edman Anjos &lt;edman@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1560517}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iea03f2c6b5571e45da40b2062990c511b63120aa">Iea03f2c6b5571e45da40b2062990c511b63120aa</a>
+Bug: b:460551908
+Fixed: b:460551908
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7238890">https://chromium-review.googlesource.com/c/chromium/src/+/7238890</a>
+Reviewed-by: Roman Arora &lt;romanarora@chromium.org&gt;
+Commit-Queue: Paul Adedeji &lt;pauladedeji@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1560660}
 </pre>
 
 </body>
