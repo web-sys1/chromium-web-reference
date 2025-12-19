@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1561123/"> 1561123</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8228728f96d14055cffed90012367445c14a0f7a">8228728f96d14055cffed90012367445c14a0f7a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1561189/"> 1561189</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c01d5705c2f2837b0859fd2da77b2dd4a0974b14">c01d5705c2f2837b0859fd2da77b2dd4a0974b14</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1561095/">1561095</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e0d5894e83109e786cc7388643aed8be5c6801ca">e0d5894e83109e786cc7388643aed8be5c6801ca</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1561196/">1561196</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/95a45e9b69b639ad962ed0b996e3e2c8a0819823">95a45e9b69b639ad962ed0b996e3e2c8a0819823</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8228728f96d14055cffed90012367445c14a0f7a
+   c01d5705c2f2837b0859fd2da77b2dd4a0974b14
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8228728f96d14055cffed90012367445c14a0f7a">
+    <a href="/chromium/src/+log/c01d5705c2f2837b0859fd2da77b2dd4a0974b14">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8228728f96d14055cffed90012367445c14a0f7a.tar.gz">
+    <a href="/chromium/src/+archive/c01d5705c2f2837b0859fd2da77b2dd4a0974b14.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Daniil Sakhapov &lt;sakhapov@chromium.org&gt;
+   Lei Zhang &lt;thestig@chromium.org&gt;
   </td>
   <td>
-   Fri Dec 19 14:50:03 2025
+   Fri Dec 19 17:03:07 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Dec 19 14:50:03 2025
+   Fri Dec 19 17:03:07 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8228728f96d14055cffed90012367445c14a0f7a/">
-    9a2fe2b4838c03af320231dad0b2c812654a1771
+   <a href="/chromium/src/+/c01d5705c2f2837b0859fd2da77b2dd4a0974b14/">
+    1f4adf3dabbdf717e0fa225a4fd3c7bf98c9679c
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8228728f96d14055cffed90012367445c14a0f7a%5E">
-    4b14edb33c15b9a01047f12fafbd9c4fd210eb45
+   <a href="/chromium/src/+/c01d5705c2f2837b0859fd2da77b2dd4a0974b14%5E">
+    7d206c73c55ce37009053316824f752710289066
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8228728f96d14055cffed90012367445c14a0f7a%5E%21/">
+    <a href="/chromium/src/+/c01d5705c2f2837b0859fd2da77b2dd4a0974b14%5E%21/">
      diff
     </a>
     ]
@@ -179,29 +179,17 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Optimize scroll-target-group using OrderedScopeTree
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Forward declare SingleThreadTaskRunner and SequencedTaskRunner
 
-Improve the performance of scroll-target-group by replacing full DOM
-traversals with an OrderedScopeTree-based management system.
+In various headers, forward declare SingleThreadTaskRunner and
+SequencedTaskRunner. Then do IWYU to fix the build.
 
-Previously, any change to an anchor or a scroll-target-group property
-triggered a global recalculation.
-
-This patch integrates scroll-target-group into the OrderedScope
-infrastructure, allowing for localized updates and efficient item
-tracking.
-
-Also, this patch modifies OrderedScope to allow to control if items of
-the scope should be saved in the scope or in some user-controlled
-storage (e.g. in this case items will be saved in focus_group_ of
-ScrollMarkerGroupData), so that the OrderedScopeTree infrastructure can
-be used just for scope management and batch updates.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4927214e984f9f270f9ce46818157a0b8a9e7ca7">I4927214e984f9f270f9ce46818157a0b8a9e7ca7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7264892">https://chromium-review.googlesource.com/c/chromium/src/+/7264892</a>
-Commit-Queue: Daniil Sakhapov &lt;sakhapov@chromium.org&gt;
-Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1561123}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2044abb7ed35f46b91e98f91eae5f329082e3edf">I2044abb7ed35f46b91e98f91eae5f329082e3edf</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7257184">https://chromium-review.googlesource.com/c/chromium/src/+/7257184</a>
+Commit-Queue: Lei Zhang &lt;thestig@chromium.org&gt;
+Owners-Override: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1561189}
 </pre>
 
 </body>
