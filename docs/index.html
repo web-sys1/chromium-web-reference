@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1561476/"> 1561476</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ef358421795db33a9bd19195534d10c721049ee8">ef358421795db33a9bd19195534d10c721049ee8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1561488/"> 1561488</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e6624c2a31e6f6082b717acc2a96f35474f5c4e4">e6624c2a31e6f6082b717acc2a96f35474f5c4e4</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1561476/">1561476</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ef358421795db33a9bd19195534d10c721049ee8">ef358421795db33a9bd19195534d10c721049ee8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1561488/">1561488</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/e6624c2a31e6f6082b717acc2a96f35474f5c4e4">e6624c2a31e6f6082b717acc2a96f35474f5c4e4</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   ef358421795db33a9bd19195534d10c721049ee8
+   e6624c2a31e6f6082b717acc2a96f35474f5c4e4
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/ef358421795db33a9bd19195534d10c721049ee8">
+    <a href="/chromium/src/+log/e6624c2a31e6f6082b717acc2a96f35474f5c4e4">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/ef358421795db33a9bd19195534d10c721049ee8.tar.gz">
+    <a href="/chromium/src/+archive/e6624c2a31e6f6082b717acc2a96f35474f5c4e4.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
+   Yao Xiao &lt;yaoxia@chromium.org&gt;
   </td>
   <td>
-   Sat Dec 20 03:04:24 2025
+   Sat Dec 20 05:31:13 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sat Dec 20 03:04:24 2025
+   Sat Dec 20 05:31:13 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/ef358421795db33a9bd19195534d10c721049ee8/">
-    83f62e6ed60266e45ab6f3463bb01fba294c55a4
+   <a href="/chromium/src/+/e6624c2a31e6f6082b717acc2a96f35474f5c4e4/">
+    0b74dfc165fb79226bcee17ae8f6e619a7904f1d
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/ef358421795db33a9bd19195534d10c721049ee8%5E">
-    289d36346f583385f9c5b2c6dc43828eb5b7f3aa
+   <a href="/chromium/src/+/e6624c2a31e6f6082b717acc2a96f35474f5c4e4%5E">
+    14899bdbbecda56b9b2b05666fdf262d6bfc0ebb
    </a>
    <span>
     [
-    <a href="/chromium/src/+/ef358421795db33a9bd19195534d10c721049ee8%5E%21/">
+    <a href="/chromium/src/+/e6624c2a31e6f6082b717acc2a96f35474f5c4e4%5E%21/">
      diff
     </a>
     ]
@@ -179,31 +179,37 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Roll Chrome Win ARM64 PGO Profile
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor GoToOffsetWithSkipping to use iterative back/forward helpers
 
-Roll Chrome Win ARM64 PGO profile from chrome-win-arm64-main-1766145201-d9353f22d49d6062fa2b5af6e4f9744bc6ff5acf-142ca60f39457730eafcdd7058a4f812f9aa63dc.profdata to chrome-win-arm64-main-1766188601-beee001f2acdf7f6498901a020ba7895da74cd60-adef7a78d900f8e0e68727e8a7f91d4a952d8359.profdata
+This CL:
+1. Extracts single-step skipping logic into
+   `GetIndexForGoBackWithSkipping` and
+   `GetIndexForGoForwardWithSkipping`.
+2. Introduces `GetIndexForOffsetWithSkipping`, which invokes these
+   helpers iteratively to determine the target index.
+3. Updates `GoToOffsetWithSkipping` and `CanGoToOffsetWithSkipping` to
+   rely on this new iterative method.
+4. Updates `GetIndexForGoBack` and `GetIndexForGoForward` to use the
+   new method with from_index=GetCurrentEntryIndex(), to retain the
+   current skipping logic.
 
-If this roll has caused a breakage, revert this CL and stop the roller
-using the controls here:
-<a href="https://autoroll.skia.org/r/pgo-win-arm64-chromium">https://autoroll.skia.org/r/pgo-win-arm64-chromium</a>
-Please CC chrome-brapp-engprod@google.com,pgo-profile-sheriffs@google.com on the revert to ensure that a human
-is aware of the problem.
+Motivation:
+This prepares for an upcoming ad-skipping intervention that involves a
+"same-origin exclusion". In the feature, we will need to perform a
+dry-run at each step of a back/forward navigation, to check if the
+potential ad-skipping logic should be used or not due to a
+"same-origin exclusion" (see design doc [1]). Splitting the offset
+calculation into granular steps allows us to seamlessly inject this
+heuristic.
 
-To file a bug in Chromium main branch: <a href="https://bugs.chromium.org/p/chromium/issues/entry">https://bugs.chromium.org/p/chromium/issues/entry</a>
+[1] <a href="https://docs.google.com/document/d/1BN1c_VAM1yIIUch7ISQh1B4cOeOTV5k2FrJ1rEu0ST8/edit?resourcekey=0-DeM1fa3iJzoipqLLlQ_aUw&amp;tab=t.0#bookmark=id.vuetpsp9ri6n">https://docs.google.com/document/d/1BN1c_VAM1yIIUch7ISQh1B4cOeOTV5k2FrJ1rEu0ST8/edit?resourcekey=0-DeM1fa3iJzoipqLLlQ_aUw&amp;tab=t.0#bookmark=id.vuetpsp9ri6n</a>
 
-To report a problem with the AutoRoller itself, please file a bug:
-<a href="https://issues.skia.org/issues/new?component=1389291&amp;template=1850622">https://issues.skia.org/issues/new?component=1389291&amp;template=1850622</a>
-
-Documentation for the AutoRoller is here:
-<a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-
-Tbr: pgo-profile-sheriffs@google.com
-Merge-Approval-Bypass: Chrome autoroller
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I26eeeb0c0449e73b6c609239854234777dfe5a46">I26eeeb0c0449e73b6c609239854234777dfe5a46</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7281473">https://chromium-review.googlesource.com/c/chromium/src/+/7281473</a>
-Commit-Queue: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Bot-Commit: chromium-autoroll &lt;chromium-autoroll@skia-public.iam.gserviceaccount.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1561476}
+Bug: 375523824
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4925ce8558dddfdd8b83a67cf864506c4cdeb94e">I4925ce8558dddfdd8b83a67cf864506c4cdeb94e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7262337">https://chromium-review.googlesource.com/c/chromium/src/+/7262337</a>
+Reviewed-by: Charlie Reis &lt;creis@chromium.org&gt;
+Commit-Queue: Yao Xiao &lt;yaoxia@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1561488}
 </pre>
 
 </body>
