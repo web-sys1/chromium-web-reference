@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1561787/"> 1561787</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3babffafaab241b498c6e006a80fb47a419853b0">3babffafaab241b498c6e006a80fb47a419853b0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1561850/"> 1561850</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/eeb0951dc083394bc624590c02555190e98acf3f">eeb0951dc083394bc624590c02555190e98acf3f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1561771/">1561771</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/32c7f8e9c9e7f8368e579bea66b4a9abbf1c11fd">32c7f8e9c9e7f8368e579bea66b4a9abbf1c11fd</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1561840/">1561840</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/976b41a11afb29df4ad7b2ee7e78c5b00a10f15f">976b41a11afb29df4ad7b2ee7e78c5b00a10f15f</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   3babffafaab241b498c6e006a80fb47a419853b0
+   eeb0951dc083394bc624590c02555190e98acf3f
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/3babffafaab241b498c6e006a80fb47a419853b0">
+    <a href="/chromium/src/+log/eeb0951dc083394bc624590c02555190e98acf3f">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/3babffafaab241b498c6e006a80fb47a419853b0.tar.gz">
+    <a href="/chromium/src/+archive/eeb0951dc083394bc624590c02555190e98acf3f.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Angela Novakovic &lt;novakovica@google.com&gt;
+   Victor Hugo Vianna Silva &lt;victorvianna@google.com&gt;
   </td>
   <td>
-   Mon Dec 22 14:51:04 2025
+   Mon Dec 22 18:16:29 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Dec 22 14:51:04 2025
+   Mon Dec 22 18:16:29 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/3babffafaab241b498c6e006a80fb47a419853b0/">
-    c4abd83eccb94063430ff788c4ab96e1c8e91197
+   <a href="/chromium/src/+/eeb0951dc083394bc624590c02555190e98acf3f/">
+    3c0ef8297efd66ef862cdc0c6a43aa72f50a09ca
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/3babffafaab241b498c6e006a80fb47a419853b0%5E">
-    e10eb189c2a10274b882bd799c4cde802d92ff15
+   <a href="/chromium/src/+/eeb0951dc083394bc624590c02555190e98acf3f%5E">
+    4f780942be67da088b632b3e9a848cd791b5dcf1
    </a>
    <span>
     [
-    <a href="/chromium/src/+/3babffafaab241b498c6e006a80fb47a419853b0%5E%21/">
+    <a href="/chromium/src/+/eeb0951dc083394bc624590c02555190e98acf3f%5E%21/">
      diff
     </a>
     ]
@@ -179,19 +179,27 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS][PRDBD] Removal of TimeRangeSelectorTableViewController files.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Migrate usages of base::to_underlying in //chromeos
 
-The purpose of this CL is to clean up the `Clear Browsing Data` folder
-by removing the `Time Range Selector Table View Controller` files which
-are no longer utilized in the code.
+```
+files_using_header="$(git grep -l base::to_underlying | tr '\n' ' ')"
+sed -i 's/base::to_underlying/std::to_underlying/g' \
+  ${files_using_header}
+tools/add_header.py --header '&lt;utility&gt;' ${files_using_header}
+files_including_header="$(git grep -l base/types/cxx23_to_underlying.h | tr '\n' ' ')"
+tools/add_header.py --header '"base/types/cxx23_to_underlying.h"' \
+  --remove ${files_including_header}
+git cl format
+```
 
-Fixed: 466113821
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I319f297789b4fc43c934613799fb76f59c1f53c9">I319f297789b4fc43c934613799fb76f59c1f53c9</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7275925">https://chromium-review.googlesource.com/c/chromium/src/+/7275925</a>
-Commit-Queue: Angela Novakovic &lt;novakovica@google.com&gt;
-Reviewed-by: Noémie St-Onge &lt;noemies@google.com&gt;
-Reviewed-by: Filipa Senra &lt;fsenra@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1561787}
+Then some manual fixes.
+
+Bug: 470039537
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic148e7c19110b69c7c2bd0622e0a402382575e33">Ic148e7c19110b69c7c2bd0622e0a402382575e33</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7280965">https://chromium-review.googlesource.com/c/chromium/src/+/7280965</a>
+Reviewed-by: Denis Kuznetsov &lt;antrim@chromium.org&gt;
+Commit-Queue: Victor Vianna &lt;victorvianna@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1561850}
 </pre>
 
 </body>
