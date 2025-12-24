@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1562301/"> 1562301</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5a5deecc72435f5f077ca362692da27480fd0395">5a5deecc72435f5f077ca362692da27480fd0395</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1562391/"> 1562391</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/07b2d30365f5eb77c17fef2710222ddb8bdce75b">07b2d30365f5eb77c17fef2710222ddb8bdce75b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1562301/">1562301</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5a5deecc72435f5f077ca362692da27480fd0395">5a5deecc72435f5f077ca362692da27480fd0395</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1562386/">1562386</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1da599a400e37796e3f0a515d21af9f06cbe0eab">1da599a400e37796e3f0a515d21af9f06cbe0eab</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5a5deecc72435f5f077ca362692da27480fd0395
+   07b2d30365f5eb77c17fef2710222ddb8bdce75b
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5a5deecc72435f5f077ca362692da27480fd0395">
+    <a href="/chromium/src/+log/07b2d30365f5eb77c17fef2710222ddb8bdce75b">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5a5deecc72435f5f077ca362692da27480fd0395.tar.gz">
+    <a href="/chromium/src/+archive/07b2d30365f5eb77c17fef2710222ddb8bdce75b.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Aman Verma &lt;amanvr@google.com&gt;
+   S. Ganesh &lt;ganesh@chromium.org&gt;
   </td>
   <td>
-   Tue Dec 23 20:38:45 2025
+   Wed Dec 24 01:19:57 2025
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Tue Dec 23 20:38:45 2025
+   Wed Dec 24 01:19:57 2025
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5a5deecc72435f5f077ca362692da27480fd0395/">
-    db871c87b1ebf883749a0fc973014fade7616e9c
+   <a href="/chromium/src/+/07b2d30365f5eb77c17fef2710222ddb8bdce75b/">
+    20f96d8d749e361eae3b7bf96358c2c9d201b528
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5a5deecc72435f5f077ca362692da27480fd0395%5E">
-    7ebaa63dcd9894e838cc8d578a475b3f94a2b907
+   <a href="/chromium/src/+/07b2d30365f5eb77c17fef2710222ddb8bdce75b%5E">
+    b46f30bfe3ec6147ca184308c4c355eda8897b7f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5a5deecc72435f5f077ca362692da27480fd0395%5E%21/">
+    <a href="/chromium/src/+/07b2d30365f5eb77c17fef2710222ddb8bdce75b%5E%21/">
      diff
     </a>
     ]
@@ -179,37 +179,15 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[InputVizard] Update emission of kAndroidOSTransferredANewSequence
-reason
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Delete the ChromeRecovery directory when the elevation service runs
 
-Android platform sometimes sends ACTION_DOWN/ACTION_UP instead of
-POINTER_DOWN/POINTER_UP due to a known platform issue. If we receive an
-ACTION_UP while a touch sequence is still potentially active on Viz, we
-should not assume that the Android OS transferred a new sequence
-unexpectedly.
-
-This change:
-1. Adds a check for IsTouchSequencePotentiallyActiveOnViz() before
-   emitting the kAndroidOSTransferredANewSequence reason.
-2. Introduces a new enumeration histogram
-   'Android.InputOnViz.Browser.NewSequenceTransferredByOS' using
-   TransferredSequenceType (ActionDown, PointerDown). It is logged
-   whenever an ACTION_UP is received while in the
-   kConsumeEventsUntilCancel state. This helps quantify how often
-   the OS transfers a different sequence than requested,
-   distinguishing between new action sequences and pointer sequences.
-3. Adds LINT markers to the C++ and XML enum definitions to ensure
-   they remain synchronized.
-
-OBSOLETE_HISTOGRAM[Android.InputOnViz.Browser.SequenceDroppedReason2]=Replaced by Android.InputOnViz.Browser.SequenceDroppedReason3
-
-Bug: 470948325
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib27409d8995c3207901c2d62521d68eeead2a3aa">Ib27409d8995c3207901c2d62521d68eeead2a3aa</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7300565">https://chromium-review.googlesource.com/c/chromium/src/+/7300565</a>
-Auto-Submit: Aman Verma &lt;amanvr@google.com&gt;
-Commit-Queue: Aman Verma &lt;amanvr@google.com&gt;
-Reviewed-by: Luc Nguyen &lt;lucnguyen@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1562301}
+Fixed: 471269919
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4b47057ba82b70aa99f6492688687ce669454e3d">I4b47057ba82b70aa99f6492688687ce669454e3d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7312757">https://chromium-review.googlesource.com/c/chromium/src/+/7312757</a>
+Commit-Queue: Sorin Jianu &lt;sorin@chromium.org&gt;
+Reviewed-by: Sorin Jianu &lt;sorin@chromium.org&gt;
+Auto-Submit: S Ganesh &lt;ganesh@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1562391}
 </pre>
 
 </body>
