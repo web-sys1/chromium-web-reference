@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1563913/"> 1563913</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5942eb2d639813e59b1fb6413248f114f1c9cf7c">5942eb2d639813e59b1fb6413248f114f1c9cf7c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1563964/"> 1563964</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/746ae0f5ec6c7a441d479adc3b6192984a703d22">746ae0f5ec6c7a441d479adc3b6192984a703d22</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1563913/">1563913</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/5942eb2d639813e59b1fb6413248f114f1c9cf7c">5942eb2d639813e59b1fb6413248f114f1c9cf7c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1563958/">1563958</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/862d090b30cd350e2352494592217cc6eded83d4">862d090b30cd350e2352494592217cc6eded83d4</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   5942eb2d639813e59b1fb6413248f114f1c9cf7c
+   746ae0f5ec6c7a441d479adc3b6192984a703d22
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/5942eb2d639813e59b1fb6413248f114f1c9cf7c">
+    <a href="/chromium/src/+log/746ae0f5ec6c7a441d479adc3b6192984a703d22">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/5942eb2d639813e59b1fb6413248f114f1c9cf7c.tar.gz">
+    <a href="/chromium/src/+archive/746ae0f5ec6c7a441d479adc3b6192984a703d22.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Steve Becker &lt;stevebe@microsoft.com&gt;
+   Alison Gale &lt;agale@chromium.org&gt;
   </td>
   <td>
-   Fri Jan 02 17:54:27 2026
+   Fri Jan 02 20:44:41 2026
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jan 02 17:54:27 2026
+   Fri Jan 02 20:44:41 2026
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/5942eb2d639813e59b1fb6413248f114f1c9cf7c/">
-    5327a6dfe3d3a0c7720b0352f65972c01976de59
+   <a href="/chromium/src/+/746ae0f5ec6c7a441d479adc3b6192984a703d22/">
+    210f9da37fe3af9641bd08e20dafcee4acc056c4
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/5942eb2d639813e59b1fb6413248f114f1c9cf7c%5E">
-    5980162e8b05f062c896d01bad07686a1813d976
+   <a href="/chromium/src/+/746ae0f5ec6c7a441d479adc3b6192984a703d22%5E">
+    0819f861c285f987422985ca8a52562d6a2e275f
    </a>
    <span>
     [
-    <a href="/chromium/src/+/5942eb2d639813e59b1fb6413248f114f1c9cf7c%5E%21/">
+    <a href="/chromium/src/+/746ae0f5ec6c7a441d479adc3b6192984a703d22%5E%21/">
      diff
     </a>
     ]
@@ -179,40 +179,14 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[DomStorage] Remove LevelDB dependencies from LocalStorageImplTest
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[SxS] Clean up more drag params
 
-Updates the local storage unit test to use the `DomStorageDatabase`
-interface instead of directly reading and writing the LevelDB. Local
-storage persists the following:
-
-1. The database version. In prior changes, the database version became
-an internal detail of the database implementation that is no exposed
-directly to `LocalStorageImpl`. This change adds
-`PutVersionForTesting()` to the `DomStorageDatabase` interface to
-support existing local storage tests that simulate corrupt versions on
-disk.
-
-2. Map key/value pairs for each storage key using local storage. This
-change adds functions `PutMapKeyValue()` and `ExpectMapEquals()` for
-unit tests to read and write a map's key/value pairs.
-
-3. Map usage metadata for each storage key using local storage. This
-includes the last access time, last modified time and the total bytes
-used. This change updates tests to use `PutMetadataSync()` and
-`ReadAllMetadataSync()`.
-
-Before the change, the test read and write LevelDB entries directly
-using `GetDatabaseContents()` and `SetDatabaseEntry()`. Afterwards, it
-must use the `DomStorageDatabase` interface through the functions above
-to read/write the database version, map key/values and map usage
-metadata.
-
-Bug: 377242771
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I244ac7a1d4fc4eec341328d2c24bdb5ebdb2752d">I244ac7a1d4fc4eec341328d2c24bdb5ebdb2752d</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7362239">https://chromium-review.googlesource.com/c/chromium/src/+/7362239</a>
-Reviewed-by: Abhishek Shanthkumar &lt;abhishek.shanthkumar@microsoft.com&gt;
-Commit-Queue: Steve Becker &lt;stevebe@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1563913}
+Bug: 454347097
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I5d70efc714731573d251f4dfac4fed3d40869162">I5d70efc714731573d251f4dfac4fed3d40869162</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7381005">https://chromium-review.googlesource.com/c/chromium/src/+/7381005</a>
+Commit-Queue: Alison Gale &lt;agale@chromium.org&gt;
+Reviewed-by: Kaan Alsan &lt;alsan@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1563964}
 </pre>
 
 </body>
