@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1563856/"> 1563856</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/427a0bc1c06fb0f42feeef5e5047522501f98efb">427a0bc1c06fb0f42feeef5e5047522501f98efb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1563913/"> 1563913</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5942eb2d639813e59b1fb6413248f114f1c9cf7c">5942eb2d639813e59b1fb6413248f114f1c9cf7c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1563858/">1563858</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/384239f79169fa9404feb82226a3a088d6d1c13e">384239f79169fa9404feb82226a3a088d6d1c13e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1563913/">1563913</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5942eb2d639813e59b1fb6413248f114f1c9cf7c">5942eb2d639813e59b1fb6413248f114f1c9cf7c</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   427a0bc1c06fb0f42feeef5e5047522501f98efb
+   5942eb2d639813e59b1fb6413248f114f1c9cf7c
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/427a0bc1c06fb0f42feeef5e5047522501f98efb">
+    <a href="/chromium/src/+log/5942eb2d639813e59b1fb6413248f114f1c9cf7c">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/427a0bc1c06fb0f42feeef5e5047522501f98efb.tar.gz">
+    <a href="/chromium/src/+archive/5942eb2d639813e59b1fb6413248f114f1c9cf7c.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Ewann Pellé &lt;ewannpv@chromium.org&gt;
+   Steve Becker &lt;stevebe@microsoft.com&gt;
   </td>
   <td>
-   Fri Jan 02 14:27:50 2026
+   Fri Jan 02 17:54:27 2026
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jan 02 14:27:50 2026
+   Fri Jan 02 17:54:27 2026
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/427a0bc1c06fb0f42feeef5e5047522501f98efb/">
-    811ca5dcd53d2d64a4824a97051261683d50d1eb
+   <a href="/chromium/src/+/5942eb2d639813e59b1fb6413248f114f1c9cf7c/">
+    5327a6dfe3d3a0c7720b0352f65972c01976de59
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/427a0bc1c06fb0f42feeef5e5047522501f98efb%5E">
-    bf90c6c91a3f77a99ae863af28ce85f9f1128650
+   <a href="/chromium/src/+/5942eb2d639813e59b1fb6413248f114f1c9cf7c%5E">
+    5980162e8b05f062c896d01bad07686a1813d976
    </a>
    <span>
     [
-    <a href="/chromium/src/+/427a0bc1c06fb0f42feeef5e5047522501f98efb%5E%21/">
+    <a href="/chromium/src/+/5942eb2d639813e59b1fb6413248f114f1c9cf7c%5E%21/">
      diff
     </a>
     ]
@@ -179,23 +179,40 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS][Assistant][8/N] Integrate Assistant Mediators and Coordinators
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[DomStorage] Remove LevelDB dependencies from LocalStorageImplTest
 
-Completes the Assistant Sheet implementation by wiring up the Mediator
-layer and connecting it to the Coordinators and Views.
+Updates the local storage unit test to use the `DomStorageDatabase`
+interface instead of directly reading and writing the LevelDB. Local
+storage persists the following:
 
-Key changes:
-- Added Mediators for Gemini and AIM.
-- Configured Coordinators to pass the `AssistantCommands` handler
-  (from the parent Sheet Coordinator) to their Mediators.
-- Wired up initial "fake" button logic for settings/back navigation.
+1. The database version. In prior changes, the database version became
+an internal detail of the database implementation that is no exposed
+directly to `LocalStorageImpl`. This change adds
+`PutVersionForTesting()` to the `DomStorageDatabase` interface to
+support existing local storage tests that simulate corrupt versions on
+disk.
 
-Bug: 469050167
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0d97979b373eb790b5e50ccfc9512d3be5d3e05c">I0d97979b373eb790b5e50ccfc9512d3be5d3e05c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7354111">https://chromium-review.googlesource.com/c/chromium/src/+/7354111</a>
-Commit-Queue: Ewann Pellé &lt;ewannpv@chromium.org&gt;
-Reviewed-by: Gauthier Ambard &lt;gambard@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1563856}
+2. Map key/value pairs for each storage key using local storage. This
+change adds functions `PutMapKeyValue()` and `ExpectMapEquals()` for
+unit tests to read and write a map's key/value pairs.
+
+3. Map usage metadata for each storage key using local storage. This
+includes the last access time, last modified time and the total bytes
+used. This change updates tests to use `PutMetadataSync()` and
+`ReadAllMetadataSync()`.
+
+Before the change, the test read and write LevelDB entries directly
+using `GetDatabaseContents()` and `SetDatabaseEntry()`. Afterwards, it
+must use the `DomStorageDatabase` interface through the functions above
+to read/write the database version, map key/values and map usage
+metadata.
+
+Bug: 377242771
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I244ac7a1d4fc4eec341328d2c24bdb5ebdb2752d">I244ac7a1d4fc4eec341328d2c24bdb5ebdb2752d</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7362239">https://chromium-review.googlesource.com/c/chromium/src/+/7362239</a>
+Reviewed-by: Abhishek Shanthkumar &lt;abhishek.shanthkumar@microsoft.com&gt;
+Commit-Queue: Steve Becker &lt;stevebe@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1563913}
 </pre>
 
 </body>
