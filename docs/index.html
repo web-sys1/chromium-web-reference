@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1566394/"> 1566394</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/359bb3776743e8d015f74f196b66337cf3cd36b1">359bb3776743e8d015f74f196b66337cf3cd36b1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1566465/"> 1566465</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4fe9ff807f15a2f2d6464f31a2e2b986c68ff105">4fe9ff807f15a2f2d6464f31a2e2b986c68ff105</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1566359/">1566359</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/10d033594eed9504a209d4ce55c5183ee00e2082">10d033594eed9504a209d4ce55c5183ee00e2082</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1566503/">1566503</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ba1c17a00fa92d81bf0dd4cc24b358d9f96f12e7">ba1c17a00fa92d81bf0dd4cc24b358d9f96f12e7</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   359bb3776743e8d015f74f196b66337cf3cd36b1
+   4fe9ff807f15a2f2d6464f31a2e2b986c68ff105
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/359bb3776743e8d015f74f196b66337cf3cd36b1">
+    <a href="/chromium/src/+log/4fe9ff807f15a2f2d6464f31a2e2b986c68ff105">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/359bb3776743e8d015f74f196b66337cf3cd36b1.tar.gz">
+    <a href="/chromium/src/+archive/4fe9ff807f15a2f2d6464f31a2e2b986c68ff105.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Wangsong Jin &lt;wangsongjin@microsoft.com&gt;
+   Alexis Hetu &lt;sugoi@chromium.org&gt;
   </td>
   <td>
-   Thu Jan 08 18:08:44 2026
+   Thu Jan 08 19:40:01 2026
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Thu Jan 08 18:08:44 2026
+   Thu Jan 08 19:40:01 2026
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/359bb3776743e8d015f74f196b66337cf3cd36b1/">
-    c005af1de26152fc72eff141e44be180e73a4cff
+   <a href="/chromium/src/+/4fe9ff807f15a2f2d6464f31a2e2b986c68ff105/">
+    5fb2ebf03ca23a2b5229bc4da1250c9e19870050
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/359bb3776743e8d015f74f196b66337cf3cd36b1%5E">
-    d91cbebed99dc5b4ed44400f4900c9afe63ee748
+   <a href="/chromium/src/+/4fe9ff807f15a2f2d6464f31a2e2b986c68ff105%5E">
+    985ca95eddf6a9a839aa46862d2550b0979ce1f2
    </a>
    <span>
     [
-    <a href="/chromium/src/+/359bb3776743e8d015f74f196b66337cf3cd36b1%5E%21/">
+    <a href="/chromium/src/+/4fe9ff807f15a2f2d6464f31a2e2b986c68ff105%5E%21/">
      diff
     </a>
     ]
@@ -179,31 +179,18 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix backdrop-filter with invalid mask image issue
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS] Add script code to serialize passkey PRF input data
 
-According to <a href="https://drafts.fxtf.org/css-masking-1/#the-mask-image,">https://drafts.fxtf.org/css-masking-1/#the-mask-image,</a> an
-invalid mask image should generate a transparent black mask layer that
-hides the content. However, when backdrop-filter is used with invalid
-mask images, the content is still created and rendered.
+This CL adds the code to properly serialize the PRF inputs in
+a format which the passkey request parser is able to parse.
 
-This change adds AllImagesAreInvalid() checking in
-PaintPropertyTreeBuilder for elements with backdrop-filter. When an
-element has both mask-image and backdrop-filter specified, but all mask
-images are invalid (failed loads, invalid URLs, slow-loading, etc.),
-PaintPropertyTreeBuilder directly checks this condition and sets
-opacity=0, correctly hiding the element and its backdrop-filter as
-required by the spec for invalid mask images.
-
-The fix is guarded by the HandleInvalidMaskImageWithBackdropFilter
-runtime feature flag as a killswitch.
-
-Bug: 441547032
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I77cd4907beb541325894eaa2a490401fbc1c05b4">I77cd4907beb541325894eaa2a490401fbc1c05b4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7004946">https://chromium-review.googlesource.com/c/chromium/src/+/7004946</a>
-Reviewed-by: Philip Rogers &lt;pdr@chromium.org&gt;
-Reviewed-by: Fredrik Söderquist &lt;fs@opera.com&gt;
-Commit-Queue: Wangsong Jin &lt;wangsongjin@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1566394}
+Bug: 460485679
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I2ca8fb80183bbb32e52944238e101de7e4daf85c">I2ca8fb80183bbb32e52944238e101de7e4daf85c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7404039">https://chromium-review.googlesource.com/c/chromium/src/+/7404039</a>
+Reviewed-by: Noémie St-Onge &lt;noemies@google.com&gt;
+Reviewed-by: Ken Buchanan &lt;kenrb@chromium.org&gt;
+Commit-Queue: Alexis Hétu &lt;sugoi@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1566465}
 </pre>
 
 </body>
