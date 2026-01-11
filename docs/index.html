@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1567460/"> 1567460</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6b088b99daa0116d45bd72e1fba82eff0dda6a29">6b088b99daa0116d45bd72e1fba82eff0dda6a29</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1567475/"> 1567475</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2be5a1c64742b89040ab5c5691c8c9b34e7b0d92">2be5a1c64742b89040ab5c5691c8c9b34e7b0d92</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1567464/">1567464</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/14f67e2e3c58c39f6c95e5d6e4bc65e702c2a562">14f67e2e3c58c39f6c95e5d6e4bc65e702c2a562</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1567475/">1567475</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2be5a1c64742b89040ab5c5691c8c9b34e7b0d92">2be5a1c64742b89040ab5c5691c8c9b34e7b0d92</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   6b088b99daa0116d45bd72e1fba82eff0dda6a29
+   2be5a1c64742b89040ab5c5691c8c9b34e7b0d92
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/6b088b99daa0116d45bd72e1fba82eff0dda6a29">
+    <a href="/chromium/src/+log/2be5a1c64742b89040ab5c5691c8c9b34e7b0d92">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/6b088b99daa0116d45bd72e1fba82eff0dda6a29.tar.gz">
+    <a href="/chromium/src/+archive/2be5a1c64742b89040ab5c5691c8c9b34e7b0d92.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   mingming &lt;mingming1.xu@intel.com&gt;
+   Jan Keitel &lt;jkeitel@google.com&gt;
   </td>
   <td>
-   Sun Jan 11 01:21:47 2026
+   Sun Jan 11 03:40:15 2026
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Sun Jan 11 01:21:47 2026
+   Sun Jan 11 03:40:15 2026
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/6b088b99daa0116d45bd72e1fba82eff0dda6a29/">
-    ee8ff166e1af04f70485cbd2ebe6c8c971a2cb00
+   <a href="/chromium/src/+/2be5a1c64742b89040ab5c5691c8c9b34e7b0d92/">
+    ef4368b35fafe137783f11f49d65563f39d9fb96
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/6b088b99daa0116d45bd72e1fba82eff0dda6a29%5E">
-    e85b05d384c7cdaf6f6f4b07191ccbf0a6d52248
+   <a href="/chromium/src/+/2be5a1c64742b89040ab5c5691c8c9b34e7b0d92%5E">
+    9a66ac11303636f3b872584c1e508c4d3cd02576
    </a>
    <span>
     [
-    <a href="/chromium/src/+/6b088b99daa0116d45bd72e1fba82eff0dda6a29%5E%21/">
+    <a href="/chromium/src/+/2be5a1c64742b89040ab5c5691c8c9b34e7b0d92%5E%21/">
      diff
     </a>
     ]
@@ -179,53 +179,17 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">WebNN: Schedule `OnLost` task immediately to avoid race conditions
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use span-based file API in directory_impl.cc
 
-Currently, dispatching and reading tensor are scheduled to each
-context's owning thread in sequence. `WebNNContextImpl::OnLost`[1] task
-to handle the context lost during dispatching is also scheduled to the
-context's owning thread, but since the scheduling is called from the
-GPU main thread by
-`WebNNContextProviderImpl::DestroyAllContextsAndKillGpuProcess`[2], a
-race condition can happen in the following scenario:
+No functionality changes.
 
-dispatch -&gt; handle context lost -&gt;read output tensor
-
-1. If handling context lost is scheduled after reading output tensor,
-renderer process can still complete reading the tensor with an invalid
-result before the `MLTensor::OnConnectionError`[3] is invoked.
-
-2. If handling context lost is scheduled before reading output tensor,
-renderer process will throw an error: "Tensor has been destroyed or
-context is lost." in `MLTensor::OnConnectionError`. This is the
-expected behavior.
-
-WebNN conformance tests can give flaky results. To address this issue,
-this CL decouples `OnLost` from `DestroyAllContextsAndKillGpuProcess`
-to schedule `OnLost` task immediately, ensuring the `OnLost` is invoked
-before reading an output tensor.
-
-After this change, the context lost reason will not be broadcasted
-across all contexts. The broadcast is unnecessary and may cause a
-security issue where contexts created on different web pages could
-share the context lost reason. Even before this change, the broadcast
-was not guaranteed due to a race condition between killing the GPU
-process[4] on the main thread and invoking OnLost on each context's
-owning thread.
-
-[1] <a href="https://source.chromium.org/chromium/chromium/src/+/main:services/webnn/webnn_context_impl.cc;l=366">https://source.chromium.org/chromium/chromium/src/+/main:services/webnn/webnn_context_impl.cc;l=366</a>
-[2] <a href="https://source.chromium.org/chromium/chromium/src/+/main:services/webnn/webnn_context_provider_impl.cc;l=169">https://source.chromium.org/chromium/chromium/src/+/main:services/webnn/webnn_context_provider_impl.cc;l=169</a>
-[3] <a href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/modules/ml/webnn/ml_tensor.cc;l=327">https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/modules/ml/webnn/ml_tensor.cc;l=327</a>
-[4] <a href="https://source.chromium.org/chromium/chromium/src/+/main:services/webnn/webnn_context_provider_impl.cc;l=177">https://source.chromium.org/chromium/chromium/src/+/main:services/webnn/webnn_context_provider_impl.cc;l=177</a>
-
-Bug: 472359963
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If94312dc10178d81b34b12beffa1694f18a0c17a">If94312dc10178d81b34b12beffa1694f18a0c17a</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7364029">https://chromium-review.googlesource.com/c/chromium/src/+/7364029</a>
-Reviewed-by: Hu, Ningxin &lt;ningxin.hu@intel.com&gt;
-Reviewed-by: Bernhart, Bryan &lt;bryan.bernhart@intel.com&gt;
-Reviewed-by: Rafael Cintron &lt;rafael.cintron@microsoft.com&gt;
-Commit-Queue: Hu, Ningxin &lt;ningxin.hu@intel.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1567460}
+Bug: 435317390
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic14a78f97b08789a14e86dacfb185d3539d545a1">Ic14a78f97b08789a14e86dacfb185d3539d545a1</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7423624">https://chromium-review.googlesource.com/c/chromium/src/+/7423624</a>
+Auto-Submit: Jan Keitel &lt;jkeitel@google.com&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Commit-Queue: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1567475}
 </pre>
 
 </body>
