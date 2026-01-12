@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1567612/"> 1567612</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8161829b80c9f304c700a73d1c0997a6f72e2c11">8161829b80c9f304c700a73d1c0997a6f72e2c11</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1567639/"> 1567639</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c00a0785515d06a0ab9440346e8c94bd7cb68bcd">c00a0785515d06a0ab9440346e8c94bd7cb68bcd</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1567612/">1567612</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8161829b80c9f304c700a73d1c0997a6f72e2c11">8161829b80c9f304c700a73d1c0997a6f72e2c11</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1567642/">1567642</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/aee988aa7dc3b3120e7dac3707c7bee11688397a">aee988aa7dc3b3120e7dac3707c7bee11688397a</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   8161829b80c9f304c700a73d1c0997a6f72e2c11
+   c00a0785515d06a0ab9440346e8c94bd7cb68bcd
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/8161829b80c9f304c700a73d1c0997a6f72e2c11">
+    <a href="/chromium/src/+log/c00a0785515d06a0ab9440346e8c94bd7cb68bcd">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/8161829b80c9f304c700a73d1c0997a6f72e2c11.tar.gz">
+    <a href="/chromium/src/+archive/c00a0785515d06a0ab9440346e8c94bd7cb68bcd.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Dominique Fauteux-Chapleau &lt;domfc@chromium.org&gt;
+   Arkadiusz Tomczak &lt;artomczak@google.com&gt;
   </td>
   <td>
-   Mon Jan 12 05:57:02 2026
+   Mon Jan 12 08:42:47 2026
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jan 12 05:57:02 2026
+   Mon Jan 12 08:42:47 2026
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/8161829b80c9f304c700a73d1c0997a6f72e2c11/">
-    d7c689cdf3e9dc8d4f36aba5e2120531578a6866
+   <a href="/chromium/src/+/c00a0785515d06a0ab9440346e8c94bd7cb68bcd/">
+    9ee92ced434c6f6a622cee6557b2addddec854d8
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/8161829b80c9f304c700a73d1c0997a6f72e2c11%5E">
-    28535e3705c7008da2e358fd7befffd4c5c64aeb
+   <a href="/chromium/src/+/c00a0785515d06a0ab9440346e8c94bd7cb68bcd%5E">
+    527cc4596dbde7b0ce810a9002c99cfb23975581
    </a>
    <span>
     [
-    <a href="/chromium/src/+/8161829b80c9f304c700a73d1c0997a6f72e2c11%5E%21/">
+    <a href="/chromium/src/+/c00a0785515d06a0ab9440346e8c94bd7cb68bcd%5E%21/">
      diff
     </a>
     ]
@@ -179,30 +179,22 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add EnableProxyOverrideRulesForAllUsers implementation
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add retry logic for creating Android and ChromeOS driver.
 
-See crrev.com/c/7080465 for the CL that added the policy
+In <a href="http://crrev.com/c/7261982">http://crrev.com/c/7261982</a> we added retry logic for Desktop.
+We observe similar issues on Android Dev and ChromeOS Beta,
+therefore we add similar mechanism for those platforms.
+Please notice that we do not reuse the timeout logic, since
+those platforms have longer start up time due to being run
+in emulator or vm.
 
-The EnableProxyOverrideRulesForAllUsers implementation is done in two
-parts:
-* In the policy handler, only error messages are added when its own
-  schema is not matched, or when affiliation is checked against it to
-  add an appropriate error message to the main proxy override rules
-  policy.
-* In ProxyConfigServiceImpl, the conversion from pref to ProxyConfig
-  will skip proxy override rules in unaffiliated cases where the policy
-  is not set/set to 0.
-
-BYPASS_POLICY_COMPATIBILITY_CHECK=Enum value 2 won't be supported.
-
-Bug: 419548922
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8354ea8c8412169bb8ed30c035a3bafb99c18b6e">I8354ea8c8412169bb8ed30c035a3bafb99c18b6e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7422844">https://chromium-review.googlesource.com/c/chromium/src/+/7422844</a>
-Reviewed-by: Owen Min &lt;zmin@chromium.org&gt;
-Reviewed-by: Sébastien Lalancette &lt;seblalancette@chromium.org&gt;
-Commit-Queue: Dominique Fauteux-Chapleau &lt;domfc@chromium.org&gt;
-Auto-Submit: Dominique Fauteux-Chapleau &lt;domfc@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1567612}
+Bug: 466009188
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1e06aba38b7d92bf1515c97c4f88b64c7a91830a">I1e06aba38b7d92bf1515c97c4f88b64c7a91830a</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7408634">https://chromium-review.googlesource.com/c/chromium/src/+/7408634</a>
+Reviewed-by: Luc Nguyen &lt;lucnguyen@google.com&gt;
+Reviewed-by: Caitlin Fischer &lt;caitlinfischer@google.com&gt;
+Commit-Queue: Arkadiusz Tomczak &lt;artomczak@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1567639}
 </pre>
 
 </body>
