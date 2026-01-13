@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1567976/"> 1567976</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/dadc58c91f0f3232b4b894fab8610a09d850b7d1">dadc58c91f0f3232b4b894fab8610a09d850b7d1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1568186/"> 1568186</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fcc56177d69e3b0ac50f90c85a38f8a0cab99f92">fcc56177d69e3b0ac50f90c85a38f8a0cab99f92</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1567980/">1567980</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/93ae23ae1d740171b34c2abb81b0a28e56f9a124">93ae23ae1d740171b34c2abb81b0a28e56f9a124</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1568151/">1568151</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/940b091fd09369d51653883e7223a9f9ef5bd9af">940b091fd09369d51653883e7223a9f9ef5bd9af</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   dadc58c91f0f3232b4b894fab8610a09d850b7d1
+   fcc56177d69e3b0ac50f90c85a38f8a0cab99f92
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/dadc58c91f0f3232b4b894fab8610a09d850b7d1">
+    <a href="/chromium/src/+log/fcc56177d69e3b0ac50f90c85a38f8a0cab99f92">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/dadc58c91f0f3232b4b894fab8610a09d850b7d1.tar.gz">
+    <a href="/chromium/src/+archive/fcc56177d69e3b0ac50f90c85a38f8a0cab99f92.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Benjamin Keen &lt;bkeen@google.com&gt;
+   Dominic Farolino &lt;dom@chromium.org&gt;
   </td>
   <td>
-   Mon Jan 12 20:22:12 2026
+   Tue Jan 13 01:39:30 2026
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jan 12 20:22:12 2026
+   Tue Jan 13 01:39:30 2026
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/dadc58c91f0f3232b4b894fab8610a09d850b7d1/">
-    f7607151c22c2df9fe9413a5e07cc4550c6a1565
+   <a href="/chromium/src/+/fcc56177d69e3b0ac50f90c85a38f8a0cab99f92/">
+    2fcf148105a34b040b594abb0ba1bb05414ea7c5
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/dadc58c91f0f3232b4b894fab8610a09d850b7d1%5E">
-    dc0355b903ab9fb71cf5f4fb93aafe35d89bace2
+   <a href="/chromium/src/+/fcc56177d69e3b0ac50f90c85a38f8a0cab99f92%5E">
+    176210e8ce99f1165437676c5623a03cadd8d574
    </a>
    <span>
     [
-    <a href="/chromium/src/+/dadc58c91f0f3232b4b894fab8610a09d850b7d1%5E%21/">
+    <a href="/chromium/src/+/fcc56177d69e3b0ac50f90c85a38f8a0cab99f92%5E%21/">
      diff
     </a>
     ]
@@ -179,25 +179,28 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix PiP crash from duplicate child dialog destruction notifications
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rename CrashReportStorage, and its remove() method
 
-This change fixes a Picture-in-Picture (PiP) window crash that occurs
-during the destruction of a child dialog widget. The crash happens due
-to a CHECK failure in
-base::ScopedMultiSourceObservation::RemoveObservation.
+This CL renames CrashReportStorage to CrashReportContext, per W3C TAG
+feedback [1], and the remove() method to delete(), per other community
+feedback [2].
 
-The theory is that a race condition during widget teardown can cause
-OnWidgetDestroying to be called twice for the same dialog. The first
-call is triggered "manually" when the parent widget is notified of the
-child's removal. A second call can still be dispatched from the child's
-own destruction notification.
+<a href="https://github.com/WICG/crash-reporting/pull/37">https://github.com/WICG/crash-reporting/pull/37</a> will be updated
+separately.
 
-Bug: 474370379
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I8ad293f3944f66c0e9ed5d88e5694a469ae2269e">I8ad293f3944f66c0e9ed5d88e5694a469ae2269e</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7427141">https://chromium-review.googlesource.com/c/chromium/src/+/7427141</a>
-Commit-Queue: Benjamin Keen &lt;bkeen@google.com&gt;
-Reviewed-by: Tommy Steimel &lt;steimel@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1567976}
+[1]: <a href="https://github.com/w3ctag/design-reviews/issues/1129">https://github.com/w3ctag/design-reviews/issues/1129</a>
+[2]: <a href="https://github.com/WICG/crash-reporting/issues/38">https://github.com/WICG/crash-reporting/issues/38</a>
+
+R=dcheng
+
+Bug: 400432195
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I41025804d22b0bbd11a5fe93f8bdf6656df82b20">I41025804d22b0bbd11a5fe93f8bdf6656df82b20</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7422847">https://chromium-review.googlesource.com/c/chromium/src/+/7422847</a>
+Commit-Queue: Dominic Farolino &lt;dom@chromium.org&gt;
+Reviewed-by: Daniel Cheng &lt;dcheng@chromium.org&gt;
+Reviewed-by: mmenke &lt;mmenke@chromium.org&gt;
+Reviewed-by: Nasko Oskov &lt;nasko@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1568186}
 </pre>
 
 </body>
