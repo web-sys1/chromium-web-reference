@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1574575/"> 1574575</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b55298a214e682930aab40fe63bfaff0e53315d4">b55298a214e682930aab40fe63bfaff0e53315d4</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1574714/"> 1574714</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0b1940212e369ec3db2e7654f5975d2779eb0cdf">0b1940212e369ec3db2e7654f5975d2779eb0cdf</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1574595/">1574595</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9fa80e513a27aed38a8b0154118e42097e39b989">9fa80e513a27aed38a8b0154118e42097e39b989</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1574697/">1574697</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f881144f43b64c66996fff4f6dc9649f5a5e19f3">f881144f43b64c66996fff4f6dc9649f5a5e19f3</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   b55298a214e682930aab40fe63bfaff0e53315d4
+   0b1940212e369ec3db2e7654f5975d2779eb0cdf
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/b55298a214e682930aab40fe63bfaff0e53315d4">
+    <a href="/chromium/src/+log/0b1940212e369ec3db2e7654f5975d2779eb0cdf">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/b55298a214e682930aab40fe63bfaff0e53315d4.tar.gz">
+    <a href="/chromium/src/+archive/0b1940212e369ec3db2e7654f5975d2779eb0cdf.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Olivier Robin &lt;olivierrobin@google.com&gt;
+   Sky Debreuil &lt;skydebreuil@google.com&gt;
   </td>
   <td>
-   Mon Jan 26 16:58:53 2026
+   Mon Jan 26 20:50:55 2026
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Jan 26 16:58:53 2026
+   Mon Jan 26 20:50:55 2026
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/b55298a214e682930aab40fe63bfaff0e53315d4/">
-    0b13977fa1b9ab832c250f4f5a1c073d17bf0409
+   <a href="/chromium/src/+/0b1940212e369ec3db2e7654f5975d2779eb0cdf/">
+    7d8dbd92a44c1d70384dde787f7c3694f07a406d
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/b55298a214e682930aab40fe63bfaff0e53315d4%5E">
-    904b1dab77a9bac3e051891f632de58c2dddb386
+   <a href="/chromium/src/+/0b1940212e369ec3db2e7654f5975d2779eb0cdf%5E">
+    ed3d4876844a108dee159037de8b9f70624d9dbd
    </a>
    <span>
     [
-    <a href="/chromium/src/+/b55298a214e682930aab40fe63bfaff0e53315d4%5E%21/">
+    <a href="/chromium/src/+/0b1940212e369ec3db2e7654f5975d2779eb0cdf%5E%21/">
      diff
     </a>
     ]
@@ -179,22 +179,34 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Let JavaScriptFeatures to return values
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor CompositorFrameSinkSupport to use FrameSinkThrottler
 
-This CL leverage WKScriptMessageHandlerWithReply to let
-JavaScriptFeature reply to the messages sent from JavaScript.
+Extract throttling state and logic from CompositorFrameSinkSupport into
+a new FrameSinkThrottler helper class. This encapsulates the logic for
+calculating the effective begin frame interval based on multiple inputs,
+including explicit throttle requests and video cadence signals.
 
-The new sendWebKitMessageWithReply JS returns a Promise that will
-resolve to the response sent by the feature.
+While this is primarily a refactor, it introduces a functional shift in
+how conflicting throttle intervals are resolved. Previously, throttling
+was managed via a "last writer wins" approach where incremental updates
+directly mutated the interval. This was prone to execution-order race
+conditions (e.g., global throttling overriding a screen capture
+exclusion). This CL shifts to a deterministic model where the effective
+interval is strictly calculated based on current inputs.
 
-Features can opt in to this system by overriding
-GetFeatureRepliesToScriptMessages.
+Other notable changes:
+- Add RecurseChildren and RecurseParents helpers to FrameSinkManagerImpl to facilitate safe hierarchy traversal.
+- Add VideoCadenceThrottlingTest and RecurseFrameSinks tests.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I429ab24e0a1af687d6c8a8bdd1bb93fc7a4a1af3">I429ab24e0a1af687d6c8a8bdd1bb93fc7a4a1af3</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7456553">https://chromium-review.googlesource.com/c/chromium/src/+/7456553</a>
-Reviewed-by: Mike Dougherty &lt;michaeldo@chromium.org&gt;
-Commit-Queue: Olivier Robin &lt;olivierrobin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1574575}
+Bug: 467315115
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib787a6cf2596e72b90c07f8a6d34bb08208b4afe">Ib787a6cf2596e72b90c07f8a6d34bb08208b4afe</a>
+Cq-Do-Not-Cancel-Tryjobs: true
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7455363">https://chromium-review.googlesource.com/c/chromium/src/+/7455363</a>
+Reviewed-by: Stacy Gaikovaia &lt;gaiko@google.com&gt;
+Auto-Submit: Sky Debreuil &lt;skydebreuil@google.com&gt;
+Commit-Queue: Sky Debreuil &lt;skydebreuil@google.com&gt;
+Reviewed-by: Jonathan Ross &lt;jonross@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1574714}
 </pre>
 
 </body>
