@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1577166/"> 1577166</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c168b345def22515f8e7f250b0e2b36e3f673ce9">c168b345def22515f8e7f250b0e2b36e3f673ce9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1577224/"> 1577224</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/797a5c7ff6e1c361cac2feec5e39168fa454efc3">797a5c7ff6e1c361cac2feec5e39168fa454efc3</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1577174/">1577174</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f31c1f5ea1ec17cfd3c26af1132821f64fdcdb65">f31c1f5ea1ec17cfd3c26af1132821f64fdcdb65</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1577207/">1577207</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a94f9ec8ea670b58153307298db5ce8c9bbf4993">a94f9ec8ea670b58153307298db5ce8c9bbf4993</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c168b345def22515f8e7f250b0e2b36e3f673ce9
+   797a5c7ff6e1c361cac2feec5e39168fa454efc3
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c168b345def22515f8e7f250b0e2b36e3f673ce9">
+    <a href="/chromium/src/+log/797a5c7ff6e1c361cac2feec5e39168fa454efc3">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c168b345def22515f8e7f250b0e2b36e3f673ce9.tar.gz">
+    <a href="/chromium/src/+archive/797a5c7ff6e1c361cac2feec5e39168fa454efc3.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Christopher Grant &lt;cjgrant@chromium.org&gt;
+   Devon Loehr &lt;dloehr@google.com&gt;
   </td>
   <td>
-   Fri Jan 30 12:28:47 2026
+   Fri Jan 30 14:59:05 2026
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Fri Jan 30 12:28:47 2026
+   Fri Jan 30 14:59:05 2026
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c168b345def22515f8e7f250b0e2b36e3f673ce9/">
-    d7ecff96f8bfe46a7b94de4900e6566a2d0cbaac
+   <a href="/chromium/src/+/797a5c7ff6e1c361cac2feec5e39168fa454efc3/">
+    4d4f40b94ddcd91ab95a3ec9ddc271bba4bb0b20
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c168b345def22515f8e7f250b0e2b36e3f673ce9%5E">
-    8fea11725595db6eaec800133e171061bd05f998
+   <a href="/chromium/src/+/797a5c7ff6e1c361cac2feec5e39168fa454efc3%5E">
+    3bd8d19c057ec7305a60c4f94159dcfb39361c18
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c168b345def22515f8e7f250b0e2b36e3f673ce9%5E%21/">
+    <a href="/chromium/src/+/797a5c7ff6e1c361cac2feec5e39168fa454efc3%5E%21/">
      diff
     </a>
     ]
@@ -179,22 +179,29 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[SEH] Dialog Part 5: Add the actual dialog implementation
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[rustmojo] Implement and migrate data pipes to new FFI
 
-Here, a new variation of the search engine override dialog is added, offering explicit radio button-based options. It ties to plumbing
-introduced in the set of prior CLs (see bug). A screenshot of the
-initial appearance is below (subject to refinement).
+This CL implements the functions for reading from and creating data
+pipes, then migrates the existing system bindings to use the new
+constructs. There's more work to do there to make things ergonomic and
+implement additional data pipe functionality, but this covers the
+alread-written code.
 
-This change is behind a flag.
+One difference from the previous API is that we now take in an array
+of uninitialized bytes, which saves the effort of default-initializing
+them but also requires the user to `unsafe`ly mark them as initialized
+after calling the function. This is a bummer but is unavoidable if we
+don't want to impose unnecessary overhead on users. One of the future
+changes we could do is adding safe equivalents that use already-
+initialized bytes.
 
-<a href="https://screenshot.googleplex.com/AWGVChajJaBSqDV">https://screenshot.googleplex.com/AWGVChajJaBSqDV</a>
-
-Bug: 461806299
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I817f6da7d182411bd984c344f6b6ea0f074a204f">I817f6da7d182411bd984c344f6b6ea0f074a204f</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7163616">https://chromium-review.googlesource.com/c/chromium/src/+/7163616</a>
-Commit-Queue: Christopher Grant &lt;cjgrant@chromium.org&gt;
-Reviewed-by: Emilia Paz &lt;emiliapaz@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1577166}
+Bug: 444509367
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia605bb6c61a25d3c4753c0455eddc379e817f6e7">Ia605bb6c61a25d3c4753c0455eddc379e817f6e7</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7533335">https://chromium-review.googlesource.com/c/chromium/src/+/7533335</a>
+Reviewed-by: Łukasz Anforowicz &lt;lukasza@chromium.org&gt;
+Reviewed-by: Julia Hansbrough &lt;flowerhack@google.com&gt;
+Commit-Queue: Devon Loehr &lt;dloehr@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1577224}
 </pre>
 
 </body>
