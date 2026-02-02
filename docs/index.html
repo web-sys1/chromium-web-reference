@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1578052/"> 1578052</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c04bbf7c8dddb9e908498e3575715e095b8bc4ec">c04bbf7c8dddb9e908498e3575715e095b8bc4ec</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1578082/"> 1578082</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/befcbbf59b7c8c7f67701dcd3e8c4f948a545e4e">befcbbf59b7c8c7f67701dcd3e8c4f948a545e4e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1578053/">1578053</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/23d874a6e8953b00e31814422cac77aba2417408">23d874a6e8953b00e31814422cac77aba2417408</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1578093/">1578093</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a36fb2a6e62d45cdf787b9290b65c83de2ec2a16">a36fb2a6e62d45cdf787b9290b65c83de2ec2a16</a></td>
      </tbody>
     </table>
    <hr><table>
@@ -110,19 +110,19 @@ body{
    commit
   </th>
   <td>
-   c04bbf7c8dddb9e908498e3575715e095b8bc4ec
+   befcbbf59b7c8c7f67701dcd3e8c4f948a545e4e
   </td>
   <td>
    <span>
     [
-    <a href="/chromium/src/+log/c04bbf7c8dddb9e908498e3575715e095b8bc4ec">
+    <a href="/chromium/src/+log/befcbbf59b7c8c7f67701dcd3e8c4f948a545e4e">
      log
     </a>
     ]
    </span>
    <span>
     [
-    <a href="/chromium/src/+archive/c04bbf7c8dddb9e908498e3575715e095b8bc4ec.tar.gz">
+    <a href="/chromium/src/+archive/befcbbf59b7c8c7f67701dcd3e8c4f948a545e4e.tar.gz">
      tgz
     </a>
     ]
@@ -134,10 +134,10 @@ body{
    author
   </th>
   <td>
-   Christopher Cameron &lt;ccameron@chromium.org&gt;
+   Luchen Peng &lt;luchenpeng@google.com&gt;
   </td>
   <td>
-   Mon Feb 02 12:51:22 2026
+   Mon Feb 02 14:18:10 2026
   </td>
  </tr>
  <tr>
@@ -148,7 +148,7 @@ body{
    Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
   </td>
   <td>
-   Mon Feb 02 12:51:22 2026
+   Mon Feb 02 14:18:10 2026
   </td>
  </tr>
  <tr>
@@ -156,8 +156,8 @@ body{
    tree
   </th>
   <td>
-   <a href="/chromium/src/+/c04bbf7c8dddb9e908498e3575715e095b8bc4ec/">
-    18266c55f9dd301154b6276982493a6ca16688b2
+   <a href="/chromium/src/+/befcbbf59b7c8c7f67701dcd3e8c4f948a545e4e/">
+    1df660bff8d40c3d112d76957a755592c45c86b3
    </a>
   </td>
  </tr>
@@ -166,12 +166,12 @@ body{
    parent
   </th>
   <td>
-   <a href="/chromium/src/+/c04bbf7c8dddb9e908498e3575715e095b8bc4ec%5E">
-    8d310d7856d46bcb61824245d3ad20dc8267715e
+   <a href="/chromium/src/+/befcbbf59b7c8c7f67701dcd3e8c4f948a545e4e%5E">
+    f08f2c4f931ca08bc8e68097f8a87f363371925b
    </a>
    <span>
     [
-    <a href="/chromium/src/+/c04bbf7c8dddb9e908498e3575715e095b8bc4ec%5E%21/">
+    <a href="/chromium/src/+/befcbbf59b7c8c7f67701dcd3e8c4f948a545e4e%5E%21/">
      diff
     </a>
     ]
@@ -179,27 +179,16 @@ body{
   </td>
  </tr>
 </table>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">viz::VideoCaptureOverlay: Remove gfx::ColorTransform
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Cleanup] Cleanup ApplyClientsideModelPredictionsForOtps.
 
-Change the function to use skia::ConvertRGBAToOrFromYUVA. In the center
-of VideoCaptureOverlay::Sprite::TransformImage, populate an array of
-SkColor4fs instead of a separate color and alpha array (this is needed
-because the old gfx::ColorTransform doesn't take an SkColor4f).
+The actual flag was removed in crrev.com/c/7145938
 
-This change threw up a bunch of UNSAFE_TODO warnings. Fix all of the
-ones that this change touched by changing transformed_image_ to a
-base::HeapArray instead of just an array, and use base::span to make the
-pointer math safe.
-
-Of note is that all of this CPU-side pixel manipulation should be moved
-into Skia calls (and ideally done on the GPU).
-
-Bug: 463702880
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I86eb50478f310a265d8548d1732e3136afbcdd70">I86eb50478f310a265d8548d1732e3136afbcdd70</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7510983">https://chromium-review.googlesource.com/c/chromium/src/+/7510983</a>
-Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
-Commit-Queue: ccameron chromium &lt;ccameron@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1578052}
+Bug: 459738161
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I24b5046392d162f749c630434bdabf6df3bc18a0">I24b5046392d162f749c630434bdabf6df3bc18a0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7527246">https://chromium-review.googlesource.com/c/chromium/src/+/7527246</a>
+Commit-Queue: Luchen Peng &lt;luchenpeng@google.com&gt;
+Reviewed-by: Ioana Treib &lt;ioanap@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1578082}
 </pre>
 
 </body>
