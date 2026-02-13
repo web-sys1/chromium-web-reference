@@ -2,6 +2,7 @@
 from bs4 import BeautifulSoup
 import json
 import requests
+from urllib.parse import urljoin
 
 HEADER = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'}    
 
@@ -14,7 +15,6 @@ begin = """<!DOCTYPE html>
 <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
 <meta content="utf-8" http-equiv="encoding">
 <link href="https://chromium.googlesource.com/+static/base.css" rel="stylesheet"/>
-<base href="https://chromium.googlesource.com/">
 <style type="text/css">
 table.blueTable {
   border: 1px solid #1C6EA4;
@@ -103,28 +103,28 @@ endLine = """
 </html>
 """
 
-def main():
-    CR_REV_G = [requests.get('https://cr-rev.appspot.com/_ah/api/crrev/v1/redirect/' + CURRENT_REVISION_NO[0]), requests.get('https://cr-rev.appspot.com/_ah/api/crrev/v1/redirect/' + CURRENT_REVISION_NO[1])]
-    CR_IDENTIFIER = json.loads(CR_REV_G[0].text)
-    CR_IDENTIFIER_WIN = json.loads(CR_REV_G[1].text)
+
+CR_REV_G = [requests.get('https://cr-rev.appspot.com/_ah/api/crrev/v1/redirect/' + "1583672"), requests.get('https://cr-rev.appspot.com/_ah/api/crrev/v1/redirect/' + "1583676")]
+CR_IDENTIFIER = json.loads(CR_REV_G[0].text)
+CR_IDENTIFIER_WIN = json.loads(CR_REV_G[1].text)
     
-    try:
-      r = requests.get(CR_IDENTIFIER['redirect_url'])
-    except:
-      r = requests.get(CR_IDENTIFIER['redirectUrl'])
+try:
+ r = requests.get(CR_IDENTIFIER['redirect_url'])
+except:
+ r = requests.get(CR_IDENTIFIER['redirectUrl'])
       
-    content = BeautifulSoup(r.content, "html.parser")
+content = BeautifulSoup(r.content, "html.parser")
     
-    print('SUMMARY'.center(54, "-"), '\n')
-    print('REVISION NO. ' + CURRENT_REVISION_NO[0])
-    title = content.title.string
-    print('PAGE TITLE: ', title)
-    print('SHA-1 COMMIT NO.: ', CR_IDENTIFIER['git_sha'])
+print('SUMMARY'.center(54, "-"), '\n')
+print('REVISION NO. ' + CURRENT_REVISION_NO[0])
+title = content.title.string
+print('PAGE TITLE: ', title)
+print('SHA-1 COMMIT NO.: ', CR_IDENTIFIER['git_sha'])
     
-    GIT_SHA1 = [CR_IDENTIFIER['git_sha'], CR_IDENTIFIER_WIN['git_sha']]
+GIT_SHA1 = [CR_IDENTIFIER['git_sha'], CR_IDENTIFIER_WIN['git_sha']]
     
-    ContentSummary = f"""
-    <table class="blueTable">
+ContentSummary = f"""
+<table class="blueTable">
      <thead>
       <tr>
        <th><strong>REVISION ID</strong></th>
@@ -142,17 +142,23 @@ def main():
        <td><a href="https://chromium.googlesource.com/chromium/src/+/{GIT_SHA1[1]}">{GIT_SHA1[1]}</a></td>
      </tbody>
     </table>
-   <hr>"""
-    HR_BREAKPOINT= f"""<hr style="height:1px;border-width:0;color:gray;background-color:gray">"""
-    MetadataParser = content.find_all("div", {"class" : "Metadata"})
-    PreMMsg = content.find_all("pre", {"class" : "MetadataMessage"})
+<hr>"""
+HR_BREAKPOINT= f"""<hr style="height:1px;border-width:0;color:gray;background-color:gray">"""
+MetadataParser = content.find_all("div", {"class" : "Metadata"})
+PreMMsg = content.find_all("pre", {"class" : "MetadataMessage"})
 
-    MTAB_P = MetadataParser[0].find("dl")
-    METADATA_FT = MTAB_P()
-    MTAB_RES = ContentSummary + MTAB_P.prettify() + HR_BREAKPOINT + PreMMsg[0].prettify()
+MTAB_P = MetadataParser[0].find("dl")
+# --- HREFs ---
+base_url = "https://chromium.googlesource.com/"
+for a_tag in MTAB_P.find_all('a', href=True):
+    a_tag['href'] = urljoin(base_url, a_tag['href'])
+
+METADATA_FT = MTAB_P()
+MTAB_RES = ContentSummary + MTAB_P.prettify() + HR_BREAKPOINT + PreMMsg[0].prettify()
     
-    for tag in PreMMsg:
-        if 'class' in tag.attrs.keys() and tag.attrs['class'][0].strip():
+for tag in PreMMsg:
+    if 'class' in tag.attrs.keys() and tag.attrs['class'][0].strip():
+            print("Result HREF:", METADATA_FT[0].find_all("a"))
             print('CLASS ORIGINS :', tag.attrs['class'], '\n\n')
             print('METADATA'.center(54, "-"), '\n')
             print(METADATA_FT[1].text, ':' + '', METADATA_FT[2].text)
@@ -163,9 +169,6 @@ def main():
             print('DETAILS'.center(54, "-"), '\n')
             print(PreMMsg[0].text)
             
-    with open(f'docs/index.html', 'w', encoding='utf8') as f:
+with open(f'index.html', 'w', encoding='utf8') as f:
        content = begin + MTAB_RES + endLine
        f.write(content)
-    
-if __name__ == '__main__':
-    main()
