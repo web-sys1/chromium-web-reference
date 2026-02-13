@@ -13,6 +13,7 @@ begin = """<!DOCTYPE html>
 <head>
 <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
 <meta content="utf-8" http-equiv="encoding">
+<link href="https://chromium.googlesource.com/+static/base.css" rel="stylesheet"/>
 <base href="https://chromium.googlesource.com/">
 <style type="text/css">
 table.blueTable {
@@ -146,7 +147,7 @@ def main():
     MetadataParser = content.find_all("div", {"class" : "Metadata"})
     PreMMsg = content.find_all("pre", {"class" : "MetadataMessage"})
 
-    MTAB_P = MetadataParser[0].find("table")
+    MTAB_P = MetadataParser[0].find("dl")
     METADATA_FT = MTAB_P()
     MTAB_RES = ContentSummary + MTAB_P.prettify() + HR_BREAKPOINT + PreMMsg[0].prettify()
     
