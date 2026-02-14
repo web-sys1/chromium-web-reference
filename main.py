@@ -104,7 +104,7 @@ endLine = """
 """
 
 
-CR_REV_G = [requests.get('https://cr-rev.appspot.com/_ah/api/crrev/v1/redirect/' + "1583672"), requests.get('https://cr-rev.appspot.com/_ah/api/crrev/v1/redirect/' + "1583676")]
+CR_REV_G = [requests.get('https://cr-rev.appspot.com/_ah/api/crrev/v1/redirect/' + CURRENT_REVISION_NO[0]), requests.get('https://cr-rev.appspot.com/_ah/api/crrev/v1/redirect/' + CURRENT_REVISION_NO[1])]
 CR_IDENTIFIER = json.loads(CR_REV_G[0].text)
 CR_IDENTIFIER_WIN = json.loads(CR_REV_G[1].text)
     
