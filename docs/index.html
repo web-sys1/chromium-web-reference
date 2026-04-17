@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1616293/"> 1616293</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/74348f33afb8ace323289e63550b3f598f0fcaad">74348f33afb8ace323289e63550b3f598f0fcaad</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1616358/"> 1616358</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/895d8848ed06c4cf8888325811dc41b2c94e0d91">895d8848ed06c4cf8888325811dc41b2c94e0d91</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1616246/">1616246</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2c76972196f1321c090c7701522b7124133b938b">2c76972196f1321c090c7701522b7124133b938b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1616339/">1616339</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/29af85bb67e3fd61398a6f1d701dfafbcf2432a0">29af85bb67e3fd61398a6f1d701dfafbcf2432a0</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    74348f33afb8ace323289e63550b3f598f0fcaad
+    895d8848ed06c4cf8888325811dc41b2c94e0d91
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/74348f33afb8ace323289e63550b3f598f0fcaad">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/895d8848ed06c4cf8888325811dc41b2c94e0d91">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Eriko Kurimoto &lt;elkurin@chromium.org&gt;
+    Jason Hu &lt;hujasonx@google.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Fri Apr 17 02:45:51 2026
+    Fri Apr 17 06:42:53 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Fri Apr 17 02:45:51 2026
+    Fri Apr 17 06:42:53 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/74348f33afb8ace323289e63550b3f598f0fcaad/">
-     a8f07de559583ac1d5ddd37c41fc5a02326fa77a
+    <a href="https://chromium.googlesource.com/chromium/src/+/895d8848ed06c4cf8888325811dc41b2c94e0d91/">
+     6c307081b956aa5e59102d1b11c5c050a52ea818
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/74348f33afb8ace323289e63550b3f598f0fcaad%5E">
-     c9c1c446c27f7601ec2b66b6617d867422fa3946
+    <a href="https://chromium.googlesource.com/chromium/src/+/895d8848ed06c4cf8888325811dc41b2c94e0d91%5E">
+     00b6b58c23aedfffe2eaa3f651007820548d3f83
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/74348f33afb8ace323289e63550b3f598f0fcaad%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/895d8848ed06c4cf8888325811dc41b2c94e0d91%5E%21/">
       diff
      </a>
      ]
@@ -182,26 +182,31 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">WaaP: Fix race condition in ExtensionTabsApiTest.WindowSetFocus
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[context-input] Make Omnibox AIM button use QueryContextualizer
 
-This CL fixes a race condition in the
-`ExtensionsTabsApiTest.WindowSetFocus` interactive ui tests that occurs
-when Initial WebUI is enabled.
+Previously, the entrypoint was not capable of contextualization as there
+were no contextual use cases for it. However, now the entry point needs
+to be capable of URL-parsing made possible through the
+QueryContextualizer (e.g., when users enter query text and then press
+the AIM button).
 
-When the feature is active, BrowserView show is deferred until the top
-chrome webui finishes painting and that is not expected in this test
-which assuming that calling chrome.windows.update with `focused: true`
-would result in an immediate focus state change.
+Adds a QueryContextualizer delegate implementation in omnibox_edit_model
+and sets up the url-opening callback to pass the contextual session
+handle to the resulting web contents (if needed). The web contents will
+only be created if the query_contextualizer needed it for parsed-url
+uploading.
 
-This CL updates the test to expect such case by using an event-driven
-approach.
+Also, fixes some issues with the object and session lifecycle of the
+upload tracker and created session handles in the query_contextualizer
+that were surfaced by this new entrypoint.
 
-Bug: 477426026
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0dfc2af62d0ef419f44e09918db454e01bf1cf6b">I0dfc2af62d0ef419f44e09918db454e01bf1cf6b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7752998">https://chromium-review.googlesource.com/c/chromium/src/+/7752998</a>
-Reviewed-by: Tim &lt;tjudkins@chromium.org&gt;
-Commit-Queue: Eriko Kurimoto &lt;elkurin@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1616293}
+Bug: b:496004892
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If9d081f41aae96edf5a55143342dba7b53ab5842">If9d081f41aae96edf5a55143342dba7b53ab5842</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7717726">https://chromium-review.googlesource.com/c/chromium/src/+/7717726</a>
+Reviewed-by: Shakti Sahu &lt;shaktisahu@chromium.org&gt;
+Reviewed-by: Nihar Majmudar &lt;niharm@google.com&gt;
+Commit-Queue: Jason Hu &lt;hujasonx@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1616358}
 </pre>
 
 </body>
