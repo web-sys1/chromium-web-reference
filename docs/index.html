@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1630226/"> 1630226</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/800ece354d0a72cc05bd17ba2dc294a2fc85309b">800ece354d0a72cc05bd17ba2dc294a2fc85309b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1630423/"> 1630423</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/b96845005b9ecfaee146495e0e363ec9500e6b8f">b96845005b9ecfaee146495e0e363ec9500e6b8f</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1630208/">1630208</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9f49973e34be3cc6c9828fb1a12df52e5630c1a8">9f49973e34be3cc6c9828fb1a12df52e5630c1a8</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1630365/">1630365</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1146ca4eaf7810c111b91312ac19a63aae3485bd">1146ca4eaf7810c111b91312ac19a63aae3485bd</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    800ece354d0a72cc05bd17ba2dc294a2fc85309b
+    b96845005b9ecfaee146495e0e363ec9500e6b8f
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/800ece354d0a72cc05bd17ba2dc294a2fc85309b">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/b96845005b9ecfaee146495e0e363ec9500e6b8f">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Alexis Hétu &lt;sugoi@chromium.org&gt;
+    xiaobincui &lt;xiaobincui@microsoft.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Wed May 13 21:37:04 2026
+    Thu May 14 03:33:19 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Wed May 13 21:37:04 2026
+    Thu May 14 03:33:19 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/800ece354d0a72cc05bd17ba2dc294a2fc85309b/">
-     5b95af62e80cd87f6b690f6f3a9dc61ef96c9b07
+    <a href="https://chromium.googlesource.com/chromium/src/+/b96845005b9ecfaee146495e0e363ec9500e6b8f/">
+     f72e723b52220ffa18d1e03c3c859d7a3ebd9d69
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/800ece354d0a72cc05bd17ba2dc294a2fc85309b%5E">
-     bba91bc61a13adf2a7c55f9becb58940df7475c2
+    <a href="https://chromium.googlesource.com/chromium/src/+/b96845005b9ecfaee146495e0e363ec9500e6b8f%5E">
+     758ce17e7597f245359019bdb96285bf74ffe0d4
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/800ece354d0a72cc05bd17ba2dc294a2fc85309b%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/b96845005b9ecfaee146495e0e363ec9500e6b8f%5E%21/">
       diff
      </a>
      ]
@@ -182,24 +182,23 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[iOS] Properly set timeout for deferred PublicKeyCredential promises
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Guard ad detector hit-testing on kPrePaintClean lifecycle state
 
-The timeout property of PublicKeyCredential options is defined as:
-"A numerical hint, in milliseconds, which indicates the time the calling
- web app/relying party is willing to wait for the creation/retrieval
- operation to complete. This hint may be overridden by the browser."
+OverlayInterstitialAdDetector and StickyAdDetector call
+HitTestNoLifecycleUpdate, which requires kPrePaintClean (enforced by
+PaintLayer::HitTestLayer). However, MaybeFireDetection can be called
+from RunPostLifecycleSteps when the lifecycle has only reached
+kLayoutClean, causing a DCHECK crash.
 
-While we are technically allowed to always choose the timeout, this CL
-sets a relatively long timeout (5 minutes) for passkey requests, and
-leaves the option for sites to override this value by respecting the
-hint if it is defined.
+Add a lifecycle state guard before hit-testing in both detectors.
 
-Bug: 460486709
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I08a65faba22f552a519437b4235f26cd423d63b4">I08a65faba22f552a519437b4235f26cd423d63b4</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7844588">https://chromium-review.googlesource.com/c/chromium/src/+/7844588</a>
-Reviewed-by: Tommy Martino &lt;tmartino@chromium.org&gt;
-Commit-Queue: Alexis Hétu &lt;sugoi@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1630226}
+Bug: 511876957
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I26af178759aff9607ca442fd60d106c0294d67d6">I26af178759aff9607ca442fd60d106c0294d67d6</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7828869">https://chromium-review.googlesource.com/c/chromium/src/+/7828869</a>
+Commit-Queue: Dave Tapuska &lt;dtapuska@chromium.org&gt;
+Reviewed-by: Yao Xiao &lt;yaoxia@chromium.org&gt;
+Reviewed-by: Dave Tapuska &lt;dtapuska@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1630423}
 </pre>
 
 </body>
