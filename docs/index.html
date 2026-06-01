@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1639493/"> 1639493</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/59cceba961ea5fff337889fbb6730b7c2a9246a1">59cceba961ea5fff337889fbb6730b7c2a9246a1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1639625/"> 1639625</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/98f623fb856459b72b798b4decbddfbc48becb34">98f623fb856459b72b798b4decbddfbc48becb34</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1639417/">1639417</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e7a2d1d89c51a0058dcb4c71249b8460b11197a6">e7a2d1d89c51a0058dcb4c71249b8460b11197a6</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1639568/">1639568</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/a55900b66ca29bad6eeb0e6b86207fc4f562bac0">a55900b66ca29bad6eeb0e6b86207fc4f562bac0</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    59cceba961ea5fff337889fbb6730b7c2a9246a1
+    98f623fb856459b72b798b4decbddfbc48becb34
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/59cceba961ea5fff337889fbb6730b7c2a9246a1">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/98f623fb856459b72b798b4decbddfbc48becb34">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Keishi Hattori &lt;keishi@google.com&gt;
+    Patrick Monette &lt;pmonette@chromium.org&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Mon Jun 01 17:24:21 2026
+    Mon Jun 01 20:23:43 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Mon Jun 01 17:24:21 2026
+    Mon Jun 01 20:23:43 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/59cceba961ea5fff337889fbb6730b7c2a9246a1/">
-     dd15bac49e0ffdc14748443a14d8dbda0f6a517e
+    <a href="https://chromium.googlesource.com/chromium/src/+/98f623fb856459b72b798b4decbddfbc48becb34/">
+     2caae9c2bf93ba52b085863b9ddd5d4e5e1b56b3
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/59cceba961ea5fff337889fbb6730b7c2a9246a1%5E">
-     c9648b6c3802820b7111ed79e1f7abea12c9f5ad
+    <a href="https://chromium.googlesource.com/chromium/src/+/98f623fb856459b72b798b4decbddfbc48becb34%5E">
+     8f1f2572be65504e5668c0df295cbf832daddf3b
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/59cceba961ea5fff337889fbb6730b7c2a9246a1%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/98f623fb856459b72b798b4decbddfbc48becb34%5E%21/">
       diff
      </a>
      ]
@@ -182,23 +182,32 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Enable heap_vector_active_iterator_checks as an experiment
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Migrate UrgentPageDiscardingPolicy to base::MemoryConsumer
 
-Enable enable_heap_vector_active_iterator_checks by default as an
-experiment to get performance numbers and detect realloc while iterating issues in the wild.
+All base::MemoryPressureListener implementations are being migrated to
+the new memory coordinator API. This new system gives policies much more
+flexibility on how memory is managed across Chrome processes.
 
-This will be reverted within a day.
+Unlike the old system, which used a single OnMemoryPressure callback,
+base::MemoryConsumer splits responsibilities into two phases:
 
-Design doc: <a href="https://docs.google.com/document/d/1xKOsdXdgnsORfUyA3CBAtUK3tIka50KBFF1lei8P9jA/edit?tab=t.0#heading=h.c0uts5ftkk58">https://docs.google.com/document/d/1xKOsdXdgnsORfUyA3CBAtUK3tIka50KBFF1lei8P9jA/edit?tab=t.0#heading=h.c0uts5ftkk58</a>
+1. OnUpdateMemoryLimit(): The consumer must cap its maximum cache size
+at the greater of its current usage and the new target limit. No memory
+should be evicted during this phase. This is irrelevant for
+UrgentPageDiscardingPolicy, since it is not a stateful MemoryConsumer.
 
-Bug: 501112189
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ifd0e9ed8235665549cc8041e43297364830e68d6">Ifd0e9ed8235665549cc8041e43297364830e68d6</a>
-Binary-Size: Enables experimental security feature.
-Fuchsia-Binary-Size: Enables experimental security feature.
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7875848">https://chromium-review.googlesource.com/c/chromium/src/+/7875848</a>
-Reviewed-by: Kent Tamura &lt;tkent@chromium.org&gt;
-Commit-Queue: Keishi Hattori &lt;keishi@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1639493}
+2. OnReleaseMemory(): The consumer should enforce the target limit
+strictly, evicting any entries that no longer fit. This is where
+discarding happens, but because it is non stateful, there is no target
+limit to follow. This function will be called repeatedly as long as
+memory pressure lasts.
+
+Bug: 489349561
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I054915de18694b528fa2e5b0ddff870d4c124b8c">I054915de18694b528fa2e5b0ddff870d4c124b8c</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7881320">https://chromium-review.googlesource.com/c/chromium/src/+/7881320</a>
+Commit-Queue: Patrick Monette &lt;pmonette@chromium.org&gt;
+Reviewed-by: Andres Ricardo Perez Rojas &lt;andresrperez@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1639625}
 </pre>
 
 </body>
