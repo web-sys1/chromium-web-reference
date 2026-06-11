@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1645579/"> 1645579</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f00835ed053530d524e16b1d54f2008a37573910">f00835ed053530d524e16b1d54f2008a37573910</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1645656/"> 1645656</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f2f9365db503d22e791ed623f9b84f0af48a37ac">f2f9365db503d22e791ed623f9b84f0af48a37ac</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1645465/">1645465</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1020022745c092092fa9fc0ea36a55cd2c71b7b1">1020022745c092092fa9fc0ea36a55cd2c71b7b1</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1645618/">1645618</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/d82eba7313ad3c567e942e5ab7dfb3d1974fd987">d82eba7313ad3c567e942e5ab7dfb3d1974fd987</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    f00835ed053530d524e16b1d54f2008a37573910
+    f2f9365db503d22e791ed623f9b84f0af48a37ac
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/f00835ed053530d524e16b1d54f2008a37573910">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/f2f9365db503d22e791ed623f9b84f0af48a37ac">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Viktoriya Bryhider &lt;vbryhider@microsoft.com&gt;
+    Patrick Noland &lt;pnoland@google.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jun 11 20:45:55 2026
+    Thu Jun 11 22:42:18 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jun 11 20:45:55 2026
+    Thu Jun 11 22:42:18 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/f00835ed053530d524e16b1d54f2008a37573910/">
-     386d4a65f98acedbd87762bb11bb5bb9ea0dd986
+    <a href="https://chromium.googlesource.com/chromium/src/+/f2f9365db503d22e791ed623f9b84f0af48a37ac/">
+     70aa8be714cfc2598320fc32bd358b446ed82d5e
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/f00835ed053530d524e16b1d54f2008a37573910%5E">
-     9316c451247af7e414eefae70548547c2c87c588
+    <a href="https://chromium.googlesource.com/chromium/src/+/f2f9365db503d22e791ed623f9b84f0af48a37ac%5E">
+     6bd797bbdec087e124046e31037ca6417d5028ef
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/f00835ed053530d524e16b1d54f2008a37573910%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/f2f9365db503d22e791ed623f9b84f0af48a37ac%5E%21/">
       diff
      </a>
      ]
@@ -182,34 +182,19 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use SecurityPrincipal in instant process helpers
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add a special visual state for standby on tablets
 
-Replace URL-based instant process assignment functions with
-SecurityPrincipal-based equivalents to remove calls to
-GetDeprecatedSiteURL() in chrome_content_browser_client.cc.
+This handles the case where the autocomplete state is STANDBY on
+tablets, adding a foreground drawable and cancelling extra expansion
+that might otherwise happen due to fusebox state handling. Everything
+goes back to normal when leaving standby state.
 
-Rename ShouldUseProcessPerSiteForInstantSiteURL to
-ShouldUseProcessPerSiteForSecurityPrincipal and add
-ShouldAssignSecurityPrincipalToInstantRenderer for callers
-that already have a SecurityPrincipal (post effective URL
-translation). The new functions operate directly on
-SecurityPrincipal using SchemeIs() and GetHost() rather than
-extracting a GURL.
-
-The original ShouldAssignURLToInstantRenderer is preserved
-for callers that work with navigation URLs before effective
-URL translation.
-
-Add SecurityPrincipal::CreateForTesting factory backed by a
-real SiteInfo to support browser tests.
-
-Bug: 397481045, 40526490
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I19e570dc809edd3a2fcd9248f003d031b3fdf184">I19e570dc809edd3a2fcd9248f003d031b3fdf184</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7899138">https://chromium-review.googlesource.com/c/chromium/src/+/7899138</a>
-Commit-Queue: Viktoriya Bryhider &lt;vbryhider@microsoft.com&gt;
-Reviewed-by: Tibor Goldschwendt &lt;tiborg@chromium.org&gt;
-Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1645579}
+Bug: 507111601
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib9266e1c8da4ad7a797f624b683069291ac1c765">Ib9266e1c8da4ad7a797f624b683069291ac1c765</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7909626">https://chromium-review.googlesource.com/c/chromium/src/+/7909626</a>
+Commit-Queue: Patrick Noland &lt;pnoland@chromium.org&gt;
+Reviewed-by: Sky Malice &lt;skym@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1645656}
 </pre>
 
 </body>
