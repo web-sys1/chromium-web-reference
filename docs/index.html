@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1645418/"> 1645418</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7031d2d251cfdd8077fd2ed317032a9a85fddacb">7031d2d251cfdd8077fd2ed317032a9a85fddacb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1645579/"> 1645579</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f00835ed053530d524e16b1d54f2008a37573910">f00835ed053530d524e16b1d54f2008a37573910</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1645391/">1645391</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/1a2b55eea64ccb7c2d6516b8626cce6a583b1224">1a2b55eea64ccb7c2d6516b8626cce6a583b1224</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1645465/">1645465</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/1020022745c092092fa9fc0ea36a55cd2c71b7b1">1020022745c092092fa9fc0ea36a55cd2c71b7b1</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    7031d2d251cfdd8077fd2ed317032a9a85fddacb
+    f00835ed053530d524e16b1d54f2008a37573910
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/7031d2d251cfdd8077fd2ed317032a9a85fddacb">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/f00835ed053530d524e16b1d54f2008a37573910">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Tzarial &lt;zork@google.com&gt;
+    Viktoriya Bryhider &lt;vbryhider@microsoft.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jun 11 16:16:54 2026
+    Thu Jun 11 20:45:55 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jun 11 16:16:54 2026
+    Thu Jun 11 20:45:55 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/7031d2d251cfdd8077fd2ed317032a9a85fddacb/">
-     eb22b2760b446a8d80879e2dbd4f18e866ca9d39
+    <a href="https://chromium.googlesource.com/chromium/src/+/f00835ed053530d524e16b1d54f2008a37573910/">
+     386d4a65f98acedbd87762bb11bb5bb9ea0dd986
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/7031d2d251cfdd8077fd2ed317032a9a85fddacb%5E">
-     0dfe822c456199a0dc507674a6c2ac8ca85c5083
+    <a href="https://chromium.googlesource.com/chromium/src/+/f00835ed053530d524e16b1d54f2008a37573910%5E">
+     9316c451247af7e414eefae70548547c2c87c588
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/7031d2d251cfdd8077fd2ed317032a9a85fddacb%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/f00835ed053530d524e16b1d54f2008a37573910%5E%21/">
       diff
      </a>
      ]
@@ -182,28 +182,34 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">viz: Validate node IDs in TransformTreeUpdate
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Use SecurityPrincipal in instant process helpers
 
-On the server side (LayerContextImpl), we receive
-untrusted mojo input. If any node ID in
-nodes_affected_by_outer_viewport_bounds_delta or
-nodes_affected_by_safe_area_bottom is out of
-bounds, it eventually causes a CHECK failure and
-crashes the viz process when attempting to access the
-transform tree nodes.
+Replace URL-based instant process assignment functions with
+SecurityPrincipal-based equivalents to remove calls to
+GetDeprecatedSiteURL() in chrome_content_browser_client.cc.
 
-This CL adds server-side validation to reject any
-invalid transform node IDs in TransformTreeUpdate and
-returns base::unexpected.
+Rename ShouldUseProcessPerSiteForInstantSiteURL to
+ShouldUseProcessPerSiteForSecurityPrincipal and add
+ShouldAssignSecurityPrincipalToInstantRenderer for callers
+that already have a SecurityPrincipal (post effective URL
+translation). The new functions operate directly on
+SecurityPrincipal using SchemeIs() and GetHost() rather than
+extracting a GURL.
 
-Fixed: 518026677
-Fixed: 513057451
-Test: viz_unittests
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I109021bb9152ad6917e90c9ae2046a14438ae6cc">I109021bb9152ad6917e90c9ae2046a14438ae6cc</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7922508">https://chromium-review.googlesource.com/c/chromium/src/+/7922508</a>
-Commit-Queue: Tzarial &lt;zork@chromium.org&gt;
-Reviewed-by: Zhenyao Mo &lt;zmo@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1645418}
+The original ShouldAssignURLToInstantRenderer is preserved
+for callers that work with navigation URLs before effective
+URL translation.
+
+Add SecurityPrincipal::CreateForTesting factory backed by a
+real SiteInfo to support browser tests.
+
+Bug: 397481045, 40526490
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I19e570dc809edd3a2fcd9248f003d031b3fdf184">I19e570dc809edd3a2fcd9248f003d031b3fdf184</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7899138">https://chromium-review.googlesource.com/c/chromium/src/+/7899138</a>
+Commit-Queue: Viktoriya Bryhider &lt;vbryhider@microsoft.com&gt;
+Reviewed-by: Tibor Goldschwendt &lt;tiborg@chromium.org&gt;
+Reviewed-by: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1645579}
 </pre>
 
 </body>
