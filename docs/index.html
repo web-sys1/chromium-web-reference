@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1647933/"> 1647933</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7f4181fabb329920be950c95b76e69d1ad296cda">7f4181fabb329920be950c95b76e69d1ad296cda</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1648077/"> 1648077</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/0586d9e895e60d6370fee0a32231b13147b8dbf8">0586d9e895e60d6370fee0a32231b13147b8dbf8</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1647870/">1647870</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/141bd385ab4a0858496c5da9c7f2a3eb085ad522">141bd385ab4a0858496c5da9c7f2a3eb085ad522</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1648046/">1648046</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/394ea80eec3974ddc89a1b00d329b72d7ad092b9">394ea80eec3974ddc89a1b00d329b72d7ad092b9</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    7f4181fabb329920be950c95b76e69d1ad296cda
+    0586d9e895e60d6370fee0a32231b13147b8dbf8
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/7f4181fabb329920be950c95b76e69d1ad296cda">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/0586d9e895e60d6370fee0a32231b13147b8dbf8">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
+    Jiacheng Guo &lt;gjc@google.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Tue Jun 16 22:23:13 2026
+    Wed Jun 17 04:57:33 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Tue Jun 16 22:23:13 2026
+    Wed Jun 17 04:57:33 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/7f4181fabb329920be950c95b76e69d1ad296cda/">
-     4192d89de14328c174ed43116ce582cbdb234f55
+    <a href="https://chromium.googlesource.com/chromium/src/+/0586d9e895e60d6370fee0a32231b13147b8dbf8/">
+     76ea70b5c041ad7aab47cb7993ea09a06094f522
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/7f4181fabb329920be950c95b76e69d1ad296cda%5E">
-     cbeef1f6c339547243cbac52ed90d37452eee912
+    <a href="https://chromium.googlesource.com/chromium/src/+/0586d9e895e60d6370fee0a32231b13147b8dbf8%5E">
+     7d6555b11f181bdc24ba56577f753a07add6e8c7
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/7f4181fabb329920be950c95b76e69d1ad296cda%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/0586d9e895e60d6370fee0a32231b13147b8dbf8%5E%21/">
       diff
      </a>
      ]
@@ -182,30 +182,28 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[gpu] Check GL error before marking GLTexture/EGLImage cleared
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Deduplicate prefetch activation beacons during prerender activation.
 
-GLTextureImageBacking and EGLImageBacking currently mark the backing as
-cleared unconditionally when initial pixel data is provided, even if the
-subsequent upload via glTexSubImage2D fails (e.g. under resource
-pressure / GL_OUT_OF_MEMORY). This bypasses the IsCleared() check,
-potentially exposing uninitialized VRAM allocator residue during
-readback.
+When both prefetch and prerender activation beacons are enabled, a
+prefetched page upgraded to a prerender page would send duplicate
+beacons upon activation. This happens because the prerender
+activation is processed as a cross-document navigation that
+synchronously calls OnResponseStarted with the cached prefetch
+headers, triggering a prefetch activation beacon registration, while
+PrerenderHost::Activate separately fires a prerender activation
+beacon.
 
-This CL checks for GL errors before calling SetCleared(). If a GL error
-is detected, the backing remains uncleared so subsequent read access is
-refused.
+This CL resolves the duplication by preventing prefetch activation
+beacon registration during prerender activation navigations when the
+prerender activation beacon feature is active.
 
-Landing a shared image unittest for this wasn't feasible since it needs
-patching GL function pointers which won't work well in any parallel test
-setup. However, I was able to verify the fix locally with a unit test.
-
-Fixed: 517080836
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If9ac7f2cb1742601418db52ad163742d6a6a6964">If9ac7f2cb1742601418db52ad163742d6a6a6964</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7909296">https://chromium-review.googlesource.com/c/chromium/src/+/7909296</a>
-Commit-Queue: Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
-Auto-Submit: Sunny Sachanandani &lt;sunnyps@chromium.org&gt;
-Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1647933}
+Bug: 524073966
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ibdcba36db5abd599f5bf3155fec0fa41fd9c20ac">Ibdcba36db5abd599f5bf3155fec0fa41fd9c20ac</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7940651">https://chromium-review.googlesource.com/c/chromium/src/+/7940651</a>
+Commit-Queue: Jiacheng Guo &lt;gjc@google.com&gt;
+Reviewed-by: Rakina Zata Amni &lt;rakina@chromium.org&gt;
+Reviewed-by: Lingqi Chi &lt;lingqi@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1648077}
 </pre>
 
 </body>
