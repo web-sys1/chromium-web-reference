@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1652894/"> 1652894</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/32db081c22169fc1c7f379c01360a24b43c1d952">32db081c22169fc1c7f379c01360a24b43c1d952</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1653001/"> 1653001</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/48838b5676d4cfd3789ac160ba938462d92615a8">48838b5676d4cfd3789ac160ba938462d92615a8</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1652885/">1652885</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/fdf32f09b3617f18583c4e478e15dd23a0904946">fdf32f09b3617f18583c4e478e15dd23a0904946</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1652950/">1652950</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ed86c14cf96a29088cabc4584210854a81e71d03">ed86c14cf96a29088cabc4584210854a81e71d03</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    32db081c22169fc1c7f379c01360a24b43c1d952
+    48838b5676d4cfd3789ac160ba938462d92615a8
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/32db081c22169fc1c7f379c01360a24b43c1d952">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/48838b5676d4cfd3789ac160ba938462d92615a8">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Kouhei Ueno &lt;kouhei@chromium.org&gt;
+    Luchen Peng &lt;luchenpeng@google.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Fri Jun 26 04:33:46 2026
+    Fri Jun 26 09:16:28 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Fri Jun 26 04:33:46 2026
+    Fri Jun 26 09:16:28 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/32db081c22169fc1c7f379c01360a24b43c1d952/">
-     7eac1694a558da60c4708273081ec5bc5da44657
+    <a href="https://chromium.googlesource.com/chromium/src/+/48838b5676d4cfd3789ac160ba938462d92615a8/">
+     a0a38b21bf459167ba91166e1776f1f45cb5e04d
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/32db081c22169fc1c7f379c01360a24b43c1d952%5E">
-     76901cf5a61391c8c5e651c0dccec84d3f317069
+    <a href="https://chromium.googlesource.com/chromium/src/+/48838b5676d4cfd3789ac160ba938462d92615a8%5E">
+     9dac5105a4b4ca8dd74fcc043dc63e7ea8fd7e28
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/32db081c22169fc1c7f379c01360a24b43c1d952%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/48838b5676d4cfd3789ac160ba938462d92615a8%5E%21/">
       diff
      </a>
      ]
@@ -182,30 +182,18 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[SXG] Resolve report StoragePartition at reporter creation
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[EnterprisePolicy] Block payments and address if disabled by enterprise.
 
-SignedExchangeReporter is created when the outer SXG response is
-received but only queues its NEL report after asynchronous work
-(certificate fetch, inner-body decode) completes. It previously
-re-resolved the StoragePartition via the FrameTreeNode's
-current_frame_host() at queue time, by which point the frame may have
-committed a document in a different StoragePartition, so the report
-could be sent to the wrong NetworkContext.
+Add checks for the new AutofillSettings policy in addition to legacy
+policies.
 
-Resolve the StoragePartition once at construction (matching the
-already-captured NetworkAnonymizationKey) and hold it via a weak
-reference. Adds a test-only observation hook and a browser test that
-swaps the frame across partitions while a reporter is outstanding.
-
-TAG=agy
-CONV=78281464-5ea8-4e38-94fb-a1a0de44eede
-
-Bug: 513532735
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iebe2b48283e18557e21eeafb5cd3533ba26a9c73">Iebe2b48283e18557e21eeafb5cd3533ba26a9c73</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8009246">https://chromium-review.googlesource.com/c/chromium/src/+/8009246</a>
-Commit-Queue: Kouhei Ueno &lt;kouhei@chromium.org&gt;
-Reviewed-by: Martin Pan-Verde &lt;thesalsa@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1652894}
+Bug: 466345561
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I662ccd8034e833afb027f3e6fd15f9a30bfba87b">I662ccd8034e833afb027f3e6fd15f9a30bfba87b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7963025">https://chromium-review.googlesource.com/c/chromium/src/+/7963025</a>
+Commit-Queue: Luchen Peng &lt;luchenpeng@google.com&gt;
+Reviewed-by: Norge Vizcay &lt;vizcay@google.com&gt;
+Reviewed-by: Vinny Persky &lt;vinnypersky@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1653001}
 </pre>
 
 </body>
