@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1658580/"> 1658580</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/6246093e44c484a74a108bae84ded6b2eec44f2c">6246093e44c484a74a108bae84ded6b2eec44f2c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1658637/"> 1658637</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/69ef3277135b564311a879633ded774eabfe1650">69ef3277135b564311a879633ded774eabfe1650</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1658493/">1658493</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/961334b1891f07c4efc42b83acd52923935d3e39">961334b1891f07c4efc42b83acd52923935d3e39</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1658604/">1658604</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/7d472c1ad4b65ccb4bfdf1354ccb1159e1649c73">7d472c1ad4b65ccb4bfdf1354ccb1159e1649c73</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    6246093e44c484a74a108bae84ded6b2eec44f2c
+    69ef3277135b564311a879633ded774eabfe1650
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/6246093e44c484a74a108bae84ded6b2eec44f2c">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/69ef3277135b564311a879633ded774eabfe1650">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Ali Hijazi &lt;ahijazi@chromium.org&gt;
+    Jan Keitel &lt;jkeitel@google.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Wed Jul 08 08:46:29 2026
+    Wed Jul 08 11:11:18 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Wed Jul 08 08:46:29 2026
+    Wed Jul 08 11:11:18 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/6246093e44c484a74a108bae84ded6b2eec44f2c/">
-     8dce280169bcecb3301099ee9f76732ee427de96
+    <a href="https://chromium.googlesource.com/chromium/src/+/69ef3277135b564311a879633ded774eabfe1650/">
+     564c7b4349b57a3b934b8ee30fec4de629ccbd14
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/6246093e44c484a74a108bae84ded6b2eec44f2c%5E">
-     84470c5cbe6ac292ecd98fd469905476368bec66
+    <a href="https://chromium.googlesource.com/chromium/src/+/69ef3277135b564311a879633ded774eabfe1650%5E">
+     508a728c684ff44ca77fafb7350d62691a46b5b9
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/6246093e44c484a74a108bae84ded6b2eec44f2c%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/69ef3277135b564311a879633ded774eabfe1650%5E%21/">
       diff
      </a>
      ]
@@ -182,37 +182,16 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[DBSC] Support client cert selection for registration and refresh
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Rename Autofill.Funnel.AtMemory.SuggestionFilled metric
 
-This CL adds support for client certificate selection during DBSC
-background requests (session registration and session token refreshes)
-executed via URLFetcher.
+This is the new name proposed in the DD.
 
-When the server requests a client certificate, URLFetcher delegates
-selection to a new SelectClientCertificateHandler repeating callback on
-SessionService, avoiding direct Mojo dependencies inside net/.
-
-Key implementation details:
-
-- NetworkContext sets up a DeviceBoundSessionServiceDelegate to
-  implement the callback, forwarding requests over Mojo via the
-  partition-bound URLLoaderNetworkServiceObserver.
-
-- If the session service or callback is missing, or selection is
-  cancelled, the request fails with ERR_SSL_CLIENT_AUTH_CERT_NEEDED to
-  prevent poisoning the client certificate cache.
-
-- Adds unit tests in URLFetcherTest and
-  DeviceBoundSessionServiceDelegateTest covering successes,
-  cancellations, and missing handlers.
-
-Bug: 438783633, 524165451
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I72faf4bf8023491e702f25f55ee9f12d355517dc">I72faf4bf8023491e702f25f55ee9f12d355517dc</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7943043">https://chromium-review.googlesource.com/c/chromium/src/+/7943043</a>
-Reviewed-by: Adam Rice &lt;ricea@chromium.org&gt;
-Reviewed-by: Alex Ilin &lt;alexilin@chromium.org&gt;
-Commit-Queue: Ali Hijazi &lt;ahijazi@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1658580}
+Fixed: 530438524
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ib09b3cb898cc5cf41790129e7962dff005dd2b51">Ib09b3cb898cc5cf41790129e7962dff005dd2b51</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8062945">https://chromium-review.googlesource.com/c/chromium/src/+/8062945</a>
+Reviewed-by: Karol Sygiet &lt;sygiet@google.com&gt;
+Commit-Queue: Jan Keitel &lt;jkeitel@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1658637}
 </pre>
 
 </body>
