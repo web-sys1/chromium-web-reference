@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1659545/"> 1659545</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/71543dba30208aa8737f71a82165d2cadc8235da">71543dba30208aa8737f71a82165d2cadc8235da</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1659769/"> 1659769</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/93c5abb5659490412227f2b29e4ad25b09f03889">93c5abb5659490412227f2b29e4ad25b09f03889</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1659522/">1659522</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/41afa792bfcfcb25db849692c7f80046c684c071">41afa792bfcfcb25db849692c7f80046c684c071</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1659661/">1659661</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/774dbd243c334ecb559822683e20c580c3be8afe">774dbd243c334ecb559822683e20c580c3be8afe</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    71543dba30208aa8737f71a82165d2cadc8235da
+    93c5abb5659490412227f2b29e4ad25b09f03889
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/71543dba30208aa8737f71a82165d2cadc8235da">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/93c5abb5659490412227f2b29e4ad25b09f03889">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Sophie Crowley &lt;crowleso@google.com&gt;
+    Benjamin Beaudry &lt;benjamin.beaudry@microsoft.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jul 09 14:52:25 2026
+    Thu Jul 09 19:32:41 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jul 09 14:52:25 2026
+    Thu Jul 09 19:32:41 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/71543dba30208aa8737f71a82165d2cadc8235da/">
-     f65a95ddf038072a67458adbbe5036e7acdeb736
+    <a href="https://chromium.googlesource.com/chromium/src/+/93c5abb5659490412227f2b29e4ad25b09f03889/">
+     6834e3eefaa872487463f1f37934334fbb22f3bc
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/71543dba30208aa8737f71a82165d2cadc8235da%5E">
-     b42f6e613551e762920a6fd8a2812b3588106c89
+    <a href="https://chromium.googlesource.com/chromium/src/+/93c5abb5659490412227f2b29e4ad25b09f03889%5E">
+     8120d6f9e28f55e3e930d75e767f604e8ad94054
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/71543dba30208aa8737f71a82165d2cadc8235da%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/93c5abb5659490412227f2b29e4ad25b09f03889%5E%21/">
       diff
      </a>
      ]
@@ -182,26 +182,21 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Extensions][Al] Show signout dialog if account extensions are installed
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[views-ax] Expose StyledLabel as a paragraph when it hosts child views
 
-By account extensions we mean extensions the user installed while signed
-in. If the user installed extensions before signing in we do not need to
-show the dialog as they are saved onto the device.
+While testing ViewsAX, we observed that the links within StyledLabels were no longer exposed to assistive technologies. This was caused by StyledLabel having a role of kStaticText, which is implied to be a leaf node, while still having children views.
 
-We should always show a sign-out confirmation dialog box with the
-'uninstall extensions' checkbox when account extensions have been added,
-including in cases where:
-- No confirmation dialog would show up otherwise
-- The 'unsaved data' confirmation dialog shows up
+This CL fixes it by instead using a role of paragraph when it has text ranges that are not just text (if it's just text, exposing the StyledLabel as a leaf text is fine because the strings get passed up to the parent). We kept the previous behavior of using a kTitleBar for dialog titles.
 
-Example screenshot: <a href="https://crbug.com/502977184#comment18">https://crbug.com/502977184#comment18</a>
+While working on this, we discovered this issue was already known and fixed only for the isolated_web_app_installer_view_impl.cc. Our new fix here fixes it for all StyledLabels instead, so I went ahead and resolved that bug.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id16446aeba483aa18a541e72825a69aca9e262d5">Id16446aeba483aa18a541e72825a69aca9e262d5</a>
-Bug: 502977184
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8034087">https://chromium-review.googlesource.com/c/chromium/src/+/8034087</a>
-Commit-Queue: Sophie Crowley &lt;crowleso@google.com&gt;
-Reviewed-by: Samar Chehade &lt;samarchehade@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1659545}
+Bug: 40672441
+Fixed: 510791136
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6036c2c9e42ce75f254c327f5d21b660d42310de">I6036c2c9e42ce75f254c327f5d21b660d42310de</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8033381">https://chromium-review.googlesource.com/c/chromium/src/+/8033381</a>
+Reviewed-by: Elly &lt;ellyjones@chromium.org&gt;
+Commit-Queue: Benjamin Beaudry &lt;benjamin.beaudry@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1659769}
 </pre>
 
 </body>
