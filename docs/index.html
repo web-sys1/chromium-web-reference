@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1659769/"> 1659769</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/93c5abb5659490412227f2b29e4ad25b09f03889">93c5abb5659490412227f2b29e4ad25b09f03889</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1659892/"> 1659892</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/ef29b8d103e306a6fdb0996050d4068ff09696a8">ef29b8d103e306a6fdb0996050d4068ff09696a8</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1659661/">1659661</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/774dbd243c334ecb559822683e20c580c3be8afe">774dbd243c334ecb559822683e20c580c3be8afe</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1659769/">1659769</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/93c5abb5659490412227f2b29e4ad25b09f03889">93c5abb5659490412227f2b29e4ad25b09f03889</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    93c5abb5659490412227f2b29e4ad25b09f03889
+    ef29b8d103e306a6fdb0996050d4068ff09696a8
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/93c5abb5659490412227f2b29e4ad25b09f03889">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/ef29b8d103e306a6fdb0996050d4068ff09696a8">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Benjamin Beaudry &lt;benjamin.beaudry@microsoft.com&gt;
+    Michael Wu &lt;mklw@google.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jul 09 19:32:41 2026
+    Thu Jul 09 22:27:08 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jul 09 19:32:41 2026
+    Thu Jul 09 22:27:08 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/93c5abb5659490412227f2b29e4ad25b09f03889/">
-     6834e3eefaa872487463f1f37934334fbb22f3bc
+    <a href="https://chromium.googlesource.com/chromium/src/+/ef29b8d103e306a6fdb0996050d4068ff09696a8/">
+     5cb54a3f71f5592756599461f1e7f0a5279b532f
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/93c5abb5659490412227f2b29e4ad25b09f03889%5E">
-     8120d6f9e28f55e3e930d75e767f604e8ad94054
+    <a href="https://chromium.googlesource.com/chromium/src/+/ef29b8d103e306a6fdb0996050d4068ff09696a8%5E">
+     f3adf0141db994ea274b31069a0d90981ec964eb
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/93c5abb5659490412227f2b29e4ad25b09f03889%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/ef29b8d103e306a6fdb0996050d4068ff09696a8%5E%21/">
       diff
      </a>
      ]
@@ -182,21 +182,29 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[views-ax] Expose StyledLabel as a paragraph when it hosts child views
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Hide empty header divider to make vertical padding symmetric
 
-While testing ViewsAX, we observed that the links within StyledLabels were no longer exposed to assistive technologies. This was caused by StyledLabel having a role of kStaticText, which is implied to be a leaf node, while still having children views.
+When BasicListMenu is created without a header (e.g., the Incognito
+indicator context menu), menu_header_bottom_hairline starts as
+View.INVISIBLE. Because View.INVISIBLE views still occupy vertical space
+in a LinearLayout, the 1dp divider remained measured right above
+menu_list. This caused the visible top gap above the hover highlight to
+be 1dp taller (5dp) than the bottom gap (4dp).
 
-This CL fixes it by instead using a role of paragraph when it has text ranges that are not just text (if it's just text, exposing the StyledLabel as a leaf text is fine because the strings get passed up to the parent). We kept the previous behavior of using a kTitleBar for dialog titles.
+Before: <a href="https://screenshot.googleplex.com/8s8aVUHb9hkLj6x">https://screenshot.googleplex.com/8s8aVUHb9hkLj6x</a>
 
-While working on this, we discovered this issue was already known and fixed only for the isolated_web_app_installer_view_impl.cc. Our new fix here fixes it for all StyledLabels instead, so I went ahead and resolved that bug.
+After: <a href="https://screenshot.googleplex.com/4ra8Wxokd3LDmvk">https://screenshot.googleplex.com/4ra8Wxokd3LDmvk</a>
 
-Bug: 40672441
-Fixed: 510791136
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6036c2c9e42ce75f254c327f5d21b660d42310de">I6036c2c9e42ce75f254c327f5d21b660d42310de</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8033381">https://chromium-review.googlesource.com/c/chromium/src/+/8033381</a>
-Reviewed-by: Elly &lt;ellyjones@chromium.org&gt;
-Commit-Queue: Benjamin Beaudry &lt;benjamin.beaudry@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1659769}
+This change sets the hairline divider to View.GONE whenever the menu
+header precondition is false (mHeaderModelList is empty).
+
+Bug: 528371776
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1b87e1094de3d9bb47cbe2f54082e68df1dbe2fc">I1b87e1094de3d9bb47cbe2f54082e68df1dbe2fc</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8065834">https://chromium-review.googlesource.com/c/chromium/src/+/8065834</a>
+Reviewed-by: Jenna Himawan &lt;jhimawan@google.com&gt;
+Reviewed-by: Sirisha Kavuluru &lt;skavuluru@google.com&gt;
+Commit-Queue: Michael Wu &lt;mklw@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1659892}
 </pre>
 
 </body>
