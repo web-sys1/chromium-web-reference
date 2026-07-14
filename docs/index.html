@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1661593/"> 1661593</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f2ae4695f2b098019c5df6be4096f92036550965">f2ae4695f2b098019c5df6be4096f92036550965</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1661676/"> 1661676</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6ed29677f1d437e8acb732da6e86b19a3209294b">6ed29677f1d437e8acb732da6e86b19a3209294b</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1661543/">1661543</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7cb48f7de3d8a459fb92e74db7bd59d9c2475941">7cb48f7de3d8a459fb92e74db7bd59d9c2475941</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1661645/">1661645</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9fdee9d14028fbb2d7eda7cc32317c787e78d06f">9fdee9d14028fbb2d7eda7cc32317c787e78d06f</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    f2ae4695f2b098019c5df6be4096f92036550965
+    6ed29677f1d437e8acb732da6e86b19a3209294b
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/f2ae4695f2b098019c5df6be4096f92036550965">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/6ed29677f1d437e8acb732da6e86b19a3209294b">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Satoru Takabayashi &lt;satorux@chromium.org&gt;
+    Dominic Battré &lt;battre@chromium.org&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Tue Jul 14 03:19:32 2026
+    Tue Jul 14 08:33:47 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Tue Jul 14 03:19:32 2026
+    Tue Jul 14 08:33:47 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/f2ae4695f2b098019c5df6be4096f92036550965/">
-     938fc34ab6ff576be8867c44bfe5c4ce234b8a4a
+    <a href="https://chromium.googlesource.com/chromium/src/+/6ed29677f1d437e8acb732da6e86b19a3209294b/">
+     035e6e76a25483e7e2dace447ce34ffd52b1f1f0
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/f2ae4695f2b098019c5df6be4096f92036550965%5E">
-     2f239c162161dac7ca9353842c638a22e1d8f09e
+    <a href="https://chromium.googlesource.com/chromium/src/+/6ed29677f1d437e8acb732da6e86b19a3209294b%5E">
+     9190acf171142be4383962183b438b8f9d9a27f4
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/f2ae4695f2b098019c5df6be4096f92036550965%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/6ed29677f1d437e8acb732da6e86b19a3209294b%5E%21/">
       diff
      </a>
      ]
@@ -182,30 +182,34 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">cros: Add audio focus toggle in Settings behind flag
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix heap-buffer-overflow in SubstringSetMatcher
 
-Implement a persistent user-facing toggle in ChromeOS
-Audio settings to control audio focus enforcement
-(audio ducking).
+SubstringSetMatcher::AhoCorasickNode::SetEdge could overflow its
+allocated edge capacity when duplicate patterns are provided in release
+builds. In release builds (without DCHECKs), duplicate patterns are not
+rejected and can result in multiple kMatchIDLabel edges being added to
+the same node. This can exceed the maximum capacity of 260 edges and
+cause an out-of-bounds write when subsequent edges (like failure edges)
+are added.
 
-The UI toggle is gated behind the new
-`ash::features::kAudioFocusSetting` feature flag:
---enable-features=AudioFocusSetting
+This CL makes SetMatchID idempotent. If a node is already marked as the
+end of a pattern, we return early and do not add a duplicate
+kMatchIDLabel edge.
 
-Test:
-./out/Release/browser_tests --gtest_filter=OSSettingsMochaTest.DevicePageAudioPage
+This behavior is now documented in Build(), and a regression test has
+been added to verify that duplicate patterns are handled safely by
+ignoring subsequent duplicates in release builds.
+
+Bug: 533331920
 
 TAG=agy
-CONV=6796c235-02ba-40f8-9e85-6604447ca52e
-Bug: 40124759
+CONV=95405c0a-c9e1-4622-aefd-20ac03e2cd86
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Icaf941fe6b974124a5cc0e8d9f9561e2768a87b7">Icaf941fe6b974124a5cc0e8d9f9561e2768a87b7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8037503">https://chromium-review.googlesource.com/c/chromium/src/+/8037503</a>
-Reviewed-by: Mitsuru Oshima &lt;oshima@chromium.org&gt;
-Commit-Queue: Satoru Takabayashi &lt;satorux@chromium.org&gt;
-Reviewed-by: Marc Treib &lt;treib@chromium.org&gt;
-Reviewed-by: James Cook &lt;jamescook@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1661593}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I68933c463aa1a37e210002529c67116aece19523">I68933c463aa1a37e210002529c67116aece19523</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8076938">https://chromium-review.googlesource.com/c/chromium/src/+/8076938</a>
+Commit-Queue: Dominic Battré &lt;battre@chromium.org&gt;
+Reviewed-by: Jan Keitel &lt;jkeitel@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1661676}
 </pre>
 
 </body>
