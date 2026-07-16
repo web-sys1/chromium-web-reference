@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1663127/"> 1663127</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4981bdc3d0be6ad328c35def583327b8a47fadf0">4981bdc3d0be6ad328c35def583327b8a47fadf0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1663152/"> 1663152</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/65494ad63c8668d6cebb76fb15ea3105592a5e09">65494ad63c8668d6cebb76fb15ea3105592a5e09</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1663105/">1663105</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e4230452c71e516e7424923c4bd7eac84f2a5847">e4230452c71e516e7424923c4bd7eac84f2a5847</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1663142/">1663142</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5d805cfb374ca80efbb02bc953c82dd2b4da59f9">5d805cfb374ca80efbb02bc953c82dd2b4da59f9</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    4981bdc3d0be6ad328c35def583327b8a47fadf0
+    65494ad63c8668d6cebb76fb15ea3105592a5e09
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/4981bdc3d0be6ad328c35def583327b8a47fadf0">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/65494ad63c8668d6cebb76fb15ea3105592a5e09">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Lucas Radaelli &lt;lucasradaelli@google.com&gt;
+    Zhenyao Mo &lt;zmo@chromium.org&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jul 16 14:21:58 2026
+    Thu Jul 16 15:57:32 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jul 16 14:21:58 2026
+    Thu Jul 16 15:57:32 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/4981bdc3d0be6ad328c35def583327b8a47fadf0/">
-     d8f38fab29412d7e43ad4cb11d2911508e256578
+    <a href="https://chromium.googlesource.com/chromium/src/+/65494ad63c8668d6cebb76fb15ea3105592a5e09/">
+     34262de175f6fe019bca2909acbb4c6579497311
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/4981bdc3d0be6ad328c35def583327b8a47fadf0%5E">
-     606214ea9f603e6834f0949cc7bc592deaebadbd
+    <a href="https://chromium.googlesource.com/chromium/src/+/65494ad63c8668d6cebb76fb15ea3105592a5e09%5E">
+     251747f480043ea10a1059d1baf8534db4ba3ff6
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/4981bdc3d0be6ad328c35def583327b8a47fadf0%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/65494ad63c8668d6cebb76fb15ea3105592a5e09%5E%21/">
       diff
      </a>
      ]
@@ -182,31 +182,26 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[a11y] Guard ProfileMenuViewBase owner across activation change accessibility events
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Clamp subframe touch selection bounds to subframe view bounds
 
-In ProfileMenuViewBase::AXMenuWidgetObserver::OnWidgetActivationChanged(),
-two synchronous accessibility events (kMenuStart/kMenuPopupStart and
-kMenuPopupEnd/kMenuEnd) are fired back-to-back when the profile menu
-widget activates or deactivates.
+A compromised child frame renderer can send selection metadata with
+coordinates outside its visual boundaries. When transforming these
+bounds to the root view coordinate space without validation, the browser
+process could display the Touch Selection Quick Menu at spoofed
+coordinates outside the reporting frame's visual area.
 
-On Windows, firing native accessibility events can theoretically spin a
-COM message pump if assistive technologies are active, allowing queued UI
-tasks (like closing the bubble on deactivation) to run reentrantly and destroy
-the view and observer between the two event dispatches. While there is no
-guarantee that this reentrancy actually occurs in practice, there is established
-precedent in the codebase for wrapping against it: autofill::PopupBaseView
-uses views::ViewTracker when firing these exact same menu event pairs.
+This CL updates TouchSelectionControllerClientChildFrame to clamp all
+reported selection bounds to the local view geometry of the child frame
+before transforming them to root coordinate space, preventing
+out-of-bounds menu placement.
 
-To apply the same safeguards, we wrap owner_ in a views::ViewTracker and
-verify that owner_ is still alive before dispatching the second accessibility
-event in both the activation and deactivation branches.
-
-Bug: 521942358
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I846da826e7dac4d45d105983bcd5e2fb4b1f459c">I846da826e7dac4d45d105983bcd5e2fb4b1f459c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8086800">https://chromium-review.googlesource.com/c/chromium/src/+/8086800</a>
-Reviewed-by: Ramin Halavati &lt;rhalavati@chromium.org&gt;
-Commit-Queue: Lucas Radaelli &lt;lucasradaelli@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1663127}
+Bug: 497456156
+Test: RenderWidgetHostViewChildFrameTest.SelectionBoundsClampedToViewBounds
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1b5304b7233f0bafa67599917e0d59ab5b504990">I1b5304b7233f0bafa67599917e0d59ab5b504990</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8100702">https://chromium-review.googlesource.com/c/chromium/src/+/8100702</a>
+Commit-Queue: Zhenyao Mo &lt;zmo@chromium.org&gt;
+Reviewed-by: Dave Tapuska &lt;dtapuska@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1663152}
 </pre>
 
 </body>
