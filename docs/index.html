@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1663738/"> 1663738</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/3acad265244c446faa34b90f131dfd155557b79e">3acad265244c446faa34b90f131dfd155557b79e</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1663787/"> 1663787</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/857d5898680a30eb09436b760a4050f2ecfbd476">857d5898680a30eb09436b760a4050f2ecfbd476</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1663693/">1663693</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/c12c244f0235ac11a57afa193ccbdd5c5d5e46c3">c12c244f0235ac11a57afa193ccbdd5c5d5e46c3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1663752/">1663752</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/c69a52b277a9f328027a40259e972b654509710e">c69a52b277a9f328027a40259e972b654509710e</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    3acad265244c446faa34b90f131dfd155557b79e
+    857d5898680a30eb09436b760a4050f2ecfbd476
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/3acad265244c446faa34b90f131dfd155557b79e">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/857d5898680a30eb09436b760a4050f2ecfbd476">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Sam Zackrisson &lt;saza@chromium.org&gt;
+    Tamino Bauknecht &lt;taminob@chromium.org&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Fri Jul 17 08:34:12 2026
+    Fri Jul 17 10:39:48 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Fri Jul 17 08:34:12 2026
+    Fri Jul 17 10:39:48 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/3acad265244c446faa34b90f131dfd155557b79e/">
-     57d59d35500231500538251dcf5a705ecae905cc
+    <a href="https://chromium.googlesource.com/chromium/src/+/857d5898680a30eb09436b760a4050f2ecfbd476/">
+     339dcbda368c16581795f24d0b19b4de1144b4ce
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/3acad265244c446faa34b90f131dfd155557b79e%5E">
-     902125e6731a5fd6d6a87df57290f70a64fe9075
+    <a href="https://chromium.googlesource.com/chromium/src/+/857d5898680a30eb09436b760a4050f2ecfbd476%5E">
+     3ee10fe4a86208b960a040721bfb736ec56b3776
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/3acad265244c446faa34b90f131dfd155557b79e%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/857d5898680a30eb09436b760a4050f2ecfbd476%5E%21/">
       diff
      </a>
      ]
@@ -182,21 +182,22 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Audio service: share ML model ownership with clients
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix autofill::AddressFormDataImporter public interface
 
-The ML models are kept in FlatBufferModels, which are immutable after construction and have no exterior dependencies and can therefore be safely read and deleted on arbitrary threads.
+This change replaces the incorrect return value which is supposed to be
+the number of complete profiles for the profile extraction in
+`autofill::AddressFormDataImporter`.
+Although the docstring documented a different behavior, the returned
+number always matched the number of all profiles that were extracted.
+Thus, the interface was simplified to directly return the `std::vector`
+of all extracted profiles.
 
-Wrapping our models in a //media refcounted interface has 3 benefits:
-1. The models can be read on background threads to avoid blocking main thread work that are synchronous to renderer-side JS API calls (used here: <a href="http://crrev.com/c/8108258">http://crrev.com/c/8108258</a>),
-2. the ML model manager implementation is greatly simplified, and
-3. the WebRTC components in //media can access and own the models they use, instead of forcing higher layers (AudioProcessorHandler, VoiceIsolationHandler) to cache them.
-
-Bug: webrtc:442444736
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ic16c58d871039f9949a9544d2899f16930c7af46">Ic16c58d871039f9949a9544d2899f16930c7af46</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8091889">https://chromium-review.googlesource.com/c/chromium/src/+/8091889</a>
-Reviewed-by: Dale Curtis &lt;dalecurtis@chromium.org&gt;
-Commit-Queue: Sam Zackrisson &lt;saza@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1663738}
+Bug: 40100455
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I002addc4fa52557db16c522b1eb3a348db71de58">I002addc4fa52557db16c522b1eb3a348db71de58</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8062948">https://chromium-review.googlesource.com/c/chromium/src/+/8062948</a>
+Commit-Queue: Tamino Bauknecht &lt;taminob@chromium.org&gt;
+Reviewed-by: Jihad Hanna &lt;jihadghanna@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1663787}
 </pre>
 
 </body>
