@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1663518/"> 1663518</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/31604ceeb45830321d90f28606a23e42b61d8ed9">31604ceeb45830321d90f28606a23e42b61d8ed9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1663648/"> 1663648</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/90309b0d2c7d8f975a2e3cc672d3e59b3e19947e">90309b0d2c7d8f975a2e3cc672d3e59b3e19947e</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1663495/">1663495</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/f6529df32f599ebbe499ee6ab2bc962910a23833">f6529df32f599ebbe499ee6ab2bc962910a23833</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1663623/">1663623</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/df6c8062011e35b293783093bbfb8ffd2549b4f4">df6c8062011e35b293783093bbfb8ffd2549b4f4</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    31604ceeb45830321d90f28606a23e42b61d8ed9
+    90309b0d2c7d8f975a2e3cc672d3e59b3e19947e
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/31604ceeb45830321d90f28606a23e42b61d8ed9">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/90309b0d2c7d8f975a2e3cc672d3e59b3e19947e">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Ritika Gupta &lt;ritikagup@google.com&gt;
+    Bryan Oltman &lt;bryanoltman@google.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jul 16 21:31:33 2026
+    Fri Jul 17 03:29:11 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jul 16 21:31:33 2026
+    Fri Jul 17 03:29:11 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/31604ceeb45830321d90f28606a23e42b61d8ed9/">
-     7002b345f39acdc466afe0674dcb40d289101d14
+    <a href="https://chromium.googlesource.com/chromium/src/+/90309b0d2c7d8f975a2e3cc672d3e59b3e19947e/">
+     698b17c39487a7a861adcfc3ac17aa8f7997546d
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/31604ceeb45830321d90f28606a23e42b61d8ed9%5E">
-     b355674aa14ba48a6d30e56f3e1d5cc1f6f253ce
+    <a href="https://chromium.googlesource.com/chromium/src/+/90309b0d2c7d8f975a2e3cc672d3e59b3e19947e%5E">
+     29485914e1962adf17f4c4b9a7bc4dda6014a89b
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/31604ceeb45830321d90f28606a23e42b61d8ed9%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/90309b0d2c7d8f975a2e3cc672d3e59b3e19947e%5E%21/">
       diff
      </a>
      ]
@@ -182,20 +182,30 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Background Actuation] Prep offscreen tab observation on Android
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[macOS] Make modal sheet presentation asynchronous to prevent UAF bugs
 
-- Added getOffscreenWindow() to OffscreenRenderingManager.java to expose the headless WindowAndroid container.
-- Updated tab_observation_controller.cc to support observing offscreen rendering tabs on Android and adding them to window observations.
+Modal sheet animations run a nested run loop synchronously in AppKit.
+During this loop, the main thread remains active, allowing the parent or
+child widget to be closed and its C++ bridge synchronously destroyed.
+This leads to Use-After-Free (UAF) bugs when the nested loop exits and
+execution resumes in the member functions of the deleted bridge.
 
-Bug: 534363152
+This CL runs modal sheet presentations asynchronously to prevent UAF:
+- Always post the sheet animation task to the message loop (previously
+  only done for remote cocoa).
+- Add the SetVisibilityStateBridgeDestruction regression test.
 
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If903bcd1580823a8dcc924553afc7c07190fc429">If903bcd1580823a8dcc924553afc7c07190fc429</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8087114">https://chromium-review.googlesource.com/c/chromium/src/+/8087114</a>
-Reviewed-by: Siddhartha S &lt;ssid@chromium.org&gt;
-Auto-Submit: Ritika Gupta &lt;ritikagup@google.com&gt;
-Commit-Queue: Ritika Gupta &lt;ritikagup@google.com&gt;
-Commit-Queue: Siddhartha S &lt;ssid@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1663518}
+This CL also removes a weak pointer check in
+FullscreenControllerTransitionComplete that is no longer necessary now
+that the modal sheet presentation is asynchronous.
+
+Include-Ci-Only-Tests: true
+Fixed: 518006007,502109333,502101200
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I9a911b80d087f79920cbd944af854dbf82c6f6ae">I9a911b80d087f79920cbd944af854dbf82c6f6ae</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8086464">https://chromium-review.googlesource.com/c/chromium/src/+/8086464</a>
+Commit-Queue: Bryan Oltman &lt;bryanoltman@google.com&gt;
+Reviewed-by: Keren Zhu &lt;kerenzhu@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1663648}
 </pre>
 
 </body>
