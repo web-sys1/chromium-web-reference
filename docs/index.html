@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1664742/"> 1664742</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e8dbfd47761c643a9a0c22ecaf32cf5b8f27ebb0">e8dbfd47761c643a9a0c22ecaf32cf5b8f27ebb0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1664821/"> 1664821</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fcdb331ece5f0f9ede6304d54301605ae81e8c96">fcdb331ece5f0f9ede6304d54301605ae81e8c96</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1664683/">1664683</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/8ee96c879b3178a6591d8b0139ac1f820e5097a9">8ee96c879b3178a6591d8b0139ac1f820e5097a9</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1664787/">1664787</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5dd0cf3e1c278bc7a1727e3a15f99a1e5f6be23b">5dd0cf3e1c278bc7a1727e3a15f99a1e5f6be23b</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    e8dbfd47761c643a9a0c22ecaf32cf5b8f27ebb0
+    fcdb331ece5f0f9ede6304d54301605ae81e8c96
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/e8dbfd47761c643a9a0c22ecaf32cf5b8f27ebb0">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/fcdb331ece5f0f9ede6304d54301605ae81e8c96">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Kurt Catti-Schmidt &lt;kschmi@microsoft.com&gt;
+    Travis Li &lt;songhaoli@google.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Mon Jul 20 16:36:04 2026
+    Mon Jul 20 18:41:33 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Mon Jul 20 16:36:04 2026
+    Mon Jul 20 18:41:33 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/e8dbfd47761c643a9a0c22ecaf32cf5b8f27ebb0/">
-     714a1634db519c7d188aec0db21e2d9f20a90519
+    <a href="https://chromium.googlesource.com/chromium/src/+/fcdb331ece5f0f9ede6304d54301605ae81e8c96/">
+     adef2232598d5a4a58351c06128a3cef619b6340
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/e8dbfd47761c643a9a0c22ecaf32cf5b8f27ebb0%5E">
-     46446483fa6bfc28f264e19bd531430f39a53ee4
+    <a href="https://chromium.googlesource.com/chromium/src/+/fcdb331ece5f0f9ede6304d54301605ae81e8c96%5E">
+     6d1f03f439b81eaf6d26e7f37d68c4acfeed1eb5
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/e8dbfd47761c643a9a0c22ecaf32cf5b8f27ebb0%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/fcdb331ece5f0f9ede6304d54301605ae81e8c96%5E%21/">
       diff
      </a>
      ]
@@ -182,25 +182,28 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Invalidation highlights with first-line and viewport units
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Clarity] Defer bubble widget destruction on deactivation close
 
-HighlightRegistry handles invalidation for custom highlights for most
-scenarios. However, ::first-line has additional invalidation paths that
-weren't accounting for highlights. In particular, ink overflow wasn't
-being invalidated for first-line and the style diffs were missing the
-highlight changes. This change adds additional invalidation logic for
-these scenarios.
+When the anchored message bubble widget is closed on deactivation,
+destroying the widget synchronously inside macOS
+NativeWidgetMac::OnWindowKeyStatusChanged() causes a Use-After-Free
+crash during native post-processing frames.
 
-The existing WPT was only checking ::first-line, but we needed
-additional logic to fix ::first-letter too, so an additional WPT was
-added for ::first-letter.
+This CL resolves the crash by deferring the widget's destruction in
+PageActionView::OnAnchoredMessageWidgetClose() using PostTask bound to
+a WeakPtr and performing instance identity checks. This allows native
+stack frames to unwind first, while ensuring that early parent
+destruction or quick-succession bubble recreations do not cause UAF
+crashes or accidental deletion of newer bubbles.
 
-Bug: 484218877
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I958f09831b0b46bbf1e8ecff5b5bb632541ddace">I958f09831b0b46bbf1e8ecff5b5bb632541ddace</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7981266">https://chromium-review.googlesource.com/c/chromium/src/+/7981266</a>
-Reviewed-by: Rune Lillesveen &lt;futhark@chromium.org&gt;
-Commit-Queue: Kurt Catti-Schmidt &lt;kschmi@microsoft.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1664742}
+Bug: 531762726
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6b01005c85c77742762032ec306711c277e3e944">I6b01005c85c77742762032ec306711c277e3e944</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8070238">https://chromium-review.googlesource.com/c/chromium/src/+/8070238</a>
+Reviewed-by: Thomas Lukaszewicz &lt;tluk@chromium.org&gt;
+Reviewed-by: Allen Bauer &lt;kylixrd@chromium.org&gt;
+Commit-Queue: Travis Li &lt;songhaoli@google.com&gt;
+Reviewed-by: Kaan Alsan &lt;alsan@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1664821}
 </pre>
 
 </body>
