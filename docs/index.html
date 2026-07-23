@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1667051/"> 1667051</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ed7cfddf585924772aee2226e09d05c55c209a83">ed7cfddf585924772aee2226e09d05c55c209a83</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1667184/"> 1667184</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/adf18c8cb50d805b6f1ebb7b2b2444bc432f63e4">adf18c8cb50d805b6f1ebb7b2b2444bc432f63e4</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1667051/">1667051</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ed7cfddf585924772aee2226e09d05c55c209a83">ed7cfddf585924772aee2226e09d05c55c209a83</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1667086/">1667086</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/9dd9d5277410d8d30831fb6f0e1c97a92c0dd7cd">9dd9d5277410d8d30831fb6f0e1c97a92c0dd7cd</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    ed7cfddf585924772aee2226e09d05c55c209a83
+    adf18c8cb50d805b6f1ebb7b2b2444bc432f63e4
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/ed7cfddf585924772aee2226e09d05c55c209a83">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/adf18c8cb50d805b6f1ebb7b2b2444bc432f63e4">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Jiacheng Guo &lt;gjc@google.com&gt;
+    Júlio Piubello &lt;julio@gitstart.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jul 23 13:35:24 2026
+    Thu Jul 23 16:32:46 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jul 23 13:35:24 2026
+    Thu Jul 23 16:32:46 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/ed7cfddf585924772aee2226e09d05c55c209a83/">
-     9aa39a542851c2b2926227a7c16641433693ec19
+    <a href="https://chromium.googlesource.com/chromium/src/+/adf18c8cb50d805b6f1ebb7b2b2444bc432f63e4/">
+     8ee318134837943a84a473d6b5edf90a413b0336
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/ed7cfddf585924772aee2226e09d05c55c209a83%5E">
-     9ade7afbef78895fe7cf648d3145737f9260f1a1
+    <a href="https://chromium.googlesource.com/chromium/src/+/adf18c8cb50d805b6f1ebb7b2b2444bc432f63e4%5E">
+     479b420a86c07ec3c09f53e4434fe3332b082e84
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/ed7cfddf585924772aee2226e09d05c55c209a83%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/adf18c8cb50d805b6f1ebb7b2b2444bc432f63e4%5E%21/">
       diff
      </a>
      ]
@@ -182,27 +182,30 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Add PrewarmDisableOnStartup feature
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">chromedriver: Support non-BMP SendKeys input
 
-This CL introduces a new standalone feature kPrewarmDisableOnStartup
-which, when enabled, prevents the Default Search Engine (DSE) prewarm
-from triggering if the browser startup is not yet complete. This is
-intended to prevent startup time regressions.
+ChromeDriver currently rejects UTF-16 surrogate pairs while flattening
+Element Send Keys input, returning an unknown error before the key
+conversion path can generate text events. That prevents WebDriver
+clients from sending valid non-BMP Unicode characters such as emoji.
 
-If the prewarm is triggered during startup, we now queue it to run
-after startup completes to ensure we don't miss the prewarm.
+Allow valid surrogate pairs through flattening and convert each pair into
+a text-only key event with VKEY_UNKNOWN. Keep the existing BMP key,
+modifier, NULL, and special-key handling unchanged, and reject malformed
+surrogate input in the converter.
 
-We also update the PrewarmZeroSuggestTrigger study in
-fieldtrial_testing_config.json to enable this new feature in its
-experiment group, renamed to Enabled_WithDisableOnStartup.
+Add unit coverage for valid and invalid surrogate input, and update the
+Android WebDriver expectation now that the existing WPT surrogate test
+passes.
 
-Bug: 537950343
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6eb40ad73e4f72268c8fe23983312b28d072da6b">I6eb40ad73e4f72268c8fe23983312b28d072da6b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8130305">https://chromium-review.googlesource.com/c/chromium/src/+/8130305</a>
-Reviewed-by: Takashi Toyoshima &lt;toyoshim@chromium.org&gt;
-Commit-Queue: Jiacheng Guo &lt;gjc@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1667051}
+Overview: <a href="https://drive.google.com/file/d/1ozANhzNw52xe85B02LL5lBoCHUMQlaxP/view?usp=sharing">https://drive.google.com/file/d/1ozANhzNw52xe85B02LL5lBoCHUMQlaxP/view?usp=sharing</a>
+Bug: 42321343
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I22dd46bd221caf52900469dbb5257fd1b52f8b5f">I22dd46bd221caf52900469dbb5257fd1b52f8b5f</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7902576">https://chromium-review.googlesource.com/c/chromium/src/+/7902576</a>
+Commit-Queue: Alex N. Jose &lt;alexnj@chromium.org&gt;
+Reviewed-by: Alex Rudenko &lt;alexrudenko@chromium.org&gt;
+Reviewed-by: Thomas Lukaszewicz &lt;tluk@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1667184}
 </pre>
 
 </body>
