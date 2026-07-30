@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1670797/"> 1670797</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/39809cbb08113098af2522afb85ac245b7b11e3c">39809cbb08113098af2522afb85ac245b7b11e3c</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1670917/"> 1670917</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/fdf48ac9f2193a4e016ecc0c2b719b66f9080c8c">fdf48ac9f2193a4e016ecc0c2b719b66f9080c8c</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1670767/">1670767</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/e69b8fa9e09c97a8b702dec606984e7117815456">e69b8fa9e09c97a8b702dec606984e7117815456</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1670852/">1670852</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5dad4cf651fd8fc6753a7b61082d87404f24acae">5dad4cf651fd8fc6753a7b61082d87404f24acae</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    39809cbb08113098af2522afb85ac245b7b11e3c
+    fdf48ac9f2193a4e016ecc0c2b719b66f9080c8c
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/39809cbb08113098af2522afb85ac245b7b11e3c">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/fdf48ac9f2193a4e016ecc0c2b719b66f9080c8c">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Shu Yang &lt;shuyng@google.com&gt;
+    Ran Yeheskel &lt;ran.yeheskel@island.io&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jul 30 03:25:25 2026
+    Thu Jul 30 08:55:21 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Jul 30 03:25:25 2026
+    Thu Jul 30 08:55:21 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/39809cbb08113098af2522afb85ac245b7b11e3c/">
-     85f26844470664711a464580ec55c4467dee0874
+    <a href="https://chromium.googlesource.com/chromium/src/+/fdf48ac9f2193a4e016ecc0c2b719b66f9080c8c/">
+     5908d607a3c168058945c9416c2787bb24617e06
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/39809cbb08113098af2522afb85ac245b7b11e3c%5E">
-     fea67fd85394b182540e8dd5fca9a46905d23faa
+    <a href="https://chromium.googlesource.com/chromium/src/+/fdf48ac9f2193a4e016ecc0c2b719b66f9080c8c%5E">
+     6b38bb6d27ea260e2ca1aecf0211834b38e80464
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/39809cbb08113098af2522afb85ac245b7b11e3c%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/fdf48ac9f2193a4e016ecc0c2b719b66f9080c8c%5E%21/">
       diff
      </a>
      ]
@@ -182,28 +182,29 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix GLiC fatal CHECK during rapid tab switching
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Mac: Depend on chrome_framework via data_deps in chrome/app:test_support
 
-During rapid tab switching, an asynchronous task posted by
-`OnBoundTabActivated` could execute after the tab had already been
-deactivated. This led to `Show()` being called for a background tab,
-which ultimately tripped a fatal CHECK in
-`ShowInactiveSidePanelEmbedderFor()` because the background tab
-transiently remained the active embedder due to delayed side panel
-detachment.
+On Mac, browser_tests C++ object compilations are blocked until the
+linking of //chrome:chrome_framework finishes, which unnecessarily slows
+the build.
 
-This CL fixes the issue by adding an early return in
-`OnBoundTabActivatedAsync`. We now verify that the tab is still
-active when the asynchronous task executes, aborting the operation if
-the tab has already been backgrounded.
+The reason is because chrome_framework is a create_bundle target and
+also a GN dep of //chrome/app:test_support (which is an indirect dep of
+the browser_tests target). However, chrome_framework is only needed at
+runtime by the test_support target.
 
-Cq-Include-Trybots: luci.chromium.try:android-desktop-x64-rel
-Bug: 535487924
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I3fef4f9ea5e199e27c769d229b1a1f591e3d7794">I3fef4f9ea5e199e27c769d229b1a1f591e3d7794</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8144021">https://chromium-review.googlesource.com/c/chromium/src/+/8144021</a>
-Commit-Queue: Shu Yang &lt;shuyng@google.com&gt;
-Reviewed-by: Bryant Chandler &lt;bryantchandler@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1670797}
+Therefore, we move chrome_framework to be a data_dep (instead of a dep)
+of test_support.
+
+Also, remove dead code from chrome/app/chrome_main_mac.h.
+
+Bug: 537472294
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ieebd4ae3fb295594df6b8b3cde3407af00c3e7e8">Ieebd4ae3fb295594df6b8b3cde3407af00c3e7e8</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8128344">https://chromium-review.googlesource.com/c/chromium/src/+/8128344</a>
+Reviewed-by: Greg Thompson &lt;grt@chromium.org&gt;
+Commit-Queue: Michael Maltsev &lt;michaelm@island.io&gt;
+Reviewed-by: Mark Mentovai &lt;mark@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1670917}
 </pre>
 
 </body>
