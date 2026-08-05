@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1673982/"> 1673982</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/485332d42df574918913561ea664caf6ce8a9284">485332d42df574918913561ea664caf6ce8a9284</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1674144/"> 1674144</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/66dcf87ccb3e7b6ab2fbca4c960e7cfe89af73aa">66dcf87ccb3e7b6ab2fbca4c960e7cfe89af73aa</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1673937/">1673937</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/96fc99187fd3327790451dbb5c27ffb28ea1563d">96fc99187fd3327790451dbb5c27ffb28ea1563d</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1674089/">1674089</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/bfe9b697253a006ad1d1c91af6ee157cbb48629a">bfe9b697253a006ad1d1c91af6ee157cbb48629a</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    485332d42df574918913561ea664caf6ce8a9284
+    66dcf87ccb3e7b6ab2fbca4c960e7cfe89af73aa
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/485332d42df574918913561ea664caf6ce8a9284">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/66dcf87ccb3e7b6ab2fbca4c960e7cfe89af73aa">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Aditya Gupta &lt;adigupt@google.com&gt;
+    Free Debreuil &lt;freedebreuil@google.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Wed Aug 05 09:11:25 2026
+    Wed Aug 05 14:45:13 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Wed Aug 05 09:11:25 2026
+    Wed Aug 05 14:45:13 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/485332d42df574918913561ea664caf6ce8a9284/">
-     dcc7e6a89e607450e41eba0be0c30d5011f41d1c
+    <a href="https://chromium.googlesource.com/chromium/src/+/66dcf87ccb3e7b6ab2fbca4c960e7cfe89af73aa/">
+     1e6c3242088bb7dfab941d2205d9435134762452
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/485332d42df574918913561ea664caf6ce8a9284%5E">
-     114281c4802b89ea349320340ee668e65e913848
+    <a href="https://chromium.googlesource.com/chromium/src/+/66dcf87ccb3e7b6ab2fbca4c960e7cfe89af73aa%5E">
+     8a0d6d1d39ae4f87a2de5b1322f2c599ed362e5c
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/485332d42df574918913561ea664caf6ce8a9284%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/66dcf87ccb3e7b6ab2fbca4c960e7cfe89af73aa%5E%21/">
       diff
      </a>
      ]
@@ -182,25 +182,27 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Record user manual filtering behavior after ignoring a Multistep Filter suggestion.
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Blink] Fix bottom-controls visual viewport scroll bounds
 
-This CL introduces the MultistepFilter.PostIgnoreFiltering histogram to
-track user behavior after they ignore or dismiss a Multistep Filter
-suggestion. Specifically, it records whether the user subsequently
-manually applies the same filters, different filters, or does not filter
-further on the same site.
+The maximum visual viewport offset now accounts for the bottom browser
+controls, matching the viewport container bounds deltas cc applies in
+LayerTreeImpl::UpdateViewportContainerSizes(). Previously, offsets
+applied by the compositor while the bottom toolbar was hidden were
+clamped on the main thread: visualViewport reported a smaller offset
+than what was rendered, and main-thread scrolls could not reach the full
+scroll range.
 
-To support this, MultistepFilterMetricsTracker now tracks ignored
-impressions and evaluates manual filter extractions on subsequent
-navigations.
+Add BrowserControls::UnreportedBottomSizeAdjustment(), mirroring
+UnreportedSizeAdjustment() for the top controls, and include it in the
+maximum scroll offset. Only the transient scroll bounds change;
+visualViewport.height still does not track bottom controls.
 
-Bug: b:525687867
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I865ba15b36caa9de5ec28000f963f9ab060585ad">I865ba15b36caa9de5ec28000f963f9ab060585ad</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8181984">https://chromium-review.googlesource.com/c/chromium/src/+/8181984</a>
-Commit-Queue: Aditya Gupta &lt;adigupt@google.com&gt;
-Reviewed-by: Dominic Battré &lt;battre@chromium.org&gt;
-Reviewed-by: Jihad Hanna &lt;jihadghanna@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1673982}
+Fixed: 510914105
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4c7d19e77cba7b57b8506f90017c83043772e904">I4c7d19e77cba7b57b8506f90017c83043772e904</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8162664">https://chromium-review.googlesource.com/c/chromium/src/+/8162664</a>
+Reviewed-by: David Bokan &lt;bokan@chromium.org&gt;
+Commit-Queue: Free Debreuil &lt;freedebreuil@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1674144}
 </pre>
 
 </body>
