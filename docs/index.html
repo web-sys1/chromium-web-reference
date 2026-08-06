@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1674807/"> 1674807</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4a76acfe845337892a828da4cc09c411f224c9eb">4a76acfe845337892a828da4cc09c411f224c9eb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1674862/"> 1674862</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/561466aa36f2384aed26e38629ff15b0ee7007da">561466aa36f2384aed26e38629ff15b0ee7007da</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1674742/">1674742</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/364aea1e58b66d894470cbaf2e355c2502ae32af">364aea1e58b66d894470cbaf2e355c2502ae32af</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1674833/">1674833</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f28c93ba23d6bbe15b5b3980cad3a6b48a9d9557">f28c93ba23d6bbe15b5b3980cad3a6b48a9d9557</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    4a76acfe845337892a828da4cc09c411f224c9eb
+    561466aa36f2384aed26e38629ff15b0ee7007da
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/4a76acfe845337892a828da4cc09c411f224c9eb">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/561466aa36f2384aed26e38629ff15b0ee7007da">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Nidhi Jaju &lt;nidhijaju@chromium.org&gt;
+    Scott Yoder &lt;scottyoder@google.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Aug 06 09:04:54 2026
+    Thu Aug 06 11:27:53 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Thu Aug 06 09:04:54 2026
+    Thu Aug 06 11:27:53 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/4a76acfe845337892a828da4cc09c411f224c9eb/">
-     d26af705c2c8f520140eaf3da06c627c9e438edc
+    <a href="https://chromium.googlesource.com/chromium/src/+/561466aa36f2384aed26e38629ff15b0ee7007da/">
+     7bd068b937e25d5365db4edab51e9aa504afb9ff
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/4a76acfe845337892a828da4cc09c411f224c9eb%5E">
-     66d8ccfd2b6a984fad48cc5eb8d6f6d7e81fcac7
+    <a href="https://chromium.googlesource.com/chromium/src/+/561466aa36f2384aed26e38629ff15b0ee7007da%5E">
+     bf24e53741ded35e3ae617ed3cf9ada9e0f631e4
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/4a76acfe845337892a828da4cc09c411f224c9eb%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/561466aa36f2384aed26e38629ff15b0ee7007da%5E%21/">
       diff
      </a>
      ]
@@ -182,31 +182,21 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Disable SYN retransmissions for loopback on Windows
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[ios] Fix webview viewport calculation during device rotation
 
-When connecting to a closed port on Windows, the TCP stack will
-retransmit the SYN packet multiple times before reporting an
-ECONNREFUSED error. By default, this takes roughly 2 seconds.
+This change causes the webview to recalculate its viewport during the
+rotation transition, after its frame has been updated. Previously it was
+calculating it before the frame had been updated.
 
-For web developers running local servers (which often bind only to
-127.0.0.1), this creates a significant performance penalty. Chromium's
-TransportConnectJob tries IPv6 (::1) first and waits either for it to
-finish or for a fallback timer (~300ms) before trying IPv4. Because the
-::1 attempt stalls for 2 seconds rather than failing immediately, every
-new connection to localhost incurs the full 300ms fallback penalty.
+Video with fix:
+<a href="http://screencast/cast/NDk2NDI3NjczNjM2MDQ0OHw1MmY3OTM4Yy0zMQ">http://screencast/cast/NDk2NDI3NjczNjM2MDQ0OHw1MmY3OTM4Yy0zMQ</a>
 
-This CL avoids the SYN retransmission stall by explicitly disabling SYN
-retransmissions for loopback connections on Windows 10 version 1709 and
-above.
-
-Bug: 542261173
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie3392f1ed2fadb8623dc6d96425fc92acf3ae1ec">Ie3392f1ed2fadb8623dc6d96425fc92acf3ae1ec</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8212039">https://chromium-review.googlesource.com/c/chromium/src/+/8212039</a>
-Auto-Submit: Nidhi Jaju &lt;nidhijaju@chromium.org&gt;
-Commit-Queue: Nidhi Jaju &lt;nidhijaju@chromium.org&gt;
-Reviewed-by: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
-Commit-Queue: Kenichi Ishibashi &lt;bashi@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1674807}
+Fixed: 543064516
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I21359accd8db1c5ce7f05de1fe9c1ceacc0c7d14">I21359accd8db1c5ce7f05de1fe9c1ceacc0c7d14</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8207401">https://chromium-review.googlesource.com/c/chromium/src/+/8207401</a>
+Reviewed-by: Gauthier Ambard &lt;gambard@chromium.org&gt;
+Commit-Queue: Scott Yoder &lt;scottyoder@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1674862}
 </pre>
 
 </body>
