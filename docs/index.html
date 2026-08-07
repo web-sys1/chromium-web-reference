@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1675742/"> 1675742</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2b36bda8d72d10800efb056805aec81e0203bf1b">2b36bda8d72d10800efb056805aec81e0203bf1b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1675868/"> 1675868</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/971a736d9cdbb3e1eb965043a201e5250fce73fc">971a736d9cdbb3e1eb965043a201e5250fce73fc</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1675702/">1675702</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2827ebbc738247d125b9e84d625206fa43fb5df3">2827ebbc738247d125b9e84d625206fa43fb5df3</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1675815/">1675815</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/f825bbee8a787f80faaf665657ae7d87cc913b9a">f825bbee8a787f80faaf665657ae7d87cc913b9a</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    2b36bda8d72d10800efb056805aec81e0203bf1b
+    971a736d9cdbb3e1eb965043a201e5250fce73fc
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/2b36bda8d72d10800efb056805aec81e0203bf1b">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/971a736d9cdbb3e1eb965043a201e5250fce73fc">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    David Bienvenu &lt;davidbienvenu@chromium.org&gt;
+    Dan Harrington &lt;harringtond@chromium.org&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Fri Aug 07 16:08:39 2026
+    Fri Aug 07 19:08:29 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Fri Aug 07 16:08:39 2026
+    Fri Aug 07 19:08:29 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/2b36bda8d72d10800efb056805aec81e0203bf1b/">
-     508e286a4290b125592f731d8ccaeed9e8b62def
+    <a href="https://chromium.googlesource.com/chromium/src/+/971a736d9cdbb3e1eb965043a201e5250fce73fc/">
+     5c4b2368b2209eee1711a069bcd55e8ae85a71df
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/2b36bda8d72d10800efb056805aec81e0203bf1b%5E">
-     c5f9f66c683ec8dfde8cb37ecf069c49af2f1bae
+    <a href="https://chromium.googlesource.com/chromium/src/+/971a736d9cdbb3e1eb965043a201e5250fce73fc%5E">
+     f4836b115a635cb2852c2182d6723155b95ca110
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/2b36bda8d72d10800efb056805aec81e0203bf1b%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/971a736d9cdbb3e1eb965043a201e5250fce73fc%5E%21/">
       diff
      </a>
      ]
@@ -182,25 +182,18 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix flakiness in IsolatedWebApp test
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Fix autotest filter for parameterized tests
 
-IsolatedWebAppChromeBrowsingDataRemoverDelegateTest
-.FilterOriginRespected fails because a previous test leaves a stale task
-runner alive.
+If you pass a full test name, Foo.MyTest to autotest, it will find the
+test and run it. If the test is a parameterized test, this currently
+fails unless the parameterized test has no prefix. This change fixes the
+bug, so it will find the test in either case.
 
-Fix is to use LAZY_THREAD_POOL_SEQUENCED_TASK_RUNNER_INITIALIZER(...)
-rather than static in GetCdmDataTaskRunner().
-
-base::NoDestructor&lt;scoped_refptr&lt;base::SequencedTaskRunner&gt;&gt;.
-LazyThreadPoolSequencedTaskRunner detects when TaskEnvironment restarts
-between unit tests and safely re-creates the task runner bound to the
-active thread pool delegate.
-
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I71f8bad55ade3403a37a34e156d63c1de9ba2823">I71f8bad55ade3403a37a34e156d63c1de9ba2823</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8211261">https://chromium-review.googlesource.com/c/chromium/src/+/8211261</a>
-Reviewed-by: Sangbaek Park &lt;sangbaekpark@chromium.org&gt;
-Commit-Queue: David Bienvenu &lt;davidbienvenu@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1675742}
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Id2fece5a8268b0f6c2aebaf63cded1736a6a6964">Id2fece5a8268b0f6c2aebaf63cded1736a6a6964</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8224323">https://chromium-review.googlesource.com/c/chromium/src/+/8224323</a>
+Commit-Queue: Dan H &lt;harringtond@chromium.org&gt;
+Reviewed-by: Andrew Grieve &lt;agrieve@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1675868}
 </pre>
 
 </body>
