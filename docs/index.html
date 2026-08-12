@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1678003/"> 1678003</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/2d32feeea6e1a0878be280b9316b28b24989476a">2d32feeea6e1a0878be280b9316b28b24989476a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1678063/"> 1678063</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/8511a17a85692aae9b4215b8d62b2678301db839">8511a17a85692aae9b4215b8d62b2678301db839</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1677969/">1677969</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/4eb69ec31f82fccba5cde096ac2f9ef4d8bcf01b">4eb69ec31f82fccba5cde096ac2f9ef4d8bcf01b</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1678017/">1678017</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/20fb18cef5b4bff80e0985175ee9158a29cb4727">20fb18cef5b4bff80e0985175ee9158a29cb4727</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    2d32feeea6e1a0878be280b9316b28b24989476a
+    8511a17a85692aae9b4215b8d62b2678301db839
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/2d32feeea6e1a0878be280b9316b28b24989476a">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/8511a17a85692aae9b4215b8d62b2678301db839">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Charles Cai &lt;charlesyc@google.com&gt;
+    Richard Chen &lt;richche@google.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Wed Aug 12 13:47:08 2026
+    Wed Aug 12 15:55:25 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Wed Aug 12 13:47:08 2026
+    Wed Aug 12 15:55:25 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/2d32feeea6e1a0878be280b9316b28b24989476a/">
-     b52f95c4315d271519ddb1e16b0934347f2a8791
+    <a href="https://chromium.googlesource.com/chromium/src/+/8511a17a85692aae9b4215b8d62b2678301db839/">
+     e864d835f846e1b90e64436ceb939a161f698e6a
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/2d32feeea6e1a0878be280b9316b28b24989476a%5E">
-     552f151ecf714fb8d859ac1350ac0491a05075ff
+    <a href="https://chromium.googlesource.com/chromium/src/+/8511a17a85692aae9b4215b8d62b2678301db839%5E">
+     cbecaeeffe6dada4d736994a6aee43da2a003697
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/2d32feeea6e1a0878be280b9316b28b24989476a%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/8511a17a85692aae9b4215b8d62b2678301db839%5E%21/">
       diff
      </a>
      ]
@@ -182,21 +182,22 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Set INPUT_METHOD_NOT_NEEDED on focusable Fusebox popup
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Refactor BaseUIManager friend classes to use base::PassKey
 
-When opening the focusable popup window on phones/tablets during an
-active typing session, the popup is set as the IME client, causing a
-flicker at the bottom of the screen where the soft keyboard was.
+This CL replaces the remaining `friend class` declarations in
+BaseUIManager with `base::PassKey` parameters to restrict access to
+RemoveAllowlistUrlSet and RemoveAllowlistUrlSetThreatType. This allows
+ChromePasswordProtectionService and SuspiciousSiteControllerAndroid
+to cleanly access these methods without needing to be friends, and
+improves encapsulation. SafeBrowsingUIManagerTest remains a friend
+to maintain test isolation.
 
-This CL marks the popup with INPUT_METHOD_NOT_NEEDED which aligns with
-its actual property and resolves the keyboard flicker issue.
-
-Bug: 544566458
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If501afe96693226d8865a5c78fedca2c5132479b">If501afe96693226d8865a5c78fedca2c5132479b</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8241488">https://chromium-review.googlesource.com/c/chromium/src/+/8241488</a>
-Commit-Queue: Charles Cai &lt;charlesyc@google.com&gt;
-Reviewed-by: Sky Malice &lt;skym@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1678003}
+Bug: 539984776
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ie1d18a9b1f323e12afc60124ad37ed6151c75121">Ie1d18a9b1f323e12afc60124ad37ed6151c75121</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8239994">https://chromium-review.googlesource.com/c/chromium/src/+/8239994</a>
+Reviewed-by: thefrog &lt;thefrog@chromium.org&gt;
+Commit-Queue: Richard Chen &lt;richche@google.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1678063}
 </pre>
 
 </body>
