@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1677886/"> 1677886</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/18f1c209c7a6fb3d2ec6cca6912795dc1a95f9dc">18f1c209c7a6fb3d2ec6cca6912795dc1a95f9dc</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1678003/"> 1678003</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/2d32feeea6e1a0878be280b9316b28b24989476a">2d32feeea6e1a0878be280b9316b28b24989476a</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1677879/">1677879</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/846876a8326b47ccd58ed2e8f86ad24d2cb68600">846876a8326b47ccd58ed2e8f86ad24d2cb68600</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1677969/">1677969</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4eb69ec31f82fccba5cde096ac2f9ef4d8bcf01b">4eb69ec31f82fccba5cde096ac2f9ef4d8bcf01b</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    18f1c209c7a6fb3d2ec6cca6912795dc1a95f9dc
+    2d32feeea6e1a0878be280b9316b28b24989476a
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/18f1c209c7a6fb3d2ec6cca6912795dc1a95f9dc">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/2d32feeea6e1a0878be280b9316b28b24989476a">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Marc Treib &lt;treib@chromium.org&gt;
+    Charles Cai &lt;charlesyc@google.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Wed Aug 12 09:33:43 2026
+    Wed Aug 12 13:47:08 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Wed Aug 12 09:33:43 2026
+    Wed Aug 12 13:47:08 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/18f1c209c7a6fb3d2ec6cca6912795dc1a95f9dc/">
-     2b3fce07943b16a54f0f105269ebe36a5891fa3e
+    <a href="https://chromium.googlesource.com/chromium/src/+/2d32feeea6e1a0878be280b9316b28b24989476a/">
+     b52f95c4315d271519ddb1e16b0934347f2a8791
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/18f1c209c7a6fb3d2ec6cca6912795dc1a95f9dc%5E">
-     39e88838fadbd7d714a92a4096c12a0c5f1f6579
+    <a href="https://chromium.googlesource.com/chromium/src/+/2d32feeea6e1a0878be280b9316b28b24989476a%5E">
+     552f151ecf714fb8d859ac1350ac0491a05075ff
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/18f1c209c7a6fb3d2ec6cca6912795dc1a95f9dc%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/2d32feeea6e1a0878be280b9316b28b24989476a%5E%21/">
       diff
      </a>
      ]
@@ -182,33 +182,21 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Sync: Simplify SyncServiceFactory::IsSyncAllowed()
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Set INPUT_METHOD_NOT_NEEDED on focusable Fusebox popup
 
-SyncServiceFactory::IsSyncAllowed() checks that Sync isn't blocked by
-one of two specific things: command-line flag, or enterprise policy.
-(Which seems "moderately useful" at best, really.)
+When opening the focusable popup window on phones/tablets during an
+active typing session, the popup is set as the IME client, causing a
+flicker at the bottom of the screen where the soft keyboard was.
 
-Before this CL, this method tried to avoid creating a SyncServiceImpl
-instance if it wasn't created yet. That seems a bit pointless (the
-instance will probably get created very soon anyway), and to achieve
-this it had to duplicate some logic.
+This CL marks the popup with INPUT_METHOD_NOT_NEEDED which aligns with
+its actual property and resolves the keyboard flicker issue.
 
-This CL simplifies the logic, by letting the SyncServiceImpl get created
-if necessary.
-
-Some tests depended on IsSyncAllowed() returning true, even though the
-SyncService was null (due to ServiceIsNULLWhileTesting()). These are
-updated to set up a TestSyncService now.
-
-Note: The eventual goal is to get rid of IsSyncAllowed(). After this CL,
-that will be straightforward (just tedious).
-
-Bug: 40103662
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I930e4a5dd4ee8a9a76134a5d89bdd308b396dbf7">I930e4a5dd4ee8a9a76134a5d89bdd308b396dbf7</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/4604531">https://chromium-review.googlesource.com/c/chromium/src/+/4604531</a>
-Commit-Queue: Marc Treib &lt;treib@chromium.org&gt;
-Reviewed-by: Rushan Suleymanov &lt;rushans@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1677886}
+Bug: 544566458
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/If501afe96693226d8865a5c78fedca2c5132479b">If501afe96693226d8865a5c78fedca2c5132479b</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8241488">https://chromium-review.googlesource.com/c/chromium/src/+/8241488</a>
+Commit-Queue: Charles Cai &lt;charlesyc@google.com&gt;
+Reviewed-by: Sky Malice &lt;skym@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1678003}
 </pre>
 
 </body>
