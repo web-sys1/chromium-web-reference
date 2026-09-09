@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1694657/"> 1694657</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/d080ccd08c0ea26102d1cb4c4f8df33cedb0c6f2">d080ccd08c0ea26102d1cb4c4f8df33cedb0c6f2</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1694848/"> 1694848</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/15fa9b70af99448877b1d5853dde7c97f95eba68">15fa9b70af99448877b1d5853dde7c97f95eba68</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1694562/">1694562</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/28f31bbfb99191635766ae5f97d1e5b2cebea008">28f31bbfb99191635766ae5f97d1e5b2cebea008</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1694793/">1694793</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/acb09943fadd074bfc395157d61fca105fcdd0ae">acb09943fadd074bfc395157d61fca105fcdd0ae</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    d080ccd08c0ea26102d1cb4c4f8df33cedb0c6f2
+    15fa9b70af99448877b1d5853dde7c97f95eba68
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/d080ccd08c0ea26102d1cb4c4f8df33cedb0c6f2">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/15fa9b70af99448877b1d5853dde7c97f95eba68">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    mikt &lt;mikt@google.com&gt;
+    tomerni-island &lt;tomer.nissim@island.io&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Wed Sep 09 16:34:23 2026
+    Wed Sep 09 20:43:41 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Wed Sep 09 16:34:23 2026
+    Wed Sep 09 20:43:41 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/d080ccd08c0ea26102d1cb4c4f8df33cedb0c6f2/">
-     0e622d28445df338bf05353db55fb6d82742bc11
+    <a href="https://chromium.googlesource.com/chromium/src/+/15fa9b70af99448877b1d5853dde7c97f95eba68/">
+     7a060e403ea056ba7b1a4933f849f9e8f48e5bfe
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/d080ccd08c0ea26102d1cb4c4f8df33cedb0c6f2%5E">
-     9f71a427cfecd8f682d33adc2631962e466d36db
+    <a href="https://chromium.googlesource.com/chromium/src/+/15fa9b70af99448877b1d5853dde7c97f95eba68%5E">
+     68a573d2dfcebbd7aab21bf0201dcf31e0e0ecf3
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/d080ccd08c0ea26102d1cb4c4f8df33cedb0c6f2%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/15fa9b70af99448877b1d5853dde7c97f95eba68%5E%21/">
       diff
      </a>
      ]
@@ -182,21 +182,32 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[infra] Add partition_alloc_perftests to infra targets
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[updater] Serve and prefer the admin-protected update service pipe
 
-Define partition_alloc_perftests binary in binaries.star and regenerate
-gn_isolate_map.pyl so Pinpoint and perf runners can build and isolate
-the standalone partition_alloc_perftests target.
+The system update service now also listens on a pipe under
+"ProtectedPrefix\Administrators", where only Administrators and
+LocalSystem may create pipes, with a DACL that withholds
+FILE_CREATE_PIPE_INSTANCE from Authenticated Users. Together those close
+the two ways an unprivileged process could end up serving that pipe:
+squatting the name while no server is listening, and adding an instance
+under the name the updater owns, which NPFS reports as owned by
+LocalSystem because the security descriptor belongs to the name rather
+than the instance. The updater first creates the protected pipe and only
+then the legacy pipe to avoid race condition.
 
-TAG=agy
-CONV=39f5a12b-07dd-45ea-bc29-f8fb13fbba35
+The legacy pipe keeps its name and DACL and stays live so that clients
+which predate this change keep working. Clients prefer the protected
+pipe and fall back to the legacy one only when the protected pipe does
+not exist, which means an older updater.
 
-Bug: 40158212
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I618c50ceda21fa6cd68d3606501e435ae026d3ee">I618c50ceda21fa6cd68d3606501e435ae026d3ee</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8363446">https://chromium-review.googlesource.com/c/chromium/src/+/8363446</a>
-Reviewed-by: Ben Pastene &lt;bpastene@chromium.org&gt;
-Commit-Queue: Mikihito Matsuura &lt;mikt@google.com&gt;
-Cr-Commit-Position: refs/heads/main@{#1694657}
+Bug: 535718578
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Iccf3641a4939bc5e7ea84c625c9dbd136d974a72">Iccf3641a4939bc5e7ea84c625c9dbd136d974a72</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8334870">https://chromium-review.googlesource.com/c/chromium/src/+/8334870</a>
+Reviewed-by: Noah Rose Ledesma &lt;noahrose@google.com&gt;
+Commit-Queue: S Ganesh &lt;ganesh@chromium.org&gt;
+Reviewed-by: S Ganesh &lt;ganesh@chromium.org&gt;
+Reviewed-by: Sorin Jianu &lt;sorin@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1694848}
 </pre>
 
 </body>
