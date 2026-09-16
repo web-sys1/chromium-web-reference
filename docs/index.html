@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1698268/"> 1698268</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9b5f668a1e8c2b4e69cf8a9bef38d831cdff02ab">9b5f668a1e8c2b4e69cf8a9bef38d831cdff02ab</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1698632/"> 1698632</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/5e19146a6a77fb33c4946c032d4b13c5e083b086">5e19146a6a77fb33c4946c032d4b13c5e083b086</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1698313/">1698313</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/9435e29ce5acddb378e828f870fded7bf3bca0eb">9435e29ce5acddb378e828f870fded7bf3bca0eb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1698595/">1698595</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6807862c69377d725645f6a055b0a82fe041cc7c">6807862c69377d725645f6a055b0a82fe041cc7c</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    9b5f668a1e8c2b4e69cf8a9bef38d831cdff02ab
+    5e19146a6a77fb33c4946c032d4b13c5e083b086
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/9b5f668a1e8c2b4e69cf8a9bef38d831cdff02ab">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/5e19146a6a77fb33c4946c032d4b13c5e083b086">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Jack Thiesen &lt;jthiesen@chromium.org&gt;
+    Gaurav Sahitya &lt;gsahitya@microsoft.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Tue Sep 15 18:45:17 2026
+    Wed Sep 16 04:55:25 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Tue Sep 15 18:45:17 2026
+    Wed Sep 16 04:55:25 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/9b5f668a1e8c2b4e69cf8a9bef38d831cdff02ab/">
-     08c2746215d2fc586cbe8adf6f7c1e07de3dba5f
+    <a href="https://chromium.googlesource.com/chromium/src/+/5e19146a6a77fb33c4946c032d4b13c5e083b086/">
+     608eb5a4d42fd25d6bab1fee5b8ec17493ec9495
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/9b5f668a1e8c2b4e69cf8a9bef38d831cdff02ab%5E">
-     3d4912594896113f9decffd60aa47c2f1cdc4a6d
+    <a href="https://chromium.googlesource.com/chromium/src/+/5e19146a6a77fb33c4946c032d4b13c5e083b086%5E">
+     bcc3e6ad6b7bfea009b16d008a43da990bede4dd
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/9b5f668a1e8c2b4e69cf8a9bef38d831cdff02ab%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/5e19146a6a77fb33c4946c032d4b13c5e083b086%5E%21/">
       diff
      </a>
      ]
@@ -182,50 +182,27 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "Roll clank/internal/apps from 9894ddfeed30 to 50ee212bf2e4 (1 revision)"
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Deflake ShellTest.OpenFileWithSpaceInExtension modal-dialog wall
 
-This reverts commit 89ea0ca6ff92cb90fe97b56655c76196c426cc0e.
+OpenFileViaShell calls ShellExecuteEx with SEE_MASK_NOASYNC, which runs
+synchronously. For a file with an unregistered extension ("test. txt")
+the shell can pop a modal "Open With" dialog; on a headless bot that
+dialog is never dismissed, so the call blocks forever and walls the
+whole test process (observed as a test-launcher timeout on win11-arm64).
 
-Reason for revert: Warning: Missing class com.google.j2objc.annotations.GenerateObjCCompanion (referenced from: com.google.common.util.concurrent.SettableFuture)
+Run OpenFileViaShell on a detached, non-joinable thread so a blocking
+dialog only wedges that abandoned thread. The existing sentinel check
+(executed.txt must not exist) still catches the real regression. A
+ThreadPool task can't be used because TaskEnvironment drains its workers
+at teardown and would still wall the process.
 
-Failure Link: <a href="https://ci.chromium.org/ui/p/chrome/builders/ci/android-desktop-arm64-rel/20464/overview">https://ci.chromium.org/ui/p/chrome/builders/ci/android-desktop-arm64-rel/20464/overview</a>
-
-Original change's description:
-&gt; Roll clank/internal/apps from 9894ddfeed30 to 50ee212bf2e4 (1 revision)
-&gt;
-&gt; <a href="https://chrome-internal.googlesource.com/clank/internal/apps.git/+log/9894ddfeed30..50ee212bf2e4">https://chrome-internal.googlesource.com/clank/internal/apps.git/+log/9894ddfeed30..50ee212bf2e4</a>
-&gt;
-&gt; If this roll has caused a breakage, revert this CL and set the roller
-&gt; to dry run mode using the controls here:
-&gt; <a href="https://skia-autoroll.corp.goog/r/clank-apps-chromium-autoroll">https://skia-autoroll.corp.goog/r/clank-apps-chromium-autoroll</a>
-&gt; Please CC atsvirchkova@google.com,chrome-brapp-engprod@google.com,kije@google.com on the revert to ensure that a human
-&gt; is aware of the problem.
-&gt;
-&gt; To report a problem with the AutoRoller itself, please file a bug:
-&gt; <a href="https://issues.skia.org/issues/new?component=1389291&amp;template=1850622">https://issues.skia.org/issues/new?component=1389291&amp;template=1850622</a>
-&gt;
-&gt; Documentation for the AutoRoller is here:
-&gt; <a href="https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md">https://skia.googlesource.com/buildbot/+doc/main/autoroll/README.md</a>
-&gt;
-&gt; Bug: None
-&gt; Tbr: atsvirchkova@google.com,kije@google.com
-&gt; No-Try: true
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I6993c574bdf2fca6979d8ac376de1e674b342d0f">I6993c574bdf2fca6979d8ac376de1e674b342d0f</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8413532">https://chromium-review.googlesource.com/c/chromium/src/+/8413532</a>
-&gt; Bot-Commit: chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-&gt; Commit-Queue: chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com &lt;chromium-internal-autoroll@skia-corp.google.com.iam.gserviceaccount.com&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1698201}
-
-Bug: None
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I751a07a35361762bd1880cea98652f35854dc7c1">I751a07a35361762bd1880cea98652f35854dc7c1</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8413534">https://chromium-review.googlesource.com/c/chromium/src/+/8413534</a>
-Bot-Commit: rubber-stamper@appspot.gserviceaccount.com &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Commit-Queue: rubber-stamper@appspot.gserviceaccount.com &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Auto-Submit: Jack Thiesen &lt;jthiesen@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1698268}
+Bug: 561094263
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I304d15d6c611448995caee16031eabcd9baaae0e">I304d15d6c611448995caee16031eabcd9baaae0e</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8376961">https://chromium-review.googlesource.com/c/chromium/src/+/8376961</a>
+Reviewed-by: Will Harris &lt;wfh@chromium.org&gt;
+Reviewed-by: Robert Liao &lt;robliao@chromium.org&gt;
+Commit-Queue: Gaurav Sahitya &lt;gsahitya@microsoft.com&gt;
+Cr-Commit-Position: refs/heads/main@{#1698632}
 </pre>
 
 </body>
