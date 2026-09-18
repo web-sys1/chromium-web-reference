@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1700634/"> 1700634</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/b0b351fe08943e9f05a197419e750cfb1fb797a7">b0b351fe08943e9f05a197419e750cfb1fb797a7</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1700803/"> 1700803</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/4f44867a964f834cf39a39ee160d99a0e72a0766">4f44867a964f834cf39a39ee160d99a0e72a0766</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1700600/">1700600</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/ef184401c0c7f6af464ade1973f93202940e7aaa">ef184401c0c7f6af464ade1973f93202940e7aaa</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1700718/">1700718</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/89d6f88e6b36ecfacf64437284fde62afa5f774c">89d6f88e6b36ecfacf64437284fde62afa5f774c</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    b0b351fe08943e9f05a197419e750cfb1fb797a7
+    4f44867a964f834cf39a39ee160d99a0e72a0766
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/b0b351fe08943e9f05a197419e750cfb1fb797a7">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/4f44867a964f834cf39a39ee160d99a0e72a0766">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Michael van Ouwerkerk &lt;mvanouwerkerk@chromium.org&gt;
+    Alex Moshchuk &lt;alexmos@chromium.org&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Fri Sep 18 10:56:40 2026
+    Fri Sep 18 15:40:02 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Fri Sep 18 10:56:40 2026
+    Fri Sep 18 15:40:02 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/b0b351fe08943e9f05a197419e750cfb1fb797a7/">
-     155660c05f25d5d9d85256a5c04cadb9adc3d40d
+    <a href="https://chromium.googlesource.com/chromium/src/+/4f44867a964f834cf39a39ee160d99a0e72a0766/">
+     6496ef3d33f77187e2c1f4175a4995c5188b7312
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/b0b351fe08943e9f05a197419e750cfb1fb797a7%5E">
-     c520739e3ff9f6f281ef23477e42b0e60899419a
+    <a href="https://chromium.googlesource.com/chromium/src/+/4f44867a964f834cf39a39ee160d99a0e72a0766%5E">
+     777b0256af7e5019576783636171c210951c3a59
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/b0b351fe08943e9f05a197419e750cfb1fb797a7%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/4f44867a964f834cf39a39ee160d99a0e72a0766%5E%21/">
       diff
      </a>
      ]
@@ -182,45 +182,42 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Revert "grvk: Add graphite context implementation"
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Close and reject popup widgets when creator RenderFrameHost is inactive
 
-This reverts commit 54c5c5685528e29b1a087870885448b52b045e8f.
+Currently, RenderFrameHostImpl::CreateNewPopupWidget verifies that the
+creator frame is active at widget creation time, creating a self-owned
+RenderWidgetHostImpl stored in WebContentsImpl::pending_widgets_ and
+created_widgets_. However, WebContentsImpl::ShowCreatedWidget does not
+re-verify the creator frame's lifecycle state when showing the widget,
+nor does WebContentsImpl clean up popup widgets when their creator
+frame leaves LifecycleState::kActive (e.g., entering BackForwardCache
+on navigation) or is deleted. A compromised renderer could defer
+ShowPopup or suppress RequestClosePopup across a cross-origin
+navigation to show spoofed popup UI over another site.
 
-Reason for revert: many tests hitting NOTREACHED in GetGraphiteContext
+This CL fixes the issue by:
 
-Failure Link: <a href="https://ci.chromium.org/ui/p/chromium/builders/ci/android-14-arm64-rel/19509/test-results?q=ExactID%3A%3A%2F%2Fandroid_webview%2Ftest%5C%3Awebview_64_cts_tests%21junit%3Aandroid.text.cts%3AEmojiTest%23testEmojiGlyphWebView+VHash%3A366b52a8fd946fa0">https://ci.chromium.org/ui/p/chromium/builders/ci/android-14-arm64-rel/19509/test-results?q=ExactID%3A%3A%2F%2Fandroid_webview%2Ftest%5C%3Awebview_64_cts_tests%21junit%3Aandroid.text.cts%3AEmojiTest%23testEmojiGlyphWebView+VHash%3A366b52a8fd946fa0</a>
+1. Adding a check in WebContentsImpl::ShowCreatedWidget to verify that
+   the popup widget's creator RenderFrameHost exists, is active, and
+   belongs to the current WebContents. Otherwise, the widget is
+   immediately destroyed via ShutdownAndDestroyWidget(true).
+2. Removing the DCHECK(false) in WebContentsImpl::GetCreatedWidget
+   when a routing ID is not found in pending_widgets_, allowing late
+   or duplicate ShowPopup requests after cleanup to fail gracefully.
+3. Adding WebContentsImpl::ClosePopupWidgetsForFrame to destroy any
+   pending or shown popup widgets created by a frame when it leaves
+   LifecycleState::kActive (in RenderFrameHostStateChanged) or is
+   deleted (in RenderFrameDeleted).
 
-Original change's description:
-&gt; grvk: Add graphite context implementation
-&gt;
-&gt; Add code to VulkanContextProvider to create GraphiteSharedContext
-&gt; instead of GrContext. Also add the code to trigger creation from
-&gt; SharedContextState.
-&gt;
-&gt; This increases the binary size on Android considerably as it
-&gt; includes the Skia Graphite native Vulkan code for the first time. The
-&gt; size increase is unavoidable if Chrome uses the library.
-&gt;
-&gt; Binary-Size: See commit.
-&gt; Bug: 552951905
-&gt; Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I37b9c6e30529852bad8206c696048c87e711f166">I37b9c6e30529852bad8206c696048c87e711f166</a>
-&gt; Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8400809">https://chromium-review.googlesource.com/c/chromium/src/+/8400809</a>
-&gt; Reviewed-by: Vasiliy Telezhnikov &lt;vasilyt@chromium.org&gt;
-&gt; Commit-Queue: Kyle Charbonneau &lt;kylechar@chromium.org&gt;
-&gt; Cr-Commit-Position: refs/heads/main@{#1699825}
+TAG=agy
+CONV=baaf02fe-2569-434c-a573-4803011aef64
 
-Bug: 552951905
-No-Presubmit: true
-No-Tree-Checks: true
-No-Try: true
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/Ia61cf528b4cf8f95a546d6fb22dbba08afe6a17c">Ia61cf528b4cf8f95a546d6fb22dbba08afe6a17c</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8419545">https://chromium-review.googlesource.com/c/chromium/src/+/8419545</a>
-Commit-Queue: Michael van Ouwerkerk &lt;mvanouwerkerk@chromium.org&gt;
-Auto-Submit: Michael van Ouwerkerk &lt;mvanouwerkerk@chromium.org&gt;
-Bot-Commit: rubber-stamper@appspot.gserviceaccount.com &lt;rubber-stamper@appspot.gserviceaccount.com&gt;
-Owners-Override: Michael van Ouwerkerk &lt;mvanouwerkerk@chromium.org&gt;
-Reviewed-by: Michael van Ouwerkerk &lt;mvanouwerkerk@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1700634}
+Bug: 556899544
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I4acababf68adda964184afcba24b1922921a02c0">I4acababf68adda964184afcba24b1922921a02c0</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8424342">https://chromium-review.googlesource.com/c/chromium/src/+/8424342</a>
+Reviewed-by: Rakina Zata Amni &lt;rakina@chromium.org&gt;
+Commit-Queue: Alex Moshchuk &lt;alexmos@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1700803}
 </pre>
 
 </body>
