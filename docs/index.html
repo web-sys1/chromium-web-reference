@@ -96,8 +96,8 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1701065/"> 1701065</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/01df72b34847da8a1662b6f0f2de0a23e93ef5a0">01df72b34847da8a1662b6f0f2de0a23e93ef5a0</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1701138/"> 1701138</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/db98b9d571f40dc4ac256281f227e4d1d9f150b6">db98b9d571f40dc4ac256281f227e4d1d9f150b6</a></td>
       </tr>
       <tr>
        <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1700812/">1700812</a> <sup><b>(WIN)</b></sup></td>
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    01df72b34847da8a1662b6f0f2de0a23e93ef5a0
+    db98b9d571f40dc4ac256281f227e4d1d9f150b6
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/01df72b34847da8a1662b6f0f2de0a23e93ef5a0">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/db98b9d571f40dc4ac256281f227e4d1d9f150b6">
       log
      </a>
      ]
@@ -130,10 +130,10 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    Yiren Wang &lt;yrw@chromium.org&gt;
+    Jordan Bayles &lt;jophba@chromium.org&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Fri Sep 18 20:51:40 2026
+    Fri Sep 18 22:24:27 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Fri Sep 18 20:51:40 2026
+    Fri Sep 18 22:24:27 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/01df72b34847da8a1662b6f0f2de0a23e93ef5a0/">
-     70cc91b65ddcaa7490ea09386236e4823e505a6d
+    <a href="https://chromium.googlesource.com/chromium/src/+/db98b9d571f40dc4ac256281f227e4d1d9f150b6/">
+     4018ba31106a5447e3ebcfd265ac2badc93788a6
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/01df72b34847da8a1662b6f0f2de0a23e93ef5a0%5E">
-     0de7fece6adbedd5f5c8236144ab3923c91373fb
+    <a href="https://chromium.googlesource.com/chromium/src/+/db98b9d571f40dc4ac256281f227e4d1d9f150b6%5E">
+     7c07f3e9258968cbd558cdb341e25553e4666d4b
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/01df72b34847da8a1662b6f0f2de0a23e93ef5a0%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/db98b9d571f40dc4ac256281f227e4d1d9f150b6%5E%21/">
       diff
      </a>
      ]
@@ -182,20 +182,36 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Allow video playback wake locks regardless of permissions policy
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">[Cast] Use base::BindPostTask for TCP connect reply
 
-Exempt WakeLockReason::kVideoPlayback from the kScreenWakeLock
-permissions policy check in WakeLockServiceImpl::GetWakeLock. The
-screen-wake-lock policy governs the Web Wake Lock API and should not
-block internal video playback wake locks (e.g., in cross-origin iframes
-or Picture-in-Picture windows).
+CastSocketImpl::DoTcpConnect() hops to the UI thread to call
+NetworkContext::CreateTCPConnectedSocket(), and the reply has to come
+back on the socket's own sequence. That return hop was implemented by a
+hand-rolled OnConnected() trampoline that unpacked all six callback
+arguments and re-posted them to a hard-coded
+content::GetIOThreadTaskRunner({}).
 
-Bug: 561613785
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I329fd6a700193af24cc152d8b396aeb0b6b6ec63">I329fd6a700193af24cc152d8b396aeb0b6b6ec63</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8428425">https://chromium-review.googlesource.com/c/chromium/src/+/8428425</a>
-Commit-Queue: Yiren Wang &lt;yrw@chromium.org&gt;
-Reviewed-by: Dmitry Gozman &lt;dgozman@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1701065}
+Replace it with base::BindPostTask(), binding the sequence that
+DoTcpConnect() is running on. This is behavior-preserving today, since
+CastSocketImpl runs on the IO thread, but it removes the hard-coded
+thread reference and the argument-forwarding boilerplate.
+
+This is a prerequisite cleanup for moving the Cast stack off the IO
+thread: with the reply sequence derived from the caller rather than
+hard-coded, CastSocketImpl no longer has to be told which thread it
+lives on.
+
+No functional change intended.
+
+TAG=agy
+CONV=170f98cf-bccf-49d6-85db-ee5bf7848a5a
+
+Bug: 562669503
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I1ae46867b4fa6c5734a79139274e7b8fec7f31b4">I1ae46867b4fa6c5734a79139274e7b8fec7f31b4</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8422420">https://chromium-review.googlesource.com/c/chromium/src/+/8422420</a>
+Reviewed-by: Mark Foltz &lt;mfoltz@chromium.org&gt;
+Commit-Queue: Jordan Bayles &lt;jophba@chromium.org&gt;
+Cr-Commit-Position: refs/heads/main@{#1701138}
 </pre>
 
 </body>
