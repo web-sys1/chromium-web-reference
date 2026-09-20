@@ -96,12 +96,12 @@ body{
     <tfoot></tfoot>
      <tbody>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1701514/"> 1701514</a> <sup><b>(MAC)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/60abad70c7180dc72a3b55553c4cc50ddf711a4a">60abad70c7180dc72a3b55553c4cc50ddf711a4a</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1701521/"> 1701521</a> <sup><b>(MAC)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/6f9e867c094c4be939525f9a523510a9d3055b3d">6f9e867c094c4be939525f9a523510a9d3055b3d</a></td>
       </tr>
       <tr>
-       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1701500/">1701500</a> <sup><b>(WIN)</b></sup></td>
-       <td><a href="https://chromium.googlesource.com/chromium/src/+/7703969ca1d5b4a8615ab8470240cab64a1273eb">7703969ca1d5b4a8615ab8470240cab64a1273eb</a></td>
+       <td><a href ="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win/1701514/">1701514</a> <sup><b>(WIN)</b></sup></td>
+       <td><a href="https://chromium.googlesource.com/chromium/src/+/60abad70c7180dc72a3b55553c4cc50ddf711a4a">60abad70c7180dc72a3b55553c4cc50ddf711a4a</a></td>
      </tbody>
     </table>
 <hr><dl class="Metadata-descriptionList">
@@ -111,12 +111,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    60abad70c7180dc72a3b55553c4cc50ddf711a4a
+    6f9e867c094c4be939525f9a523510a9d3055b3d
    </div>
    <div class="Metadata-descriptionCell">
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+log/60abad70c7180dc72a3b55553c4cc50ddf711a4a">
+     <a href="https://chromium.googlesource.com/chromium/src/+log/6f9e867c094c4be939525f9a523510a9d3055b3d">
       log
      </a>
      ]
@@ -133,7 +133,7 @@ body{
     Erik Chen &lt;erikchen@chromium.org&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Sun Sep 20 20:36:21 2026
+    Sun Sep 20 23:10:41 2026
    </div>
   </dd>
  </div>
@@ -146,7 +146,7 @@ body{
     Chromium LUCI CQ &lt;chromium-scoped@luci-project-accounts.iam.gserviceaccount.com&gt;
    </div>
    <div class="Metadata-descriptionCell">
-    Sun Sep 20 20:36:21 2026
+    Sun Sep 20 23:10:41 2026
    </div>
   </dd>
  </div>
@@ -156,8 +156,8 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/60abad70c7180dc72a3b55553c4cc50ddf711a4a/">
-     2480611f74748a321d8a54a827485676bca49008
+    <a href="https://chromium.googlesource.com/chromium/src/+/6f9e867c094c4be939525f9a523510a9d3055b3d/">
+     d342433debd7dd3bfafe6dda2052fe7c5ec9d432
     </a>
    </div>
   </dd>
@@ -168,12 +168,12 @@ body{
   </dt>
   <dd class="Metadata-description">
    <div class="Metadata-descriptionCell">
-    <a href="https://chromium.googlesource.com/chromium/src/+/60abad70c7180dc72a3b55553c4cc50ddf711a4a%5E">
-     850ad8faeb52f8ff8b5827573f497d039578def6
+    <a href="https://chromium.googlesource.com/chromium/src/+/6f9e867c094c4be939525f9a523510a9d3055b3d%5E">
+     aacc5db858838c580cc62ea2cdf132cd3c59eb3c
     </a>
     <span>
      [
-     <a href="https://chromium.googlesource.com/chromium/src/+/60abad70c7180dc72a3b55553c4cc50ddf711a4a%5E%21/">
+     <a href="https://chromium.googlesource.com/chromium/src/+/6f9e867c094c4be939525f9a523510a9d3055b3d%5E%21/">
       diff
      </a>
      ]
@@ -182,26 +182,24 @@ body{
   </dd>
  </div>
 </dl>
-<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Include what you use around browser_view.h, part 3 of 3
+<hr style="height:1px;border-width:0;color:gray;background-color:gray"><pre class="u-pre u-monospace MetadataMessage">Give browser_widget.h and contents_container_view.h their own targets
 
-These files reach types such as views::BubbleDialogDelegateView and
-FullscreenController only because
-chrome/browser/ui/views/frame/browser_view.h happens to pull them in
-transitively. browser_view.h is about to stop doing so, when it is
-split into its own GN target and drops the two includes that keep it
-tied to the //chrome/browser/ui:ui monolith.
+Both headers live in //chrome/browser/ui:ui today, which means anything
+including them has to depend on the monolith. Both are nearly
+free-standing: browser_widget.h has no chrome/ includes at all, and
+contents_container_view.h has two that already sit in leaf targets.
 
-Adding the includes here is a no-op today and lets that split land
-without breaking these files. Where the use sits behind a build guard
-the include is placed inside the same guard. No behaviour change.
+This is preparation for splitting browser_view.h out of :ui. That
+header includes both, so it cannot move to its own target while they
+are owned by :ui. Their .cc files stay in :ui.
 
 Bug: 428946261
 Agent-Generated: true
-Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I0a0e2f046482e747162ecbdb43a0c4781afa0580">I0a0e2f046482e747162ecbdb43a0c4781afa0580</a>
-Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8431887">https://chromium-review.googlesource.com/c/chromium/src/+/8431887</a>
+Change-Id: <a href="https://chromium-review.googlesource.com/#/q/I37e15eca8445aab93d63aaf22900325e40e80a04">I37e15eca8445aab93d63aaf22900325e40e80a04</a>
+Reviewed-on: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8433481">https://chromium-review.googlesource.com/c/chromium/src/+/8433481</a>
 Reviewed-by: Thomas Lukaszewicz &lt;tluk@chromium.org&gt;
 Commit-Queue: Erik Chen &lt;erikchen@chromium.org&gt;
-Cr-Commit-Position: refs/heads/main@{#1701514}
+Cr-Commit-Position: refs/heads/main@{#1701521}
 </pre>
 
 </body>
