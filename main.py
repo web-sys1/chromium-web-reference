@@ -147,7 +147,7 @@ HR_BREAKPOINT= f"""<hr style="height:1px;border-width:0;color:gray;background-co
 MetadataParser = content.find_all("div", {"class" : "Metadata"})
 PreMMsg = content.find_all("pre", {"class" : "MetadataMessage"})
 
-MTAB_P = MetadataParser[0].find("dl")
+MTAB_P = MetadataParser[0].find("table")
 # --- HREFs ---
 base_url = "https://chromium.googlesource.com/"
 for a_tag in MTAB_P.find_all('a', href=True):
