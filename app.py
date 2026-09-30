@@ -1,4 +1,5 @@
-from flask import Flask
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 from bs4 import BeautifulSoup
 import json
 import requests
@@ -7,17 +8,17 @@ import os
 import sys
 from main import *
 from datetime import datetime, timedelta
+import uvicorn
 
-app = Flask(__name__)
+app = FastAPI()
 
 HEADER = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'}
 
 html_template = """<!DOCTYPE html>...""" 
-endLine = """..."""                      
+endLine = """..."""                     
 
-
-@app.route("/")
-@app.route("/api/cron")
+@app.get("/", response_class=HTMLResponse)
+@app.get("/api/cron", response_class=HTMLResponse)
 def generate_page():
     commits = get_commits_last_24h()
 
@@ -34,7 +35,7 @@ def generate_page():
             commits = []
 
     if not commits:
-        return "<h1>No commits found</h1>", 404
+        raise HTTPException(status_code=404, detail="No commits found")
 
     page_content = f"""
 <div class="container">
@@ -124,7 +125,7 @@ def generate_page():
 </div>"""
 
     full_html = html_template + page_content + endLine
-    return full_html
+    return HTMLResponse(content=full_html)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    uvicorn.run(app, host="127.0.0.1", port=8000)
