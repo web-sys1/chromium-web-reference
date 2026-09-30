@@ -162,8 +162,4 @@ Ensure JavaScript is enabled and jQuery CDN is accessible from your network.
 
 ---
 
-**Generated:** {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
-
-**Author:** Chromium MetadataParser Tool
-
 **Repository:** https://chromium.googlesource.com/chromium/src
