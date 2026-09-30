@@ -120,7 +120,6 @@ def parse_commit_time(time_str):
         return None
 
 async def fetch_commit_metadata_async(client, git_sha):
-    """Descărcare asincronă a metadatelor pentru un comit."""
     try:
         url = f'https://chromium.googlesource.com/chromium/src/+/{git_sha}'
         response = await client.get(url, headers=HEADER, timeout=3.0)
@@ -149,21 +148,19 @@ async def fetch_commit_metadata_async(client, git_sha):
 async def generate_page():
     async with httpx.AsyncClient(verify=False) as client:
         try:
-            # Număr redus la 10 comituri pentru viteza optimă în Serverless
             url = 'https://chromium.googlesource.com/chromium/src/+log?format=JSON&n=50'
             response = await client.get(url, headers=HEADER, timeout=5.0)
             text = response.text
             if text.startswith(")]}'"):
                 text = text[4:]
             data = json.loads(text)
-            commits = data.get('log', [])[:10]
+            commits = data.get('log', [])[:50]
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error fetching log: {e}")
 
         if not commits:
             raise HTTPException(status_code=404, detail="No commits found")
 
-        # Descărcare PARALELĂ pentru toate metadatele
         tasks = [fetch_commit_metadata_async(client, commit.get('commit', '')) for commit in commits]
         metadata_results = await asyncio.gather(*tasks)
 
