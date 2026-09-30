@@ -24,7 +24,7 @@ def generate_page():
 
     if not commits:
         try:
-            url = 'https://chromium.googlesource.com/chromium/src/+log?format=JSON&n=50'
+            url = 'https://chromium.googlesource.com/chromium/src/+log?format=JSON&n=5'
             response = requests.get(url, headers=HEADER, timeout=30)
             text = response.text
             if text.startswith(")]}'"):
