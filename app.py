@@ -150,7 +150,7 @@ async def generate_page():
     async with httpx.AsyncClient(verify=False) as client:
         try:
             # Număr redus la 10 comituri pentru viteza optimă în Serverless
-            url = 'https://chromium.googlesource.com/chromium/src/+log?format=JSON&n=10'
+            url = 'https://chromium.googlesource.com/chromium/src/+log?format=JSON&n=50'
             response = await client.get(url, headers=HEADER, timeout=5.0)
             text = response.text
             if text.startswith(")]}'"):
