@@ -149,7 +149,7 @@ async def generate_page():
     async with httpx.AsyncClient(verify=False) as client:
         try:
             url = 'https://chromium.googlesource.com/chromium/src/+log?format=JSON&n=50'
-            response = await client.get(url, headers=HEADER, timeout=10.0)
+            response = await client.get(url, headers=HEADER, timeout=20.0)
             text = response.text
             if text.startswith(")]}'"):
                 text = text[4:]
